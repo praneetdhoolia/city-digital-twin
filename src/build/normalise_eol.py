@@ -40,7 +40,8 @@ REPO_SINGLE = ['README.md', 'run.py', '.gitignore', '.gitattributes']
 # touched - only the metadata this repository writes about one.
 # `**` because a city may keep its records in category folders under data/raw/
 # (Mumbai's 514 sat in transit/, roads/, freight/ ... and every one was CRLF).
-CITY_GLOBS = ['data/raw/**/provenance*.json', 'data/raw/**/_*.txt', 'data/raw/**/_*.log',
+CITY_GLOBS = ['city.json',
+              'data/raw/**/provenance*.json', 'data/raw/**/_*.txt', 'data/raw/**/_*.log',
               'data/raw/**/_*.json',
               'schedules/*.json', 'schedules/raw/provenance*.json',
               'schedules/scenarios/_*.json',
