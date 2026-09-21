@@ -1,16 +1,16 @@
 {
   "source": "derived_provisional_regional_supply",
   "input_sha256": {
-    "schedules/baseline_multimodal.zip": "64b9af9eab1f66926d5f6d395ca3fda0e5404e648f5887667ab7ecd038a23629",
+    "schedules/baseline_multimodal.zip": "59466a7ebe2b53c25c11361cb5cf62397a86fb56b7b0693229fe7423aa176866",
     "registry/A_regional_buses.json": "b30b33a068a2da54f8989ec94b5599c94dfc68549123a568cda18316f87a35a8",
     "data/processed/observed/nmmt_departures.csv": "d32ce08bb63509c389af2c00770cd937d2424cc765240eeb8237ffc1f192c321",
     "data/processed/observed/nmmt_stop_times.csv": "3223cacfb9e5783a0c02cf9875678e631ac9c3fe4316b1dfd0baf3f54095878f",
-    "data/processed/observed/nmmt_route_stop_snapshots.csv": "ce0f98f13d27dad62e2abb5f38f6c44a3d902a4ac02f65ae9f93d7a2b4252efb",
+    "data/processed/observed/nmmt_route_stop_snapshots.csv": "10f907a5cc4f0d76176dc23da2978f22d71e780fc11500e2865e363a482e6fdb",
     "data/processed/observed/mbmt_route_stops.csv": "6149a0804b2f7bfdec305c6ba1e0a817f2b4cc7e036365b0bb33d52035ab9111",
     "data/processed/observed/mbmt_published_bus_allocations.csv": "038abc61148f385583e00acb0c356908d8dc693dd4ef10986d4a0227b934064c",
     "data/raw/transit/nmmt_current_stops_8029b8b9b5a3d93c.json": "8029b8b9b5a3d93c54d7396257bbecc00fc9c8c1c51d466336633a6b17b2215e"
   },
-  "output_sha256": "5c5bc92c925af954bb143f65b256fec53c34d6da04e64e8a301e3c6def35fb91",
+  "output_sha256": "d378a3516a2f3773e10e2d1802e8a5c423a8c5115490bf1664f848eb62ef8aaa",
   "generated_patterns": [
     {
       "operator": "NMMT",

@@ -17,13 +17,13 @@
     "fleet_assignments": "networks/matsim/schedules/baseline_regional/fleet_assignments.json"
   },
   "inputs_sha256": {
-    "network": "5a07a45b50860c4191996f1a84b9e736723aa730d8697f1c9a1bd3ea642f188e",
-    "schedule": "7096be1c36df6194336bb0079fa71be7a4cf00cfbed80d99d23f494e4589e253",
-    "transit_vehicles": "0ec5558b558c0b6129b0636c3415ee4097919d3def51ba512d3c1fd058afc89d",
+    "network": "ef792e36a47cf381ee151174896c1cc0e9b09d20d27edcc80d7c28c6b62ac37c",
+    "schedule": "80dd88d30c52a87492979d808a407b6a8a09a7e0db890caf1a498050d6857e57",
+    "transit_vehicles": "7223af4a48541ac0d0a6c65786cf2d0eb0f95991e78a39a855f42b321ce944de",
     "plans": "f5acf260fa4ce71cf16ab58050737c7f593ea0cff084627468f2548c6863c44d",
     "boarding_fares": "951d7ddaa057fe8ea57067b08572f910d68d340ac0cffbbee30137e53c0b8b9b",
     "hired_fleet": "3970384fe178b88b91c1c54c0367656a8efe1f129e4f83f4417dd8a4947b3951",
-    "fleet_assignments": "31055aa2e4227b5502b27a4c170751feac0409d19ff5a512d0893900267bf821"
+    "fleet_assignments": "1474f4af5846a3e40682262dbd11b3d25639c205c236995e0fa4496da121c44c"
   },
   "demand": {
     "source_sha256": "f5acf260fa4ce71cf16ab58050737c7f593ea0cff084627468f2548c6863c44d",
@@ -325,6 +325,76 @@
         "final_arrival_s": 6517.0
       },
       {
+        "route": "BASE_MMB_11_0_26100",
+        "adjusted_stops": 1,
+        "final_arrival_s": 3344
+      },
+      {
+        "route": "BASE_MMB_11_1_54900",
+        "adjusted_stops": 1,
+        "final_arrival_s": 3344
+      },
+      {
+        "route": "BASE_MMB_14_0_43200",
+        "adjusted_stops": 1,
+        "final_arrival_s": 4131
+      },
+      {
+        "route": "BASE_MMB_14_1_63000",
+        "adjusted_stops": 1,
+        "final_arrival_s": 4131
+      },
+      {
+        "route": "BASE_MMB_1_0_41400",
+        "adjusted_stops": 1,
+        "final_arrival_s": 41
+      },
+      {
+        "route": "BASE_MMB_1_1_36000",
+        "adjusted_stops": 1,
+        "final_arrival_s": 41
+      },
+      {
+        "route": "BASE_MMB_3_0_60000",
+        "adjusted_stops": 1,
+        "final_arrival_s": 141.0
+      },
+      {
+        "route": "BASE_MMB_3_1_61800",
+        "adjusted_stops": 1,
+        "final_arrival_s": 141.0
+      },
+      {
+        "route": "BASE_MMB_4_0_37800",
+        "adjusted_stops": 1,
+        "final_arrival_s": 139
+      },
+      {
+        "route": "BASE_MMB_4_1_57600",
+        "adjusted_stops": 1,
+        "final_arrival_s": 139
+      },
+      {
+        "route": "BASE_MMB_5_0_31200",
+        "adjusted_stops": 1,
+        "final_arrival_s": 445
+      },
+      {
+        "route": "BASE_MMB_5_1_49200",
+        "adjusted_stops": 1,
+        "final_arrival_s": 445
+      },
+      {
+        "route": "BASE_MMB_8_0_50400",
+        "adjusted_stops": 1,
+        "final_arrival_s": 2275
+      },
+      {
+        "route": "BASE_MMB_8_1_43200",
+        "adjusted_stops": 1,
+        "final_arrival_s": 2275
+      },
+      {
         "route": "best_trip_1169_2140",
         "adjusted_stops": 61,
         "final_arrival_s": 4649
@@ -467,7 +537,7 @@
       {
         "route": "best_trip_1594_0720",
         "adjusted_stops": 59,
-        "final_arrival_s": 5501
+        "final_arrival_s": 5500
       },
       {
         "route": "best_trip_1597_0745",
@@ -2162,7 +2232,7 @@
       {
         "route": "best_trip_3678_1020",
         "adjusted_stops": 52,
-        "final_arrival_s": 3422
+        "final_arrival_s": 3450
       },
       {
         "route": "best_trip_3679_0615",
@@ -2822,12 +2892,12 @@
       {
         "route": "best_trip_4006_1147",
         "adjusted_stops": 113,
-        "final_arrival_s": 7571
+        "final_arrival_s": 7598
       },
       {
         "route": "best_trip_4007_1034",
         "adjusted_stops": 117,
-        "final_arrival_s": 8331
+        "final_arrival_s": 8312
       },
       {
         "route": "best_trip_4008_0905",
@@ -4422,7 +4492,7 @@
       {
         "route": "best_trip_4556_1603",
         "adjusted_stops": 66,
-        "final_arrival_s": 5232
+        "final_arrival_s": 5213
       },
       {
         "route": "best_trip_4557_1751",
@@ -9195,14 +9265,14 @@
         "final_arrival_s": 4465
       },
       {
-        "route": "vvmt_trip_17_0_1600",
-        "adjusted_stops": 25,
-        "final_arrival_s": 1545
-      },
-      {
         "route": "vvmt_trip_17_1_2040",
         "adjusted_stops": 25,
         "final_arrival_s": 1641
+      },
+      {
+        "route": "vvmt_trip_17_0_1600",
+        "adjusted_stops": 25,
+        "final_arrival_s": 1545
       },
       {
         "route": "vvmt_trip_18_0_0730",
@@ -9220,14 +9290,14 @@
         "final_arrival_s": 3082
       },
       {
-        "route": "vvmt_trip_20_0_2055",
-        "adjusted_stops": 35,
-        "final_arrival_s": 2549
-      },
-      {
         "route": "vvmt_trip_20_1_0915",
         "adjusted_stops": 35,
         "final_arrival_s": 2626
+      },
+      {
+        "route": "vvmt_trip_20_0_2055",
+        "adjusted_stops": 35,
+        "final_arrival_s": 2549
       },
       {
         "route": "vvmt_trip_21_0_1000",
@@ -9257,7 +9327,7 @@
       {
         "route": "vvmt_trip_27_0_0600",
         "adjusted_stops": 147,
-        "final_arrival_s": 14917
+        "final_arrival_s": 14918
       },
       {
         "route": "vvmt_trip_28_0_1635",
@@ -9332,12 +9402,12 @@
       {
         "route": "vvmt_trip_9_0_0840",
         "adjusted_stops": 57,
-        "final_arrival_s": 4501
+        "final_arrival_s": 4504
       }
     ]
   },
   "fleet": {
-    "vehicles": 114670,
+    "vehicles": 115100,
     "vehicle_capacity_patched": [
       [
         "bus_city",
@@ -9345,6 +9415,13 @@
         "0",
         "36",
         "30"
+      ],
+      [
+        "ferry_borivali_esselworld",
+        "250",
+        "0",
+        "423",
+        "0"
       ],
       [
         "ferry_creek_launch",
@@ -9358,6 +9435,48 @@
         "250",
         "0",
         "80",
+        "0"
+      ],
+      [
+        "ferry_gateway_mandwa",
+        "250",
+        "0",
+        "390",
+        "0"
+      ],
+      [
+        "ferry_gorai_borivali",
+        "250",
+        "0",
+        "290",
+        "0"
+      ],
+      [
+        "ferry_m2m_mandwa",
+        "250",
+        "0",
+        "780",
+        "0"
+      ],
+      [
+        "ferry_marve_manori",
+        "250",
+        "0",
+        "313",
+        "0"
+      ],
+      [
+        "ferry_versova_madh",
+        "250",
+        "0",
+        "60",
+        "0"
+      ],
+      [
+        "ferry_wharf_mora",
+        "250",
+        "0",
+        "1635",
         "0"
       ],
       [
@@ -9414,8 +9533,15 @@
     "fleet_assignment_mode": "explicit_vehicle",
     "active_vehicles_by_profile": {
       "bus_city": 109858,
+      "ferry_borivali_esselworld": 52,
       "ferry_creek_launch": 76,
       "ferry_elephanta_launch": 76,
+      "ferry_gateway_mandwa": 54,
+      "ferry_gorai_borivali": 76,
+      "ferry_m2m_mandwa": 46,
+      "ferry_marve_manori": 76,
+      "ferry_versova_madh": 74,
+      "ferry_wharf_mora": 52,
       "metro_beml_6car": 1104,
       "metro_line1_4car": 276,
       "metro_line3_8car": 276,
@@ -9424,7 +9550,7 @@
       "rail_emu_12car_central": 704,
       "rail_emu_12car_uran": 352
     },
-    "vehicle_refs": 114670
+    "vehicle_refs": 115100
   },
   "tables_sha256": {
     "boarding_fares": "951d7ddaa057fe8ea57067b08572f910d68d340ac0cffbbee30137e53c0b8b9b",

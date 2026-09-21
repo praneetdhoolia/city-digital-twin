@@ -920,7 +920,13 @@ def stale_structural(corpus):
                 seen.add('%s:%s' % (portable(r), d['name']))
         except SyntaxError:
             continue
-    return sorted(k for k in STRUCTURAL if k not in seen)
+    return sorted(k for k in STRUCTURAL
+                  if k not in seen and not _live_in_reference_city(k, _decision_keys))
+
+
+def _decision_keys(text, rp):
+    path = os.path.join(_city.REPO, 'cities', _city.DEFAULT_CITY, rp[len('<city>/'):])
+    return {'%s:%s' % (rp, d['name']) for d in _legacy.scan_decisions(path)}
 
 
 def script_decisions(corpus, fields):
@@ -1299,7 +1305,14 @@ def inline_literals(corpus):
 
 
 def stale_structural_inline(corpus):
-    """A STRUCTURAL_INLINE entry whose literal is no longer in the source."""
+    """A STRUCTURAL_INLINE entry whose literal is no longer in the source.
+
+    A `<city>` entry is one register over every city, written against the
+    reference city's files: under another city an entry that is not live is
+    stale only if it is not live in the reference city's file either (the
+    second city has no `reader_shapes.py`, and its `build_mode_targets.py`
+    is a different script under the same name; 9.207).
+    """
     live = set()
     for path, text in corpus.items():
         if not path.endswith('.py'):
@@ -1315,7 +1328,33 @@ def stale_structural_inline(corpus):
         scan.visit(tree)
         for line, func, value in scan.hits:
             live.add('%s:%s:%s' % (rp, func, ('%g' % value)))
-    return sorted(k for k in STRUCTURAL_INLINE if k not in live)
+    return sorted(k for k in STRUCTURAL_INLINE
+                  if k not in live and not _live_in_reference_city(k, _inline_keys))
+
+
+def _inline_keys(text, rp):
+    scan = _InlineScan()
+    scan.visit(ast.parse(text))
+    return {'%s:%s:%s' % (rp, func, ('%g' % value)) for line, func, value in scan.hits}
+
+
+def _live_in_reference_city(key, keys_of):
+    """Whether a `<city>` register entry is live in the reference city's file.
+
+    Only consulted when the active city is not the reference city; `keys_of`
+    turns a file's text into the register keys it makes live.
+    """
+    if _city.CITY == _city.DEFAULT_CITY or not key.startswith('<city>/'):
+        return False
+    rp = key.rsplit(':', 2)[0]
+    path = os.path.join(_city.REPO, 'cities', _city.DEFAULT_CITY, rp[len('<city>/'):])
+    if not os.path.exists(path):
+        return False
+    try:
+        with open(path, encoding='utf-8') as f:
+            return key in keys_of(f.read(), rp)
+    except (SyntaxError, OSError):
+        return False
 
 
 def audit():

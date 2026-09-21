@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 403 fields are made of
+## What the 411 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 8 | read directly from a raw download |
-| `measured` | 2 | computed from observed data in this package |
+| `measured` | 9 | computed from observed data in this package |
 | `derived` | 22 | follows from another registry field by identity |
 | `literature` | 36 | a published value, not specific to this city |
 | `assumed` | 160 | chosen without direct empirical support |
-| `definition` | 175 | fixed by the formulation, not an empirical quantity |
+| `definition` | 176 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 361 | usable point value |
+| `active` | 369 | usable point value |
 | `computed` | 6 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 35 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 1 | the datum does not exist in the package; must be swept, never pinned |
@@ -53,7 +53,7 @@ These carry `value: null` and the resolver refuses to return a point value for t
 |---|---|---|
 | `B.population.tertiary_attendance_rate_20_24` | 0 - 0.35 | Unobtained: null, and the synthesiser makes nobody in that age range a student, which the report says. |
 
-### What the 189 sweeps are for
+### What the 196 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
@@ -61,7 +61,7 @@ A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.
 |---|---:|---|
 | `answer` | 5 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
 | `uncertainty` | 183 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
-| `measurement` | 1 | an observed spread on a measured or derived value; it describes the data, not a run to make |
+| `measurement` | 8 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
 
@@ -134,13 +134,14 @@ Adult-priced development population pending verified concessions and pass owners
 
 ## Provisional broad transit services
 
-*`cities/mumbai/registry/A_baseline_services.json` - 9 fields*
+*`cities/mumbai/registry/A_baseline_services.json` - 10 fields*
 
 
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
 | `A.baseline_transit.commercial_speed_kmh` | `{"train": 35, "subway": 32, "ferry": 15}` | km/h | `assumed` | 8 - 60 |
+| `A.baseline_transit.directory_crossings` | `{"1": {"from": "1640461450", "to": "4306257482", "profile": "ferry_versova_madh"}, "3": {"from": "627734256...` | crossing_table | `definition` | - |
 | `A.baseline_transit.distance_multiplier` | `{"train": 1.25, "subway": 1.15, "ferry": 1.0}` | factor | `assumed` | 1 - 1.75 |
 | `A.baseline_transit.gtfs_route_types` | `{"train": 2, "subway": 1, "ferry": 4}` | GTFS_route_type_codes | `definition` | - |
 | `A.baseline_transit.networks` | `{"train": ["Mumbai Suburban Railway", "IR"], "subway": ["Mumbai Metro", "Navi Mumbai Metro"]}` | OSM_network_tags | `definition` | - |
@@ -157,6 +158,12 @@ Provisional movement speeds between mapped stops; explicit dwell is added separa
 ***assumed** · status **active** · DECISIONS.md §9.187 · sweep role **uncertainty***
 
 > **Sweep basis.** Provisional broad service assumptions; test service supply sensitivity, not fitted ridership shares.
+
+#### `A.baseline_transit.directory_crossings`
+
+The Maharashtra Maritime Board's passenger crossings (water_service_directory.csv, keyed by its directory_route_id) that the feed generates beside the two OSM ferry relations, each between the two OSM ferry terminals its named jetties are (osm_transport_points.csv node ids: Versova Jetty 1640461450, Madh Jetty 4306257482, Marve Jetty 627734256, Manori Jetty 564906271, Gorai 564878691 (the node named Gorai Ferry, 814439568, sits 47 m from the Borivali jetty on the Borivali bank), Borivali 593916996, Essel World 627733109, Bhaucha Dhakka / Ferry Wharf 6813413581, Uran (Mora) 2236784797, Gateway of India 870449150, Mandwa RoRo Ferry Terminal 1186542661, M2M Ro-Ro Terminal 8360488232), and the fleet profile carrying its vessel capacity. Both directions are generated; directory route 2 is route 1's return. Not included, and why: 9 (Ferry Wharf-Rewas) has no capacity in the directory; 12 (Karanja-Rewas), 13 (Mora-Sassoon Dock) and 15 (Belapur-Nerul/Vashi) have a terminal OSM names only by coordinate, not by name; 6 (Marve-Esselworld) has no capacity; 7 (Arnala) and 17-21 are outside the core or carry no departure. Identifiers of the mapped terminals, not values (9.207).
+
+***definition** · status **active** · DECISIONS.md §9.207*
 
 #### `A.baseline_transit.distance_multiplier`
 
@@ -1028,7 +1035,7 @@ Local clock basis for published departures.
 
 ## Transit vehicle passenger capacities per operated configuration (9.206)
 
-*`cities/mumbai/registry/A_transit_fleet.json` - 23 fields*
+*`cities/mumbai/registry/A_transit_fleet.json` - 30 fields*
 
 
 
@@ -1036,9 +1043,16 @@ Local clock basis for published departures.
 |---|---|---|---|---|
 | `A.transit.bus_capacity_seated` | `36` | persons_per_vehicle | `observed` | - |
 | `A.transit.bus_capacity_standing` | `30` | persons_per_vehicle | `assumed` | 20 - 45 |
+| `A.transit.ferry_borivali_esselworld_capacity_seated` | `423` | persons_per_vehicle | `measured` | 186 - 423 |
 | `A.transit.ferry_capacity_standing` | `0` | persons_per_vehicle | `definition` | - |
 | `A.transit.ferry_creek_capacity_seated` | `100` | persons_per_vehicle | `observed` | - |
 | `A.transit.ferry_elephanta_capacity_seated` | `80` | persons_per_vehicle | `observed` | - |
+| `A.transit.ferry_gateway_mandwa_capacity_seated` | `390` | persons_per_vehicle | `measured` | 80 - 390 |
+| `A.transit.ferry_gorai_borivali_capacity_seated` | `290` | persons_per_vehicle | `measured` | 186 - 290 |
+| `A.transit.ferry_m2m_mandwa_capacity_seated` | `780` | persons_per_vehicle | `measured` | 520 - 780 |
+| `A.transit.ferry_marve_manori_capacity_seated` | `313` | persons_per_vehicle | `measured` | 201 - 313 |
+| `A.transit.ferry_versova_madh_capacity_seated` | `60` | persons_per_vehicle | `measured` | 37 - 70 |
+| `A.transit.ferry_wharf_mora_capacity_seated` | `1635` | persons_per_vehicle | `measured` | 300 - 1635 |
 | `A.transit.fleet_assignment_mode` | `explicit_vehicle` | enum | `definition` | - |
 | `A.transit.fleet_profiles` | `{"rail_emu_12car": {"base_type": "Rail", "seats_field": "A.transit.rail_capacity_seated", "standing_field":...` | profile_table | `definition` | - |
 | `A.transit.metro_beml_capacity_seated` | `239` | persons_per_vehicle | `derived` | derived: round(A.transit.metro_beml_capacity_total x A.transit.metro_seated_sha |
@@ -1072,6 +1086,14 @@ Standing places in one city bus. Assumed and swept: the only transit capacity in
 
 > **Sweep basis.** No operator or manufacturer in the package states a standing capacity (bus_capacity_evidence_audit.json: 'All standing capacities remain missing'); the MBMT contract defers it to the AIS-052 bus body code's area rule (0.125 square metres a standee), whose input - the net standing floor area of each body - is not published, so the derivation GOAL.md requirement 6 asks for is blocked on that one unpublished figure and this is the fallback it permits. 30 is a 12 m low-floor city bus at the AIS-052 rule on the 4-6 square metres of aisle and platform such a body leaves beside 36 seats; the bracket runs from a 9 m midi (20) to a licensed-capacity 12 m body (45). Replaced the moment a body drawing or a licence certificate is acquired.
 
+#### `A.transit.ferry_borivali_esselworld_capacity_seated`
+
+Passengers one vessel on the borivali-esselworld crossing carries, from the Maritime Board's directory; launches carry seated passengers.
+
+***measured** · status **active** · DECISIONS.md §9.207 · sweep role **measurement***
+
+> **Sweep basis.** directory route 5: 'Fair 423'; the foul-season capacity is not printed, so the sweep floor is the neighbouring Gorai crossing's foul figure (water_service_directory.csv, the Maharashtra Maritime Board's route service directory, mmb_routes).
+
 #### `A.transit.ferry_capacity_standing`
 
 Standing places on a licensed passenger launch: none, the directory's capacity is the licensed passenger count.
@@ -1090,6 +1112,54 @@ Passengers one Gateway of India - Elephanta launch carries: 'Min. 40 Max. 80' in
 
 ***observed** · status **active** · DECISIONS.md §9.206*
 
+#### `A.transit.ferry_gateway_mandwa_capacity_seated`
+
+Passengers one vessel on the gateway-mandwa crossing carries, from the Maritime Board's directory; launches carry seated passengers.
+
+***measured** · status **active** · DECISIONS.md §9.207 · sweep role **measurement***
+
+> **Sweep basis.** directory route 11: 'Min. 80 Max. 390' - the largest vessel, swept to the smallest (water_service_directory.csv, the Maharashtra Maritime Board's route service directory, mmb_routes).
+
+#### `A.transit.ferry_gorai_borivali_capacity_seated`
+
+Passengers one vessel on the gorai-borivali crossing carries, from the Maritime Board's directory; launches carry seated passengers.
+
+***measured** · status **active** · DECISIONS.md §9.207 · sweep role **measurement***
+
+> **Sweep basis.** directory route 4: 'Fair 290 / Foul 186' (water_service_directory.csv, the Maharashtra Maritime Board's route service directory, mmb_routes).
+
+#### `A.transit.ferry_m2m_mandwa_capacity_seated`
+
+Passengers one vessel on the m2m-mandwa crossing carries, from the Maritime Board's directory; launches carry seated passengers.
+
+***measured** · status **active** · DECISIONS.md §9.207 · sweep role **measurement***
+
+> **Sweep basis.** directory route 14 (the Ro-Ro): '780/520' passengers (water_service_directory.csv, the Maharashtra Maritime Board's route service directory, mmb_routes).
+
+#### `A.transit.ferry_marve_manori_capacity_seated`
+
+Passengers one vessel on the marve-manori crossing carries, from the Maritime Board's directory; launches carry seated passengers.
+
+***measured** · status **active** · DECISIONS.md §9.207 · sweep role **measurement***
+
+> **Sweep basis.** directory route 3: 'Fair 313 / Foul 201' - the fair-season vessel for the base weekday, the foul-season one the sweep floor (water_service_directory.csv, the Maharashtra Maritime Board's route service directory, mmb_routes).
+
+#### `A.transit.ferry_versova_madh_capacity_seated`
+
+Passengers one vessel on the versova-madh crossing carries, from the Maritime Board's directory; launches carry seated passengers.
+
+***measured** · status **active** · DECISIONS.md §9.207 · sweep role **measurement***
+
+> **Sweep basis.** directory routes 1 and 2 (Versova-Madh, Madh-Versova): '37 (fair season)' and '60-70 (fair season)' - the two directions' printed capacities; the larger vessel's lower figure, swept over both (water_service_directory.csv, the Maharashtra Maritime Board's route service directory, mmb_routes).
+
+#### `A.transit.ferry_wharf_mora_capacity_seated`
+
+Passengers one vessel on the wharf-mora crossing carries, from the Maritime Board's directory; launches carry seated passengers.
+
+***measured** · status **active** · DECISIONS.md §9.207 · sweep role **measurement***
+
+> **Sweep basis.** directory route 8: '1635' as printed - larger than any launch on the Mora run, so read as the licensed capacity of the route's vessels together; the sweep floor is a single large launch (water_service_directory.csv, the Maharashtra Maritime Board's route service directory, mmb_routes).
+
 #### `A.transit.fleet_assignment_mode`
 
 How the run-input assembly resolves transit passenger capacities (docs/transit_fleet.md). explicit_vehicle: every mapped vehicle is assigned a capacity profile by build_transit_fleet.py from the route relation it serves, so a 12-car EMU, a 4-car Line 1 train, a 6-car BEML train, an 8-car Line 3 train, a 3-car Navi Mumbai train, a creek ferry and a city bus each carry their own evidenced capacity. Until 9.206 the assembly copied the mapper's own defaults (Bus 70, Rail 400, Subway 300, Ferry 250 seats, no standing room), so a suburban train that carries about 5,000 was simulated as 400 seats.
@@ -1098,7 +1168,7 @@ How the run-input assembly resolves transit passenger capacities (docs/transit_f
 
 #### `A.transit.fleet_profiles`
 
-The capacity profiles build_transit_fleet.py assigns to the mapped vehicles (docs/transit_fleet.md): each names the mapper's base type it clones, the two registry fields that carry its seats and standing places, and EITHER the transport mode every line of that mode falls to (rail, bus) OR the OSM route relations it serves, read from the transit line id the feed builder writes as BASE_<relation>_<direction> (build_baseline_transit_feed.py). The relation ids are the identifiers of the mapped lines - Line 1 (3808111, 7684032), Lines 2A/2B/7/9 on BEML 6-car stock, Line 3 (7898597, 17876723), Navi Mumbai Line 1 (16533435, 16533436), the Gateway-Elephanta launch (19764205) and the Vasai-Bhayander creek ferry (16777766) - not values; a line with no profile refuses the build. The mapper typed the Central main-line and the Nerul-Uran patterns as their own base types (C, U) beside Rail; the three rail profiles carry one capacity and differ only in the base type each clones, because an assignment cannot change a vehicle's mapped type.
+The capacity profiles build_transit_fleet.py assigns to the mapped vehicles (docs/transit_fleet.md): each names the mapper's base type it clones, the two registry fields that carry its seats and standing places, and EITHER the transport mode every line of that mode falls to (rail, bus) OR the OSM route relations it serves, read from the transit line id the feed builder writes as BASE_<relation>_<direction> (build_baseline_transit_feed.py). The relation ids are the identifiers of the mapped lines - Line 1 (3808111, 7684032), Lines 2A/2B/7/9 on BEML 6-car stock, Line 3 (7898597, 17876723), Navi Mumbai Line 1 (16533435, 16533436), the Gateway-Elephanta launch (19764205) and the Vasai-Bhayander creek ferry (16777766) - not values; a line with no profile refuses the build. The mapper typed the Central main-line and the Nerul-Uran patterns as their own base types (C, U) beside Rail; the three rail profiles carry one capacity and differ only in the base type each clones, because an assignment cannot change a vehicle's mapped type. A profile may instead name the Maritime Board directory routes it serves (`directory_routes`): the feed builder writes those lines as BASE_MMB_<directory route>_<direction> (9.207).
 
 ***definition** · status **active** · DECISIONS.md §9.206*
 

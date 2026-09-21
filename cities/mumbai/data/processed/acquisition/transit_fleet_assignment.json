@@ -1,14 +1,21 @@
 {
  "source": "derived",
  "assignment": "networks/matsim/schedules/baseline_regional/fleet_assignments.json",
- "mapped_vehicles": 114670,
- "assigned_vehicles": 114670,
+ "mapped_vehicles": 115100,
+ "assigned_vehicles": 115100,
  "unassigned_mapped_vehicles": 0,
- "lines": 1846,
+ "lines": 1860,
  "vehicles_by_profile": {
   "bus_city": 109858,
+  "ferry_borivali_esselworld": 52,
   "ferry_creek_launch": 76,
   "ferry_elephanta_launch": 76,
+  "ferry_gateway_mandwa": 54,
+  "ferry_gorai_borivali": 76,
+  "ferry_m2m_mandwa": 46,
+  "ferry_marve_manori": 76,
+  "ferry_versova_madh": 74,
+  "ferry_wharf_mora": 52,
   "metro_beml_6car": 1104,
   "metro_line1_4car": 276,
   "metro_line3_8car": 276,
@@ -77,6 +84,48 @@
    "standing": 3816,
    "seats_field": "A.transit.rail_capacity_seated",
    "standing_field": "A.transit.rail_capacity_standing"
+  },
+  "ferry_versova_madh": {
+   "seats": 60,
+   "standing": 0,
+   "seats_field": "A.transit.ferry_versova_madh_capacity_seated",
+   "standing_field": "A.transit.ferry_capacity_standing"
+  },
+  "ferry_marve_manori": {
+   "seats": 313,
+   "standing": 0,
+   "seats_field": "A.transit.ferry_marve_manori_capacity_seated",
+   "standing_field": "A.transit.ferry_capacity_standing"
+  },
+  "ferry_gorai_borivali": {
+   "seats": 290,
+   "standing": 0,
+   "seats_field": "A.transit.ferry_gorai_borivali_capacity_seated",
+   "standing_field": "A.transit.ferry_capacity_standing"
+  },
+  "ferry_borivali_esselworld": {
+   "seats": 423,
+   "standing": 0,
+   "seats_field": "A.transit.ferry_borivali_esselworld_capacity_seated",
+   "standing_field": "A.transit.ferry_capacity_standing"
+  },
+  "ferry_wharf_mora": {
+   "seats": 1635,
+   "standing": 0,
+   "seats_field": "A.transit.ferry_wharf_mora_capacity_seated",
+   "standing_field": "A.transit.ferry_capacity_standing"
+  },
+  "ferry_gateway_mandwa": {
+   "seats": 390,
+   "standing": 0,
+   "seats_field": "A.transit.ferry_gateway_mandwa_capacity_seated",
+   "standing_field": "A.transit.ferry_capacity_standing"
+  },
+  "ferry_m2m_mandwa": {
+   "seats": 780,
+   "standing": 0,
+   "seats_field": "A.transit.ferry_m2m_mandwa_capacity_seated",
+   "standing_field": "A.transit.ferry_capacity_standing"
   }
  },
  "limitations": [

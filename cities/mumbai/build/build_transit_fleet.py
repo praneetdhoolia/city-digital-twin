@@ -57,6 +57,10 @@ OUTPUT_INPUTS = {
 # sees every declared field wired to this producer (docs/transit_fleet.md:
 # a reference inside bulk assignment JSON alone is invisible to it).
 CAPACITY_FIELDS = (
+    'A.transit.ferry_versova_madh_capacity_seated', 'A.transit.ferry_marve_manori_capacity_seated',
+    'A.transit.ferry_gorai_borivali_capacity_seated', 'A.transit.ferry_borivali_esselworld_capacity_seated',
+    'A.transit.ferry_wharf_mora_capacity_seated', 'A.transit.ferry_gateway_mandwa_capacity_seated',
+    'A.transit.ferry_m2m_mandwa_capacity_seated',
     'A.transit.rail_capacity_seated', 'A.transit.rail_capacity_standing', 'A.transit.rail_capacity_total',
     'A.transit.bus_capacity_seated', 'A.transit.bus_capacity_standing',
     'A.transit.metro_seated_share',
@@ -73,6 +77,7 @@ MODE_RE = re.compile(r'<transportMode>([^<]*)</transportMode>')
 VEH_RE = re.compile(r'vehicleRefId="([^"]*)"')
 VEHICLE_RE = re.compile(r'<vehicle id="([^"]*)" type="([^"]*)"')
 GENERATED_LINE_RE = re.compile(r'^BASE_(\d+)_\d+$')
+DIRECTORY_LINE_RE = re.compile(r'^BASE_MMB_(\d+)_\d+$')
 
 
 def sha256(path):
@@ -96,10 +101,13 @@ def lines_of(schedule_text):
         yield line_id, modes.pop(), vehicles
 
 
-def profile_for(line_id, mode, base_type, by_relation, by_mode):
+def profile_for(line_id, mode, base_type, by_relation, by_mode, by_directory=None):
     m = GENERATED_LINE_RE.match(line_id)
     if m and m.group(1) in by_relation:
         return by_relation[m.group(1)]
+    m = DIRECTORY_LINE_RE.match(line_id)
+    if m and m.group(1) in (by_directory or {}):
+        return by_directory[m.group(1)]
     if base_type in by_mode.get(mode, {}):
         return by_mode[mode][base_type]
     raise SystemExit('transit line %s (%s, mapped type %s) falls to no capacity profile: declare it in '
@@ -118,7 +126,8 @@ def main():
             raise SystemExit('%s: units must be persons_per_vehicle or ratio' % field)
         cfg.get(field)
     declared = cfg.get('A.transit.fleet_profiles')
-    profiles, by_relation, by_mode = {}, {}, {}
+    cfg.get('A.baseline_transit.directory_crossings')   # the crossings the directory lines come from
+    profiles, by_relation, by_mode, by_directory = {}, {}, {}, {}
     for profile_id, spec in declared.items():
         profiles[profile_id] = dict(base_type=spec['base_type'], seats_field=spec['seats_field'],
                                     standing_field=spec['standing_field'])
@@ -126,6 +135,10 @@ def main():
             if rel in by_relation:
                 raise SystemExit('relation %s is claimed by two profiles' % rel)
             by_relation[rel] = profile_id
+        for route in spec.get('directory_routes', []):
+            if route in by_directory:
+                raise SystemExit('directory route %s is claimed by two profiles' % route)
+            by_directory[route] = profile_id
         if spec.get('transport_mode'):
             # one profile per (mode, mapped base type): the mapper typed the
             # Central and Uran patterns C and U beside Rail
@@ -145,7 +158,7 @@ def main():
         mapped_types = sorted(set(vehicle_types.get(v) for v in line_vehicles))
         if len(mapped_types) != 1:
             raise SystemExit('transit line %s runs %d mapped vehicle types; one expected' % (line_id, len(mapped_types)))
-        profile_id = profile_for(line_id, mode, mapped_types[0], by_relation, by_mode)
+        profile_id = profile_for(line_id, mode, mapped_types[0], by_relation, by_mode, by_directory)
         base = profiles[profile_id]['base_type']
         for vid in line_vehicles:
             if vid not in vehicle_types:

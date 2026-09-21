@@ -187,6 +187,54 @@
       ],
       "sweep_role": "uncertainty",
       "sweep_basis": "Provisional broad service assumptions; test service supply sensitivity, not fitted ridership shares."
+    },
+    "A.baseline_transit.directory_crossings": {
+      "value": {
+        "1": {
+          "from": "1640461450",
+          "to": "4306257482",
+          "profile": "ferry_versova_madh"
+        },
+        "3": {
+          "from": "627734256",
+          "to": "564906271",
+          "profile": "ferry_marve_manori"
+        },
+        "4": {
+          "from": "564878691",
+          "to": "593916996",
+          "profile": "ferry_gorai_borivali"
+        },
+        "5": {
+          "from": "593916996",
+          "to": "627733109",
+          "profile": "ferry_borivali_esselworld"
+        },
+        "8": {
+          "from": "6813413581",
+          "to": "2236784797",
+          "profile": "ferry_wharf_mora"
+        },
+        "11": {
+          "from": "870449150",
+          "to": "1186542661",
+          "profile": "ferry_gateway_mandwa"
+        },
+        "14": {
+          "from": "8360488232",
+          "to": "1186542661",
+          "profile": "ferry_m2m_mandwa"
+        }
+      },
+      "units": "crossing_table",
+      "source": "definition",
+      "status": "active",
+      "decisions_ref": "9.207",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_transit_feed.py",
+        "cities/mumbai/build/build_transit_fleet.py"
+      ],
+      "description": "The Maharashtra Maritime Board's passenger crossings (water_service_directory.csv, keyed by its directory_route_id) that the feed generates beside the two OSM ferry relations, each between the two OSM ferry terminals its named jetties are (osm_transport_points.csv node ids: Versova Jetty 1640461450, Madh Jetty 4306257482, Marve Jetty 627734256, Manori Jetty 564906271, Gorai 564878691 (the node named Gorai Ferry, 814439568, sits 47 m from the Borivali jetty on the Borivali bank), Borivali 593916996, Essel World 627733109, Bhaucha Dhakka / Ferry Wharf 6813413581, Uran (Mora) 2236784797, Gateway of India 870449150, Mandwa RoRo Ferry Terminal 1186542661, M2M Ro-Ro Terminal 8360488232), and the fleet profile carrying its vessel capacity. Both directions are generated; directory route 2 is route 1's return. Not included, and why: 9 (Ferry Wharf-Rewas) has no capacity in the directory; 12 (Karanja-Rewas), 13 (Mora-Sassoon Dock) and 15 (Belapur-Nerul/Vashi) have a terminal OSM names only by coordinate, not by name; 6 (Marve-Esselworld) has no capacity; 7 (Arnala) and 17-21 are outside the core or carry no departure. Identifiers of the mapped terminals, not values (9.207)."
     }
   }
 }

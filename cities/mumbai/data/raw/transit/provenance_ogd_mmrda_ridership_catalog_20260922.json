@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/ogd_mmrda_ridership_catalog_20260922_132e188eed033ecd.json",
+      "url": "https://www.data.gov.in/backend/dmspublic/v1/resources?filters[catalog_reference]=604084764&offset=0&limit=20",
+      "final_url": "https://www.data.gov.in/backend/dmspublic/v1/resources?filters%5Bcatalog_reference%5D=604084764&offset=0&limit=20",
+      "source": "OGD: the resource listing of the MMRDA ridership catalog (Metro Line 2A, 7, Monorail)",
+      "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
+      "retrieved": "2026-09-21T17:23:22.985023+00:00",
+      "sha256": "132e188eed033ecd7ff6df42000ec816055c9d341df6c953300a10fa8751ddef",
+      "bytes": 5586,
+      "content_type": "application/json",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "The catalog metadata: two daily CSV resources, their periods, sizes and publication dates; discovery evidence for the two series."
+    }
+  ]
+}

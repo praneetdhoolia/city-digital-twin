@@ -238,6 +238,7 @@ about its layout will otherwise cost you an hour:
 | **The second city through the harness; its extent and population** | **§9.204** - one launch path for every city (`RUN.scoring.translation`), D13 taken and derived leaf by leaf, 27.06 M persons synthesised from the census controls, the CTS/CMP mode splits transcribed; no target, no result |
 | **Citywide Mumbai plans, the first targets, the fraction** | **§9.205** - plans at the harness's own household sample (1.35 M persons), thirteen derived targets, the 0.1 % case through the harness; 140 KB an agent and 1.8 veh/h a lane at 0.001: D14 |
 | **The live-set heap rule, the leaner agent at 1 %, every Mumbai transit vehicle at its evidenced capacity, the viewer on every run** | **§9.206** - 9.205's 140 KB an agent was the heap given, not needed (7.4 GiB + ~19 KB a plan); plan memory 5; the mapper's default fleet replaced by profiles from Indian Railways', the operators' and the Maritime Board's figures; transit PCE scaled with the sample; two 1 % cases gridlock on the flow identity: D15 |
+| **The commuter crossings in Mumbai's feed, the pass-through merge measured and not applied, the hosts that refuse this address** | **§9.207** - seven Maritime Board crossings at their printed vessel capacities (`A.baseline_transit.directory_crossings`, 115,100 vehicles, one mapping, the 0.1 % check ran them); the merge moves the median link 62.7 → 69.0 m and the user keeps the network as converted; D15 a 384-512 GB host, D16 the OGD key, D17 a browser capture from a network the hosts admit |
 | **Every open issue worked to done or to one measurement, and the fix that was half a fix** | **§9.164** - the twenty-one MATSim defaults that decided the model unreviewed go to **0** (nine declared at the framework's own values, twelve accepted with a reason). The demand STATES that a declared passenger rides: `B.mode.bound_passenger_placement` = `every_plan` puts a bound tour on `ride` in every seeded plan as the driver is already put on `car` - **194,131** fully bound weekday tours over **199,329** persons - and the demand, plans and 30 run-input sets are rebuilt on it, opening family **`F33`**. A tour that will not fit no longer discards the rest of the day (**547** weekday tours recovered; week trip rate **3.398** against the HTS 3.473). `C.time_weights.beta_headway` and `beta_reliability` REACH MATSIM after two reports asked, behind a gate shipped `absent`; the pt submodes get a plan-level control; the calibration objective gets the replication-band denominator it never had, at zero until one is measured. **The ceiling watcher stops a run for the first time** (`stopped_at_ceiling` at iteration 3) and the gate watcher is caught arming over a disabled monitor and judging nothing. **§9.161's #167 diagnosis was HALF right**: `routingMode` takes the failure 40 agents → 20 and the residual is not in our input at all - 0 mixed trips over 6,347 persons - so `accessEgressModeToLink` still cannot start and ships `none` |
 | **A deviation no constant can reach, and the tail of cheap fixes the reports kept re-issuing** | **§9.163** - MATSim writes `modeChoiceCoverage1x.txt` on every arm and nothing read it, so every gate ever taken blamed a constant without asking whether a constant could reach the target. On the landed arm **ride's target of 20.60 % sits ABOVE the 20.05 % of agents who have ever held a ride plan** - the only mode of twelve, and no value of any constant closes it. Every choice set is within 1 pp of its final coverage by iteration 5-10 and shut by 16-27, **except pt**, still opening at 233 and reaching 25.78 %. The count-station map had been orphaned by a network rebuild 47 minutes after it was written: **0 of 195 rows still named the road they claimed**, and on the repaired map counts read **+16.30 % mean, -1.1 % median, 0 zeros** against -89.35 % / -98.7 % / 7. Half of all declared escort pairs put the passenger in their own car (**10,224 of 20,902**) with 99.6 % of tours realised, so ride's loss is mode assignment, not pairing. `RUN.replanning.score_msa_representation` and `RUN.replanning.score_msa_fraction` declare score averaging at MATSim's own default literal (registry **497 -> 499**, byte-neutral); undeclared MATSim defaults **31 -> 21**; three fields shipped at their consumer's off value now say so via `inert_at`. Fourteen of sixteen `awaiting-run` issues were measured from a run that had already finished |
 | **A stated ceiling is enforced by the runner, and the teleported access leg is diagnosed to a missing attribute in our own plans** | **§9.161** - `RUN.gate.wall_ceiling_h` (0 = no ceiling) and `start_ceiling_watch` give an approved cost the enforcement it never had: a SECOND watcher beside the gate's, stopping through 9.143's marker path with a new completion `stopped_at_ceiling`, so `RUN.gate.interval_iterations = 0` keeps meaning "do not judge my modes" rather than "do not enforce my budget". #167 is DIAGNOSED and the cause is ours: the input plans carry **zero** `routingMode` attributes and every trip is a single leg, so under `accessEgressModeToLink` the router inserts walk access and egress legs and MATSim INFERS each leg's routing mode from its own mode - `walk` beside a `car` main leg - and rejects the trip it just built. The fix is to emit `routingMode` per leg in `build_matsim_plans.py`, a no-op at `access_egress_type = none`, and it needs the demand rebuilt in the same change |
@@ -17693,10 +17694,124 @@ launch refusals held fixed on their stated readings.
 plan memory of 9. The mapper-default transit capacities that every Mumbai case before this one ran on:
 no earlier Mumbai case's pt loads compare with a later one's.
 
+## 9.207 The commuter ferry crossings in Mumbai's feed, the pass-through merge measured and not applied, and the hosts that refuse this address (22 September 2026, fifty-ninth session; #239 #245)
+
+**What was wrong.** Three things. *The ferry supply* of the second city was two launches (the
+Gateway-Elephanta excursion and the Vasai-Bhayander creek crossing, the only `route=ferry` relations
+the extract holds) while the ferry target of 9.205 is derived from the Maritime Board's annual
+passengers on its commuter crossings - a target the feed could not reach because the crossings it
+counts were not in it (#245); the corrected 1 % case read ferry at 0.005 % against 0.136. *The
+fraction*: both 1 % cases gridlock on the flow identity (9.206), and D15 asked whether merging the
+network's pass-through nodes - 41.5 % of the run network's nodes - would change that picture. *The
+acquisition*: 42 catalogued sources stood unobtained after 9.206's retry, with the reason recorded
+per host but not the cause; and the previous session's last act, the Western Railway timetable index
+(`western_railway_timetable_index_582e40ea35ee5587.html`, retrieved 21 September 16:55 UTC), sat on
+disk with its provenance and outside the inventory and the manifest. Also found at `/onboard`: the
+session's work on `praneetdhoolia/mumbai-ferry-crossings` was uncommitted and unrecorded - the feed
+rebuilt and converted at 02:55 but not mapped, and the conversion had overwritten
+`baseline_regional/transitVehicles.xml.gz` with pt2matsim's default types, so on disk the evidenced
+fleet of 9.206 was gone until `build_transit_fleet.py` re-ran; `scenarios/matsim/BASE/` (00:58) still
+held the committed state. And Mumbai's hardcoding ledger read 268 with "STALE" entries that were
+Newcastle's: a `<city>` register entry for a file the second city does not have (`reader_shapes.py`),
+or holds under the same name as a different script (`build_mode_targets.py`), was judged stale
+against the wrong corpus.
+
+**What changed.** *The crossings.* `A.baseline_transit.directory_crossings` (`A_baseline_services.json`,
+`definition`) names, for seven Maritime Board directory routes, the two OSM ferry terminals its jetties
+are (`osm_transport_points.csv` node ids - Versova 1640461450, Madh 4306257482, Marve 627734256, Manori
+564906271, Gorai 564878691, Borivali 593916996, Essel World 627733109, Ferry Wharf 6813413581, Mora
+2236784797, Gateway 870449150, Mandwa 1186542661, the M2M terminal 8360488232) and the fleet profile
+carrying its vessel; `build_baseline_transit_feed.py` writes both directions as
+`BASE_MMB_<route>_<direction>` between the two terminals on the straight water line (the extract holds
+no ferry way for them; `geometry_source` says so), the window from the directory's first and last
+printed sailing (`directory_clock` reads '05.30 AM', '12.00 AM' as the day's end, '06:30 HRS', the first
+clock of a pair of windows), the headway the provisional ferry headway of `A.baseline_transit.*`; the
+timetable source is labelled `directory_window_provisional_headway` - the directory prints first and
+last sailings only. Seven `A.transit.ferry_<crossing>_capacity_seated` fields (`A_transit_fleet.json`,
+`measured`, `sweep_role` measurement) carry the printed capacities: Versova-Madh 60 (37-70, the two
+directions' printed figures), Marve-Manori 313 (foul 201), Gorai-Borivali 290 (186), Borivali-Esselworld
+423 (the neighbouring crossing's foul figure as floor), Ferry Wharf-Mora 1,635 as printed (read as the
+route's vessels together; floor 300), Gateway-Mandwa 390 (80-390), the M2M Ro-Ro 780 (520); seven
+profiles name their `directory_routes`, and `build_transit_fleet.py` resolves `BASE_MMB_` lines through
+them. Not included and why: route 9 (Ferry Wharf-Rewas) and 6 print no capacity; 12 (Karanja-Rewas), 13
+(Mora-Sassoon Dock) and 15 (Belapur-Nerul/Vashi) have a terminal OSM names only by coordinate; 7 and
+17-21 are outside the core or carry no departure. Mumbai's registry 403 → 411 fields. *The merge.*
+`src/build/merge_pass_through_nodes.py` merges a node that passes traffic straight through (one link in
+and one out, or the two directions of a two-way street) when the two links agree on `freespeed`,
+`capacity`, `permlanes`, `oneway`, `modes`, `osm:way:highway` and `osm:way:railway`, neither carries or
+is named by a `disallowedNextLinks` restriction (275 links carry one) and the merged length stays under
+`A.network.max_link_length_m`; the in-link keeps its id and attributes and records `merged_link_ids` and
+`merged_osm_way_ids`; nodes are visited in id order with the maps live, the output a zero-header gzip
+(`tests/unit/test_merge_pass_through_nodes.py`). It is a measurement tool: nothing wires it into a
+build. *The hardcoding check*: `stale_structural_inline` and `stale_structural` consult the reference
+city's file before calling a `<city>` entry stale under another city (`_live_in_reference_city`).
+*The acquisition adapter*: a catalogue entry may name `api_key_env`; `acquire_sources.py` reads the key
+from the environment or the gitignored `.env`, sends it as `api_key_param` (`api-key`), refuses with the
+registration reason when absent, and strips it from the final URL the provenance keeps
+(`tests/unit/test_acquisition_api_key.py`). Three entries catalogued (572 → 575): the OGD platform's
+MMRDA catalog listing (acquired: `ogd_mmrda_ridership_catalog_20260922`, two daily CSV resources
+published 23 September 2025) and the two keyed series behind it. `.claude/settings.json` admits
+`api.data.gov.in` and `www.data.gov.in`. The Western Railway index is in the inventory and the manifest
+(1,349 → 1,353 rows; 529 → 531 acquired, 42 → 43 unobtained: the two keyed series in, the index out).
+`scaling.md` states the merge's measurement and the decision; Mumbai's front page carries the crossings,
+the counts and D15.
+
+**Measured.** *The merge*, on the 846,699-link, 377,443-node base network (20 s): 37,122 nodes merge
+(9.8 %) and 67,202 links fold away; 33,923 more nodes are held by the 500 m cap, 2,050 by differing
+values, 349 by turn restrictions; the median link moves **62.7 m → 69.0 m** and the length 101,306 km
+is unchanged. The lever is weak, as 9.206's arithmetic said: the storage a 1 % link offers is not
+changed by a tenth-of-a-node merge. *The mapping*: 82 s, **18,116 stops (+11), 1,865 routes (+14), 0
+unmapped**; the fleet **115,100 vehicles on 17 profiles** (+430 crossing departures: 37, 38, 38, 26, 26,
+27 and 23 sailings a direction on routes 1, 3, 4, 5, 8, 11 and 14; crossing lengths 168 m to 17.2 km,
+durations 160 s to 71 min at the provisional ferry speed). *The 0.1 % check*
+`20260922T031226_2it_0.1pct` (`smoke_two_iterations`, 26,884 persons) ran to its last iteration: 502 s
+wall, iterations of 96 and 95 s; all 430 `BASE_MMB_` departures ran (`TransitDriverStarts` in the
+iteration-2 events) and carried 18 boardings; the reporter's ferry row reads 3 trips, 0.018 % against
+0.136 - a structural check at a fraction that reads nothing, not a reading. *The retry* of the 42
+unobtained sources: of 23 attempted before the pass was stopped, one landed (the Western Railway index,
+already on disk) and 22 refused - MMMOCL, Central and Western Railway, TRTI, MoSPI and NMMC time out or
+drop the connection, the five DES district pages fail certificate trust, the Maritime Board answers an
+HTML page for its 2023-24 passenger PDF, MMRCL's station search is 404 - under the adapter's Windows
+TLS, under Python's `requests` (`ConnectTimeout`, `ConnectionError`, `SSLError`) and under a scratch
+Edge on this machine (`ERR_CONNECTION_TIMED_OUT` at MMMOCL, `ERR_CONNECTION_REFUSED` at Central
+Railway): the block is on the address, not the client. The OGD platform's shared sample key answers
+429 to every call. *The hardcoding ledger*: Mumbai 268 → 225 (43 false stales), Newcastle 0 → 0.
+
+**Decision.** D15 (asked 9.206) is taken by the user, 22 September 2026: a larger host (384-512 GB) for
+a 10 % core, after the merge diagnostic. The diagnostic was then measured before any run, and the user,
+asked how the links should be built, chose to keep the network exactly as converted - every vertex as
+OSM holds it - so the merge is not applied and the 1 % re-run is dropped (it was run twice and the
+merge cannot move it). D16 (taken): register a free OGD account and put its key in `.env` as
+`OGD_API_KEY`. D17 (taken): capture the refusing hosts in a browser and import each through
+`import_browser_acquisition.py` - with the note that the browser must sit on a network the hosts
+admit, since this machine's own browser is refused too. The user's standing goal (21 September 2026)
+stands: a full Mumbai twin, every mode's data acquired, the broad executable baseline first.
+
+**Deliberately not done.** No arm, no family; no 1 % re-run; no merge in any build; no published
+departures per crossing (the directory prints none; the feed states its provisional headway); the four
+crossings without a named OSM terminal stay out rather than placed by coordinate; the two OGD series
+wait for the key; the 40 refusing hosts wait for a network that admits them; no monorail line in the
+feed; the reference city untouched.
+
+**Consequences.** Every Mumbai case before 9.207 ran a feed without the crossings; the 0.1 % check
+compares with nothing (no Mumbai family is open). The next Mumbai reading needs the D15 host: the
+lane's task is a 10 % probe there, priced by `arm_cost.py` before any approval. The metro target can
+be re-derived from an operator series once D16's key lands.
+
+**Sweep.** `A.transit.ferry_versova_madh_capacity_seated` 37-70, `ferry_marve_manori` 201-313,
+`ferry_gorai_borivali` 186-290, `ferry_borivali_esselworld` 186-423, `ferry_wharf_mora` 300-1,635,
+`ferry_gateway_mandwa` 80-390, `ferry_m2m_mandwa` 520-780 (all `measured`, the printed pairs);
+`A.baseline_transit.directory_crossings` is a table of identifiers, `definition`.
+
+**Supersedes.** 9.206's "the commuter crossings stay out of the feed (#245)" and its "no network merge
+yet (D15's diagnostic)": the crossings are in, the merge is measured and, by the user's decision, not
+applied.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-22 | **The commuter ferry crossings in Mumbai's feed, the pass-through merge measured and not applied, the hosts that refuse this address (§9.207).** `A.baseline_transit.directory_crossings` and seven `A.transit.ferry_*_capacity_seated` fields (Mumbai 403 → 411) put the Maritime Board's seven crossings in the regional feed (18,116 stops, 1,865 routes, 115,100 vehicles); `merge_pass_through_nodes.py` measured 37,122 of 377,443 nodes mergeable and the median link 62.7 → 69.0 m - the user keeps the network as converted (D15 taken: a 384-512 GB host for a 10 % core); `check_hardcoding.py` judges a `<city>` entry against the reference city's file (Mumbai 268 → 225); the acquisition adapter sends a registered key from `.env` (D16: OGD); 40 sources refuse this address under every client (D17: a browser capture from a network they admit); manifest 1,349 → 1,353, catalogue 575. No target value of the reference city changed, the 67/143 split is untouched, nothing here is a finding. |
 | 2026-09-22 | **The heap rule re-read on the live set, the leaner agent measured at 1 %, every transit vehicle given its evidenced capacity, the viewer on every run (§9.206).** Plan memory 9 → 5 and the heap rule 7.4 + 2,400 × fraction GiB; `A_transit_fleet.json` (23 fields) and `build_transit_fleet.py` assign all 114,670 mapped vehicles a profile (12-car EMU 1,168 + 3,816, Line 1 200 + 1,300, BEML 239 + 1,561, Line 3 399 + 2,601, Navi Mumbai 150 + 950, launches 80 and 100, bus 36 + 30 assumed) in place of pt2matsim's defaults; `RUN.sample.transit_pce_scaling` scales every transit PCE by the fraction (MOVES the reference city's RESULTS at its next arm, which opens a family on #237); `RUN.monitor.enabled` retired, the view serves on every run and draws every transit route; two 1 % cases (`20260921T231313_4it_1pct`, `20260922T005949_4it_1pct`) measured 31 KB an agent at two plans and a gridlock the fraction cannot carry. D14 taken from the user's directive; D15 asked. 14 sources acquired (529 of 572). No target value of the reference city changed, the 67/143 split is untouched, nothing here is a finding. |
 | 2026-09-21 | **Citywide Mumbai plans at the harness's sample, the first per-mode targets, the first citywide case (§9.205).** `build_plans.py` writes the households the nested hash keeps at a 0.05 build fraction (1,352,144 persons); `build_mode_targets.py` derives thirteen targets from the CTS 2017 split, B-28, the synthesised driver share, the MMB passengers and the CMP goods share; `20260921T220701_2it_0.1pct` ran through the harness and the reporter printed every mode - a structural check whose trip times are the flow identity at 0.001, not the city. The heap rule is measured on two points (1 % needs 50 GiB). D14 asked. No target value of the reference city changed, the 67/143 split is untouched, nothing here is a finding. |
 | 2026-09-21 | **Mumbai runs through the framework harness; its extent is the notified MMR; its population is synthesised (§9.204).** The city's own launcher is deleted; `RUN.scoring.translation`, `A.fare.boarding_representation` and `B.hired_fleet.representation` are framework gates; Newcastle's smoke config re-emits identically but for the new gate's own default. D13: 2,538 core leaves / 23.54 M persons at 2011, derived from the public MMR lists. 27,057,132 persons in 6,068,786 households for 2026 from the census controls; the published daily mode splits transcribed. Three sources acquired of 54 retried. No target value changed, the 67/143 split is untouched, nothing here is a finding. |
