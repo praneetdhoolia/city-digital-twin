@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/maharashtra_infrastructure_2023_archived_20251209_2a46a480ea3cf728.pdf",
+      "url": "https://web.archive.org/web/20251209045113id_/https://mahades.maharashtra.gov.in/files/publication/Infra2023.pdf",
+      "final_url": "https://web.archive.org/web/20251005220238id_/https://www.mahades.maharashtra.gov.in/files/publication/Infra2023.pdf",
+      "source": "Internet Archive copy (09 December 2025) of: Maharashtra infrastructure statistics 2021-22 and 2022-23",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-21T17:55:06.148834+00:00",
+      "sha256": "2a46a480ea3cf7288fb66783e067e83ee27e5ccea6b9bdc8d267a2e115437991",
+      "bytes": 5242880,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20251209045113 of https://mahades.maharashtra.gov.in/files/publication/Infra2023.pdf (catalogue id maharashtra_infrastructure_2023), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Historical multimodal infrastructure and passenger statistics."
+    }
+  ]
+}

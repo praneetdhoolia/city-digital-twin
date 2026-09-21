@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/bmc_climate_budget_2025_26_archived_20250808_d3c84a227b917163.pdf",
+      "url": "https://web.archive.org/web/20250808200251id_/https://mcap.mcgm.gov.in/wp-content/uploads/2025/06/English_CB-Report-2025-26_digital.pdf",
+      "final_url": "https://web.archive.org/web/20250808200251id_/https://mcap.mcgm.gov.in/wp-content/uploads/2025/06/English_CB-Report-2025-26_digital.pdf",
+      "source": "Internet Archive copy (08 August 2025) of: BMC Climate Budget Report 2025-26 English",
+      "licence": "BMC publication; reuse terms unverified",
+      "retrieved": "2026-09-21T17:55:33.151763+00:00",
+      "sha256": "d3c84a227b91716326df7ddc9ff51a4f5775d17252134681cc5bdad5cd1049b0",
+      "bytes": 1705501,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20250808200251 of https://mcap.mcgm.gov.in/wp-content/uploads/2025/06/English_CB-Report-2025-26_digital.pdf (catalogue id bmc_climate_budget_2025_26), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Climate budget with historical actuals, revised estimates and budget forecasts. Keep these measures distinct."
+    }
+  ]
+}

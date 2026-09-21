@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/traffic/mumbai_road_capacity_study_2016_archived_20220505_5b388e773ab0e999.html",
+      "url": "https://web.archive.org/web/20220505065244id_/https://www.sciencedirect.com/science/article/pii/S2352146516307396",
+      "final_url": "https://web.archive.org/web/20220505065244id_/https://www.sciencedirect.com/science/article/pii/S2352146516307396",
+      "source": "Internet Archive copy (05 May 2022) of: Gajjar and Mohandas 2016: Critical Assessment of Road Capacities on Urban Roads - A Mumbai Case-study",
+      "licence": "Publisher states open access; exact reuse licence unverified",
+      "retrieved": "2026-09-21T17:55:36.237387+00:00",
+      "sha256": "5b388e773ab0e999a1cb38fc187f9622757095a72c392bff208b8760fbfdf4cf",
+      "bytes": 86888,
+      "content_type": "text/html; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20220505065244 of https://www.sciencedirect.com/science/article/pii/S2352146516307396 (catalogue id mumbai_road_capacity_study_2016), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Primary field study of selected Mumbai roads. Publication date is not the survey date; design service volumes and observed peak flows must be distinguished."
+    }
+  ]
+}

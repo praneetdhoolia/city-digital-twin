@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmmocl_schedule_20260918_archived_20250917_2324fe7d100135ab.html",
+      "url": "https://web.archive.org/web/20250917181358id_/https://www.mmmocl.co.in/train-time-table",
+      "final_url": "https://web.archive.org/web/20250917181358id_/https://www.mmmocl.co.in/train-time-table",
+      "source": "Internet Archive copy (17 September 2025) of: Current MMMOCL public train timetable",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-21T17:55:27.340330+00:00",
+      "sha256": "2324fe7d100135ab9568c98bb1fc0d21c90cc82546497ca321d82c36d3f01b9f",
+      "bytes": 28597,
+      "content_type": "text/html; charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20250917181358 of https://www.mmmocl.co.in/train-time-table (catalogue id mmmocl_schedule_20260918), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Current public passenger information; effective dates and operational coverage require extraction and validation."
+    }
+  ]
+}

@@ -235,6 +235,39 @@
         "cities/mumbai/build/build_transit_fleet.py"
       ],
       "description": "The Maharashtra Maritime Board's passenger crossings (water_service_directory.csv, keyed by its directory_route_id) that the feed generates beside the two OSM ferry relations, each between the two OSM ferry terminals its named jetties are (osm_transport_points.csv node ids: Versova Jetty 1640461450, Madh Jetty 4306257482, Marve Jetty 627734256, Manori Jetty 564906271, Gorai 564878691 (the node named Gorai Ferry, 814439568, sits 47 m from the Borivali jetty on the Borivali bank), Borivali 593916996, Essel World 627733109, Bhaucha Dhakka / Ferry Wharf 6813413581, Uran (Mora) 2236784797, Gateway of India 870449150, Mandwa RoRo Ferry Terminal 1186542661, M2M Ro-Ro Terminal 8360488232), and the fleet profile carrying its vessel capacity. Both directions are generated; directory route 2 is route 1's return. Not included, and why: 9 (Ferry Wharf-Rewas) has no capacity in the directory; 12 (Karanja-Rewas), 13 (Mora-Sassoon Dock) and 15 (Belapur-Nerul/Vashi) have a terminal OSM names only by coordinate, not by name; 6 (Marve-Esselworld) has no capacity; 7 (Arnala) and 17-21 are outside the core or carry no departure. Identifiers of the mapped terminals, not values (9.207)."
+    },
+    "A.baseline_transit.line_windows_s": {
+      "value": {
+        "13989912": [
+          21300,
+          82800
+        ],
+        "13989913": [
+          23580,
+          81360
+        ],
+        "13989914": [
+          21600,
+          82800
+        ],
+        "13989915": [
+          20580,
+          81480
+        ]
+      },
+      "units": "seconds_after_midnight",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.208",
+      "held_fixed": {
+        "rule": "the operator's published first and last trains (MMMOCL Train Time Table, Internet Archive capture of 17 September 2025: mmmocl_schedule_20260918_archived_20250917), read per direction as the earliest first and latest last departure from the pattern's origin terminal - Line 2A Andheri West to Dahisar East 05:55-23:00, Dahisar East to Andheri West 06:33-22:36, Line 7 Gundavali to Dahisar East 06:00-23:00 (the 06:00 and 23:00 services run through to Andheri West / Dahanukarwadi), Dahisar East to Gundavali 05:43-22:38; never varied",
+        "decisions_ref": "9.208",
+        "departure_requires": "a newer published timetable, or a dated departure list for the line"
+      },
+      "consumers": [
+        "cities/mumbai/build/build_baseline_transit_feed.py"
+      ],
+      "description": "The service window of a generated line, keyed by its OSM route relation, where the operator publishes first and last trains; a relation not listed runs the assumed A.baseline_transit.service_window_s. Lines 2A and 7 (MMMOCL) are the first; Line 1, Line 3 and Navi Mumbai Line 1 windows await their operators' published timetables in the same shape."
     }
   }
 }

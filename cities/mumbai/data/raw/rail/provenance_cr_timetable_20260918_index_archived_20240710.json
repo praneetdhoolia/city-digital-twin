@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/cr_timetable_20260918_index_archived_20240710_27df82584cf711e0.html",
+      "url": "https://web.archive.org/web/20240710145200id_/https://cr.indianrailways.gov.in/view_section.jsp?backgroundColor=LIGHTSTEELBLUE&fontColor=black&id=0,5,2360&lang=0",
+      "final_url": "https://web.archive.org/web/20240710145200id_/https://cr.indianrailways.gov.in/view_section.jsp?backgroundColor=LIGHTSTEELBLUE&fontColor=black&id=0,5,2360&lang=0",
+      "source": "Internet Archive copy (10 July 2024) of: Central Railway suburban timetable index",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-21T17:55:09.669701+00:00",
+      "sha256": "27df82584cf711e0231f4a18f41d3e4a1cb594c63e0f78abc2f54b48e136f602",
+      "bytes": 473427,
+      "content_type": "text/html;charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20240710145200 of https://cr.indianrailways.gov.in/view_section.jsp?backgroundColor=LIGHTSTEELBLUE&fontColor=black&id=0,5,2360&lang=0 (catalogue id cr_timetable_20260918_index), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Current public timetable index; linked documents retain individual effective dates."
+    }
+  ]
+}

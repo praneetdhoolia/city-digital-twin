@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/bmc_cmp_coastal_annexure_2017_archived_20221010_175cd023773b549d.pdf",
+      "url": "https://web.archive.org/web/20221010083009id_/https://environmentclearance.nic.in/writereaddata/Online/EDS/07_Sep_2017_123242960LCKCFI1LCompliancetoAdditionalDetailsSoughtbyMemberSecretary.pdf",
+      "final_url": "https://web.archive.org/web/20221010083009id_/https://environmentclearance.nic.in/writereaddata/Online/EDS/07_Sep_2017_123242960LCKCFI1LCompliancetoAdditionalDetailsSoughtbyMemberSecretary.pdf",
+      "source": "Internet Archive copy (10 October 2022) of: CMP annexure lodged with coastal road environmental clearance",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-21T17:55:26.779224+00:00",
+      "sha256": "175cd023773b549d5e10911473bceacd921e9a1e00d5ff163b8fe86569edc9a8",
+      "bytes": 29486160,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20221010083009 of https://environmentclearance.nic.in/writereaddata/Online/EDS/07_Sep_2017_123242960LCKCFI1LCompliancetoAdditionalDetailsSoughtbyMemberSecretary.pdf (catalogue id bmc_cmp_coastal_annexure_2017), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Historical or current publication; each table needs its own period, universe and definition. Acquisition does not establish validation."
+    }
+  ]
+}

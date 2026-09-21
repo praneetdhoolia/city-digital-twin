@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/mohfw_population_projections_2011_2036_archived_20251213_bf867a344d5eead9.pdf",
+      "url": "https://web.archive.org/web/20251213143513id_/https://www.mohfw.gov.in/sites/default/files/Population%20Projection%20Report%202011-2036%20-%20upload_compressed_0.pdf",
+      "final_url": "https://web.archive.org/web/20251213143513id_/https://www.mohfw.gov.in/sites/default/files/Population%20Projection%20Report%202011-2036%20-%20upload_compressed_0.pdf",
+      "source": "Internet Archive copy (13 December 2025) of: Technical Group population projections for India and states 2011-2036",
+      "licence": "Government of India publication; reuse terms unverified",
+      "retrieved": "2026-09-21T18:12:49.645604+00:00",
+      "sha256": "bf867a344d5eead958235dd03c75a3fc2a39187072f6ddedcbab3cc3720e8417",
+      "bytes": 21818044,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20251213143513 of https://www.mohfw.gov.in/sites/default/files/Population%20Projection%20Report%202011-2036%20-%20upload_compressed_0.pdf (catalogue id mohfw_population_projections_2011_2036), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Official demographic projections; state-level total, age, sex and urban/rural estimates. Not observed Mumbai small-area counts."
+    }
+  ]
+}

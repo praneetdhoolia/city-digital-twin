@@ -2,13 +2,13 @@
   "source": "modelled_provisional_service_supply",
   "input_sha256": {
     "schedules/baseline_bus.zip": "497b42cbffbc24f7f11bb535e68a1edfdcbfa35323d5630ff7353fd1b09ee68f",
-    "registry/A_baseline_services.json": "d42505b6a72bfce449684d99194689ba18017fcf7b5ec3f641963a468c448800",
+    "registry/A_baseline_services.json": "3dacaaaacd9703b3bbb65ab15e6363de08ad385853ab286e9b7aa02514dd8262",
     "data/processed/observed/osm_transport_relations.csv": "727f0ff9567863417095b80fd016828d3e880734d3981b7f6b6262a517088a01",
     "data/processed/observed/osm_transport_points.csv": "95b51e278e8fcc2710fc57ad040032525538a5819de4140535a85e6012b067a9",
     "data/processed/geospatial/osm_research.gpkg": "e95023a6a853e11501d57864be9c89e20e3b8e072300eda753c880bb5690e25e",
     "data/processed/observed/water_service_directory.csv": "9a96aeb23ead63099c58c8bf0665584955d491f86908f6af020986788ce067d1"
   },
-  "output_sha256": "59466a7ebe2b53c25c11361cb5cf62397a86fb56b7b0693229fe7423aa176866",
+  "output_sha256": "dc1a7cd3510a00f14fd09ff32077f8973a30d1347ecd5b3e8278076221c040b3",
   "generated_routes": [
     {
       "route_id": "BASE_3808111_0",
@@ -17,6 +17,10 @@
       "stops_count": 12,
       "departures_count": 138,
       "duration_s": 1697,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -27,6 +31,10 @@
       "stops_count": 12,
       "departures_count": 138,
       "duration_s": 1693,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -37,6 +45,10 @@
       "stops_count": 27,
       "departures_count": 138,
       "duration_s": 4605,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -47,6 +59,10 @@
       "stops_count": 25,
       "departures_count": 88,
       "duration_s": 7012,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -57,6 +73,10 @@
       "stops_count": 9,
       "departures_count": 88,
       "duration_s": 2352,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -67,6 +87,10 @@
       "stops_count": 8,
       "departures_count": 88,
       "duration_s": 2999,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -77,6 +101,10 @@
       "stops_count": 25,
       "departures_count": 88,
       "duration_s": 6709,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -87,6 +115,10 @@
       "stops_count": 18,
       "departures_count": 88,
       "duration_s": 3885,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -97,6 +129,10 @@
       "stops_count": 8,
       "departures_count": 88,
       "duration_s": 6545,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -107,6 +143,10 @@
       "stops_count": 8,
       "departures_count": 88,
       "duration_s": 6547,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -117,6 +157,10 @@
       "stops_count": 18,
       "departures_count": 88,
       "duration_s": 3884,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -127,6 +171,10 @@
       "stops_count": 16,
       "departures_count": 88,
       "duration_s": 8075,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -137,6 +185,10 @@
       "stops_count": 16,
       "departures_count": 88,
       "duration_s": 8075,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -147,6 +199,10 @@
       "stops_count": 7,
       "departures_count": 88,
       "duration_s": 4993,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -157,6 +213,10 @@
       "stops_count": 2,
       "departures_count": 88,
       "duration_s": 250,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -167,6 +227,10 @@
       "stops_count": 2,
       "departures_count": 88,
       "duration_s": 251,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -177,6 +241,10 @@
       "stops_count": 7,
       "departures_count": 88,
       "duration_s": 4994,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -187,6 +255,10 @@
       "stops_count": 26,
       "departures_count": 88,
       "duration_s": 7295,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -197,6 +269,10 @@
       "stops_count": 26,
       "departures_count": 88,
       "duration_s": 7298,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -207,6 +283,10 @@
       "stops_count": 29,
       "departures_count": 88,
       "duration_s": 8499,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -217,6 +297,10 @@
       "stops_count": 29,
       "departures_count": 88,
       "duration_s": 8504,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -227,6 +311,10 @@
       "stops_count": 14,
       "departures_count": 88,
       "duration_s": 4060,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -237,6 +325,10 @@
       "stops_count": 9,
       "departures_count": 88,
       "duration_s": 2349,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -247,6 +339,10 @@
       "stops_count": 15,
       "departures_count": 88,
       "duration_s": 4521,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -257,6 +353,10 @@
       "stops_count": 7,
       "departures_count": 88,
       "duration_s": 2787,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -267,6 +367,10 @@
       "stops_count": 8,
       "departures_count": 88,
       "duration_s": 3002,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -277,6 +381,10 @@
       "stops_count": 7,
       "departures_count": 88,
       "duration_s": 2789,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -287,6 +395,10 @@
       "stops_count": 19,
       "departures_count": 88,
       "duration_s": 14735,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -297,6 +409,10 @@
       "stops_count": 22,
       "departures_count": 88,
       "duration_s": 14600,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -307,6 +423,10 @@
       "stops_count": 22,
       "departures_count": 88,
       "duration_s": 14594,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -317,6 +437,10 @@
       "stops_count": 19,
       "departures_count": 88,
       "duration_s": 16084,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -325,40 +449,56 @@
       "osm_relation_id": "13989912",
       "mode": "subway",
       "stops_count": 17,
-      "departures_count": 138,
+      "departures_count": 127,
       "duration_s": 2656,
+      "window_s": [
+        21300,
+        82800
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
+      "timetable_source": "published_window_provisional_headway"
     },
     {
       "route_id": "BASE_13989913_0",
       "osm_relation_id": "13989913",
       "mode": "subway",
       "stops_count": 17,
-      "departures_count": 138,
+      "departures_count": 121,
       "duration_s": 2654,
+      "window_s": [
+        23580,
+        81360
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
+      "timetable_source": "published_window_provisional_headway"
     },
     {
       "route_id": "BASE_13989914_0",
       "osm_relation_id": "13989914",
       "mode": "subway",
       "stops_count": 14,
-      "departures_count": 138,
+      "departures_count": 126,
       "duration_s": 2371,
+      "window_s": [
+        21600,
+        82800
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
+      "timetable_source": "published_window_provisional_headway"
     },
     {
       "route_id": "BASE_13989915_0",
       "osm_relation_id": "13989915",
       "mode": "subway",
       "stops_count": 14,
-      "departures_count": 138,
+      "departures_count": 126,
       "duration_s": 2372,
+      "window_s": [
+        20580,
+        81480
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
+      "timetable_source": "published_window_provisional_headway"
     },
     {
       "route_id": "BASE_16533435_0",
@@ -367,6 +507,10 @@
       "stops_count": 11,
       "departures_count": 138,
       "duration_s": 1566,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -377,6 +521,10 @@
       "stops_count": 11,
       "departures_count": 138,
       "duration_s": 1567,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -387,6 +535,10 @@
       "stops_count": 2,
       "departures_count": 38,
       "duration_s": 247,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -397,6 +549,10 @@
       "stops_count": 2,
       "departures_count": 38,
       "duration_s": 247,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -407,6 +563,10 @@
       "stops_count": 27,
       "departures_count": 138,
       "duration_s": 4618,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -417,6 +577,10 @@
       "stops_count": 7,
       "departures_count": 88,
       "duration_s": 3386,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -427,6 +591,10 @@
       "stops_count": 7,
       "departures_count": 88,
       "duration_s": 3385,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -437,6 +605,10 @@
       "stops_count": 2,
       "departures_count": 38,
       "duration_s": 3187,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -447,6 +619,10 @@
       "stops_count": 2,
       "departures_count": 38,
       "duration_s": 3187,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -457,6 +633,10 @@
       "stops_count": 17,
       "departures_count": 88,
       "duration_s": 12391,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -467,6 +647,10 @@
       "stops_count": 6,
       "departures_count": 138,
       "duration_s": 822,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -477,6 +661,10 @@
       "stops_count": 6,
       "departures_count": 138,
       "duration_s": 808,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -487,6 +675,10 @@
       "stops_count": 4,
       "departures_count": 138,
       "duration_s": 526,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },
@@ -497,6 +689,10 @@
       "stops_count": 4,
       "departures_count": 138,
       "duration_s": 525,
+      "window_s": [
+        18000,
+        86400
+      ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
     },

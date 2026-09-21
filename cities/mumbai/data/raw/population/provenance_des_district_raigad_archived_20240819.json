@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/des_district_raigad_archived_20240819_c24c1f2a35223bf3.html",
+      "url": "https://web.archive.org/web/20240819034114id_/https://www.mahades.maharashtra.gov.in/district.do?districtname=RAIGAD",
+      "final_url": "https://web.archive.org/web/20240819034114id_/https://www.mahades.maharashtra.gov.in/district.do?districtname=RAIGAD",
+      "source": "Internet Archive copy (19 August 2024) of: Maharashtra official district statistics index RAIGAD",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-21T18:12:23.560041+00:00",
+      "sha256": "c24c1f2a35223bf34265507124f73451781e0f1d9af865e721ce4f1077a930c4",
+      "bytes": 22095,
+      "content_type": "text/html;charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20240819034114 of https://www.mahades.maharashtra.gov.in/district.do?districtname=RAIGAD (catalogue id des_district_raigad), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Locate latest socioeconomic review; report year and individual observation reference years differ."
+    }
+  ]
+}

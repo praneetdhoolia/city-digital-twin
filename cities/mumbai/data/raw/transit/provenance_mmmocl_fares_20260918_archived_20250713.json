@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmmocl_fares_20260918_archived_20250713_a8d3a8129e644abd.html",
+      "url": "https://web.archive.org/web/20250713072315id_/https://www.mmmocl.co.in/fare_table",
+      "final_url": "https://web.archive.org/web/20250713072315id_/https://www.mmmocl.co.in/fare_table",
+      "source": "Internet Archive copy (13 July 2025) of: Current MMMOCL public fare tables",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-21T17:55:28.162271+00:00",
+      "sha256": "a8d3a8129e644abd91003164711bcb177aa9fb095d5f13e30cde61a6f2956293",
+      "bytes": 33290,
+      "content_type": "text/html; charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20250713072315 of https://www.mmmocl.co.in/fare_table (catalogue id mmmocl_fares_20260918), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Current public passenger information; effective dates and operational coverage require extraction and validation."
+    }
+  ]
+}

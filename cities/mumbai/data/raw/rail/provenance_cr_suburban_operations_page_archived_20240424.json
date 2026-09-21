@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/cr_suburban_operations_page_archived_20240424_54179a39a4698975.html",
+      "url": "https://web.archive.org/web/20240424034902id_/https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,287,391,561,1025",
+      "final_url": "https://web.archive.org/web/20240424034902id_/https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,287,391,561,1025",
+      "source": "Internet Archive copy (24 April 2024) of: Central Railway suburban operations page",
+      "licence": "Indian Railways/MRVC publication; reuse terms unverified",
+      "retrieved": "2026-09-21T18:12:52.888735+00:00",
+      "sha256": "54179a39a46989753db0dcf3fcf93162033de8ac85ebccb19363a865b3d1bfe8",
+      "bytes": 464715,
+      "content_type": "text/html;charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20240424034902 of https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,287,391,561,1025 (catalogue id cr_suburban_operations_page), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Published suburban operations and linked records. Distinguish dated counts, timetable service totals, network scope and operating amendments."
+    }
+  ]
+}

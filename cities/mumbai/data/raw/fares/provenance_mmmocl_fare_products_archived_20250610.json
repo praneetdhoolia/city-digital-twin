@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/fares/mmmocl_fare_products_archived_20250610_b9d221150263b0dc.html",
+      "url": "https://web.archive.org/web/20250610044543id_/https://www.mmmocl.co.in/fare-schemes-products.html",
+      "final_url": "https://web.archive.org/web/20250610044543id_/https://www.mmmocl.co.in/fare-schemes-products.html",
+      "source": "Internet Archive copy (10 June 2025) of: Maha Mumbai Metro fare products",
+      "licence": "Operator or government publication; reuse terms unverified",
+      "retrieved": "2026-09-21T18:12:22.994690+00:00",
+      "sha256": "b9d221150263b0dc2fa1edbb121fe0f7f3e9a82569e2653e2bfacbf26f62f8e7",
+      "bytes": 31966,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20250610044543 of https://www.mmmocl.co.in/fare-schemes-products.html (catalogue id mmmocl_fare_products), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Published single return pass and card products; date and line scope require verification."
+    }
+  ]
+}

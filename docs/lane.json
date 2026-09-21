@@ -211,7 +211,7 @@
     },
     {
       "id": "mumbai-geoblocked-hosts",
-      "title": "Acquire the 40 catalogued sources whose hosts refuse this machine (MMMOCL, Central and Western Railway, RDSO, MRVC, DES, TRTI, MoSPI, NMMC, MCGM climate portal, the paper hosts) by the route D17 chooses - a browser capture through import_browser_acquisition.py or a fetch from an Indian network",
+      "title": "Acquire the 17 catalogued sources whose hosts refuse this machine and which the Internet Archive does not hold (the Western Railway attachments, the NMMC plan, MMMOCL ridership, the RDSO 2022 and 2014 specifications, the MRVC CBTC terms, the Maritime Board 2023-24 passenger PDF, the paper hosts, MMRCL station search and train trials, the MahaMetro annual report, the Mumbai City DES page, the census villages download) by a browser capture from a network the hosts admit, imported through import_browser_acquisition.py",
       "kind": "data",
       "status": "open",
       "recommended": false,
@@ -219,7 +219,7 @@
       "blocked_on": "D17 (taken): a browser capture from a network the hosts admit - a scratch Edge on this machine is refused at the address too (ERR_CONNECTION_TIMED_OUT / REFUSED), so the browser needs an Indian VPN endpoint",
       "opens_family": false,
       "answers_issues": [],
-      "evidence": "9.207: 23 of the 42 unobtained sources were retried on 22 September 2026 before the pass was stopped - the hosts time out or drop the connection under Python, Windows TLS and a real browser, the DES pages fail certificate trust, the Maritime Board answers an HTML page for its 2023-24 passenger PDF"
+      "evidence": "9.208: 22 of the 41 refusing sources acquired as dated Internet Archive copies (4 of them empty of content, kept unusable); 17 have no capture; 9.207: the hosts refuse this address under Python, Windows TLS and a real browser"
     },
     {
       "id": "mumbai-host-probe",

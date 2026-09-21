@@ -35,12 +35,12 @@
       "source": "literature",
       "sweep": [
         3504,
-        5964
+        6072
       ],
       "sweep_role": "uncertainty",
-      "sweep_basis": "The three published capacities of a 12-car rake in Indian Railways' EMU primer (IRIMEE, Basics of EMU): 3,504 is the design capacity (1,168 seated + 2,336 standees), 4,984 the stated capacity of the Siemens 12-car rake and 5,964 the Bombardier rake's (which PIB 2017 splits as 1,028 seated + 4,936 standing for the AC rake). MATSim denies boarding at seats + standing, so the value is the load a rake physically carries at peak, not the comfort design; the same primer records 5,000 in a 9-car rake at super-dense crush.",
+      "sweep_basis": "The three published capacities of a 12-car rake in Indian Railways' EMU primer (IRIMEE, Basics of EMU): 3,504 is the design capacity (1,168 seated + 2,336 standees), 4,984 the stated capacity of the Siemens 12-car rake and 5,964 the Bombardier rake's (which PIB 2017 splits as 1,028 seated + 4,936 standing for the AC rake). MATSim denies boarding at seats + standing, so the value is the load a rake physically carries at peak, not the comfort design; the same primer records 5,000 in a 9-car rake at super-dense crush. The sweep's top is raised to 6,072 on RDSO's MRVC-III EMU specification (RDSO/PE/SPEC/D/EMU/0190-2017, table 2.2.4, acquired as the Internet Archive copy rdso_mrvc3_emu_spec_2017_archived_20240709, 9.208): the existing MRVC Phase II coaches carry MC 86 + 349, TC 112 + 449, DTC 89 + 433 and NDTC 99 + 402 passengers seated + standing at the Super Dense Crush Load of 16 standing passengers a square metre the Mumbai EMUs are designed to operate under, so a 12-car rake of four DTC-MC-TC units is 1,148 seated + 4,924 standing = 6,072 - the design payload, above every stated capacity in the primer.",
       "status": "active",
-      "decisions_ref": "9.206",
+      "decisions_ref": "9.208",
       "description": "Passengers one suburban EMU rake carries when boarding is refused (seated plus standing): the Siemens 12-car rake's stated capacity, the middle of the three published figures. Not the design capacity (3,504, at which every peak train would deny boarding to a third of its real load) and not the newest rake's (5,964)."
     },
     "A.transit.rail_capacity_standing": {

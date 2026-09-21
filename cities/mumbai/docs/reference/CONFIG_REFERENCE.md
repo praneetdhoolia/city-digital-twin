@@ -27,11 +27,11 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 411 fields are made of
+## What the 412 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
-| `observed` | 8 | read directly from a raw download |
+| `observed` | 9 | read directly from a raw download |
 | `measured` | 9 | computed from observed data in this package |
 | `derived` | 22 | follows from another registry field by identity |
 | `literature` | 36 | a published value, not specific to this city |
@@ -40,7 +40,7 @@ Three things are refused at every layer:
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 369 | usable point value |
+| `active` | 370 | usable point value |
 | `computed` | 6 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 35 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 1 | the datum does not exist in the package; must be swept, never pinned |
@@ -73,10 +73,11 @@ The `answer` sweeps - the runs the study owes after the gate:
 | `RUN.replanning.score_msa_representation` | `absent` | `absent`, `at_innovation_cutoff` |
 | `RUN.routing.access_egress_consistency_check` | `reroute` | `reroute`, `disable`, `abortOnInconsistency` |
 
-### The 11 fields held fixed
+### The 12 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
+- `A.baseline_transit.line_windows_s` - the operator's published first and last trains (MMMOCL Train Time Table, Internet Archive capture of 17 September 2025: mmmocl_schedule_20260918_archived_20250917), read per direct
 - `B.activity.detour_factor` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
 - `B.activity.short_trip_band_km` - the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - t
 - `B.targets.goods_vehicle_traffic_share_pct` - a published screenline observation (CMP for Greater Mumbai executive summary, traffic composition), never varied
@@ -134,7 +135,7 @@ Adult-priced development population pending verified concessions and pass owners
 
 ## Provisional broad transit services
 
-*`cities/mumbai/registry/A_baseline_services.json` - 10 fields*
+*`cities/mumbai/registry/A_baseline_services.json` - 11 fields*
 
 
 
@@ -144,6 +145,7 @@ Adult-priced development population pending verified concessions and pass owners
 | `A.baseline_transit.directory_crossings` | `{"1": {"from": "1640461450", "to": "4306257482", "profile": "ferry_versova_madh"}, "3": {"from": "627734256...` | crossing_table | `definition` | - |
 | `A.baseline_transit.distance_multiplier` | `{"train": 1.25, "subway": 1.15, "ferry": 1.0}` | factor | `assumed` | 1 - 1.75 |
 | `A.baseline_transit.gtfs_route_types` | `{"train": 2, "subway": 1, "ferry": 4}` | GTFS_route_type_codes | `definition` | - |
+| `A.baseline_transit.line_windows_s` | `{"13989912": [21300, 82800], "13989913": [23580, 81360], "13989914": [21600, 82800], "13989915": [20580, 81...` | seconds_after_midnight | `observed` | **held fixed** |
 | `A.baseline_transit.networks` | `{"train": ["Mumbai Suburban Railway", "IR"], "subway": ["Mumbai Metro", "Navi Mumbai Metro"]}` | OSM_network_tags | `definition` | - |
 | `A.baseline_transit.offpeak_headway_s` | `{"train": 900, "subway": 600, "ferry": 1800}` | seconds | `assumed` | 300 - 5400 |
 | `A.baseline_transit.peak_headway_s` | `{"train": 600, "subway": 360, "ferry": 1800}` | seconds | `assumed` | 180 - 3600 |
@@ -178,6 +180,16 @@ Provisional path/geodesic ratio for rail stops; ferry distance comes from mapped
 GTFS mode vocabulary.
 
 ***definition** · status **active** · DECISIONS.md §9.187*
+
+#### `A.baseline_transit.line_windows_s`
+
+The service window of a generated line, keyed by its OSM route relation, where the operator publishes first and last trains; a relation not listed runs the assumed A.baseline_transit.service_window_s. Lines 2A and 7 (MMMOCL) are the first; Line 1, Line 3 and Navi Mumbai Line 1 windows await their operators' published timetables in the same shape.
+
+***observed** · status **active** · DECISIONS.md §9.208*
+
+> **Held fixed.** the operator's published first and last trains (MMMOCL Train Time Table, Internet Archive capture of 17 September 2025: mmmocl_schedule_20260918_archived_20250917), read per direction as the earliest first and latest last departure from the pattern's origin terminal - Line 2A Andheri West to Dahisar East 05:55-23:00, Dahisar East to Andheri West 06:33-22:36, Line 7 Gundavali to Dahisar East 06:00-23:00 (the 06:00 and 23:00 services run through to Andheri West / Dahanukarwadi), Dahisar East to Gundavali 05:43-22:38; never varied
+>
+> *Departure requires: a newer published timetable, or a dated departure list for the line*
 
 #### `A.baseline_transit.networks`
 
@@ -1070,7 +1082,7 @@ Local clock basis for published departures.
 | `A.transit.metro_seated_share` | `0.133` | ratio | `literature` | 0.1 - 0.25 |
 | `A.transit.rail_capacity_seated` | `1168` | persons_per_vehicle | `literature` | 1028 - 1168 |
 | `A.transit.rail_capacity_standing` | `3816` | persons_per_vehicle | `derived` | derived: A.transit.rail_capacity_total - A.transit.rail_capacity_seated = 4984  |
-| `A.transit.rail_capacity_total` | `4984` | persons_per_vehicle | `literature` | 3504 - 5964 |
+| `A.transit.rail_capacity_total` | `4984` | persons_per_vehicle | `literature` | 3504 - 6072 |
 
 #### `A.transit.bus_capacity_seated`
 
@@ -1290,9 +1302,9 @@ Standing places in one suburban EMU rake: the rake's carried capacity less its s
 
 Passengers one suburban EMU rake carries when boarding is refused (seated plus standing): the Siemens 12-car rake's stated capacity, the middle of the three published figures. Not the design capacity (3,504, at which every peak train would deny boarding to a third of its real load) and not the newest rake's (5,964).
 
-***literature** · status **active** · DECISIONS.md §9.206 · sweep role **uncertainty***
+***literature** · status **active** · DECISIONS.md §9.208 · sweep role **uncertainty***
 
-> **Sweep basis.** The three published capacities of a 12-car rake in Indian Railways' EMU primer (IRIMEE, Basics of EMU): 3,504 is the design capacity (1,168 seated + 2,336 standees), 4,984 the stated capacity of the Siemens 12-car rake and 5,964 the Bombardier rake's (which PIB 2017 splits as 1,028 seated + 4,936 standing for the AC rake). MATSim denies boarding at seats + standing, so the value is the load a rake physically carries at peak, not the comfort design; the same primer records 5,000 in a 9-car rake at super-dense crush.
+> **Sweep basis.** The three published capacities of a 12-car rake in Indian Railways' EMU primer (IRIMEE, Basics of EMU): 3,504 is the design capacity (1,168 seated + 2,336 standees), 4,984 the stated capacity of the Siemens 12-car rake and 5,964 the Bombardier rake's (which PIB 2017 splits as 1,028 seated + 4,936 standing for the AC rake). MATSim denies boarding at seats + standing, so the value is the load a rake physically carries at peak, not the comfort design; the same primer records 5,000 in a 9-car rake at super-dense crush. The sweep's top is raised to 6,072 on RDSO's MRVC-III EMU specification (RDSO/PE/SPEC/D/EMU/0190-2017, table 2.2.4, acquired as the Internet Archive copy rdso_mrvc3_emu_spec_2017_archived_20240709, 9.208): the existing MRVC Phase II coaches carry MC 86 + 349, TC 112 + 449, DTC 89 + 433 and NDTC 99 + 402 passengers seated + standing at the Super Dense Crush Load of 16 standing passengers a square metre the Mumbai EMUs are designed to operate under, so a 12-car rake of four DTC-MC-TC units is 1,148 seated + 4,924 standing = 6,072 - the design payload, above every stated capacity in the primer.
 
 ## Vehicle types per routed mode (RUN.qsim.mode_vehicle_fields; 9.204)
 

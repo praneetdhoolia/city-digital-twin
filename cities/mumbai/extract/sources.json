@@ -5773,6 +5773,271 @@
       "title": "OGD: the resource listing of the MMRDA ridership catalog (Metro Line 2A, 7, Monorail)",
       "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
       "coverage": "The catalog metadata: two daily CSV resources, their periods, sizes and publication dates; discovery evidence for the two series."
+    },
+    {
+      "id": "maharashtra_infrastructure_2023_archived_20251209",
+      "category": "planning",
+      "format": "pdf",
+      "url": "https://web.archive.org/web/20251209045113id_/https://mahades.maharashtra.gov.in/files/publication/Infra2023.pdf",
+      "title": "Internet Archive copy (09 December 2025) of: Maharashtra infrastructure statistics 2021-22 and 2022-23",
+      "licence": "Publication reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20251209045113 of https://mahades.maharashtra.gov.in/files/publication/Infra2023.pdf (catalogue id maharashtra_infrastructure_2023), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Historical multimodal infrastructure and passenger statistics.",
+      "archived_copy_of": "maharashtra_infrastructure_2023",
+      "archived_snapshot": "20251209045113",
+      "content_review": {
+        "status": "acquired_unusable",
+        "sha256": "2a46a480ea3cf7288fb66783e067e83ee27e5ccea6b9bdc8d267a2e115437991",
+        "reason": "The Wayback Machine holds a capture truncated at exactly 5,242,880 bytes (5 MiB): the PDF opens but has no trailer (%%EOF absent). Preserved as partial-delivery evidence; the publication stays unobtained."
+      }
+    },
+    {
+      "id": "cr_timetable_20260918_index_archived_20240710",
+      "category": "rail",
+      "format": "html",
+      "url": "https://web.archive.org/web/20240710145200id_/https://cr.indianrailways.gov.in/view_section.jsp?backgroundColor=LIGHTSTEELBLUE&fontColor=black&id=0,5,2360&lang=0",
+      "title": "Internet Archive copy (10 July 2024) of: Central Railway suburban timetable index",
+      "licence": "Government publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20240710145200 of https://cr.indianrailways.gov.in/view_section.jsp?backgroundColor=LIGHTSTEELBLUE&fontColor=black&id=0,5,2360&lang=0 (catalogue id cr_timetable_20260918_index), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Current public timetable index; linked documents retain individual effective dates.",
+      "archived_copy_of": "cr_timetable_20260918_index",
+      "archived_snapshot": "20240710145200"
+    },
+    {
+      "id": "des_district_mumbai_suburban_archived_20191230",
+      "category": "population",
+      "format": "html",
+      "url": "https://web.archive.org/web/20191230180016id_/https://www.mahades.maharashtra.gov.in/district.do?districtname=MUMBAI+SUBURBAN",
+      "title": "Internet Archive copy (30 December 2019) of: Maharashtra official district statistics index MUMBAI SUBURBAN",
+      "licence": "Government publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20191230180016 of https://www.mahades.maharashtra.gov.in/district.do?districtname=MUMBAI+SUBURBAN (catalogue id des_district_mumbai_suburban), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Locate latest socioeconomic review; report year and individual observation reference years differ.",
+      "archived_copy_of": "des_district_mumbai_suburban",
+      "archived_snapshot": "20191230180016"
+    },
+    {
+      "id": "des_district_thane_archived_20260418",
+      "category": "population",
+      "format": "html",
+      "url": "https://web.archive.org/web/20260418192617id_/https://www.mahades.maharashtra.gov.in/district.do?districtname=THANE",
+      "title": "Internet Archive copy (18 April 2026) of: Maharashtra official district statistics index THANE",
+      "licence": "Government publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20260418192617 of https://www.mahades.maharashtra.gov.in/district.do?districtname=THANE (catalogue id des_district_thane), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Locate latest socioeconomic review; report year and individual observation reference years differ.",
+      "archived_copy_of": "des_district_thane",
+      "archived_snapshot": "20260418192617"
+    },
+    {
+      "id": "des_district_palghar_archived_20260418",
+      "category": "population",
+      "format": "html",
+      "url": "https://web.archive.org/web/20260418202526id_/https://www.mahades.maharashtra.gov.in/district.do?districtname=PALGHAR",
+      "title": "Internet Archive copy (18 April 2026) of: Maharashtra official district statistics index PALGHAR",
+      "licence": "Government publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20260418202526 of https://www.mahades.maharashtra.gov.in/district.do?districtname=PALGHAR (catalogue id des_district_palghar), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Locate latest socioeconomic review; report year and individual observation reference years differ.",
+      "archived_copy_of": "des_district_palghar",
+      "archived_snapshot": "20260418202526"
+    },
+    {
+      "id": "bmc_cmp_coastal_annexure_2017_archived_20221010",
+      "category": "planning",
+      "format": "pdf",
+      "url": "https://web.archive.org/web/20221010083009id_/https://environmentclearance.nic.in/writereaddata/Online/EDS/07_Sep_2017_123242960LCKCFI1LCompliancetoAdditionalDetailsSoughtbyMemberSecretary.pdf",
+      "title": "Internet Archive copy (10 October 2022) of: CMP annexure lodged with coastal road environmental clearance",
+      "licence": "Government publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20221010083009 of https://environmentclearance.nic.in/writereaddata/Online/EDS/07_Sep_2017_123242960LCKCFI1LCompliancetoAdditionalDetailsSoughtbyMemberSecretary.pdf (catalogue id bmc_cmp_coastal_annexure_2017), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Historical or current publication; each table needs its own period, universe and definition. Acquisition does not establish validation.",
+      "archived_copy_of": "bmc_cmp_coastal_annexure_2017",
+      "archived_snapshot": "20221010083009"
+    },
+    {
+      "id": "mmmocl_schedule_20260918_archived_20250917",
+      "category": "transit",
+      "format": "html",
+      "url": "https://web.archive.org/web/20250917181358id_/https://www.mmmocl.co.in/train-time-table",
+      "title": "Internet Archive copy (17 September 2025) of: Current MMMOCL public train timetable",
+      "licence": "Operator publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20250917181358 of https://www.mmmocl.co.in/train-time-table (catalogue id mmmocl_schedule_20260918), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Current public passenger information; effective dates and operational coverage require extraction and validation.",
+      "archived_copy_of": "mmmocl_schedule_20260918",
+      "archived_snapshot": "20250917181358"
+    },
+    {
+      "id": "mmmocl_fares_20260918_archived_20250713",
+      "category": "transit",
+      "format": "html",
+      "url": "https://web.archive.org/web/20250713072315id_/https://www.mmmocl.co.in/fare_table",
+      "title": "Internet Archive copy (13 July 2025) of: Current MMMOCL public fare tables",
+      "licence": "Operator publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20250713072315 of https://www.mmmocl.co.in/fare_table (catalogue id mmmocl_fares_20260918), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Current public passenger information; effective dates and operational coverage require extraction and validation.",
+      "archived_copy_of": "mmmocl_fares_20260918",
+      "archived_snapshot": "20250713072315"
+    },
+    {
+      "id": "mospi_mcp_catalogue_archived_20260511",
+      "category": "employment",
+      "format": "html",
+      "url": "https://web.archive.org/web/20260511000158id_/https://datainnovation.mospi.gov.in/mospi-mcp",
+      "title": "Internet Archive copy (11 May 2026) of: mospi mcp catalogue",
+      "licence": "Government publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20260511000158 of https://datainnovation.mospi.gov.in/mospi-mcp (catalogue id mospi_mcp_catalogue), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Public economic census documentation or aggregate data catalogue; not acquired restricted unit records.",
+      "archived_copy_of": "mospi_mcp_catalogue",
+      "archived_snapshot": "20260511000158",
+      "content_review": {
+        "status": "acquired_unusable",
+        "sha256": "63ec5e25ef428618e597e279c62cde44c178c47abb3bd153e77c57274b59646e",
+        "reason": "The archived page is a JavaScript application shell (create-react-app, 745 bytes) with no catalogue content; the data loads from an API the capture did not include."
+      }
+    },
+    {
+      "id": "bmc_climate_budget_2025_26_archived_20250808",
+      "category": "planning",
+      "format": "pdf",
+      "url": "https://web.archive.org/web/20250808200251id_/https://mcap.mcgm.gov.in/wp-content/uploads/2025/06/English_CB-Report-2025-26_digital.pdf",
+      "title": "Internet Archive copy (08 August 2025) of: BMC Climate Budget Report 2025-26 English",
+      "licence": "BMC publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20250808200251 of https://mcap.mcgm.gov.in/wp-content/uploads/2025/06/English_CB-Report-2025-26_digital.pdf (catalogue id bmc_climate_budget_2025_26), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Climate budget with historical actuals, revised estimates and budget forecasts. Keep these measures distinct.",
+      "archived_copy_of": "bmc_climate_budget_2025_26",
+      "archived_snapshot": "20250808200251"
+    },
+    {
+      "id": "bmc_climate_portal_20260919_archived_20260510",
+      "category": "planning",
+      "format": "html",
+      "url": "https://web.archive.org/web/20260510203533id_/https://mcap.mcgm.gov.in/",
+      "title": "Internet Archive copy (10 May 2026) of: Mumbai Climate Action Plan public portal",
+      "licence": "BMC website; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20260510203533 of https://mcap.mcgm.gov.in/ (catalogue id bmc_climate_portal_20260919), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Official report catalogue and climate programme context.",
+      "archived_copy_of": "bmc_climate_portal_20260919",
+      "archived_snapshot": "20260510203533"
+    },
+    {
+      "id": "best_route_network_20260919_archived_20250126",
+      "category": "transit",
+      "format": "html",
+      "url": "https://web.archive.org/web/20250126110658id_/http://routenetwork.bestundertaking.com/",
+      "title": "Internet Archive copy (26 January 2025) of: BEST official Route Network",
+      "licence": "BEST publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20250126110658 of http://routenetwork.bestundertaking.com/ (catalogue id best_route_network_20260919), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Public operator transport information; effective dates, coverage and ongoing operation require verification.",
+      "archived_copy_of": "best_route_network_20260919",
+      "archived_snapshot": "20250126110658",
+      "content_review": {
+        "status": "acquired_unusable",
+        "sha256": "869ef6d64d262421368d8b6debae03e87f0722e4decda0b27a0925ecb882ef13",
+        "reason": "The archived page is an iframe wrapper (717 bytes) pointing at server.overtures.in:8080; the route network itself was not captured."
+      }
+    },
+    {
+      "id": "mumbai_road_capacity_study_2016_archived_20220505",
+      "category": "traffic",
+      "format": "html",
+      "url": "https://web.archive.org/web/20220505065244id_/https://www.sciencedirect.com/science/article/pii/S2352146516307396",
+      "title": "Internet Archive copy (05 May 2022) of: Gajjar and Mohandas 2016: Critical Assessment of Road Capacities on Urban Roads - A Mumbai Case-study",
+      "licence": "Publisher states open access; exact reuse licence unverified",
+      "coverage": "Wayback Machine snapshot of 20220505065244 of https://www.sciencedirect.com/science/article/pii/S2352146516307396 (catalogue id mumbai_road_capacity_study_2016), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Primary field study of selected Mumbai roads. Publication date is not the survey date; design service volumes and observed peak flows must be distinguished.",
+      "archived_copy_of": "mumbai_road_capacity_study_2016",
+      "archived_snapshot": "20220505065244"
+    },
+    {
+      "id": "rdso_mrvc3_emu_spec_2017_archived_20240709",
+      "category": "rail",
+      "format": "pdf",
+      "url": "https://web.archive.org/web/20240709221928id_/https://rdso.indianrailways.gov.in/works/uploads/File/MRVC%20III%20SPEC%20WEB.pdf",
+      "title": "Internet Archive copy (09 July 2024) of: RDSO MRVC/MUTP-III AC EMU technical specification 0190-2017 revision 0",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20240709221928 of https://rdso.indianrailways.gov.in/works/uploads/File/MRVC%20III%20SPEC%20WEB.pdf (catalogue id rdso_mrvc3_emu_spec_2017), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Design requirements, loading-density definitions, car layouts and traction characteristics. Procurement specification does not establish current fleet or operational service assignments.",
+      "archived_copy_of": "rdso_mrvc3_emu_spec_2017",
+      "archived_snapshot": "20240709221928",
+      "download_timeout_seconds": 90
+    },
+    {
+      "id": "cr_system_map_2019_archived_20240629",
+      "category": "rail",
+      "format": "pdf",
+      "url": "https://web.archive.org/web/20240629045456id_/https://cr.indianrailways.gov.in/cris/uploads/files/1561376559029-all_div_merged.pdf",
+      "title": "Internet Archive copy (29 June 2024) of: Central Railway combined divisional system maps hosted June 2019",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20240629045456 of https://cr.indianrailways.gov.in/cris/uploads/files/1561376559029-all_div_merged.pdf (catalogue id cr_system_map_2019), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Historical system maps, line topology, station codes and chainages. Internal edition dates require verification; diagrams are not georeferenced or proof of current track configuration.",
+      "archived_copy_of": "cr_system_map_2019",
+      "archived_snapshot": "20240629045456",
+      "download_timeout_seconds": 120
+    },
+    {
+      "id": "cr_mumbai_signal_telecom_page_archived_20230819",
+      "category": "rail",
+      "format": "html",
+      "url": "https://web.archive.org/web/20230819054204id_/https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,1191,1192,1211",
+      "title": "Internet Archive copy (19 August 2023) of: Central Railway Mumbai division signalling and telecom page",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20230819054204 of https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,1191,1192,1211 (catalogue id cr_mumbai_signal_telecom_page), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Mumbai division signalling evidence and linked asset documents; current applicability requires inspection.",
+      "archived_copy_of": "cr_mumbai_signal_telecom_page",
+      "archived_snapshot": "20230819054204",
+      "download_timeout_seconds": 120
+    },
+    {
+      "id": "mmmocl_fare_products_archived_20250610",
+      "category": "fares",
+      "format": "html",
+      "url": "https://web.archive.org/web/20250610044543id_/https://www.mmmocl.co.in/fare-schemes-products.html",
+      "title": "Internet Archive copy (10 June 2025) of: Maha Mumbai Metro fare products",
+      "licence": "Operator or government publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20250610044543 of https://www.mmmocl.co.in/fare-schemes-products.html (catalogue id mmmocl_fare_products), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Published single return pass and card products; date and line scope require verification.",
+      "archived_copy_of": "mmmocl_fare_products",
+      "archived_snapshot": "20250610044543"
+    },
+    {
+      "id": "des_district_raigad_archived_20240819",
+      "category": "population",
+      "format": "html",
+      "url": "https://web.archive.org/web/20240819034114id_/https://www.mahades.maharashtra.gov.in/district.do?districtname=RAIGAD",
+      "title": "Internet Archive copy (19 August 2024) of: Maharashtra official district statistics index RAIGAD",
+      "licence": "Government publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20240819034114 of https://www.mahades.maharashtra.gov.in/district.do?districtname=RAIGAD (catalogue id des_district_raigad), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Locate latest socioeconomic review; report year and individual observation reference years differ.",
+      "archived_copy_of": "des_district_raigad",
+      "archived_snapshot": "20240819034114"
+    },
+    {
+      "id": "maharashtra_scheduled_areas_statistical_index_archived_20260414",
+      "category": "boundaries",
+      "format": "html",
+      "url": "https://web.archive.org/web/20260414131449id_/https://trti.maharashtra.gov.in/page/statistical-report",
+      "title": "Internet Archive copy (14 April 2026) of: Tribal Research and Training Institute statistical reports",
+      "licence": "Government publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20260414131449 of https://trti.maharashtra.gov.in/page/statistical-report (catalogue id maharashtra_scheduled_areas_statistical_index), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Legal/planning boundary evidence; no automatic model inclusion or exclusion.",
+      "archived_copy_of": "maharashtra_scheduled_areas_statistical_index",
+      "archived_snapshot": "20260414131449"
+    },
+    {
+      "id": "mrvc_trespass_midsection_executive_summary_archived_20240525",
+      "category": "rail",
+      "format": "pdf",
+      "url": "https://web.archive.org/web/20240525015917id_/https://mrvc.indianrailways.gov.in/works/uploads/File/1.Executive%20Summary_Volume%201%281%29.pdf",
+      "title": "Internet Archive copy (25 May 2024) of: MRVC final study on mid-section railway trespassing: executive summary",
+      "licence": "MRVC publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20240525015917 of https://mrvc.indianrailways.gov.in/works/uploads/File/1.Executive%20Summary_Volume%201%281%29.pdf (catalogue id mrvc_trespass_midsection_executive_summary), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Historical observed pedestrian access, crossings and proposed remedies around suburban railway corridors. Internal survey dates and proposed-versus-built facilities must be extracted; recommendations are not current infrastructure.",
+      "archived_copy_of": "mrvc_trespass_midsection_executive_summary",
+      "archived_snapshot": "20240525015917"
+    },
+    {
+      "id": "mohfw_population_projections_2011_2036_archived_20251213",
+      "category": "population",
+      "format": "pdf",
+      "url": "https://web.archive.org/web/20251213143513id_/https://www.mohfw.gov.in/sites/default/files/Population%20Projection%20Report%202011-2036%20-%20upload_compressed_0.pdf",
+      "title": "Internet Archive copy (13 December 2025) of: Technical Group population projections for India and states 2011-2036",
+      "licence": "Government of India publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20251213143513 of https://www.mohfw.gov.in/sites/default/files/Population%20Projection%20Report%202011-2036%20-%20upload_compressed_0.pdf (catalogue id mohfw_population_projections_2011_2036), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Official demographic projections; state-level total, age, sex and urban/rural estimates. Not observed Mumbai small-area counts.",
+      "archived_copy_of": "mohfw_population_projections_2011_2036",
+      "archived_snapshot": "20251213143513"
+    },
+    {
+      "id": "cr_suburban_operations_page_archived_20240424",
+      "category": "rail",
+      "format": "html",
+      "url": "https://web.archive.org/web/20240424034902id_/https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,287,391,561,1025",
+      "title": "Internet Archive copy (24 April 2024) of: Central Railway suburban operations page",
+      "licence": "Indian Railways/MRVC publication; reuse terms unverified",
+      "coverage": "Wayback Machine snapshot of 20240424034902 of https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,287,391,561,1025 (catalogue id cr_suburban_operations_page), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Published suburban operations and linked records. Distinguish dated counts, timetable service totals, network scope and operating amendments.",
+      "archived_copy_of": "cr_suburban_operations_page",
+      "archived_snapshot": "20240424034902",
+      "content_review": {
+        "status": "acquired_unusable",
+        "sha256": "54179a39a46989753db0dcf3fcf93162033de8ac85ebccb19363a865b3d1bfe8",
+        "reason": "The archived page is the Central Railway site menu (departments and links) with no suburban operations content; the figures sit on sub-pages the capture does not include."
+      }
     }
   ]
 }

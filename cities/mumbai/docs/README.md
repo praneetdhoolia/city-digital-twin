@@ -56,14 +56,14 @@ factor no run overlay can reach.
 
 | | |
 |---|---|
-| Files in the manifest | **1,353** ([`data/MANIFEST.csv`](../data/MANIFEST.csv)) — 28,587 before the harvest rule of 21 September 2026 folded 13,500 per-response files into eleven archives (§9.201) |
-| Catalogue | **575** sources in [`extract/sources.json`](../extract/sources.json), 531 acquired, 43 unobtained (40 on hosts that refuse this address, two behind the OGD platform's registered key, one an HTML page where a PDF is published), one acquired-unusable; eleven of them harvests (one archive of many public queries each) |
+| Files in the manifest | **1,397** ([`data/MANIFEST.csv`](../data/MANIFEST.csv)) — 28,587 before the harvest rule of 21 September 2026 folded 13,500 per-response files into eleven archives (§9.201) |
+| Catalogue | **597** sources in [`extract/sources.json`](../extract/sources.json), 549 acquired (22 of them dated Internet Archive copies of publishers that refuse this address, §9.208), 43 unobtained (the originals behind those copies count among them; 17 have no capture, two wait on the OGD platform's registered key, one is an HTML page where a PDF is published), five acquired-unusable; eleven of them harvests (one archive of many public queries each) |
 | Package on disk | 9.2 GB under `data/raw/`, mostly gitignored: 3.6 GB of traffic-police road orders, 633 MB of transit responses, 582 MB of raster and geospatial layers |
 | Network | 846,699 links, 101,306 km, from one native OSM extract (`networks/osm/network_source.osm.gz`, Geofabrik western zone 15 September 2026) |
 | PT | Three feeds mapped once: community bus GTFS (1,120 bus routes, 99,080 departures); the multimodal feed adding 31 suburban rail, 14 metro and 4 ferry patterns; the regional feed adding NMMT and MBMT (1,802 bus routes) and, since 22 September 2026, the Maritime Board's seven commuter crossings (§9.207, #245): **1,865 routes, 115,100 departures, 18,116 stop facilities, 0 unmapped**. Every mapped vehicle carries an evidenced capacity profile since 21 September 2026 (§9.206, [`build_transit_fleet.py`](../build/build_transit_fleet.py)): a 12-car EMU 1,168 + 3,816, Line 1 200 + 1,300, the BEML 6-car 239 + 1,561, Line 3 399 + 2,601, Navi Mumbai 150 + 950, the two launches 80 and 100, the seven crossings at the directory's printed vessel capacities (60 to 1,635), every bus 36 + 30 (the standing room assumed, swept) |
 | Plans | **1,352,144 persons in 303,384 households**, the core households the harness's nested hash keeps at `B.population.plans_build_fraction` 0.05, written by [`build_plans.py`](../build/build_plans.py): work tours at the Census B-28 distance bands, education and optional tours by the declared mechanisms, homes inside the leaf, municipality or taluka polygon; no freight ([`_plans_core_sample_report.json`](../demand/baseline/_plans_core_sample_report.json)). A run at `RUN.sample.fraction` at or below 0.05 keeps what a file of everyone would |
 | Population | **27,057,132 persons in 6,068,786 households at the core extent for the 2026 base year**, synthesised by [`build_population.py`](../build/build_population.py) from the Census 2011 leaf controls (households, persons and workers by sex, ages 0-6), the ward/village HL-14 household sizes and vehicle possession, the district single-year ages, work status and school attendance, and the IIPS district projections to 2026 ([`_population_report.json`](../demand/population/_population_report.json)); licence holding and income are declared assumptions, tertiary attendance 20-24 unobtained |
-| Input registry | **411** fields — the city's own supply, demand, fare and fleet declarations plus the framework's run-side keys, moved from a private namespace or adopted from the reference city and labelled so (§9.202) |
+| Input registry | **412** fields — the city's own supply, demand, fare and fleet declarations plus the framework's run-side keys, moved from a private namespace or adopted from the reference city and labelled so (§9.202) |
 | Validation | **Thirteen per-mode targets** in [`mode_targets_by_mode.csv`](../data/processed/validation/mode_targets_by_mode.csv) ([`build_mode_targets.py`](../build/build_mode_targets.py), §9.205): every share derived from the CTS Updation 2017 MMR motorised split and its 47 % active share, the B-28 walk/bicycle split, the synthesised car-driver share, the MMB ferry passengers and the CMP goods share, each with its sweep; no projection to 2026, no holdout |
 
 The regional extension's counts come from
@@ -86,8 +86,8 @@ published operation and calendars remain unverified:
 | walk, bike | OSM footways and access evidence; the walking network reaches most boarding links | the short-trip band, gradient, stress classes (all gates `absent`) |
 | taxi, auto_rickshaw | published meter tariffs (transcribed), RTO stock, a pooled-queue fleet with provisional counts | spatial dispatch, empty running, calibrated fleet sizes, an observed trip volume |
 | bus | community GTFS, BEST depots, fares and passes, NMMT timetables (619 routes, 9,522 trips), MBMT routes (118), bus capacity evidence | BEST's own timetable and ridership (requested: [`requests/best_operations.md`](requests/best_operations.md)), a validated per-vehicle capacity file |
-| heavy_rail (suburban) | WR and CR printed timetables extracted, harbour-line geometry evidence, MRVC and Economic Survey controls, rake capacities from Indian Railways' EMU primer (§9.206) | a validated harbour-line path, station entries or ridership by line, the AC/15-car/MEMU stock per departure |
-| light_rail (metro, monorail) | MMRCL stations, journeys and fares; metro fleet claims and per-line train capacities (§9.206); Navi Mumbai metro controls | ridership by line; monorail service; the seated/standing split of the BEML and Alstom trains |
+| heavy_rail (suburban) | WR and CR printed timetables extracted, harbour-line geometry evidence, MRVC and Economic Survey controls, rake capacities from Indian Railways' EMU primer (§9.206) and the per-coach seated and SDCL standing loads of RDSO's MRVC-III specification (§9.208) | a validated harbour-line path, station entries or ridership by line, the AC/15-car/MEMU stock per departure |
+| light_rail (metro, monorail) | MMRCL stations, journeys and fares; metro fleet claims and per-line train capacities (§9.206); Navi Mumbai metro controls; MMMOCL's published first and last trains on Lines 2A and 7, which set those four patterns' service windows (`A.baseline_transit.line_windows_s`, §9.208); MMRDA's daily ridership of Lines 2A/7 and the Monorail catalogued on the OGD platform behind its registered key | ridership by line; monorail service; the seated/standing split of the BEML and Alstom trains |
 | ferry | MMB water-transport directory and annual passengers; the two mapped launches and the seven directory crossings (Versova–Madh, Marve–Manori, Gorai–Borivali, Borivali–Esselworld, Ferry Wharf–Mora, Gateway–Mandwa, the M2M Ro-Ro) at the directory's vessel capacities, each in its directory window at the provisional headway (§9.206, §9.207) | published departures per crossing (the directory prints first and last sailings only); the four crossings whose terminal OSM names only by coordinate (Rewas, Karanja, Sassoon Dock, Belapur–Nerul) |
 | truck | port and JNPA daily rake and cargo statistics; provisional port trucks in the baseline | a count basis on the network; an OD proxy that is validated |
 | freight_train | Mumbai Port monthly rakes (loaded and empty by commodity), JNPA ICD rakes | the paths and times of the movements |
@@ -186,7 +186,13 @@ adapter is listed in the manifest's `produced_by` for what it writes.
 
 Acquisitions are immutable and carry provenance. An unsuccessful download
 stays unobtained; an HTML error page is not a PDF; identical bytes at two URLs
-are one observation. `extract/import_browser_acquisition.py` validates a
+are one observation. A publisher whose host refuses this address (§9.207) may
+be acquired as an **Internet Archive copy**: a catalogue entry
+`<id>_archived_<date>` whose URL pins the Wayback Machine snapshot
+(`web.archive.org/web/<timestamp>id_/<original>`, the original bytes), with
+`archived_copy_of` naming the source it stands in for; a capture that holds no
+content (a truncated PDF, a script shell, a site menu) is kept as
+`acquired_unusable` with its reason. `extract/import_browser_acquisition.py` validates a
 browser-captured HTTPS response against the catalogue before importing it.
 `extract_port_rail_controls.py` needs poppler's `pdftotext` 24 or later: the
 4.00 build on Git Bash's PATH mangles the table layout.
