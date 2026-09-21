@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/des_district_thane_archived_20260418_d34612b46c058feb.html",
+      "url": "https://web.archive.org/web/20260418192617id_/https://www.mahades.maharashtra.gov.in/district.do?districtname=THANE",
+      "final_url": "https://web.archive.org/web/20260311221045id_/https://www.mahades.maharashtra.gov.in/district.do?districtname=THANE",
+      "source": "Internet Archive copy (18 April 2026) of: Maharashtra official district statistics index THANE",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-21T17:55:15.362234+00:00",
+      "sha256": "d34612b46c058feb7920c622e6ac8cd72f8255542599cf75fc2004ed38b0e4f8",
+      "bytes": 34051,
+      "content_type": "text/html;charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20260418192617 of https://www.mahades.maharashtra.gov.in/district.do?districtname=THANE (catalogue id des_district_thane), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Locate latest socioeconomic review; report year and individual observation reference years differ."
+    }
+  ]
+}

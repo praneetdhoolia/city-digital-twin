@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/mospi_mcp_catalogue_archived_20260511_63ec5e25ef428618.html",
+      "url": "https://web.archive.org/web/20260511000158id_/https://datainnovation.mospi.gov.in/mospi-mcp",
+      "final_url": "https://web.archive.org/web/20260511000158id_/https://datainnovation.mospi.gov.in/mospi-mcp",
+      "source": "Internet Archive copy (11 May 2026) of: mospi mcp catalogue",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-21T17:55:29.243939+00:00",
+      "sha256": "63ec5e25ef428618e597e279c62cde44c178c47abb3bd153e77c57274b59646e",
+      "bytes": 745,
+      "content_type": "text/html; charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20260511000158 of https://datainnovation.mospi.gov.in/mospi-mcp (catalogue id mospi_mcp_catalogue), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Public economic census documentation or aggregate data catalogue; not acquired restricted unit records."
+    }
+  ]
+}

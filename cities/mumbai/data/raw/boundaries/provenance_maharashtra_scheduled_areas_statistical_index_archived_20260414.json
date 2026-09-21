@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/maharashtra_scheduled_areas_statistical_index_archived_20260414_206883d3e416d0be.html",
+      "url": "https://web.archive.org/web/20260414131449id_/https://trti.maharashtra.gov.in/page/statistical-report",
+      "final_url": "https://web.archive.org/web/20260414131449id_/https://trti.maharashtra.gov.in/page/statistical-report",
+      "source": "Internet Archive copy (14 April 2026) of: Tribal Research and Training Institute statistical reports",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-21T18:12:24.348633+00:00",
+      "sha256": "206883d3e416d0be5093aec8a49b0d63b38de6d777f2a4940fa49c5d8bf50737",
+      "bytes": 179472,
+      "content_type": "text/html; charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20260414131449 of https://trti.maharashtra.gov.in/page/statistical-report (catalogue id maharashtra_scheduled_areas_statistical_index), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Legal/planning boundary evidence; no automatic model inclusion or exclusion."
+    }
+  ]
+}

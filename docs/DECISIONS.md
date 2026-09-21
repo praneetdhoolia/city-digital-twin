@@ -239,6 +239,7 @@ about its layout will otherwise cost you an hour:
 | **Citywide Mumbai plans, the first targets, the fraction** | **§9.205** - plans at the harness's own household sample (1.35 M persons), thirteen derived targets, the 0.1 % case through the harness; 140 KB an agent and 1.8 veh/h a lane at 0.001: D14 |
 | **The live-set heap rule, the leaner agent at 1 %, every Mumbai transit vehicle at its evidenced capacity, the viewer on every run** | **§9.206** - 9.205's 140 KB an agent was the heap given, not needed (7.4 GiB + ~19 KB a plan); plan memory 5; the mapper's default fleet replaced by profiles from Indian Railways', the operators' and the Maritime Board's figures; transit PCE scaled with the sample; two 1 % cases gridlock on the flow identity: D15 |
 | **The commuter crossings in Mumbai's feed, the pass-through merge measured and not applied, the hosts that refuse this address** | **§9.207** - seven Maritime Board crossings at their printed vessel capacities (`A.baseline_transit.directory_crossings`, 115,100 vehicles, one mapping, the 0.1 % check ran them); the merge moves the median link 62.7 → 69.0 m and the user keeps the network as converted; D15 a 384-512 GB host, D16 the OGD key, D17 a browser capture from a network the hosts admit |
+| **The refusing hosts reached through the Internet Archive; Metro 2A/7 in their published windows; RDSO's coach loads** | **§9.208** - 22 of the 41 sources whose hosts refuse this address acquired as dated Wayback copies (4 empty ones kept unusable, 17 without a capture); `A.baseline_transit.line_windows_s` runs Lines 2A and 7 in MMMOCL's published first-to-last windows (552 → 500 departures); RDSO's MRVC-III coach loads (1,148 + 4,924 at 16/m²) raise the rail capacity sweep to 6,072 |
 | **Every open issue worked to done or to one measurement, and the fix that was half a fix** | **§9.164** - the twenty-one MATSim defaults that decided the model unreviewed go to **0** (nine declared at the framework's own values, twelve accepted with a reason). The demand STATES that a declared passenger rides: `B.mode.bound_passenger_placement` = `every_plan` puts a bound tour on `ride` in every seeded plan as the driver is already put on `car` - **194,131** fully bound weekday tours over **199,329** persons - and the demand, plans and 30 run-input sets are rebuilt on it, opening family **`F33`**. A tour that will not fit no longer discards the rest of the day (**547** weekday tours recovered; week trip rate **3.398** against the HTS 3.473). `C.time_weights.beta_headway` and `beta_reliability` REACH MATSIM after two reports asked, behind a gate shipped `absent`; the pt submodes get a plan-level control; the calibration objective gets the replication-band denominator it never had, at zero until one is measured. **The ceiling watcher stops a run for the first time** (`stopped_at_ceiling` at iteration 3) and the gate watcher is caught arming over a disabled monitor and judging nothing. **§9.161's #167 diagnosis was HALF right**: `routingMode` takes the failure 40 agents → 20 and the residual is not in our input at all - 0 mixed trips over 6,347 persons - so `accessEgressModeToLink` still cannot start and ships `none` |
 | **A deviation no constant can reach, and the tail of cheap fixes the reports kept re-issuing** | **§9.163** - MATSim writes `modeChoiceCoverage1x.txt` on every arm and nothing read it, so every gate ever taken blamed a constant without asking whether a constant could reach the target. On the landed arm **ride's target of 20.60 % sits ABOVE the 20.05 % of agents who have ever held a ride plan** - the only mode of twelve, and no value of any constant closes it. Every choice set is within 1 pp of its final coverage by iteration 5-10 and shut by 16-27, **except pt**, still opening at 233 and reaching 25.78 %. The count-station map had been orphaned by a network rebuild 47 minutes after it was written: **0 of 195 rows still named the road they claimed**, and on the repaired map counts read **+16.30 % mean, -1.1 % median, 0 zeros** against -89.35 % / -98.7 % / 7. Half of all declared escort pairs put the passenger in their own car (**10,224 of 20,902**) with 99.6 % of tours realised, so ride's loss is mode assignment, not pairing. `RUN.replanning.score_msa_representation` and `RUN.replanning.score_msa_fraction` declare score averaging at MATSim's own default literal (registry **497 -> 499**, byte-neutral); undeclared MATSim defaults **31 -> 21**; three fields shipped at their consumer's off value now say so via `inert_at`. Fourteen of sixteen `awaiting-run` issues were measured from a run that had already finished |
 | **A stated ceiling is enforced by the runner, and the teleported access leg is diagnosed to a missing attribute in our own plans** | **§9.161** - `RUN.gate.wall_ceiling_h` (0 = no ceiling) and `start_ceiling_watch` give an approved cost the enforcement it never had: a SECOND watcher beside the gate's, stopping through 9.143's marker path with a new completion `stopped_at_ceiling`, so `RUN.gate.interval_iterations = 0` keeps meaning "do not judge my modes" rather than "do not enforce my budget". #167 is DIAGNOSED and the cause is ours: the input plans carry **zero** `routingMode` attributes and every trip is a single leg, so under `accessEgressModeToLink` the router inserts walk access and egress legs and MATSim INFERS each leg's routing mode from its own mode - `walk` beside a `car` main leg - and rejects the trip it just built. The fix is to emit `routingMode` per leg in `build_matsim_plans.py`, a no-op at `access_egress_type = none`, and it needs the demand rebuilt in the same change |
@@ -17807,10 +17808,81 @@ be re-derived from an operator series once D16's key lands.
 yet (D15's diagnostic)": the crossings are in, the merge is measured and, by the user's decision, not
 applied.
 
+## 9.208 The refusing hosts reached through the Internet Archive, the published windows of Metro Lines 2A and 7, and RDSO's coach loads (22 September 2026, fifty-ninth session continued; #239)
+
+**What was wrong.** 9.207 left 40 catalogued sources on hosts that refuse this address and closed the
+session on that; the goal directive (a full Mumbai twin, every mode's data acquired) held the
+session open. Two things were still untried. *The archive*: the Wayback Machine keeps dated copies of
+many of those pages and PDFs, and a snapshot pinned by its timestamp is an acquisition with
+provenance - the original bytes, the date they were served, the publisher's URL - not a guess. *The
+data already landed*: an archived copy is only evidence once something reads it. Also: the assumed
+`A.baseline_transit.service_window_s` (05:00-24:00) ran every generated line, including the four
+Metro 2A/7 patterns whose operator publishes first and last trains.
+
+**What changed.** *The archive route.* A catalogue entry `<id>_archived_<date>` whose URL is
+`https://web.archive.org/web/<timestamp>id_/<original>` (the `id_` flag returns the archived bytes
+unmodified), with `archived_copy_of` and `archived_snapshot`, the original's format and licence, and
+a coverage line naming the snapshot and why it was taken; `.claude/settings.json` admits
+`web.archive.org` and `archive.org`; `acquire_sources.py` is unchanged - the format check still
+refuses an HTML page where a PDF is declared. The availability API answered for 16 of the 41
+refusing sources and the CDX index for 8 more (5 new, 3 already found); 24 entries were catalogued,
+2 whose captures were empty were dropped again, 22 acquired: the DES district pages for Mumbai
+Suburban (2019), Thane, Palghar (April 2026) and Raigad (2024); MMMOCL's train timetable (17 September
+2025), fare table (July 2025) and fare products (June 2025); the BMC coastal-road CMP annexure (29.5
+MB) and climate budget 2025-26; RDSO's MRVC-III EMU specification (2017, 5.4 MB); Central Railway's
+2019 system map, its 2024 timetable index (8 PDF links) and signal-and-telecom page; MRVC's trespass
+mid-section executive summary; MoHFW's 2011-2036 population projections (21.8 MB, the NHM mirror's
+original); TRTI's statistical index; the 2016 road-capacity study's publisher page. Four captures hold
+no content and are kept `acquired_unusable` with the reason: the DES infrastructure statistics PDF
+truncated by the archive at exactly 5 MiB (no trailer), the MoSPI catalogue's script shell, BEST's
+route-network iframe wrapper, and Central Railway's suburban-operations page, which is the site menu.
+Catalogue 575 → 597 (22 archived entries), acquired 531 → 549 usable plus 5 unusable (4 new),
+manifest 1,353 → 1,397. *The windows.* `A.baseline_transit.line_windows_s` (`observed`, held fixed on the published
+timetable) keys a service window by OSM route relation; the feed builder runs a listed relation in
+its window and every other in the assumed one, and its report says which (`window_s`,
+`timetable_source` = `published_window_provisional_headway`). Lines 2A and 7 from the archived MMMOCL
+timetable, read per direction as the earliest first and latest last departure from the pattern's
+origin: Andheri West → Dahisar East 05:55-23:00, Dahisar East → Andheri West 06:33-22:36, Gundavali
+→ Dahisar East 06:00-23:00 (the 06:00 and 23:00 services run through), Dahisar East → Gundavali
+05:43-22:38. Line 1, Line 3 and Navi Mumbai's windows await their operators' timetables in the same
+shape. *The coach loads.* `A.transit.rail_capacity_total`'s sweep top rises 5,964 → 6,072 on RDSO's
+specification (RDSO/PE/SPEC/D/EMU/0190-2017, table 2.2.4): the existing MRVC Phase II coaches carry MC
+86 + 349, TC 112 + 449, DTC 89 + 433, NDTC 99 + 402 seated + standing at the Super Dense Crush Load
+of 16 standing a square metre the Mumbai EMUs are designed to operate under, so a 12-car rake of four
+DTC-MC-TC units is 1,148 + 4,924 = 6,072, the design payload; the value 4,984 (the Siemens rake) and
+the seated 1,168 are unchanged (RDSO's 1,148 is inside the seated sweep).
+
+**Measured.** The four 2A/7 patterns fall 552 → 500 departures under the published windows; the
+regional feed re-mapped once (85 s): **18,113 stops, 1,865 routes, 0 unmapped** (the mapper's
+stop count moves by three between two mappings of near-identical feeds, 3.5); the fleet **115,048
+vehicles on 17 profiles**; the 0.1 % check `20260922T041420_2it_0.1pct` ran to its last iteration. The
+OGD platform's download is behind a user session (every backend route answers 405 or the site's HTML;
+the API's shared key 429): D16 stands. Of the 41 refusing sources, 17 have no capture at all (the
+Western Railway attachments, the NMMC plan, the MMMOCL ridership page and press PDF, the RDSO 2022
+and 2014 specifications, the MRVC CBTC terms, the Maritime Board's 2023-24 passenger PDF, the paper
+hosts, MMRCL's station search and train-trials PDF, the MahaMetro annual report, the Mumbai City DES
+page, the census villages download) and stay with D17.
+
+**Deliberately not done.** No run beyond the 0.1 % check; nothing extracted yet from the DES pages,
+the CMP annexure, the MRVC summary or the MoHFW projections (the NHM mirror is already the
+population's source); the storage-above-flow remedy of older MATSim is not re-raised (15: the tool
+rejects it); the merge stays unapplied; the monorail stays out of the feed.
+
+**Consequences.** Every Mumbai case before 9.208 ran the 2A/7 patterns on the assumed window; the
+0.1 % check compares with nothing. The next reading needs the D15 host. An archived copy is an
+observation at its snapshot date: a reading that cites one cites the date.
+
+**Sweep.** `A.transit.rail_capacity_total` 3,504-6,072 (was -5,964); `A.baseline_transit.line_windows_s`
+held fixed on the published timetable.
+
+**Supersedes.** 9.207's "40 sources refuse this address ... left unobtained": 22 of them are acquired
+as dated archive copies, 17 remain.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-22 | **The refusing hosts reached through the Internet Archive, Metro Lines 2A and 7 in their published windows, RDSO's coach loads (§9.208).** 22 dated Wayback copies catalogued and acquired (`<id>_archived_<date>`; catalogue 575 → 597, manifest 1,353 → 1,397; 4 empty captures kept unusable, 17 sources without a capture stay with D17); `A.baseline_transit.line_windows_s` (observed, MMMOCL's timetable) sets the four 2A/7 patterns' windows; `A.transit.rail_capacity_total`'s sweep top 5,964 → 6,072 on RDSO/PE/SPEC/D/EMU/0190-2017; one mapping (18,113 stops, 1,865 routes), 115,048 vehicles, the 0.1 % check `20260922T041420_2it_0.1pct` ran to its last iteration. No target value of the reference city changed, the 67/143 split is untouched, nothing here is a finding. |
 | 2026-09-22 | **The commuter ferry crossings in Mumbai's feed, the pass-through merge measured and not applied, the hosts that refuse this address (§9.207).** `A.baseline_transit.directory_crossings` and seven `A.transit.ferry_*_capacity_seated` fields (Mumbai 403 → 411) put the Maritime Board's seven crossings in the regional feed (18,116 stops, 1,865 routes, 115,100 vehicles); `merge_pass_through_nodes.py` measured 37,122 of 377,443 nodes mergeable and the median link 62.7 → 69.0 m - the user keeps the network as converted (D15 taken: a 384-512 GB host for a 10 % core); `check_hardcoding.py` judges a `<city>` entry against the reference city's file (Mumbai 268 → 225); the acquisition adapter sends a registered key from `.env` (D16: OGD); 40 sources refuse this address under every client (D17: a browser capture from a network they admit); manifest 1,349 → 1,353, catalogue 575. No target value of the reference city changed, the 67/143 split is untouched, nothing here is a finding. |
 | 2026-09-22 | **The heap rule re-read on the live set, the leaner agent measured at 1 %, every transit vehicle given its evidenced capacity, the viewer on every run (§9.206).** Plan memory 9 → 5 and the heap rule 7.4 + 2,400 × fraction GiB; `A_transit_fleet.json` (23 fields) and `build_transit_fleet.py` assign all 114,670 mapped vehicles a profile (12-car EMU 1,168 + 3,816, Line 1 200 + 1,300, BEML 239 + 1,561, Line 3 399 + 2,601, Navi Mumbai 150 + 950, launches 80 and 100, bus 36 + 30 assumed) in place of pt2matsim's defaults; `RUN.sample.transit_pce_scaling` scales every transit PCE by the fraction (MOVES the reference city's RESULTS at its next arm, which opens a family on #237); `RUN.monitor.enabled` retired, the view serves on every run and draws every transit route; two 1 % cases (`20260921T231313_4it_1pct`, `20260922T005949_4it_1pct`) measured 31 KB an agent at two plans and a gridlock the fraction cannot carry. D14 taken from the user's directive; D15 asked. 14 sources acquired (529 of 572). No target value of the reference city changed, the 67/143 split is untouched, nothing here is a finding. |
 | 2026-09-21 | **Citywide Mumbai plans at the harness's sample, the first per-mode targets, the first citywide case (§9.205).** `build_plans.py` writes the households the nested hash keeps at a 0.05 build fraction (1,352,144 persons); `build_mode_targets.py` derives thirteen targets from the CTS 2017 split, B-28, the synthesised driver share, the MMB passengers and the CMP goods share; `20260921T220701_2it_0.1pct` ran through the harness and the reporter printed every mode - a structural check whose trip times are the flow identity at 0.001, not the city. The heap rule is measured on two points (1 % needs 50 GiB). D14 asked. No target value of the reference city changed, the 67/143 split is untouched, nothing here is a finding. |

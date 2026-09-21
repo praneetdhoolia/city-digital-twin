@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_route_network_20260919_archived_20250126_869ef6d64d262421.html",
+      "url": "https://web.archive.org/web/20250126110658id_/http://routenetwork.bestundertaking.com/",
+      "final_url": "https://web.archive.org/web/20250126110658id_/http://routenetwork.bestundertaking.com/",
+      "source": "Internet Archive copy (26 January 2025) of: BEST official Route Network",
+      "licence": "BEST publication; reuse terms unverified",
+      "retrieved": "2026-09-21T17:55:34.471750+00:00",
+      "sha256": "869ef6d64d262421368d8b6debae03e87f0722e4decda0b27a0925ecb882ef13",
+      "bytes": 717,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20250126110658 of http://routenetwork.bestundertaking.com/ (catalogue id best_route_network_20260919), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Public operator transport information; effective dates, coverage and ongoing operation require verification."
+    }
+  ]
+}

@@ -17,13 +17,13 @@
     "fleet_assignments": "networks/matsim/schedules/baseline_regional/fleet_assignments.json"
   },
   "inputs_sha256": {
-    "network": "ef792e36a47cf381ee151174896c1cc0e9b09d20d27edcc80d7c28c6b62ac37c",
-    "schedule": "80dd88d30c52a87492979d808a407b6a8a09a7e0db890caf1a498050d6857e57",
-    "transit_vehicles": "7223af4a48541ac0d0a6c65786cf2d0eb0f95991e78a39a855f42b321ce944de",
+    "network": "b1831b682904303c346fc226994da47007974c5e8754b8b4443824137a5c9fa2",
+    "schedule": "09a1c1864edbd123ef9850a8aa0c401e220eec7177af8394592b1b52f38473ef",
+    "transit_vehicles": "4ad2880690aa3fed6bb40d910f5ceafd85227711070fd6acb25b3932a7ddb272",
     "plans": "f5acf260fa4ce71cf16ab58050737c7f593ea0cff084627468f2548c6863c44d",
     "boarding_fares": "951d7ddaa057fe8ea57067b08572f910d68d340ac0cffbbee30137e53c0b8b9b",
     "hired_fleet": "3970384fe178b88b91c1c54c0367656a8efe1f129e4f83f4417dd8a4947b3951",
-    "fleet_assignments": "1474f4af5846a3e40682262dbd11b3d25639c205c236995e0fa4496da121c44c"
+    "fleet_assignments": "e48947463de550e9ac28f3bca9e09f9ab777f6b90782e3df6bf163572f7bf51f"
   },
   "demand": {
     "source_sha256": "f5acf260fa4ce71cf16ab58050737c7f593ea0cff084627468f2548c6863c44d",
@@ -185,12 +185,12 @@
         "final_arrival_s": 16054.0
       },
       {
-        "route": "BASE_13989912_0_85200",
+        "route": "BASE_13989912_0_35220",
         "adjusted_stops": 16,
         "final_arrival_s": 2626.0
       },
       {
-        "route": "BASE_13989913_0_60600",
+        "route": "BASE_13989913_0_52380",
         "adjusted_stops": 16,
         "final_arrival_s": 2624.0
       },
@@ -200,7 +200,7 @@
         "final_arrival_s": 2341.0
       },
       {
-        "route": "BASE_13989915_0_58200",
+        "route": "BASE_13989915_0_27540",
         "adjusted_stops": 13,
         "final_arrival_s": 2342.0
       },
@@ -472,7 +472,7 @@
       {
         "route": "best_trip_1517_1021",
         "adjusted_stops": 11,
-        "final_arrival_s": 695
+        "final_arrival_s": 702
       },
       {
         "route": "best_trip_1518_1826",
@@ -487,7 +487,7 @@
       {
         "route": "best_trip_1540_0819",
         "adjusted_stops": 37,
-        "final_arrival_s": 2689
+        "final_arrival_s": 2693
       },
       {
         "route": "best_trip_1563_1651",
@@ -532,12 +532,12 @@
       {
         "route": "best_trip_1593_1928",
         "adjusted_stops": 61,
-        "final_arrival_s": 5295
+        "final_arrival_s": 5296
       },
       {
         "route": "best_trip_1594_0720",
         "adjusted_stops": 59,
-        "final_arrival_s": 5500
+        "final_arrival_s": 5425
       },
       {
         "route": "best_trip_1597_0745",
@@ -612,7 +612,7 @@
       {
         "route": "best_trip_1643_1750",
         "adjusted_stops": 4,
-        "final_arrival_s": 285
+        "final_arrival_s": 237
       },
       {
         "route": "best_trip_1658_0825",
@@ -732,7 +732,7 @@
       {
         "route": "best_trip_1772_1022",
         "adjusted_stops": 26,
-        "final_arrival_s": 1592
+        "final_arrival_s": 1591
       },
       {
         "route": "best_trip_1791_1835",
@@ -762,7 +762,7 @@
       {
         "route": "best_trip_1802_1418",
         "adjusted_stops": 12,
-        "final_arrival_s": 779
+        "final_arrival_s": 796
       },
       {
         "route": "best_trip_1807_1331",
@@ -837,7 +837,7 @@
       {
         "route": "best_trip_1912_0700",
         "adjusted_stops": 25,
-        "final_arrival_s": 2547
+        "final_arrival_s": 2545
       },
       {
         "route": "best_trip_1913_0550",
@@ -867,7 +867,7 @@
       {
         "route": "best_trip_1930_1000",
         "adjusted_stops": 27,
-        "final_arrival_s": 2054
+        "final_arrival_s": 2052
       },
       {
         "route": "best_trip_1931_0710",
@@ -947,7 +947,7 @@
       {
         "route": "best_trip_2030_0602",
         "adjusted_stops": 48,
-        "final_arrival_s": 4505
+        "final_arrival_s": 4507
       },
       {
         "route": "best_trip_2031_1340",
@@ -987,7 +987,7 @@
       {
         "route": "best_trip_2120_0830",
         "adjusted_stops": 38,
-        "final_arrival_s": 2761
+        "final_arrival_s": 2745
       },
       {
         "route": "best_trip_2133_0627",
@@ -1017,7 +1017,7 @@
       {
         "route": "best_trip_2138_1150",
         "adjusted_stops": 22,
-        "final_arrival_s": 1636
+        "final_arrival_s": 1634
       },
       {
         "route": "best_trip_2139_0829",
@@ -1042,7 +1042,7 @@
       {
         "route": "best_trip_2159_1022",
         "adjusted_stops": 79,
-        "final_arrival_s": 5907
+        "final_arrival_s": 5891
       },
       {
         "route": "best_trip_2190_0956",
@@ -1052,17 +1052,17 @@
       {
         "route": "best_trip_2191_2342",
         "adjusted_stops": 56,
-        "final_arrival_s": 4390
+        "final_arrival_s": 4374
       },
       {
         "route": "best_trip_2206_2036",
         "adjusted_stops": 60,
-        "final_arrival_s": 4918
+        "final_arrival_s": 4902
       },
       {
         "route": "best_trip_2207_0818",
         "adjusted_stops": 61,
-        "final_arrival_s": 5165
+        "final_arrival_s": 5149
       },
       {
         "route": "best_trip_2208_0847",
@@ -1117,12 +1117,12 @@
       {
         "route": "best_trip_2258_1611",
         "adjusted_stops": 99,
-        "final_arrival_s": 6658
+        "final_arrival_s": 6667
       },
       {
         "route": "best_trip_2259_2154",
         "adjusted_stops": 100,
-        "final_arrival_s": 6964
+        "final_arrival_s": 6954
       },
       {
         "route": "best_trip_2260_2140",
@@ -1132,7 +1132,7 @@
       {
         "route": "best_trip_2261_0809",
         "adjusted_stops": 100,
-        "final_arrival_s": 5964
+        "final_arrival_s": 5988
       },
       {
         "route": "best_trip_2391_1313",
@@ -1152,7 +1152,7 @@
       {
         "route": "best_trip_2459_1024",
         "adjusted_stops": 32,
-        "final_arrival_s": 1863
+        "final_arrival_s": 1866
       },
       {
         "route": "best_trip_2469_0820",
@@ -1167,12 +1167,12 @@
       {
         "route": "best_trip_2485_0537",
         "adjusted_stops": 43,
-        "final_arrival_s": 3719
+        "final_arrival_s": 3711
       },
       {
         "route": "best_trip_2496_0918",
         "adjusted_stops": 40,
-        "final_arrival_s": 2992
+        "final_arrival_s": 2994
       },
       {
         "route": "best_trip_2497_0922",
@@ -1222,7 +1222,7 @@
       {
         "route": "best_trip_2545_1700",
         "adjusted_stops": 34,
-        "final_arrival_s": 2134
+        "final_arrival_s": 2133
       },
       {
         "route": "best_trip_2571_1350",
@@ -1272,7 +1272,7 @@
       {
         "route": "best_trip_2633_2012",
         "adjusted_stops": 15,
-        "final_arrival_s": 682
+        "final_arrival_s": 686
       },
       {
         "route": "best_trip_2634_0635",
@@ -1297,7 +1297,7 @@
       {
         "route": "best_trip_2664_1040",
         "adjusted_stops": 58,
-        "final_arrival_s": 4226
+        "final_arrival_s": 4222
       },
       {
         "route": "best_trip_2665_0917",
@@ -1372,7 +1372,7 @@
       {
         "route": "best_trip_2784_0813",
         "adjusted_stops": 39,
-        "final_arrival_s": 2335
+        "final_arrival_s": 2336
       },
       {
         "route": "best_trip_2785_1352",
@@ -1392,7 +1392,7 @@
       {
         "route": "best_trip_2802_0829",
         "adjusted_stops": 41,
-        "final_arrival_s": 3061
+        "final_arrival_s": 3064
       },
       {
         "route": "best_trip_2807_2005",
@@ -1402,7 +1402,7 @@
       {
         "route": "best_trip_2808_2252",
         "adjusted_stops": 20,
-        "final_arrival_s": 870
+        "final_arrival_s": 839
       },
       {
         "route": "best_trip_2811_1006",
@@ -1432,12 +1432,12 @@
       {
         "route": "best_trip_2818_2145",
         "adjusted_stops": 25,
-        "final_arrival_s": 1229
+        "final_arrival_s": 1198
       },
       {
         "route": "best_trip_2819_1719",
         "adjusted_stops": 45,
-        "final_arrival_s": 3315
+        "final_arrival_s": 3307
       },
       {
         "route": "best_trip_2820_2120",
@@ -1637,7 +1637,7 @@
       {
         "route": "best_trip_2894_0903",
         "adjusted_stops": 28,
-        "final_arrival_s": 7226
+        "final_arrival_s": 7224
       },
       {
         "route": "best_trip_2895_1722",
@@ -1742,7 +1742,7 @@
       {
         "route": "best_trip_2935_1858",
         "adjusted_stops": 12,
-        "final_arrival_s": 673
+        "final_arrival_s": 665
       },
       {
         "route": "best_trip_2940_1035",
@@ -1782,7 +1782,7 @@
       {
         "route": "best_trip_2965_2142",
         "adjusted_stops": 80,
-        "final_arrival_s": 5532
+        "final_arrival_s": 5551
       },
       {
         "route": "best_trip_2970_1350",
@@ -1802,7 +1802,7 @@
       {
         "route": "best_trip_2973_0718",
         "adjusted_stops": 29,
-        "final_arrival_s": 3947
+        "final_arrival_s": 3956
       },
       {
         "route": "best_trip_2986_1640",
@@ -1812,7 +1812,7 @@
       {
         "route": "best_trip_3009_2355",
         "adjusted_stops": 43,
-        "final_arrival_s": 3395
+        "final_arrival_s": 3398
       },
       {
         "route": "best_trip_3010_1015",
@@ -1862,7 +1862,7 @@
       {
         "route": "best_trip_3039_0609",
         "adjusted_stops": 41,
-        "final_arrival_s": 3052
+        "final_arrival_s": 3036
       },
       {
         "route": "best_trip_3040_0955",
@@ -1897,7 +1897,7 @@
       {
         "route": "best_trip_3046_1053",
         "adjusted_stops": 35,
-        "final_arrival_s": 2086
+        "final_arrival_s": 2089
       },
       {
         "route": "best_trip_3047_0923",
@@ -1907,12 +1907,12 @@
       {
         "route": "best_trip_3104_0540",
         "adjusted_stops": 99,
-        "final_arrival_s": 6623
+        "final_arrival_s": 6616
       },
       {
         "route": "best_trip_3105_0825",
         "adjusted_stops": 101,
-        "final_arrival_s": 6397
+        "final_arrival_s": 6401
       },
       {
         "route": "best_trip_3116_0644",
@@ -1942,7 +1942,7 @@
       {
         "route": "best_trip_3121_1110",
         "adjusted_stops": 61,
-        "final_arrival_s": 4494
+        "final_arrival_s": 4478
       },
       {
         "route": "best_trip_3122_0707",
@@ -1987,7 +1987,7 @@
       {
         "route": "best_trip_3149_1311",
         "adjusted_stops": 45,
-        "final_arrival_s": 5027
+        "final_arrival_s": 5028
       },
       {
         "route": "best_trip_3150_0805",
@@ -2007,7 +2007,7 @@
       {
         "route": "best_trip_3169_2105",
         "adjusted_stops": 46,
-        "final_arrival_s": 2049
+        "final_arrival_s": 2018
       },
       {
         "route": "best_trip_3182_1509",
@@ -2022,12 +2022,12 @@
       {
         "route": "best_trip_3188_1908",
         "adjusted_stops": 47,
-        "final_arrival_s": 2759
+        "final_arrival_s": 2683
       },
       {
         "route": "best_trip_3189_0628",
         "adjusted_stops": 46,
-        "final_arrival_s": 3022
+        "final_arrival_s": 3021
       },
       {
         "route": "best_trip_3225_1023",
@@ -2042,12 +2042,12 @@
       {
         "route": "best_trip_3229_1406",
         "adjusted_stops": 29,
-        "final_arrival_s": 2069
+        "final_arrival_s": 2086
       },
       {
         "route": "best_trip_3230_0827",
         "adjusted_stops": 25,
-        "final_arrival_s": 1988
+        "final_arrival_s": 1993
       },
       {
         "route": "best_trip_3231_1721",
@@ -2057,17 +2057,17 @@
       {
         "route": "best_trip_3232_2142",
         "adjusted_stops": 41,
-        "final_arrival_s": 3138
+        "final_arrival_s": 3128
       },
       {
         "route": "best_trip_3233_1021",
         "adjusted_stops": 30,
-        "final_arrival_s": 2936
+        "final_arrival_s": 2952
       },
       {
         "route": "best_trip_3234_1427",
         "adjusted_stops": 24,
-        "final_arrival_s": 2087
+        "final_arrival_s": 2092
       },
       {
         "route": "best_trip_3307_1010",
@@ -2177,7 +2177,7 @@
       {
         "route": "best_trip_3566_0944",
         "adjusted_stops": 57,
-        "final_arrival_s": 3990
+        "final_arrival_s": 4005
       },
       {
         "route": "best_trip_3567_1044",
@@ -2217,7 +2217,7 @@
       {
         "route": "best_trip_3645_1726",
         "adjusted_stops": 53,
-        "final_arrival_s": 3979
+        "final_arrival_s": 3978
       },
       {
         "route": "best_trip_3654_2020",
@@ -2232,7 +2232,7 @@
       {
         "route": "best_trip_3678_1020",
         "adjusted_stops": 52,
-        "final_arrival_s": 3450
+        "final_arrival_s": 3471
       },
       {
         "route": "best_trip_3679_0615",
@@ -2262,7 +2262,7 @@
       {
         "route": "best_trip_3696_2042",
         "adjusted_stops": 58,
-        "final_arrival_s": 4347
+        "final_arrival_s": 4348
       },
       {
         "route": "best_trip_3697_1114",
@@ -2272,7 +2272,7 @@
       {
         "route": "best_trip_3730_2050",
         "adjusted_stops": 50,
-        "final_arrival_s": 3917
+        "final_arrival_s": 3908
       },
       {
         "route": "best_trip_3731_0915",
@@ -2292,7 +2292,7 @@
       {
         "route": "best_trip_3742_0659",
         "adjusted_stops": 44,
-        "final_arrival_s": 2965
+        "final_arrival_s": 2968
       },
       {
         "route": "best_trip_3743_0540",
@@ -2322,7 +2322,7 @@
       {
         "route": "best_trip_3770_0719",
         "adjusted_stops": 62,
-        "final_arrival_s": 4614
+        "final_arrival_s": 4613
       },
       {
         "route": "best_trip_3771_0840",
@@ -2332,7 +2332,7 @@
       {
         "route": "best_trip_3782_1354",
         "adjusted_stops": 23,
-        "final_arrival_s": 1927
+        "final_arrival_s": 1925
       },
       {
         "route": "best_trip_3783_0709",
@@ -2352,7 +2352,7 @@
       {
         "route": "best_trip_3796_1430",
         "adjusted_stops": 41,
-        "final_arrival_s": 3440
+        "final_arrival_s": 3442
       },
       {
         "route": "best_trip_3797_2053",
@@ -2392,7 +2392,7 @@
       {
         "route": "best_trip_3820_1155",
         "adjusted_stops": 53,
-        "final_arrival_s": 4020
+        "final_arrival_s": 3951
       },
       {
         "route": "best_trip_3824_0906",
@@ -2417,7 +2417,7 @@
       {
         "route": "best_trip_3828_1723",
         "adjusted_stops": 25,
-        "final_arrival_s": 2547
+        "final_arrival_s": 2545
       },
       {
         "route": "best_trip_3829_2021",
@@ -2472,7 +2472,7 @@
       {
         "route": "best_trip_3845_1928",
         "adjusted_stops": 33,
-        "final_arrival_s": 2174
+        "final_arrival_s": 2175
       },
       {
         "route": "best_trip_3850_0535",
@@ -2517,12 +2517,12 @@
       {
         "route": "best_trip_3866_1916",
         "adjusted_stops": 75,
-        "final_arrival_s": 5795
+        "final_arrival_s": 5794
       },
       {
         "route": "best_trip_3867_1645",
         "adjusted_stops": 73,
-        "final_arrival_s": 6690
+        "final_arrival_s": 6673
       },
       {
         "route": "best_trip_3870_2005",
@@ -2537,7 +2537,7 @@
       {
         "route": "best_trip_3872_1021",
         "adjusted_stops": 21,
-        "final_arrival_s": 1420
+        "final_arrival_s": 1418
       },
       {
         "route": "best_trip_3873_2040",
@@ -2562,7 +2562,7 @@
       {
         "route": "best_trip_3879_2240",
         "adjusted_stops": 47,
-        "final_arrival_s": 4204
+        "final_arrival_s": 4202
       },
       {
         "route": "best_trip_3882_1015",
@@ -2617,22 +2617,22 @@
       {
         "route": "best_trip_3892_0558",
         "adjusted_stops": 57,
-        "final_arrival_s": 4475
+        "final_arrival_s": 4474
       },
       {
         "route": "best_trip_3893_1130",
         "adjusted_stops": 56,
-        "final_arrival_s": 4628
+        "final_arrival_s": 4612
       },
       {
         "route": "best_trip_3894_2150",
         "adjusted_stops": 47,
-        "final_arrival_s": 3598
+        "final_arrival_s": 3597
       },
       {
         "route": "best_trip_3895_1508",
         "adjusted_stops": 47,
-        "final_arrival_s": 3635
+        "final_arrival_s": 3636
       },
       {
         "route": "best_trip_3898_0758",
@@ -2722,7 +2722,7 @@
       {
         "route": "best_trip_3935_0827",
         "adjusted_stops": 45,
-        "final_arrival_s": 3855
+        "final_arrival_s": 3839
       },
       {
         "route": "best_trip_3936_1921",
@@ -2747,7 +2747,7 @@
       {
         "route": "best_trip_3946_0524",
         "adjusted_stops": 26,
-        "final_arrival_s": 1786
+        "final_arrival_s": 1773
       },
       {
         "route": "best_trip_3947_1020",
@@ -2772,7 +2772,7 @@
       {
         "route": "best_trip_3955_2030",
         "adjusted_stops": 5,
-        "final_arrival_s": 444
+        "final_arrival_s": 396
       },
       {
         "route": "best_trip_3956_0938",
@@ -2787,7 +2787,7 @@
       {
         "route": "best_trip_3960_1839",
         "adjusted_stops": 72,
-        "final_arrival_s": 4626
+        "final_arrival_s": 4631
       },
       {
         "route": "best_trip_3963_1003",
@@ -2847,7 +2847,7 @@
       {
         "route": "best_trip_3992_0515",
         "adjusted_stops": 72,
-        "final_arrival_s": 6479
+        "final_arrival_s": 6470
       },
       {
         "route": "best_trip_3993_0440",
@@ -2892,12 +2892,12 @@
       {
         "route": "best_trip_4006_1147",
         "adjusted_stops": 113,
-        "final_arrival_s": 7598
+        "final_arrival_s": 7573
       },
       {
         "route": "best_trip_4007_1034",
         "adjusted_stops": 117,
-        "final_arrival_s": 8312
+        "final_arrival_s": 8347
       },
       {
         "route": "best_trip_4008_0905",
@@ -2907,7 +2907,7 @@
       {
         "route": "best_trip_4009_0235",
         "adjusted_stops": 82,
-        "final_arrival_s": 4574
+        "final_arrival_s": 4625
       },
       {
         "route": "best_trip_4016_1559",
@@ -2992,7 +2992,7 @@
       {
         "route": "best_trip_4057_1251",
         "adjusted_stops": 4,
-        "final_arrival_s": 240
+        "final_arrival_s": 257
       },
       {
         "route": "best_trip_4058_1800",
@@ -3012,7 +3012,7 @@
       {
         "route": "best_trip_4061_0503",
         "adjusted_stops": 1,
-        "final_arrival_s": 81
+        "final_arrival_s": 84
       },
       {
         "route": "best_trip_4062_0615",
@@ -3092,7 +3092,7 @@
       {
         "route": "best_trip_4118_2341",
         "adjusted_stops": 1,
-        "final_arrival_s": 159
+        "final_arrival_s": 99
       },
       {
         "route": "best_trip_4119_0515",
@@ -3107,12 +3107,12 @@
       {
         "route": "best_trip_4121_1253",
         "adjusted_stops": 5,
-        "final_arrival_s": 342
+        "final_arrival_s": 371
       },
       {
         "route": "best_trip_4134_1307",
         "adjusted_stops": 25,
-        "final_arrival_s": 1761
+        "final_arrival_s": 1769
       },
       {
         "route": "best_trip_4135_2100",
@@ -3127,17 +3127,17 @@
       {
         "route": "best_trip_4137_0615",
         "adjusted_stops": 53,
-        "final_arrival_s": 4276
+        "final_arrival_s": 4274
       },
       {
         "route": "best_trip_4138_1353",
         "adjusted_stops": 54,
-        "final_arrival_s": 3128
+        "final_arrival_s": 3125
       },
       {
         "route": "best_trip_4139_1241",
         "adjusted_stops": 56,
-        "final_arrival_s": 3116
+        "final_arrival_s": 3114
       },
       {
         "route": "best_trip_4142_0750",
@@ -3187,7 +3187,7 @@
       {
         "route": "best_trip_4151_0935",
         "adjusted_stops": 11,
-        "final_arrival_s": 856
+        "final_arrival_s": 860
       },
       {
         "route": "best_trip_4152_2107",
@@ -3197,7 +3197,7 @@
       {
         "route": "best_trip_4153_1542",
         "adjusted_stops": 55,
-        "final_arrival_s": 4448
+        "final_arrival_s": 4432
       },
       {
         "route": "best_trip_4154_0617",
@@ -3237,7 +3237,7 @@
       {
         "route": "best_trip_4167_0846",
         "adjusted_stops": 40,
-        "final_arrival_s": 4979
+        "final_arrival_s": 5000
       },
       {
         "route": "best_trip_4168_0818",
@@ -3267,7 +3267,7 @@
       {
         "route": "best_trip_4178_1918",
         "adjusted_stops": 41,
-        "final_arrival_s": 3335
+        "final_arrival_s": 3329
       },
       {
         "route": "best_trip_4181_1220",
@@ -3277,7 +3277,7 @@
       {
         "route": "best_trip_4182_1230",
         "adjusted_stops": 52,
-        "final_arrival_s": 3785
+        "final_arrival_s": 3769
       },
       {
         "route": "best_trip_4186_1837",
@@ -3302,7 +3302,7 @@
       {
         "route": "best_trip_4192_1225",
         "adjusted_stops": 31,
-        "final_arrival_s": 2849
+        "final_arrival_s": 2870
       },
       {
         "route": "best_trip_4193_0813",
@@ -3332,7 +3332,7 @@
       {
         "route": "best_trip_4198_2013",
         "adjusted_stops": 45,
-        "final_arrival_s": 3813
+        "final_arrival_s": 3815
       },
       {
         "route": "best_trip_4199_0939",
@@ -3407,7 +3407,7 @@
       {
         "route": "best_trip_4218_2200",
         "adjusted_stops": 70,
-        "final_arrival_s": 5212
+        "final_arrival_s": 5196
       },
       {
         "route": "best_trip_4219_1818",
@@ -3417,7 +3417,7 @@
       {
         "route": "best_trip_4220_0837",
         "adjusted_stops": 14,
-        "final_arrival_s": 803
+        "final_arrival_s": 799
       },
       {
         "route": "best_trip_4221_1115",
@@ -3457,7 +3457,7 @@
       {
         "route": "best_trip_4228_2155",
         "adjusted_stops": 16,
-        "final_arrival_s": 944
+        "final_arrival_s": 942
       },
       {
         "route": "best_trip_4231_0822",
@@ -3477,7 +3477,7 @@
       {
         "route": "best_trip_4234_0738",
         "adjusted_stops": 13,
-        "final_arrival_s": 881
+        "final_arrival_s": 882
       },
       {
         "route": "best_trip_4239_2250",
@@ -3502,7 +3502,7 @@
       {
         "route": "best_trip_4243_1935",
         "adjusted_stops": 42,
-        "final_arrival_s": 6491
+        "final_arrival_s": 6492
       },
       {
         "route": "best_trip_4244_1830",
@@ -3547,7 +3547,7 @@
       {
         "route": "best_trip_4261_2037",
         "adjusted_stops": 14,
-        "final_arrival_s": 1062
+        "final_arrival_s": 1060
       },
       {
         "route": "best_trip_4262_0615",
@@ -3557,7 +3557,7 @@
       {
         "route": "best_trip_4263_0710",
         "adjusted_stops": 33,
-        "final_arrival_s": 2429
+        "final_arrival_s": 2427
       },
       {
         "route": "best_trip_4264_0945",
@@ -3567,7 +3567,7 @@
       {
         "route": "best_trip_4265_1917",
         "adjusted_stops": 18,
-        "final_arrival_s": 1601
+        "final_arrival_s": 1599
       },
       {
         "route": "best_trip_4266_0820",
@@ -3582,7 +3582,7 @@
       {
         "route": "best_trip_4270_1506",
         "adjusted_stops": 47,
-        "final_arrival_s": 3410
+        "final_arrival_s": 3414
       },
       {
         "route": "best_trip_4273_0639",
@@ -3597,7 +3597,7 @@
       {
         "route": "best_trip_4277_1730",
         "adjusted_stops": 52,
-        "final_arrival_s": 5382
+        "final_arrival_s": 5383
       },
       {
         "route": "best_trip_4278_2251",
@@ -3722,7 +3722,7 @@
       {
         "route": "best_trip_4344_0808",
         "adjusted_stops": 19,
-        "final_arrival_s": 957
+        "final_arrival_s": 943
       },
       {
         "route": "best_trip_4345_1549",
@@ -3737,7 +3737,7 @@
       {
         "route": "best_trip_4347_2130",
         "adjusted_stops": 48,
-        "final_arrival_s": 3458
+        "final_arrival_s": 3456
       },
       {
         "route": "best_trip_4348_0944",
@@ -3747,7 +3747,7 @@
       {
         "route": "best_trip_4349_1012",
         "adjusted_stops": 27,
-        "final_arrival_s": 2147
+        "final_arrival_s": 2145
       },
       {
         "route": "best_trip_4350_0550",
@@ -3792,7 +3792,7 @@
       {
         "route": "best_trip_4358_1818",
         "adjusted_stops": 20,
-        "final_arrival_s": 1258
+        "final_arrival_s": 1261
       },
       {
         "route": "best_trip_4359_1226",
@@ -3867,7 +3867,7 @@
       {
         "route": "best_trip_4377_1610",
         "adjusted_stops": 68,
-        "final_arrival_s": 4630
+        "final_arrival_s": 4614
       },
       {
         "route": "best_trip_4378_2050",
@@ -3877,7 +3877,7 @@
       {
         "route": "best_trip_4379_0815",
         "adjusted_stops": 51,
-        "final_arrival_s": 3852
+        "final_arrival_s": 3836
       },
       {
         "route": "best_trip_4380_0745",
@@ -3897,7 +3897,7 @@
       {
         "route": "best_trip_4383_1737",
         "adjusted_stops": 61,
-        "final_arrival_s": 4738
+        "final_arrival_s": 4722
       },
       {
         "route": "best_trip_4384_0854",
@@ -3922,7 +3922,7 @@
       {
         "route": "best_trip_4388_1452",
         "adjusted_stops": 20,
-        "final_arrival_s": 1443
+        "final_arrival_s": 1441
       },
       {
         "route": "best_trip_4389_0130",
@@ -3952,7 +3952,7 @@
       {
         "route": "best_trip_4396_1809",
         "adjusted_stops": 48,
-        "final_arrival_s": 3713
+        "final_arrival_s": 3712
       },
       {
         "route": "best_trip_4397_0905",
@@ -3962,12 +3962,12 @@
       {
         "route": "best_trip_4398_0730",
         "adjusted_stops": 50,
-        "final_arrival_s": 5509
+        "final_arrival_s": 5510
       },
       {
         "route": "best_trip_4399_0818",
         "adjusted_stops": 48,
-        "final_arrival_s": 5659
+        "final_arrival_s": 5652
       },
       {
         "route": "best_trip_4400_0657",
@@ -3987,7 +3987,7 @@
       {
         "route": "best_trip_4405_2050",
         "adjusted_stops": 61,
-        "final_arrival_s": 4041
+        "final_arrival_s": 4039
       },
       {
         "route": "best_trip_4406_1407",
@@ -4042,7 +4042,7 @@
       {
         "route": "best_trip_4416_0905",
         "adjusted_stops": 40,
-        "final_arrival_s": 3634
+        "final_arrival_s": 3635
       },
       {
         "route": "best_trip_4417_0831",
@@ -4052,7 +4052,7 @@
       {
         "route": "best_trip_4418_2143",
         "adjusted_stops": 60,
-        "final_arrival_s": 3991
+        "final_arrival_s": 3988
       },
       {
         "route": "best_trip_4419_0725",
@@ -4067,7 +4067,7 @@
       {
         "route": "best_trip_4421_0725",
         "adjusted_stops": 54,
-        "final_arrival_s": 4350
+        "final_arrival_s": 4334
       },
       {
         "route": "best_trip_4422_1816",
@@ -4082,7 +4082,7 @@
       {
         "route": "best_trip_4424_0627",
         "adjusted_stops": 48,
-        "final_arrival_s": 2904
+        "final_arrival_s": 2903
       },
       {
         "route": "best_trip_4425_1322",
@@ -4097,7 +4097,7 @@
       {
         "route": "best_trip_4431_0715",
         "adjusted_stops": 45,
-        "final_arrival_s": 2789
+        "final_arrival_s": 2787
       },
       {
         "route": "best_trip_4432_1115",
@@ -4112,7 +4112,7 @@
       {
         "route": "best_trip_4434_1929",
         "adjusted_stops": 13,
-        "final_arrival_s": 601
+        "final_arrival_s": 605
       },
       {
         "route": "best_trip_4435_1533",
@@ -4227,7 +4227,7 @@
       {
         "route": "best_trip_4475_2031",
         "adjusted_stops": 50,
-        "final_arrival_s": 4233
+        "final_arrival_s": 4175
       },
       {
         "route": "best_trip_4482_0115",
@@ -4272,7 +4272,7 @@
       {
         "route": "best_trip_4494_2050",
         "adjusted_stops": 51,
-        "final_arrival_s": 3831
+        "final_arrival_s": 3815
       },
       {
         "route": "best_trip_4495_1500",
@@ -4282,12 +4282,12 @@
       {
         "route": "best_trip_4496_2020",
         "adjusted_stops": 57,
-        "final_arrival_s": 3711
+        "final_arrival_s": 3709
       },
       {
         "route": "best_trip_4499_0415",
         "adjusted_stops": 52,
-        "final_arrival_s": 4736
+        "final_arrival_s": 4738
       },
       {
         "route": "best_trip_4500_0508",
@@ -4332,7 +4332,7 @@
       {
         "route": "best_trip_4514_1426",
         "adjusted_stops": 19,
-        "final_arrival_s": 1178
+        "final_arrival_s": 1203
       },
       {
         "route": "best_trip_4515_1351",
@@ -4347,7 +4347,7 @@
       {
         "route": "best_trip_4517_1748",
         "adjusted_stops": 64,
-        "final_arrival_s": 4400
+        "final_arrival_s": 4384
       },
       {
         "route": "best_trip_4522_1025",
@@ -4457,7 +4457,7 @@
       {
         "route": "best_trip_4549_1258",
         "adjusted_stops": 11,
-        "final_arrival_s": 710
+        "final_arrival_s": 696
       },
       {
         "route": "best_trip_4550_0830",
@@ -4492,12 +4492,12 @@
       {
         "route": "best_trip_4556_1603",
         "adjusted_stops": 66,
-        "final_arrival_s": 5213
+        "final_arrival_s": 5230
       },
       {
         "route": "best_trip_4557_1751",
         "adjusted_stops": 66,
-        "final_arrival_s": 5012
+        "final_arrival_s": 4996
       },
       {
         "route": "best_trip_4558_0809",
@@ -4562,7 +4562,7 @@
       {
         "route": "best_trip_4570_0817",
         "adjusted_stops": 32,
-        "final_arrival_s": 3094
+        "final_arrival_s": 3092
       },
       {
         "route": "best_trip_4571_0940",
@@ -4587,7 +4587,7 @@
       {
         "route": "best_trip_4575_0607",
         "adjusted_stops": 39,
-        "final_arrival_s": 3200
+        "final_arrival_s": 3199
       },
       {
         "route": "best_trip_4576_0919",
@@ -4612,7 +4612,7 @@
       {
         "route": "best_trip_4580_0617",
         "adjusted_stops": 53,
-        "final_arrival_s": 4063
+        "final_arrival_s": 4052
       },
       {
         "route": "best_trip_4581_0901",
@@ -4622,7 +4622,7 @@
       {
         "route": "best_trip_4582_1650",
         "adjusted_stops": 50,
-        "final_arrival_s": 3985
+        "final_arrival_s": 3987
       },
       {
         "route": "best_trip_4583_0728",
@@ -4817,12 +4817,12 @@
       {
         "route": "best_trip_916_1120",
         "adjusted_stops": 60,
-        "final_arrival_s": 4746
+        "final_arrival_s": 4730
       },
       {
         "route": "best_trip_917_0717",
         "adjusted_stops": 53,
-        "final_arrival_s": 3926
+        "final_arrival_s": 3925
       },
       {
         "route": "best_trip_939_1202",
@@ -6187,7 +6187,7 @@
       {
         "route": "NMMT_8396_9982",
         "adjusted_stops": 181,
-        "final_arrival_s": 14834
+        "final_arrival_s": 14792
       },
       {
         "route": "NMMT_8397_12490",
@@ -6482,7 +6482,7 @@
       {
         "route": "NMMT_8794_17148",
         "adjusted_stops": 14,
-        "final_arrival_s": 1114
+        "final_arrival_s": 1110.0
       },
       {
         "route": "NMMT_8797_24705",
@@ -6582,7 +6582,7 @@
       {
         "route": "NMMT_8937_24679",
         "adjusted_stops": 44,
-        "final_arrival_s": 3602
+        "final_arrival_s": 3592.0
       },
       {
         "route": "NMMT_8943_24550",
@@ -7402,7 +7402,7 @@
       {
         "route": "NMMT_9597_20708",
         "adjusted_stops": 6,
-        "final_arrival_s": 437
+        "final_arrival_s": 438
       },
       {
         "route": "NMMT_9598_20716",
@@ -8557,7 +8557,7 @@
       {
         "route": "tmt_153_0_16",
         "adjusted_stops": 38,
-        "final_arrival_s": 4088
+        "final_arrival_s": 4097
       },
       {
         "route": "tmt_153_1_28",
@@ -9062,7 +9062,7 @@
       {
         "route": "tmt_83_1_11",
         "adjusted_stops": 15,
-        "final_arrival_s": 8659
+        "final_arrival_s": 8658
       },
       {
         "route": "tmt_84_0_12",
@@ -9240,14 +9240,14 @@
         "final_arrival_s": 973
       },
       {
-        "route": "vvmt_trip_12_1_0600",
-        "adjusted_stops": 113,
-        "final_arrival_s": 25535
-      },
-      {
         "route": "vvmt_trip_12_0_1800",
         "adjusted_stops": 113,
         "final_arrival_s": 25256
+      },
+      {
+        "route": "vvmt_trip_12_1_0600",
+        "adjusted_stops": 113,
+        "final_arrival_s": 25535
       },
       {
         "route": "vvmt_trip_13_0_1420",
@@ -9262,17 +9262,17 @@
       {
         "route": "vvmt_trip_14_0_1030",
         "adjusted_stops": 58,
-        "final_arrival_s": 4465
-      },
-      {
-        "route": "vvmt_trip_17_1_2040",
-        "adjusted_stops": 25,
-        "final_arrival_s": 1641
+        "final_arrival_s": 4447
       },
       {
         "route": "vvmt_trip_17_0_1600",
         "adjusted_stops": 25,
         "final_arrival_s": 1545
+      },
+      {
+        "route": "vvmt_trip_17_1_2040",
+        "adjusted_stops": 25,
+        "final_arrival_s": 1636
       },
       {
         "route": "vvmt_trip_18_0_0730",
@@ -9282,17 +9282,12 @@
       {
         "route": "vvmt_trip_19_0_0710",
         "adjusted_stops": 57,
-        "final_arrival_s": 7386
+        "final_arrival_s": 7387
       },
       {
         "route": "vvmt_trip_2_1_1815",
         "adjusted_stops": 37,
-        "final_arrival_s": 3082
-      },
-      {
-        "route": "vvmt_trip_20_1_0915",
-        "adjusted_stops": 35,
-        "final_arrival_s": 2626
+        "final_arrival_s": 3242
       },
       {
         "route": "vvmt_trip_20_0_2055",
@@ -9300,9 +9295,14 @@
         "final_arrival_s": 2549
       },
       {
+        "route": "vvmt_trip_20_1_0915",
+        "adjusted_stops": 35,
+        "final_arrival_s": 2621
+      },
+      {
         "route": "vvmt_trip_21_0_1000",
         "adjusted_stops": 31,
-        "final_arrival_s": 2290
+        "final_arrival_s": 2291
       },
       {
         "route": "vvmt_trip_23_0_1240",
@@ -9315,19 +9315,19 @@
         "final_arrival_s": 4851
       },
       {
-        "route": "vvmt_trip_26_1_2030",
-        "adjusted_stops": 19,
-        "final_arrival_s": 929
-      },
-      {
         "route": "vvmt_trip_26_0_0700",
         "adjusted_stops": 19,
         "final_arrival_s": 937
       },
       {
+        "route": "vvmt_trip_26_1_2030",
+        "adjusted_stops": 19,
+        "final_arrival_s": 929
+      },
+      {
         "route": "vvmt_trip_27_0_0600",
         "adjusted_stops": 147,
-        "final_arrival_s": 14918
+        "final_arrival_s": 14916
       },
       {
         "route": "vvmt_trip_28_0_1635",
@@ -9407,7 +9407,7 @@
     ]
   },
   "fleet": {
-    "vehicles": 115100,
+    "vehicles": 115048,
     "vehicle_capacity_patched": [
       [
         "bus_city",
@@ -9542,7 +9542,7 @@
       "ferry_marve_manori": 76,
       "ferry_versova_madh": 74,
       "ferry_wharf_mora": 52,
-      "metro_beml_6car": 1104,
+      "metro_beml_6car": 1052,
       "metro_line1_4car": 276,
       "metro_line3_8car": 276,
       "metro_navi_3car": 276,
@@ -9550,7 +9550,7 @@
       "rail_emu_12car_central": 704,
       "rail_emu_12car_uran": 352
     },
-    "vehicle_refs": 115100
+    "vehicle_refs": 115048
   },
   "tables_sha256": {
     "boarding_fares": "951d7ddaa057fe8ea57067b08572f910d68d340ac0cffbbee30137e53c0b8b9b",

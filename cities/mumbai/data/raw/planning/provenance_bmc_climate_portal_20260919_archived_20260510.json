@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/bmc_climate_portal_20260919_archived_20260510_71595fe55b0a0cb6.html",
+      "url": "https://web.archive.org/web/20260510203533id_/https://mcap.mcgm.gov.in/",
+      "final_url": "https://web.archive.org/web/20260510203533id_/https://mcap.mcgm.gov.in/",
+      "source": "Internet Archive copy (10 May 2026) of: Mumbai Climate Action Plan public portal",
+      "licence": "BMC website; reuse terms unverified",
+      "retrieved": "2026-09-21T17:55:33.854175+00:00",
+      "sha256": "71595fe55b0a0cb6622cd9d8b1a2130cabffde11a51c7abc957241dd7e79ecd0",
+      "bytes": 189313,
+      "content_type": "text/html; charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20260510203533 of https://mcap.mcgm.gov.in/ (catalogue id bmc_climate_portal_20260919), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Official report catalogue and climate programme context."
+    }
+  ]
+}

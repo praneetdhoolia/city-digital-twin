@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/rdso_mrvc3_emu_spec_2017_archived_20240709_4417415d139aeeaa.pdf",
+      "url": "https://web.archive.org/web/20240709221928id_/https://rdso.indianrailways.gov.in/works/uploads/File/MRVC%20III%20SPEC%20WEB.pdf",
+      "final_url": "https://web.archive.org/web/20240709221928id_/https://rdso.indianrailways.gov.in/works/uploads/File/MRVC%20III%20SPEC%20WEB.pdf",
+      "source": "Internet Archive copy (09 July 2024) of: RDSO MRVC/MUTP-III AC EMU technical specification 0190-2017 revision 0",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "retrieved": "2026-09-21T17:55:43.498200+00:00",
+      "sha256": "4417415d139aeeaa31d45ac3a4118250732f15ab835169db15da291183f841f7",
+      "bytes": 5438454,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20240709221928 of https://rdso.indianrailways.gov.in/works/uploads/File/MRVC%20III%20SPEC%20WEB.pdf (catalogue id rdso_mrvc3_emu_spec_2017), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Design requirements, loading-density definitions, car layouts and traction characteristics. Procurement specification does not establish current fleet or operational service assignments."
+    }
+  ]
+}

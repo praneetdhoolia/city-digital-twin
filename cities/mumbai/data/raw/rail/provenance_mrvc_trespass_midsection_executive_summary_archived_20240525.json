@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/mrvc_trespass_midsection_executive_summary_archived_20240525_d1f84b32895441d2.pdf",
+      "url": "https://web.archive.org/web/20240525015917id_/https://mrvc.indianrailways.gov.in/works/uploads/File/1.Executive%20Summary_Volume%201%281%29.pdf",
+      "final_url": "https://web.archive.org/web/20240525015917id_/https://mrvc.indianrailways.gov.in/works/uploads/File/1.Executive%20Summary_Volume%201%281%29.pdf",
+      "source": "Internet Archive copy (25 May 2024) of: MRVC final study on mid-section railway trespassing: executive summary",
+      "licence": "MRVC publication; reuse terms unverified",
+      "retrieved": "2026-09-21T18:12:35.036537+00:00",
+      "sha256": "d1f84b32895441d2dda2719d08d4509bc25810ab9b05597cad66b4cb9dd08df5",
+      "bytes": 3702295,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20240525015917 of https://mrvc.indianrailways.gov.in/works/uploads/File/1.Executive%20Summary_Volume%201%281%29.pdf (catalogue id mrvc_trespass_midsection_executive_summary), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Historical observed pedestrian access, crossings and proposed remedies around suburban railway corridors. Internal survey dates and proposed-versus-built facilities must be extracted; recommendations are not current infrastructure."
+    }
+  ]
+}

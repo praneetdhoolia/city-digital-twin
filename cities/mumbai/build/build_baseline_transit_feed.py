@@ -93,6 +93,7 @@ def main():
     new_stops, new_routes, new_trips, new_times = {}, [], [], []
     report, skipped = [], []
     start, end = cfg.get('A.baseline_transit.service_window_s')
+    line_windows = cfg.get('A.baseline_transit.line_windows_s')   # published first/last trains, per relation (9.208)
     peaks, peak_headway, offpeak = cfg.get('A.baseline_transit.peak_windows_s'), cfg.get('A.baseline_transit.peak_headway_s'), cfg.get('A.baseline_transit.offpeak_headway_s')
     speed, dwell, factor = cfg.get('A.baseline_transit.commercial_speed_kmh'), cfg.get('A.baseline_transit.stop_dwell_s'), cfg.get('A.baseline_transit.distance_multiplier')
     with zipfile.ZipFile(city.path('schedules/baseline_bus.zip')) as incoming:
@@ -155,8 +156,9 @@ def main():
                 arrival = elapsed + length / (speed[mode] / 3.6)
                 elapsed = arrival + dwell[mode]
                 offsets.append((round(arrival), round(elapsed)))
-            departure, departures = start, 0
-            while departure < end:
+            first, last = line_windows.get(identity, [start, end])
+            departure, departures = first, 0
+            while departure < last:
                 tid = f'{rid}_{departure}'
                 new_trips.append(dict(route_id=rid, service_id=service_id, trip_id=tid,
                                       direction_id=direction))
@@ -170,8 +172,10 @@ def main():
                 departures += 1
             report.append(dict(route_id=rid, osm_relation_id=identity, mode=mode,
                 stops_count=len(stop_ids), departures_count=departures, duration_s=round(elapsed),
+                window_s=[first, last],
                 geometry_source='mapped_native_stops_or_ferry_way',
-                timetable_source='modelled_from_provisional_registry'))
+                timetable_source=('published_window_provisional_headway' if identity in line_windows
+                                  else 'modelled_from_provisional_registry')))
     # The Maritime Board's crossings (9.207): a directory route between the two OSM
     # terminals the registry names, on the straight water line between them (the
     # extract holds no route=ferry way for these), its window the directory's first

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/cr_mumbai_signal_telecom_page_archived_20230819_0765c2b82a536a5c.html",
+      "url": "https://web.archive.org/web/20230819054204id_/https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,1191,1192,1211",
+      "final_url": "https://web.archive.org/web/20230819054204id_/https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,1191,1192,1211",
+      "source": "Internet Archive copy (19 August 2023) of: Central Railway Mumbai division signalling and telecom page",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "retrieved": "2026-09-21T17:55:45.292387+00:00",
+      "sha256": "0765c2b82a536a5c9f94e27f276343592a0662cd41d36d0024041aead546a25d",
+      "bytes": 472784,
+      "content_type": "text/html;charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Wayback Machine snapshot of 20230819054204 of https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,1191,1192,1211 (catalogue id cr_mumbai_signal_telecom_page), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Mumbai division signalling evidence and linked asset documents; current applicability requires inspection."
+    }
+  ]
+}
