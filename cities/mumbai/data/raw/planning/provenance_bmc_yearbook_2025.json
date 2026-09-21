@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/bmc_yearbook_2025_fff3ddf74a5523ad.pdf",
+      "url": "https://portal.mcgm.gov.in/irj/go/km/docs/documents/HomePage%20Data/Whats%20New/English%20Year%20Book%202025%20Portal.pdf",
+      "final_url": "https://portal.mcgm.gov.in/irj/go/km/docs/documents/HomePage%20Data/Whats%20New/English%20Year%20Book%202025%20Portal.pdf",
+      "content_type": "application/pdf",
+      "source": "BMC official yearbook 2025",
+      "licence": "Operator or government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:00:25.858359+00:00",
+      "sha256": "fff3ddf74a5523adae18bdb2e40e6608967d608697ed96590759b58f6669577b",
+      "bytes": 13500801,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Municipal facts and BEST transport operating statistics at March 2025; historical observations not September 2026 totals.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

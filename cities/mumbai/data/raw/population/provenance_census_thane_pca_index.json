@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_thane_pca_index_aa583ec27e290fd2.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/6708",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/6708",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Thane 2011 PCA index",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:45:46.141389+00:00",
+      "sha256": "aa583ec27e290fd2d9a23b4d918bda26404414b8b77a64397309dc9700f6ac97",
+      "bytes": 3007729,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official catalogue; workbook link and definitions.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

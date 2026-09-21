@@ -1,0 +1,34 @@
+{
+  "source": "derived_native_boarding_join_evidence",
+  "input_sha256": {
+    "data/processed/acquisition/cr_harbour_constrained_paths_audit.json": "2126adafe830ee71a5305e90aff8fa7f8404f3098a144bf3112469f5d4129f7d",
+    "data/processed/network/cr_harbour_boarding_nodes.csv": "6a24f95dc367691e9f22e146b5f45203255d26e3abdbb2cbcc87742f683f3fd1",
+    "data/processed/network/cr_harbour_mapped_route_segments.csv": "8982f0912337ceb1be77005686b387a442252fb836ca5213d5a574a1bd17cf3e",
+    "data/processed/transit/cr_harbour_constrained_service_candidates.csv": "55ef0102755be3b2c1cbef053444890c6edbdad3a1b6d855b5f3042985ab48bb",
+    "data/processed/transit/cr_harbour_path_patterns.csv": "13211061e3a9186dbfeec718483a9e309d2385c976a577b063a3e9fc2b9b2cdb"
+  },
+  "attempted_unresolved_patterns": 4,
+  "join_candidates": 5,
+  "ambiguous_join_candidates": 0,
+  "unique_composite_paths": 1,
+  "composite_patterns": 1,
+  "newly_supported_services": 37,
+  "services_with_track_candidates": 857,
+  "services_without_track_candidates": 19,
+  "segment_rows": 388,
+  "composite_paths_with_join_reversal": 0,
+  "composite_paths_against_static_oneway": 0,
+  "unresolved_patterns": [
+    "2f7d94adc2a8901d0ea7f7789c7f85c1f890fa4ae9653876b7486c54f16a9d75",
+    "331fcd0f31f9108455185f1162e6e84ab6a08cf6ba771935beb41a99129ca44a",
+    "3b3f515d3b07360bd1f0e545a23fd08594d8505a8cb14c8291ba66844f307b96"
+  ],
+  "limitations": [
+    "Two source route chains are joined only at a shared native node already identified as the same timetable boarding stop.",
+    "Identical physical paths from alternative join positions count once; every source-chain segment reference remains available.",
+    "A composite path is derived evidence, not an observed route relation, operating permission or train-specific platform allocation.",
+    "Only previously unresolved patterns and one join between two mapped chains are assessed; lack of such evidence does not prove impossibility.",
+    "Reversal flags identify immediate segment reversals only; signal routes, turnouts, gauge, train length and reversal operations still need validation.",
+    "Calendars, mixed source vintages, unresolved source cells and incomplete external branches retain their original statuses. No service is exported."
+  ]
+}

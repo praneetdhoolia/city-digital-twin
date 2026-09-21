@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_route_stop_snapshot_20260918.zip",
+      "url": "https://nmmtitmsmobileapi.amnex.co.in/api/BusTracking/SearchByRouteDetails_v4",
+      "source": "NMMT public route stop and vehicle snapshot 20260918, one query per current route",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:40:57.941309+00:00",
+      "retrieved_first": "2026-09-18T11:14:41.596107+00:00",
+      "sha256": "62bc1ed7e5f9740e8930b1a82349a0f1fc5ffd0c75f02bf7b624d37c7bbffa02",
+      "bytes": 1640628,
+      "content_type": "application/zip",
+      "producing_script": "extract/acquire_nmmt_route_stops.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Sequential public query. Stops and reported vehicles need spatial, timestamp and operating-status validation; not a fleet census.",
+      "method": "POST",
+      "harvest": true,
+      "member_count": 619,
+      "members_listing": "_members.csv",
+      "formats": [
+        "json"
+      ],
+      "packed": "2026-09-21T06:14:05.640941+00:00"
+    }
+  ]
+}

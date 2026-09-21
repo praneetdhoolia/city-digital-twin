@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/demand/census_b28_maharashtra_0b0b001faccad197.xlsx",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/13981/download/17094/DDW-2700B-28.xlsx",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/13981/download/17094/DDW-2700B-28.xlsx",
+      "content_type": "application/octet-stream",
+      "source": "Maharashtra B28 commuting distance and mode 2011",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:46:46.996750+00:00",
+      "sha256": "0b0b001faccad197013de65996e77c71b9d92b390d0b21613a5003155028da09",
+      "bytes": 252358,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical 2011 observations; geographic crosswalk and current projection required.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/wr_bct_disaster_plan_part1_2025_0bd5fd0497f5caf4.pdf",
+      "url": "https://wr.indianrailways.gov.in/cris/uploads/files/1739174922855-Disaster%20Management%20%20Plan%202025%20Part-I%20BCT%20Division.pdf",
+      "final_url": "https://wr.indianrailways.gov.in/cris/uploads/files/1739174922855-Disaster%20Management%20%20Plan%202025%20Part-I%20BCT%20Division.pdf",
+      "source": "Western Railway Mumbai Central division disaster management plan part I 2025",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "retrieved": "2026-09-18T20:41:17.412688+00:00",
+      "sha256": "0bd5fd0497f5caf4caee1ec2247fcef2f87750ee08060d895eb350d8b7d78460",
+      "bytes": 10709762,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Divisional operating geography and infrastructure reference. Extract station identities, line sections and technical facts with their dated scope; emergency plans and contact directories are not current service or staffing observations."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/water/mmb_ogd_catalogue_b5cda76ec670614a.html",
+      "url": "https://ap.data.gov.in/catalog/statistics-annual-passenger-water-transport-maharashtra",
+      "final_url": "https://ap.data.gov.in/catalog/statistics-annual-passenger-water-transport-maharashtra",
+      "content_type": "text/html; charset=utf-8",
+      "source": "MMB passenger transport OGD catalogue",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:37:55.166724+00:00",
+      "sha256": "b5cda76ec670614a2ec4c95af0ddc47fdb05999fc596c5ddef9b5efaab5e6b8b",
+      "bytes": 1014457,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Catalogue metadata; resources not visible in initial page.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

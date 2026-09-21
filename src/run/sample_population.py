@@ -22,19 +22,23 @@ views of one population rather than three independent draws, and a difference
 between them is a sample-size effect rather than a sampling one. Hashing the
 HOUSEHOLD id nests exactly as hashing the person id did.
 
-**Fleet scaled with it.** MATSim enforces transit vehicle capacity at boarding,
-and the fleet carries `seats` with `standingRoomInPersons=0` (Bus 70, Tram 180).
-At a 10% sample an unscaled bus carries 70 sampled agents, i.e. 700 real ones,
-so capacity never binds and crowding silently disappears. Seats are therefore
-scaled by the same fraction, with a floor of `RUN.sample.transit_capacity_floor`
-seats so no vehicle becomes unusable.
+**Fleet scaled with it.** MATSim enforces seated and standing capacity at
+boarding. Both components scale by the population fraction. Each nonzero
+component retains the declared `RUN.sample.transit_capacity_floor`; a component
+that was zero stays zero. Integer rounding and this floor still require
+validation when a service carries few sampled passengers.
 
 Nothing here reads a validation target, let alone a holdout one.
 """
 import argparse
 import gzip
 import hashlib
-import re
+import math
+import os
+from pathlib import Path
+import tempfile
+import xml.etree.ElementTree as ET
+from lxml import etree as XML
 
 from det_io import gzip_writer
 import registry
@@ -72,19 +76,13 @@ def capacity_floor():
 
 
 def sample_unit():
-    """RUN.sample.unit - declared, not typed in. `person` reproduces every
-    run made before DECISIONS.md 9.45 byte for byte, which is what makes the
-    two comparable within one build."""
+    """RUN.sample.unit - declared, not typed in. `person` retains the
+    person inclusion rule from before DECISIONS.md 9.45. XML serialisation
+    is structural and need not reproduce an older file's whitespace."""
     return _cfg().get('RUN.sample.unit')
 
 
 CAPACITY_FLOOR_DOC = None
-PERSON_RE = re.compile(r'<person id="([^"]+)"')
-# The boundary tiers carry no householdId at all - they have no B1 household -
-# so the absence of this attribute is meaningful and those agents keep hashing
-# on their own id.
-HOUSEHOLD_RE = re.compile(
-    r'<attribute name="householdId"[^>]*>([^<]+)</attribute>')
 # DECISIONS.md 9.60: a lift binding couples TWO households. Sampled
 # independently, the pair survives intact with probability fraction^2 - the
 # 9.45 defect class again, with the coupling one level up - so households
@@ -93,17 +91,61 @@ HOUSEHOLD_RE = re.compile(
 # household's inclusion probability stays exactly the fraction, and the
 # stated price is the same as 9.45's (a clustered sample carries more
 # variance at fixed size).
-LIFT_RE = re.compile(
-    r'<attribute name="liftHousehold"[^>]*>([^<]+)</attribute>')
 # DECISIONS.md 9.127: the shared-ride drivers' households, a subset of
 # liftHousehold that the binder bound under the sampler's own unit-hash rule
 # and that must therefore NOT be unioned into clusters.
-SHARED_RE = re.compile(
-    r'<attribute name="sharedDriverHousehold"[^>]*>([^<]+)</attribute>')
-# <ns0:capacity seats="70" standingRoomInPersons="0"> - both numbers are scaled,
-# so a fleet that had standing room would scale too, though this one has none.
-CAPACITY_RE = re.compile(r'(<[\w:]*capacity\b[^>]*?)'
-                         r'(seats|standingRoomInPersons)(=")(\d+)(")')
+
+
+def population_elements(src):
+    """Stream the root declaration and complete top-level XML elements.
+
+    Memory holds one person, not the population. No DTD or external entity is
+    fetched. Internal entity declarations are refused rather than losing their
+    definitions when the population is serialised.
+    """
+    with gzip.open(src, 'rb') as stream:
+        context = XML.iterparse(stream, events=('start', 'end'), load_dtd=False,
+                                no_network=True, resolve_entities=False)
+        _, root = next(context)
+        if XML.QName(root).localname != 'population':
+            raise ValueError('plans root must be population')
+        info = root.getroottree().docinfo
+        if info.internalDTD is not None and info.internalDTD.entities():
+            raise ValueError('population entity declarations are unsupported')
+        yield 'root', (root.tag, dict(root.attrib), dict(root.nsmap), info.doctype)
+        for event, element in context:
+            if event == 'end' and element.getparent() is root:
+                yield XML.QName(element).localname, element
+                element.clear()
+                while element.getprevious() is not None:
+                    del root[0]
+
+
+def sampling_attributes(person):
+    """Read person attributes independently of layout and declaration order."""
+    attributes = {}
+    for element in person.findall('./{*}attributes/{*}attribute'):
+        name = element.get('name')
+        if name not in ('householdId', 'liftHousehold', 'sharedDriverHousehold'):
+            continue
+        if name in attributes:
+            raise ValueError('duplicate sampling attribute: ' + name)
+        if len(element):
+            raise ValueError('sampling attribute must be scalar: ' + name)
+        attributes[name] = element.text or ''
+    hid = attributes.get('householdId')
+    if hid is not None and not hid.strip():
+        raise ValueError('householdId is empty; omit it for a household-less person')
+    lifts = [value.strip() for value in attributes.get('liftHousehold', '').split(',') if value.strip()]
+    shared = {value.strip() for value in attributes.get('sharedDriverHousehold', '').split(',') if value.strip()}
+    return hid, lifts, shared
+
+
+def validate_sampling(fraction, unit):
+    if isinstance(fraction, bool) or not math.isfinite(fraction) or not 0 < fraction <= 1:
+        raise ValueError('population sample fraction must be finite and in (0, 1]')
+    if unit not in ('person', 'household'):
+        raise ValueError('population sample unit must be person or household')
 
 
 def keep(person_id, fraction, seed=None, household_id=None, unit=None):
@@ -117,6 +159,7 @@ def keep(person_id, fraction, seed=None, household_id=None, unit=None):
     that happen to be the same integer are still two independent draws.
     """
     unit = sample_unit() if unit is None else unit
+    validate_sampling(fraction, unit)
     if seed is None:
         seed = default_seed()
     if unit == 'household' and household_id is not None:
@@ -133,7 +176,7 @@ def lift_cluster_map(src):
     Union-find over (householdId, liftHousehold) pairs read from the plans
     themselves, so the sampler can never disagree with what the population
     actually carries. Empty when no binding exists, which restores the 9.45
-    behaviour byte for byte. Since 9.127 the shared-ride drivers' households
+    inclusion decisions. Since 9.127 the shared-ride drivers' households
     are excluded from the unions: a directed closure over them was measured
     to pull the 10% sample to 17.65% of persons, and a union to make it half
     of what it should be; the binder's unit-hash rule needs neither.
@@ -153,39 +196,18 @@ def lift_cluster_map(src):
     # component (the first F18 arm kept 31,262 persons at 10% against
     # 62,134). The plans name them in `sharedDriverHousehold`; the person's
     # block is read whole so the exclusion is known before the unions.
-    with gzip.open(src, 'rt', encoding='utf-8') as f:
-        hid = None
-        lifts = []
-        shared = set()
-        for line in f:
-            h = HOUSEHOLD_RE.search(line)
-            if h:
-                hid = h.group(1)
-                continue
-            l = LIFT_RE.search(line)
-            if l and hid is not None:
-                lifts = [x.strip() for x in l.group(1).split(',') if x.strip()]
-                continue
-            s = SHARED_RE.search(line)
-            if s and hid is not None:
-                shared = {x.strip() for x in s.group(1).split(',') if x.strip()}
-                continue
-            if line.startswith('\t</person>'):
-                if hid is not None:
-                    # comma-separated since 9.68: a round-trip pair may be
-                    # served by drivers from two households - union them all,
-                    # less the shared-ride drivers the hash rule already keeps
-                    for lift_hh in lifts:
-                        if lift_hh in shared:
-                            continue
-                        a, b = find(hid), find(lift_hh)
-                        if a != b:
-                            # canonical: the numerically smaller root wins
-                            lo, hi = sorted((a, b), key=lambda v: (len(v), v))
-                            parent[hi] = lo
-                hid = None
-                lifts = []
-                shared = set()
+    for kind, element in population_elements(src):
+        if kind != 'person':
+            continue
+        hid, lifts, shared = sampling_attributes(element)
+        if hid is not None:
+            for lift_hh in lifts:
+                if lift_hh in shared:
+                    continue
+                a, b = find(hid), find(lift_hh)
+                if a != b:
+                    lo, hi = sorted((a, b), key=lambda v: (len(v), v))
+                    parent[hi] = lo
     return {h: find(h) for h in list(parent)}
 
 
@@ -198,57 +220,96 @@ def subsample_plans(src, dst, fraction, seed=None, unit=None, kept_ids=None):
         seed = default_seed()
     if unit is None:
         unit = sample_unit()
+    validate_sampling(fraction, unit)
+    if Path(src).resolve() == Path(dst).resolve():
+        raise ValueError('sample output must not replace its source population')
     # 9.60 clusters over the lift couplings; 9.127: the shared-ride drivers
     # are excluded from them (see lift_cluster_map) because the binder keeps
     # them by the unit-hash rule, so the clusters stay small
     cluster = lift_cluster_map(src) if unit == 'household' else {}
-    with gzip.open(src, 'rt', encoding='utf-8') as f, gzip_writer(dst) as w:
-        buf, pid, hid = None, None, None
-        for line in f:
-            if buf is None:
-                m = PERSON_RE.search(line)
-                if m:
-                    buf, pid, hid, n_in = [line], m.group(1), None, n_in + 1
-                elif not line.startswith('\t'):
-                    w.write(line)
-                continue
-            buf.append(line)
-            if hid is None:
-                h = HOUSEHOLD_RE.search(line)
-                if h:
-                    hid = h.group(1)
-            if line.startswith('\t</person>'):
-                if hid is None:
-                    n_no_household += 1
-                if keep(pid, fraction, seed, cluster.get(hid, hid), unit):
-                    w.write(''.join(buf))
-                    n_out += 1
-                    if kept_ids is not None:
-                        kept_ids.add(pid)
-                buf = None
+    seen, retained = set(), set() if kept_ids is not None else None
+    # A malformed late person must not replace an existing valid run input.
+    with tempfile.TemporaryDirectory(prefix='sample-population-', dir=Path(dst).parent) as temporary:
+        staged = Path(temporary, 'plans.xml.gz')
+        elements = population_elements(src)
+        try:
+            _, (tag, attributes, namespaces, doctype) = next(elements)
+            with gzip_writer(staged, text=False) as stream, XML.xmlfile(stream, encoding='utf-8') as writer:
+                writer.write_declaration()
+                if doctype:
+                    writer.write_doctype(doctype)
+                with writer.element(tag, attributes, nsmap=namespaces):
+                    for kind, element in elements:
+                        if kind != 'person':
+                            writer.write(element)
+                            continue
+                        pid = element.get('id')
+                        if not pid or pid in seen:
+                            raise ValueError('missing or duplicate person id: ' + str(pid))
+                        seen.add(pid)
+                        n_in += 1
+                        hid, _, _ = sampling_attributes(element)
+                        if hid is None:
+                            n_no_household += 1
+                        if keep(pid, fraction, seed, cluster.get(hid, hid), unit):
+                            writer.write(element)
+                            n_out += 1
+                            if retained is not None:
+                                retained.add(pid)
+        finally:
+            elements.close()
+        os.replace(staged, dst)
+    if kept_ids is not None:
+        kept_ids.update(retained)
     return n_in, n_out, n_no_household
 
 
 def scale_transit_capacity(src, dst, fraction, floor=None):
-    """Scale every vehicle type's seat count by the sample fraction."""
+    """Scale seated and standing places in MATSim v1 and v2 vehicle XML.
+
+    Parse the XML structure: a regex consuming the start of a capacity tag
+    matched only its first attribute and left standing places at full size.
+    Return each component's old and new value for the launch audit.
+    """
+    if not math.isfinite(fraction) or not 0 < fraction <= 1:
+        raise ValueError('transit sample fraction must be finite and in (0, 1]')
     if floor is None:
         floor = capacity_floor()
-    with gzip.open(src, 'rt', encoding='utf-8') as f:
-        xml = f.read()
+    if isinstance(floor, bool) or not isinstance(floor, int) or floor < 1:
+        raise ValueError('transit capacity floor must be a positive integer')
+    with gzip.open(src, 'rb') as f:
+        tree = ET.parse(f)
     scaled = []
 
-    def shrink(m):
-        before = int(m.group(4))
-        # the floor keeps a vehicle usable: one scaled to zero seats would
-        # refuse every boarding and silently delete the service. It is
-        # RUN.sample.transit_capacity_floor, not a literal.
+    def shrink(element, attribute, component):
+        before = int(element.attrib[attribute])
+        if before < 0:
+            raise ValueError('negative transit capacity: %s' % component)
         after = max(floor, int(round(before * fraction))) if before else 0
-        scaled.append((m.group(2), before, after))
-        return m.group(1) + m.group(2) + m.group(3) + str(after) + m.group(5)
+        scaled.append((component, before, after))
+        element.set(attribute, str(after))
 
-    out = CAPACITY_RE.sub(shrink, xml)
-    with gzip_writer(dst) as w:
-        w.write(out)
+    for capacity in tree.getroot().iter():
+        if capacity.tag.rsplit('}', 1)[-1] != 'capacity':
+            continue
+        found = set()
+        for component in ('seats', 'standingRoomInPersons'):
+            if component in capacity.attrib:
+                shrink(capacity, component, component)
+                found.add(component)
+        for child in capacity:
+            component = child.tag.rsplit('}', 1)[-1]
+            if component not in ('seats', 'standingRoom'):
+                continue
+            name = 'standingRoomInPersons' if component == 'standingRoom' else component
+            if name in found:
+                raise ValueError('duplicate transit capacity component: %s' % name)
+            shrink(child, 'persons', name)
+            found.add(name)
+        if not found:
+            raise ValueError('transit capacity has no recognised passenger components')
+    with gzip_writer(dst, text=False) as w:
+        tree.write(w, encoding='utf-8', xml_declaration=True)
     return scaled
 
 

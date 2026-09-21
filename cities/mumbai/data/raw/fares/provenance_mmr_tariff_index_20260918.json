@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/fares/mmr_tariff_index_20260918_3e9a6bf8442b606a.html",
+      "url": "https://transport.maharashtra.gov.in/Site/Common/ViewPdfList.aspx?Doctype=1d1f28f9-a4e5-4b09-ab8b-1d4576adca18",
+      "final_url": "https://transport.maharashtra.gov.in/Site/Common/ViewPdfList.aspx?Doctype=1d1f28f9-a4e5-4b09-ab8b-1d4576adca18",
+      "content_type": "text/html; charset=utf-8",
+      "source": "Maharashtra official taxi and autorickshaw tariff publication index",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:56:40.573330+00:00",
+      "sha256": "3e9a6bf8442b606ab437b136d58941cfc28619c910c8a23cd3a2b13f4d696b18",
+      "bytes": 138533,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official index with September 2026 revised tariff entries; individual tariff geography and effective date require PDF verification.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

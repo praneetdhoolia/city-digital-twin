@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_metro_dpr_1_metro_line_1_c3c1feff8f4c0718.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%201.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%201.pdf",
+      "content_type": "application/pdf",
+      "source": "1 Metro Line 1 (Versova-Andheri-Ghatkopar) Download (10.21 MB)",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:16:59.861878+00:00",
+      "sha256": "c3c1feff8f4c071882c1993052ebb481c835a20a189afbfad0beb1238371787e",
+      "bytes": 10710069,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_pilot_stations_d0bc888f5f824000.xml",
+      "url": "https://nmmtservice.infinium.management/TransistService.asmx/GetStationsFromRoute?routeid=5577",
+      "final_url": "https://nmmtservice.infinium.management/TransistService.asmx/GetStationsFromRoute?routeid=5577",
+      "source": "NMMT public route 5577 GetStationsFromRoute",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:47:37.978110+00:00",
+      "sha256": "d0bc888f5f824000e3156b940ef94538e8c5b515d2cf1c3ab3d03c89bbd58884",
+      "bytes": 7501,
+      "content_type": "text/xml; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Pilot of route-specific public service data; selected from acquired route list."
+    }
+  ]
+}

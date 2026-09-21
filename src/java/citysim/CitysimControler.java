@@ -244,8 +244,11 @@ public final class CitysimControler {
         // reached a params JSON and stopped there.
         final ServiceQualityConfigGroup serviceQuality =
                 new ServiceQualityConfigGroup();
+        final ActivityLinksConfigGroup activityLinks = new ActivityLinksConfigGroup();
+        final BoardingFareConfigGroup boardingFare = new BoardingFareConfigGroup();
+        final HiredFleetConfigGroup hiredFleet = new HiredFleetConfigGroup();
         final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[19 + extraGroups.size()];
+                new org.matsim.core.config.ConfigGroup[22 + extraGroups.size()];
         groups[0] = parking;
         groups[1] = telemetry;
         groups[2] = ridePairing;
@@ -265,10 +268,17 @@ public final class CitysimControler {
         groups[16] = raptorModeCost;
         groups[17] = ptSubmodeChoice;
         groups[18] = serviceQuality;
+        groups[19] = activityLinks;
+        groups[20] = boardingFare;
+        groups[21] = hiredFleet;
         for (int i = 0; i < extraGroups.size(); i++) {
-            groups[19 + i] = extraGroups.get(i);
+            groups[22 + i] = extraGroups.get(i);
         }
         final Config config = ConfigUtils.loadConfig(configPath, groups);
+        if (boardingFare.isEnabled() && !new File(boardingFare.tableFile).isAbsolute()) {
+            boardingFare.tableFile = new File(new File(configPath).getAbsoluteFile().getParentFile(),
+                    boardingFare.tableFile).getPath();
+        }
         // The price file is written beside the config, like the network and the
         // schedule, so it is named relatively there and resolved here. MATSim
         // resolves its own input paths against the config's directory; this
@@ -283,12 +293,11 @@ public final class CitysimControler {
         }
         final org.matsim.api.core.v01.Scenario scenario =
                 ScenarioUtils.loadScenario(config);
-        // Every activity is pinned to a link its person can actually use
-        // BEFORE the Controler exists (DECISIONS.md 9.58): the router starts a
-        // leg at the nearest link of the leg's mode while the qsim inserts the
-        // vehicle at the activity's link, and with accessEgressType=none that
-        // disagreement wedged ~11.6k walk/bike legs per iteration at a
-        // disconnected first hop, aborting the agents mid-day.
+        AvailabilityModesCalculator.validateExplicitPopulation(scenario);
+        // Apply the declared activity-link policy before constructing the
+        // controller. The original common-link treatment remains available;
+        // mode-specific access retains the activity's location and delegates
+        // each mode's connections to its access/egress router (9.184).
         ActivityLinkAssigner.run(scenario);
         final Controler controler = new Controler(scenario);
         // One plain routing network per distinct link set instead of one
@@ -432,6 +441,15 @@ public final class CitysimControler {
             // carries the fare tables.
             installSingleton(controler, PtFareChargeHandler.class, true, true, false);
         }
+        if (boardingFare.isEnabled()) {
+            controler.addOverridingModule(new AbstractModule() {
+                @Override
+                public void install() {
+                    bind(BoardingFareTable.class).in(Singleton.class);
+                }
+            });
+            installSingleton(controler, BoardingFareHandler.class, true, true, false);
+        }
         if (fare.isEnabled()) {
             // The point-to-point flagfall (issue #49): one instance in
             // both roles, accumulating per-departure charges as an
@@ -486,10 +504,14 @@ public final class CitysimControler {
                 ridePairing.isEnabled() && ridePairing.isPhysicalBoarding();
         final boolean networkWalk =
                 config.qsim().getMainModes().contains(TransportMode.walk);
-        if (physicalBoarding || networkWalk) {
+        if (physicalBoarding || networkWalk || hiredFleet.enabled()) {
             controler.addOverridingQSimModule(new AbstractQSimModule() {
                 @Override
                 protected void configureQSim() {
+                    if (hiredFleet.enabled()) {
+                        bind(HiredFleetQueue.class).asEagerSingleton();
+                        addQSimComponentBinding(HiredFleetQueue.COMPONENT).to(HiredFleetQueue.class);
+                    }
                     if (physicalBoarding) {
                         // Physical boarding (DECISIONS.md 9.53, issue #48).
                         // The bookings it redeems live in the parent-scoped
@@ -546,6 +568,9 @@ public final class CitysimControler {
                 if (householdVehicles.isCensusRoster()) {
                     components.addNamedComponent(HouseholdCarDepartureHandler.COMPONENT);
                 }
+                if (hiredFleet.enabled()) {
+                    components.addNamedComponent(HiredFleetQueue.COMPONENT);
+                }
                 components.addNamedComponent(QNetsimEngineModule.COMPONENT_NAME);
                 if (physicalBoarding) {
                     components.addNamedComponent(JointRideEngine.COMPONENT);
@@ -598,7 +623,10 @@ public final class CitysimControler {
             // handler re-enters the manager mid-drain).
             installSingleton(controler, PtCrowdingScoring.class, true, true, false);
         }
-        if (raptorModeCost.isModeConstant()) {
+        if (boardingFare.routeChoice && !boardingFare.isEnabled()) {
+            throw new IllegalArgumentException("Fare route choice requires a boarding fare table");
+        }
+        if (raptorModeCost.isModeConstant() || boardingFare.routeChoice) {
             controler.addOverridingModule(new AbstractModule() {
                 @Override
                 public void install() {
@@ -610,7 +638,7 @@ public final class CitysimControler {
                     // SwissRailRaptorFactory takes it by constructor injection.
                     bind(ch.sbb.matsim.routing.pt.raptor
                             .RaptorInVehicleCostCalculator.class)
-                            .to(RaptorModeCostCalculator.class)
+                            .to(boardingFare.routeChoice ? RaptorFareCostCalculator.class : RaptorModeCostCalculator.class)
                             .in(Singleton.class);
                 }
             });

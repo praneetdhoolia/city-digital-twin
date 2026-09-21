@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/wri_mmr_layer_1_metadata_c75f32e0a18ac6e7.json",
+      "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/1?f=pjson",
+      "final_url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/1?f=pjson",
+      "source": "Public MMR layer 1 field and coverage metadata",
+      "licence": "Public ArcGIS item; reuse terms unverified",
+      "retrieved": "2026-09-18T09:18:37.534726+00:00",
+      "sha256": "c75f32e0a18ac6e70452b4b1bc2183e092f2bc184f3ceedad78a94169d164b10",
+      "bytes": 10988,
+      "content_type": "application/json; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+    }
+  ]
+}

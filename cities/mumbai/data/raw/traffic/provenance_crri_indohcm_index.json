@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/traffic/crri_indohcm_index_b99aabe607bf170e.html",
+      "url": "https://crridom.gov.in/en/indian-highway-capacity-manual",
+      "final_url": "https://crridom.gov.in/en/indian-highway-capacity-manual",
+      "content_type": "text/html; charset=utf-8",
+      "source": "CRRI Indo-HCM publication and procurement index",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T17:21:56.222493+00:00",
+      "sha256": "b99aabe607bf170e3ded587ea1fe6726976b408ab9a17ad3c579cb9482c5c282",
+      "bytes": 86252,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official manual availability and excerpts. Not a complete capacity model or local observation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

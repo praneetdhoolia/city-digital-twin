@@ -1,0 +1,44 @@
+{
+  "source": "derived_fixed_mapped_chain_boarding_evidence",
+  "input_sha256": {
+    "data/processed/acquisition/cr_harbour_mapped_routes_audit.json": "6490d7d7da89408ea395ff4d7f4f0487f95b6f89f46936f1d985eeecffd4ef96",
+    "data/processed/network/cr_harbour_boarding_nodes.csv": "6a24f95dc367691e9f22e146b5f45203255d26e3abdbb2cbcc87742f683f3fd1",
+    "data/processed/network/cr_harbour_mapped_route_segments.csv": "8982f0912337ceb1be77005686b387a442252fb836ca5213d5a574a1bd17cf3e",
+    "data/processed/transit/cr_harbour_mapped_route_stops.csv": "c2bd88850464cf3facfb989858c652e9078c236b92007dd2a6a1af729543476a",
+    "data/processed/transit/cr_harbour_path_patterns.csv": "13211061e3a9186dbfeec718483a9e309d2385c976a577b063a3e9fc2b9b2cdb",
+    "data/processed/transit/cr_harbour_service_path_candidates.csv": "859ac2876317ebd0aaf45fe3b4d85b09c2683adda4b0d6488bbbc4aa7d9ba0ed"
+  },
+  "mapped_track_chains": 22,
+  "timetable_patterns": 31,
+  "timetable_services": 876,
+  "coverage_rows": 682,
+  "coverage_status_counts": {
+    "boarding_nodes_absent_from_chain": 627,
+    "boarding_order_conflict": 27,
+    "unique_ordered_boarding_assignment": 28
+  },
+  "path_candidates": 28,
+  "patterns_with_candidates": 27,
+  "services_with_candidates": 820,
+  "services_without_candidates": 56,
+  "patterns_with_multiple_routes": 1,
+  "candidates_with_listed_stop_order_disagreement": 7,
+  "candidates_with_unrepresented_mapped_stops": 1,
+  "candidates_with_unlisted_boarding_nodes": 0,
+  "candidates_against_static_oneway": 0,
+  "segment_rows": 9380,
+  "unresolved_patterns": [
+    "2f7d94adc2a8901d0ea7f7789c7f85c1f890fa4ae9653876b7486c54f16a9d75",
+    "331fcd0f31f9108455185f1162e6e84ab6a08cf6ba771935beb41a99129ca44a",
+    "3b3f515d3b07360bd1f0e545a23fd08594d8505a8cb14c8291ba66844f307b96",
+    "e7a933b3e2d0359793b66cbdbc998559de2a5e6adce89b187516803902954778"
+  ],
+  "limitations": [
+    "Every trace follows one original mapped passenger-route way chain without shortest-path detours or station snapping.",
+    "The timetable supplies stop order; disagreements with the original mapped stop list remain explicit, and no source relation is edited.",
+    "A mapped stop without a timetable candidate is not evidence of a non-stop train: source omissions and quarantined cells still require resolution.",
+    "All complete boarding assignments are counted; ambiguous assignments are retained as coverage evidence without arbitrary selection.",
+    "Different mapped routes remain separate alternatives. Route evidence and source tags do not establish current or trip-specific operating permissions.",
+    "Composite routes, reversals, missing track members, signal blocks, gauge, calendars and fleet allocation remain unresolved. No timetable is exported."
+  ]
+}

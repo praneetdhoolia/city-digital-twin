@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_scmu_e25ffb0d0d739085.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/SCMU/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/SCMU/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Science Centre",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:33.029536+00:00",
+      "sha256": "e25ffb0d0d739085200b4b3f7708f22df883e3381aa2aaf25ddcc2520bf158fa",
+      "bytes": 18736,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

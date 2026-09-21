@@ -1,0 +1,308 @@
+{
+  "status": "service_evidence_not_runnable_timetable",
+  "source_time_cells": 15912,
+  "glyph_grid_page_checks": [
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 1,
+      "time_cells": 382,
+      "annotations": 1
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 2,
+      "time_cells": 367,
+      "annotations": 2
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 3,
+      "time_cells": 380,
+      "annotations": 1
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 4,
+      "time_cells": 333,
+      "annotations": 2
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 5,
+      "time_cells": 352,
+      "annotations": 2
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 6,
+      "time_cells": 364,
+      "annotations": 2
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 7,
+      "time_cells": 369,
+      "annotations": 1
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 8,
+      "time_cells": 361,
+      "annotations": 2
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 9,
+      "time_cells": 352,
+      "annotations": 3
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 10,
+      "time_cells": 386,
+      "annotations": 2
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 11,
+      "time_cells": 351,
+      "annotations": 3
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 12,
+      "time_cells": 329,
+      "annotations": 2
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 13,
+      "time_cells": 331,
+      "annotations": 2
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 14,
+      "time_cells": 334,
+      "annotations": 2
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 15,
+      "time_cells": 331,
+      "annotations": 2
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 16,
+      "time_cells": 324,
+      "annotations": 4
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 17,
+      "time_cells": 336,
+      "annotations": 2
+    },
+    {
+      "source_id": "cr_public_harbour_down_20260501",
+      "page": 18,
+      "time_cells": 297,
+      "annotations": 3
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 1,
+      "time_cells": 297,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 2,
+      "time_cells": 333,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 3,
+      "time_cells": 320,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 4,
+      "time_cells": 308,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 5,
+      "time_cells": 328,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 6,
+      "time_cells": 350,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 7,
+      "time_cells": 336,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 8,
+      "time_cells": 353,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 9,
+      "time_cells": 340,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 10,
+      "time_cells": 359,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 11,
+      "time_cells": 361,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 12,
+      "time_cells": 305,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 13,
+      "time_cells": 334,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 14,
+      "time_cells": 323,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 15,
+      "time_cells": 333,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 16,
+      "time_cells": 322,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 17,
+      "time_cells": 351,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 18,
+      "time_cells": 348,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_up_20260501",
+      "page": 19,
+      "time_cells": 222,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_ac_20260501",
+      "page": 1,
+      "time_cells": 159,
+      "annotations": 4
+    },
+    {
+      "source_id": "cr_public_harbour_ac_20260501",
+      "page": 2,
+      "time_cells": 151,
+      "annotations": 2
+    },
+    {
+      "source_id": "cr_public_harbour_ac_20260501",
+      "page": 3,
+      "time_cells": 143,
+      "annotations": 0
+    },
+    {
+      "source_id": "cr_public_harbour_ac_20260501",
+      "page": 4,
+      "time_cells": 155,
+      "annotations": 0
+    }
+  ],
+  "layout_annotations": 44,
+  "semantic_resolutions": 59,
+  "comparisons": {
+    "base_overlap_cells": 555,
+    "overlapping_base_services": 74,
+    "branch_boundary_pairs": 18,
+    "joined_branch_services": 18,
+    "ac_services": 28,
+    "quarantined_ac_only_cells": 3,
+    "ac_matched_cells": 605
+  },
+  "source_cell_conservation": "all_input_cells_retained_once_in_references_or_quarantine",
+  "boundary_dwell_seconds_distribution": {
+    "180": 2,
+    "240": 5,
+    "300": 5,
+    "360": 2,
+    "420": 1,
+    "480": 2,
+    "540": 1
+  },
+  "joined_branch_codes": {
+    "98901": "PLGN1",
+    "98902": "GNPL2",
+    "98903": "PLGN3",
+    "98904": "GNPL4",
+    "98905": "PLGN5",
+    "98906": "GNPL6",
+    "98907": "PLGN7",
+    "98908": "GNPL8",
+    "98909": "PLGN9",
+    "98910": "GNPL10",
+    "98911": "PLGN11",
+    "98912": "GNPL12",
+    "98913": "PLGN13",
+    "98914": "GNPL14",
+    "98915": "PLGN15",
+    "98916": "GNPL16",
+    "98917": "PLGN17",
+    "98918": "GNPL18"
+  },
+  "unique_service_candidates": 876,
+  "stop_candidates": 14731,
+  "external_branch_services": [
+    "91491"
+  ],
+  "limitations": [
+    "Train-number unions apply only to these editions; numbers are not globally unique across calendar dates.",
+    "Matching 2026 shared cells does not establish current validity of the rest of a 2024 train route.",
+    "BVI is an explicit external endpoint reference; its intervening stations and later WR timetable still require reconciliation.",
+    "R/O reference times are quarantined, not asserted to be passenger stops or complete rake circulations.",
+    "Shared-endpoint branch times supply derived arrival/departure pairs; the physical reversal and current rake working still require verification.",
+    "Station keys preserve source vocabularies and require physical stop, track and platform mapping.",
+    "Clock unwrapping is relative to the first printed time, not an adopted operating-day boundary.",
+    "Arrival/departure roles, dwell, calendars, vehicle assignments, amendments and train-control conflicts remain unresolved."
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/maha_economic_highlights_2025_26_1c24c1a4ee7d31bf.pdf",
+      "url": "https://cdnbbsr.s3waas.gov.in/s323af4b45f1e166141a790d1a3126e77a/uploads/2026/03/202603131321750637.pdf",
+      "final_url": "https://cdnbbsr.s3waas.gov.in/s323af4b45f1e166141a790d1a3126e77a/uploads/2026/03/202603131321750637.pdf",
+      "content_type": "application/pdf",
+      "source": "Maharashtra Economic Survey 2025-26 highlights",
+      "licence": "Public authority publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:14:22.037731+00:00",
+      "sha256": "1c24c1a4ee7d31bf2d7b8b7d13138b4e25d2ff8b1ed68097d1e4e4feb37888b9",
+      "bytes": 903281,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Source response retained; period and suitability require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -132,19 +132,41 @@ from xml.sax.saxutils import unescape as _unescape
 
 _EVENT_LINE = _re.compile(r'<event\s')
 _ATTR = _re.compile(r'(\w+)="([^"]*)"')
+_EVENT_TYPE = _re.compile(r'\btype="([^"]*)"')
 
 
-def events(path):
+def events(path, event_types=None, attribute_values=None):
     """Yield (type, attrs) for every <event .../> in a MATSim events file.
 
-    Reads the gzip line by line and parses the attributes with one regular
+    Reads plain, gzip or zstandard XML line by line and parses attributes with one regular
     expression per event: MATSim writes one event per line with every value
     quoted, and it entity-escapes a value that carries `&`, `<` or `"`, which
     is unescaped here so the dict reads what ElementTree would have read.
+
+    An optional type filter avoids decoding every attribute of irrelevant
+    events in a large file. Matching uses the decoded event type.
+    Optional attribute selectors are conjunctive maps to allowed value sets.
     """
-    with gzip.open(path, 'rt', encoding='utf-8') as f:
+    wanted = None if event_types is None else frozenset(event_types)
+    selectors = [(_re.compile(r'\b' + _re.escape(key) + r'="([^"]*)"'), frozenset(values))
+                 for key, values in (attribute_values or {}).items()]
+    literal_selectors = [tuple(key + '="' + value + '"' for value in values)
+                         for key, values in (attribute_values or {}).items()]
+    with open_table(str(path)) as f:
         for line in f:
             if not _EVENT_LINE.search(line):
+                continue
+            # Plain values dominate native link/vehicle IDs. Avoid regex work
+            # on irrelevant lines, but retain decoded matching for entities.
+            if '&' not in line and any(not any(token in line for token in tokens)
+                                       for tokens in literal_selectors):
+                continue
+            if wanted is not None:
+                kind = _EVENT_TYPE.search(line)
+                if kind is None or _unescape(kind.group(1)) not in wanted:
+                    continue
+            if any((match := pattern.search(line)) is None or _unescape(match.group(1)) not in values
+                   for pattern, values in selectors):
                 continue
             attrs = dict(_ATTR.findall(line))
             if '&' in line:

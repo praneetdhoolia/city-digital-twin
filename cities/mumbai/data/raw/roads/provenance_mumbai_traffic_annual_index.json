@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/roads/mumbai_traffic_annual_index_fdb56b6eda29e26c.html",
+      "url": "https://trafficpolicemumbai.maharashtra.gov.in/en/document-category/annual-reports/",
+      "final_url": "https://trafficpolicemumbai.maharashtra.gov.in/en/document-category/annual-reports/",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Mumbai Traffic Police annual-report index",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:24:07.635973+00:00",
+      "sha256": "fdb56b6eda29e26c0c4ea513d291689440e74c2ecea86956a1304d2938d4495a",
+      "bytes": 100511,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical or current publication; each table needs its own period, universe and definition. Acquisition does not establish validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

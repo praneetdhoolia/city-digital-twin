@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/mmrda_gis_index_1bc8160163d838fb.html",
+      "url": "https://mmrda.maharashtra.gov.in/en/projects/egovernance/geographic-information-system/overview",
+      "final_url": "https://mmrda.maharashtra.gov.in/en/projects/egovernance/geographic-information-system/overview",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "MMRDA GIS overview",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:41:43.083362+00:00",
+      "sha256": "1bc8160163d838fbd868e87a35f4e3a4d2183342bca1cb3e6faa4396493e66dd",
+      "bytes": 118276,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Locate official geographic datasets and public services.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

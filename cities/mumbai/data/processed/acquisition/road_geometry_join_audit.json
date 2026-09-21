@@ -1,0 +1,454 @@
+{
+  "source": "derived_native_geometry_join",
+  "input_sha256": {
+    "data/processed/network/road_geometry/nodes.csv": "93b90b1cb9e791b71e5451780698f1d2217cb375453dcd5b965d874b7d1b6078",
+    "data/processed/network/road_geometry/ways.csv": "091901fd4ab7b2c1e9490ca6c2f88f0d347d88fcf8381bf573eeb170e74a4309",
+    "data/processed/network/road_geometry/segments.csv": "b8f179f209783f7620c4603381236deffd053b8f350c8c777a4c96452e44e4de",
+    "data/processed/network/road_geometry/audit.json": "190d2b42f3784b5a2a2478ae4e8ac375ef84b87b87a1225767dacbc6ec0713ab",
+    "data/processed/network/rail_geometry/nodes.csv": "acb9f58f0a8d2a87737259a476a8ed25b0eeb85adc9f95a919821c5a3304e199",
+    "data/processed/network/rail_geometry/ways.csv": "669ddeb14aff0fff7d7bf0635093ae1a0e9c07364e28f0b73c7ddc76b955ed68",
+    "data/processed/network/rail_geometry/segments.csv": "81e3d8f61fe2b3321831e4c1c633623dbb070321674d3fa3703a1408e42c6968",
+    "data/processed/network/rail_geometry/audit.json": "b97bcfc91b93ba19fceb774711020979ce3500d84bbe854e2d1febe54ec71a68",
+    "data/processed/network/osm_way_attributes.csv": "5fa59bda86a144f8606b38e37be880bf0909427e589661bdb943016277a2c89b",
+    "data/processed/network/osm_way_access_profiles.csv": "49cbbfee60e2f5c7368f7bddf74ae6843fcc3cec3e2b51bea355f77978ef7e1c",
+    "data/processed/network/osm_access_profiles.json": "5af184376a9ef3e7b922dd2da955fe4f3f113eeb0b6f12c0538b13a49dec56e0",
+    "data/processed/acquisition/road_attribute_evidence_audit.json": "29ee612bb98d4607c597832850e0fd409367161d8e7e14b9fc2b35885f5c7335",
+    "data/processed/acquisition/raster_tile_selection.json": "6d0664ee641ca426c7eca5ddecd9540350c4a9e1b55722b51a2e81350635b4ce"
+  },
+  "road_geometry_ways": 232958,
+  "road_geometry_nodes": 2043886,
+  "road_geometry_segments": 2139676,
+  "road_attribute_ways_matched": 232856,
+  "access_profile_ways_matched": 232856,
+  "geometry_ways_outside_linear_attribute_scope": 102,
+  "native_road_rail_shared_nodes": 1512,
+  "shared_nodes_by_railway_tag": {
+    "buffer_stop": 1,
+    "crossing": 54,
+    "level_crossing": 896,
+    "not_tagged": 557,
+    "switch": 4
+  },
+  "road_nodes_with_railway_tag_not_in_rail_geometry": {
+    "level_crossing": [
+      6698536234
+    ],
+    "subway_entrance": [
+      4264598043,
+      6233172619,
+      6233175522,
+      6249729380,
+      6249729384,
+      6249730786,
+      7159653239,
+      8443491305,
+      10717929061,
+      10717929063,
+      12307063898,
+      12307114402,
+      12307248578,
+      12311587233,
+      12311587236,
+      12317694545,
+      12946893142,
+      13240659433,
+      13240733188,
+      13240733191,
+      13470129555,
+      13470129587,
+      13507403010,
+      14100567574,
+      14100567593,
+      14100628905,
+      14100628916
+    ],
+    "switch": [
+      10927965890
+    ]
+  },
+  "unshared_railway_node_context": {
+    "4264598043": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "name": "Gate 3",
+        "railway": "subway_entrance"
+      },
+      "road_parent_way_ids": [
+        427219284
+      ]
+    },
+    "6233172619": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "railway": "subway_entrance",
+        "ref": "5",
+        "wheelchair": "no"
+      },
+      "road_parent_way_ids": [
+        665875033
+      ]
+    },
+    "6233175522": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "railway": "subway_entrance",
+        "ref": "4",
+        "wheelchair": "no"
+      },
+      "road_parent_way_ids": [
+        665875302,
+        1444327893
+      ]
+    },
+    "6249729380": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "name": "DN Nagar",
+        "railway": "subway_entrance",
+        "ref": "4",
+        "wheelchair": "no"
+      },
+      "road_parent_way_ids": [
+        667482434
+      ]
+    },
+    "6249729384": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "entrance": "yes",
+        "name": "Versova",
+        "name:hi": "\u0935\u0930\u094d\u0938\u094b\u0935\u093e",
+        "railway": "subway_entrance",
+        "ref": "1"
+      },
+      "road_parent_way_ids": [
+        667482439
+      ]
+    },
+    "6249730786": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "fixme": "Fill in ref",
+        "railway": "subway_entrance"
+      },
+      "road_parent_way_ids": [
+        667482441
+      ]
+    },
+    "6698536234": {
+      "railway_tag": "level_crossing",
+      "within_research_envelope": false,
+      "source_tags": {
+        "railway": "level_crossing"
+      },
+      "road_parent_way_ids": [
+        1476091780
+      ]
+    },
+    "7159653239": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "name": "Versova",
+        "name:hi": "\u0935\u0930\u094d\u0938\u094b\u0935\u093e",
+        "railway": "subway_entrance",
+        "ref": "3",
+        "wheelchair": "no"
+      },
+      "road_parent_way_ids": [
+        667482443
+      ]
+    },
+    "8443491305": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "name": "A3",
+        "railway": "subway_entrance"
+      },
+      "road_parent_way_ids": [
+        781680525
+      ]
+    },
+    "10717929061": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "railway": "subway_entrance"
+      },
+      "road_parent_way_ids": [
+        1152286137
+      ]
+    },
+    "10717929063": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "railway": "subway_entrance"
+      },
+      "road_parent_way_ids": [
+        1152283128,
+        1411843941
+      ]
+    },
+    "10927965890": {
+      "railway_tag": "switch",
+      "within_research_envelope": true,
+      "source_tags": {
+        "railway": "switch"
+      },
+      "road_parent_way_ids": [
+        856312672,
+        936736937
+      ]
+    },
+    "12307063898": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "name": "Gate 5 Entry",
+        "railway": "subway_entrance",
+        "ref": "5"
+      },
+      "road_parent_way_ids": [
+        666061006,
+        1330161093
+      ]
+    },
+    "12307114402": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "name": "Exit Gate 4 To Aqua Line",
+        "railway": "subway_entrance",
+        "ref": "4"
+      },
+      "road_parent_way_ids": [
+        1330161090,
+        1330161092
+      ]
+    },
+    "12307248578": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "name": "A1",
+        "railway": "subway_entrance"
+      },
+      "road_parent_way_ids": [
+        1330177551
+      ]
+    },
+    "12311587233": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "name": "Gate 2B",
+        "railway": "subway_entrance"
+      },
+      "road_parent_way_ids": [
+        1330603450,
+        1500270891
+      ]
+    },
+    "12311587236": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "name": "Gate 2A",
+        "railway": "subway_entrance"
+      },
+      "road_parent_way_ids": [
+        1330603452,
+        1500270892
+      ]
+    },
+    "12317694545": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "name": "Gate No.1",
+        "railway": "subway_entrance",
+        "ref": "1",
+        "wheelchair": "no"
+      },
+      "road_parent_way_ids": [
+        1481201461
+      ]
+    },
+    "12946893142": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "name": "Andheri (West)",
+        "railway": "subway_entrance",
+        "ref": "A1",
+        "wheelchair": "no"
+      },
+      "road_parent_way_ids": [
+        1408832971
+      ]
+    },
+    "13240659433": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "entrance": "yes",
+        "level": "0",
+        "name": "Versova",
+        "name:hi": "\u0935\u0930\u094d\u0938\u094b\u0935\u093e",
+        "railway": "subway_entrance",
+        "ref": "5",
+        "wheelchair": "no"
+      },
+      "road_parent_way_ids": [
+        1443001284,
+        1443004427
+      ]
+    },
+    "13240733188": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "entrance": "yes",
+        "level": "0",
+        "name": "Versova",
+        "name:hi": "\u0935\u0930\u094d\u0938\u094b\u0935\u093e",
+        "railway": "subway_entrance",
+        "ref": "4",
+        "wheelchair": "no"
+      },
+      "road_parent_way_ids": [
+        1443003572,
+        1443361486
+      ]
+    },
+    "13240733191": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "entrance": "yes",
+        "name": "Versova",
+        "name:hi": "\u0935\u0930\u094d\u0938\u094b\u0935\u093e",
+        "railway": "subway_entrance",
+        "ref": "2"
+      },
+      "road_parent_way_ids": [
+        1443004264
+      ]
+    },
+    "13470129555": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "railway": "subway_entrance",
+        "wheelchair": "no"
+      },
+      "road_parent_way_ids": [
+        372673498
+      ]
+    },
+    "13470129587": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "railway": "subway_entrance"
+      },
+      "road_parent_way_ids": [
+        1468684654
+      ]
+    },
+    "13507403010": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "highway": "elevator",
+        "railway": "subway_entrance",
+        "ref": "A1",
+        "wheelchair": "yes"
+      },
+      "road_parent_way_ids": [
+        1472054421
+      ]
+    },
+    "14100567574": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "level": "-1",
+        "name": "Chhatrapati Shivaji Maharaj Terminus;General Post Office (GPO)",
+        "name:en": "Chhatrapati Shivaji Maharaj Terminus;General Post Office (GPO)",
+        "name:mr": "\u091b\u0924\u094d\u0930\u092a\u0924\u0940 \u0936\u093f\u0935\u093e\u091c\u0940 \u092e\u0939\u093e\u0930\u093e\u091c \u091f\u0930\u094d\u092e\u093f\u0928\u0938;\u092e\u0941\u0916\u094d\u092f \u091f\u092a\u093e\u0932 \u0915\u093e\u0930\u094d\u092f\u093e\u0932\u092f (\u091c\u0940.\u092a\u0940.\u0913.)",
+        "railway": "subway_entrance",
+        "ref": "A2"
+      },
+      "road_parent_way_ids": [
+        1550301899
+      ]
+    },
+    "14100567593": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "entrance": "yes",
+        "level": "0",
+        "name": "Cama and Albless Hospitals;St. Xavier's College",
+        "name:en": "Cama and Albless Hospitals;St. Xavier's College",
+        "name:mr": "\u0915\u093e\u092e\u093e \u0935 \u0906\u0932\u094d\u092c\u094d\u0932\u0947\u0938 \u0930\u0942\u0917\u094d\u0923\u093e\u0932\u092f\u0947;\u0938\u0947\u0902\u091f \u091d\u0947\u0935\u093f\u092f\u0930\u094d\u0938 \u092e\u0939\u093e\u0935\u093f\u0926\u094d\u092f\u093e\u0932\u092f",
+        "railway": "subway_entrance",
+        "ref": "B1",
+        "wheelchair": "yes"
+      },
+      "road_parent_way_ids": [
+        1550301901
+      ]
+    },
+    "14100628905": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "entrance": "yes",
+        "level": "0",
+        "name": "Ballard Estate, Fort;Bombay Gymkhana",
+        "name:en": "Ballard Estate, Fort;Bombay Gymkhana",
+        "name:mr": "\u092c\u0945\u0932\u093e\u0930\u094d\u0921 \u0907\u0938\u094d\u091f\u0947\u091f, \u092b\u094b\u0930\u094d\u091f;\u092e\u0941\u0902\u092c\u0908 \u091c\u093f\u092e\u0916\u093e\u0928\u093e",
+        "railway": "subway_entrance",
+        "ref": "A3",
+        "wheelchair": "no"
+      },
+      "road_parent_way_ids": [
+        1550301906
+      ]
+    },
+    "14100628916": {
+      "railway_tag": "subway_entrance",
+      "within_research_envelope": true,
+      "source_tags": {
+        "entrance": "yes",
+        "name": "Ballard Estate, Fort;Bombay Gymkhana",
+        "name:en": "Ballard Estate, Fort;Bombay Gymkhana",
+        "name:mr": "\u092c\u0945\u0932\u093e\u0930\u094d\u0921 \u0907\u0938\u094d\u091f\u0947\u091f, \u092b\u094b\u0930\u094d\u091f;\u092e\u0941\u0902\u092c\u0908 \u091c\u093f\u092e\u0916\u093e\u0928\u093e",
+        "railway": "subway_entrance",
+        "ref": "A3",
+        "wheelchair": "yes"
+      },
+      "road_parent_way_ids": [
+        207310706
+      ]
+    }
+  },
+  "model_connections_created": 0,
+  "limitations": [
+    "Native shared identity is geometry evidence only. A road/rail crossing is not a passenger transfer or permission to enter track.",
+    "Parent lists include area and non-operating features with their source classes; they must not be treated uniformly as active links.",
+    "Geometrically intersecting ways without a common native node are not connected or snapped by this audit.",
+    "No signal phase, level-crossing operation, barrier passability, speed, capacity or mode permission is inferred.",
+    "The research envelope check explains whole-way overcoverage; it is not a legal study boundary or a model exclusion rule."
+  ]
+}

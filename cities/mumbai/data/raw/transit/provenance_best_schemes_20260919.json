@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_schemes_20260919_5559283368d7c733.html",
+      "url": "https://www.bestundertaking.com/offers-schemes.asp",
+      "final_url": "https://www.bestundertaking.com/offers-schemes.asp",
+      "source": "BEST official Offers and Schemes",
+      "licence": "BEST publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:44:40.526178+00:00",
+      "sha256": "5559283368d7c73365101664b9011055b72f7d45ceb0a6a6c09890f5e5f33531",
+      "bytes": 56285,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification."
+    }
+  ]
+}

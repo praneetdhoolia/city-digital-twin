@@ -1,0 +1,20 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_current_service_types_f22beef9fb5ac843.json",
+      "url": "https://nmmtitmsmobileapi.amnex.co.in/api/Ticket/GetAllActiveServiceTypes",
+      "final_url": "https://nmmtitmsmobileapi.amnex.co.in/api/Ticket/GetAllActiveServiceTypes",
+      "source": "NMMT public timetable nmmt_current_service_types",
+      "licence": "Operator/vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:33:05.119285+00:00",
+      "sha256": "f22beef9fb5ac84382decfc220c5bfd10fe7ace0bcc5618850e470add55962ae",
+      "bytes": 365,
+      "content_type": "application/json; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Read-only passenger query and body observed in current public timetable component. No account, payment or booking operation.",
+      "method": "POST",
+      "request_json": {}
+    }
+  ]
+}

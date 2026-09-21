@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/calendar/maha_public_holidays_2026_f689908ac6b414f7.pdf",
+      "url": "https://maharashtra.gov.in/site/Upload/pdf/Public-Holiday-2026.pdf",
+      "final_url": "https://maharashtra.gov.in/site/Upload/pdf/Public-Holiday-2026.pdf",
+      "content_type": "application/pdf",
+      "source": "Maharashtra Gazette public holidays 2026 notification, December 2025",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T19:57:10.883731+00:00",
+      "sha256": "f689908ac6b414f7e241671fe5836f6830385150750038994cae8fb70fe00615",
+      "bytes": 389744,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Dated 2026 public holidays, separate bank-only and government-office additions. Festival dates can support explicitly matched railway holiday rules; state holidays do not automatically cancel trains or all economic activity.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

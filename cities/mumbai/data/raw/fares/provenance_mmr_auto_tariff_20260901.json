@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/fares/mmr_auto_tariff_20260901_0d7213e39ea3e93b.pdf",
+      "url": "https://transport.maharashtra.gov.in/Site/Upload/GR/Autorickshaw_Tariff_Card.pdf",
+      "final_url": "https://transport.maharashtra.gov.in/Site/Upload/GR/Autorickshaw_Tariff_Card.pdf",
+      "content_type": "application/pdf",
+      "source": "Official revised autorickshaw tariff September 2026",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:57:44.722015+00:00",
+      "sha256": "0d7213e39ea3e93b8474a84669a8d720131b3009867580ac8093046798326c9b",
+      "bytes": 2549049,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Index dated September 2026; rates and geographical coverage require PDF reading.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

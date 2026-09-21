@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/demand/tus_2024_materials_829b39a171e91930.html",
+      "url": "https://microdata.gov.in/NADA/index.php/catalog/236/related-materials",
+      "final_url": "https://microdata.gov.in/NADA/index.php/catalog/236/related-materials",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Time Use Survey 2024 documentation",
+      "licence": "Government publication; reuse terms and microdata access conditions require review",
+      "retrieved": "2026-09-18T10:01:09.412327+00:00",
+      "sha256": "829b39a171e91930e0f61478ea68eaf5bbfb5620fcb9d06688bcee636987eb3a",
+      "bytes": 72249,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public statistical evidence; survey weights, age and geographic coverage require validation. Catalogue access is not acquisition of unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

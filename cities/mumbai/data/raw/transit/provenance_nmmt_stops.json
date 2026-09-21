@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_stops_08da84cf5d4499c7.xml",
+      "url": "https://nmmtservice.infinium.management/TransistService.asmx/GetStationList?StationName=",
+      "final_url": "https://nmmtservice.infinium.management/TransistService.asmx/GetStationList?StationName=",
+      "source": "NMMT public stop list",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:45:59.855174+00:00",
+      "sha256": "08da84cf5d4499c7a04dcdc876bf3f22883fb05f59681f20605e571ed2da59c1",
+      "bytes": 507831,
+      "content_type": "text/xml; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation."
+    }
+  ]
+}

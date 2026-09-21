@@ -1,0 +1,17 @@
+{
+  "claim_rows": 8,
+  "source_ids": [
+    "alstom_metro3_opening_2024",
+    "pib_beml_mumbai_order_2018"
+  ],
+  "pib_contract_identity": {
+    "trainsets": 63,
+    "cars_per_train": 6,
+    "cars": 378,
+    "status": "exact"
+  },
+  "seating_and_standing_split": "unobtained_not_zero",
+  "current_operating_fleet_and_assignments": "unresolved",
+  "demand_forecasts": "not_extracted_as_observations",
+  "model_parameters_adopted": false
+}

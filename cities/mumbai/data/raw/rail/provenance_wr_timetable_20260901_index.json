@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/wr_timetable_20260901_index_582e40ea35ee5587.html",
+      "url": "https://wr.indianrailways.gov.in/view_section.jsp?id=0,6,458&lang=0",
+      "final_url": "https://wr.indianrailways.gov.in/view_section.jsp?id=0,6,458&lang=0",
+      "content_type": "text/html;charset=UTF-8",
+      "source": "Western Railway current suburban timetable index",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:57:07.214997+00:00",
+      "sha256": "582e40ea35ee558755697ec57b2b47bbec62c23cad38325c7591f41c32d4706d",
+      "bytes": 101200,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "September 2026 index; linked historical Harbour schedule must retain its own date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

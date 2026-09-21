@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/palghar_zp_administrative_setup_6818aab10f57d9ca.html",
+      "url": "https://www.zppalghar.gov.in/about-department/administrative-setup/",
+      "final_url": "https://www.zppalghar.gov.in/about-department/administrative-setup/",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Palghar Zilla Parishad administrative setup and PESA village counts",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:31:58.020451+00:00",
+      "sha256": "6818aab10f57d9ca549276919d39697d3632582b1bb29c0fe5896e7d09b7f8ca",
+      "bytes": 108736,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Undated/current webpage with a 2018 publication label; aggregate PESA counts are not a legal village boundary crosswalk.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

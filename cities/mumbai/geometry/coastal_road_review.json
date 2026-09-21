@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "purpose": "Review candidates for order 187 of 25 August 2026; these selections are not legal extents or access assignments.",
+  "source_order": "extract/transcriptions/coastal_road_order_187_20260825.json",
+  "name_search_fragments": ["coastal", "sambhaji", "sea link"],
+  "corridor_name_candidates": [
+    "Rajiv Gandhi Sea Link",
+    "Mumbai Coastal Road",
+    "Mumbai Coastal Road - Phase I",
+    "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road"
+  ],
+  "approach_name_candidates": ["Bandra Worli Sea Link Flyover"],
+  "notes": [
+    "Candidate names come from the acquired OSM source. A matching name does not prove the entire way is within the notification boundary.",
+    "All other matching names remain search-only results; no name match is a ban or permission.",
+    "Adjacent ways share native node references with corridor-name candidates. They are not necessarily legal turns, open links or parts of the notified corridor.",
+    "The Marine Drive and Bandra Toll Plaza limits, unnamed ramps, direction, current opening status and subsequent orders still require resolution."
+  ]
+}

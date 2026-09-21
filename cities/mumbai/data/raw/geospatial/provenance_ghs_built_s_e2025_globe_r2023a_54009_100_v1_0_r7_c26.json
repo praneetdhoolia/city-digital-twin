@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/geospatial/ghs_built_s_e2025_globe_r2023a_54009_100_v1_0_r7_c26_7deb436d3f3707ed.zip",
+      "url": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2025_GLOBE_R2023A_54009_100/V1-0/tiles/GHS_BUILT_S_E2025_GLOBE_R2023A_54009_100_V1_0_R7_C26.zip",
+      "final_url": "https://jeodpp.jrc.ec.europa.eu/ftp/jrc-opendata/GHSL/GHS_BUILT_S_GLOBE_R2023A/GHS_BUILT_S_E2025_GLOBE_R2023A_54009_100/V1-0/tiles/GHS_BUILT_S_E2025_GLOBE_R2023A_54009_100_V1_0_R7_C26.zip",
+      "source": "GHS_BUILT_S_E2025_GLOBE_R2023A_54009_100 R7_C26",
+      "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
+      "retrieved": "2026-09-18T10:09:19.272973+00:00",
+      "sha256": "7deb436d3f3707ed285184520524a46f130926e5af0415bb3aadfb160baced69",
+      "bytes": 33304976,
+      "content_type": "application/zip",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary."
+    }
+  ]
+}

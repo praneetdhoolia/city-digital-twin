@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_csia_1a8716e3bad858a8.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/CSIA/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/CSIA/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details CSMI-Airport - T2",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:19.646961+00:00",
+      "sha256": "1a8716e3bad858a8e032c311bb6a960f01c8b7f00225d1cb7bd297f13d5bd253",
+      "bytes": 23338,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

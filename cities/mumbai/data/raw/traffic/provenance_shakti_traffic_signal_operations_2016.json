@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/traffic/shakti_traffic_signal_operations_2016_e134964114d9ec57.pdf",
+      "url": "https://shaktifoundation.in/wp-content/uploads/2021/12/Best-Practices-for-Traffic-Signal-Operations-in-India.pdf",
+      "final_url": "https://shaktifoundation.in/wp-content/uploads/2021/12/Best-Practices-for-Traffic-Signal-Operations-in-India.pdf",
+      "source": "IBI best practices for traffic signal operations in India, report for Shakti Sustainable Energy Foundation",
+      "licence": "IBI report hosted by commissioning foundation; reuse terms unverified",
+      "retrieved": "2026-09-18T19:36:44.799914+00:00",
+      "sha256": "e134964114d9ec57092b703a1c893da40f5ec4f6f001dee591e18f708eeff63a",
+      "bytes": 4555429,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical city field assessments including Mumbai signal control; determine actual report and survey dates, site coverage and measured versus interview-based findings."
+    }
+  ]
+}

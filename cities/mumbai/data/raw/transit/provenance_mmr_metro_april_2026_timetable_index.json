@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_metro_april_2026_timetable_index_aac5f0c909af1f58.html",
+      "url": "https://mmrda.maharashtra.gov.in/en/news-and-announcements/mumbai-metro-introduces-simplified-passenger-friendly-timetables-april-8-new",
+      "final_url": "https://mmrda.maharashtra.gov.in/en/news-and-announcements/mumbai-metro-introduces-simplified-passenger-friendly-timetables-april-8-new",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "MMRDA revised timetables and Lines 9 and 2B operations April 2026",
+      "licence": "Public authority publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:47:22.668242+00:00",
+      "sha256": "aac5f0c909af1f58c23620fcff0032d57fe641187d2e9ffaa0c5475f42d1c70c",
+      "bytes": 101568,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Dated service evidence; operating changes and attachment completeness require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

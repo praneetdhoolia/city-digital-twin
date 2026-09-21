@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/cidco_navi_naina_transport_plan_20250731_93d3c8c4aec3d3fd.pdf",
+      "url": "https://cidco.maharashtra.gov.in/Upload/20250801122610569.pdf",
+      "final_url": "https://cidco.maharashtra.gov.in/Upload/20250801122610569.pdf",
+      "content_type": "application/pdf",
+      "source": "CIDCO comprehensive sustainable transport plan announcement for Navi Mumbai and NAINA",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T12:09:55.515374+00:00",
+      "sha256": "93d3c8c4aec3d3fd799ee6824c11d5adc5937031766d12b2284f171a16ab50f8",
+      "bytes": 293086,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Plan announcement, not a completed survey or operating timetable.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

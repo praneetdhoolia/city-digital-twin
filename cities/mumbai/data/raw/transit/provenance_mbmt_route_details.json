@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mbmt_route_details.zip",
+      "url": "https://mbmcwebportal.amnex.com/ListofRoutes/GetRoutesDetails",
+      "source": "MBMT public route details, one passenger query per route",
+      "licence": "Operator/vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:05:31.742268+00:00",
+      "retrieved_first": "2026-09-18T16:02:22.327001+00:00",
+      "sha256": "d74ec0eb92fa3ffae1bad3b207d2dc11ea8b6709b43befe22e42693818e69050",
+      "bytes": 71171,
+      "content_type": "application/zip",
+      "producing_script": "extract/acquire_mbmt_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Passenger information snapshot. Dates, completeness and current operation need validation.",
+      "method": "GET",
+      "harvest": true,
+      "member_count": 118,
+      "members_listing": "_members.csv",
+      "formats": [
+        "json"
+      ],
+      "packed": "2026-09-21T06:16:03.582420+00:00"
+    }
+  ]
+}

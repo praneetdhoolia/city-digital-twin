@@ -1,0 +1,275 @@
+{
+  "source_sha256": "88f47570e3d22cbbf1b02a36ff24dca301a688ed2cfa5148982af7d877d36349",
+  "output_sha256": "a7865ea1b59589c9202dd59711f57658ea02bfa6ca75bab373e4687ed3d91cf5",
+  "source_counts": {
+    "node": 34224766,
+    "relation": 22993,
+    "way": 3453202
+  },
+  "seed_counts": {
+    "node": 114900,
+    "way": 687975,
+    "relation": 0
+  },
+  "output_counts": {
+    "node": 5441839,
+    "way": 687975,
+    "relation": 333
+  },
+  "reference_closure_passes": 1,
+  "source_relation_types": {
+    "(missing)": 6,
+    "Bulding :- BHAGWATI KRUPA Owner :- B. B. Sheth": 1,
+    "area": 1,
+    "associatedStreet": 1,
+    "boundary": 7165,
+    "bridge": 1,
+    "building": 25,
+    "cafe": 1,
+    "canal": 25,
+    "collection": 1,
+    "dryfruits,_sprices,_dates,_seeds": 1,
+    "enforcement": 1,
+    "factory": 1,
+    "highway": 1,
+    "level": 1,
+    "multipolygon": 11741,
+    "network": 12,
+    "person": 1,
+    "pipeline": 2,
+    "poi": 1,
+    "power": 2,
+    "public_transport": 564,
+    "residential": 2,
+    "restriction": 551,
+    "route": 2535,
+    "route_master": 77,
+    "site": 53,
+    "street": 11,
+    "superroute": 49,
+    "tracks": 31,
+    "watershed": 1,
+    "waterway": 127,
+    "wind_park": 1
+  },
+  "output_relation_types": {
+    "restriction": 333
+  },
+  "selected_entities_unique": true,
+  "complete_selected_references": true,
+  "selection": "Whole seeded ways and nodes, plus touching restrictions and complete nested members",
+  "limits": "Native geometric network input; not modal access, routability, capacities, schedules or a calibrated simulation",
+  "source": "derived",
+  "raw_pbf_sha256": "c335a72cadfebc3ffde5cfff20fc9711f3112bc11000d43fde4daea10c36b53e",
+  "selection_sha256": "6d0664ee641ca426c7eca5ddecd9540350c4a9e1b55722b51a2e81350635b4ce",
+  "selection_extent_wgs84": [
+    72.6466890177437,
+    17.85028531100463,
+    73.795467531648,
+    20.22830255910601
+  ],
+  "spatial_seed_layers": [
+    {
+      "layer": "points",
+      "id_field": "osm_id",
+      "native_entities_selected": 114900,
+      "envelope_candidates": 114900,
+      "invalid_selected_geometries": 0
+    },
+    {
+      "layer": "lines",
+      "id_field": "osm_id",
+      "native_entities_selected": 253233,
+      "envelope_candidates": 253233,
+      "invalid_selected_geometries": 0
+    },
+    {
+      "layer": "multipolygons",
+      "id_field": "osm_way_id",
+      "native_entities_selected": 434742,
+      "envelope_candidates": 439036,
+      "invalid_selected_geometries": 4
+    }
+  ],
+  "gdal_version": "3.12.4",
+  "spatial_parser_warnings": [
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "organizePolygons() received an unexpected geometry.  Either a polygon with interior rings, or a polygon with less than 4 points, or a non-Polygon geometry.  Return arguments as a collection."
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "organizePolygons() received an unexpected geometry.  Either a polygon with interior rings, or a polygon with less than 4 points, or a non-Polygon geometry.  Return arguments as a collection."
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "organizePolygons() received an unexpected geometry.  Either a polygon with interior rings, or a polygon with less than 4 points, or a non-Polygon geometry.  Return arguments as a collection."
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "organizePolygons() received an unexpected geometry.  Either a polygon with interior rings, or a polygon with less than 4 points, or a non-Polygon geometry.  Return arguments as a collection."
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "Non closed ring detected. To avoid accepting it, set the OGR_GEOMETRY_ACCEPT_UNCLOSED_RING configuration option to NO"
+    },
+    {
+      "layer": "multipolygons",
+      "warning": "organizePolygons() received an unexpected geometry.  Either a polygon with interior rings, or a polygon with less than 4 points, or a non-Polygon geometry.  Return arguments as a collection."
+    }
+  ],
+  "spatial_parser_warning_scope": "The PBF driver processes the source before its spatial filter; warnings need not identify an in-envelope feature. Native way sequences are retained without OGR repairs.",
+  "output_bytes": 82163755,
+  "geometry_scope": "Research envelope overcoverage with complete ways and touching restrictions; not the legal MMR boundary",
+  "preserved": "Native coordinates, way-node sequence, selected relation-member sequence, roles and all entity tags",
+  "excluded": "Other relations except required nested members; GTFS, route inventory and legal boundary remain separate inputs",
+  "licence": "ODbL 1.0; OpenStreetMap contributors"
+}

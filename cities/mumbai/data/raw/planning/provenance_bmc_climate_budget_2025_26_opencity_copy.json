@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/bmc_climate_budget_2025_26_opencity_copy_d3c84a227b917163.pdf",
+      "url": "https://data.opencity.in/dataset/5e30debb-0b24-4533-9f6c-e8abd515a9c1/resource/d2da01c0-4afc-4039-9a16-7aeca5947929/download/9f96994c-1209-4d06-bd35-2968e2b218d4.pdf",
+      "final_url": "https://data.opencity.in/dataset/5e30debb-0b24-4533-9f6c-e8abd515a9c1/resource/d2da01c0-4afc-4039-9a16-7aeca5947929/download/9f96994c-1209-4d06-bd35-2968e2b218d4.pdf",
+      "source": "BMC Climate Budget Report 2025-26 OpenCity-hosted copy",
+      "licence": "BMC publication; original reuse terms unverified",
+      "retrieved": "2026-09-18T15:48:28.193191+00:00",
+      "sha256": "d3c84a227b91716326df7ddc9ff51a4f5775d17252134681cc5bdad5cd1049b0",
+      "bytes": 1705501,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Third-party copy of municipal report; verify publisher, edition, units and actual versus forecast columns. Original host currently times out."
+    }
+  ]
+}

@@ -265,6 +265,11 @@ def check_layers(city_dir, name, doc):
                     concrete[x] = a
         elif a['kind'] != 'pattern':
             concrete[p] = a
+    declared_osm = (doc or {}).get('osm_network_inputs', [])
+    if isinstance(declared_osm, list):
+        for p in declared_osm:
+            if isinstance(p, str):  # malformed entries are reported by the schema check
+                concrete[p] = {'kind': 'file', 'read_by': ['src/build/build_matsim_network.py']}
     absent = sorted(p for p in concrete
                     if not os.path.exists(os.path.join(city_dir, p)))
     check(True, '%s: %d of %d contracted artefacts present'

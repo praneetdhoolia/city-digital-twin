@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/freight/jnpa_aug_2026_commodities_5670c440697e1dfb.pdf",
+      "url": "https://www.jnport.gov.in/uploads/content_manager/ANNEXURE-1-_2026-27-Aug-2026.pdf",
+      "final_url": "https://www.jnport.gov.in/uploads/content_manager/ANNEXURE-1-_2026-27-Aug-2026.pdf",
+      "content_type": "application/pdf",
+      "source": "JNPA August 2026 commodity throughput, provisional 1 September",
+      "licence": "Operator or public authority publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:24:39.984064+00:00",
+      "sha256": "5670c440697e1dfb02f991eaf04aa4106cb04118a5e3d4f5a00f1b80771f97ee",
+      "bytes": 215732,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published evidence requiring units, effective dates and operational validation; throughput is not a truck or train movement count.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

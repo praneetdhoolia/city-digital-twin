@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/iitb_census_thane_b0f189d3edd8552b.zip",
+      "url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/thane.zip",
+      "final_url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/thane.zip",
+      "source": "IIT Bombay thane census-linked village and ward GIS",
+      "licence": "IIT Bombay source reuse terms unverified",
+      "retrieved": "2026-09-18T08:44:29.952652+00:00",
+      "sha256": "b0f189d3edd8552be6d8a574e1576132c65bb67a747908419ba55d246f5b0152",
+      "bytes": 14489190,
+      "content_type": "application/zip",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Research GIS linked to historical census; boundary completeness, coordinate reference system and permissions require audit."
+    }
+  ]
+}

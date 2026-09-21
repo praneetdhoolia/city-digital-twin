@@ -1,0 +1,20 @@
+{
+  "rows": 432,
+  "district_count": 35,
+  "tables": [
+    "2.8",
+    "2.9"
+  ],
+  "state_totals_reconciled": true,
+  "district_totals_reconciled_between_tables": true,
+  "public_dashboard_state_totals_reconciled": true,
+  "dashboard_sha256": "659a6eed2f69a2b27ee1f46a73a78f309cc88a45743712af622d1c8e2dca92d1",
+  "derived_blank_cells": 4,
+  "limitations": [
+    "District boundaries are those of the historical census; no separate Palghar control.",
+    "Excludes crop production, plantation, public administration, defence and compulsory social security.",
+    "Establishment workers are not unique resident commuters or daily trips.",
+    "Combined categories and the two tables overlap; never sum across them.",
+    "Dashboard detail page contains only its first page, not the whole establishment dataset."
+  ]
+}

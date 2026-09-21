@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_hl14_city_53179258a3d8cd7c.xlsx",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/9817/download/12929/HLPCA-27519-2011_H14_census.xlsx",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/9817/download/12929/HLPCA-27519-2011_H14_census.xlsx",
+      "content_type": "application/octet-stream",
+      "source": "HL-14 household amenities and assets Mumbai City 2011",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:51:20.424559+00:00",
+      "sha256": "53179258a3d8cd7c33d9df94d14f15d4a8498718523abca448cc49cd31fa5bb7",
+      "bytes": 50992,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "2011 non-institutional households; household asset possession is not vehicle count or current ownership.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

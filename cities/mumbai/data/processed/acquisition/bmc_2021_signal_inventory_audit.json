@@ -1,0 +1,22 @@
+{
+  "source_id": "bmc_signal_upgrade_spec_2021",
+  "source_sha256": "643aa77e2d77ab6fb05c1d3edca5acf2425cdf476c99810a864e17880804c9a0",
+  "rows": 70,
+  "type_counts": {
+    "3-arm": 31,
+    "3-arm +ped": 2,
+    "4-arm": 18,
+    "4-arm +ped": 1,
+    "5-arm": 3,
+    "Ped": 15
+  },
+  "unique_coordinate_pairs": 70,
+  "limitations": [
+    "The list identifies tender reference junctions; completion of an upgrade and current operational status are not established.",
+    "Pedestrian-only and combined vehicle/pedestrian source types are preserved, not converted to vehicle arms.",
+    "The source calls these reference coordinates and does not identify a geodetic datum or positional accuracy.",
+    "Decimal degree conversion changes notation only; it does not establish WGS84, improve precision or locate individual stop lines.",
+    "No OSM snapping, approach directions, crossing paths, controller assignment or phasing is inferred.",
+    "Merged arterial road labels remain in the source and have not been reconstructed as a road-to-signal crosswalk."
+  ]
+}

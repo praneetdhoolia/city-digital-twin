@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/mmr_ena_spa_notification_20240709_ceb9aa9713a21400.pdf",
+      "url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2025-07/notification_of_mmr-ena_spa.pdf",
+      "final_url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2025-07/notification_of_mmr-ena_spa.pdf",
+      "content_type": "application/pdf",
+      "source": "MMR extended notified area Special Planning Authority notification",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:15:44.265724+00:00",
+      "sha256": "ceb9aa9713a214001210571935eff7ebd40686c9d0f752d69a1d9523bd3eb928",
+      "bytes": 389806,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Planning-area notification and listed villages; distinguish SPA from whole metropolitan boundary.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_facilities_20260919_8fc7e78947403a22.html",
+      "url": "https://www.bestundertaking.com/facilities-provided.asp",
+      "final_url": "https://www.bestundertaking.com/facilities-provided.asp",
+      "source": "BEST official Facilities Provided",
+      "licence": "BEST publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:44:27.979025+00:00",
+      "sha256": "8fc7e78947403a223c25c4f03356b499243b72c76c9d9d9d208cd1b5d7910941",
+      "bytes": 67911,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification."
+    }
+  ]
+}

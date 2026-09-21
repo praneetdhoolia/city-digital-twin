@@ -1,0 +1,23 @@
+{
+  "source": "derived",
+  "source_id": "maha_economic_survey_2025_26",
+  "source_sha256": "954fceeb3803c2a79f2f50c615a7e7ec1d2f2e75fdbdb8fe0aa84ac9cd8f9885",
+  "bus_provider_count": 17,
+  "bus_rows": 34,
+  "rail_rows": 1,
+  "bus_missing_cells": 3,
+  "bus_rows_by_reference_date": {
+    "2024-03-31": 17,
+    "2025-03-31": 17
+  },
+  "rail_ac_subsets_within_totals": true,
+  "limitations": [
+    "Bus table dates are retained as printed; the averaging period and day-type weights are not defined.",
+    "A dash is missing, not zero. Ulhasnagar has missing 2024 cells and reported 2025 cells.",
+    "Vehicles on road per day are neither registered fleet size nor vehicle-by-trip assignments.",
+    "Passenger and effective-kilometre cells retain lakh units and their printed precision.",
+    "MSRTC city operations and other out-of-region providers must not be assigned wholly to MMR.",
+    "The suburban aggregate is for 2024-25, not a verified September 2026 timetable or train-formation inventory.",
+    "Aggregate passengers cannot be matched to simulation legs until the counting definition is reconciled."
+  ]
+}

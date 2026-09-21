@@ -1,0 +1,19 @@
+[
+  {
+    "path": "speedzones/speedzones.zip",
+    "url": "https://opendata.transport.nsw.gov.au/data/dataset/4253a054-b377-4b5b-83d1-71385bb6ff33/resource/72cd0f29-f231-4c8c-a885-595946f3f202/download/speedzones.zip",
+    "description": "TfNSW Speed Zones - the regulated speed zone for every road in NSW, statewide linework",
+    "licence": "CC-BY 4.0",
+    "bytes": 62453324,
+    "sha256": "7b86d6ddb3523a3c1bbd4bdacbefd86feba971f177a2a6884cde4312ed91f950",
+    "retrieved": "2026-08-13",
+    "clip": {
+      "source": "data/processed/zones/zones_LGA.gpkg",
+      "margin_m": 2000.0,
+      "note": "the extent is the dissolved LGA boundary plus a declared margin, never a typed rectangle"
+    },
+    "records_statewide": 447426,
+    "records_existing": 447426,
+    "records_in_study_area": 35688
+  }
+]

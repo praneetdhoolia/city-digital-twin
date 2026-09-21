@@ -1,0 +1,1750 @@
+{
+  "source": "derived",
+  "input_sha256": [
+    "a7865ea1b59589c9202dd59711f57658ea02bfa6ca75bab373e4687ed3d91cf5"
+  ],
+  "counts": {
+    "area_ways_excluded_from_linear_statistics": 512,
+    "transport_ways": 238584
+  },
+  "unique_source_ways": 687975,
+  "linear_transport_ways": 238072,
+  "histogram_rows": 2101,
+  "by_class": {
+    "highway=bridleway": {
+      "linear_ways": 6,
+      "tag_coverage": {
+        "access": 1,
+        "bicycle": 1,
+        "bridge": 1,
+        "foot": 1,
+        "layer": 1,
+        "motor_vehicle": 1,
+        "surface": 1,
+        "width": 1
+      },
+      "numeric_tags": {
+        "width": {
+          "n_tagged_ways": 1,
+          "minimum": 5.0,
+          "maximum": 5.0,
+          "q25": 5.0,
+          "median": 5.0,
+          "q75": 5.0
+        }
+      }
+    },
+    "highway=bus_stop": {
+      "linear_ways": 3,
+      "tag_coverage": {
+        "bus": 2
+      },
+      "numeric_tags": {}
+    },
+    "highway=busway": {
+      "linear_ways": 79,
+      "tag_coverage": {
+        "access": 13,
+        "bicycle": 5,
+        "bridge": 6,
+        "bus": 28,
+        "check_date": 2,
+        "foot": 5,
+        "lanes": 52,
+        "layer": 6,
+        "maxspeed": 13,
+        "motor_vehicle": 3,
+        "oneway": 74,
+        "psv": 28,
+        "sidewalk": 2,
+        "source": 1,
+        "surface": 16
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 52,
+          "minimum": 1,
+          "maximum": 2,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 13,
+          "minimum": 30.0,
+          "maximum": 40.0,
+          "q25": 40.0,
+          "median": 40.0,
+          "q75": 40.0
+        }
+      }
+    },
+    "highway=construction": {
+      "linear_ways": 1216,
+      "tag_coverage": {
+        "access": 33,
+        "bicycle": 11,
+        "bridge": 229,
+        "bridge:structure": 38,
+        "check_date": 71,
+        "foot": 11,
+        "junction": 1,
+        "lane_markings": 1,
+        "lanes": 88,
+        "layer": 225,
+        "lit": 2,
+        "maxheight": 3,
+        "maxspeed": 4,
+        "maxspeed:type": 1,
+        "motor_vehicle": 13,
+        "motorcycle": 1,
+        "oneway": 498,
+        "sidewalk": 1,
+        "smoothness": 1,
+        "source": 60,
+        "source:bridge": 1,
+        "source:construction": 1,
+        "surface": 16,
+        "toll": 1,
+        "tunnel": 19,
+        "width": 1
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 88,
+          "minimum": 2,
+          "maximum": 4,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 4,
+          "minimum": 30.0,
+          "maximum": 80.0,
+          "q25": 45.0,
+          "median": 50.0,
+          "q75": 57.5
+        },
+        "width": {
+          "n_tagged_ways": 1,
+          "minimum": 2.0,
+          "maximum": 2.0,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 2.0
+        }
+      }
+    },
+    "highway=corridor": {
+      "linear_ways": 12,
+      "tag_coverage": {},
+      "numeric_tags": {}
+    },
+    "highway=cycleway": {
+      "linear_ways": 438,
+      "tag_coverage": {
+        "access": 6,
+        "bicycle": 411,
+        "bridge": 5,
+        "crossing": 1,
+        "crossing:island": 1,
+        "crossing:markings": 1,
+        "cycleway": 1,
+        "foot": 419,
+        "incline": 8,
+        "layer": 17,
+        "motor_vehicle": 3,
+        "oneway": 17,
+        "smoothness": 26,
+        "surface": 41,
+        "tunnel": 9,
+        "width": 26
+      },
+      "numeric_tags": {
+        "width": {
+          "n_tagged_ways": 25,
+          "minimum": 0.4,
+          "maximum": 100.0,
+          "q25": 20.0,
+          "median": 50.0,
+          "q75": 50.0
+        }
+      }
+    },
+    "highway=elevator": {
+      "linear_ways": 4,
+      "tag_coverage": {
+        "access": 1
+      },
+      "numeric_tags": {}
+    },
+    "highway=footway": {
+      "linear_ways": 5617,
+      "tag_coverage": {
+        "access": 443,
+        "bicycle": 240,
+        "bridge": 839,
+        "bridge:structure": 16,
+        "check_date": 2,
+        "check_date:surface": 17,
+        "crossing": 120,
+        "crossing:island": 17,
+        "crossing:markings": 83,
+        "foot": 214,
+        "incline": 78,
+        "junction": 1,
+        "lanes": 4,
+        "layer": 896,
+        "lit": 331,
+        "motor_vehicle": 131,
+        "motorcar": 4,
+        "oneway": 12,
+        "oneway:foot": 40,
+        "service": 1,
+        "sidewalk": 1,
+        "smoothness": 92,
+        "source": 254,
+        "surface": 1081,
+        "tracktype": 2,
+        "tunnel": 100,
+        "width": 143
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 3,
+          "minimum": 2,
+          "maximum": 2,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "width": {
+          "n_tagged_ways": 141,
+          "minimum": 0.25,
+          "maximum": 50.0,
+          "q25": 2.0,
+          "median": 3.0,
+          "q75": 6.0
+        }
+      }
+    },
+    "highway=footway|route=hiking": {
+      "linear_ways": 2,
+      "tag_coverage": {
+        "foot": 2,
+        "route": 2
+      },
+      "numeric_tags": {}
+    },
+    "highway=living_street": {
+      "linear_ways": 3021,
+      "tag_coverage": {
+        "access": 175,
+        "bicycle": 22,
+        "bridge": 14,
+        "cycleway": 1,
+        "foot": 20,
+        "lanes": 42,
+        "layer": 26,
+        "lit": 1,
+        "maxspeed": 5,
+        "motor_vehicle": 24,
+        "motorcar": 182,
+        "motorcycle": 2,
+        "oneway": 13,
+        "service": 1,
+        "sidewalk": 2,
+        "smoothness": 1,
+        "source": 388,
+        "surface": 150,
+        "surface:note": 1,
+        "width": 12
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 42,
+          "minimum": 1,
+          "maximum": 2,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 5,
+          "minimum": 10.0,
+          "maximum": 20.0,
+          "q25": 20.0,
+          "median": 20.0,
+          "q75": 20.0
+        },
+        "width": {
+          "n_tagged_ways": 12,
+          "minimum": 3.0,
+          "maximum": 10.0,
+          "q25": 5.0,
+          "median": 5.0,
+          "q75": 6.25
+        }
+      }
+    },
+    "highway=motorway": {
+      "linear_ways": 888,
+      "tag_coverage": {
+        "access": 92,
+        "bicycle": 529,
+        "bridge": 322,
+        "bridge:name": 2,
+        "bridge:structure": 8,
+        "bus:lanes": 20,
+        "check_date": 184,
+        "check_date:lit": 8,
+        "check_date:surface": 9,
+        "foot": 409,
+        "hgv": 4,
+        "lane_markings": 114,
+        "lanes": 639,
+        "lanes:bus": 20,
+        "layer": 364,
+        "lit": 289,
+        "maxheight": 16,
+        "maxheight:signed": 4,
+        "maxspeed": 529,
+        "maxspeed:bus": 91,
+        "maxspeed:hgv": 291,
+        "maxspeed:type": 43,
+        "maxweight": 1,
+        "motor_vehicle": 427,
+        "motorcycle": 329,
+        "oneway": 866,
+        "smoothness": 13,
+        "source": 118,
+        "surface": 413,
+        "toll": 344,
+        "tunnel": 32,
+        "turn:lanes": 2,
+        "width": 13
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 639,
+          "minimum": 2,
+          "maximum": 8,
+          "q25": 3.0,
+          "median": 3.0,
+          "q75": 3.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 529,
+          "minimum": 20.0,
+          "maximum": 120.0,
+          "q25": 80.0,
+          "median": 100.0,
+          "q75": 100.0
+        },
+        "width": {
+          "n_tagged_ways": 13,
+          "minimum": 13.5,
+          "maximum": 13.5,
+          "q25": 13.5,
+          "median": 13.5,
+          "q75": 13.5
+        }
+      }
+    },
+    "highway=motorway_link": {
+      "linear_ways": 440,
+      "tag_coverage": {
+        "access": 14,
+        "bicycle": 70,
+        "bridge": 89,
+        "bridge:structure": 3,
+        "check_date": 3,
+        "check_date:lit": 1,
+        "check_date:surface": 1,
+        "foot": 34,
+        "junction": 7,
+        "lane_markings": 6,
+        "lanes": 184,
+        "layer": 103,
+        "lit": 61,
+        "maxheight": 1,
+        "maxspeed": 47,
+        "motor_vehicle": 32,
+        "motorcycle": 62,
+        "oneway": 416,
+        "sidewalk": 10,
+        "source": 45,
+        "surface": 101,
+        "toll": 44,
+        "tunnel": 4,
+        "turn:lanes": 3
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 184,
+          "minimum": 1,
+          "maximum": 5,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 47,
+          "minimum": 20.0,
+          "maximum": 100.0,
+          "q25": 40.0,
+          "median": 40.0,
+          "q75": 40.0
+        }
+      }
+    },
+    "highway=path": {
+      "linear_ways": 4264,
+      "tag_coverage": {
+        "access": 260,
+        "bicycle": 113,
+        "bridge": 75,
+        "bridge:movable": 1,
+        "foot": 101,
+        "incline": 41,
+        "lanes": 2,
+        "layer": 118,
+        "lit": 25,
+        "motor_vehicle": 68,
+        "motorcar": 9,
+        "motorcycle": 1,
+        "oneway": 11,
+        "sidewalk": 3,
+        "smoothness": 26,
+        "source": 536,
+        "surface": 336,
+        "tracktype": 3,
+        "tunnel": 28,
+        "vehicle": 5,
+        "width": 34
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 2,
+          "minimum": 2,
+          "maximum": 2,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "width": {
+          "n_tagged_ways": 32,
+          "minimum": 0.25,
+          "maximum": 300.0,
+          "q25": 1.0,
+          "median": 1.5,
+          "q75": 6.0
+        }
+      }
+    },
+    "highway=path|route=hiking": {
+      "linear_ways": 527,
+      "tag_coverage": {
+        "access": 1,
+        "bicycle": 4,
+        "foot": 510,
+        "incline": 4,
+        "layer": 1,
+        "motor_vehicle": 3,
+        "route": 527,
+        "surface": 11,
+        "tunnel": 1,
+        "width": 2
+      },
+      "numeric_tags": {
+        "width": {
+          "n_tagged_ways": 2,
+          "minimum": 1.0,
+          "maximum": 1.5,
+          "q25": 1.125,
+          "median": 1.25,
+          "q75": 1.375
+        }
+      }
+    },
+    "highway=pedestrian": {
+      "linear_ways": 345,
+      "tag_coverage": {
+        "access": 59,
+        "bicycle": 23,
+        "bridge": 17,
+        "foot": 13,
+        "lanes": 2,
+        "layer": 37,
+        "lit": 12,
+        "motor_vehicle": 10,
+        "motorcar": 1,
+        "motorcycle": 1,
+        "oneway": 8,
+        "sidewalk": 1,
+        "smoothness": 1,
+        "source": 50,
+        "surface": 46,
+        "tunnel": 13,
+        "vehicle": 1,
+        "width": 7
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 2,
+          "minimum": 1,
+          "maximum": 4,
+          "q25": 1.75,
+          "median": 2.5,
+          "q75": 3.25
+        },
+        "width": {
+          "n_tagged_ways": 6,
+          "minimum": 1.5,
+          "maximum": 40.0,
+          "q25": 2.25,
+          "median": 3.4,
+          "q75": 9.95
+        }
+      }
+    },
+    "highway=primary": {
+      "linear_ways": 4806,
+      "tag_coverage": {
+        "access": 29,
+        "bicycle": 72,
+        "bridge": 742,
+        "bridge:name": 5,
+        "bridge:name:en": 4,
+        "bridge:name:mr": 5,
+        "bridge:structure": 8,
+        "check_date": 9,
+        "check_date:surface": 5,
+        "cycleway": 12,
+        "cycleway:both": 68,
+        "foot": 106,
+        "incline": 3,
+        "junction": 139,
+        "lane_markings": 105,
+        "lanes": 1358,
+        "lanes:backward": 1,
+        "lanes:forward": 1,
+        "layer": 802,
+        "lit": 332,
+        "maxheight": 8,
+        "maxheight:signed": 13,
+        "maxspeed": 298,
+        "maxspeed:source": 1,
+        "maxspeed:type": 173,
+        "maxweight:signed": 8,
+        "motor_vehicle": 2,
+        "motorcar": 1,
+        "motorcycle": 15,
+        "oneway": 3876,
+        "sidewalk": 150,
+        "sidewalk:both:surface": 5,
+        "sidewalk:left": 32,
+        "sidewalk:left:surface": 2,
+        "sidewalk:right": 30,
+        "smoothness": 97,
+        "source": 966,
+        "source:bridge": 13,
+        "source:geometry": 1,
+        "source:lanes": 6,
+        "surface": 1026,
+        "toll": 22,
+        "tunnel": 21,
+        "turn:lanes": 28,
+        "turn:lanes:backward": 1,
+        "turn:lanes:forward": 1,
+        "width": 51
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 1358,
+          "minimum": 1,
+          "maximum": 6,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 3.0
+        },
+        "lanes:backward": {
+          "n_tagged_ways": 1,
+          "minimum": 2,
+          "maximum": 2,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "lanes:forward": {
+          "n_tagged_ways": 1,
+          "minimum": 3,
+          "maximum": 3,
+          "q25": 3.0,
+          "median": 3.0,
+          "q75": 3.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 298,
+          "minimum": 20.0,
+          "maximum": 120.0,
+          "q25": 40.0,
+          "median": 50.0,
+          "q75": 60.0
+        },
+        "width": {
+          "n_tagged_ways": 51,
+          "minimum": 7.0,
+          "maximum": 25.0,
+          "q25": 8.8,
+          "median": 10.0,
+          "q75": 16.0
+        }
+      }
+    },
+    "highway=primary_link": {
+      "linear_ways": 716,
+      "tag_coverage": {
+        "access": 5,
+        "bicycle": 2,
+        "bridge": 19,
+        "cycleway:both": 1,
+        "foot": 2,
+        "lane_markings": 15,
+        "lanes": 90,
+        "layer": 26,
+        "lit": 23,
+        "maxheight:signed": 1,
+        "maxspeed": 5,
+        "maxspeed:type": 5,
+        "motor_vehicle": 1,
+        "motorcar": 2,
+        "motorcycle": 4,
+        "oneway": 328,
+        "sidewalk": 12,
+        "sidewalk:left": 1,
+        "sidewalk:right": 1,
+        "smoothness": 2,
+        "source": 89,
+        "surface": 102
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 90,
+          "minimum": 1,
+          "maximum": 5,
+          "q25": 1.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 5,
+          "minimum": 20.0,
+          "maximum": 50.0,
+          "q25": 20.0,
+          "median": 20.0,
+          "q75": 20.0
+        }
+      }
+    },
+    "highway=proposed": {
+      "linear_ways": 19,
+      "tag_coverage": {
+        "bicycle": 2,
+        "bridge": 6,
+        "foot": 2,
+        "lanes": 2,
+        "layer": 6,
+        "maxspeed": 2,
+        "motor_vehicle": 2,
+        "oneway": 5,
+        "source": 8,
+        "surface": 2
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 2,
+          "minimum": 4,
+          "maximum": 4,
+          "q25": 4.0,
+          "median": 4.0,
+          "q75": 4.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 2,
+          "minimum": 50.0,
+          "maximum": 50.0,
+          "q25": 50.0,
+          "median": 50.0,
+          "q75": 50.0
+        }
+      }
+    },
+    "highway=residential": {
+      "linear_ways": 122350,
+      "tag_coverage": {
+        "access": 31173,
+        "access:hgv": 1,
+        "bicycle": 588,
+        "bridge": 957,
+        "bridge:structure": 4,
+        "bus": 1,
+        "check_date": 18,
+        "check_date:surface": 2,
+        "crossing": 1,
+        "crossing:markings": 1,
+        "cycleway": 44,
+        "cycleway:both": 47,
+        "cycleway:left": 3,
+        "cycleway:right": 1,
+        "foot": 248,
+        "hgv": 2,
+        "incline": 31,
+        "junction": 72,
+        "lane_markings": 254,
+        "lanes": 829,
+        "lanes:backward": 2,
+        "lanes:forward": 2,
+        "layer": 1416,
+        "lit": 310,
+        "maxheight": 17,
+        "maxheight:signed": 2,
+        "maxspeed": 299,
+        "maxspeed:advisory": 13,
+        "maxspeed:type": 59,
+        "maxweight:signed": 3,
+        "maxwidth": 1,
+        "motor_vehicle": 330,
+        "motorcar": 203,
+        "motorcycle": 8,
+        "oneway": 4993,
+        "oneway:bicycle": 2,
+        "service": 11,
+        "sidewalk": 192,
+        "sidewalk:both": 29,
+        "sidewalk:both:kerb": 1,
+        "sidewalk:both:surface": 6,
+        "sidewalk:left": 18,
+        "sidewalk:left:surface": 3,
+        "sidewalk:right": 16,
+        "sidewalk:right:kerb": 2,
+        "sidewalk:right:surface": 1,
+        "sidewalk:surface": 3,
+        "smoothness": 51,
+        "source": 39235,
+        "source:bridge": 4,
+        "source:width": 3,
+        "surface": 4054,
+        "surface:note": 1,
+        "toll": 1,
+        "tracktype": 7,
+        "tunnel": 391,
+        "tunnel:name": 1,
+        "vehicle": 16,
+        "width": 984
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 827,
+          "minimum": 1,
+          "maximum": 4,
+          "q25": 1.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "lanes:backward": {
+          "n_tagged_ways": 2,
+          "minimum": 1,
+          "maximum": 1,
+          "q25": 1.0,
+          "median": 1.0,
+          "q75": 1.0
+        },
+        "lanes:forward": {
+          "n_tagged_ways": 2,
+          "minimum": 1,
+          "maximum": 1,
+          "q25": 1.0,
+          "median": 1.0,
+          "q75": 1.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 299,
+          "minimum": 5.0,
+          "maximum": 60.0,
+          "q25": 20.0,
+          "median": 20.0,
+          "q75": 30.0
+        },
+        "width": {
+          "n_tagged_ways": 984,
+          "minimum": 1.0,
+          "maximum": 25.0,
+          "q25": 5.0,
+          "median": 5.0,
+          "q75": 5.0
+        }
+      }
+    },
+    "highway=residential|route=foot": {
+      "linear_ways": 1,
+      "tag_coverage": {
+        "route": 1
+      },
+      "numeric_tags": {}
+    },
+    "highway=residential|route=hiking": {
+      "linear_ways": 3,
+      "tag_coverage": {
+        "foot": 3,
+        "route": 3
+      },
+      "numeric_tags": {}
+    },
+    "highway=road": {
+      "linear_ways": 33,
+      "tag_coverage": {
+        "bridge": 2,
+        "layer": 4,
+        "source": 9,
+        "surface": 4,
+        "tunnel": 2
+      },
+      "numeric_tags": {}
+    },
+    "highway=secondary": {
+      "linear_ways": 5625,
+      "tag_coverage": {
+        "access": 50,
+        "bicycle": 137,
+        "bridge": 550,
+        "bridge:name": 2,
+        "bridge:name:en": 2,
+        "bridge:name:hi": 2,
+        "bridge:name:mr": 2,
+        "check_date": 4,
+        "check_date:surface": 1,
+        "cycleway": 46,
+        "cycleway:both": 32,
+        "cycleway:left": 2,
+        "cycleway:right": 1,
+        "foot": 164,
+        "goods": 2,
+        "hgv": 2,
+        "incline": 2,
+        "junction": 179,
+        "lane_markings": 160,
+        "lanes": 1009,
+        "lanes:backward": 1,
+        "lanes:forward": 1,
+        "layer": 611,
+        "lit": 306,
+        "maxheight": 4,
+        "maxheight:signed": 12,
+        "maxspeed": 132,
+        "maxspeed:type": 69,
+        "maxweight:signed": 8,
+        "motor_vehicle": 30,
+        "motorcycle": 6,
+        "oneway": 4468,
+        "oneway:bicycle": 13,
+        "psv": 5,
+        "sidewalk": 172,
+        "sidewalk:both": 1,
+        "sidewalk:both:kerb": 12,
+        "sidewalk:both:surface": 12,
+        "sidewalk:left": 20,
+        "sidewalk:left:kerb": 25,
+        "sidewalk:left:surface": 25,
+        "sidewalk:right": 12,
+        "sidewalk:right:kerb": 8,
+        "sidewalk:right:surface": 8,
+        "smoothness": 29,
+        "source": 870,
+        "surface": 1154,
+        "tunnel": 23,
+        "turn:lanes:forward": 1,
+        "width": 98
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 1009,
+          "minimum": 1,
+          "maximum": 6,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 3.0
+        },
+        "lanes:backward": {
+          "n_tagged_ways": 1,
+          "minimum": 1,
+          "maximum": 1,
+          "q25": 1.0,
+          "median": 1.0,
+          "q75": 1.0
+        },
+        "lanes:forward": {
+          "n_tagged_ways": 1,
+          "minimum": 2,
+          "maximum": 2,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 132,
+          "minimum": 30.0,
+          "maximum": 70.0,
+          "q25": 35.0,
+          "median": 50.0,
+          "q75": 60.0
+        },
+        "width": {
+          "n_tagged_ways": 98,
+          "minimum": 5.0,
+          "maximum": 20.0,
+          "q25": 10.0,
+          "median": 10.0,
+          "q75": 10.0
+        }
+      }
+    },
+    "highway=secondary_link": {
+      "linear_ways": 762,
+      "tag_coverage": {
+        "bicycle": 2,
+        "bridge": 7,
+        "cycleway:both": 1,
+        "lane_markings": 17,
+        "lanes": 27,
+        "layer": 5,
+        "lit": 11,
+        "maxspeed": 1,
+        "maxspeed:type": 1,
+        "motor_vehicle": 1,
+        "motorcar": 7,
+        "oneway": 183,
+        "sidewalk": 5,
+        "sidewalk:both:kerb": 1,
+        "sidewalk:both:surface": 1,
+        "smoothness": 1,
+        "source": 35,
+        "surface": 61,
+        "width": 1
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 27,
+          "minimum": 1,
+          "maximum": 2,
+          "q25": 1.0,
+          "median": 1.0,
+          "q75": 2.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 1,
+          "minimum": 30.0,
+          "maximum": 30.0,
+          "q25": 30.0,
+          "median": 30.0,
+          "q75": 30.0
+        },
+        "width": {
+          "n_tagged_ways": 1,
+          "minimum": 7.0,
+          "maximum": 7.0,
+          "q25": 7.0,
+          "median": 7.0,
+          "q75": 7.0
+        }
+      }
+    },
+    "highway=service": {
+      "linear_ways": 42728,
+      "tag_coverage": {
+        "access": 23636,
+        "bicycle": 138,
+        "bridge": 262,
+        "bus": 14,
+        "check_date:surface": 1,
+        "cycleway": 7,
+        "cycleway:left": 1,
+        "foot": 156,
+        "incline": 22,
+        "junction": 46,
+        "lane_markings": 7,
+        "lanes": 106,
+        "layer": 488,
+        "lit": 47,
+        "maxheight": 5,
+        "maxspeed": 119,
+        "maxspeed:advisory": 3,
+        "maxspeed:type": 4,
+        "motor_vehicle": 274,
+        "motorcar": 91,
+        "motorcycle": 3,
+        "oneway": 2833,
+        "psv": 32,
+        "service": 2311,
+        "sidewalk": 39,
+        "smoothness": 30,
+        "source": 10899,
+        "source:bridge": 2,
+        "surface": 1483,
+        "toll": 6,
+        "tracktype": 2,
+        "tunnel": 231,
+        "vehicle": 3,
+        "width": 230
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 106,
+          "minimum": 1,
+          "maximum": 4,
+          "q25": 1.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 119,
+          "minimum": 5.0,
+          "maximum": 60.0,
+          "q25": 20.0,
+          "median": 20.0,
+          "q75": 30.0
+        },
+        "width": {
+          "n_tagged_ways": 230,
+          "minimum": 1.0,
+          "maximum": 30.0,
+          "q25": 4.0,
+          "median": 5.0,
+          "q75": 5.0
+        }
+      }
+    },
+    "highway=services": {
+      "linear_ways": 5,
+      "tag_coverage": {},
+      "numeric_tags": {}
+    },
+    "highway=steps": {
+      "linear_ways": 2236,
+      "tag_coverage": {
+        "access": 112,
+        "bicycle": 8,
+        "bridge": 250,
+        "bridge:structure": 8,
+        "check_date:surface": 12,
+        "foot": 12,
+        "incline": 655,
+        "lanes": 2,
+        "layer": 271,
+        "lit": 212,
+        "motor_vehicle": 9,
+        "motorcar": 2,
+        "oneway": 26,
+        "oneway:foot": 12,
+        "source": 106,
+        "source:width": 1,
+        "surface": 434,
+        "surface:note": 1,
+        "tunnel": 9,
+        "width": 54
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 2,
+          "minimum": 1,
+          "maximum": 2,
+          "q25": 1.25,
+          "median": 1.5,
+          "q75": 1.75
+        },
+        "width": {
+          "n_tagged_ways": 54,
+          "minimum": 0.5,
+          "maximum": 20.0,
+          "q25": 3.0,
+          "median": 5.0,
+          "q75": 5.0
+        }
+      }
+    },
+    "highway=steps|route=hiking": {
+      "linear_ways": 1,
+      "tag_coverage": {
+        "foot": 1,
+        "route": 1
+      },
+      "numeric_tags": {}
+    },
+    "highway=stop": {
+      "linear_ways": 1,
+      "tag_coverage": {},
+      "numeric_tags": {}
+    },
+    "highway=tertiary": {
+      "linear_ways": 11963,
+      "tag_coverage": {
+        "access": 133,
+        "bicycle": 158,
+        "bridge": 981,
+        "bridge:name:mr": 1,
+        "bridge:structure": 1,
+        "check_date": 20,
+        "cycleway": 18,
+        "cycleway:both": 15,
+        "cycleway:left": 3,
+        "cycleway:right": 1,
+        "foot": 130,
+        "hgv": 3,
+        "incline": 3,
+        "junction": 114,
+        "lane_markings": 171,
+        "lanes": 1079,
+        "lanes:backward": 2,
+        "lanes:forward": 2,
+        "lanes:unmarked": 3,
+        "layer": 1043,
+        "lit": 326,
+        "maxheight": 16,
+        "maxheight:signed": 2,
+        "maxspeed": 250,
+        "maxspeed:advisory": 1,
+        "maxspeed:type": 78,
+        "maxweight:signed": 6,
+        "motor_vehicle": 44,
+        "motorcycle": 2,
+        "oneway": 5911,
+        "oneway:bicycle": 2,
+        "sidewalk": 163,
+        "sidewalk:both": 1,
+        "sidewalk:both:surface": 2,
+        "sidewalk:left": 10,
+        "sidewalk:left:surface": 1,
+        "sidewalk:right": 15,
+        "sidewalk:surface": 5,
+        "smoothness": 38,
+        "source": 1301,
+        "source:bridge": 2,
+        "surface": 1219,
+        "tracktype": 1,
+        "tunnel": 74,
+        "turn:lanes": 3,
+        "turn:lanes:backward": 1,
+        "turn:lanes:forward": 1,
+        "width": 114
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 1078,
+          "minimum": 1,
+          "maximum": 6,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "lanes:backward": {
+          "n_tagged_ways": 2,
+          "minimum": 1,
+          "maximum": 2,
+          "q25": 1.25,
+          "median": 1.5,
+          "q75": 1.75
+        },
+        "lanes:forward": {
+          "n_tagged_ways": 2,
+          "minimum": 1,
+          "maximum": 2,
+          "q25": 1.25,
+          "median": 1.5,
+          "q75": 1.75
+        },
+        "maxspeed": {
+          "n_tagged_ways": 250,
+          "minimum": 10.0,
+          "maximum": 70.0,
+          "q25": 30.0,
+          "median": 40.0,
+          "q75": 50.0
+        },
+        "width": {
+          "n_tagged_ways": 114,
+          "minimum": 3.0,
+          "maximum": 17.0,
+          "q25": 5.0,
+          "median": 10.0,
+          "q75": 10.0
+        }
+      }
+    },
+    "highway=tertiary_link": {
+      "linear_ways": 994,
+      "tag_coverage": {
+        "access": 5,
+        "bicycle": 5,
+        "bridge": 12,
+        "cycleway": 1,
+        "foot": 2,
+        "lane_markings": 10,
+        "lanes": 15,
+        "layer": 22,
+        "lit": 8,
+        "maxspeed": 6,
+        "maxspeed:type": 2,
+        "motor_vehicle": 3,
+        "motorcar": 10,
+        "motorcycle": 1,
+        "oneway": 99,
+        "sidewalk": 2,
+        "source": 54,
+        "surface": 35,
+        "tunnel": 7,
+        "width": 1
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 15,
+          "minimum": 1,
+          "maximum": 6,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 6,
+          "minimum": 20.0,
+          "maximum": 50.0,
+          "q25": 30.0,
+          "median": 32.5,
+          "q75": 46.25
+        },
+        "width": {
+          "n_tagged_ways": 1,
+          "minimum": 17.0,
+          "maximum": 17.0,
+          "q25": 17.0,
+          "median": 17.0,
+          "q75": 17.0
+        }
+      }
+    },
+    "highway=tertiary|route=hiking": {
+      "linear_ways": 7,
+      "tag_coverage": {
+        "foot": 7,
+        "route": 7
+      },
+      "numeric_tags": {}
+    },
+    "highway=track": {
+      "linear_ways": 9332,
+      "tag_coverage": {
+        "access": 57,
+        "bicycle": 38,
+        "bridge": 171,
+        "foot": 36,
+        "incline": 3,
+        "lanes": 6,
+        "layer": 199,
+        "lit": 2,
+        "maxheight": 1,
+        "maxspeed": 1,
+        "motor_vehicle": 40,
+        "motorcar": 3,
+        "motorcycle": 3,
+        "oneway": 64,
+        "sidewalk": 9,
+        "smoothness": 27,
+        "source": 4846,
+        "surface": 2514,
+        "tracktype": 103,
+        "tunnel": 30,
+        "width": 62
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 6,
+          "minimum": 2,
+          "maximum": 2,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 1,
+          "minimum": 40.0,
+          "maximum": 40.0,
+          "q25": 40.0,
+          "median": 40.0,
+          "q75": 40.0
+        },
+        "width": {
+          "n_tagged_ways": 62,
+          "minimum": 2.0,
+          "maximum": 15.0,
+          "q25": 4.0,
+          "median": 5.0,
+          "q75": 5.0
+        }
+      }
+    },
+    "highway=track|route=hiking": {
+      "linear_ways": 21,
+      "tag_coverage": {
+        "foot": 21,
+        "route": 21,
+        "surface": 2
+      },
+      "numeric_tags": {}
+    },
+    "highway=trunk": {
+      "linear_ways": 3102,
+      "tag_coverage": {
+        "access": 23,
+        "bicycle": 81,
+        "bridge": 843,
+        "bridge:name": 6,
+        "check_date": 2,
+        "check_date:surface": 1,
+        "cycleway": 13,
+        "foot": 71,
+        "hgv": 2,
+        "incline": 4,
+        "junction": 34,
+        "lane_markings": 20,
+        "lanes": 1585,
+        "layer": 885,
+        "lit": 151,
+        "maxheight": 38,
+        "maxheight:signed": 1,
+        "maxspeed": 526,
+        "maxspeed:type": 13,
+        "maxweight:signed": 11,
+        "motor_vehicle": 38,
+        "motorcycle": 3,
+        "oneway": 2824,
+        "oneway:bicycle": 7,
+        "sidewalk": 29,
+        "sidewalk:both": 7,
+        "sidewalk:left": 5,
+        "sidewalk:right": 5,
+        "smoothness": 1,
+        "source": 795,
+        "surface": 641,
+        "toll": 38,
+        "tunnel": 15,
+        "width": 6
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 1585,
+          "minimum": 1,
+          "maximum": 7,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 3.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 526,
+          "minimum": 5.0,
+          "maximum": 120.0,
+          "q25": 65.0,
+          "median": 80.0,
+          "q75": 80.0
+        },
+        "width": {
+          "n_tagged_ways": 6,
+          "minimum": 10.0,
+          "maximum": 10.0,
+          "q25": 10.0,
+          "median": 10.0,
+          "q75": 10.0
+        }
+      }
+    },
+    "highway=trunk_link": {
+      "linear_ways": 963,
+      "tag_coverage": {
+        "access": 1,
+        "bicycle": 7,
+        "bridge": 73,
+        "foot": 3,
+        "lane_markings": 4,
+        "lanes": 282,
+        "layer": 82,
+        "lit": 47,
+        "maxheight": 2,
+        "maxspeed": 20,
+        "maxspeed:type": 1,
+        "motor_vehicle": 3,
+        "motorcar": 2,
+        "oneway": 623,
+        "sidewalk": 20,
+        "sidewalk:left": 1,
+        "source": 39,
+        "surface": 70,
+        "tunnel": 6,
+        "width": 1
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 281,
+          "minimum": 1,
+          "maximum": 3,
+          "q25": 2.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 20,
+          "minimum": 1.0,
+          "maximum": 120.0,
+          "q25": 40.0,
+          "median": 60.0,
+          "q75": 60.0
+        },
+        "width": {
+          "n_tagged_ways": 1,
+          "minimum": 10.0,
+          "maximum": 10.0,
+          "q25": 10.0,
+          "median": 10.0,
+          "q75": 10.0
+        }
+      }
+    },
+    "highway=unclassified": {
+      "linear_ways": 10312,
+      "tag_coverage": {
+        "access": 130,
+        "bicycle": 17,
+        "bridge": 660,
+        "check_date:surface": 1,
+        "cycleway": 3,
+        "cycleway:left": 1,
+        "cycleway:right": 1,
+        "foot": 15,
+        "incline": 8,
+        "junction": 8,
+        "lane_markings": 5,
+        "lanes": 54,
+        "layer": 695,
+        "lit": 1,
+        "maxheight": 6,
+        "maxspeed": 21,
+        "maxspeed:advisory": 1,
+        "motor_vehicle": 15,
+        "motorcar": 3,
+        "oneway": 588,
+        "service": 6,
+        "sidewalk": 7,
+        "smoothness": 47,
+        "source": 1972,
+        "source:surface": 1,
+        "surface": 641,
+        "tunnel": 56,
+        "width": 23
+      },
+      "numeric_tags": {
+        "lanes": {
+          "n_tagged_ways": 54,
+          "minimum": 1,
+          "maximum": 11,
+          "q25": 1.0,
+          "median": 2.0,
+          "q75": 2.0
+        },
+        "maxspeed": {
+          "n_tagged_ways": 21,
+          "minimum": 10.0,
+          "maximum": 50.0,
+          "q25": 10.0,
+          "median": 20.0,
+          "q75": 30.0
+        },
+        "width": {
+          "n_tagged_ways": 23,
+          "minimum": 2.0,
+          "maximum": 15.0,
+          "q25": 2.5,
+          "median": 4.0,
+          "q75": 5.1
+        }
+      }
+    },
+    "highway=unclassified|route=hiking": {
+      "linear_ways": 14,
+      "tag_coverage": {
+        "bridge": 2,
+        "foot": 14,
+        "layer": 2,
+        "route": 14
+      },
+      "numeric_tags": {}
+    },
+    "railway=abandoned": {
+      "linear_ways": 38,
+      "tag_coverage": {
+        "bridge": 2,
+        "layer": 6,
+        "railway": 38,
+        "railway:traffic_mode": 2,
+        "service": 3,
+        "source": 5,
+        "source:abandoned": 1,
+        "source:bridge": 1,
+        "tunnel": 4
+      },
+      "numeric_tags": {}
+    },
+    "railway=construction": {
+      "linear_ways": 278,
+      "tag_coverage": {
+        "bridge": 177,
+        "check_date": 8,
+        "incline": 6,
+        "layer": 132,
+        "maxheight": 6,
+        "maxspeed": 4,
+        "railway": 278,
+        "railway:ballastless": 91,
+        "railway:traffic_mode": 18,
+        "service": 21,
+        "source": 2,
+        "tunnel": 6
+      },
+      "numeric_tags": {
+        "maxspeed": {
+          "n_tagged_ways": 4,
+          "minimum": 320.0,
+          "maximum": 320.0,
+          "q25": 320.0,
+          "median": 320.0,
+          "q75": 320.0
+        }
+      }
+    },
+    "railway=disused": {
+      "linear_ways": 26,
+      "tag_coverage": {
+        "railway": 26,
+        "railway:traffic_mode": 1,
+        "service": 19,
+        "source": 2,
+        "source:abandoned": 2
+      },
+      "numeric_tags": {}
+    },
+    "railway=funicular": {
+      "linear_ways": 1,
+      "tag_coverage": {
+        "railway": 1
+      },
+      "numeric_tags": {}
+    },
+    "railway=miniature": {
+      "linear_ways": 7,
+      "tag_coverage": {
+        "bridge": 1,
+        "layer": 2,
+        "railway": 7,
+        "tunnel": 1
+      },
+      "numeric_tags": {}
+    },
+    "railway=monorail": {
+      "linear_ways": 37,
+      "tag_coverage": {
+        "bridge": 37,
+        "layer": 37,
+        "oneway": 4,
+        "railway": 37,
+        "service": 33,
+        "source": 5
+      },
+      "numeric_tags": {}
+    },
+    "railway=narrow_gauge": {
+      "linear_ways": 9,
+      "tag_coverage": {
+        "layer": 1,
+        "railway": 9,
+        "service": 2,
+        "source": 8,
+        "tunnel": 2
+      },
+      "numeric_tags": {}
+    },
+    "railway=platform": {
+      "linear_ways": 93,
+      "tag_coverage": {
+        "bicycle": 1,
+        "foot": 1,
+        "layer": 24,
+        "lit": 13,
+        "motor_vehicle": 1,
+        "railway": 93,
+        "source": 5,
+        "surface": 2
+      },
+      "numeric_tags": {}
+    },
+    "railway=platform_edge": {
+      "linear_ways": 10,
+      "tag_coverage": {
+        "railway": 10
+      },
+      "numeric_tags": {}
+    },
+    "railway=proposed": {
+      "linear_ways": 18,
+      "tag_coverage": {
+        "bridge": 14,
+        "layer": 15,
+        "railway": 18,
+        "service": 3,
+        "tunnel": 2
+      },
+      "numeric_tags": {}
+    },
+    "railway=rail": {
+      "linear_ways": 4124,
+      "tag_coverage": {
+        "bridge": 634,
+        "bridge:name": 2,
+        "bridge:structure": 44,
+        "check_date": 6,
+        "layer": 700,
+        "maxspeed": 229,
+        "oneway": 329,
+        "railway": 4124,
+        "railway:preferred_direction": 207,
+        "railway:signal:direction": 7,
+        "railway:track_ref": 5,
+        "railway:traffic_mode": 568,
+        "service": 1915,
+        "source": 444,
+        "source:alignment": 1,
+        "source:bridge": 22,
+        "source:geometry": 8,
+        "source:tunnel": 2,
+        "tunnel": 244,
+        "tunnel:name": 1
+      },
+      "numeric_tags": {
+        "maxspeed": {
+          "n_tagged_ways": 229,
+          "minimum": 40.0,
+          "maximum": 130.0,
+          "q25": 130.0,
+          "median": 130.0,
+          "q75": 130.0
+        }
+      }
+    },
+    "railway=razed": {
+      "linear_ways": 2,
+      "tag_coverage": {
+        "railway": 2
+      },
+      "numeric_tags": {}
+    },
+    "railway=station": {
+      "linear_ways": 65,
+      "tag_coverage": {
+        "layer": 56,
+        "lit": 1,
+        "railway": 65
+      },
+      "numeric_tags": {}
+    },
+    "railway=subway": {
+      "linear_ways": 438,
+      "tag_coverage": {
+        "bridge": 164,
+        "check_date": 8,
+        "layer": 178,
+        "railway": 438,
+        "railway:ballastless": 28,
+        "service": 326,
+        "tunnel": 13
+      },
+      "numeric_tags": {}
+    },
+    "railway=technical_station": {
+      "linear_ways": 2,
+      "tag_coverage": {
+        "railway": 2
+      },
+      "numeric_tags": {}
+    },
+    "railway=traverser": {
+      "linear_ways": 6,
+      "tag_coverage": {
+        "railway": 6,
+        "source": 6
+      },
+      "numeric_tags": {}
+    },
+    "railway=turntable": {
+      "linear_ways": 1,
+      "tag_coverage": {
+        "railway": 1,
+        "source": 1
+      },
+      "numeric_tags": {}
+    },
+    "railway=workshop": {
+      "linear_ways": 32,
+      "tag_coverage": {
+        "layer": 14,
+        "railway": 32,
+        "source": 2
+      },
+      "numeric_tags": {}
+    },
+    "railway=yard": {
+      "linear_ways": 2,
+      "tag_coverage": {
+        "railway": 2
+      },
+      "numeric_tags": {}
+    },
+    "route=ferry": {
+      "linear_ways": 27,
+      "tag_coverage": {
+        "bicycle": 5,
+        "foot": 2,
+        "motor_vehicle": 2,
+        "motorcar": 2,
+        "motorcycle": 1,
+        "route": 27,
+        "source": 1,
+        "toll": 1
+      },
+      "numeric_tags": {}
+    }
+  },
+  "interpretation": [
+    "Mapper-reported tags, not independently verified field measurements.",
+    "Quantiles weight native ways equally; mapping splits affect this distribution.",
+    "No missing value imputation or class default selection.",
+    "Speed tags describe legal limits, not observed free-flow speeds.",
+    "Lane totals are not halved; directional and shared lanes remain separate.",
+    "Width includes the carriageway and may include cycle and parking lanes; no lane width inferred.",
+    "Conditional and mode-specific tags are retained as text, not applied to a simulation.",
+    "Tag coverage does not establish network access, connectivity or physical capacity."
+  ],
+  "tagging_references": [
+    "https://wiki.openstreetmap.org/wiki/Key:maxspeed",
+    "https://wiki.openstreetmap.org/wiki/Key:lanes",
+    "https://wiki.openstreetmap.org/wiki/Key:width"
+  ],
+  "inputs": [
+    "networks/osm/network_source.osm.gz"
+  ]
+}

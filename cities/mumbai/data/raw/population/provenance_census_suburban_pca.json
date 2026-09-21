@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_suburban_pca_4bee46e9b2086a78.xlsx",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/6709/download/9786/DDW_PCA2722_2011_MDDS%20with%20UI.xlsx",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/6709/download/9786/DDW_PCA2722_2011_MDDS%20with%20UI.xlsx",
+      "content_type": "application/octet-stream",
+      "source": "Mumbai Suburban primary census abstract",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:32:42.818866+00:00",
+      "sha256": "4bee46e9b2086a78b6c1faefac96fbdd181d2e5f11b6eeea6a0535212fadf641",
+      "bytes": 50832,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "2011 ward demographic controls; spatial crosswalk needed.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

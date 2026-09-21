@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/freight/jnpa_performance_202608_aa4db8f3bf6259ee.html",
+      "url": "https://www.jnport.gov.in/page/performance-highlights/QVRnUlRkNUpwVlRNT3IvMjFqWEUwdz09",
+      "final_url": "https://www.jnport.gov.in/page/performance-highlights/QVRnUlRkNUpwVlRNT3IvMjFqWEUwdz09",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "JNPA August 2026 monthly freight and rake performance",
+      "licence": "Government/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:57:53.282519+00:00",
+      "sha256": "aa4db8f3bf6259ee9fe9b93cc92cccd72af51f7fee472949cef3ea993744016d",
+      "bytes": 81547,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published freight operations evidence; reporting universe, loaded/empty movement definitions and dates require reconciliation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

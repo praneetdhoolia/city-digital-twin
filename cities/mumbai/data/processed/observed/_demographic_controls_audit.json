@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "source": "derived",
+  "status": "historical_evidence_only",
+  "age_rows": 228,
+  "school_rows": 1536,
+  "household_size_rows": 1071,
+  "district_checks": [
+    {
+      "district_code": "517",
+      "c14_pca_persons_match": true,
+      "age_bands_reconcile": true
+    },
+    {
+      "district_code": "518",
+      "c14_pca_persons_match": true,
+      "age_bands_reconcile": true
+    },
+    {
+      "district_code": "519",
+      "c14_pca_persons_match": true,
+      "age_bands_reconcile": true
+    },
+    {
+      "district_code": "520",
+      "c14_pca_persons_match": true,
+      "age_bands_reconcile": true
+    }
+  ],
+  "c12_categories_and_single_ages_reconcile": true,
+  "hh1_size_counts_reconcile": true,
+  "limitations": [
+    "Normal households exclude institutional and houseless households; PCA includes different universes.",
+    "City, district, subdistrict and residence totals overlap; no joint synthetic population is created.",
+    "Age not stated remains a separate source category, not reassigned.",
+    "School attendance is not a count of daily school trips or locations.",
+    "Greater Mumbai city can use a special district code in the city table; its source identity is retained.",
+    "The four historical districts cover more than the current metropolitan region."
+  ]
+}

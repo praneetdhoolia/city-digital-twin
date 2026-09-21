@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/research/osm_wiki_oneway_20260919_c55f3903c96f53ad.html",
+      "url": "https://wiki.openstreetmap.org/wiki/Key:oneway",
+      "final_url": "https://wiki.openstreetmap.org/wiki/Key:oneway",
+      "source": "OpenStreetMap oneway tag semantics",
+      "licence": "CC-BY-SA 2.0 (OpenStreetMap Wiki content; individual media may differ)",
+      "retrieved": "2026-09-18T21:48:50.010191+00:00",
+      "sha256": "c55f3903c96f53ad5d64d87407bd28a077ecfd498a2b4f98dfb51dedb13a9d77",
+      "bytes": 108084,
+      "content_type": "text/html; charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Tag documentation snapshot; describes mapper conventions, not a traffic regulation or an observation of current access."
+    }
+  ]
+}

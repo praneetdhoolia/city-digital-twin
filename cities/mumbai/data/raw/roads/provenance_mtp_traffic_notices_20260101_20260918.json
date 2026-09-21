@@ -1,0 +1,27 @@
+{
+  "files": [
+    {
+      "path": "data/raw/roads/mtp_traffic_notices_20260101_20260918.zip",
+      "url": "https://mtperp.mahatrafficechallan.gov.in/GetPublicNotice/",
+      "source": "Mumbai Traffic Police public road-order attachments listed in mtp_notifications_20260101_20260918",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T14:44:14.716996+00:00",
+      "retrieved_first": "2026-09-18T10:52:00.731661+00:00",
+      "sha256": "9b4a5d09236b22e043f966d5bf0bdd2ce49a0bf86a5bc5a292fe259ee360768a",
+      "bytes": 3715204586,
+      "content_type": "application/zip",
+      "producing_script": "extract/register_traffic_notices.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official road order attachments; effective dates, geometry and supersession require review.",
+      "method": "GET",
+      "harvest": true,
+      "member_count": 1840,
+      "members_listing": "_members.csv",
+      "formats": [
+        "jpg",
+        "pdf"
+      ],
+      "packed": "2026-09-21T06:17:41.572371+00:00"
+    }
+  ]
+}

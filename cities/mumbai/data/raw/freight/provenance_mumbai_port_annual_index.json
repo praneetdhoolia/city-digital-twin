@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/freight/mumbai_port_annual_index_5a037812121f1898.html",
+      "url": "https://mumbaiport.gov.in/show_content.php?lang=1&level=0&lid=29&ls_id=24",
+      "final_url": "https://mumbaiport.gov.in/show_content.php?lang=1&level=0&lid=29&ls_id=24",
+      "content_type": "text/html; charset=utf-8",
+      "source": "Mumbai Port annual reports index",
+      "licence": "Operator or public authority publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:24:48.390531+00:00",
+      "sha256": "5a037812121f189820172a3c65d5dc5c483ae06770d3c5582028fde01b5ec2a6",
+      "bytes": 132048,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published evidence requiring units, effective dates and operational validation; throughput is not a truck or train movement count.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

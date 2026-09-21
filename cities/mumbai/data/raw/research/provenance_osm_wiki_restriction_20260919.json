@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/research/osm_wiki_restriction_20260919_8963ef51ab013f87.html",
+      "url": "https://wiki.openstreetmap.org/wiki/Relation:restriction",
+      "final_url": "https://wiki.openstreetmap.org/wiki/Relation:restriction",
+      "source": "OpenStreetMap turn restriction relation semantics",
+      "licence": "CC-BY-SA 2.0 (OpenStreetMap Wiki content; individual media may differ)",
+      "retrieved": "2026-09-19T02:03:35.618458+00:00",
+      "sha256": "8963ef51ab013f876e1c6a2998158b9df2502786ce4bee148276011713baa114",
+      "bytes": 139210,
+      "content_type": "text/html; charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Tag documentation snapshot; mapper conventions, not a traffic regulation or current observation."
+    }
+  ]
+}

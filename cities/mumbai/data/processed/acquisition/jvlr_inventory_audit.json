@@ -1,0 +1,170 @@
+{
+  "source": "derived",
+  "source_id": "jvlr_traffic_study_2026_pdf",
+  "source_sha256": "0a14ac9a0c70e4b08a760644c82cdc01493fefb9663421ddd43ac29a23f65162",
+  "road_inventory_rows": 18,
+  "inventory_source_cells": 252,
+  "temporal_summary_rows": 18,
+  "checks": [
+    {
+      "row_id": "1.1",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "7.7",
+      "calculated": "7.693924742484759302081143578",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "1.2",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "8.9",
+      "calculated": "8.885864281547734785144857087",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "1.3",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "8.5",
+      "calculated": "8.485463150777552400270453009",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "1.4",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "9.4",
+      "calculated": "9.443945293001896775481681142",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "2.1",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "9.9",
+      "calculated": "9.864451246174027109750765195",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "2.2",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "10.3",
+      "calculated": "10.27273591181222084956761380",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "3.1",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "9.7",
+      "calculated": "9.650633534260056587526140977",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "3.2",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "10.4",
+      "calculated": "10.42658452347615047138990012",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "3.3",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "10.5",
+      "calculated": "10.51004636785162287480680062",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "4.1",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "10.3",
+      "calculated": "10.32556872360713799209916905",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "4.2",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "9.7",
+      "calculated": "9.705473098330241187384044527",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "4.3",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "10.5",
+      "calculated": "10.53052093320549696388622563",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "4.4",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "10.1",
+      "calculated": "10.13686911890504704875962361",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "5.1",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "9.8",
+      "calculated": "9.754934681033660722799656718",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "5.2",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "9.8",
+      "calculated": "9.785553921189130603081210807",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "6.1",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "9.3",
+      "calculated": "9.314227226202661207778915046",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "6.2",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "10.7",
+      "calculated": "10.72961373390557939914163090",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "6.3",
+      "check": "cv_equals_sd_over_mean_percent",
+      "published": "10.1",
+      "calculated": "10.08717310087173100871731009",
+      "printed_half_quantum": "0.05",
+      "status": "rounding_compatible"
+    }
+  ],
+  "check_status_counts": {
+    "rounding_compatible": 18
+  },
+  "reported_pathway_widths_m": [
+    "1.5",
+    "2",
+    "2.5"
+  ],
+  "limitations": [
+    "Inventory is dated to the survey period; no claim of current corridor condition.",
+    "A reported missing footpath does not establish that pedestrians are prohibited.",
+    "Right-of-way width includes space beyond the carriageway; it is not a lane-width measurement.",
+    "A present service lane or median with no numeric width remains width-unknown.",
+    "Temporal statistics describe the published survey week; raw daily counts remain unobtained.",
+    "No causal capacity adjustment is inferred from the inventory or the variability."
+  ]
+}

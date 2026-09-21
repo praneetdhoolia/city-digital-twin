@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_hh1_maharashtra_index_92df597d2e228371.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/7136",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/7136",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Normal households by size Maharashtra 2011",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:52:36.244931+00:00",
+      "sha256": "92df597d2e2283712135a4eddfd4026f3677a050af025e39e85689fe4fdd072d",
+      "bytes": 466218,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical census control; definition, geographical universe and contemporary adjustment require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

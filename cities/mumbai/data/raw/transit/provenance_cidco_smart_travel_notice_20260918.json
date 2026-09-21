@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/cidco_smart_travel_notice_20260918_550c3e5c1a3d645e.html",
+      "url": "https://cidco.maharashtra.gov.in/Page?Token=8A3F2E90466",
+      "final_url": "https://cidco.maharashtra.gov.in/Page?Token=8A3F2E90466",
+      "content_type": "text/html; charset=utf-8",
+      "source": "CIDCO public smart travel announcement",
+      "licence": "Government/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:53:17.723928+00:00",
+      "sha256": "550c3e5c1a3d645e300f7e15c8af48a3cd0790e8a8c1d91d84e2b0828d6bcefc",
+      "bytes": 71080,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public announcement/index; publication dates and attachment content require review.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

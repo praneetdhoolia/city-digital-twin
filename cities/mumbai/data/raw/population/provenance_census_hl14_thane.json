@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_hl14_thane_838c8b18ebc224f5.xlsx",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/9815/download/12927/HLPCA-27517-2011_H14_census.xlsx",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/9815/download/12927/HLPCA-27517-2011_H14_census.xlsx",
+      "content_type": "application/octet-stream",
+      "source": "HL-14 household amenities and assets thane Maharashtra 2011",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:52:19.434131+00:00",
+      "sha256": "838c8b18ebc224f54ae8043a1adbf0434a2608cbfa59f2f9821aa03a22f42cf5",
+      "bytes": 2218812,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "2011 non-institutional households; household asset possession is not vehicle count or current ownership.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

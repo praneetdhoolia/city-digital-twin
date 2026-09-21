@@ -1,6 +1,6 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-09-16T14:29:40",
+  "generated": "2026-09-21T16:32:07",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
   "n_files": 959,
@@ -15,8 +15,8 @@
     "processed": 1842891202
   },
   "by_lineage_scope": {
-    "raw": 524,
-    "output": 334,
+    "raw": 521,
+    "output": 337,
     "script": 101,
     "none": 0
   },
@@ -635,11 +635,11 @@
       "sha256": "4577e10cd8c11eb0a75f24ad84211cb83420e532b5e50f401243fc30d77c7452",
       "stage": "raw",
       "produced_by": "",
-      "source": "Adult Opal fares (transportnsw.info), as published at retrieval",
-      "source_url": "https://transportnsw.info/tickets-fares/fares/adult-opal-fares",
-      "licence": "Copyright State of NSW (Transport for NSW); factual regulated fares cited with attribution. The transportnsw.info fare tables restate the Opal determination under the Passenger Transport Act 2014.",
-      "retrieved": "2026-08-31T14:45:00+10:00",
-      "lineage_scope": "raw",
+      "source": "Newcastle (NSW) region - the provenance record the package keeps of itself",
+      "source_url": "",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
+      "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
     {
@@ -6921,10 +6921,10 @@
       "sha256": "604f58ac796fe33744dd86cbf9dced93a1a8bb9c37d124bf018d7ea99dac02f5",
       "stage": "raw",
       "produced_by": "",
-      "source": "cross-check one year earlier; fully consistent with the 2017 state",
+      "source": "OpenStreetMap, via Overpass",
       "source_url": "https://www.openstreetmap.org/",
       "licence": "ODbL 1.0",
-      "retrieved": "2026-08-24T21:05:00+10:00",
+      "retrieved": "",
       "lineage_scope": "raw",
       "share_alike_ancestor": "yes"
     },
@@ -6935,11 +6935,11 @@
       "sha256": "e32597da576f875cef8a1e24e1c486695085751f3c7231c70002918eabd55f31",
       "stage": "raw",
       "produced_by": "",
-      "source": "Point to Point Transport (Fares) Order 2025, effective 1 July 2025 (Sally Webb, Deputy Secretary, for TfNSW)",
-      "source_url": "https://www.transport.nsw.gov.au/system/files/media/documents/2025/Point-to-Point-Transport-Fares-Order-June-2025.pdf",
-      "licence": "NSW Government publication (statutory instrument under the Point to Point Transport (Taxis and Hire Vehicles) Act 2016); factual regulated maxima cited with attribution",
-      "retrieved": "2026-08-25T03:20:00+10:00",
-      "lineage_scope": "raw",
+      "source": "Newcastle (NSW) region - the provenance record the package keeps of itself",
+      "source_url": "",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
+      "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
     {
@@ -6977,11 +6977,11 @@
       "sha256": "a091187517730925f21d90c985ba8fea86d18fa8072b2094ad4b9817abeb267b",
       "stage": "raw",
       "produced_by": "",
-      "source": "Traffic Impact Assessment, 643 Hunter Street, Newcastle West; The Transport Planning Partnership for Next Level Seven Pty Ltd; TTPP ref 22106, V03, 1 September 2022; exhibited as PPSHCC-137",
-      "source_url": "https://apps.planningportal.nsw.gov.au/prweb/PRRestService/DocMgmt/v1/PublicDocuments/DATA-WORKATTACH-FILE%20PEC-DPE-EP-WORK%20PPSHCC-137!20230328T025624.102%20GMT",
-      "licence": "Public record exhibited under the EP&A Act (NSW). The SCATS Interpreted History inside the TIA was supplied by TfNSW to the applicant's traffic consultant; republication terms for third-party reuse are NOT stated in the document. Handling decision (DECISIONS.md 9.76): the archived PDF is validation/sweep-basis evidence only - it is never merged into a CC-BY artefact, and no registry value is set from it for the 14 modelled intersections.",
-      "retrieved": "2026-08-25T02:21:00+10:00",
-      "lineage_scope": "raw",
+      "source": "Newcastle (NSW) region - the provenance record the package keeps of itself",
+      "source_url": "",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
+      "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
     {
@@ -7075,10 +7075,10 @@
       "sha256": "e0b39fd288507766a7c42a092f8b27749e331756f9973179f402ab69edef1e28",
       "stage": "raw",
       "produced_by": "",
-      "source": "TfNSW Speed Zones - the regulated speed zone for every road in NSW, statewide linework",
-      "source_url": "https://opendata.transport.nsw.gov.au/data/dataset/4253a054-b377-4b5b-83d1-71385bb6ff33/resource/72cd0f29-f231-4c8c-a885-595946f3f202/download/speedzones.zip",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "2026-08-13",
+      "retrieved": "",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_girg_c1e9e6984f78a0e7.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/GIRG/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/GIRG/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Girgaon",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:37.415947+00:00",
+      "sha256": "c1e9e6984f78a0e728194a889bae52a2b67b0e26ae8482d973122c90026c7ce7",
+      "bytes": 19669,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

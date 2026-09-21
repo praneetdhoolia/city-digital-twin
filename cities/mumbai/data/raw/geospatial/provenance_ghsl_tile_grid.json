@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/geospatial/ghsl_tile_grid_e71f66bcb47b5eaa.zip",
+      "url": "https://ghsl.jrc.ec.europa.eu/download/GHSL_data_54009_shapefile.zip",
+      "final_url": "https://human-settlement.emergency.copernicus.eu/download/GHSL_data_54009_shapefile.zip",
+      "source": "GHSL published Mollweide tile grid",
+      "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
+      "retrieved": "2026-09-18T09:56:00.014768+00:00",
+      "sha256": "e71f66bcb47b5eaa1881871cb41c12fc2db2affb2f6a0b8fe21c939926a6a3e6",
+      "bytes": 1330530,
+      "content_type": "application/zip",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Spatial-support source. GHSL population is modelled; DSM includes buildings and vegetation and is not surveyed road elevation."
+    }
+  ]
+}

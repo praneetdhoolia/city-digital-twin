@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/metro/metro1_faq_1be14438376a06fe.html",
+      "url": "https://www.reliancemumbaimetro.com/metro-faq",
+      "final_url": "https://www.reliancemumbaimetro.com/metro-faq",
+      "content_type": "text/html; charset=utf-8",
+      "source": "Mumbai Metro One passenger information",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:37:44.193057+00:00",
+      "sha256": "1be14438376a06fecd5563d21eede05ab8aa844cea527a82c7c3f93cda08cab5",
+      "bytes": 105631,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Fare and interchange rules; schedule figures conflict with dedicated schedule page and require reconciliation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

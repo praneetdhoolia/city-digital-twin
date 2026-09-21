@@ -13,6 +13,8 @@ cities/*/data/_build_timing.json
 
 # --- immutable third-party downloads (~1.8 GiB) ---
 cities/*/data/raw/**
+!cities/*/data/raw/**/
+!cities/*/data/raw/**/provenance_*.json
 !cities/*/data/raw/provenance_*.json
 !cities/*/data/raw/osm_attic/
 !cities/*/data/raw/osm_attic/*.json
@@ -26,6 +28,7 @@ cities/*/data/raw/**
 
 # --- raw Overpass extracts (~156 MB) ---
 cities/*/networks/osm/*.osm
+cities/*/networks/osm/*.osm.gz
 
 # --- source GTFS bundles (~230 MB) ---
 cities/*/schedules/raw/**
@@ -53,7 +56,13 @@ cities/*/scenarios/matsim/**
 
 # --- large derived geometry ---
 cities/*/data/processed/network/*.jsonl
+cities/*/data/processed/network/*_geometry/*.csv
+cities/*/data/processed/network/*_chains/*.csv
+cities/*/data/processed/network/osm_way_attributes.csv
+cities/*/data/processed/network/osm_way_access_profiles.csv
 cities/*/data/processed/zones/*.gpkg
+cities/*/data/processed/geospatial/*.gpkg
+cities/*/data/processed/geospatial/*.osm.gz
 
 # --- P2 network build outputs (regenerate with build_matsim_network /
 #     build_level_crossings). The build reports ARE committed: they carry the

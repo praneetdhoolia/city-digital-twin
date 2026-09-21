@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_journey_klbd_cstm_20260918_0f744ff297e8de83.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/journey-route/KLBD/CSTM/station/station/least-distance/2026-09-18/one_way/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/journey-route/KLBD/CSTM/station/station/least-distance/2026-09-18/one_way/",
+      "content_type": "application/json",
+      "source": "Metro 3 public adjacent-station journey KLBD to CSTM, 18 September 2026",
+      "licence": "Public authority or operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:16:14.115888+00:00",
+      "sha256": "0f744ff297e8de83baa27ae9b9ef84771c3adeb650b3ab6ade64bd2536d8b930",
+      "bytes": 653,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

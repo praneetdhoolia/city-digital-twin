@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_vidn_13d172b532bc0d99.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/VIDN/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/VIDN/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Bandra Colony",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:24.247078+00:00",
+      "sha256": "13d172b532bc0d99f512a41de17610d0b9516abc4d95e64657db4ce16ec6e6a9",
+      "bytes": 29902,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,614 @@
+{
+  "schema_version": 1,
+  "updated": "2026-09-19",
+  "scope": "Mumbai Metropolitan Region provisionally, pending user geographical preference; retain cross-boundary travel.",
+  "completion": "Not complete. Native Mumbai passenger/freight cases, regional transit, fare-aware routing and broader daily activities have executed. Daily timing failures are measured; a nine-iteration learning case completed. A further nine-iteration case with point-and-area destinations also completed; supply throughput and daily scheduling remain unresolved. Representative current demand, complete ticket rules, fleet realism, scaling and calibration remain unverified. Initial eligible-alternative evaluation also completed with all retained plans scored; this does not establish convergence. A native hired-supply pool case also completed with experienced waiting and refusals; spatial dispatch, empty movements and refusal fallback remain incomplete.",
+  "requirements": [
+    {
+      "id": "extent",
+      "title": "Boundary and cross-boundary connectors",
+      "required": "Official 2019 MMR notification, cadastral or administrative polygons and station catchments",
+      "source_ids": [
+        "mmr_boundary_2019",
+        "mmr_plan_2016_36",
+        "iitb_boundary_mumbai_city",
+        "iitb_boundary_mumbai_suburban",
+        "wri_mmr_service",
+        "wri_mmr_layer_1_features",
+        "wri_mmr_layer_5_features",
+        "wri_mmr_layer_6_features",
+        "mmr_ena_spa_notification_20240709",
+        "mmr_ena_palghar_plan_notice_20250918",
+        "mmr_ena_raigad_plan_notice_20250918",
+        "maharashtra_scheduled_areas_order_1985",
+        "palghar_zp_administrative_setup",
+        "maharashtra_tribal_administration_2017_18"
+      ],
+      "method": "Resolve notified areas to georeferenced boundaries; reconcile 2011 districts, 2014 Palghar split and later municipality changes. Retain external through traffic.",
+      "status": "incomplete",
+      "remaining": "Legal extent and public GIS acquired; public GIS omits Palghar and has ambiguous duplicate census codes. The extended-area English village list differs from a later notice by one Palghar village. Historical Scheduled Areas names have been transcribed and compared with census and planning names: candidates overlap the 2024 planning list, so no exclusion is inferred from name matching. Four scan readings remain uncertain. Historical/current village identities, legal scope and polygons still require reconciliation.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "base_date",
+      "title": "Common model date and operational network",
+      "required": "Dated operator notices, schedules, openings, closures, counts and surveys",
+      "source_ids": [
+        "mmrda_2024",
+        "jica_metro11_2026",
+        "mmrcl_public_notices",
+        "wr_timetable_20260901_index",
+        "mmr_line9_sept_2026_block",
+        "pib_mumbai_rail_capacity_projects_20260325"
+      ],
+      "method": "Build dated service inventory; carry source dates and adjustments separately. Select calibration period from overlapping observations.",
+      "status": "incomplete",
+      "remaining": "Current festival extensions and September commissioning blocks require explicit calendar exceptions; no common calibration day selected.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "roads",
+      "title": "Routable directed road network",
+      "required": "OSM extract, official roads, lane counts, speeds, turn restrictions, tolls, access and bridge controls",
+      "source_ids": [
+        "mumbai_cmp_summary",
+        "osm_western_zone_20260915",
+        "mtp_notifications_20260918",
+        "mtp_notifications_20260101_20260918",
+        "mtp_notice_823227",
+        "atal_setu_faq_20240315",
+        "atal_setu_ev_toll_notification_20250821",
+        "jvlr_traffic_study_2026_pdf",
+        "jvlr_conference_poster_2026_response",
+        "urban_arterial_operating_speed_capacity_2017_pdf",
+        "vm_lal_committee_report_2000",
+        "maharashtra_taxi_auto_committee_part3",
+        "mpcb_mumbai_emissions_source_apportionment_2023",
+        "bmc_coastal_traffic_peer_review_2016",
+        "mmrda_thane_borivali_tunnel_dpr",
+        "osm_wiki_access_20260919",
+        "osm_wiki_motorcar_20260919",
+        "osm_wiki_psv_20260919",
+        "osm_wiki_oneway_20260919",
+        "osm_wiki_restriction_20260919",
+        "osm_relation_16357332_history_20260919"
+      ],
+      "method": "Acquire boundary-derived OSM with halo; compare official corridors and observed counts; preserve two-wheel and auto restrictions.",
+      "status": "incomplete",
+      "remaining": "A source-derived native OSM network input now retains whole ways, complete selected node references and 333 turn restrictions. The shared MATSim builder accepts the city-declared compressed source. No MATSim network conversion or Mumbai simulation has run. Legal extent, conditional restriction interpretation, current police-order reconciliation, modal access, speed/capacity settings, road matching and traffic validation remain. The native tag audit now quantifies class-level coverage, preserves reversible and reverse-direction tags, and leaves missing or ambiguous speed/lane/width values unresolved. The final JVLR paper supplies 18 classified count windows from 24 June 2025, lane counts and reported speed limits. Count-line georeferencing, scenario-date matching and independent road-capacity estimation remain; indicative densities calculated from speed limits are excluded as observed speed evidence. JVLR road inventory and temporal summaries are extracted but unassigned. The 2017 arterial capacity study is acquired and audited; its five numerical disagreements and different-city, low-side-friction scope need corroboration before parameter adoption. The Coastal Road review retains native candidate geometry, source access tags and adjoining topology without assigning a legal extent. The historical V. M. Lal report gives two island-city boundary descriptions; neither establishes the current autorickshaw restriction polygon. The taxi/auto committee Part 3 download timed out and remains unobtained. The MPCB report dated December 2023 describes a 60-junction classified survey, but publishes grid-allocated movement totals rather than independent citywide vehicle counts; survey dates and the original junction observations remain unresolved. Native-way attributes now retain directional lane evidence, speed units and unresolved modifiers. Most ways still lack lane and speed evidence; no class defaults or saturation flows have been adopted. Explicit access-family profiles now retain all 232,856 native road/path records across 12 OSM transport classes, including bus exceptions, motorcycle prohibitions, restricted purposes, malformed values and unresolved qualifiers. No profile establishes simulation permission. Local class defaults, direction, barriers, current legal notices and traveller entitlements must be joined before network conversion. Complete native road/path geometry now retains 2,043,886 nodes and 2,139,676 adjacent-node segments without snapping or simplification. All 232,856 road attribute/access records join exactly; 61 area boundaries and 41 lifecycle-only ways remain separate evidence. Native road/rail node identities and coordinates agree at 1,512 shared nodes. Barriers, signals and crossings retain source tags but their operating behaviour is not supplied. The geometry is not a MATSim network. A pinned converter probe demonstrates loss of intermediate gate/signal/crossing nodes when paths collapse, and missing node tags even when paths are retained. Protected geometry chains now preserve every native segment and all tagged nodes, shared junctions, road/rail anchors and available turn-restriction members. These chains are not yet MATSim links and require queue/discrete-time equivalence tests before adoption. Source restriction relation 16357332 has only a via node, with no from/to ways, and remains uninterpretable. Native turn audit now preserves all selected relations and resolves via-way geometry; thirteen incomplete source relations are confirmed against acquired histories and still need current legal/layout reconciliation. Turn permissions and enforcement are not implemented.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "signals",
+      "title": "Signals, junctions and heterogeneous traffic",
+      "required": "Signal locations, cycle plans, splits, offsets, saturated flows, mixed traffic observations",
+      "source_ids": [
+        "mumbai_cmp_summary",
+        "bmc_signal_upgrade_spec_2021",
+        "shakti_traffic_signal_operations_2016"
+      ],
+      "method": "Derive geometry and measured saturation where possible; distinguish measured control from inferred control.",
+      "status": "incomplete",
+      "remaining": "The 2021 BMC tender supplies 70 reference junctions with coordinates and pedestrian/vehicle types, now extracted. It prescribes surveys, drawings and timing-plan design but does not supply actual cycles, splits, offsets or completed deployment records. The April 2016 IBI field review describes historical ITACA deployment and limited use of adaptive functions. Current controller modes, physical phases, detection, queues and mixed-traffic saturation observations remain unresolved.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "walking",
+      "title": "Walking including access, transfers and informal paths",
+      "required": "Footpaths, crossings, station entrances, overbridges, subways, gradients, barriers, observed walking times",
+      "source_ids": [
+        "mumbai_cmp_summary",
+        "osm_western_zone_20260915",
+        "mrvc_trespass_midsection_executive_summary",
+        "mrvc_gender_tiss_study"
+      ],
+      "method": "Build routable pedestrian graph; compare entrance-to-platform and street access measurements.",
+      "status": "incomplete",
+      "remaining": "Native OSM nodes, ways and relations and transport-point evidence acquired. No validated pedestrian graph, platform links or measured access/walking times. The MRVC/TISS 2016 women rail-user study is acquired: sample strata and first-leg station-access modes are extracted and visually checked. Access counts sum to 994 versus the 1000-person full sample, with the difference left unexplained. Historical sampled rail access is not a current citywide modal-share target; survey weights, dates and temporal comparability require further study.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "cycling",
+      "title": "Cycles and nonmotorised goods vehicles",
+      "required": "Cycle access network, ownership, trip counts, parking and safety restrictions",
+      "source_ids": [
+        "census_b28_index",
+        "mumbai_cmp_summary"
+      ],
+      "method": "Separate commuting cycling from all-purpose cycling; derive destinations and eligible network.",
+      "status": "incomplete",
+      "remaining": "Current cycling observations missing",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "population",
+      "title": "Households and persons",
+      "required": "Census ward/village population, age, sex, household structure, work, education, housing, vehicle access",
+      "source_ids": [
+        "census_suburban_pca",
+        "census_suburban_handbook",
+        "census_maharashtra_towns",
+        "census_maharashtra_villages",
+        "census_mumbai_pca",
+        "census_thane_pca",
+        "census_raigarh_pca",
+        "district_review_2025_mumbai_city",
+        "district_review_2025_mumbai_suburban",
+        "district_review_2025_thane",
+        "district_review_2025_palghar",
+        "district_review_2025_raigad",
+        "census_hh1_maharashtra",
+        "census_c13_maharashtra",
+        "census_c14_maharashtra",
+        "census_c12_maharashtra",
+        "census_b01_maharashtra",
+        "bmc_environment_report_2024_25",
+        "bmc_civic_diary_2025",
+        "bmc_civic_diary_2026",
+        "nhm_population_projection_2019",
+        "iips_district_projections_index",
+        "iips_district_projections_2012_2031",
+        "maha_economic_survey_2025_26"
+      ],
+      "method": "Acquire all intersecting districts; reconcile current boundaries; explicitly model post-2011 growth from independent controls.",
+      "status": "incomplete",
+      "remaining": "Historical census controls and official state projections are extracted. IIPS district projections by age and sex for 2012-2031 are acquired and extracted for all 35 Maharashtra districts on 2011 boundaries; the four acquired census district baselines match. State and district arithmetic checks are rounding-compatible. Municipal estimates and IIPS totals differ and remain separate. Current small-area allocation, Palghar/Thane and municipal boundary crosswalks, household joint distributions and daily work patterns remain unresolved. The baseline synthesises representative people from historical marginals, not current joint households.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "activities",
+      "title": "Employment, education, services and activity locations",
+      "required": "Census worker distributions, economic census, schools, universities, hospitals, establishments, land use and floorspace",
+      "source_ids": [
+        "mmr_population_employment",
+        "mmr_plan_2016_36",
+        "ec_2013_catalogue",
+        "ec_2013_report",
+        "ec_2013_instructions",
+        "mospi_udise_2024-25_maharashtra_indicator_2_page_1",
+        "mospi_aishe_2021-22_maharashtra_indicator_3_page_1",
+        "maharashtra_ec6_final",
+        "mospi_ec6_maharashtra_detail_page_1"
+      ],
+      "method": "Allocate activities from measured controls and geocoded establishments; preserve informal employment and slum populations.",
+      "status": "incomplete",
+      "remaining": "Mapped OSM point and area destinations and synthetic work, education, shopping, social and leisure tours are integrated. State time-use participation and minutes are translated through explicitly assumed out-of-home fractions; these are not local trip diaries. Uneven mapping and attraction capacities, verified entrances, age-specific education eligibility, opening hours, attendance, informal work, joint household schedules and visitors remain incomplete.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "demand",
+      "title": "Trips, tours, OD and departure times",
+      "required": "CTS household travel survey, roadside OD, time-use surveys, station OD and all-purpose trip rates",
+      "source_ids": [
+        "mumbai_cmp_summary",
+        "cts_2021_mirror",
+        "jica_metro11_2026",
+        "census_b28_index",
+        "census_b28_maharashtra",
+        "tus_2024_catalogue",
+        "tus_2024_readme",
+        "tus_2024_user_note",
+        "tus_2024_sample_design",
+        "nhts_2025_26_schedule",
+        "mmrda_thane_borivali_tunnel_dpr",
+        "mrvc_gender_tiss_study"
+      ],
+      "method": "Separate observations from forecast assignments; reconstruct dated OD with uncertainty and independent validation.",
+      "status": "incomplete",
+      "remaining": "Published state time-use estimates extracted with rate-duration and daily-total checks. Unit diaries await the user data-use agreement decision. Local OD, trip chains and calibrated travel rates remain incomplete; NHTS excludes trips under one kilometre and truncates non-fixed-workplace reporting, so it cannot stand alone for short walks or mobile workers. The MRVC/TISS 2016 women rail-user study is acquired: sample strata and first-leg station-access modes are extracted and visually checked. Access counts sum to 994 versus the 1000-person full sample, with the difference left unexplained. Historical sampled rail access is not a current citywide modal-share target; survey weights, dates and temporal comparability require further study.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "private_car",
+      "title": "Private cars and shared household rides",
+      "required": "RTO ownership, household availability, occupancy, trip counts, time profiles, road travel times",
+      "source_ids": [
+        "vehicle_stock_2025",
+        "mumbai_cmp_summary",
+        "census_hl14_city",
+        "bmc_coastal_traffic_peer_review_2016"
+      ],
+      "method": "Crosswalk RTO geography and household ownership; pair drivers and passengers using observed occupancy.",
+      "status": "incomplete",
+      "remaining": "2011 household asset shares acquired for four historical districts; current access, occupancy and joint household attributes remain unresolved.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "two_wheeler",
+      "title": "Motorcycles and scooters",
+      "required": "Ownership, riders and pillions, occupancy, parking, lane/filter behaviour, counts and access restrictions",
+      "source_ids": [
+        "vehicle_stock_2025",
+        "census_b28_index",
+        "mumbai_cmp_summary",
+        "bmc_coastal_traffic_peer_review_2016"
+      ],
+      "method": "Keep two-wheelers physically represented and validate mixed-traffic capacity; preserve pillion coupling.",
+      "status": "incomplete",
+      "remaining": "Historical census ownership and commuting controls and road counts are acquired. The simulator now accepts explicit person mode sets independent of car availability and rejects unavailable stored plans. Mumbai has no derived person-level allocation yet; current access, licence classes, rider/pillion coupling, mixed-traffic dynamics and scaling validation remain incomplete. The legacy motorcycle allocation from car-driver demand is not a valid Mumbai ownership model.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "auto",
+      "title": "Metered, shared and app autorickshaws",
+      "required": "Permit geography, fleet, trip and occupancy surveys, legal operating boundary, stands, fares, deadheading, shared routes",
+      "source_ids": [
+        "vehicle_stock_2025",
+        "mumbai_cmp_summary",
+        "mmr_auto_tariff_20260901",
+        "bmc_coastal_traffic_peer_review_2016"
+      ],
+      "method": "Separate vehicle trips from person boardings, shared from exclusive service and active from registered fleet.",
+      "status": "incomplete",
+      "remaining": "Official revised fare card transcribed and registration stock/flows extracted. East/Borivali labels conflict between official tables. Legal operating geography, active fleet, shared services, occupancy and demand remain.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "taxi",
+      "title": "Street-hail and app taxis",
+      "required": "Black-yellow, cool-cab and app fleets, permits, fare rules, spatial supply, wait, occupancy, empty kilometres",
+      "source_ids": [
+        "vehicle_stock_2025",
+        "mumbai_cmp_summary",
+        "mmr_metered_taxi_tariff_20260901",
+        "bmc_coastal_traffic_peer_review_2016"
+      ],
+      "method": "Derive spatial fleet and dispatch constraints from observed trips and waits; physical empty and passenger vehicle movement required.",
+      "status": "incomplete",
+      "remaining": "Official metered fare card transcribed and metered/tourist-cab registration categories extracted. East/Borivali labels conflict between official tables. App tariffs, active spatial fleet, empty movements and observed waits remain.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "bus_best",
+      "title": "BEST scheduled buses",
+      "required": "Stops, route paths, dated departures, fleet types, seated/standing capacity, fares, crowding and observed boardings",
+      "source_ids": [
+        "bus_gtfs_20260918",
+        "mumbai_cmp_summary",
+        "bmc_yearbook_2025",
+        "best_bus_pass_2025",
+        "best_depots_20260919",
+        "best_traffic_manual_2021",
+        "best_budget_manual_2021",
+        "best_transport_engineering_manual",
+        "morth_srtu_review_2019_2022",
+        "bmc_environment_report_2024_25",
+        "bmc_climate_budget_2025_26_opencity_copy",
+        "tata_best_bus_delivery_20210807",
+        "switch_eiv22_brochure",
+        "olectra_product_presentation_20210906",
+        "maha_economic_survey_2025_26"
+      ],
+      "method": "Cross-check community feed against official service and cancellations; estimate only documented missing times.",
+      "status": "incomplete",
+      "remaining": "Community feed structurally audited; published fares, passes and depot-route associations extracted. Historical operator controls and manufacturer seating claims retained with source conflicts. Current departures, calendars, route assignments, licensed standing capacity and date-defined ridership remain. BEST manuals identify relevant operational records; draft data specification is not sent. The 2025-26 Economic Survey bus controls at printed March 2024/2025 dates are extracted; averaging-period and counting definitions need reconciliation.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "bus_other",
+      "title": "All other public buses",
+      "required": "TMT, NMMT, MBMT, KDMT, VVMT, MSRTC, municipal and contracted services; terminal and depot operations",
+      "source_ids": [
+        "bus_gtfs_20260918",
+        "mmr_plan_2016_36",
+        "nmmt_current_routes",
+        "morth_srtu_review_2019_2022",
+        "mbmt_routes",
+        "mbmt_routes_page",
+        "mbmt_public_map_script",
+        "mbmt_operator_profile",
+        "mbmt_electric_bus_agreement",
+        "mbmt_bus_maintenance_agreement",
+        "mbmt_ticket_monitoring_agreement",
+        "mbmt_diesel_bus_work_order",
+        "maha_economic_survey_2025_26"
+      ],
+      "method": "Catalogue each operator separately; acquire or derive complete routable schedules.",
+      "status": "incomplete",
+      "remaining": "NMMT timetable/geometry/stop evidence and MBMT full-directory route details/stops/alignments acquired. MBMT axis labels are reversed relative to stop locations; some times equal stop indices, and weekday/Saturday allocation totals conflict. Operator contracts and seating requirements acquired. Dated departures/calendars, actual vehicle assignments, licensed standing capacities, route crosswalks and current ridership remain incomplete. Historical MoRTH controls cannot substitute for current operations; other operators remain incomplete. The 2025-26 Economic Survey bus controls at printed March 2024/2025 dates are extracted; averaging-period and counting definitions need reconciliation.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "bus_special",
+      "title": "School, employer, private and intercity buses",
+      "required": "Permits, service locations, timings, vehicle occupancies and trip counts",
+      "source_ids": [
+        "vehicle_stock_2025",
+        "mumbai_cmp_summary"
+      ],
+      "method": "Separate closed-access services, school travel and intercity visitors; include depot and empty repositioning.",
+      "status": "incomplete",
+      "remaining": "Published school, contract and private-service vehicle registration categories extracted. Closed-access service locations, schedules, occupancy, active fleet and empty repositioning remain unvalidated.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "suburban_rail",
+      "title": "Suburban and regional passenger rail",
+      "required": "CR, WR, Harbour, Trans-Harbour, Uran, through/regional branches; tracks, stopping patterns, times, stock and crowds",
+      "source_ids": [
+        "central_railway_timetable_index",
+        "western_railway_timetable_index",
+        "mrvc_annual_2023_24",
+        "wr_timetable_20260901_index",
+        "wr_public_timetable_attachment_1",
+        "cr_public_main_down_2024",
+        "cr_public_main_up_2024",
+        "cr_public_harbour_down_20260501",
+        "cr_public_harbour_up_20260501",
+        "cr_public_trans_harbour_20240113",
+        "cr_public_port_line_20251215",
+        "cr_public_abbreviations",
+        "cr_public_main_ac_20250416",
+        "cr_public_harbour_ac_20260501",
+        "cr_public_main_15_car_20260815",
+        "cr_public_services_20250113",
+        "cr_public_holidays_2026",
+        "maha_economic_survey_2025_26",
+        "pib_first_ac_emu_2017",
+        "pib_suburban_services_20260402",
+        "rdso_mrvc3_emu_spec_2017",
+        "rdso_emu_memu_spec_2022",
+        "maha_public_holidays_2026",
+        "cr_wall_calendar_2026_cag",
+        "cr_system_map_2019",
+        "wr_disaster_plan_part2_2025",
+        "wr_bct_disaster_plan_part1_2025",
+        "cr_transharbour_named_reference_2021",
+        "mrvc_cbtc_terms_reference_2018",
+        "pib_mumbai_rail_capacity_projects_20260325",
+        "rdso_harbour_emu_draft_spec_2014",
+        "mrvc_csmt_panvel_fast_dpr_summary_2016",
+        "cr_mumbai_carsheds_page",
+        "cr_signalling_assets_page",
+        "cr_suburban_operations_page",
+        "cr_signalling_assets_chart_20260514",
+        "cr_line_capacity_page",
+        "cr_mumbai_signal_telecom_page"
+      ],
+      "method": "Model each operating service and shared-track conflicts; separate class/AC/compartment eligibility when evidenced.",
+      "status": "incomplete",
+      "remaining": "Central Railway printed timetable cells and 162 AC/15-car/calendar supplement markers are extracted; supplements remain overlays with cancellation taking precedence over rake substitution. Western Railway remaining directions, complete calendar and vehicle joins, stations, operating amendments and realised performance remain incomplete. First-rake 2017 AC seating/standing capacities and April 2026 service and stock claims are extracted with distinct historical, receipt and procurement scopes; later fleet configurations and trip-specific assignments remain unresolved. RDSO specifications remain unobtained. Economic Survey 2024-25 aggregates still require counting-definition and current-period reconciliation. Twelve named CR holiday rules have 2026 date evidence; the undated operating sheet, Diwali wording, festival amendments and calendar applicability remain unresolved. Harbour/Trans-Harbour service assembly now reconciles 74 overlapping trains, 18 split branch services and 28 AC overlays, retaining source times and unresolved external branches. It is a candidate schedule only: physical station mapping, operating calendars, mixed-vintage amendments, arrival/departure roles and fleet assignments remain incomplete. Point/area geometry matching has candidates for all 46 Harbour source station keys and excludes explicit metro/monorail matches. Scoped identity proposals use acquired WR name/code and abbreviation evidence for Jogeshwari and Mahim Jn; Ramnagar to Ram Mandir remains a labelled inference from adjacent station order, with no times copied across vintages. All 120 SNPD occurrences have a scoped link to mapped passenger station SNCR from their TUH/VSH neighbours and two opposite OSM route relations. The original key remains intact and no global car-shed alias is created; the archived named Trans-Harbour reference is still unobtained. Native stop-area membership supplies 183 boarding candidates with 222 parent-way positions across 46 source keys. Of 90 ordered adjacent-station pairs, all 90 share an undirected rail component. This is only a necessary topology check; directed train paths, platform allocation, signalling and accessibility remain unresolved. WR 2025 zonal and divisional station-code references are acquired; the historical CR map is not. Native railway segments and horizontal lengths are extracted with full node identity, raw tags and separate area/inactive classes. This does not supply operating directions, block occupation or capacities. The MRVC historical CBTC reference is catalogued but unobtained. Continuous geometry candidates now cover all 31 stopping patterns and 876 services using the scoped SNPD identity proposal. The router enforces one arrival/departure node at every intermediate stop. A static-oneway screen removes explicit reverse traversals, but all retained patterns still contain unresolved direction evidence. Switch/reversal feasibility, gauge, signal blocks and operating platform assignments remain unvalidated; no candidate is eligible for schedule export. Native PTv2 route auditing finds coherent contiguous mapped route windows for 19 patterns covering 613 services, retaining alternative platforms and routes. The CSMT-to-Panvel relation has a Chembur/Tilak Nagar stop-order discrepancy; source members remain unchanged. Composite, skipped-stop, reversal and external branches need separate route evidence. Mapped route matches do not establish current operations or train-specific assignments. Fixed-chain boarding assignment extends mapped track candidates to 27 patterns and 820 services, retaining seven mapped stop-order disagreements and one unrepresented mapped stop without inferring a non-stop service. Two-chain joins at identical native boarding nodes derive one Thane-Panvel track candidate from five equivalent shared-stop joins, adding 37 services. Combined mapped/composite track candidates now cover 857 services. The remaining 19 need Vadala reversal/branch evidence or the incomplete Borivali branch. Composite geometry is not an observed operating route; direction, signal, turnout, train-length and platform permissions remain unverified. The March 2026 Railways project statement is acquired and extracted; sanctioned corridors and mixed-status terminal works are not operational supply. The acquired MRVC 2023-24 report distinguishes a 2.5-minute CBTC target from commissioned operations and records historical mixed traffic on Kalyan-Badlapur. Its train/capacity totals omit the period and direction basis. The acquired CR signalling HTML depends on an external image that remains unobtained; no signalling asset counts or link capacities have been adopted.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "metro",
+      "title": "Every operational metro operator and line",
+      "required": "MMMOCL, MMRC, Mumbai Metro One and CIDCO/MAHA-Metro; dates, stops, timetables, capacity, fares and ridership",
+      "source_ids": [
+        "mmrda_2024",
+        "jica_metro11_2026",
+        "metro_timetable_april2026",
+        "mmrcl_all_stations",
+        "mmrcl_passenger_faqs",
+        "mmrcl_public_notices",
+        "mmrcl_journey_aryj_cup_20260918",
+        "mmrcl_journey_cup_aryj_20260918",
+        "metro1_metro_train_schedule_20260918",
+        "mmr_metro_dpr_index",
+        "mahametro_current_annual_2024_25",
+        "mahametro_current_annual_2023_24",
+        "cidco_metro_qr_ticketing_20250617",
+        "cidco_metro_project",
+        "maha_economic_survey_2025_26",
+        "mmrcl_train_trials_2022",
+        "alstom_metro3_opening_2024",
+        "pib_beml_mumbai_order_2018"
+      ],
+      "method": "Inventory operational lines on common base date; exclude unopened construction and forecast ridership from observations.",
+      "status": "incomplete",
+      "remaining": "Line 3 topology reconciled; segment API times are unusable zeros. Line 1 schedule summary conflicts with older FAQ. Navi Mumbai historical headways, ridership and operating performance acquired; published growth percentage conflicts with its component averages. Current dated departures, calendars, capacities, fares and station/hour observations remain incomplete. The Economic Survey metro table is extracted with shared passenger cells retained as control groups; averaging dates and passenger counting definitions remain unresolved. Alstom October 2024 specifies eight-car formations and at least 3,000 passengers per train but no seat/standing-density split; current fleet and trip assignments remain to reconcile.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "monorail",
+      "title": "Monorail",
+      "required": "Operating status, timetable, rolling stock availability, capacity, fare and daily station ridership",
+      "source_ids": [
+        "mmrda_2024",
+        "monorail_status_official_20260918",
+        "monorail_safety_20260221"
+      ],
+      "method": "Verify service or suspension on selected date; a suspended mode has observed zero service, not an arbitrary omission.",
+      "status": "incomplete",
+      "remaining": "Official suspension notice acquired; establish the representative-date status and distinguish restoration scenario from base operations.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "heritage_rail",
+      "title": "Matheran and other local branch rail",
+      "required": "Seasonal services, timetable, stock, passenger demand, walking/horse alternatives where applicable",
+      "source_ids": [
+        "central_railway_timetable_index"
+      ],
+      "method": "Check extent and actual operating status; model access and seasonal availability.",
+      "status": "incomplete",
+      "remaining": "Not acquired",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "water",
+      "title": "Ferries, Ro-Ro, water taxis and local crossings",
+      "required": "Jetty locations, licensed routes, dated departures, vessel passengers/vehicles capacities, fares, closures and counts",
+      "source_ids": [
+        "ferry_passengers_2023_24",
+        "mmb_performance",
+        "mmb_routes",
+        "mmb_route_information"
+      ],
+      "method": "Separate pedestrian passengers, accompanying vehicle occupants and carried vehicles; preserve cross-bay road alternatives.",
+      "status": "incomplete",
+      "remaining": "Official annual series and directory extracted; route identity, repeated series, seasonal vessel capacities and departure frequency remain unresolved.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "road_freight",
+      "title": "Urban goods, delivery and port road freight",
+      "required": "Classified counts, commodity flows, truck restrictions, terminals, delivery locations, logistics schedules",
+      "source_ids": [
+        "jnpa_operations",
+        "jnpa_administration_2024_25_index",
+        "mumbai_cmp_summary",
+        "jnpa_performance_202608",
+        "jnpa_daily_status_20260917",
+        "jnpa_central_parking_20260918",
+        "bmc_coastal_traffic_peer_review_2016",
+        "mmrda_thane_borivali_tunnel_dpr"
+      ],
+      "method": "Convert cargo to loaded and empty vehicle trips using measured payload and mode shares; include LCV and last-mile deliveries.",
+      "status": "incomplete",
+      "remaining": "Port cargo, rail movements and centralised truck-parking publications acquired. Cargo is not converted to vehicle trips without load, empty-running and modal-share evidence. No OD/time/class-specific validated freight demand.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "rail_freight",
+      "title": "Physical freight trains and shared tracks",
+      "required": "JNPA/Mumbai Port train movements, loading, rakes, paths, timing and track conflicts",
+      "source_ids": [
+        "jnpa_operations",
+        "jnpa_administration_2024_25_index",
+        "jnpa_daily_icd_20260317",
+        "jnpa_daily_icd_20260917",
+        "jnpa_dfc_first_long_haul_20260821",
+        "mumbai_port_rail_traffic_index_20260918",
+        "mumbai_port_rail_1778075791"
+      ],
+      "method": "Represent train movements and occupation, not only road crossing closures; separate TEUs from train counts.",
+      "status": "incomplete",
+      "remaining": "Daily JNPA handled-rake times and cargo totals extracted; Mumbai Port monthly loaded/empty rakes extracted with subtotal checks. Published rail-statistics archive acquired. Network paths, train lengths, capacities, representative operating days, full freight demand and shared-track occupation remain incomplete.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "ports",
+      "title": "Ports, inland terminals and coastal cargo",
+      "required": "JNPA and Mumbai Port berths, gate throughput, cargo, hinterland split, shift and truck turnaround times",
+      "source_ids": [
+        "jnpa_operations",
+        "jnpa_administration_2024_25_index",
+        "maha_economic_survey_2025_26"
+      ],
+      "method": "Link port demand to rail, road and vessel activities without double-counting cargo or jobs.",
+      "status": "incomplete",
+      "remaining": "Mumbai Port and terminal-level timing incomplete The Economic Survey 2023-24/2024-25 port totals are extracted with original units and arithmetic checks; cargo modal splits, loads, empty movements and the scope of port passenger counts remain unresolved.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "air_intercity",
+      "title": "Airport, long-distance rail and highway external demand",
+      "required": "CSMIA and NMIA operational dates, passenger/employee/aircargo surface access; long-distance trains and highways",
+      "source_ids": [
+        "mmr_plan_2016_36",
+        "jica_metro11_2026"
+      ],
+      "method": "Model surface access and external station connectors; do not represent aircraft as local road modes.",
+      "status": "incomplete",
+      "remaining": "Observed access OD and time profiles missing",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "fares",
+      "title": "Fares, passes, transfers and eligibility",
+      "required": "Operator ticket rules, integrated fare products, passes, concession eligibility, tolls, fuel and parking prices",
+      "source_ids": [
+        "jica_metro11_2026",
+        "mmr_auto_tariff_20260901",
+        "mmr_metered_taxi_tariff_20260901",
+        "mmrcl_public_notices",
+        "mmrcl_fare_aryj_cup_20260918",
+        "metro1_ticket_fares_20260918",
+        "metro3_fare_chart_20260918",
+        "best_bus_pass_2025",
+        "best_facilities_20260919"
+      ],
+      "method": "Store INR with validity dates; distinguish marginal pass costs, distance slabs and interchange penalties.",
+      "status": "incomplete",
+      "remaining": "Metro 3 chart transcribed with a directional conflict. BEST dated fares and passes transcribed; independent language review, current amendments, fare-stage mapping, pass eligibility and tax treatment remain. Cross-operator products and remaining fare matrices are incomplete.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "parking",
+      "title": "Parking supply, prices and cruising",
+      "required": "Formal and informal on/off street spaces, loading bays, prices, restrictions, enforcement and occupancy",
+      "source_ids": [
+        "mumbai_cmp_summary"
+      ],
+      "method": "Derive geometry and capacity from mapped supply; calibrate occupancy and search using observations.",
+      "status": "incomplete",
+      "remaining": "Spatial supply and occupancy incomplete",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "weather",
+      "title": "Weather, monsoon, tidal and flood disruption",
+      "required": "IMD rain, flood extents, drainage closures, tide, heat, weather-related rail and ferry interruptions",
+      "source_ids": [
+        "mmr_environment"
+      ],
+      "method": "Choose representative normal and disruption days; retain seasonal service changes and flood sensitivity.",
+      "status": "incomplete",
+      "remaining": "Date-matched operational conditions missing",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "behaviour",
+      "title": "Mode, route, activity and transfer response",
+      "required": "Local revealed/stated preference, income, household constraints, accessibility, reliability, crowding and gender/safety constraints",
+      "source_ids": [
+        "cts_2021_mirror",
+        "jica_metro11_2026"
+      ],
+      "method": "Estimate identifiable parameters with local data; label priors and distinguish calibration targets from validation.",
+      "status": "incomplete",
+      "remaining": "Age/licence/vehicle availability, income-sensitive money scoring, declared boarding fares in routing and scoring, time, transfers, crowding and service-quality factors execute in bounded cases. Endogenous mode changes are observed, but daily timing failures remain and local parameters are neither fitted nor independently validated. Native diagnostics expose prolonged bus-link delays and blank-mode aborts; these require correction before interpreting ridership. A completed capacity sensitivity changes traveller choices, but its higher capacities are not adopted as measured. Initial eligible alternatives preserved selected demand and completed with broader recorded mode coverage and no unscored retained plans (9.198). Separate hired-supply pools now execute with actual-arrival release and experienced waits (9.200). Household coupling, same-day refusal fallback, spatial dispatch, empty movements, rare-mode coverage and local behavioural validation remain incomplete.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "validation",
+      "title": "Independent all-mode validation",
+      "required": "Screenline and classified counts, stations/routes ridership, OD, travel-time distributions, queues, loads and denied boarding",
+      "source_ids": [
+        "mumbai_cmp_summary",
+        "mrvc_annual_2023_24",
+        "ferry_passengers_2023_24",
+        "bmc_coastal_traffic_peer_review_2016",
+        "mmrda_thane_borivali_tunnel_dpr"
+      ],
+      "method": "Declare target universes and uncertainty; reserve spatial/temporal holdouts before fitting; score every active mode.",
+      "status": "incomplete",
+      "remaining": "No complete current target set or frozen holdout The 2016 Coastal Road study now supplies directional daily counts, site-specific peak counts and rounded vehicle shares with an explicit total conflict; these do not complete a current target set.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "scaling",
+      "title": "Mode-preserving simulation scale",
+      "required": "Full demand controls, per-mode capacity and event audit, sample inclusion probabilities, rare-mode coverage and runtime measurements",
+      "source_ids": [],
+      "method": "Preserve physical network and service frequency; validate passenger and road capacity scaling, household/party coupling, class eligibility and integer floors with paired experiments.",
+      "status": "incomplete",
+      "remaining": "No Mumbai scaling experiment; accuracy equivalence unproven. Generic mode-level capacity overrides cannot preserve distinct operational bus configurations, train formations and vessels; evidenced per-departure assignments are required.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "implementation",
+      "title": "Portable runnable model",
+      "required": "City registry, city adapters, generic mode definitions, runnable network, demand, schedules, scoring and completion records",
+      "source_ids": [],
+      "method": "Replace remaining fixed-mode and country-specific assumptions through contracts; complete a run and independent all-mode validation.",
+      "status": "incomplete",
+      "remaining": "City-owned network, schedules, representative-person demand, registry and executed native cases now exist. Portable framework mechanisms run both city packages; the full Mumbai schema/package, current supply and demand, convergence, scaling and independent all-mode validation remain incomplete.",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    },
+    {
+      "id": "rights",
+      "title": "Provenance and permitted reuse",
+      "required": "Source URL, immutable bytes, dates, hashes, licence, definitions and transformation lineage",
+      "source_ids": [
+        "bus_gtfs_licence"
+      ],
+      "method": "Keep licence uncertainty explicit and OSM ODbL distinct; no private account access or messages without instruction.",
+      "status": "incomplete",
+      "remaining": "Acquired evidence has provenance; several government reuse terms unverified",
+      "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
+    }
+  ],
+  "immediate_priority": "User instruction, 19 September 2026: running broad all-mode behavioural baseline first; endogenous mode choices and interacting ridership factors before corridor precision. Provisional inputs are labelled; target shares are not imposed."
+}

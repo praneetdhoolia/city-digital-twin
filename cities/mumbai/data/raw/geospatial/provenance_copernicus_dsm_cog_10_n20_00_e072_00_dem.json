@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/geospatial/copernicus_dsm_cog_10_n20_00_e072_00_dem_a7fbf68f8dddbb80.tif",
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N20_00_E072_00_DEM/Copernicus_DSM_COG_10_N20_00_E072_00_DEM.tif",
+      "final_url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_N20_00_E072_00_DEM/Copernicus_DSM_COG_10_N20_00_E072_00_DEM.tif",
+      "source": "Copernicus GLO30 public DSM Copernicus_DSM_COG_10_N20_00_E072_00_DEM",
+      "licence": "Copernicus DEM free licence; prescribed attribution and product terms apply",
+      "retrieved": "2026-09-18T10:13:30.221038+00:00",
+      "sha256": "a7fbf68f8dddbb809676f88adfc4abdf6dd11cdd749399e9937ca900626b6f3a",
+      "bytes": 10404171,
+      "content_type": "image/tiff",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "DSM including buildings and vegetation; historical acquisition. Must not be used as surveyed road, bridge or tunnel elevation."
+    }
+  ]
+}

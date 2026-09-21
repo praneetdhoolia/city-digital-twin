@@ -1,0 +1,17 @@
+{
+  "source_id": "mrvc_annual_2023_24",
+  "source_sha256": "67c7ff9e579f5b2575d494754ea71a3908888f401cbee6de7cc319d0367c0ae3",
+  "claim_rows": 8,
+  "source_pdf_page": 134,
+  "source_printed_page": 10,
+  "derived_project_target_headway_seconds": "150.0",
+  "derived_from": "reported project headway minutes multiplied by 60 seconds per minute",
+  "model_parameters_adopted": false,
+  "limitations": [
+    "The CBTC scope and headway are project features, followed by a statement that development and further directives are pending.",
+    "No current commissioning date, block geometry, interlocking, braking curve or platform clearance is established.",
+    "The mixed-traffic train and capacity counts omit a time period and direction basis. They are not converted to trains per day or per hour.",
+    "Two existing lines are a historical section-level claim, not a per-link track-count assignment.",
+    "The translated copy is not counted as a second observation; the English page was checked against the rendered PDF."
+  ]
+}

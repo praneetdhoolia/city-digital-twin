@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_metro_dpr_8_metro_line_7_fc491ae5b77f208a.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%207.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%207.pdf",
+      "content_type": "application/pdf",
+      "source": "8 Metro Line 7 (Andheri (E) to Dahisar (E)) Download (11.43 MB)",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:18:01.907237+00:00",
+      "sha256": "fc491ae5b77f208a228c51f8036fd5d245ebde7fdc59fd18702a0fa7173282ed",
+      "bytes": 11985721,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

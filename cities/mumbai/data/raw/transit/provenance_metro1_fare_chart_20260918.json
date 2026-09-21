@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/metro1_fare_chart_20260918_7613a253a5b1223f.jpg",
+      "url": "https://www.reliancemumbaimetro.com/images/Tickets_Fares_Map.jpg",
+      "final_url": "https://www.reliancemumbaimetro.com/images/Tickets_Fares_Map.jpg",
+      "content_type": "image/jpeg",
+      "source": "Metro One fare chart image linked from fares page",
+      "licence": "Operator or public authority publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:24:34.804635+00:00",
+      "sha256": "7613a253a5b1223fcb5b768b1d67cf09a6a390260b24cdd983776bf4498c2ee4",
+      "bytes": 143268,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published evidence requiring units, effective dates and operational validation; throughput is not a truck or train movement count.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

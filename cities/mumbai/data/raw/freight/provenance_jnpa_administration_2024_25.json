@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/freight/jnpa_administration_2024_25_2226cb49e18efcb9.pdf",
+      "url": "https://www.jnport.gov.in/uploads/content_manager/Administration_Report_2024-25.pdf",
+      "final_url": "https://www.jnport.gov.in/uploads/content_manager/Administration_Report_2024-25.pdf",
+      "content_type": "application/pdf",
+      "source": "JNPA administration report 2024-25",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:37:19.250633+00:00",
+      "sha256": "2226cb49e18efcb9c5229d2da2f7a1bebeb014b89098538cfabba0c1d7d6f55c",
+      "bytes": 4831659,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Primary annual operations report; inspect commodity and mode definitions.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

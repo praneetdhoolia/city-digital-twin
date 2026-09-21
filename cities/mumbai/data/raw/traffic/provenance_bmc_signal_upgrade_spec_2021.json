@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/traffic/bmc_signal_upgrade_spec_2021_643aa77e2d77ab6f.pdf",
+      "url": "https://portal.mcgm.gov.in/irj/go/km/docs/documents/Tenders/ETH/ETH_7000008779_311221.pdf",
+      "final_url": "https://portal.mcgm.gov.in/irj/go/km/docs/documents/Tenders/ETH/ETH_7000008779_311221.pdf",
+      "content_type": "application/pdf",
+      "source": "BMC consultancy and technical specification for upgrading 70 conventional traffic signals, 2021 tender",
+      "licence": "BMC tender publication; reuse terms unverified",
+      "retrieved": "2026-09-18T19:36:40.243216+00:00",
+      "sha256": "643aa77e2d77ab6fb05c1d3edca5acf2425cdf476c99810a864e17880804c9a0",
+      "bytes": 1860124,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Tender requirements and junction inventory; prescribed surveys, capabilities and design limits are not measured operating signal plans. Verify date and completed deployment independently.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

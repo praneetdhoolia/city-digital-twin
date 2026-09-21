@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_traffic_manual_2021_7711aaef09c1b6fb.pdf",
+      "url": "https://www.bestundertaking.com/assets/pdf/rti/traffic_Departmental_manual_2021.pdf",
+      "final_url": "https://www.bestundertaking.com/assets/pdf/rti/traffic_Departmental_manual_2021.pdf",
+      "source": "BEST Traffic Department public manual 2021",
+      "licence": "BEST public disclosure; reuse terms unverified",
+      "retrieved": "2026-09-18T15:49:01.242405+00:00",
+      "sha256": "7711aaef09c1b6fbbd8c22125c13f3f8c66c23d2d1f885a5c7cd06eaa9a07a82",
+      "bytes": 4409731,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public department manual linked from RTI disclosures. Historical or undated; inspect fleet, operations and statistical definitions before use."
+    }
+  ]
+}

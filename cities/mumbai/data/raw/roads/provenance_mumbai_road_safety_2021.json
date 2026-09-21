@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/roads/mumbai_road_safety_2021_2cea026e7f582551.pdf",
+      "url": "https://cdnbbsr.s3waas.gov.in/s3d827f12e35eae370ba9c65b7f6026695/uploads/2025/02/202502211093635853.pdf",
+      "final_url": "https://cdnbbsr.s3waas.gov.in/s3d827f12e35eae370ba9c65b7f6026695/uploads/2025/02/202502211093635853.pdf",
+      "content_type": "application/pdf",
+      "source": "Mumbai Road Safety Annual Report 2021",
+      "licence": "Operator or government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:26:18.440338+00:00",
+      "sha256": "2cea026e7f582551e3bab9e0db89dde7f32fa3aa8e796e5d7bdfb3a1f394b138",
+      "bytes": 8621651,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published document with source period retained; validate observed definitions, current operational relevance and spatial coverage.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

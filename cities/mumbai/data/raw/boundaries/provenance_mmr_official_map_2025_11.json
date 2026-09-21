@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/mmr_official_map_2025_11_2dd1fe5db15eebc8.jpg",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2025-11/mmr-map.jpg",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2025-11/mmr-map.jpg",
+      "content_type": "image/jpeg",
+      "source": "MMRDA boundary map image linked from public GIS page",
+      "licence": "Operator or government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:25:42.331579+00:00",
+      "sha256": "2dd1fe5db15eebc83a94833f743800ac2fbaecdd61e4b7ab96d15540fc751904",
+      "bytes": 15663,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published document with source period retained; validate observed definitions, current operational relevance and spatial coverage.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

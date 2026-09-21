@@ -1,0 +1,42 @@
+{
+  "status": "published_claims_not_current_operating_fleet",
+  "fleet_rows": 3,
+  "allocation_cells": 72,
+  "contract_configurations": 3,
+  "allocation_subtotals": [
+    {
+      "day_type_raw": "Monday.to.Friday.",
+      "published_buses_count": 70,
+      "summed_route_buses_count": 71,
+      "difference_buses": 1
+    },
+    {
+      "day_type_raw": "Saturday",
+      "published_buses_count": 67,
+      "summed_route_buses_count": 70,
+      "difference_buses": 3
+    },
+    {
+      "day_type_raw": "Sundays and public holidays",
+      "published_buses_count": 57,
+      "summed_route_buses_count": 57,
+      "difference_buses": 0
+    }
+  ],
+  "duplicate_source_serials": {
+    "3": 2
+  },
+  "limitations": [
+    "PDF and printed page numbers agree on the visually checked capacity pages.",
+    "OCR located pages; the retained capacities were read from the rendered page images.",
+    "Minimum seating is not an exact delivered vehicle capacity.",
+    "Contract variants do not establish which configurations were delivered or assigned to current departures.",
+    "The referenced standard does not alone determine a standing count; certified layout, usable area, vehicle mass and applicable approval are still required.",
+    "No simulation input or standing-space count is inferred from this transcription.",
+    "Municipal profile dates are unresolved; its fleet table omits the electric fleet described elsewhere on the page.",
+    "Capacity addition is printed but the components are not explicitly labelled seated/standing in the English table.",
+    "Day-type bus allocation is not a departure timetable or independently observed daily operation.",
+    "Route numbers do not directly identify the passenger API RouteId; the crosswalk remains unresolved.",
+    "Repeated source serial numbers are retained and never used as unique route identifiers."
+  ]
+}

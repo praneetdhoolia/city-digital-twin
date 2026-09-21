@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "url": "https://link.springer.com/content/pdf/10.1007/s40999-017-0206-7.pdf",
+      "final_url": "https://link.springer.com/content/pdf/10.1007/s40999-017-0206-7.pdf",
+      "content_type": "application/pdf",
+      "retrieved": "2026-09-18T18:05:38.952Z",
+      "bytes": 1645818,
+      "path": "data/raw/research/urban_arterial_operating_speed_capacity_2017_pdf_62cf654c280e09ef.pdf",
+      "sha256": "62cf654c280e09ef133cc86b6ce4f4047fc557b719f98e3dbeb5f3fadaef2aaf",
+      "source": "Dhamaniya and Chandra (2017): Influence of Operating Speed on Capacity of Urban Arterial Midblock Sections",
+      "licence": "CC BY 4.0; the authors; DOI 10.1007/s40999-017-0206-7",
+      "coverage": "Twelve fitting and two validation midblocks in other Indian cities; model-estimated capacities and measured free-flow speeds, not Mumbai observations. Applicability depends on divided arterial geometry and absence of side friction.",
+      "producing_script": "extract/import_browser_acquisition.py",
+      "transport": "Connected Chrome public fetch; default certificate verification",
+      "validation_status": "acquired_unvalidated"
+    }
+  ]
+}

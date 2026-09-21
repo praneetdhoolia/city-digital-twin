@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/cr_signalling_assets_page_6fdbbb66ce6e17cf.html",
+      "url": "https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,287,394,579",
+      "final_url": "https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,287,394,579",
+      "content_type": "text/html;charset=UTF-8",
+      "source": "Central Railway signalling assets page",
+      "licence": "Indian Railways/MRVC publication; reuse terms unverified",
+      "retrieved": "2026-09-18T21:39:23.225227+00:00",
+      "sha256": "6fdbbb66ce6e17cf2ab4b90841fcc0adbe8535a64abbf1150271b761ddddac17",
+      "bytes": 477998,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published signalling assets and linked technical records. Require dated section applicability; aggregate assets do not establish individual signal/block operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

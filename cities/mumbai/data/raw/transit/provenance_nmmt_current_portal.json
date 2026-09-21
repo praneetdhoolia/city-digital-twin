@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_current_portal_2baa56b91b1f2f0f.html",
+      "url": "https://nmmtitmswebportal.amnex.co.in/",
+      "final_url": "https://nmmtitmswebportal.amnex.co.in/",
+      "content_type": "text/html",
+      "source": "NMMT branded public passenger portal",
+      "licence": "Authority or vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:30:55.123671+00:00",
+      "sha256": "2baa56b91b1f2f0f7106469009bfa8b291b9b354c950c45e5d5cfca84184149a",
+      "bytes": 9586,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published passenger information or planning report. Confirm operator authority, observation dates and live service validity.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

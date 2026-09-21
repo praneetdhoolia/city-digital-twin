@@ -1,0 +1,258 @@
+{
+  "layer": "B",
+  "title": "Provisional behavioural baseline population",
+  "fields": {
+    "B.baseline.seed": {
+      "value": 20260810,
+      "units": "integer_seed",
+      "source": "definition",
+      "status": "active",
+      "description": "Deterministic master seed.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ]
+    },
+    "B.baseline.persons": {
+      "value": 1000,
+      "units": "persons",
+      "source": "definition",
+      "status": "active",
+      "description": "Small representative-person smoke population; not a calibrated full-city sample or experiment arm.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ]
+    },
+    "B.baseline.income_median_monthly_inr": {
+      "value": 30000,
+      "units": "INR/month",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional personal budget distribution, not observed income.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ],
+      "sweep": [
+        10000,
+        90000
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline; sensitivity range, not an observed joint distribution."
+    },
+    "B.baseline.income_log_sigma": {
+      "value": 0.7,
+      "units": "dimensionless",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional dispersion of personal monthly budgets.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ],
+      "sweep": [
+        0.3,
+        1.2
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline; sensitivity range, not an observed joint distribution."
+    },
+    "B.baseline.income_minimum_monthly_inr": {
+      "value": 3000,
+      "units": "INR/month",
+      "source": "assumed",
+      "status": "active",
+      "description": "Positive minimum personal budget for scoring stability.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ],
+      "sweep": [
+        1000,
+        10000
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline; sensitivity range, not an observed joint distribution."
+    },
+    "B.baseline.licence_given_vehicle_probability": {
+      "value": 0.8,
+      "units": "probability",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional adult driving eligibility conditional on household vehicle access.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ],
+      "sweep": [
+        0.5,
+        1
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline; sensitivity range, not an observed joint distribution."
+    },
+    "B.baseline.adult_age_years": {
+      "value": 18,
+      "units": "years",
+      "source": "definition",
+      "status": "active",
+      "description": "Baseline adult motor-vehicle eligibility threshold.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ]
+    },
+    "B.baseline.school_min_age_years": {
+      "value": 6,
+      "units": "years",
+      "source": "assumed",
+      "status": "active",
+      "description": "School activity starts at this provisional age.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ],
+      "sweep": [
+        5,
+        7
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline; sensitivity range, not an observed joint distribution."
+    },
+    "B.baseline.work_max_age_years": {
+      "value": 65,
+      "units": "years",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional age boundary for employed-person activity generation.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ],
+      "sweep": [
+        60,
+        75
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline; sensitivity range, not an observed joint distribution."
+    },
+    "B.baseline.open_age_upper_years": {
+      "value": 95,
+      "units": "years",
+      "source": "assumed",
+      "status": "active",
+      "description": "Upper support of the census open-ended age band.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ],
+      "sweep": [
+        85,
+        105
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline; sensitivity range, not an observed joint distribution."
+    },
+    "B.baseline.gravity_distance_scale_m": {
+      "value": {
+        "work": 12000,
+        "education": 2500,
+        "other": 4000
+      },
+      "units": "metres",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional destination distance decay by activity; resident workers proxy employment locations.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ],
+      "sweep": [
+        1000,
+        30000
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline; sensitivity range, not an observed joint distribution."
+    },
+    "B.baseline.activity_start_s": {
+      "value": {
+        "work": 32400,
+        "education": 28800,
+        "other": 39600
+      },
+      "units": "seconds_after_midnight",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional activity departure anchors.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ],
+      "sweep": [
+        21600,
+        50400
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline; sensitivity range, not an observed joint distribution."
+    },
+    "B.baseline.departure_spread_s": {
+      "value": 3600,
+      "units": "seconds",
+      "source": "assumed",
+      "status": "active",
+      "description": "Uniform spread either side of the departure anchor.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ],
+      "sweep": [
+        900,
+        7200
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline; sensitivity range, not an observed joint distribution."
+    },
+    "B.baseline.activity_duration_s": {
+      "value": {
+        "work": 28800,
+        "education": 21600,
+        "other": 3600
+      },
+      "units": "seconds",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional activity durations.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ],
+      "sweep": [
+        1800,
+        36000
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline; sensitivity range, not an observed joint distribution."
+    },
+    "B.baseline.initial_choice_modes": {
+      "value": [
+        "walk",
+        "pt",
+        "car",
+        "bike",
+        "motorbike",
+        "taxi",
+        "ride",
+        "auto_rickshaw"
+      ],
+      "units": "mode_names",
+      "source": "definition",
+      "status": "active",
+      "description": "Unbiased exploration among personally available alternatives; no target mode shares used.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_population.py"
+      ]
+    }
+  }
+}

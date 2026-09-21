@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/mmr_gis_page_da9ae5cecf75e102.html",
+      "url": "https://mmrda.maharashtra.gov.in/en/gis",
+      "final_url": "https://mmrda.maharashtra.gov.in/en/gis",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "MMRDA public GIS page",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:23:57.051612+00:00",
+      "sha256": "da9ae5cecf75e10256b039d56c6f17797c3d60218622d3764014dd356aca2228",
+      "bytes": 99165,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical or current publication; each table needs its own period, universe and definition. Acquisition does not establish validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_platform_eta_bundle_07231a6a54e6db2a.js",
+      "url": "https://nmmtitmswebportal.amnex.co.in/chunk-WVC7PT73.js",
+      "final_url": "https://nmmtitmswebportal.amnex.co.in/chunk-WVC7PT73.js",
+      "source": "NMMT public platform eta client",
+      "licence": "Operator/vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:10:42.463334+00:00",
+      "sha256": "07231a6a54e6db2acd570e66dca0da926ff77e8eeae38d321614b0944b66437d",
+      "bytes": 22320,
+      "content_type": "application/javascript",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public client documentation for read-only service information. No account actions or embedded credentials are used."
+    }
+  ]
+}

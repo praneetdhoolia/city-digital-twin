@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mbmt_diesel_bus_work_order_130945a3e6e25889.pdf",
+      "url": "https://www.mbmc.gov.in/assets/uploads/file-8289.pdf",
+      "final_url": "https://www.mbmc.gov.in/assets/uploads/file-8289.pdf",
+      "source": "MBMT Work Order_346 regarding selection of operator for providing stage carriage bus service for 74 diesel buses on PPP basis (Gross Cost Contract basis), and for operation and maintenance of buses, bus depot and/or parking space.",
+      "licence": "Municipal/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:02:59.689035+00:00",
+      "sha256": "130945a3e6e25889c99114f6d3a9078c370111e521547c19700fef37e65291c4",
+      "bytes": 272189,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published contract, budget or notice. Procurement and planned service are not current operating observations."
+    }
+  ]
+}

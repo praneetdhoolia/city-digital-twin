@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mbmt_timing_page_003a36b971867b30.html",
+      "url": "https://mbmcwebportal.amnex.com/BusTiming/ViewBusTiming",
+      "final_url": "https://mbmcwebportal.amnex.com/BusTiming/ViewBusTiming",
+      "source": "MBMT public service timing page",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:46:01.624940+00:00",
+      "sha256": "003a36b971867b306f3a1cec27c5bd6d0b86c555b112e4e86681a5bdc63cd390",
+      "bytes": 63114,
+      "content_type": "text/html; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation."
+    }
+  ]
+}

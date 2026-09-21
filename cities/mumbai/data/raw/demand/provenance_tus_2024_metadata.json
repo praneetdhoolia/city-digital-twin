@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/demand/tus_2024_metadata_eeafc97179ea87b4.json",
+      "url": "https://microdata.gov.in/NADA/index.php/metadata/export/236/json",
+      "final_url": "https://microdata.gov.in/NADA/index.php/metadata/export/236/json",
+      "content_type": "application/json; charset=UTF-8",
+      "source": "Time Use Survey 2024 full JSON metadata",
+      "licence": "Government publication; reuse terms and microdata access conditions require review",
+      "retrieved": "2026-09-18T10:04:31.447389+00:00",
+      "sha256": "eeafc97179ea87b4bae5f800fdc76aa2f0ba07c5959e730fa34c81a5448ac4de",
+      "bytes": 6346,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public statistical evidence; survey weights, age and geographic coverage require validation. Catalogue access is not acquisition of unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

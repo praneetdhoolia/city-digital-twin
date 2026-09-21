@@ -1,0 +1,308 @@
+{
+  "schema_version": 1,
+  "summary": {
+    "acquired_queries": 36,
+    "stop_rows": 1560,
+    "location_rows": 36,
+    "stop_status_counts": {
+      "covered": 453,
+      "skipped": 454,
+      "upcoming": 653
+    },
+    "count_disagreements": 0,
+    "covered_with_both_actual_fields": 453,
+    "skipped_with_actual_equal_scheduled": 60
+  },
+  "queries": [
+    {
+      "source_id": "nmmt_vehicle_277_20260918",
+      "success": true,
+      "stop_rows": 0,
+      "location_rows": 1,
+      "declared_row_count": 1,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_293_20260918",
+      "success": true,
+      "stop_rows": 16,
+      "location_rows": 1,
+      "declared_row_count": 17,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_423_20260918",
+      "success": true,
+      "stop_rows": 91,
+      "location_rows": 1,
+      "declared_row_count": 92,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_427_20260918",
+      "success": true,
+      "stop_rows": 89,
+      "location_rows": 1,
+      "declared_row_count": 90,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_437_20260918",
+      "success": true,
+      "stop_rows": 20,
+      "location_rows": 1,
+      "declared_row_count": 21,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_465_20260918",
+      "success": true,
+      "stop_rows": 91,
+      "location_rows": 1,
+      "declared_row_count": 92,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_485_20260918",
+      "success": true,
+      "stop_rows": 0,
+      "location_rows": 1,
+      "declared_row_count": 1,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_528_20260918",
+      "success": true,
+      "stop_rows": 59,
+      "location_rows": 1,
+      "declared_row_count": 60,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_529_20260918",
+      "success": true,
+      "stop_rows": 58,
+      "location_rows": 1,
+      "declared_row_count": 59,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_536_20260918",
+      "success": true,
+      "stop_rows": 0,
+      "location_rows": 1,
+      "declared_row_count": 1,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_548_20260918",
+      "success": true,
+      "stop_rows": 40,
+      "location_rows": 1,
+      "declared_row_count": 41,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_550_20260918",
+      "success": true,
+      "stop_rows": 61,
+      "location_rows": 1,
+      "declared_row_count": 62,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_556_20260918",
+      "success": true,
+      "stop_rows": 61,
+      "location_rows": 1,
+      "declared_row_count": 62,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_573_20260918",
+      "success": true,
+      "stop_rows": 0,
+      "location_rows": 1,
+      "declared_row_count": 1,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_574_20260918",
+      "success": true,
+      "stop_rows": 40,
+      "location_rows": 1,
+      "declared_row_count": 41,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_576_20260918",
+      "success": true,
+      "stop_rows": 40,
+      "location_rows": 1,
+      "declared_row_count": 41,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_585_20260918",
+      "success": true,
+      "stop_rows": 45,
+      "location_rows": 1,
+      "declared_row_count": 46,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_586_20260918",
+      "success": true,
+      "stop_rows": 60,
+      "location_rows": 1,
+      "declared_row_count": 61,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_592_20260918",
+      "success": true,
+      "stop_rows": 30,
+      "location_rows": 1,
+      "declared_row_count": 31,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_593_20260918",
+      "success": true,
+      "stop_rows": 56,
+      "location_rows": 1,
+      "declared_row_count": 57,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_600_20260918",
+      "success": true,
+      "stop_rows": 61,
+      "location_rows": 1,
+      "declared_row_count": 62,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_603_20260918",
+      "success": true,
+      "stop_rows": 35,
+      "location_rows": 1,
+      "declared_row_count": 36,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_613_20260918",
+      "success": true,
+      "stop_rows": 0,
+      "location_rows": 1,
+      "declared_row_count": 1,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_623_20260918",
+      "success": true,
+      "stop_rows": 50,
+      "location_rows": 1,
+      "declared_row_count": 51,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_624_20260918",
+      "success": true,
+      "stop_rows": 29,
+      "location_rows": 1,
+      "declared_row_count": 30,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_633_20260918",
+      "success": true,
+      "stop_rows": 49,
+      "location_rows": 1,
+      "declared_row_count": 50,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_635_20260918",
+      "success": true,
+      "stop_rows": 33,
+      "location_rows": 1,
+      "declared_row_count": 34,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_639_20260918",
+      "success": true,
+      "stop_rows": 33,
+      "location_rows": 1,
+      "declared_row_count": 34,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_642_20260918",
+      "success": true,
+      "stop_rows": 0,
+      "location_rows": 1,
+      "declared_row_count": 1,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_648_20260918",
+      "success": true,
+      "stop_rows": 77,
+      "location_rows": 1,
+      "declared_row_count": 78,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_651_20260918",
+      "success": true,
+      "stop_rows": 39,
+      "location_rows": 1,
+      "declared_row_count": 40,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_657_20260918",
+      "success": true,
+      "stop_rows": 77,
+      "location_rows": 1,
+      "declared_row_count": 78,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_684_20260918",
+      "success": true,
+      "stop_rows": 77,
+      "location_rows": 1,
+      "declared_row_count": 78,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_688_20260918",
+      "success": true,
+      "stop_rows": 49,
+      "location_rows": 1,
+      "declared_row_count": 50,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_692_20260918",
+      "success": true,
+      "stop_rows": 67,
+      "location_rows": 1,
+      "declared_row_count": 68,
+      "count_agrees": true
+    },
+    {
+      "source_id": "nmmt_vehicle_705_20260918",
+      "success": true,
+      "stop_rows": 27,
+      "location_rows": 1,
+      "declared_row_count": 28,
+      "count_agrees": true
+    }
+  ],
+  "client_semantics": "Public client displays actual_arrivaltime2 and actual_departudetime as arrival/departure only when stopstatus is covered. Other statuses cannot be treated as observed stops merely because an actual-named field is populated.",
+  "limits": "Clock timezone and device freshness remain unverified. Tracking trip IDs have not been joined to timetable trip IDs. Reported covered times are not independent ground truth. One sequential snapshot is not a dwell/running-time distribution, operating calendar, complete fleet or ridership count."
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_routes_ef83239fe0db34fc.xml",
+      "url": "https://nmmtservice.infinium.management/TransistService.asmx/GetRouteList",
+      "final_url": "https://nmmtservice.infinium.management/TransistService.asmx/GetRouteList",
+      "source": "NMMT public route list",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:45:59.501889+00:00",
+      "sha256": "ef83239fe0db34fc474f468aeb1e24543584e87369d6b11cfb914debb21c5a52",
+      "bytes": 1353493,
+      "content_type": "text/xml; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation."
+    }
+  ]
+}

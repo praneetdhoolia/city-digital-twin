@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/tata_best_bus_delivery_20210807_c8bb6e464633e89a.pdf",
+      "url": "https://www.tatamotors.com/wp-content/uploads/2023/11/press-release-07aug21.pdf",
+      "final_url": "https://www.tatamotors.com/wp-content/uploads/2023/11/press-release-07aug21.pdf",
+      "source": "Tata Motors BEST electric bus delivery notice 7 August 2021",
+      "licence": "Manufacturer publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:56:19.784886+00:00",
+      "sha256": "c8bb6e464633e89abdd3faf02f1c1a02ac5f71ffb2cc47c2e05372832784f945",
+      "bytes": 606612,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical BEST order and delivery, identifying 9-metre 25-seat and 12-metre 35-seat variants. Orders are not current active fleet; standing capacity and route allocations not established."
+    }
+  ]
+}

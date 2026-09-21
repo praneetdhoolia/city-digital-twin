@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/maharashtra_economic_census_reports_1d8032168ab97508.html",
+      "url": "https://mahasdb.maharashtra.gov.in/economicReport.do",
+      "final_url": "https://mahasdb.maharashtra.gov.in/economicReport.do",
+      "content_type": "text/html; x-content-type-options=nosniff;charset=UTF-8",
+      "source": "maharashtra economic census reports",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:20:56.679882+00:00",
+      "sha256": "1d8032168ab97508f17e0b8ddf534042f6134b94347646338a5ddc152cbce88c",
+      "bytes": 247537,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public economic census documentation or aggregate data catalogue; not acquired restricted unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/water/mmb_route_information_b42aa8cf83acf0f3.json",
+      "url": "https://maharashtramaritimeboard.com/api/v1/passenger-water-transport/route-service-info",
+      "final_url": "https://maharashtramaritimeboard.com/api/v1/passenger-water-transport/route-service-info",
+      "source": "MMB public route and service information",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:37:07.169609+00:00",
+      "sha256": "b42aa8cf83acf0f3b66d24406a0c89affe0ce3b0ba2eb2184918cb805f12eba4",
+      "bytes": 1289,
+      "content_type": "application/json; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Service details published by the official public website."
+    }
+  ]
+}

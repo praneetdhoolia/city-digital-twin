@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/vehicles/maharashtra_ev_policy_2025_a0f87168a51239e4.pdf",
+      "url": "https://cdnbbsr.s3waas.gov.in/s3d446e76a7b26f214b3f29f4441e6eb87/uploads/2025/09/20250922123311775.pdf",
+      "final_url": "https://cdnbbsr.s3waas.gov.in/s3d446e76a7b26f214b3f29f4441e6eb87/uploads/2025/09/20250922123311775.pdf",
+      "content_type": "application/pdf",
+      "source": "Maharashtra Electric Vehicle Policy 2025",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:27:29.530697+00:00",
+      "sha256": "a0f87168a51239e4ab112b6db5556d00a27fcfb5c1a16681a5388f8fdfa3b665",
+      "bytes": 791760,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Policy incentives and infrastructure provisions; targets are not observed adoption.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

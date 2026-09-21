@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/jica_metro11_2026_11acf42102752570.pdf",
+      "url": "https://openjicareport.jica.go.jp/pdf/1000056889_01.pdf",
+      "final_url": "https://openjicareport.jica.go.jp/pdf/1000056889_01.pdf",
+      "content_type": "application/pdf",
+      "source": "JICA Mumbai Metro Line 11 preparatory survey final report part 1",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:37:05.891382+00:00",
+      "sha256": "11acf42102752570539f8800f8e8f9f9df02f158cdf6a5e5b6a2796e1aa4659f",
+      "bytes": 29444080,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Primary planning report citing 2021 CTS; distinguish observed, modelled and future scenarios.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

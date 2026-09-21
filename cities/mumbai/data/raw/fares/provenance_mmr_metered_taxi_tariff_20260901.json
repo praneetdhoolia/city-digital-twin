@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/fares/mmr_metered_taxi_tariff_20260901_5db8147504e7871e.pdf",
+      "url": "https://transport.maharashtra.gov.in/Site/Upload/GR/Metered_Taxi_Tariff_Card.pdf",
+      "final_url": "https://transport.maharashtra.gov.in/Site/Upload/GR/Metered_Taxi_Tariff_Card.pdf",
+      "content_type": "application/pdf",
+      "source": "Official revised metered taxi tariff September 2026",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:57:39.383897+00:00",
+      "sha256": "5db8147504e7871eb442c429d1f620e4f3b78b56a7a185b970f3fc13add7badf",
+      "bytes": 4338711,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Index dated September 2026; rates and geographical coverage require PDF reading.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

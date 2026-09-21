@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_budget_manual_2021_f2adc3d2c1b69bb6.pdf",
+      "url": "https://www.bestundertaking.com/assets/pdf/rti/budget_manual_2021.pdf",
+      "final_url": "https://www.bestundertaking.com/assets/pdf/rti/budget_manual_2021.pdf",
+      "source": "BEST Budget Department public manual 2021",
+      "licence": "BEST public disclosure; reuse terms unverified",
+      "retrieved": "2026-09-18T15:49:01.871777+00:00",
+      "sha256": "f2adc3d2c1b69bb69a529e93eafe8ae0d03d9fb532706390be28bbddbe75b032",
+      "bytes": 55569,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public department manual linked from RTI disclosures. Historical or undated; inspect fleet, operations and statistical definitions before use."
+    }
+  ]
+}

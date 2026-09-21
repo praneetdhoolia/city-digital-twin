@@ -1,0 +1,770 @@
+{
+  "schema_version": 1,
+  "cells": 264,
+  "checks": 94,
+  "disagreements": 0,
+  "derivations": [
+    {
+      "direction": "outward",
+      "period": "Apr-25",
+      "field": "loaded_other",
+      "value_count": 0,
+      "derived_from": "loaded_rakes - (loaded_muriate_of_potash + loaded_wheat + loaded_hr_coils)"
+    }
+  ],
+  "reconciliation": [
+    {
+      "direction": "inward",
+      "period": "Apr-25",
+      "check": "loaded",
+      "reported": 3,
+      "calculated": 3,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Apr-25",
+      "check": "empty",
+      "reported": 1,
+      "calculated": 1,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Apr-25",
+      "check": "all",
+      "reported": 4,
+      "calculated": 4,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "May-25",
+      "check": "loaded",
+      "reported": 4,
+      "calculated": 4,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "May-25",
+      "check": "empty",
+      "reported": 8,
+      "calculated": 8,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "May-25",
+      "check": "all",
+      "reported": 12,
+      "calculated": 12,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Jun-25",
+      "check": "loaded",
+      "reported": 7,
+      "calculated": 7,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Jun-25",
+      "check": "empty",
+      "reported": 1,
+      "calculated": 1,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Jun-25",
+      "check": "all",
+      "reported": 8,
+      "calculated": 8,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Jul-25",
+      "check": "loaded",
+      "reported": 4,
+      "calculated": 4,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Jul-25",
+      "check": "empty",
+      "reported": 7,
+      "calculated": 7,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Jul-25",
+      "check": "all",
+      "reported": 11,
+      "calculated": 11,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Aug-25",
+      "check": "loaded",
+      "reported": 5,
+      "calculated": 5,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Aug-25",
+      "check": "empty",
+      "reported": 6,
+      "calculated": 6,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Aug-25",
+      "check": "all",
+      "reported": 11,
+      "calculated": 11,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Sep-25",
+      "check": "loaded",
+      "reported": 16,
+      "calculated": 16,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Sep-25",
+      "check": "empty",
+      "reported": 4,
+      "calculated": 4,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Sep-25",
+      "check": "all",
+      "reported": 20,
+      "calculated": 20,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Oct-25",
+      "check": "loaded",
+      "reported": 10,
+      "calculated": 10,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Oct-25",
+      "check": "empty",
+      "reported": 0,
+      "calculated": 0,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Oct-25",
+      "check": "all",
+      "reported": 10,
+      "calculated": 10,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Nov-25",
+      "check": "loaded",
+      "reported": 16,
+      "calculated": 16,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Nov-25",
+      "check": "empty",
+      "reported": 0,
+      "calculated": 0,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Nov-25",
+      "check": "all",
+      "reported": 16,
+      "calculated": 16,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Dec-25",
+      "check": "loaded",
+      "reported": 16,
+      "calculated": 16,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Dec-25",
+      "check": "empty",
+      "reported": 4,
+      "calculated": 4,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Dec-25",
+      "check": "all",
+      "reported": 20,
+      "calculated": 20,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Jan-26",
+      "check": "loaded",
+      "reported": 30,
+      "calculated": 30,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Jan-26",
+      "check": "empty",
+      "reported": 3,
+      "calculated": 3,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Jan-26",
+      "check": "all",
+      "reported": 33,
+      "calculated": 33,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Feb-26",
+      "check": "loaded",
+      "reported": 17,
+      "calculated": 17,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Feb-26",
+      "check": "empty",
+      "reported": 0,
+      "calculated": 0,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Feb-26",
+      "check": "all",
+      "reported": 17,
+      "calculated": 17,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Mar-26",
+      "check": "loaded",
+      "reported": 17,
+      "calculated": 17,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Mar-26",
+      "check": "empty",
+      "reported": 0,
+      "calculated": 0,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "Mar-26",
+      "check": "all",
+      "reported": 17,
+      "calculated": 17,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "2025-26",
+      "check": "loaded_rakes",
+      "reported": 145,
+      "calculated": 145,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "2025-26",
+      "check": "loaded_cement",
+      "reported": 46,
+      "calculated": 46,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "2025-26",
+      "check": "loaded_hr_coils_iron_steel",
+      "reported": 89,
+      "calculated": 89,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "2025-26",
+      "check": "loaded_car",
+      "reported": 9,
+      "calculated": 9,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "2025-26",
+      "check": "loaded_other",
+      "reported": 1,
+      "calculated": 1,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "2025-26",
+      "check": "empty_rakes",
+      "reported": 34,
+      "calculated": 34,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "2025-26",
+      "check": "empty_boxnhl_box",
+      "reported": 0,
+      "calculated": 0,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "2025-26",
+      "check": "empty_bcn_bcnhl",
+      "reported": 32,
+      "calculated": 32,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "2025-26",
+      "check": "empty_nmg",
+      "reported": 0,
+      "calculated": 0,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "2025-26",
+      "check": "empty_bost_brn_bfn_bosm",
+      "reported": 2,
+      "calculated": 2,
+      "agrees": true
+    },
+    {
+      "direction": "inward",
+      "period": "2025-26",
+      "check": "total_rakes",
+      "reported": 179,
+      "calculated": 179,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Apr-25",
+      "check": "loaded",
+      "reported": 1,
+      "calculated": 1,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Apr-25",
+      "check": "empty",
+      "reported": 3,
+      "calculated": 3,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Apr-25",
+      "check": "all",
+      "reported": 4,
+      "calculated": 4,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "May-25",
+      "check": "loaded",
+      "reported": 15,
+      "calculated": 15,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "May-25",
+      "check": "empty",
+      "reported": 3,
+      "calculated": 3,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "May-25",
+      "check": "all",
+      "reported": 18,
+      "calculated": 18,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Jun-25",
+      "check": "loaded",
+      "reported": 4,
+      "calculated": 4,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Jun-25",
+      "check": "empty",
+      "reported": 4,
+      "calculated": 4,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Jun-25",
+      "check": "all",
+      "reported": 8,
+      "calculated": 8,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Jul-25",
+      "check": "loaded",
+      "reported": 9,
+      "calculated": 9,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Jul-25",
+      "check": "empty",
+      "reported": 2,
+      "calculated": 2,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Jul-25",
+      "check": "all",
+      "reported": 11,
+      "calculated": 11,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Aug-25",
+      "check": "loaded",
+      "reported": 11,
+      "calculated": 11,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Aug-25",
+      "check": "empty",
+      "reported": 3,
+      "calculated": 3,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Aug-25",
+      "check": "all",
+      "reported": 14,
+      "calculated": 14,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Sep-25",
+      "check": "loaded",
+      "reported": 8,
+      "calculated": 8,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Sep-25",
+      "check": "empty",
+      "reported": 15,
+      "calculated": 15,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Sep-25",
+      "check": "all",
+      "reported": 23,
+      "calculated": 23,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Oct-25",
+      "check": "loaded",
+      "reported": 1,
+      "calculated": 1,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Oct-25",
+      "check": "empty",
+      "reported": 10,
+      "calculated": 10,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Oct-25",
+      "check": "all",
+      "reported": 11,
+      "calculated": 11,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Nov-25",
+      "check": "loaded",
+      "reported": 0,
+      "calculated": 0,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Nov-25",
+      "check": "empty",
+      "reported": 16,
+      "calculated": 16,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Nov-25",
+      "check": "all",
+      "reported": 16,
+      "calculated": 16,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Dec-25",
+      "check": "loaded",
+      "reported": 5,
+      "calculated": 5,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Dec-25",
+      "check": "empty",
+      "reported": 17,
+      "calculated": 17,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Dec-25",
+      "check": "all",
+      "reported": 22,
+      "calculated": 22,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Jan-26",
+      "check": "loaded",
+      "reported": 3,
+      "calculated": 3,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Jan-26",
+      "check": "empty",
+      "reported": 29,
+      "calculated": 29,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Jan-26",
+      "check": "all",
+      "reported": 32,
+      "calculated": 32,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Feb-26",
+      "check": "loaded",
+      "reported": 0,
+      "calculated": 0,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Feb-26",
+      "check": "empty",
+      "reported": 18,
+      "calculated": 18,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Feb-26",
+      "check": "all",
+      "reported": 18,
+      "calculated": 18,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Mar-26",
+      "check": "loaded",
+      "reported": 0,
+      "calculated": 0,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Mar-26",
+      "check": "empty",
+      "reported": 16,
+      "calculated": 16,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "Mar-26",
+      "check": "all",
+      "reported": 16,
+      "calculated": 16,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "2025-26",
+      "check": "loaded_rakes",
+      "reported": 57,
+      "calculated": 57,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "2025-26",
+      "check": "loaded_muriate_of_potash",
+      "reported": 38,
+      "calculated": 38,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "2025-26",
+      "check": "loaded_wheat",
+      "reported": 4,
+      "calculated": 4,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "2025-26",
+      "check": "loaded_hr_coils",
+      "reported": 0,
+      "calculated": 0,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "2025-26",
+      "check": "loaded_other",
+      "reported": 15,
+      "calculated": 15,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "2025-26",
+      "check": "empty_rakes",
+      "reported": 136,
+      "calculated": 136,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "2025-26",
+      "check": "empty_boxnhl_box",
+      "reported": 0,
+      "calculated": 0,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "2025-26",
+      "check": "empty_bcn_bcnhl",
+      "reported": 38,
+      "calculated": 38,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "2025-26",
+      "check": "empty_nmg",
+      "reported": 9,
+      "calculated": 9,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "2025-26",
+      "check": "empty_bost_brn_bfn_bosm",
+      "reported": 89,
+      "calculated": 89,
+      "agrees": true
+    },
+    {
+      "direction": "outward",
+      "period": "2025-26",
+      "check": "total_rakes",
+      "reported": 193,
+      "calculated": 193,
+      "agrees": true
+    }
+  ],
+  "limits": "Port railway rakes, not citywide freight trains or wagons. Monthly inward/outward loaded/empty counts can differ; no balance is imposed. Commodity and wagon classes are source categories, not vehicle capacity. No operating times or network paths are inferred. Subtotals must not be added to their components."
+}

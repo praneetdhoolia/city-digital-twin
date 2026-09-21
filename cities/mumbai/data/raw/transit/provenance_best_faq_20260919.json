@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_faq_20260919_6f647b62151e15af.html",
+      "url": "https://www.bestundertaking.com/faq.asp",
+      "final_url": "https://www.bestundertaking.com/faq.asp",
+      "source": "BEST official Faq's",
+      "licence": "BEST publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:44:39.387700+00:00",
+      "sha256": "6f647b62151e15af476478ea603a980d88e9be75acaab363e1d01be3353fa09b",
+      "bytes": 61908,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification."
+    }
+  ]
+}

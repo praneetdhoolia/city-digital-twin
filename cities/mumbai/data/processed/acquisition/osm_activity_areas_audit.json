@@ -1,0 +1,25 @@
+{
+  "source_sha256": "c335a72cadfebc3ffde5cfff20fc9711f3112bc11000d43fde4daea10c36b53e",
+  "licence": "ODbL 1.0; OpenStreetMap contributors",
+  "source": "derived_activity_area_inventory",
+  "source_candidates_count": 11735,
+  "retained_areas_count": 8303,
+  "purpose_counts": {
+    "work": 2770,
+    "social": 1095,
+    "education": 992,
+    "leisure": 4705,
+    "shopping": 520
+  },
+  "excluded": {
+    "inactive_or_no_positive_purpose_match": 3430,
+    "invalid_or_empty_geometry_not_repaired": 2
+  },
+  "driver_warnings": [],
+  "limitations": [
+    "Mapped areas are not verified current operations, capacity or access entrances.",
+    "Invalid geometry is counted and excluded without silent repair.",
+    "Node/area duplicate identities are not resolved by this inventory.",
+    "Whole valid geometries intersecting the research envelope are retained."
+  ]
+}

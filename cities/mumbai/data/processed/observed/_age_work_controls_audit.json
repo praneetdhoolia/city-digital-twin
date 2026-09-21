@@ -1,0 +1,1459 @@
+{
+  "single_year_age_rows": 1236,
+  "work_status_rows": 192,
+  "c14_rows_reconciled": 228,
+  "b01_c13_checks": 576,
+  "pca_b01_joint_work_checks": 180,
+  "pca_b01_joint_work_reconciliation": [
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "population",
+      "sex": "all",
+      "pca_leaf_count": 11060148,
+      "b01_count": 11060148
+    },
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "population",
+      "sex": "male",
+      "pca_leaf_count": 5865078,
+      "b01_count": 5865078
+    },
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "population",
+      "sex": "female",
+      "pca_leaf_count": 5195070,
+      "b01_count": 5195070
+    },
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "main_worker",
+      "sex": "all",
+      "pca_leaf_count": 3930511,
+      "b01_count": 3930511
+    },
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "main_worker",
+      "sex": "male",
+      "pca_leaf_count": 3059503,
+      "b01_count": 3059503
+    },
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "main_worker",
+      "sex": "female",
+      "pca_leaf_count": 871008,
+      "b01_count": 871008
+    },
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "marginal_worker_under_3_months",
+      "sex": "all",
+      "pca_leaf_count": 79842,
+      "b01_count": 79842
+    },
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "marginal_worker_under_3_months",
+      "sex": "male",
+      "pca_leaf_count": 40558,
+      "b01_count": 40558
+    },
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "marginal_worker_under_3_months",
+      "sex": "female",
+      "pca_leaf_count": 39284,
+      "b01_count": 39284
+    },
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "all",
+      "pca_leaf_count": 482414,
+      "b01_count": 482414
+    },
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "male",
+      "pca_leaf_count": 263062,
+      "b01_count": 263062
+    },
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "female",
+      "pca_leaf_count": 219352,
+      "b01_count": 219352
+    },
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "non_worker",
+      "sex": "all",
+      "pca_leaf_count": 6567381,
+      "b01_count": 6567381
+    },
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "non_worker",
+      "sex": "male",
+      "pca_leaf_count": 2501955,
+      "b01_count": 2501955
+    },
+    {
+      "district_code": "517",
+      "residence": "Total",
+      "category": "non_worker",
+      "sex": "female",
+      "pca_leaf_count": 4065426,
+      "b01_count": 4065426
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "population",
+      "sex": "all",
+      "pca_leaf_count": 2545470,
+      "b01_count": 2545470
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "population",
+      "sex": "male",
+      "pca_leaf_count": 1300136,
+      "b01_count": 1300136
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "population",
+      "sex": "female",
+      "pca_leaf_count": 1245334,
+      "b01_count": 1245334
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "main_worker",
+      "sex": "all",
+      "pca_leaf_count": 885453,
+      "b01_count": 885453
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "main_worker",
+      "sex": "male",
+      "pca_leaf_count": 595115,
+      "b01_count": 595115
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "main_worker",
+      "sex": "female",
+      "pca_leaf_count": 290338,
+      "b01_count": 290338
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "marginal_worker_under_3_months",
+      "sex": "all",
+      "pca_leaf_count": 46300,
+      "b01_count": 46300
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "marginal_worker_under_3_months",
+      "sex": "male",
+      "pca_leaf_count": 20323,
+      "b01_count": 20323
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "marginal_worker_under_3_months",
+      "sex": "female",
+      "pca_leaf_count": 25977,
+      "b01_count": 25977
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "all",
+      "pca_leaf_count": 237976,
+      "b01_count": 237976
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "male",
+      "pca_leaf_count": 113980,
+      "b01_count": 113980
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "female",
+      "pca_leaf_count": 123996,
+      "b01_count": 123996
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "non_worker",
+      "sex": "all",
+      "pca_leaf_count": 1375741,
+      "b01_count": 1375741
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "non_worker",
+      "sex": "male",
+      "pca_leaf_count": 570718,
+      "b01_count": 570718
+    },
+    {
+      "district_code": "517",
+      "residence": "Rural",
+      "category": "non_worker",
+      "sex": "female",
+      "pca_leaf_count": 805023,
+      "b01_count": 805023
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "population",
+      "sex": "all",
+      "pca_leaf_count": 8514678,
+      "b01_count": 8514678
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "population",
+      "sex": "male",
+      "pca_leaf_count": 4564942,
+      "b01_count": 4564942
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "population",
+      "sex": "female",
+      "pca_leaf_count": 3949736,
+      "b01_count": 3949736
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "main_worker",
+      "sex": "all",
+      "pca_leaf_count": 3045058,
+      "b01_count": 3045058
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "main_worker",
+      "sex": "male",
+      "pca_leaf_count": 2464388,
+      "b01_count": 2464388
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "main_worker",
+      "sex": "female",
+      "pca_leaf_count": 580670,
+      "b01_count": 580670
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "marginal_worker_under_3_months",
+      "sex": "all",
+      "pca_leaf_count": 33542,
+      "b01_count": 33542
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "marginal_worker_under_3_months",
+      "sex": "male",
+      "pca_leaf_count": 20235,
+      "b01_count": 20235
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "marginal_worker_under_3_months",
+      "sex": "female",
+      "pca_leaf_count": 13307,
+      "b01_count": 13307
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "all",
+      "pca_leaf_count": 244438,
+      "b01_count": 244438
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "male",
+      "pca_leaf_count": 149082,
+      "b01_count": 149082
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "female",
+      "pca_leaf_count": 95356,
+      "b01_count": 95356
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "non_worker",
+      "sex": "all",
+      "pca_leaf_count": 5191640,
+      "b01_count": 5191640
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "non_worker",
+      "sex": "male",
+      "pca_leaf_count": 1931237,
+      "b01_count": 1931237
+    },
+    {
+      "district_code": "517",
+      "residence": "Urban",
+      "category": "non_worker",
+      "sex": "female",
+      "pca_leaf_count": 3260403,
+      "b01_count": 3260403
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "population",
+      "sex": "all",
+      "pca_leaf_count": 9356962,
+      "b01_count": 9356962
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "population",
+      "sex": "male",
+      "pca_leaf_count": 5031323,
+      "b01_count": 5031323
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "population",
+      "sex": "female",
+      "pca_leaf_count": 4325639,
+      "b01_count": 4325639
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "main_worker",
+      "sex": "all",
+      "pca_leaf_count": 3515922,
+      "b01_count": 3515922
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "main_worker",
+      "sex": "male",
+      "pca_leaf_count": 2811481,
+      "b01_count": 2811481
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "main_worker",
+      "sex": "female",
+      "pca_leaf_count": 704441,
+      "b01_count": 704441
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "marginal_worker_under_3_months",
+      "sex": "all",
+      "pca_leaf_count": 35816,
+      "b01_count": 35816
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "marginal_worker_under_3_months",
+      "sex": "male",
+      "pca_leaf_count": 23164,
+      "b01_count": 23164
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "marginal_worker_under_3_months",
+      "sex": "female",
+      "pca_leaf_count": 12652,
+      "b01_count": 12652
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "all",
+      "pca_leaf_count": 183283,
+      "b01_count": 183283
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "male",
+      "pca_leaf_count": 109677,
+      "b01_count": 109677
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "female",
+      "pca_leaf_count": 73606,
+      "b01_count": 73606
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "non_worker",
+      "sex": "all",
+      "pca_leaf_count": 5621941,
+      "b01_count": 5621941
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "non_worker",
+      "sex": "male",
+      "pca_leaf_count": 2087001,
+      "b01_count": 2087001
+    },
+    {
+      "district_code": "518",
+      "residence": "Total",
+      "category": "non_worker",
+      "sex": "female",
+      "pca_leaf_count": 3534940,
+      "b01_count": 3534940
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "population",
+      "sex": "all",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "population",
+      "sex": "male",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "population",
+      "sex": "female",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "main_worker",
+      "sex": "all",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "main_worker",
+      "sex": "male",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "main_worker",
+      "sex": "female",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "marginal_worker_under_3_months",
+      "sex": "all",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "marginal_worker_under_3_months",
+      "sex": "male",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "marginal_worker_under_3_months",
+      "sex": "female",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "all",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "male",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "female",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "non_worker",
+      "sex": "all",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "non_worker",
+      "sex": "male",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Rural",
+      "category": "non_worker",
+      "sex": "female",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "population",
+      "sex": "all",
+      "pca_leaf_count": 9356962,
+      "b01_count": 9356962
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "population",
+      "sex": "male",
+      "pca_leaf_count": 5031323,
+      "b01_count": 5031323
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "population",
+      "sex": "female",
+      "pca_leaf_count": 4325639,
+      "b01_count": 4325639
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "main_worker",
+      "sex": "all",
+      "pca_leaf_count": 3515922,
+      "b01_count": 3515922
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "main_worker",
+      "sex": "male",
+      "pca_leaf_count": 2811481,
+      "b01_count": 2811481
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "main_worker",
+      "sex": "female",
+      "pca_leaf_count": 704441,
+      "b01_count": 704441
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "marginal_worker_under_3_months",
+      "sex": "all",
+      "pca_leaf_count": 35816,
+      "b01_count": 35816
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "marginal_worker_under_3_months",
+      "sex": "male",
+      "pca_leaf_count": 23164,
+      "b01_count": 23164
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "marginal_worker_under_3_months",
+      "sex": "female",
+      "pca_leaf_count": 12652,
+      "b01_count": 12652
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "all",
+      "pca_leaf_count": 183283,
+      "b01_count": 183283
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "male",
+      "pca_leaf_count": 109677,
+      "b01_count": 109677
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "female",
+      "pca_leaf_count": 73606,
+      "b01_count": 73606
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "non_worker",
+      "sex": "all",
+      "pca_leaf_count": 5621941,
+      "b01_count": 5621941
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "non_worker",
+      "sex": "male",
+      "pca_leaf_count": 2087001,
+      "b01_count": 2087001
+    },
+    {
+      "district_code": "518",
+      "residence": "Urban",
+      "category": "non_worker",
+      "sex": "female",
+      "pca_leaf_count": 3534940,
+      "b01_count": 3534940
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "population",
+      "sex": "all",
+      "pca_leaf_count": 3085411,
+      "b01_count": 3085411
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "population",
+      "sex": "male",
+      "pca_leaf_count": 1684608,
+      "b01_count": 1684608
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "population",
+      "sex": "female",
+      "pca_leaf_count": 1400803,
+      "b01_count": 1400803
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "main_worker",
+      "sex": "all",
+      "pca_leaf_count": 1209334,
+      "b01_count": 1209334
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "main_worker",
+      "sex": "male",
+      "pca_leaf_count": 975508,
+      "b01_count": 975508
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "main_worker",
+      "sex": "female",
+      "pca_leaf_count": 233826,
+      "b01_count": 233826
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "marginal_worker_under_3_months",
+      "sex": "all",
+      "pca_leaf_count": 11398,
+      "b01_count": 11398
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "marginal_worker_under_3_months",
+      "sex": "male",
+      "pca_leaf_count": 7378,
+      "b01_count": 7378
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "marginal_worker_under_3_months",
+      "sex": "female",
+      "pca_leaf_count": 4020,
+      "b01_count": 4020
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "all",
+      "pca_leaf_count": 63664,
+      "b01_count": 63664
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "male",
+      "pca_leaf_count": 38123,
+      "b01_count": 38123
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "female",
+      "pca_leaf_count": 25541,
+      "b01_count": 25541
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "non_worker",
+      "sex": "all",
+      "pca_leaf_count": 1801015,
+      "b01_count": 1801015
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "non_worker",
+      "sex": "male",
+      "pca_leaf_count": 663599,
+      "b01_count": 663599
+    },
+    {
+      "district_code": "519",
+      "residence": "Total",
+      "category": "non_worker",
+      "sex": "female",
+      "pca_leaf_count": 1137416,
+      "b01_count": 1137416
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "population",
+      "sex": "all",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "population",
+      "sex": "male",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "population",
+      "sex": "female",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "main_worker",
+      "sex": "all",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "main_worker",
+      "sex": "male",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "main_worker",
+      "sex": "female",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "marginal_worker_under_3_months",
+      "sex": "all",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "marginal_worker_under_3_months",
+      "sex": "male",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "marginal_worker_under_3_months",
+      "sex": "female",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "all",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "male",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "female",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "non_worker",
+      "sex": "all",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "non_worker",
+      "sex": "male",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Rural",
+      "category": "non_worker",
+      "sex": "female",
+      "pca_leaf_count": 0,
+      "b01_count": 0
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "population",
+      "sex": "all",
+      "pca_leaf_count": 3085411,
+      "b01_count": 3085411
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "population",
+      "sex": "male",
+      "pca_leaf_count": 1684608,
+      "b01_count": 1684608
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "population",
+      "sex": "female",
+      "pca_leaf_count": 1400803,
+      "b01_count": 1400803
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "main_worker",
+      "sex": "all",
+      "pca_leaf_count": 1209334,
+      "b01_count": 1209334
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "main_worker",
+      "sex": "male",
+      "pca_leaf_count": 975508,
+      "b01_count": 975508
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "main_worker",
+      "sex": "female",
+      "pca_leaf_count": 233826,
+      "b01_count": 233826
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "marginal_worker_under_3_months",
+      "sex": "all",
+      "pca_leaf_count": 11398,
+      "b01_count": 11398
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "marginal_worker_under_3_months",
+      "sex": "male",
+      "pca_leaf_count": 7378,
+      "b01_count": 7378
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "marginal_worker_under_3_months",
+      "sex": "female",
+      "pca_leaf_count": 4020,
+      "b01_count": 4020
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "all",
+      "pca_leaf_count": 63664,
+      "b01_count": 63664
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "male",
+      "pca_leaf_count": 38123,
+      "b01_count": 38123
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "female",
+      "pca_leaf_count": 25541,
+      "b01_count": 25541
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "non_worker",
+      "sex": "all",
+      "pca_leaf_count": 1801015,
+      "b01_count": 1801015
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "non_worker",
+      "sex": "male",
+      "pca_leaf_count": 663599,
+      "b01_count": 663599
+    },
+    {
+      "district_code": "519",
+      "residence": "Urban",
+      "category": "non_worker",
+      "sex": "female",
+      "pca_leaf_count": 1137416,
+      "b01_count": 1137416
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "population",
+      "sex": "all",
+      "pca_leaf_count": 2634200,
+      "b01_count": 2634200
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "population",
+      "sex": "male",
+      "pca_leaf_count": 1344345,
+      "b01_count": 1344345
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "population",
+      "sex": "female",
+      "pca_leaf_count": 1289855,
+      "b01_count": 1289855
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "main_worker",
+      "sex": "all",
+      "pca_leaf_count": 858825,
+      "b01_count": 858825
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "main_worker",
+      "sex": "male",
+      "pca_leaf_count": 641655,
+      "b01_count": 641655
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "main_worker",
+      "sex": "female",
+      "pca_leaf_count": 217170,
+      "b01_count": 217170
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "marginal_worker_under_3_months",
+      "sex": "all",
+      "pca_leaf_count": 35918,
+      "b01_count": 35918
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "marginal_worker_under_3_months",
+      "sex": "male",
+      "pca_leaf_count": 17763,
+      "b01_count": 17763
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "marginal_worker_under_3_months",
+      "sex": "female",
+      "pca_leaf_count": 18155,
+      "b01_count": 18155
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "all",
+      "pca_leaf_count": 178226,
+      "b01_count": 178226
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "male",
+      "pca_leaf_count": 94425,
+      "b01_count": 94425
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "female",
+      "pca_leaf_count": 83801,
+      "b01_count": 83801
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "non_worker",
+      "sex": "all",
+      "pca_leaf_count": 1561231,
+      "b01_count": 1561231
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "non_worker",
+      "sex": "male",
+      "pca_leaf_count": 590502,
+      "b01_count": 590502
+    },
+    {
+      "district_code": "520",
+      "residence": "Total",
+      "category": "non_worker",
+      "sex": "female",
+      "pca_leaf_count": 970729,
+      "b01_count": 970729
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "population",
+      "sex": "all",
+      "pca_leaf_count": 1664005,
+      "b01_count": 1664005
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "population",
+      "sex": "male",
+      "pca_leaf_count": 836996,
+      "b01_count": 836996
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "population",
+      "sex": "female",
+      "pca_leaf_count": 827009,
+      "b01_count": 827009
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "main_worker",
+      "sex": "all",
+      "pca_leaf_count": 539278,
+      "b01_count": 539278
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "main_worker",
+      "sex": "male",
+      "pca_leaf_count": 381638,
+      "b01_count": 381638
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "main_worker",
+      "sex": "female",
+      "pca_leaf_count": 157640,
+      "b01_count": 157640
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "marginal_worker_under_3_months",
+      "sex": "all",
+      "pca_leaf_count": 30932,
+      "b01_count": 30932
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "marginal_worker_under_3_months",
+      "sex": "male",
+      "pca_leaf_count": 14618,
+      "b01_count": 14618
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "marginal_worker_under_3_months",
+      "sex": "female",
+      "pca_leaf_count": 16314,
+      "b01_count": 16314
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "all",
+      "pca_leaf_count": 144346,
+      "b01_count": 144346
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "male",
+      "pca_leaf_count": 74241,
+      "b01_count": 74241
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "female",
+      "pca_leaf_count": 70105,
+      "b01_count": 70105
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "non_worker",
+      "sex": "all",
+      "pca_leaf_count": 949449,
+      "b01_count": 949449
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "non_worker",
+      "sex": "male",
+      "pca_leaf_count": 366499,
+      "b01_count": 366499
+    },
+    {
+      "district_code": "520",
+      "residence": "Rural",
+      "category": "non_worker",
+      "sex": "female",
+      "pca_leaf_count": 582950,
+      "b01_count": 582950
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "population",
+      "sex": "all",
+      "pca_leaf_count": 970195,
+      "b01_count": 970195
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "population",
+      "sex": "male",
+      "pca_leaf_count": 507349,
+      "b01_count": 507349
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "population",
+      "sex": "female",
+      "pca_leaf_count": 462846,
+      "b01_count": 462846
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "main_worker",
+      "sex": "all",
+      "pca_leaf_count": 319547,
+      "b01_count": 319547
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "main_worker",
+      "sex": "male",
+      "pca_leaf_count": 260017,
+      "b01_count": 260017
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "main_worker",
+      "sex": "female",
+      "pca_leaf_count": 59530,
+      "b01_count": 59530
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "marginal_worker_under_3_months",
+      "sex": "all",
+      "pca_leaf_count": 4986,
+      "b01_count": 4986
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "marginal_worker_under_3_months",
+      "sex": "male",
+      "pca_leaf_count": 3145,
+      "b01_count": 3145
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "marginal_worker_under_3_months",
+      "sex": "female",
+      "pca_leaf_count": 1841,
+      "b01_count": 1841
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "all",
+      "pca_leaf_count": 33880,
+      "b01_count": 33880
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "male",
+      "pca_leaf_count": 20184,
+      "b01_count": 20184
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "marginal_worker_3_to_6_months",
+      "sex": "female",
+      "pca_leaf_count": 13696,
+      "b01_count": 13696
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "non_worker",
+      "sex": "all",
+      "pca_leaf_count": 611782,
+      "b01_count": 611782
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "non_worker",
+      "sex": "male",
+      "pca_leaf_count": 224003,
+      "b01_count": 224003
+    },
+    {
+      "district_code": "520",
+      "residence": "Urban",
+      "category": "non_worker",
+      "sex": "female",
+      "pca_leaf_count": 387779,
+      "b01_count": 387779
+    }
+  ],
+  "status": "historical_controls_not_current_population_or_demand",
+  "limitations": [
+    "All ages and residence totals overlap constituent rows.",
+    "Age 100+ remains top coded; unstated age is retained.",
+    "B01 age 15-59 and 60+ overlap detailed age bands.",
+    "B01 has no separate 0-4 row; totals include this population.",
+    "Seeking/available categories overlap marginal and non-worker totals.",
+    "Main and marginal work are annual duration categories, not full/part-time employment.",
+    "District boundaries are historical; no allocation to a current model boundary."
+  ]
+}

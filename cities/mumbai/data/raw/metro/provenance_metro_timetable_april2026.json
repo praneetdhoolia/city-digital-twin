@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/metro/metro_timetable_april2026_fb965e60c020c965.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2026-04/mumbai_metro_introduces_simplified_passenger-friendly_timetables_from_april_8.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2026-04/mumbai_metro_introduces_simplified_passenger-friendly_timetables_from_april_8.pdf",
+      "content_type": "application/pdf",
+      "source": "MMRDA metro schedule announcement April 2026",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:41:16.309980+00:00",
+      "sha256": "fb965e60c020c96528f7364cbf8e715cdec4cba0b125357bfcb3e76bddc8eebc",
+      "bytes": 4335718,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Dated operational timetables; inspect attachment.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

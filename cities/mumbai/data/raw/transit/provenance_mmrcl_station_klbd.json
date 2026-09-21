@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_klbd_6c78023ab48793db.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/KLBD/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/KLBD/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Kalbadevi",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:38.730434+00:00",
+      "sha256": "6c78023ab48793db16a59a75d2c2b4dcdfecc1b0908e9279f35eb3659ec298e1",
+      "bytes": 39839,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

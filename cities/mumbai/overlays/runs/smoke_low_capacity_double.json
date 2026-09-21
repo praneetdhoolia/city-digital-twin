@@ -1,0 +1,24 @@
+{
+  "overlay": "smoke_low_capacity_double",
+  "description": "Bounded development sensitivity: double only road classes whose provisional per-lane base capacity is 600 PCU/h. Preserve the nine-iteration horizon, all demand, timetables, geometry, lanes, speed and behavioural values. Tests sensitivity to a broad prior; does not adopt the doubled capacity as observed or calibrated. Decision 9.196.",
+  "set": {
+    "RUN.smoke.road_capacity_factors": {
+      "motorway": 1.0,
+      "motorway_link": 2.0,
+      "trunk": 1.0,
+      "trunk_link": 2.0,
+      "primary": 1.0,
+      "primary_link": 2.0,
+      "secondary": 1.0,
+      "secondary_link": 2.0,
+      "tertiary": 2.0,
+      "tertiary_link": 2.0,
+      "residential": 2.0,
+      "living_street": 2.0,
+      "service": 2.0,
+      "unclassified": 2.0,
+      "road": 2.0,
+      "busway": 1.0
+    }
+  }
+}

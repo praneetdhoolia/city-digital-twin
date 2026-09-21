@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "source_id": "mtp_notice_822764",
+  "source_sha256": "0d6f7fb97ce878f2499a92386419a43dcc47723516ee13244e4408f8ca680f32",
+  "notification_number": "155/TRF/Addl CP/R/Permanent Notification/2026",
+  "issued_date": "2026-06-26",
+  "source_pages_1_based": [3, 4],
+  "method": "Visual transcription of the English signed order after English OCR located its clauses; OCR text is not treated as a verified transcription.",
+  "status": "single_pass_transcription_predecessor_spatial_and_supersession_checks_pending",
+  "scope": {
+    "road": "Western Express Highway",
+    "from": "Bandra",
+    "to": "Dahisar",
+    "directions": ["northbound", "southbound"],
+    "restricted_source_vehicle_class": "heavy vehicles",
+    "restricted_actions": ["entering", "plying"]
+  },
+  "source": "official_notification_visually_transcribed",
+  "restrictions": [
+    {
+      "start_local_time": "08:00",
+      "end_local_time": "11:00",
+      "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      "source_page_1_based": 3
+    },
+    {
+      "start_local_time": "16:00",
+      "end_local_time": "21:00",
+      "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      "source_page_1_based": 3
+    }
+  ],
+  "sunday_clause": {
+    "meaning": "The order states that these heavy-vehicle movement restrictions do not apply on Sundays throughout the day.",
+    "source_page_1_based": 3,
+    "scope_limit": "This is not evidence that every independent road restriction or vehicle rule is removed on Sundays."
+  },
+  "predecessor": {
+    "notification_number_numeric": "227",
+    "issued_date": "2025-12-29",
+    "source_id": null,
+    "status": "referenced_in_amendment_not_yet_located",
+    "continued_terms": "All other terms and conditions of the predecessor remain unchanged and in force.",
+    "source_page_1_based": 4
+  },
+  "vehicle_exceptions": null,
+  "vehicle_exceptions_status": "Cannot infer an empty exception set: the amendment incorporates terms from the unlocated predecessor.",
+  "network_link_ids": null,
+  "model_ready": false,
+  "limitations": [
+    "The predecessor is absent from the acquired notice index under its stated number and date; the index is not proof of complete publication coverage.",
+    "The exact heavy-vehicle classification and any inherited passenger-bus or essential-service exceptions require the predecessor.",
+    "The notification text must be joined to the correct highway carriageways and checked against later amendments before simulation use.",
+    "This transcription does not establish a restriction outside the Bandra-Dahisar corridor or on every road of the metropolitan region."
+  ]
+}

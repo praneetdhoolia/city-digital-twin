@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_mlxm_d1cf9b919f09da35.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/MLXM/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/MLXM/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Mahalaxmi Metro",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:34.103556+00:00",
+      "sha256": "d1cf9b919f09da35eb6c58700d63b77813d3bc164c8d0076050582de98f272d5",
+      "bytes": 18643,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

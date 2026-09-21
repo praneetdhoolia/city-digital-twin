@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_raigarh_pca_index_e0c96eba05419728.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/6711",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/6711",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Raigarh Maharashtra 2011 PCA index",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:45:56.942873+00:00",
+      "sha256": "e0c96eba0541972814c7ff23ef380417a0f188e026d7b50d01e0570484f4de70",
+      "bytes": 2540796,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official catalogue; workbook link and definitions.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

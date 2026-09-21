@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/education/mospi_aishe_2021-22_maharashtra_indicator_3_page_1_62b7f56f63c52844.json",
+      "url": "https://api.mospi.gov.in/api/aishe/getAisheRecords?indicator_code=3&year=2021-22&state_code=15&limit=200&page=1&Format=JSON",
+      "final_url": "https://api.mospi.gov.in/api/aishe/getAisheRecords?indicator_code=3&year=2021-22&state_code=15&limit=200&page=1&Format=JSON",
+      "content_type": "application/json; charset=utf-8",
+      "source": "NSO AISHE Maharashtra 2021-22 indicator 3",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:24:05.175634+00:00",
+      "sha256": "62b7f56f63c5284468d3b680fb09cd8bdad9154c72705c51dce94877549f1af7",
+      "bytes": 4207,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "State-level aggregate; not a Mumbai local control or facility location. Pagination and indicator dimensions require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

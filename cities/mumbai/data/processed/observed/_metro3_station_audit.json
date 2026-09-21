@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "source": "derived",
+  "status": "evidence_only",
+  "station_count": 27,
+  "gate_count": 137,
+  "gate_count_missing_coordinates": 66,
+  "directed_neighbour_count": 48,
+  "station_chains": [
+    [
+      "ARYJ",
+      "SEPZ",
+      "MIDC",
+      "MNK",
+      "CSIA",
+      "SHRR",
+      "CIAD",
+      "STZM",
+      "VIDN",
+      "BDRM",
+      "DHAV"
+    ],
+    [
+      "SCMU",
+      "MLXM",
+      "MCLM",
+      "GTRM",
+      "GIRG",
+      "KLBD",
+      "CSTM",
+      "HUC",
+      "CHGM",
+      "VIDB",
+      "CUP"
+    ],
+    [
+      "SDIT",
+      "DDRM",
+      "SIDV",
+      "WOR",
+      "ACA"
+    ]
+  ],
+  "complete_station_chain": false,
+  "stations_without_first_last_times": [
+    "ACA",
+    "ARYJ",
+    "BDRM",
+    "CHGM",
+    "CIAD",
+    "CSIA",
+    "CSTM",
+    "CUP",
+    "DDRM",
+    "DHAV",
+    "GIRG",
+    "GTRM",
+    "HUC",
+    "KLBD",
+    "MCLM",
+    "MIDC",
+    "MLXM",
+    "MNK",
+    "SCMU",
+    "SDIT",
+    "SEPZ",
+    "SHRR",
+    "SIDV",
+    "STZM",
+    "VIDB",
+    "VIDN",
+    "WOR"
+  ],
+  "source_conflicts": [
+    {
+      "station_code": "ARYJ",
+      "field": "type",
+      "conflict": "Type says elevated; description says at-grade. Preserve both in raw data."
+    },
+    {
+      "station_code": "SHRR",
+      "field": "gate_coordinates",
+      "gate": "A2",
+      "conflict": "Published latitude/longitude fields exceed degree ranges. CRS unresolved."
+    },
+    {
+      "station_code": "SHRR",
+      "field": "gate_coordinates",
+      "gate": "A3",
+      "conflict": "Published latitude/longitude fields exceed degree ranges. CRS unresolved."
+    },
+    {
+      "station_code": "SHRR",
+      "field": "gate_coordinates",
+      "gate": "A4",
+      "conflict": "Published latitude/longitude fields exceed degree ranges. CRS unresolved."
+    },
+    {
+      "station_code": "SHRR",
+      "field": "gate_coordinates",
+      "gate": "A5",
+      "conflict": "Published latitude/longitude fields exceed degree ranges. CRS unresolved."
+    },
+    {
+      "field": "neighbour_chain",
+      "conflict": "Published neighbour graph is disconnected or incomplete; no missing link inferred."
+    }
+  ],
+  "limitations": [
+    "Published station coordinates are points, not validated entrance or platform geometry.",
+    "Schematic x/y fields are not geographical coordinates and are excluded.",
+    "Null entrance coordinates remain null; station centroids cannot substitute for entrances.",
+    "API lift status and estimated nearby-place walking times are not field measurements.",
+    "Observed means published by the operator; contradictions remain flagged for review."
+  ]
+}

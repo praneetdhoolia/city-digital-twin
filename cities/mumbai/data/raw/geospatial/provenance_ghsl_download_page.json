@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/geospatial/ghsl_download_page_d6b4be8ec46f13f2.html",
+      "url": "https://human-settlement.emergency.copernicus.eu/download.php",
+      "final_url": "https://human-settlement.emergency.copernicus.eu/download.php",
+      "source": "GHSL official download page",
+      "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
+      "retrieved": "2026-09-18T09:55:38.387839+00:00",
+      "sha256": "d6b4be8ec46f13f2528635ec61c9c4f332d81ab9818db5ce189139b1a8f1e981",
+      "bytes": 26368,
+      "content_type": "text/html; charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Spatial-support source. GHSL population is modelled; DSM includes buildings and vegetation and is not surveyed road elevation."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/mumbai_suburban_census_summary_c69cc15157987dbe.pdf",
+      "url": "https://cdn.s3waas.gov.in/s304025959b191f8f9de3f924f0940515f/uploads/2016/09/2018040645.pdf",
+      "final_url": "https://cdn.s3waas.gov.in/s304025959b191f8f9de3f924f0940515f/uploads/2016/09/2018040645.pdf",
+      "content_type": "application/pdf",
+      "source": "Mumbai Suburban district census summary",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:37:24.819683+00:00",
+      "sha256": "c69cc15157987dbe3a2c98d060ede7b42d35f79661e6f3cb6bdffef74176c156",
+      "bytes": 59492,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "District-published historical census summary.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

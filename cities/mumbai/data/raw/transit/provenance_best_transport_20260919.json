@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_transport_20260919_449f0dea27128807.html",
+      "url": "https://www.bestundertaking.com/transport.asp",
+      "final_url": "https://www.bestundertaking.com/transport.asp",
+      "source": "BEST official transport information and public documents",
+      "licence": "BEST website; reuse terms unverified",
+      "retrieved": "2026-09-18T15:43:47.101176+00:00",
+      "sha256": "449f0dea27128807a21735dfb04c667bc556c77f4a1debcbf3e50b398fcf9b45",
+      "bytes": 60397,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Operator transport page discovered from the public homepage; inspect dated statistics, timetable and fare publications."
+    }
+  ]
+}

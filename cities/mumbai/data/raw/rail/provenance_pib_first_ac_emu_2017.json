@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/pib_first_ac_emu_2017_3115541f37f3cfac.html",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1514002&lang=2&reg=48",
+      "final_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=1514002&lang=2&reg=48",
+      "content_type": "text/html; charset=utf-8",
+      "source": "Ministry of Railways first Mumbai AC EMU introduction, December 2017",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "retrieved": "2026-09-18T19:48:26.200798+00:00",
+      "sha256": "3115541f37f3cfac581aeac821a62643ef9760f79ac136d33855589b6c3da713",
+      "bytes": 657051,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical first-rake seating and standing capacities, composition, technical features and calendar. Not a specification for every later AC or non-AC rake.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

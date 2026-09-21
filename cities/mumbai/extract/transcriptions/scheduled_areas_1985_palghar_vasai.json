@@ -1,0 +1,28 @@
+{
+  "source_id": "maharashtra_scheduled_areas_order_1985",
+  "source_sha256": "f9688f5830373c805bdb4b86f4e9f46abd8fcb5e862b48fa41d23105dab3dadd",
+  "source_pdf_page": 8,
+  "notification_date": "1985-12-02",
+  "method": "English printed village lists visually transcribed from the acquired gazette scan. Line-break hyphenation joined. Historical spellings retained; uncertain scan readings explicitly flagged. No Hindi cross-validation or legal boundary assignment.",
+  "district_name_as_printed": "Thane",
+  "lists": [
+    {
+      "taluka_name": "Palghar",
+      "printed_village_count": 144,
+      "uncertain_serials": [15, 40, 98],
+      "names": [
+        "Tarapur", "Kudan", "Dahisar-tarf-Tarapur", "Ghiwali", "Wawre", "Akkarpatti", "Kurgaon", "Parnali", "Vengani", "Patharwali", "Nowale", "Shigaon", "Gargaon", "Chinchare",
+        "Akegwahan", "Naniwali", "Ambedhe", "Barhanpur", "Salgaon", "Khutad", "Khaniwade", "Rawale", "Akoli", "Asheri", "Somate", "Pasthal", "Boisar", "Borheti", "Mahagaon", "Kirat", "Wade", "Khadkawane", "Mendhwan", "Vilshet", "Kondgaon", "Karsood", "Betegaon", "Warangade", "Lalonde", "Gahande", "Kambalgaon", "Man", "Ghaneghar", "Wedhe", "Chari Budruk", "Birwadi", "Kallale", "Padghe", "Pole", "Nandore", "Girnoli", "Borande", "Devkhope", "Sagawe", "Kosbad", "Kokaner", "Nagzari", "Chari Khurd", "Velgaon", "Khutal", "Chilhar", "Bhopoli", "Nihe", "Damkhand", "Kondhan", "Awandhan", "Bangarchole", "Shil", "Loware", "Bandhan", "Nandgaon-tarf-Manor", "Shilshet", "Katale", "Ambhan", "Wasaroli", "Kharshet", "Manor", "Takwahal", "Sawarkhand", "Nalshet", "Kev", "Wakadi", "Maswan", "Wandiwali", "Netali", "Saye", "Ten", "Karalgaon", "Gowade", "Tamsai", "Durves", "Dhuktan", "Pochade", "Haloli", "Khamloli", "Bahaloli", "Bot", "Embur Irambi", "Danisari-tarf-Manor", "Kude", "Gundave", "Sativali", "Vehaloli", "Saware", "Warai", "Jansai", "Khaire", "Dhekale", "Ganje", "Jayshet", "Shelwade", "Veur", "Ambadi", "Nawali", "Morawali", "Varkhunti", "Kamare", "Tokrale", "Bandade", "Zanjaroli", "Chahade", "Wasare", "Khadkoli", "Sakhare", "Rothe", "Lalthane", "Navaze", "Tandulwadi", "Girale", "Pargaon", "Nagave-tarf-Manor", "Umbarpada Nandade", "Uchavali", "Safale", "Sonawe", "Makane Kapse", "Karwale", "Wadhiv Sarawali", "Penand", "Kandarwan", "Dahiwale", "Darshet", "Navghar (Ghatim)", "Umbarpada-tarf-Manor"
+      ]
+    },
+    {
+      "taluka_name": "Vasai",
+      "taluka_name_as_printed": "Vasai (Bassein)",
+      "printed_village_count": 45,
+      "uncertain_serials": [29],
+      "names": [
+        "Dahisar", "Koshimbe", "Tulinj", "Sakawar", "Chimane", "Hedavade", "Kashidkopar", "Khaniwade", "Bhalivali", "Kavher", "Shirsad", "Mandvi", "Chandip", "Bhatane", "Shivansai", "Usgaon", "Medhe", "Vadghar", "Bhinar", "Ambode", "Kalbhon", "Adne", "Sayawan", "Parol", "Shirvali", "Majivali", "Karanjon", "Tilher", "Dhaviv", "Pelhar", "Achole", "Valiv", "Sativali", "Rajavali", "Kolhi", "Chinchoti", "Juchandra", "Bapane", "Deodal", "Kamam", "Sarjamori", "Poman", "Shilot-tar", "Sasunavghar", "Nagle"
+      ]
+    }
+  ]
+}

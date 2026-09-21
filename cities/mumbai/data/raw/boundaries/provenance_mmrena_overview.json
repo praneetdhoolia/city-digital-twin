@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/mmrena_overview_8168cdbd05034bb7.html",
+      "url": "https://mmrda.maharashtra.gov.in/en/node/5394",
+      "final_url": "https://mmrda.maharashtra.gov.in/en/node/5394",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "MMR extended notified area planning overview",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:09:01.573571+00:00",
+      "sha256": "8168cdbd05034bb76ad6230f6a3eb67f16c463422a7b41597c40e31ba657fe83",
+      "bytes": 102188,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Planning authority jurisdiction and village schedules; distinguish planning authority from MMR extent.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

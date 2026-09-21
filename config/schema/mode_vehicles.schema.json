@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Registry references for explicit network-mode vehicle types",
+  "description": "Keys are the exact routing mode and vehicle type IDs. All physical values are resolved scalar registry fields. An empty object selects the existing vehicle writer during migration.",
+  "type": "object",
+  "propertyNames": {"pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]*$"},
+  "additionalProperties": {
+    "type": "object",
+    "required": ["length_m_field", "width_m_field", "pce_field", "seats_field", "standing_field"],
+    "additionalProperties": false,
+    "properties": {
+      "length_m_field": {"type": "string", "minLength": 1},
+      "width_m_field": {"type": "string", "minLength": 1},
+      "pce_field": {"type": "string", "minLength": 1},
+      "maximum_speed_ms_field": {"type": "string", "minLength": 1},
+      "maximum_speed_kmh_field": {"type": "string", "minLength": 1},
+      "seats_field": {"type": "string", "minLength": 1},
+      "standing_field": {"type": "string", "minLength": 1}
+    },
+    "not": {"required": ["maximum_speed_ms_field", "maximum_speed_kmh_field"]},
+    "dependentRequired": {
+      "seats_field": ["standing_field"],
+      "standing_field": ["seats_field"]
+    }
+  }
+}

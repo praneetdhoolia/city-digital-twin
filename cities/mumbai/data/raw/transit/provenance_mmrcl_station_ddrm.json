@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_ddrm_3ce73fdf31322d3e.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/DDRM/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/DDRM/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Dadar Metro",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:28.700666+00:00",
+      "sha256": "3ce73fdf31322d3ef03fecbb5149cb535b330721b271b7cb3d7ae8cf84730f56",
+      "bytes": 34132,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

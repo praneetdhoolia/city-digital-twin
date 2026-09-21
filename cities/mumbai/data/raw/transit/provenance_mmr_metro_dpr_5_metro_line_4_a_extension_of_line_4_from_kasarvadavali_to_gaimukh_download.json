@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_metro_dpr_5_metro_line_4_a_extension_of_line_4_from_kasarvadavali_to_gaimukh_download_e0097913cae84b4c.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%204A.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%204A.pdf",
+      "content_type": "application/pdf",
+      "source": "5 Metro Line 4 A- EXTENSION OF LINE-4 FROM KASARVADAVALI TO GAIMUKH Download (12.7 MB)",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:17:40.653159+00:00",
+      "sha256": "e0097913cae84b4cf1be719582fe7367a18ed8b4655fb458a7350f9ce5976a01",
+      "bytes": 13317434,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

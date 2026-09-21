@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/metro1_fare_products_card_20260918_b148677bc7c8f367.jpg",
+      "url": "https://www.reliancemumbaimetro.com/images/tickets-and-fares-card.jpg",
+      "final_url": "https://www.reliancemumbaimetro.com/images/tickets-and-fares-card.jpg",
+      "content_type": "image/jpeg",
+      "source": "Metro One fare products chart",
+      "licence": "Operator or government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:25:40.766648+00:00",
+      "sha256": "b148677bc7c8f3672d3bc72b0c4b978f4ad60550ce0441ab9569fc0e517fa662",
+      "bytes": 11302,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published document with source period retained; validate observed definitions, current operational relevance and spatial coverage.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

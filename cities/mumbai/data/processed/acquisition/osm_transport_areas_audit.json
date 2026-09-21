@@ -1,0 +1,50 @@
+{
+  "source_id": "osm_western_zone_20260915",
+  "source_sha256": "c335a72cadfebc3ffde5cfff20fc9711f3112bc11000d43fde4daea10c36b53e",
+  "source_layer": "multipolygons",
+  "research_extent_wgs84": [
+    72.6466890177437,
+    17.85028531100463,
+    73.795467531648,
+    20.22830255910601
+  ],
+  "coordinate_crs": "EPSG:4326",
+  "driver_candidates": 939,
+  "retained_features": 939,
+  "object_type_counts": {
+    "relation": 10,
+    "way": 929
+  },
+  "selected_tag_counts": {
+    "aeroway=aerodrome": 5,
+    "aeroway=helipad": 105,
+    "aeroway=terminal": 5,
+    "amenity=bicycle_parking": 5,
+    "amenity=bicycle_rental": 6,
+    "amenity=bus_station": 149,
+    "amenity=ferry_terminal": 5,
+    "amenity=taxi": 13,
+    "public_transport=construction": 2,
+    "public_transport=platform": 535,
+    "public_transport=station": 181,
+    "public_transport=train_station": 3,
+    "public_transport=yes": 4,
+    "railway=construction": 9,
+    "railway=platform": 510,
+    "railway=station": 61,
+    "railway=technical_station": 2,
+    "railway=workshop": 30,
+    "railway=yard": 2
+  },
+  "excluded": {},
+  "geometry_issues": {},
+  "driver_warnings": [],
+  "limitations": [
+    "Research overcoverage is not a notified administrative or simulation boundary.",
+    "Source-tag classes do not establish operational mode, status, capacity or station identity.",
+    "Station areas may overlap station points; neither may be counted as a separate station without reconciliation.",
+    "Area geometry is not a boarding coordinate, platform, entrance or network attachment.",
+    "Invalid geometry is retained without repair and excluded from confident spatial interpretation.",
+    "OGR exposes assembled area geometry, not its original member roles; the native OSM source remains authoritative."
+  ]
+}

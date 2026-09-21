@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_suburban_pca_index_004487f62ab010b6.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/6709",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/6709",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Mumbai Suburban 2011 ward-level PCA catalogue",
+      "licence": "ORGI copyright; reuse terms unverified",
+      "retrieved": "2026-09-18T08:30:13.641050+00:00",
+      "sha256": "004487f62ab010b652a2386f72f830de05e66d04e5f11526940f9e6b1f4c2095",
+      "bytes": 154269,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Small-area marginals and download links.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

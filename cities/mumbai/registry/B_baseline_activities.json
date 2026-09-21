@@ -1,0 +1,271 @@
+{
+  "layer": "B",
+  "title": "Provisional daily activities and mapped destinations",
+  "fields": {
+    "B.activities.seed": {
+      "value": 20260810,
+      "units": "integer_seed",
+      "source": "definition",
+      "status": "active",
+      "description": "Deterministic activities stream; the existing resident cohort is read unchanged.",
+      "decisions_ref": "9.193",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_activities.py"
+      ]
+    },
+    "B.activities.location_tags": {
+      "value": {
+        "work": {
+          "office": [
+            "*"
+          ],
+          "shop": [
+            "*"
+          ],
+          "amenity": [
+            "school",
+            "college",
+            "university",
+            "hospital",
+            "clinic",
+            "restaurant",
+            "cafe",
+            "bank",
+            "fuel",
+            "post_office"
+          ]
+        },
+        "education": {
+          "amenity": [
+            "school",
+            "college",
+            "university"
+          ]
+        },
+        "shopping": {
+          "shop": [
+            "*"
+          ]
+        },
+        "social": {
+          "amenity": [
+            "place_of_worship",
+            "community_centre",
+            "social_centre",
+            "library"
+          ]
+        },
+        "leisure": {
+          "leisure": [
+            "park",
+            "garden",
+            "sports_centre",
+            "fitness_centre",
+            "playground",
+            "pitch",
+            "resort"
+          ],
+          "amenity": [
+            "restaurant",
+            "cafe",
+            "cinema",
+            "theatre"
+          ],
+          "tourism": [
+            "attraction",
+            "museum",
+            "viewpoint",
+            "zoo"
+          ]
+        }
+      },
+      "units": "OSM_tag_values",
+      "source": "definition",
+      "status": "active",
+      "description": "Positive mapping of acquired point and area tags to modelled activity purposes; each location is a proxy, not measured attraction capacity.",
+      "decisions_ref": "9.194",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_activities.py",
+        "cities/mumbai/extract/extract_activity_areas.py"
+      ]
+    },
+    "B.activities.poi_probability": {
+      "value": {
+        "work": 0.75,
+        "education": 0.9,
+        "shopping": 0.9,
+        "social": 0.6,
+        "leisure": 0.9
+      },
+      "units": "probabilities",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional mixture of mapped point opportunities and historical zone proxies. Retains demand where point coverage is incomplete.",
+      "decisions_ref": "9.193",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_activities.py"
+      ],
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad activity model; not inferred trip diaries or fitted mode shares. Validate out-of-home demand and location coverage separately."
+    },
+    "B.activities.distance_scale_m": {
+      "value": {
+        "work": 12000,
+        "education": 2500,
+        "shopping": 3000,
+        "social": 4000,
+        "leisure": 6000
+      },
+      "units": "metres",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional distance decay for purpose-specific destination opportunity choice.",
+      "decisions_ref": "9.193",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_activities.py"
+      ],
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad activity model; not inferred trip diaries or fitted mode shares. Validate out-of-home demand and location coverage separately."
+    },
+    "B.activities.time_use_activities": {
+      "value": {
+        "shopping": "Unpaid domestic services for household members",
+        "social": "Socializing and communication, community participation and religious practice",
+        "leisure": "Culture, leisure, mass-media and sports practices"
+      },
+      "units": "source_activity_labels",
+      "source": "definition",
+      "status": "active",
+      "description": "State time-use benchmark rows. These broad divisions include in-home activity, and are not trip purposes measured locally.",
+      "decisions_ref": "9.193",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_activities.py"
+      ]
+    },
+    "B.activities.out_of_home_fraction": {
+      "value": {
+        "shopping": 0.5,
+        "social": 0.35,
+        "leisure": 0.2
+      },
+      "units": "probabilities",
+      "source": "assumed",
+      "status": "active",
+      "description": "Assumed proportion of benchmark activity participants making an out-of-home outing. Applied to existing adults as a provisional proxy; not an observed adult trip rate.",
+      "decisions_ref": "9.193",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_activities.py"
+      ],
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad activity model; not inferred trip diaries or fitted mode shares. Validate out-of-home demand and location coverage separately."
+    },
+    "B.activities.out_of_home_time_fraction": {
+      "value": {
+        "shopping": 0.25,
+        "social": 0.5,
+        "leisure": 0.5
+      },
+      "units": "fractions",
+      "source": "assumed",
+      "status": "active",
+      "description": "Assumed allocation of benchmark per-participant minutes to one out-of-home episode; minutes include other activities within the source division.",
+      "decisions_ref": "9.193",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_activities.py"
+      ],
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad activity model; not inferred trip diaries or fitted mode shares. Validate out-of-home demand and location coverage separately."
+    },
+    "B.activities.optional_min_age_years": {
+      "value": 18,
+      "units": "years",
+      "source": "definition",
+      "status": "active",
+      "description": "Independent discretionary tours are adult-only until household escort schedules are represented.",
+      "decisions_ref": "9.193",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_activities.py"
+      ]
+    },
+    "B.activities.max_optional_tours": {
+      "value": 2,
+      "units": "tours_per_person_day",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional limit on discretionary tours, selected without imposing any mode target.",
+      "decisions_ref": "9.193",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_activities.py"
+      ],
+      "sweep": [
+        1,
+        3
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad activity model; not inferred trip diaries or fitted mode shares. Validate out-of-home demand and location coverage separately."
+    },
+    "B.activities.home_break_s": {
+      "value": 1800,
+      "units": "seconds",
+      "source": "assumed",
+      "status": "active",
+      "description": "Minimum modelled at-home interval between successive tours; departure follows actual return travel time.",
+      "decisions_ref": "9.193",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_activities.py"
+      ],
+      "sweep": [
+        300,
+        5400
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad activity model; not inferred trip diaries or fitted mode shares. Validate out-of-home demand and location coverage separately."
+    },
+    "B.activities.discretionary_departure_s": {
+      "value": 39600,
+      "units": "seconds_after_midnight",
+      "source": "assumed",
+      "status": "active",
+      "description": "Departure anchor for adults without a work or education tour.",
+      "decisions_ref": "9.193",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_activities.py"
+      ],
+      "sweep": [
+        32400,
+        50400
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad activity model; not inferred trip diaries or fitted mode shares. Validate out-of-home demand and location coverage separately."
+    },
+    "B.activities.departure_spread_s": {
+      "value": 3600,
+      "units": "seconds",
+      "source": "assumed",
+      "status": "active",
+      "description": "Spread around the discretionary-only first-departure anchor.",
+      "decisions_ref": "9.193",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_activities.py"
+      ],
+      "sweep": [
+        900,
+        7200
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad activity model; not inferred trip diaries or fitted mode shares. Validate out-of-home demand and location coverage separately."
+    }
+  }
+}

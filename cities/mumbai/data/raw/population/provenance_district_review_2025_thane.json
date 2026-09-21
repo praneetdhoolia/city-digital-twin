@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/district_review_2025_thane_68ac6d4c725d9147.pdf",
+      "url": "https://cdnbbsr.s3waas.gov.in/s31c87860778df9675a35aa14d3bee8776/uploads/2025/12/202512161612075282.pdf",
+      "final_url": "https://cdnbbsr.s3waas.gov.in/s31c87860778df9675a35aa14d3bee8776/uploads/2025/12/202512161612075282.pdf",
+      "content_type": "application/pdf",
+      "source": "District Social and Economic Review 2025 Dist. Thane",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:09:56.981271+00:00",
+      "sha256": "68ac6d4c725d914773e7f6b7e43c143d49764702f6e3762520bdc9055520efc0",
+      "bytes": 4409495,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Government district socioeconomic review 2025. Each table has its own reference period; published projections remain projections.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

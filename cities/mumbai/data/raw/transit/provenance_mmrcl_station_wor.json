@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_wor_1b5c5a3c928181e6.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/WOR/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/WOR/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Worli",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:31.093739+00:00",
+      "sha256": "1b5c5a3c928181e6ce21aa31396d6c111d9fc2dce7c90959965e299fe2496b81",
+      "bytes": 32086,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

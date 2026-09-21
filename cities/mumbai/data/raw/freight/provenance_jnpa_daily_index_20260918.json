@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/freight/jnpa_daily_index_20260918_10dd7bd67e6d5e15.html",
+      "url": "https://www.jnport.gov.in/page/daily-performance-report/L0RSb0dEcWVrQUxEM1VkaStJdG5xQT09",
+      "final_url": "https://www.jnport.gov.in/page/daily-performance-report/L0RSb0dEcWVrQUxEM1VkaStJdG5xQT09",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "JNPA daily report index",
+      "licence": "Government/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:59:23.435742+00:00",
+      "sha256": "10dd7bd67e6d5e1526fdf55c94f92793311e0e28c915de44a28ac086b204db53",
+      "bytes": 74447,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published operations evidence. Separate departure events, daily reports, forecasts and capacity; no all-day timetable or citywide freight demand implied.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

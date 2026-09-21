@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_vidb_9d42aee07c56ca42.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/VIDB/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/VIDB/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Vidhan Bhavan",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:44.127531+00:00",
+      "sha256": "9d42aee07c56ca429ecf520a3935ab81947a3f5cbc44c2c358a9085577f7eaed",
+      "bytes": 29470,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

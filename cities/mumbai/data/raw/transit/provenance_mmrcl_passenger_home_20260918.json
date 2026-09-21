@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_passenger_home_20260918_493a122f29b3343c.html",
+      "url": "https://mmrcl.com/en/",
+      "final_url": "https://mmrcl.com/en/",
+      "content_type": "text/html",
+      "source": "Mumbai Metro Line 3 official passenger website",
+      "licence": "Operator or government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:00:27.405018+00:00",
+      "sha256": "493a122f29b3343c3f4bc13b140fa1422e970e156f926df186d8e1722b397c68",
+      "bytes": 4902,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Locate current timetable fare and station data.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

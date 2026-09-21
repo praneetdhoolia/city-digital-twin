@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_hl12_suburban_search_630ffb37d5652df7.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/?sk=PC11_HL12-27-518",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/?sk=PC11_HL12-27-518",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Household asset counts Mumbai Suburban 2011 catalogue search",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:52:54.335598+00:00",
+      "sha256": "630ffb37d5652df755511c99960909eed8ed00b4202dedd656e7c9052d9eb11e",
+      "bytes": 102733,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical census control; definition, geographical universe and contemporary adjustment require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

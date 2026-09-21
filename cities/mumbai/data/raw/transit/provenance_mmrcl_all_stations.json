@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_all_stations_d9ef4c622aad48b8.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-by-keyword/all/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-by-keyword/all/",
+      "content_type": "application/json",
+      "source": "Line 3 complete public station directory",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:03:55.419036+00:00",
+      "sha256": "d9ef4c622aad48b8f1adcdb6ea9846794e2ed82cade6e09059697e03917bc91f",
+      "bytes": 1989,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; original fields and source date retained.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

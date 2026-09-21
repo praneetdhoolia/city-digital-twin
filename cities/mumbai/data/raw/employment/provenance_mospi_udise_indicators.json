@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/mospi_udise_indicators_065051d23c1c171f.json",
+      "url": "https://api.mospi.gov.in/api/udise/getIndicatorList",
+      "final_url": "https://api.mospi.gov.in/api/udise/getIndicatorList",
+      "content_type": "application/json; charset=utf-8",
+      "source": "NSO public aggregate API reference mospi_udise_indicators",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:21:29.408784+00:00",
+      "sha256": "065051d23c1c171f29bd03ba3161338a5fff3bd25ae2bee75c03982bbb07dcae",
+      "bytes": 5298,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public aggregate metadata, not unit records; indicator coverage requires inspection.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "url": "https://cr.indianrailways.gov.in/cris//uploads/files/1640859089146-ABBREVIATIONS.pdf",
+      "final_url": "https://cr.indianrailways.gov.in/cris//uploads/files/1640859089146-ABBREVIATIONS.pdf",
+      "content_type": "application/pdf",
+      "retrieved": "2026-09-18T10:40:28.618Z",
+      "bytes": 522754,
+      "path": "data/raw/transit/cr_public_abbreviations_61186b0db2c445c8.pdf",
+      "sha256": "61186b0db2c445c8b5e068efbcd2287b8df827934f97e3dd9245934e50772d9d",
+      "source": "Central Railway published abbreviations",
+      "licence": "Operator publication; reuse terms unverified",
+      "coverage": "Linked from official Mumbai Suburban timetable index; effective dates, later amendments, station times and operating exceptions require validation.",
+      "producing_script": "extract/import_browser_acquisition.py",
+      "transport": "Connected Chrome public fetch; default certificate verification",
+      "validation_status": "acquired_unvalidated"
+    }
+  ]
+}

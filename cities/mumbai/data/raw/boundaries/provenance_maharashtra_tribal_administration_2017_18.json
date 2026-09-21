@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/maharashtra_tribal_administration_2017_18_9eed53bd9207affb.pdf",
+      "url": "https://tribal.maharashtra.gov.in/Site/Upload/GR/Administration%20Report%202017-2018.pdf",
+      "final_url": "https://tribal.maharashtra.gov.in/Site/Upload/GR/Administration%20Report%202017-2018.pdf",
+      "content_type": "application/pdf",
+      "source": "Maharashtra administration of Scheduled Areas report 2017-2018",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:32:08.528393+00:00",
+      "sha256": "9eed53bd9207affb617941c831855137f81126609c2a4370196eaafe929c0dc4",
+      "bytes": 1882713,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical Scheduled Areas, main and additional Tribal Sub Plan distinctions; not a current spatial boundary.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/demand/nhts_2025_26_schedule_419782cf5676df12.pdf",
+      "url": "https://mospi.gov.in/uploads/documents/temp/DTESANDNHTS/Instructions%20to%20Field%20Staff%20Volume-II%20of%20DTES%20%26%20NHTS.pdf",
+      "final_url": "https://mospi.gov.in/uploads/documents/temp/DTESANDNHTS/Instructions%20to%20Field%20Staff%20Volume-II%20of%20DTES%20%26%20NHTS.pdf",
+      "content_type": "application/pdf",
+      "source": "NSO 2025-26 National Household Travel Survey and tourism questionnaires",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:09:50.450177+00:00",
+      "sha256": "419782cf5676df127018932d7d7e4ba4296d199da05df6df0623df01898933a2",
+      "bytes": 1597547,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Survey instruments only; no household travel records or estimates.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "source": "derived",
+  "status": "historical_evidence_only",
+  "rows": 4928,
+  "sources": [
+    {
+      "source_id": "census_hl14_thane",
+      "source_sha256": "838c8b18ebc224f54ae8043a1adbf0434a2608cbfa59f2f9821aa03a22f42cf5",
+      "rows": 2634,
+      "selected_source_columns_one_based": {
+        "households_with_bicycle_pct": 135,
+        "households_with_two_wheeler_pct": 136,
+        "households_with_car_jeep_van_pct": 137,
+        "household_size_1_pct": 56,
+        "household_size_2_pct": 57,
+        "household_size_3_pct": 58,
+        "household_size_4_pct": 59,
+        "household_size_5_pct": 60,
+        "household_size_6_to_8_pct": 61,
+        "household_size_9_plus_pct": 62
+      },
+      "maximum_absolute_size_sum_deviation_pp": 0.3,
+      "rows_with_missing_size_percentage": 0
+    },
+    {
+      "source_id": "census_hl14_suburban",
+      "source_sha256": "0899831d2730dd554a2eeb04945f10651b2291692bb3d08ce2ed59601b2889d7",
+      "rows": 63,
+      "selected_source_columns_one_based": {
+        "households_with_bicycle_pct": 135,
+        "households_with_two_wheeler_pct": 136,
+        "households_with_car_jeep_van_pct": 137,
+        "household_size_1_pct": 56,
+        "household_size_2_pct": 57,
+        "household_size_3_pct": 58,
+        "household_size_4_pct": 59,
+        "household_size_5_pct": 60,
+        "household_size_6_to_8_pct": 61,
+        "household_size_9_plus_pct": 62
+      },
+      "maximum_absolute_size_sum_deviation_pp": 0.2,
+      "rows_with_missing_size_percentage": 0
+    },
+    {
+      "source_id": "census_hl14_city",
+      "source_sha256": "53179258a3d8cd7c33d9df94d14f15d4a8498718523abca448cc49cd31fa5bb7",
+      "rows": 44,
+      "selected_source_columns_one_based": {
+        "households_with_bicycle_pct": 135,
+        "households_with_two_wheeler_pct": 136,
+        "households_with_car_jeep_van_pct": 137,
+        "household_size_1_pct": 56,
+        "household_size_2_pct": 57,
+        "household_size_3_pct": 58,
+        "household_size_4_pct": 59,
+        "household_size_5_pct": 60,
+        "household_size_6_to_8_pct": 61,
+        "household_size_9_plus_pct": 62
+      },
+      "maximum_absolute_size_sum_deviation_pp": 0.1,
+      "rows_with_missing_size_percentage": 0
+    },
+    {
+      "source_id": "census_hl14_raigad",
+      "source_sha256": "fef2ab0d6c53a735cdf17452e7cdef79500bc16782c11aa0e47716293fe8a7f6",
+      "rows": 2187,
+      "selected_source_columns_one_based": {
+        "households_with_bicycle_pct": 135,
+        "households_with_two_wheeler_pct": 136,
+        "households_with_car_jeep_van_pct": 137,
+        "household_size_1_pct": 56,
+        "household_size_2_pct": 57,
+        "household_size_3_pct": 58,
+        "household_size_4_pct": 59,
+        "household_size_5_pct": 60,
+        "household_size_6_to_8_pct": 61,
+        "household_size_9_plus_pct": 62
+      },
+      "maximum_absolute_size_sum_deviation_pp": 0.2,
+      "rows_with_missing_size_percentage": 0
+    }
+  ],
+  "limitations": [
+    "Percentages describe households possessing an asset, not numbers of vehicles or trips.",
+    "Possession of different assets overlaps; mode percentages must not be summed to 100.",
+    "Districts, subdistricts, towns, wards and rural/urban/total rows overlap.",
+    "Houselisting denominators differ from some population-census universes; no count is inferred.",
+    "These 2011 geographical units exceed and differ from the current metropolitan region.",
+    "Rounded household-size percentages retain their published sum discrepancies.",
+    "No 2026 projection or household-level joint distribution is inferred."
+  ]
+}

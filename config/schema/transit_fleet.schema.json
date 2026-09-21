@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Assignments of mapped transit vehicles to registry-backed capacity profiles",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "mapped_vehicles_sha256", "mapped_schedule_sha256", "profiles", "vehicles"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "mapped_vehicles_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "mapped_schedule_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "profiles": {
+      "type": "object",
+      "propertyNames": {"minLength": 1},
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["base_type", "seats_field", "standing_field"],
+        "properties": {
+          "base_type": {"type": "string", "minLength": 1},
+          "seats_field": {"type": "string", "pattern": "^[A-Z]+\\.[a-zA-Z0-9_.]+$"},
+          "standing_field": {"type": "string", "pattern": "^[A-Z]+\\.[a-zA-Z0-9_.]+$"}
+        }
+      }
+    },
+    "vehicles": {
+      "type": "object",
+      "propertyNames": {"minLength": 1},
+      "additionalProperties": {"type": "string", "minLength": 1}
+    },
+    "description": {"type": "string"}
+  }
+}

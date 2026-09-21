@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/traffic/bmc_coastal_traffic_peer_review_2016_a40925dbeea1a5de.pdf",
+      "url": "https://portal.mcgm.gov.in/irj/go/km/docs/documents/Coastal%20road/Peer%20Review%20Reports%20by%20M_s%20Frischmann%20Prabhu/5.%20Report%204A_B_Rev1.pdf",
+      "final_url": "https://portal.mcgm.gov.in/irj/go/km/docs/documents/Coastal%20road/Peer%20Review%20Reports%20by%20M_s%20Frischmann%20Prabhu/5.%20Report%204A_B_Rev1.pdf",
+      "content_type": "application/pdf",
+      "source": "BMC Coastal Road peer review report 4 A and B, traffic demand and dispersal, November 2016",
+      "licence": "Frischmann Prabhu report publicly hosted by BMC; reproduction restrictions stated in report; reuse permission unverified",
+      "retrieved": "2026-09-18T19:17:18.224525+00:00",
+      "sha256": "a40925dbeea1a5de2f41980cdc39299bb0f9ea887f202a4f9fcf66a62fa894ac",
+      "bytes": 8487806,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical classified counts, OD interviews and speed-delay surveys are separate from future VISUM forecasts and proposed road layouts. Match survey dates, modes, directions and locations before use.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

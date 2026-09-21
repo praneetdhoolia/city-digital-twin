@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/pib_suburban_services_20260402_135094e6b45aff79.html",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2248576&lang=1&reg=3",
+      "final_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2248576&lang=1&reg=3",
+      "content_type": "text/html; charset=utf-8",
+      "source": "Ministry of Railways suburban services and rolling-stock receipts, April 2026",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "retrieved": "2026-09-18T19:48:27.823747+00:00",
+      "sha256": "135094e6b45aff79b9d2433327c799fbdf3e7db468a1a5ce5fa37b7bce895e89",
+      "bytes": 287771,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Dated system service totals and FY2025-26 rake receipts; distinguish receipts and sanctioned future procurement from operational fleet assignments.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mbmt_service_notice_20240314_224e93c668a6a467.pdf",
+      "url": "https://www.mbmc.gov.in/assets/uploads/file-4915.pdf",
+      "final_url": "https://www.mbmc.gov.in/assets/uploads/file-4915.pdf",
+      "source": "MBMT Press Note - (The said new transport service buses have been started on the new bus route from 14/03/2024.) Out of 57 electric buses, 20 electric buses are in the transport service fleet.",
+      "licence": "Municipal/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:03:00.310146+00:00",
+      "sha256": "224e93c668a6a46709ee157577985d63d72989285a2626eb779db6277c652438",
+      "bytes": 131247,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published contract, budget or notice. Procurement and planned service are not current operating observations."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/pib_mumbai_rail_capacity_projects_20260325_01bf7104e08c403c.html",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2245194&lang=2&reg=48",
+      "final_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2245194&lang=2&reg=48",
+      "content_type": "text/html; charset=utf-8",
+      "source": "Railways statement on Mumbai rail capacity projects, 25 March 2026",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T21:18:12.348198+00:00",
+      "sha256": "01bf7104e08c403c1fd1813fcb35b5aac8b5a5e240020d12b86e81e94d483072",
+      "bytes": 230984,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Dated current service aggregates and mixed completed/taken-up/planned terminal works, sanctioned corridors and rake procurement. Project sanction is not commissioning; do not add proposed tracks, platforms or vehicles to current supply.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

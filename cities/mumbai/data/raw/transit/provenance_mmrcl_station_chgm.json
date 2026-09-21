@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_chgm_df76c489ebd463d6.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/CHGM/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/CHGM/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Churchgate Metro",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:42.871918+00:00",
+      "sha256": "df76c489ebd463d6b536c91259d15cc5e9a4832e47dd5551c0d43d5b7ce7aa7d",
+      "bytes": 29575,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

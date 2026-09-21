@@ -1,0 +1,65 @@
+{
+  "source_sha256": "a4380137658c886985c5312c199dc71a8e95c0b39d7b969396ca2f4c859788c9",
+  "rows": 405,
+  "statement_headers": {
+    "3.1": "Statement 3.1: Percentage of persons participating in a day in activities of major divisions of TUS activity classification as major activity (considering only the major activity of the time slots) major divisions of TUS activity classification rural urban rural+urban",
+    "4.1": "Statement 4.1: Minutes spent in a day on an averageper participantof age 6 years and above in the activites of major divisions of TUS activity classification as a major activity (considering only the major activity of the time slots) major divisions of TUS activity classification rural urban rural+urban",
+    "5.1": "Statement 5.1: Percentage of persons of age 6 years and above participating in a day in activites of major divisions of TUS activity classification irrespective of whether it is a major activity or not (considering all the activities in a time slot) major divisions of TUS activity classification rural urban rural+urban",
+    "6.1": "Statement 6.1: Minutes spent in a day on an averageper participantof age 6 years and above in the activities of major divisions of TUS activity classification irrespective of whether it is a major activity or not (considering all the activities in a time slot) major divisions of TUS activity classification rural urban rural+urban",
+    "7.1": "Statement 7.1: Minutes spent in a day on an averageper personof age 6 years and above in the activities of major divisions of TUS activity classification irrespective of whether it is a major activity or not (considering all the activities in a time slot) major divisions of TUS activity classification"
+  },
+  "rate_duration_reconciliations": 81,
+  "daily_minutes": [
+    {
+      "residence": "rural",
+      "sex": "male",
+      "minutes": 1440
+    },
+    {
+      "residence": "rural",
+      "sex": "female",
+      "minutes": 1439
+    },
+    {
+      "residence": "rural",
+      "sex": "person",
+      "minutes": 1440
+    },
+    {
+      "residence": "urban",
+      "sex": "male",
+      "minutes": 1440
+    },
+    {
+      "residence": "urban",
+      "sex": "female",
+      "minutes": 1440
+    },
+    {
+      "residence": "urban",
+      "sex": "person",
+      "minutes": 1441
+    },
+    {
+      "residence": "rural+urban",
+      "sex": "male",
+      "minutes": 1441
+    },
+    {
+      "residence": "rural+urban",
+      "sex": "female",
+      "minutes": 1440
+    },
+    {
+      "residence": "rural+urban",
+      "sex": "person",
+      "minutes": 1440
+    }
+  ],
+  "limitations": [
+    "State averages do not establish local diary sequences or trip lengths.",
+    "Survey age coverage excludes children under six.",
+    "Activity participation is not workforce participation or a trip rate.",
+    "Combined geography and sex categories overlap their components."
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/mmr_proposed_landuse_overview_cf6d73bae931140b.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Proposed%20Landuse.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Proposed%20Landuse.pdf",
+      "content_type": "application/pdf",
+      "source": "Proposed Landuse (1:1,00,000)",
+      "licence": "MMRDA publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:08:14.931557+00:00",
+      "sha256": "cf6d73bae931140b5a584260778c6e7390251c393b8cd3d396c4ee4da13dad5d",
+      "bytes": 82856283,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official spatial planning evidence. Proposed land use and future infrastructure are not observed current activity or operating transport.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

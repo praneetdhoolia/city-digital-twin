@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "url": "https://cr.indianrailways.gov.in/cris//uploads/files/1728294831372-SUB%20PTT%20DN%20ML'24.pdf",
+      "final_url": "https://cr.indianrailways.gov.in/cris//uploads/files/1728294831372-SUB%20PTT%20DN%20ML'24.pdf",
+      "content_type": "application/pdf",
+      "retrieved": "2026-09-18T10:38:44.258Z",
+      "bytes": 516366,
+      "path": "data/raw/transit/cr_public_main_down_2024_b5d8d8648af1c828.pdf",
+      "sha256": "b5d8d8648af1c828b35d20920dc72ffb70f911b85585b9db711fd01a52b63c95",
+      "source": "Central Railway published main down 2024",
+      "licence": "Operator publication; reuse terms unverified",
+      "coverage": "Linked from official Mumbai Suburban timetable index; effective dates, later amendments, station times and operating exceptions require validation.",
+      "producing_script": "extract/import_browser_acquisition.py",
+      "transport": "Connected Chrome public fetch; default certificate verification",
+      "validation_status": "acquired_unvalidated"
+    }
+  ]
+}

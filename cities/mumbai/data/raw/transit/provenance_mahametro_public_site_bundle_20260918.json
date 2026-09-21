@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mahametro_public_site_bundle_20260918_fba9aef8764339d4.js",
+      "url": "https://www.metrorailnagpur.com/assets/index-DJULQSfv.js",
+      "final_url": "https://www.metrorailnagpur.com/assets/index-DJULQSfv.js",
+      "source": "Maha Metro public site client for report endpoint discovery",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T12:05:44.111002+00:00",
+      "sha256": "fba9aef8764339d42951675c1c6e4278294f3d0eb088c7ca1b65c4951f4e1f21",
+      "bytes": 1331451,
+      "content_type": "application/javascript",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Static inspection of public annual-report links; not executed."
+    }
+  ]
+}

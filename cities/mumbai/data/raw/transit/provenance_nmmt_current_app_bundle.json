@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_current_app_bundle_7529d9fa191196b8.js",
+      "url": "https://nmmtitmswebportal.amnex.co.in/main-NMWRUSWL.js",
+      "final_url": "https://nmmtitmswebportal.amnex.co.in/main-NMWRUSWL.js",
+      "content_type": "application/javascript",
+      "source": "NMMT public passenger application bundle",
+      "licence": "Authority or vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:30:56.862723+00:00",
+      "sha256": "7529d9fa191196b88b8f7220c1237fc7765cb980969074b710fc9fa0f0e93000",
+      "bytes": 186285,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published passenger information or planning report. Confirm operator authority, observation dates and live service validity.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

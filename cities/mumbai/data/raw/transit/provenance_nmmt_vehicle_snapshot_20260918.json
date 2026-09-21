@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_vehicle_snapshot_20260918.zip",
+      "url": "https://nmmtitmsmobileapi.amnex.co.in/api/BusTracking/GetVehicleTripDetails_v2",
+      "source": "NMMT public indicated vehicle trip details 20260918, one query per indicated vehicle",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:53:54.163491+00:00",
+      "retrieved_first": "2026-09-18T11:37:53.521451+00:00",
+      "sha256": "bc415a82aa3594aa3df13981bf16fbdf3ca2862a27a3ea4bb98ab56f70b8ff2d",
+      "bytes": 155537,
+      "content_type": "application/zip",
+      "producing_script": "extract/acquire_nmmt_vehicle_details.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public passenger query for each vehicle indicated in a route snapshot; not a complete fleet sample or validated trajectory.",
+      "method": "POST",
+      "harvest": true,
+      "member_count": 36,
+      "members_listing": "_members.csv",
+      "formats": [
+        "json"
+      ],
+      "packed": "2026-09-21T06:14:06.116877+00:00"
+    }
+  ]
+}

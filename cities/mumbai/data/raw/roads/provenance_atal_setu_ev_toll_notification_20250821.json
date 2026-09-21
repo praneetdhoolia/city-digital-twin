@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/roads/atal_setu_ev_toll_notification_20250821_9ef61fe8db8e5f1a.pdf",
+      "url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2025-11/part_iv-b_ext._no._298_dated_the_21st_august_2025.indd_2.pdf",
+      "final_url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2025-11/part_iv-b_ext._no._298_dated_the_21st_august_2025.indd_2.pdf",
+      "content_type": "application/pdf",
+      "source": "Atal Setu EV toll exemption notification August 2025",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:50:31.696817+00:00",
+      "sha256": "9ef61fe8db8e5f1a60a94d5e4b7a867f8ab8c02a7d1ee2d3a75d0331321bf8dc",
+      "bytes": 233526,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical policy, restrictions or toll evidence; current applicability and later orders require reconciliation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

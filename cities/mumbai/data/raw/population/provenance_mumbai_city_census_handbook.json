@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/mumbai_city_census_handbook_0e3ce85883906265.pdf",
+      "url": "https://cdn.s3waas.gov.in/s311b921ef080f7736089c757404650e40/uploads/2018/04/2018040279.pdf",
+      "final_url": "https://cdn.s3waas.gov.in/s311b921ef080f7736089c757404650e40/uploads/2018/04/2018040279.pdf",
+      "content_type": "application/pdf",
+      "source": "Mumbai City district census download",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:37:32.086202+00:00",
+      "sha256": "0e3ce85883906265af0263e9721b983bb1831bcb4c4e3e98ca3b42dba6ef61f0",
+      "bytes": 2982771,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "District-published 2011 census document; inspect contents.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

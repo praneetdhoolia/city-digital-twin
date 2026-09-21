@@ -1,0 +1,12 @@
+{
+  "source_id": "cr_signalling_assets_page",
+  "source_sha256": "6fdbbb66ce6e17cf2ab4b90841fcc0adbe8535a64abbf1150271b761ddddac17",
+  "page_review_date": "2026-05-14",
+  "asset_observation_date": null,
+  "asset_table_image_urls": [
+    "https://cr.indianrailways.gov.in/cris//uploads/files/1778763482049-signalling-assets-english-new-1.jpg"
+  ],
+  "asset_values_extracted": 0,
+  "interpretation": "The acquired HTML embeds an external asset-table image. HTML acquisition does not include that image or establish asset counts.",
+  "model_parameters_adopted": false
+}

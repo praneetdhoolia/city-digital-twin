@@ -1,0 +1,160 @@
+{
+  "source": "provisional_activity_model_not_observed_trip_diaries",
+  "input_sha256": {
+    "demand/baseline/persons.csv": "13fa0c66029070e891d26ed6ee1e6116a732b42abdd4215eab012ec440f3efe2",
+    "demand/baseline/plans.xml.gz": "52b9763c43397375a31a8afc9df983d6c29286ac021e7d4b3d55eb346ef39074",
+    "registry/B_baseline_activities.json": "030dc7945f050d84e35f8b0be7cb9a0dd7566d5f99d00a29319a9881de5b7a3c",
+    "data/processed/geospatial/osm_research.gpkg": "e95023a6a853e11501d57864be9c89e20e3b8e072300eda753c880bb5690e25e",
+    "data/processed/geospatial/osm_activity_areas.geojson": "7d738f3c7a497a866f59eeec1b40e142e9adda27bb5994933373a573d6d0f1e8",
+    "data/processed/geospatial/census_2011_geographies.gpkg": "bed805bb29e5642f2dfe01605721297bb07ff358cf40df1bba9e2ac8f6648b5f",
+    "data/processed/observed/state_time_use_controls.csv": "f18f6ebf9ded7275e417397b678a266884f41b78f3c05608d77bd7c63d407512"
+  },
+  "residents_count": 1000,
+  "location_candidates_by_purpose": {
+    "work": 16369,
+    "education": 1403,
+    "shopping": 6219,
+    "social": 2423,
+    "leisure": 8033
+  },
+  "selected_point_count": 15883,
+  "retained_point_count": 15810,
+  "retained_area_count": 8303,
+  "duplicate_node_purposes_removed": {
+    "work": 42,
+    "leisure": 28,
+    "education": 9,
+    "social": 11,
+    "shopping": 5
+  },
+  "ambiguous_zone_matches_count": 120,
+  "retained_locations_without_census_zone_count": 11332,
+  "primary_tours_relocated_count": 480,
+  "persons_by_tour_count": {
+    "0": 232,
+    "1": 532,
+    "2": 188,
+    "3": 48
+  },
+  "tours_by_purpose": {
+    "education": 187,
+    "work": 394,
+    "shopping": 175,
+    "leisure": 124,
+    "social": 172
+  },
+  "destination_sources": {
+    "OSM_area_representative_point_not_capacity_or_entrance": 314,
+    "OSM_point_location_not_capacity": 543,
+    "historical_population_location_proxy": 94,
+    "unchanged_primary_zone_proxy": 101
+  },
+  "time_use_benchmarks": {
+    "urban/male/shopping": {
+      "source_id": "tus_2024_report",
+      "activity_participation_pct": 19.5,
+      "modelled_outing_probability": 0.0975,
+      "benchmark_minutes_per_participant": 95.0,
+      "modelled_duration_s": 1425.0,
+      "source": "state_all_6_plus_benchmark_with_assumed_out_of_home_fractions"
+    },
+    "urban/male/social": {
+      "source_id": "tus_2024_report",
+      "activity_participation_pct": 67.2,
+      "modelled_outing_probability": 0.2352,
+      "benchmark_minutes_per_participant": 115.0,
+      "modelled_duration_s": 3450.0,
+      "source": "state_all_6_plus_benchmark_with_assumed_out_of_home_fractions"
+    },
+    "urban/male/leisure": {
+      "source_id": "tus_2024_report",
+      "activity_participation_pct": 94.1,
+      "modelled_outing_probability": 0.1882,
+      "benchmark_minutes_per_participant": 189.0,
+      "modelled_duration_s": 5670.0,
+      "source": "state_all_6_plus_benchmark_with_assumed_out_of_home_fractions"
+    },
+    "urban/female/shopping": {
+      "source_id": "tus_2024_report",
+      "activity_participation_pct": 82.0,
+      "modelled_outing_probability": 0.41,
+      "benchmark_minutes_per_participant": 292.0,
+      "modelled_duration_s": 4380.0,
+      "source": "state_all_6_plus_benchmark_with_assumed_out_of_home_fractions"
+    },
+    "urban/female/social": {
+      "source_id": "tus_2024_report",
+      "activity_participation_pct": 76.0,
+      "modelled_outing_probability": 0.26599999999999996,
+      "benchmark_minutes_per_participant": 113.0,
+      "modelled_duration_s": 3390.0,
+      "source": "state_all_6_plus_benchmark_with_assumed_out_of_home_fractions"
+    },
+    "urban/female/leisure": {
+      "source_id": "tus_2024_report",
+      "activity_participation_pct": 92.9,
+      "modelled_outing_probability": 0.18580000000000002,
+      "benchmark_minutes_per_participant": 182.0,
+      "modelled_duration_s": 5460.0,
+      "source": "state_all_6_plus_benchmark_with_assumed_out_of_home_fractions"
+    },
+    "rural/female/shopping": {
+      "source_id": "tus_2024_report",
+      "activity_participation_pct": 85.0,
+      "modelled_outing_probability": 0.425,
+      "benchmark_minutes_per_participant": 288.0,
+      "modelled_duration_s": 4320.0,
+      "source": "state_all_6_plus_benchmark_with_assumed_out_of_home_fractions"
+    },
+    "rural/female/social": {
+      "source_id": "tus_2024_report",
+      "activity_participation_pct": 70.9,
+      "modelled_outing_probability": 0.24815,
+      "benchmark_minutes_per_participant": 114.0,
+      "modelled_duration_s": 3420.0,
+      "source": "state_all_6_plus_benchmark_with_assumed_out_of_home_fractions"
+    },
+    "rural/female/leisure": {
+      "source_id": "tus_2024_report",
+      "activity_participation_pct": 81.4,
+      "modelled_outing_probability": 0.16280000000000003,
+      "benchmark_minutes_per_participant": 152.0,
+      "modelled_duration_s": 4560.0,
+      "source": "state_all_6_plus_benchmark_with_assumed_out_of_home_fractions"
+    },
+    "rural/male/shopping": {
+      "source_id": "tus_2024_report",
+      "activity_participation_pct": 21.4,
+      "modelled_outing_probability": 0.107,
+      "benchmark_minutes_per_participant": 101.0,
+      "modelled_duration_s": 1515.0,
+      "source": "state_all_6_plus_benchmark_with_assumed_out_of_home_fractions"
+    },
+    "rural/male/social": {
+      "source_id": "tus_2024_report",
+      "activity_participation_pct": 76.5,
+      "modelled_outing_probability": 0.26775,
+      "benchmark_minutes_per_participant": 131.0,
+      "modelled_duration_s": 3930.0,
+      "source": "state_all_6_plus_benchmark_with_assumed_out_of_home_fractions"
+    },
+    "rural/male/leisure": {
+      "source_id": "tus_2024_report",
+      "activity_participation_pct": 91.9,
+      "modelled_outing_probability": 0.18380000000000002,
+      "benchmark_minutes_per_participant": 172.0,
+      "modelled_duration_s": 5160.0,
+      "source": "state_all_6_plus_benchmark_with_assumed_out_of_home_fractions"
+    }
+  },
+  "limitations": [
+    "OSM point and area coverage is uneven; attraction capacities and verified entrances are absent.",
+    "Only exact nonempty named nodes inside same-purpose areas are deduplicated; other duplicates may remain.",
+    "Research-envelope destinations outside available census polygons are retained without invented zone IDs.",
+    "Each mapped location is an equal opportunity proxy, not one observed job or customer.",
+    "State all-age activity participation is not local adult out-of-home travel; fractions and tour cap are assumed.",
+    "Optional activities are home-based tours without household escort or joint scheduling.",
+    "Actual route times determine subsequent departures; no guarantee all activities fit a civil day.",
+    "No visitor/external passenger demand, work attendance calibration or ridership quota."
+  ]
+}

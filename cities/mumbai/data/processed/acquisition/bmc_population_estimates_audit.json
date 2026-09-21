@@ -1,0 +1,342 @@
+{
+  "status": "published_estimates_with_unresolved_conflicts",
+  "rows": 112,
+  "subtotal_checks": [
+    {
+      "source_id": "bmc_civic_diary_2025",
+      "reference_year_as_printed": 2023,
+      "area_name": "City",
+      "sum_of_children_persons": 3227255,
+      "published_total_persons": 3227256,
+      "difference_persons": -1
+    },
+    {
+      "source_id": "bmc_civic_diary_2025",
+      "reference_year_as_printed": 2023,
+      "area_name": "Western",
+      "sum_of_children_persons": 5781123,
+      "published_total_persons": 5781123,
+      "difference_persons": 0
+    },
+    {
+      "source_id": "bmc_civic_diary_2025",
+      "reference_year_as_printed": 2023,
+      "area_name": "Eastern",
+      "sum_of_children_persons": 4006011,
+      "published_total_persons": 4006011,
+      "difference_persons": 0
+    },
+    {
+      "source_id": "bmc_civic_diary_2025",
+      "reference_year_as_printed": 2023,
+      "area_name": "Greater Mumbai",
+      "sum_of_children_persons": 13014390,
+      "published_total_persons": 13014390,
+      "difference_persons": 0
+    },
+    {
+      "source_id": "bmc_civic_diary_2026",
+      "reference_year_as_printed": 2025,
+      "area_name": "City",
+      "sum_of_children_persons": 3238671,
+      "published_total_persons": 3238761,
+      "difference_persons": -90
+    },
+    {
+      "source_id": "bmc_civic_diary_2026",
+      "reference_year_as_printed": 2025,
+      "area_name": "Western",
+      "sum_of_children_persons": 5801730,
+      "published_total_persons": 5801730,
+      "difference_persons": 0
+    },
+    {
+      "source_id": "bmc_civic_diary_2026",
+      "reference_year_as_printed": 2025,
+      "area_name": "Eastern",
+      "sum_of_children_persons": 4020292,
+      "published_total_persons": 4020292,
+      "difference_persons": 0
+    },
+    {
+      "source_id": "bmc_civic_diary_2026",
+      "reference_year_as_printed": 2025,
+      "area_name": "Greater Mumbai",
+      "sum_of_children_persons": 13060783,
+      "published_total_persons": 13060783,
+      "difference_persons": 0
+    },
+    {
+      "source_id": "bmc_environment_report_2024_25",
+      "reference_year_as_printed": 2024,
+      "area_name": "City",
+      "sum_of_children_persons": 3238761,
+      "published_total_persons": 3238160,
+      "difference_persons": 601
+    },
+    {
+      "source_id": "bmc_environment_report_2024_25",
+      "reference_year_as_printed": 2024,
+      "area_name": "Western",
+      "sum_of_children_persons": 5801729,
+      "published_total_persons": 5801729,
+      "difference_persons": 0
+    },
+    {
+      "source_id": "bmc_environment_report_2024_25",
+      "reference_year_as_printed": 2024,
+      "area_name": "Eastern",
+      "sum_of_children_persons": 4020292,
+      "published_total_persons": 4020292,
+      "difference_persons": 0
+    },
+    {
+      "source_id": "bmc_environment_report_2024_25",
+      "reference_year_as_printed": 2024,
+      "area_name": "Greater Mumbai",
+      "sum_of_children_persons": 13060181,
+      "published_total_persons": 13060781,
+      "difference_persons": -600
+    },
+    {
+      "source_id": "bmc_environment_report_2024_25",
+      "reference_year_as_printed": 2025,
+      "area_name": "City",
+      "sum_of_children_persons": 3250266,
+      "published_total_persons": 3250266,
+      "difference_persons": 0
+    },
+    {
+      "source_id": "bmc_environment_report_2024_25",
+      "reference_year_as_printed": 2025,
+      "area_name": "Western",
+      "sum_of_children_persons": 5822339,
+      "published_total_persons": 5822339,
+      "difference_persons": 0
+    },
+    {
+      "source_id": "bmc_environment_report_2024_25",
+      "reference_year_as_printed": 2025,
+      "area_name": "Eastern",
+      "sum_of_children_persons": 4034572,
+      "published_total_persons": 4034572,
+      "difference_persons": 0
+    },
+    {
+      "source_id": "bmc_environment_report_2024_25",
+      "reference_year_as_printed": 2025,
+      "area_name": "Greater Mumbai",
+      "sum_of_children_persons": 13107177,
+      "published_total_persons": 13107177,
+      "difference_persons": 0
+    }
+  ],
+  "subtotal_disagreements": 4,
+  "same_labelled_year_comparison": [
+    {
+      "area_name": "A",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 194120,
+      "environment_persons": 194900,
+      "diary_minus_environment_persons": -780
+    },
+    {
+      "area_name": "H/E",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 584934,
+      "environment_persons": 587012,
+      "diary_minus_environment_persons": -2078
+    },
+    {
+      "area_name": "L",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 947067,
+      "environment_persons": 950431,
+      "diary_minus_environment_persons": -3364
+    },
+    {
+      "area_name": "B",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 133616,
+      "environment_persons": 134091,
+      "diary_minus_environment_persons": -475
+    },
+    {
+      "area_name": "H/W",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 322869,
+      "environment_persons": 324016,
+      "diary_minus_environment_persons": -1147
+    },
+    {
+      "area_name": "M/E",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 847865,
+      "environment_persons": 850877,
+      "diary_minus_environment_persons": -3012
+    },
+    {
+      "area_name": "C",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 174419,
+      "environment_persons": 175039,
+      "diary_minus_environment_persons": -620
+    },
+    {
+      "area_name": "K/E",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 864834,
+      "environment_persons": 867906,
+      "diary_minus_environment_persons": -3072
+    },
+    {
+      "area_name": "M/W",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 432365,
+      "environment_persons": 433900,
+      "diary_minus_environment_persons": -1535
+    },
+    {
+      "area_name": "D",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 364106,
+      "environment_persons": 365399,
+      "diary_minus_environment_persons": -1293
+    },
+    {
+      "area_name": "K/W",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 785899,
+      "environment_persons": 788691,
+      "diary_minus_environment_persons": -2792
+    },
+    {
+      "area_name": "N",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 653810,
+      "environment_persons": 656132,
+      "diary_minus_environment_persons": -2322
+    },
+    {
+      "area_name": "E",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 412833,
+      "environment_persons": 414299,
+      "diary_minus_environment_persons": -1466
+    },
+    {
+      "area_name": "P/S",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 486544,
+      "environment_persons": 488273,
+      "diary_minus_environment_persons": -1729
+    },
+    {
+      "area_name": "S",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 780751,
+      "environment_persons": 783524,
+      "diary_minus_environment_persons": -2773
+    },
+    {
+      "area_name": "F/S",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 378913,
+      "environment_persons": 380259,
+      "diary_minus_environment_persons": -1346
+    },
+    {
+      "area_name": "P/N",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 988155,
+      "environment_persons": 991665,
+      "diary_minus_environment_persons": -3510
+    },
+    {
+      "area_name": "T",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 358434,
+      "environment_persons": 359708,
+      "diary_minus_environment_persons": -1274
+    },
+    {
+      "area_name": "F/N",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 555328,
+      "environment_persons": 557301,
+      "diary_minus_environment_persons": -1973
+    },
+    {
+      "area_name": "R/S",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 725585,
+      "environment_persons": 728162,
+      "diary_minus_environment_persons": -2577
+    },
+    {
+      "area_name": "G/S",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 396524,
+      "environment_persons": 397932,
+      "diary_minus_environment_persons": -1408
+    },
+    {
+      "area_name": "R/C",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 590102,
+      "environment_persons": 592198,
+      "diary_minus_environment_persons": -2096
+    },
+    {
+      "area_name": "G/N",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 628812,
+      "environment_persons": 631046,
+      "diary_minus_environment_persons": -2234
+    },
+    {
+      "area_name": "R/N",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 452808,
+      "environment_persons": 454416,
+      "diary_minus_environment_persons": -1608
+    },
+    {
+      "area_name": "City",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 3238761,
+      "environment_persons": 3250266,
+      "diary_minus_environment_persons": -11505
+    },
+    {
+      "area_name": "Western",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 5801730,
+      "environment_persons": 5822339,
+      "diary_minus_environment_persons": -20609
+    },
+    {
+      "area_name": "Eastern",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 4020292,
+      "environment_persons": 4034572,
+      "diary_minus_environment_persons": -14280
+    },
+    {
+      "area_name": "Greater Mumbai",
+      "reference_year_as_printed": 2025,
+      "diary_persons": 13060783,
+      "environment_persons": 13107177,
+      "diary_minus_environment_persons": -46394
+    }
+  ],
+  "same_labelled_year_disagreements": 28,
+  "limitations": [
+    "Reference years remain as printed; apparent reuse of older figures is not silently relabelled.",
+    "Municipal estimates are not observed census counts and their estimation method is unresolved.",
+    "Administrative wards differ from Census wards and need a spatial crosswalk.",
+    "Greater Mumbai is only part of MMR; these controls do not cover the whole model extent.",
+    "Subtotals overlap their children and must not be summed together.",
+    "No projection to 2026 or assignment to model agents has been made."
+  ]
+}

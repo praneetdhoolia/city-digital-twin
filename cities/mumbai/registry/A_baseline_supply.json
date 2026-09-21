@@ -1,0 +1,557 @@
+{
+  "layer": "A",
+  "title": "Provisional broad Mumbai supply",
+  "description": "First runnable baseline; provisional parameters are explicit and are not calibrated observations.",
+  "fields": {
+    "A.road.speed_default": {
+      "value": {
+        "motorway": 80,
+        "motorway_link": 40,
+        "trunk": 60,
+        "trunk_link": 35,
+        "primary": 50,
+        "primary_link": 30,
+        "secondary": 40,
+        "secondary_link": 25,
+        "tertiary": 30,
+        "tertiary_link": 20,
+        "residential": 25,
+        "living_street": 10,
+        "service": 15,
+        "unclassified": 25,
+        "road": 25,
+        "busway": 40
+      },
+      "units": "km/h",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional class free speeds where OSM has no usable speed. Broad supply baseline authorised on 19 September 2026; not observed speeds. Tagged OSM speed takes precedence.",
+      "decisions_ref": "9.187",
+      "sweep": [
+        5,
+        100
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad-baseline range; not a measured Mumbai calibration interval."
+    },
+    "A.road.lanes_default": {
+      "value": {
+        "motorway": 2,
+        "motorway_link": 1,
+        "trunk": 2,
+        "trunk_link": 1,
+        "primary": 2,
+        "primary_link": 1,
+        "secondary": 1,
+        "secondary_link": 1,
+        "tertiary": 1,
+        "tertiary_link": 1,
+        "residential": 1,
+        "living_street": 1,
+        "service": 1,
+        "unclassified": 1,
+        "road": 1,
+        "busway": 1
+      },
+      "units": "lanes_per_direction",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional per-direction lane counts where OSM lacks lane tags. Tagged values take precedence; corridor refinement deferred.",
+      "decisions_ref": "9.187",
+      "sweep": [
+        1,
+        4
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad-baseline range; not a measured Mumbai calibration interval."
+    },
+    "A.road.capacity_default": {
+      "value": {
+        "motorway": 1800,
+        "motorway_link": 600,
+        "trunk": 1800,
+        "trunk_link": 600,
+        "primary": 1200,
+        "primary_link": 600,
+        "secondary": 1200,
+        "secondary_link": 600,
+        "tertiary": 600,
+        "tertiary_link": 600,
+        "residential": 600,
+        "living_street": 600,
+        "service": 600,
+        "unclassified": 600,
+        "road": 600,
+        "busway": 1200
+      },
+      "units": "vehicles/h/lane",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional class queue capacities. Used to enable congestion feedback to traveller decisions; not calibrated saturation flows.",
+      "decisions_ref": "9.187",
+      "sweep": [
+        300,
+        2400
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad-baseline range; not a measured Mumbai calibration interval."
+    },
+    "A.network.railway_speed_default_kmh": {
+      "value": {
+        "rail": 60,
+        "subway": 60,
+        "light_rail": 40,
+        "tram": 25,
+        "monorail": 40
+      },
+      "units": "km/h",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional track free speeds; scheduled travel times will provide service timing. Not observed train operating speeds.",
+      "decisions_ref": "9.187",
+      "sweep": [
+        15,
+        100
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad-baseline range; not a measured Mumbai calibration interval."
+    },
+    "A.network.railway_lane_capacity_veh_h": {
+      "value": 120,
+      "units": "vehicles/h",
+      "source": "assumed",
+      "status": "active",
+      "description": "Coarse track queue throughput for baseline; block signalling and corridor capacity deferred.",
+      "decisions_ref": "9.187",
+      "sweep": [
+        30,
+        240
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad-baseline range; not a measured Mumbai calibration interval."
+    },
+    "A.network.way_default_oneway": {
+      "value": {
+        "motorway": true,
+        "motorway_link": true
+      },
+      "units": "boolean_by_way_class",
+      "source": "definition",
+      "status": "active",
+      "description": "Motorway carriageway direction convention; explicit OSM direction overrides it.",
+      "decisions_ref": "9.187"
+    },
+    "A.network.routable_subnetworks": {
+      "value": {
+        "car": [
+          "car"
+        ],
+        "bus": [
+          "bus",
+          "car"
+        ],
+        "rail": [
+          "rail",
+          "light_rail"
+        ],
+        "walk": [
+          "walk"
+        ],
+        "bike": [
+          "bike"
+        ]
+      },
+      "units": "mode_names_by_subnetwork",
+      "source": "definition",
+      "status": "active",
+      "description": "Retain distinct active and transit subnetworks for later mode assembly.",
+      "decisions_ref": "9.187",
+      "pt2matsim_osm_param": "OsmConverter.routableSubnetwork[*].allowedTransportModes"
+    },
+    "A.network.path_modes_by_class": {
+      "value": {
+        "bridleway": [
+          "walk",
+          "bike"
+        ],
+        "corridor": [
+          "walk"
+        ],
+        "cycleway": [
+          "bike",
+          "walk"
+        ],
+        "footway": [
+          "walk"
+        ],
+        "path": [
+          "walk",
+          "bike"
+        ],
+        "pedestrian": [
+          "walk"
+        ],
+        "steps": [
+          "walk"
+        ],
+        "track": [
+          "walk",
+          "bike"
+        ]
+      },
+      "units": "mode_names_by_osm_highway_class",
+      "source": "definition",
+      "status": "active",
+      "description": "Baseline active-travel graph vocabulary; explicit path access tags are applied afterwards.",
+      "decisions_ref": "9.187"
+    },
+    "A.network.path_access_overrides": {
+      "value": {
+        "keys": {
+          "access": "all",
+          "foot": "walk",
+          "bicycle": "bike"
+        },
+        "grant": [
+          "yes",
+          "designated",
+          "permissive",
+          "official"
+        ],
+        "deny": [
+          "no",
+          "private",
+          "use_sidepath",
+          "dismount"
+        ]
+      },
+      "units": "osm_access_vocabulary",
+      "source": "definition",
+      "status": "active",
+      "description": "Existing explicit path-tag parser vocabulary. Conditional and purpose-specific restrictions remain separate evidence.",
+      "decisions_ref": "9.187"
+    },
+    "A.network.path_lane_capacity_veh_h": {
+      "value": 10000,
+      "units": "travellers/h",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional nonbinding active-path capacity for the first baseline.",
+      "decisions_ref": "9.187",
+      "sweep": [
+        1000,
+        20000
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad-baseline range; not a measured Mumbai calibration interval."
+    },
+    "A.transit.walk_speed_ms": {
+      "value": 1.2,
+      "units": "m/s",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional walking speed; individual mobility differences will enter the decision model.",
+      "decisions_ref": "9.187",
+      "sweep": [
+        0.6,
+        1.8
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad-baseline range; not a measured Mumbai calibration interval."
+    },
+    "B.bike.speed_ms": {
+      "value": 4.0,
+      "units": "m/s",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional cycling free speed for the initial active network.",
+      "decisions_ref": "9.187",
+      "sweep": [
+        2,
+        7
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad-baseline range; not a measured Mumbai calibration interval."
+    },
+    "A.network.keep_paths": {
+      "value": false,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Baseline converter switch. Geometry reduction is permitted for the broad behavioural prototype; detailed node controls remain a declared limitation.",
+      "decisions_ref": "9.187",
+      "pt2matsim_osm_param": "OsmConverter.keepPaths"
+    },
+    "A.network.keep_tags_as_attributes": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Converter representation switch for the broad baseline.",
+      "decisions_ref": "9.187",
+      "pt2matsim_osm_param": "OsmConverter.keepTagsAsAttributes"
+    },
+    "A.network.keep_ways_with_public_transit": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Converter representation switch for the broad baseline.",
+      "decisions_ref": "9.187",
+      "pt2matsim_osm_param": "OsmConverter.keepWaysWithPublicTransit"
+    },
+    "A.network.parse_turn_restrictions": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Converter representation switch for the broad baseline.",
+      "decisions_ref": "9.187",
+      "pt2matsim_osm_param": "OsmConverter.parseTurnRestrictions"
+    },
+    "A.network.scale_max_speed": {
+      "value": false,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Converter representation switch for the broad baseline.",
+      "decisions_ref": "9.187",
+      "pt2matsim_osm_param": "OsmConverter.scaleMaxSpeed"
+    },
+    "A.network.write_crs": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Converter representation switch for the broad baseline.",
+      "decisions_ref": "9.187",
+      "pt2matsim_osm_param": "OsmConverter.writeCRS"
+    },
+    "A.network.max_link_length_m": {
+      "value": 500,
+      "units": "metres",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional maximum reduced link length; whole source geometry remains available.",
+      "decisions_ref": "9.187",
+      "sweep": [
+        100,
+        1000
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad-baseline range; not a measured Mumbai calibration interval.",
+      "pt2matsim_osm_param": "OsmConverter.maxLinkLength"
+    },
+    "A.network.freespeed_factor": {
+      "value": 1.0,
+      "units": "factor",
+      "source": "definition",
+      "status": "active",
+      "description": "Use declared or tagged free speed without an extra multiplier.",
+      "decisions_ref": "9.187",
+      "pt2matsim_osm_param": "OsmConverter.wayDefaultParams[*].freespeedFactor"
+    },
+    "RUN.machine.build_xmx": {
+      "value": "16g",
+      "units": "JVM_heap",
+      "source": "definition",
+      "status": "active",
+      "description": "Memory ceiling for network preprocessing on the current workstation; throughput setting, not model supply.",
+      "decisions_ref": "9.187"
+    },
+    "A.schedule_mapping.bounded_search": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.boundedSearch"
+    },
+    "A.schedule_mapping.candidate_distance_multiplier": {
+      "value": 2.0,
+      "units": "factor",
+      "source": "assumed",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.candidateDistanceMultiplier",
+      "sweep": [
+        1.0,
+        4.0
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional mapper search sensitivity around the baseline, not a measured transport parameter."
+    },
+    "A.schedule_mapping.max_link_candidate_distance_m": {
+      "value": 150.0,
+      "units": "metres",
+      "source": "assumed",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.maxLinkCandidateDistance, PublicTransitMapping.transportModeAssignment[*].maxLinkCandidateDistance",
+      "sweep": [
+        75.0,
+        300.0
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional mapper search sensitivity around the baseline, not a measured transport parameter."
+    },
+    "A.schedule_mapping.max_travel_cost_factor": {
+      "value": 8.0,
+      "units": "factor",
+      "source": "assumed",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.maxTravelCostFactor",
+      "sweep": [
+        4.0,
+        16.0
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional mapper search sensitivity around the baseline, not a measured transport parameter."
+    },
+    "A.schedule_mapping.mode_specific_rules": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.modeSpecificRules"
+    },
+    "A.schedule_mapping.modes_to_keep_on_cleanup": {
+      "value": [
+        "car",
+        "bus",
+        "walk",
+        "bike",
+        "rail",
+        "light_rail"
+      ],
+      "units": "mode_names",
+      "source": "definition",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.modesToKeepOnCleanUp"
+    },
+    "A.schedule_mapping.n_link_threshold": {
+      "value": 8,
+      "units": "links",
+      "source": "assumed",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.nLinkThreshold, PublicTransitMapping.transportModeAssignment[*].nLinkThreshold",
+      "sweep": [
+        4.0,
+        16
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional mapper search sensitivity around the baseline, not a measured transport parameter."
+    },
+    "A.schedule_mapping.network_router": {
+      "value": "SpeedyALT",
+      "units": "router_name",
+      "source": "definition",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.networkRouter"
+    },
+    "A.schedule_mapping.remove_not_used_stop_facilities": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.removeNotUsedStopFacilities"
+    },
+    "A.schedule_mapping.routing_with_candidate_distance": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.routingWithCandidateDistance"
+    },
+    "A.schedule_mapping.schedule_freespeed_modes": {
+      "value": [
+        "artificial"
+      ],
+      "units": "mode_names",
+      "source": "definition",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.scheduleFreespeedModes"
+    },
+    "A.schedule_mapping.thread_chunk_size": {
+      "value": 100,
+      "units": "routes",
+      "source": "assumed",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.threadChunkSize",
+      "sweep": [
+        50.0,
+        200
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional mapper search sensitivity around the baseline, not a measured transport parameter."
+    },
+    "A.schedule_mapping.travel_cost_type": {
+      "value": "linkLength",
+      "units": "cost_basis",
+      "source": "definition",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.travelCostType"
+    },
+    "A.schedule_mapping.strict_link_rule": {
+      "value": false,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.transportModeAssignment[*].strictLinkRule"
+    },
+    "A.schedule_mapping.transport_mode_assignment": {
+      "value": {
+        "bus": [
+          "car",
+          "bus"
+        ],
+        "rail": [
+          "rail"
+        ],
+        "light_rail": [
+          "light_rail"
+        ],
+        "tram": [
+          "light_rail"
+        ],
+        "ferry": [
+          "artificial"
+        ],
+        "subway": [
+          "light_rail"
+        ]
+      },
+      "units": "network_modes_by_schedule_mode",
+      "source": "definition",
+      "status": "active",
+      "description": "Broad-baseline schedule mapping rule. Mapping diagnostics must identify artificial links and stop offsets; this setting does not establish observed operational accuracy.",
+      "decisions_ref": "9.187",
+      "pt2matsim_mapper_param": "PublicTransitMapping.transportModeAssignment[*].networkModes"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_line9_sept_2026_block_442725b1e8d504d4.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2026-09/metro_line_9_phase_2_moves_closer_to_commissioning_special_morning_block_for_integration_trials.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2026-09/metro_line_9_phase_2_moves_closer_to_commissioning_special_morning_block_for_integration_trials.pdf",
+      "content_type": "application/pdf",
+      "source": "MMRDA September 2026 Line 9 phase 2 integration block",
+      "licence": "Public authority publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:47:56.474205+00:00",
+      "sha256": "442725b1e8d504d49dfeae3fd1dd2495734155f40b6c4b77e639038d31a40775",
+      "bytes": 961684,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Dated service evidence; operating changes and attachment completeness require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

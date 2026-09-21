@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_passenger_facilities_5ccc666afaa31841.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/passenger/facilities/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/passenger/facilities/",
+      "content_type": "application/json",
+      "source": "Line 3 official passenger facilities",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:03:56.523576+00:00",
+      "sha256": "5ccc666afaa318414c6d43ba848e45635e5cbe08893801b2f795fd8bacf3f008",
+      "bytes": 10738,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; original fields and source date retained.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

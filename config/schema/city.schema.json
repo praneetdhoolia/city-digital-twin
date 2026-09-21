@@ -267,6 +267,16 @@
         }
       }
     },
+    "osm_network_inputs": {
+      "type": "array",
+      "description": "Ordered city-relative native OSM XML files under networks/osm/ for the physical network builder. Plain .osm and .osm.gz are supported. If absent, the legacy roads, railways, signals and footways extracts are used in that order.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^networks/osm/[^/\\\\]+\\.osm(?:\\.gz)?$"
+      }
+    },
     "adapters": {
       "type": "object",
       "description": "The acquisition scripts under this city's extract/ directory, and what each one lands. These are jurisdiction-specific BY NATURE - the framework does not pretend otherwise. Paths are city-relative.",

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_metro_dpr_11_metro_line_11_wadala_to_cstm_download_7690a9689dcd8ad0.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%2011.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%2011.pdf",
+      "content_type": "application/pdf",
+      "source": "11 Metro Line 11 - Wadala to CSTM Download (14.4 MB)",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:18:16.549503+00:00",
+      "sha256": "7690a9689dcd8ad03473957efe9c497e5b96f2698541db6acf7c2e0bd6886e39",
+      "bytes": 15099695,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

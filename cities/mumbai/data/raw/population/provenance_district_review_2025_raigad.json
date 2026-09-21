@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/district_review_2025_raigad_b4b0f13e1ae8390f.pdf",
+      "url": "https://cdnbbsr.s3waas.gov.in/s31c87860778df9675a35aa14d3bee8776/uploads/2025/12/20251216647003088.pdf",
+      "final_url": "https://cdnbbsr.s3waas.gov.in/s31c87860778df9675a35aa14d3bee8776/uploads/2025/12/20251216647003088.pdf",
+      "content_type": "application/pdf",
+      "source": "District Social and Economic Review 2025 Dist. Raigad",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:11:01.633792+00:00",
+      "sha256": "b4b0f13e1ae8390f7c43df37b9be1d7745c78ef23f4654a70890796699d2d3bc",
+      "bytes": 7748576,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Government district socioeconomic review 2025. Each table has its own reference period; published projections remain projections.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

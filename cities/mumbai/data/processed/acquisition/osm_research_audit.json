@@ -1,0 +1,125 @@
+{
+  "source_sha256": "c335a72cadfebc3ffde5cfff20fc9711f3112bc11000d43fde4daea10c36b53e",
+  "selection_sha256": "6d0664ee641ca426c7eca5ddecd9540350c4a9e1b55722b51a2e81350635b4ce",
+  "research_envelope_wgs84": [
+    72.6466890177437,
+    17.85028531100463,
+    73.795467531648,
+    20.22830255910601
+  ],
+  "gdal_version": "3.12.4",
+  "layers": [
+    {
+      "layer": "points",
+      "features": 114900,
+      "envelope_candidates": 114900,
+      "rejected_nonintersecting_geometries": 0,
+      "fields_populated": {
+        "osm_id": 114900,
+        "name": 29838,
+        "barrier": 34614,
+        "highway": 7946,
+        "ref": 1692,
+        "address": 4,
+        "is_in": 16,
+        "place": 3458,
+        "man_made": 1327,
+        "other_tags": 108492
+      },
+      "invalid_geometries": 0,
+      "empty_geometries": 0,
+      "geometry_bounds_wgs84": [
+        72.6552808,
+        17.8505737,
+        73.79543960000001,
+        20.228272200000003
+      ],
+      "source_fields": [
+        "osm_id",
+        "name",
+        "barrier",
+        "highway",
+        "ref",
+        "address",
+        "is_in",
+        "place",
+        "man_made",
+        "other_tags"
+      ]
+    },
+    {
+      "layer": "lines",
+      "features": 253233,
+      "envelope_candidates": 253233,
+      "rejected_nonintersecting_geometries": 0,
+      "fields_populated": {
+        "osm_id": 253233,
+        "name": 27608,
+        "highway": 232848,
+        "waterway": 3956,
+        "aerialway": 3,
+        "barrier": 3849,
+        "man_made": 2663,
+        "railway": 5036,
+        "z_order": 253233,
+        "other_tags": 114969
+      },
+      "invalid_geometries": 0,
+      "empty_geometries": 0,
+      "geometry_bounds_wgs84": [
+        71.8024993,
+        4.4644916,
+        100.1908064,
+        20.923694
+      ],
+      "source_fields": [
+        "osm_id",
+        "name",
+        "highway",
+        "waterway",
+        "aerialway",
+        "barrier",
+        "man_made",
+        "railway",
+        "z_order",
+        "other_tags"
+      ]
+    },
+    {
+      "layer": "multilinestrings",
+      "features": 1386,
+      "envelope_candidates": 1386,
+      "rejected_nonintersecting_geometries": 0,
+      "fields_populated": {
+        "osm_id": 1386,
+        "name": 1303,
+        "type": 1386,
+        "other_tags": 1386
+      },
+      "invalid_geometries": 0,
+      "empty_geometries": 0,
+      "geometry_bounds_wgs84": [
+        72.3676305,
+        14.8804508,
+        80.6707418,
+        24.486605
+      ],
+      "source_fields": [
+        "osm_id",
+        "name",
+        "type",
+        "other_tags"
+      ]
+    }
+  ],
+  "container_timestamp_from_immutable_acquisition": "2026-09-18T08:39:52.932Z",
+  "licence": "ODbL 1.0; OpenStreetMap contributors",
+  "status": "spatial_evidence_not_model_network",
+  "limitations": [
+    "Envelope derives from district datasets and is not the notified metropolitan boundary.",
+    "Features intersecting the envelope retain their complete source geometry.",
+    "OGR attributes do not retain complete way-node references or restriction relations.",
+    "Tags describe mapped features, not verified current operations or capacity.",
+    "No silent geometry repair, connectivity inference or modal permission assignment."
+  ]
+}

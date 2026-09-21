@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/freight/jnpa_daily_icd_20260317_b9e7cbbcf335c91e.pdf",
+      "url": "https://www.jnport.gov.in/uploads/content_manager/ICD_DAILY_REPORT_17-MAR-2026.pdf",
+      "final_url": "https://www.jnport.gov.in/uploads/content_manager/ICD_DAILY_REPORT_17-MAR-2026.pdf",
+      "content_type": "application/pdf",
+      "source": "JNPA daily ICD report dated 17 March 2026",
+      "licence": "Government/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:57:50.995209+00:00",
+      "sha256": "b9e7cbbcf335c91e5b5fae224a728bdfad69472c56e01474df0c2623b802d206",
+      "bytes": 435090,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published freight operations evidence; reporting universe, loaded/empty movement definitions and dates require reconciliation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

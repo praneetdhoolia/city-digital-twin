@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/freight/jnpa_central_parking_20260918_194151c2cd14765d.html",
+      "url": "https://www.jnport.gov.in/page/centralized-parking-plaza/ay9vK1lZa0hlZmsraEhhNlc5dnNrdz09",
+      "final_url": "https://www.jnport.gov.in/page/centralized-parking-plaza/ay9vK1lZa0hlZmsraEhhNlc5dnNrdz09",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "JNPA centralised parking plaza truck handling infrastructure",
+      "licence": "Government/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:59:33.370937+00:00",
+      "sha256": "194151c2cd14765d58ad4fe8c914af5cd95e4324c5ccd3b4d9c4d24f699cb1d8",
+      "bytes": 81090,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published operations evidence. Separate departure events, daily reports, forecasts and capacity; no all-day timetable or citywide freight demand implied.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

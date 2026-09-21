@@ -1,0 +1,30 @@
+{
+  "source": "derived_baseline_boarding_fares",
+  "currency_code": "INR",
+  "input_sha256": {
+    "schedules/baseline_regional.zip": "5c5bc92c925af954bb143f65b256fec53c34d6da04e64e8a301e3c6def35fb91",
+    "registry/A_baseline_fares.json": "5cefbbf74075ab994964bd222aa882d2819e9b54e3b7cdb179df1ea1f0d9054e",
+    "data/processed/observed/best_published_fares.csv": "52e1018a6d52148070918a57b37979e4da360e970e7bc181b49b7a18c6caad08"
+  },
+  "output_sha256": "951d7ddaa057fe8ea57067b08572f910d68d340ac0cffbbee30137e53c0b8b9b",
+  "published_line_profiles": {
+    "ac_adult": 576,
+    "non_ac_adult": 361
+  },
+  "fallback_modes": [
+    "bus",
+    "ferry",
+    "rail",
+    "subway"
+  ],
+  "distance_basis": "network_links_entered_between_boarding_and_alighting",
+  "limitations": [
+    "Published bands do not verify current route vehicle class, operation or operator fare-stage distances.",
+    "AC class is inferred from a declared route-label convention; other labels take the provisional non-AC class.",
+    "All travellers use the declared baseline rider class; concession eligibility and passes are not yet modelled.",
+    "Beyond the last published distance, the final marginal rate is extrapolated and counted separately.",
+    "Uncovered operators and rail/metro/ferry retain explicit provisional per-metre prices.",
+    "Completed boarding fares enter income-sensitive scoring; the transit path router does not yet optimise exact ticket prices.",
+    "Transfers are separately charged; unfinished boardings have no invented alighting fare."
+  ]
+}

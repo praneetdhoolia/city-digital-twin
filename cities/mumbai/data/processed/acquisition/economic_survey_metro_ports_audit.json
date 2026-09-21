@@ -1,0 +1,51 @@
+{
+  "source": "derived",
+  "source_id": "maha_economic_survey_2025_26",
+  "source_sha256": "954fceeb3803c2a79f2f50c615a7e7ec1d2f2e75fdbdb8fe0aa84ac9cd8f9885",
+  "metro_route_rows": 9,
+  "metro_control_groups": 6,
+  "port_period_rows": 4,
+  "port_arithmetic_checks": [
+    {
+      "port": "Mumbai Port",
+      "reference_financial_year": "2023-24",
+      "identity": "cargo_handled_equals_import_plus_export",
+      "residual_lakh_mt": "0.00",
+      "source_rounding_envelope_lakh_mt": "0.015",
+      "status": "exact"
+    },
+    {
+      "port": "Mumbai Port",
+      "reference_financial_year": "2024-25",
+      "identity": "cargo_handled_equals_import_plus_export",
+      "residual_lakh_mt": "0.00",
+      "source_rounding_envelope_lakh_mt": "0.015",
+      "status": "exact"
+    },
+    {
+      "port": "Jawaharlal Nehru Port",
+      "reference_financial_year": "2023-24",
+      "identity": "cargo_handled_equals_import_plus_export",
+      "residual_lakh_mt": "0.01",
+      "source_rounding_envelope_lakh_mt": "0.015",
+      "status": "rounding_compatible"
+    },
+    {
+      "port": "Jawaharlal Nehru Port",
+      "reference_financial_year": "2024-25",
+      "identity": "cargo_handled_equals_import_plus_export",
+      "residual_lakh_mt": "0.00",
+      "source_rounding_envelope_lakh_mt": "0.015",
+      "status": "exact"
+    }
+  ],
+  "limitations": [
+    "Metro averaging dates and the passenger counting definition are not stated in the table.",
+    "Merged metro passenger cells remain one group; no figure is duplicated or divided between routes.",
+    "Commissioning months describe the published route entry, not every opening phase.",
+    "The table also includes Nagpur and Pune; those observations are not Mumbai demand.",
+    "Port passenger N.A. is not applicable, not zero; local ferry counting scope is unresolved.",
+    "Cargo mass and vessel counts do not imply road vehicles, train movements or passenger services.",
+    "Cargo units retain the printed lakh MT; no load factor, modal split or empty return flow is inferred."
+  ]
+}

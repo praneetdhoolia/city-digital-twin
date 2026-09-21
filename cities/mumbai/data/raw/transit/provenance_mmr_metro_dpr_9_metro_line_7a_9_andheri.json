@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_metro_dpr_9_metro_line_7a_9_andheri_a76799ae99c9dd46.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%207A%20%26%209.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%207A%20%26%209.pdf",
+      "content_type": "application/pdf",
+      "source": "9 Metro Line 7A & 9 Andheri (E) to CSIA & Dahisar to Mira Bhayander Download (15.71 MB)",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:18:07.183109+00:00",
+      "sha256": "a76799ae99c9dd46b7e406c0957e3f755e83e62d26c9c80cf587061a93c24db2",
+      "bytes": 16471263,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

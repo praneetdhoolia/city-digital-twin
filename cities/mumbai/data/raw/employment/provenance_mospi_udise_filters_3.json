@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/mospi_udise_filters_3_627d877b522342ea.json",
+      "url": "https://api.mospi.gov.in/api/udise/getUdiseFilterByIndicatorId?indicator_code=3",
+      "final_url": "https://api.mospi.gov.in/api/udise/getUdiseFilterByIndicatorId?indicator_code=3",
+      "content_type": "application/json; charset=utf-8",
+      "source": "NSO public UDISE aggregate indicator 3 filters",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:22:01.741540+00:00",
+      "sha256": "627d877b522342ea4200a14543fd401d2ed5c98492d5b465c5c8f291123df4f1",
+      "bytes": 1522,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public aggregate dimensions and allowed filter codes, not household unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

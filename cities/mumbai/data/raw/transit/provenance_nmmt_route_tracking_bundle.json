@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_route_tracking_bundle_55ac1b7cc53f04e9.js",
+      "url": "https://nmmtitmswebportal.amnex.co.in/chunk-VPNOKVMU.js",
+      "final_url": "https://nmmtitmswebportal.amnex.co.in/chunk-VPNOKVMU.js",
+      "source": "NMMT public route tracking client",
+      "licence": "Operator/vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:10:41.865073+00:00",
+      "sha256": "55ac1b7cc53f04e9b594116959f4e56db9c529b77017e2ffab862bc3356b202e",
+      "bytes": 164,
+      "content_type": "application/javascript",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public client documentation for read-only service information. No account actions or embedded credentials are used."
+    }
+  ]
+}

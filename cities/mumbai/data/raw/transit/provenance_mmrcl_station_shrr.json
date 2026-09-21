@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_shrr_e0ae6452f0f048d3.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/SHRR/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/SHRR/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Sahar Road",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:20.825220+00:00",
+      "sha256": "e0ae6452f0f048d3bf1538d2910072e108046536dc7e73700035d2c7c42c8e87",
+      "bytes": 25931,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

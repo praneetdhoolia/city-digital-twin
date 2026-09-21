@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/metro_lastmile_20260319_6da1623841650cfa.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2026-03/mumbai_metro_strengthens_last-mile_connectivity_with_uber_integration_via_ondc_1.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2026-03/mumbai_metro_strengthens_last-mile_connectivity_with_uber_integration_via_ondc_1.pdf",
+      "content_type": "application/pdf",
+      "source": "MMRDA metro integration and ridership March 2026",
+      "licence": "MMRDA publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:59:30.606239+00:00",
+      "sha256": "6da1623841650cfa3fd24b6820f6103315ca616e0c151ff670562041f077ccd9",
+      "bytes": 1365054,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Contemporaneous aggregate reported daily Line 2A/7 passengers and ticketing offer. Rounded press figure not a station/hour validation series.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

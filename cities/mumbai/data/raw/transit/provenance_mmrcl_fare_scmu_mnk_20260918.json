@@ -1,0 +1,25 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_fare_scmu_mnk_20260918_dc6ba1211d963ca0.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/fare-calculator/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/fare-calculator/",
+      "content_type": "application/json",
+      "source": "Metro 3 public fare calculator SCMU to MNK",
+      "licence": "Public authority publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:44:50.282473+00:00",
+      "sha256": "dc6ba1211d963ca077a884e98c1ff6603ff96f8fc61200dd55f164c91c6e8f8a",
+      "bytes": 91,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Source response retained; period and suitability require validation.",
+      "transport": "Windows system TLS; certificate verification enabled",
+      "method": "POST",
+      "request_json": {
+        "source": "SCMU",
+        "destination": "MNK",
+        "line_type": "normal"
+      }
+    }
+  ]
+}

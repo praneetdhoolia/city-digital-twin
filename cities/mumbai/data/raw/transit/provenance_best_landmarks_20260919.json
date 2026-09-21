@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_landmarks_20260919_7767f31948bba525.html",
+      "url": "https://www.bestundertaking.com/landmarks.asp",
+      "final_url": "https://www.bestundertaking.com/landmarks.asp",
+      "source": "BEST official Landmarks",
+      "licence": "BEST publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:44:27.632205+00:00",
+      "sha256": "7767f31948bba5259c8659219bb92bc19ccabe73726f8f1413ed0538ae9d34a1",
+      "bytes": 60885,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification."
+    }
+  ]
+}

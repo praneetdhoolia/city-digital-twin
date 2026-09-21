@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/demand/tus_2024_data_layout_5f18e4f62e9ca19b.xlsx",
+      "url": "https://microdata.gov.in/NADA/index.php/catalog/236/download/2601",
+      "final_url": "https://microdata.gov.in/NADA/index.php/catalog/236/download/2601",
+      "content_type": "application/octet-stream",
+      "source": "Time Use Survey 2024 data layout",
+      "licence": "Government publication; reuse terms and microdata access conditions require review",
+      "retrieved": "2026-09-18T10:03:11.878717+00:00",
+      "sha256": "5f18e4f62e9ca19b859f8ed8126b99404b2e6a49644c2435856766f915c79af5",
+      "bytes": 21616,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public statistical evidence; survey weights, age and geographic coverage require validation. Catalogue access is not acquisition of unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

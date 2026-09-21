@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mahametro_current_annual_2024_25_aff714b443ee1c83.pdf",
+      "url": "https://livewebapi.metrorailnagpur.com/uploads/1772007604507-342624065.pdf",
+      "final_url": "https://livewebapi.metrorailnagpur.com/uploads/1772007604507-342624065.pdf",
+      "source": "Maha Metro annual report 2024-25 from current operator directory",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T12:10:21.881796+00:00",
+      "sha256": "aff714b443ee1c83e9e438f345d3c1543c366b08debcf8b6fddf25f21fcdf122",
+      "bytes": 13193956,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Corporate report covers multiple cities. Extract Navi Mumbai observations separately from design forecasts and Pune/Nagpur operations."
+    }
+  ]
+}

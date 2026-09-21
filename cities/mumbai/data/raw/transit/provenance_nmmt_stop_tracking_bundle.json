@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_stop_tracking_bundle_6052e9ed735f7d44.js",
+      "url": "https://nmmtitmswebportal.amnex.co.in/chunk-WSRLSETC.js",
+      "final_url": "https://nmmtitmswebportal.amnex.co.in/chunk-WSRLSETC.js",
+      "source": "NMMT public stop tracking client",
+      "licence": "Operator/vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:10:42.095390+00:00",
+      "sha256": "6052e9ed735f7d44ab8b612df3a8be72a975a99cbd741bf35f72fafea5f168a6",
+      "bytes": 163,
+      "content_type": "application/javascript",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public client documentation for read-only service information. No account actions or embedded credentials are used."
+    }
+  ]
+}

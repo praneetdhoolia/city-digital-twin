@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mbmt_budget_2024_25_ff2c0bb18993376d.pdf",
+      "url": "https://www.mbmc.gov.in/assets/uploads/file-6771.pdf",
+      "final_url": "https://www.mbmc.gov.in/assets/uploads/file-6771.pdf",
+      "source": "MBMT Transport Department Budget 2024-2025",
+      "licence": "Municipal/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:02:44.102751+00:00",
+      "sha256": "ff2c0bb18993376d213ef288cffc3f84c3aee7ecf1c0fa8109251fd165c92c6b",
+      "bytes": 5362624,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published contract, budget or notice. Procurement and planned service are not current operating observations."
+    }
+  ]
+}

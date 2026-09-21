@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "source_id": "best_bus_pass_2025",
+  "source_sha256": "b59d8697af65dc34ac5b3e5558c6c5cf6e8f43bc1e68d069ef5a9d4d3a8a534c",
+  "source_pages_1_based": [1, 2],
+  "method": "Single-pass visual reading of the two original Marathi scanned pages, including Devanagari digits. English labels are translations; an independent language and effective-date check remains.",
+  "effective_date_as_printed": "2025-05-08",
+  "date_status": "Printed Thursday 8 May 2025; operational implementation date and later revisions require verification.",
+  "status": "published_table_transcribed_not_current_fare_engine",
+  "model_ready": false,
+  "fare_columns": ["stage_distance_km", "non_ac_adult_inr", "non_ac_concessional_inr", "ac_adult_inr", "ac_concessional_inr"],
+  "fare_rows": [
+    [5, 10, 5, 12, 5],
+    [10, 15, 8, 20, 10],
+    [15, 20, 10, 30, 15],
+    [20, 30, 15, 35, 15],
+    [25, 35, 15, 40, 20],
+    [30, 40, 20, 45, 20],
+    [35, 45, 20, 50, 25],
+    [40, 50, 25, 55, 25],
+    [45, 55, 25, 60, 30],
+    [50, 60, 30, 65, 30]
+  ],
+  "fare_rules": {
+    "source_page_1_based": 1,
+    "over_50_km_additional_stage_km": 5,
+    "over_50_km_additional_stage_fare_inr": 5,
+    "over_50_km_concessional_application": "The extra-stage cell spans adult and concessional columns; separate concession treatment is not explicit.",
+    "outside_bmc_toll_point_addition_inr": 2,
+    "outside_bmc_toll_point_scope": "The note applies an addition to Non-AC and AC journeys through toll points outside municipal limits; the count of chargeable crossings and mapping require verification.",
+    "luggage_basis": "Corresponding adult fare, subject to the stated ceiling.",
+    "luggage_non_ac_maximum_inr": 30,
+    "luggage_ac_maximum_inr": 35,
+    "nutrition_surcharge_included_paise": 15,
+    "ac_gst_additional_percent": 5,
+    "distance_basis": "Distance between fare stages, not distance between the two bus stops.",
+    "distance_notification_reference": "Maharashtra Home Department notification dated 8 July 2011, cited on page 1; original notification and stage-point list not yet acquired."
+  },
+  "pass_columns": ["up_to_distance_km", "weekly_14_trips_7_days_inr", "monthly_60_trips_28_days_inr", "monthly_90_trips_28_days_inr", "monthly_120_trips_28_days_inr"],
+  "pass_rows": [
+    [5, 140, 500, 800, 1100],
+    [10, 210, 800, 1250, 1700],
+    [15, 280, 1100, 1700, 2300],
+    [20, 420, 1700, 2600, 3500],
+    [25, 490, 2000, 3050, 4100],
+    [30, 560, 2300, 3500, 4700],
+    [35, 630, 2600, 3950, 5300],
+    [40, 700, 2900, 4400, 5900],
+    [45, 770, 3200, 4850, 6500],
+    [50, 840, 3500, 5300, 7200]
+  ],
+  "pass_rules": {
+    "source_page_1_based": 2,
+    "senior_discount_inr": 50,
+    "senior_eligible_trip_products": [60, 90, 120],
+    "electronic_purchase_extra_trips_percent_as_printed": 5,
+    "electronic_purchase_examples": [
+      {"base_trips": 60, "extra_trips": 3},
+      {"base_trips": 90, "extra_trips": 5},
+      {"base_trips": 120, "extra_trips": 6}
+    ],
+    "wallet_credit_bonus_percent": 5,
+    "wallet_credit_example": {"payment_inr": 100, "bonus_inr": 5, "credited_inr": 105},
+    "ac_and_non_ac_product_eligibility": "The pass table does not separate AC and Non-AC columns; do not infer universal eligibility or GST handling."
+  },
+  "other_passes": [
+    {"product": "daily_unlimited", "valid_days": 1, "trips": null, "unlimited": true, "price_inr": 75},
+    {"product": "monthly_unlimited", "valid_days": 30, "trips": null, "unlimited": true, "price_inr": 1800},
+    {"product": "student_monthly", "valid_days": 30, "trips": 60, "unlimited": false, "price_inr": 200},
+    {"product": "student_quarterly", "valid_days": 90, "trips": 180, "unlimited": false, "price_inr": 600},
+    {"product": "student_half_yearly", "valid_days": 180, "trips": 360, "unlimited": false, "price_inr": 1200}
+  ],
+  "special_role_passes_as_printed": [
+    {"role": "retired_employee_member", "period": "annual", "price_inr": 100},
+    {"role": "accredited_journalist", "period": "annual", "price_inr": 365},
+    {"role": "wet_lease_employee", "period": "monthly", "price_inr": 375}
+  ],
+  "limitations": [
+    "This document is linked by the official transport page but does not prove no later amendment exists.",
+    "A separate current concession-eligibility rule is needed; the fare column label alone does not identify all eligible passengers.",
+    "The undated facilities webpage and this dated PDF differ on AC concession availability; both sources must be retained.",
+    "Actual fare-stage locations, rounding, tax collection, transfer charging and electronic product eligibility remain unresolved.",
+    "These ordinary fare tables do not establish premium Chalo fares or pass validity on premium services.",
+    "No passenger uptake, trip frequency or pass ownership is inferred from a fare product."
+  ]
+}

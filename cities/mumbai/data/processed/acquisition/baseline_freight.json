@@ -1,0 +1,84 @@
+{
+  "residents_count": 1000,
+  "truck_movements_count": 243,
+  "freight_rail_movements_count": 39,
+  "goods_to_cars_historical_ratio": 0.2425546868136695,
+  "handled_rakes_by_report_day": {
+    "2026-03-16": 20,
+    "2026-09-16": 19
+  },
+  "mean_handled_rakes": 19.5,
+  "anchors": {
+    "truck": {
+      "port": {
+        "link": "99494",
+        "xy": [
+          284369.63951059117,
+          2096250.4430178935
+        ]
+      },
+      "gates": [
+        {
+          "link": "164124",
+          "xy": [
+            310598.15689781273,
+            2244739.655113729
+          ],
+          "axis": "north"
+        },
+        {
+          "link": "605798",
+          "xy": [
+            382222.3113604968,
+            1984739.318141921
+          ],
+          "axis": "east"
+        }
+      ],
+      "port_snap_m": 54.41182526120229,
+      "connected_links_count": 824536
+    },
+    "freight_rail": {
+      "port": {
+        "link": "698607",
+        "xy": [
+          284452.04156737746,
+          2096167.101104537
+        ]
+      },
+      "gates": [
+        {
+          "link": "355029",
+          "xy": [
+            276078.1453862593,
+            2239112.2631191383
+          ],
+          "axis": "north"
+        },
+        {
+          "link": "738773",
+          "xy": [
+            378246.6131424636,
+            2201429.659009278
+          ],
+          "axis": "east"
+        }
+      ],
+      "port_snap_m": 63.92039114312091,
+      "connected_links_count": 18353
+    }
+  },
+  "input_sha256": {
+    "demand/baseline/plans_with_activities.xml.gz": "a67502dc9e73da11c6e3de3bd901ce1cf1e01d52ad87bc9c23496962e3d2a579",
+    "registry/B_baseline_freight.json": "4b11a84c3571fc6d2a78d295564fb10b94be321d324d2f8d6dd0c202ba0e679a",
+    "networks/matsim/schedules/baseline_regional/network.xml.gz": "5a07a45b50860c4191996f1a84b9e736723aa730d8697f1c9a1bd3ea642f188e",
+    "data/processed/geospatial/osm_research.gpkg": "e95023a6a853e11501d57864be9c89e20e3b8e072300eda753c880bb5690e25e",
+    "data/processed/observed/tbtt_2018_reported_aggregates.csv": "205c93cbeea7ee1f16573ed7ed9e231c754a8895a9267f8a7f69f9eed222a509",
+    "data/processed/observed/jnpa_rake_observations.csv": "e95b4e4c8f36d654d854f6426fc45844fb2fdeb430fa31cb54bfe33d58fd4e42"
+  },
+  "limitations": [
+    "Not observed current regional freight demand or OD.",
+    "All port access and cordon endpoints are provisional network anchors.",
+    "No regional expansion, time bans, depot circulation or freight calibration."
+  ]
+}

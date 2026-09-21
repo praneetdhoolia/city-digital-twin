@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/demand/nhts_2025_26_instructions_87f98a9dd45471b3.pdf",
+      "url": "https://mospi.gov.in/uploads/documents/temp/DTESANDNHTS/Instructions%20to%20Field%20Staff%20Volume-I%20of%20DTES%20%26%20NHTS.pdf",
+      "final_url": "https://mospi.gov.in/uploads/documents/temp/DTESANDNHTS/Instructions%20to%20Field%20Staff%20Volume-I%20of%20DTES%20%26%20NHTS.pdf",
+      "content_type": "application/pdf",
+      "source": "NSO 2025-26 travel survey field instructions",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:12:39.268872+00:00",
+      "sha256": "87f98a9dd45471b3c7340deb379b63a9b3e0b35aa6882cca471107e3ed742d8d",
+      "bytes": 8288039,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Candidate companion manual URL derived from official Volume-II filename; validate contents. No observed survey estimates.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

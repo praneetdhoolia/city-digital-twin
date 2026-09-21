@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/water/mmb_public_app_0ce3971d1e08d319.js",
+      "url": "https://mahammb.maharashtra.gov.in/assets/index-BPf6ntpj.js",
+      "final_url": "https://mahammb.maharashtra.gov.in/assets/index-BPf6ntpj.js",
+      "source": "MMB public website application",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:37:05.230656+00:00",
+      "sha256": "0ce3971d1e08d319926db63e563353e285ddd4e5e3395be5dcc8481ea7ed1b2b",
+      "bytes": 1627842,
+      "content_type": "application/x-javascript",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public API discovery evidence; not a transport dataset."
+    }
+  ]
+}

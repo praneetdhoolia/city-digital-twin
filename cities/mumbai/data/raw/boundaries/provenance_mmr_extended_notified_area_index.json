@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/mmr_extended_notified_area_index_74ca0d9d156db473.html",
+      "url": "https://www.mmrda.maharashtra.gov.in/en/Planning/Mumbai-Metropolitan-Region-Extended-Notified-Area",
+      "final_url": "https://www.mmrda.maharashtra.gov.in/en/Planning/Mumbai-Metropolitan-Region-Extended-Notified-Area",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "MMRDA extended notified area and development plan notices",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:14:03.654873+00:00",
+      "sha256": "74ca0d9d156db47317e0b5deb9ba26669a47a9b635cfb5a17ba2fc12ed7c4941",
+      "bytes": 112929,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Legal/planning boundary evidence; no automatic model inclusion or exclusion.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

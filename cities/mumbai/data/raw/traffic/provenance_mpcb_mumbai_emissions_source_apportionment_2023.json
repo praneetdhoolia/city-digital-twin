@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/traffic/mpcb_mumbai_emissions_source_apportionment_2023_b973e4945d2b5f53.pdf",
+      "url": "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/Mumbai_Final_El_%26_SA_Report_July_2024.pdf",
+      "final_url": "https://mpcb.gov.in/sites/default/files/Establishment%20of%20MPCB/Seniority%20list/2014/Mumbai_Final_El_%26_SA_Report_July_2024.pdf",
+      "content_type": "application/pdf",
+      "source": "MPCB Mumbai air quality, emissions inventory and source apportionment final report, December 2023",
+      "licence": "Maharashtra Pollution Control Board publication; reuse terms unverified",
+      "retrieved": "2026-09-18T18:39:59.648480+00:00",
+      "sha256": "b973e4945d2b5f5368757b34ed33dd37e63018d4352d657181e017dfcc9bcc5a",
+      "bytes": 30580567,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Final report dated December 2023, hosted as July 2024 PDF. Transport activity, traffic counts, vehicle use and emission estimates require source-year, universe and method checks; emission estimates are not direct traffic observations.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

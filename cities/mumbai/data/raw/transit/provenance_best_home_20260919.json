@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_home_20260919_e82aebfb4020c547.html",
+      "url": "https://www.bestundertaking.com/",
+      "final_url": "https://www.bestundertaking.com/",
+      "source": "BEST official public website",
+      "licence": "BEST website; reuse terms unverified",
+      "retrieved": "2026-09-18T15:43:10.042485+00:00",
+      "sha256": "e82aebfb4020c5477d1fa2d61c7f63e9903b09dfc46c0abc33224647a3c2d345",
+      "bytes": 99903,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public navigation and transport publications; access and publication dates require verification."
+    }
+  ]
+}

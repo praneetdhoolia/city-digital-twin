@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_journey_shrr_ciad_20260918_0214fa6126c58e67.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/journey-route/SHRR/CIAD/station/station/least-distance/2026-09-18/one_way/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/journey-route/SHRR/CIAD/station/station/least-distance/2026-09-18/one_way/",
+      "content_type": "application/json",
+      "source": "Metro 3 public adjacent-station journey SHRR to CIAD, 18 September 2026",
+      "licence": "Public authority or operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:16:04.846342+00:00",
+      "sha256": "0214fa6126c58e6770d39e18ce3097924679635630ad742ee534e9002ba78657",
+      "bytes": 577,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

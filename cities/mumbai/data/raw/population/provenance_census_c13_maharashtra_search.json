@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_c13_maharashtra_search_842f67fcc24ff5cc.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/?sk=PC11_C13-27",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/?sk=PC11_C13-27",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Census single-year ages Maharashtra 2011 catalogue search",
+      "licence": "Government publication; reuse terms and microdata access conditions require review",
+      "retrieved": "2026-09-18T10:03:14.848211+00:00",
+      "sha256": "842f67fcc24ff5cc36da1c969f62e2d2d55e2b3453fd753f2b6f844d2ca9fa2d",
+      "bytes": 108115,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public statistical evidence; survey weights, age and geographic coverage require validation. Catalogue access is not acquisition of unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

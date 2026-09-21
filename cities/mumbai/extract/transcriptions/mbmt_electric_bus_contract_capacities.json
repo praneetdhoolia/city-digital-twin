@@ -1,0 +1,49 @@
+{
+  "source_id": "mbmt_electric_bus_agreement",
+  "source_sha256": "687ae4cce93548ea8d309f763c3fc6d40bd61757bf355504ac7a1a6dbfe1bb48",
+  "source": "municipal_contract_visual_transcription",
+  "status": "contract_specifications_not_verified_delivered_configuration",
+  "rows": [
+    {
+      "configuration": "12 metre electric AC",
+      "section_start_page_1_based": 189,
+      "source_page_1_based": 194,
+      "seating_text_as_printed": "Min 36 + Driver",
+      "seat_requirement_kind": "minimum",
+      "passenger_seats_count": 36,
+      "driver_separate": true,
+      "standing_text_as_printed": "Calculation as per AIS 052",
+      "standing_passengers_count": null
+    },
+    {
+      "configuration": "12 metre electric non-AC",
+      "section_start_page_1_based": 199,
+      "source_page_1_based": 204,
+      "seating_text_as_printed": "Min 36 + Driver",
+      "seat_requirement_kind": "minimum",
+      "passenger_seats_count": 36,
+      "driver_separate": true,
+      "standing_text_as_printed": "Calculation as per AIS 052",
+      "standing_passengers_count": null
+    },
+    {
+      "configuration": "9 metre electric non-AC midi",
+      "section_start_page_1_based": 222,
+      "source_page_1_based": 228,
+      "seating_text_as_printed": "31 + Driver.",
+      "seat_requirement_kind": "specified",
+      "passenger_seats_count": 31,
+      "driver_separate": true,
+      "standing_text_as_printed": "Calculation as per AIS 052",
+      "standing_passengers_count": null
+    }
+  ],
+  "limitations": [
+    "PDF and printed page numbers agree on the visually checked capacity pages.",
+    "OCR located pages; the retained capacities were read from the rendered page images.",
+    "Minimum seating is not an exact delivered vehicle capacity.",
+    "Contract variants do not establish which configurations were delivered or assigned to current departures.",
+    "The referenced standard does not alone determine a standing count; certified layout, usable area, vehicle mass and applicable approval are still required.",
+    "No simulation input or standing-space count is inferred from this transcription."
+  ]
+}

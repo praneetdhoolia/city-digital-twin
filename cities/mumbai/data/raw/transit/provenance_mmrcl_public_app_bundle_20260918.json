@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_public_app_bundle_20260918_2498b9b3aa5af701.js",
+      "url": "https://mmrcl.com/static/js/main.5bd7c52d.js",
+      "final_url": "https://mmrcl.com/static/js/main.5bd7c52d.js",
+      "content_type": "application/javascript",
+      "source": "Mumbai Metro Line 3 public website application bundle",
+      "licence": "Government website publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:03:01.251379+00:00",
+      "sha256": "2498b9b3aa5af701ef1a3406264fecb666f1df3e661e68aac862f47603d3e3a2",
+      "bytes": 6551148,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public app code used to identify documented passenger information endpoints; not itself transport observations.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

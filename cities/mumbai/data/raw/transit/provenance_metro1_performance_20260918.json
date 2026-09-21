@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/metro1_performance_20260918_a5fd77935744f0cd.html",
+      "url": "https://www.reliancemumbaimetro.com/performance",
+      "final_url": "https://www.reliancemumbaimetro.com/performance",
+      "content_type": "text/html; charset=utf-8",
+      "source": "Metro One performance",
+      "licence": "Public authority or operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:15:39.852968+00:00",
+      "sha256": "a5fd77935744f0cd9e967935d30a533793b7d9be68c4c540749468469cc79261",
+      "bytes": 31069,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

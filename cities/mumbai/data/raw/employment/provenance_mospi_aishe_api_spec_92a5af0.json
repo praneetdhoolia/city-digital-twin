@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/mospi_aishe_api_spec_92a5af0_8ccba5c46acce979.yaml",
+      "url": "https://raw.githubusercontent.com/nso-india/esankhyiki-mcp/92a5af0defa22785d073a26c71b2758c40d0564d/swagger/swagger_user_aishe.yaml",
+      "final_url": "https://raw.githubusercontent.com/nso-india/esankhyiki-mcp/92a5af0defa22785d073a26c71b2758c40d0564d/swagger/swagger_user_aishe.yaml",
+      "source": "Official NSO AISHE public API specification",
+      "licence": "MIT (API specification only)",
+      "retrieved": "2026-09-18T10:22:32.748250+00:00",
+      "sha256": "8ccba5c46acce9798ed5118c935d9de1c19bbadddaf8d2d9fc052cc8208fe916",
+      "bytes": 3836,
+      "content_type": "text/plain; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Pinned API request definitions; data licence remains separate."
+    }
+  ]
+}

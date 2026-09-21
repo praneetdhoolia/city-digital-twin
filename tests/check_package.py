@@ -1292,7 +1292,8 @@ def _script_names(text, basename):
 _orphans, _no_script, _checked_rows = [], [], 0
 _script_cache = {}
 _repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-for _row in csv.DictReader(open(_city.path('data/MANIFEST.csv'), encoding='utf-8')):
+from manifest_io import manifest_reader
+for _row in manifest_reader(open(_city.path('data/MANIFEST.csv'), encoding='utf-8')):
     if _row.get('stage') != 'processed':
         continue
     _checked_rows += 1

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_bus_tracking_component_ad2e04c66a746d4d.js",
+      "url": "https://nmmtitmswebportal.amnex.co.in/chunk-EYC224K5.js",
+      "final_url": "https://nmmtitmswebportal.amnex.co.in/chunk-EYC224K5.js",
+      "source": "NMMT public bus tracking component",
+      "licence": "Operator/vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:11:06.322628+00:00",
+      "sha256": "ad2e04c66a746d4d38419c96bca8b208cb5e8e6a857349e6e8b32090e40eee91",
+      "bytes": 37407,
+      "content_type": "application/javascript",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public client documentation for read-only service information. No account actions or embedded credentials are used."
+    }
+  ]
+}

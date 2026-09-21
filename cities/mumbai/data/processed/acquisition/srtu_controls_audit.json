@@ -1,0 +1,320 @@
+{
+  "status": "historical_operator_evidence_not_current_targets",
+  "rows": 255,
+  "reported_status_counts": {
+    "reported": 234,
+    "not_reported": 21
+  },
+  "arithmetic_check_counts": {
+    "compatible_at_printed_precision": 27,
+    "not_checkable_missing_source_cell": 3
+  },
+  "arithmetic_checks": [
+    {
+      "operator_name": "Maharashtra SRTC",
+      "financial_year": "2021-22",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "39.06135918927601413510119447",
+      "derived_percent_upper": "39.06948216945588364146149128",
+      "printed_percent": "39.07",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Maharashtra SRTC",
+      "financial_year": "2021-22",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "derived_percent_lower": "61.69980075271932769013255223",
+      "derived_percent_upper": "61.69980612166650267063947112",
+      "printed_percent": "61.70",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Maharashtra SRTC",
+      "financial_year": "2020-21",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "44.92704540964637484830525217",
+      "derived_percent_upper": "44.93522621433208207501905111",
+      "printed_percent": "44.93",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Maharashtra SRTC",
+      "financial_year": "2020-21",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "derived_percent_lower": "53.76310049816122451473015778",
+      "derived_percent_upper": "53.76310466829079487817201001",
+      "printed_percent": "53.76",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Maharashtra SRTC",
+      "financial_year": "2019-20",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "86.17466174661746617466174662",
+      "derived_percent_upper": "86.18483995298362627449908427",
+      "printed_percent": "86.18",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Maharashtra SRTC",
+      "financial_year": "2019-20",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "derived_percent_lower": "68.37547556103260471850181884",
+      "derived_percent_upper": "68.37547756081260354176873013",
+      "printed_percent": "68.38",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "BEST Undertaking",
+      "financial_year": "2021-22",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "81.56562378294171102167986499",
+      "derived_percent_upper": "81.61277756135566809505259057",
+      "printed_percent": "81.59",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "BEST Undertaking",
+      "financial_year": "2021-22",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "derived_percent_lower": "80.12546555565680132187610634",
+      "derived_percent_upper": "80.12549118133837769688706213",
+      "printed_percent": "80.13",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "BEST Undertaking",
+      "financial_year": "2020-21",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "75.26510187060645776242106517",
+      "derived_percent_upper": "75.30687641520676915743058038",
+      "printed_percent": "75.29",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "BEST Undertaking",
+      "financial_year": "2020-21",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "derived_percent_lower": "57.64801249132602832343862315",
+      "derived_percent_upper": "57.64803066170460585427818111",
+      "printed_percent": "57.65",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "BEST Undertaking",
+      "financial_year": "2019-20",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "84.99775415481359484952837251",
+      "derived_percent_upper": "85.05316759023513553991313464",
+      "printed_percent": "85.03",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "BEST Undertaking",
+      "financial_year": "2019-20",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "derived_percent_lower": "87.32790601934875414386636524",
+      "derived_percent_upper": "87.32793193740276556876776629",
+      "printed_percent": "87.33",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Navi Mumbai MT",
+      "financial_year": "2021-22",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "79.68970380818053596614950635",
+      "derived_percent_upper": "80.19801980198019801980198020",
+      "printed_percent": "79.94",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Navi Mumbai MT",
+      "financial_year": "2021-22",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "derived_percent_lower": "67.07323885961155285748868736",
+      "derived_percent_upper": "67.07946144248496247602376208",
+      "printed_percent": "67.08",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Navi Mumbai MT",
+      "financial_year": "2020-21",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "94.65478841870824053452115813",
+      "derived_percent_upper": "95.52572706935123042505592841",
+      "printed_percent": "95.09",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Navi Mumbai MT",
+      "financial_year": "2020-21",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "derived_percent_lower": "76.74101357342609644635427324",
+      "derived_percent_upper": "76.74905072645005797958209227",
+      "printed_percent": "76.75",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Navi Mumbai MT",
+      "financial_year": "2019-20",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "87.21704394141145139813581891",
+      "derived_percent_upper": "87.71695594125500667556742323",
+      "printed_percent": "87.47",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Navi Mumbai MT",
+      "financial_year": "2019-20",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "derived_percent_lower": "66.41841183618040168679865628",
+      "derived_percent_upper": "66.42316984260860863722785299",
+      "printed_percent": "66.42",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Thane MT",
+      "financial_year": "2021-22",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "48.55305466237942122186495177",
+      "derived_percent_upper": "48.87218045112781954887218045",
+      "printed_percent": "48.71",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Thane MT",
+      "financial_year": "2021-22",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "derived_percent_lower": "46.86989922199485918345197096",
+      "derived_percent_upper": "46.87005473837133888499753548",
+      "printed_percent": "46.87",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Thane MT",
+      "financial_year": "2020-21",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "30.04830917874396135265700483",
+      "derived_percent_upper": "30.30009680542110358180058083",
+      "printed_percent": "30.17",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Thane MT",
+      "financial_year": "2020-21",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "derived_percent_lower": "12.19987016464374230961994552",
+      "derived_percent_upper": "12.20004134598734141487189228",
+      "printed_percent": "12.20",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Thane MT",
+      "financial_year": "2019-20",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "52.85024154589371980676328502",
+      "derived_percent_upper": "53.14617618586640851887705712",
+      "printed_percent": "53.00",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Thane MT",
+      "financial_year": "2019-20",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "derived_percent_lower": "46.86986020872163630411704598",
+      "derived_percent_upper": "46.86998997608662710998075179",
+      "printed_percent": "46.87",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Kalyan Dombivali MT",
+      "financial_year": "2021-22",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "27.20848056537102473498233216",
+      "derived_percent_upper": "28.11387900355871886120996441",
+      "printed_percent": "27.66",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Kalyan Dombivali MT",
+      "financial_year": "2021-22",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "status": "not_checkable_missing_source_cell"
+    },
+    {
+      "operator_name": "Kalyan Dombivali MT",
+      "financial_year": "2020-21",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "22.96819787985865724381625442",
+      "derived_percent_upper": "23.84341637010676156583629893",
+      "printed_percent": "23.40",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Kalyan Dombivali MT",
+      "financial_year": "2020-21",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "status": "not_checkable_missing_source_cell"
+    },
+    {
+      "operator_name": "Kalyan Dombivali MT",
+      "financial_year": "2019-20",
+      "metric": "fleet_utilisation",
+      "identity": "100 * average_fleet_operated / average_fleet_held",
+      "derived_percent_lower": "45.58303886925795053003533569",
+      "derived_percent_upper": "46.61921708185053380782918149",
+      "printed_percent": "46.10",
+      "status": "compatible_at_printed_precision"
+    },
+    {
+      "operator_name": "Kalyan Dombivali MT",
+      "financial_year": "2019-20",
+      "metric": "occupancy_ratio",
+      "identity": "100 * passenger_kilometres_performed / passenger_kilometres_offered",
+      "status": "not_checkable_missing_source_cell"
+    }
+  ],
+  "unresolved_source_issues": [
+    "Navi Mumbai MT passengers carried in 2021-22 is printed as 1.34 lakh, versus 337.44 and 670.34 lakh in the adjacent columns. It is retained without rescaling.",
+    "Navi Mumbai MT fleet age is NR in Annexure I; Annexure VI prints zero. Zero must not replace the missing age.",
+    "Lakh passenger-kilometres for Navi Mumbai MT require independent unit and denominator confirmation.",
+    "Zero CNG efficiency for Kalyan Dombivali MT is retained as printed, not interpreted as an operating vehicle fuel-efficiency coefficient."
+  ],
+  "limitations": [
+    "Financial years include pandemic restrictions and cannot stand in for the 2026 operating year.",
+    "Maharashtra SRTC totals cover its entire network and cannot be assigned to MMR.",
+    "Fleet averages are not peak availability, vehicle capacity, seated/standing composition or route allocations.",
+    "Passenger counts are operator-reported carriage; unique journeys and transfers need separate definitions.",
+    "NR means not reported and remains distinct from zero.",
+    "Rounding intervals only audit printed arithmetic; no original cell is changed.",
+    "Repetition elsewhere in the same publication is not independent corroboration."
+  ]
+}

@@ -16,6 +16,7 @@ import fnmatch
 import hashlib
 import datetime
 import zipfile
+from manifest_io import atomic_manifest_writer
 
 # The manifest describes ONE CITY. Its paths stay city-relative - `data/...`,
 # not `cities/newcastle/data/...` - so the manifest does not repeat the city's
@@ -160,8 +161,48 @@ def lineage_for(rel):
     return LINEAGE.get(best, '')
 
 
-def source_for(rel):
+def _path_prefixes(path):
+    """The path and its directory ancestors, longest first, at slash boundaries."""
+    while True:
+        yield path
+        if '/' not in path:
+            break
+        path = path.rsplit('/', 1)[0]
+
+
+class SourceIndex:
+    """Snapshot a build's declarations without rescanning them for every file.
+
+    Duplicate and overlapping declarations retain descriptor order. An exact
+    or directory-prefix match has the same meaning as in the linear readers.
+    The index is local to one build, so a later build cannot inherit old city
+    declarations through a process-global cache.
+    """
+
+    def __init__(self, sources):
+        self.sources = tuple(sources)
+        self.prefixes = {}
+        for ordinal, source in enumerate(self.sources):
+            for prefix in source.get('provides') or []:
+                self.prefixes.setdefault(prefix.strip('/'), []).append(ordinal)
+
+    def nearest(self, path):
+        for prefix in _path_prefixes(path):
+            matches = self.prefixes.get(prefix)
+            if matches:
+                return self.sources[matches[0]]
+        return None
+
+    def covering(self, paths):
+        ordinals = {ordinal for path in paths for prefix in _path_prefixes(path)
+                    for ordinal in self.prefixes.get(prefix, ())}
+        return [self.sources[ordinal] for ordinal in sorted(ordinals)]
+
+
+def source_for(rel, source_index=None):
     """The declared source whose `provides` prefix covers the path, or None."""
+    if source_index is not None:
+        return source_index.nearest(rel)
     best, best_len = None, -1
     for s in SOURCES:
         for prefix in s.get('provides') or []:
@@ -174,7 +215,7 @@ def source_for(rel):
 def _resolve_record_path(key, here, base):
     """A record's file key to a city-relative path.
 
-    Records name their files three ways: relative to a `base` directory the
+    Records name their files relative to the city root, a `base` directory the
     record declares, relative to the directory the record sits in (the dict
     form's `files` map), or relative to the layer root - `data/raw` or
     `schedules/raw` - as the list-form writers do. The candidate that exists
@@ -182,6 +223,10 @@ def _resolve_record_path(key, here, base):
     joins its record and the manifest shows what it was.
     """
     key = key.replace('\\', '/').lstrip('./')
+    # Canonical city-relative records must also resolve when their bulk file
+    # is absent from a checkout. Do not prepend the record directory twice.
+    if key.split('/', 1)[0] in _city.LAYERS:
+        return key
     root = 'schedules/raw' if here.startswith('schedules') else 'data/raw'
     cands = []
     if base:
@@ -288,6 +333,9 @@ _script_inputs_cache = {}
 # declaration for exactly that column subset - the granularity at which a
 # mixed-provenance table (ABS columns beside OSM POI counts) stops being one
 # undivided ancestor.
+# The reserved selector city.json#osm_network_inputs resolves the ordered
+# native network input list through city.py, including its legacy defaults.
+# A whole-directory glob would falsely attribute unselected themed extracts.
 #
 # WHY A DECLARATION IN THE SCRIPT, and not the two alternatives weighed:
 #   - in the script's `_*_report.json`: a report exists only after that script
@@ -434,7 +482,14 @@ def _declared_inputs(rel, entry, selector=''):
             if '#' in pat:
                 continue
             if fnmatch.fnmatch(rel, pat) and len(pat) > best_len:
-                best, best_len, found = set(ins), len(pat), True
+                resolved = set(ins)
+                if any('{match}' in dep for dep in resolved):
+                    if pat.count('*') != 1:
+                        raise ValueError('Input {match} requires one output wildcard: ' + pat)
+                    prefix, suffix = pat.split('*')
+                    matched = rel[len(prefix):len(rel) - len(suffix) if suffix else None]
+                    resolved = {dep.replace('{match}', matched) for dep in resolved}
+                best, best_len, found = resolved, len(pat), True
     if found:
         return (best or set()), True
     # A consumer that names a DIRECTORY (`data/processed/network`) rather than
@@ -487,6 +542,19 @@ def explicit_share_alike(rel):
     return bool(best) and is_share_alike(DERIVED_LICENCES.get(best) or '')
 
 
+def artifact_stage(rel):
+    """An explicit build declaration takes precedence over raw folder names.
+
+    A city can derive its native OSM input from an immutable PBF. Calling that
+    result a download loses the producing script's raw ancestry and licence.
+    Legacy acquisitions have no OUTPUT_INPUTS declaration and remain raw.
+    """
+    if not rel.startswith(_RAW_PREFIXES):
+        return 'processed'
+    _, declared = _declared_inputs(rel, lineage_for(rel))
+    return 'processed' if declared else 'raw'
+
+
 def ancestry(rel, selector='', _seen=None):
     """(proven, possible, scope) for one manifest path.
 
@@ -504,7 +572,36 @@ def ancestry(rel, selector='', _seen=None):
     if rel in _seen:
         return set(), set(), 'output'
     _seen.add(rel)
-    if rel.startswith(_RAW_PREFIXES):
+    if rel == 'city.json' and selector == '#osm_network_inputs':
+        proven, possible = set(), set()
+        for path in _city.network_osm_inputs():
+            sub_p, sub_a, _scope = ancestry(_city.rel(path), '', _seen)
+            proven |= sub_p
+            possible |= sub_a
+        return proven, possible, 'output'
+    if glob.has_magic(rel):
+        # A pattern can include both downloads and built network inputs.
+        # Expand first, then resolve each file instead of declaring all raw.
+        paths = {os.path.relpath(p, ROOT).replace('\\', '/')
+                 for p in glob.glob(os.path.join(ROOT, rel), recursive=True)
+                 if os.path.isfile(p)}
+        paths.update(p for source in SOURCES for p in source.get('provides', [])
+                     if not glob.has_magic(p) and fnmatch.fnmatch(p, rel))
+        # Explicit built paths remain traceable without uncommitted bulk bytes.
+        paths.update(p for p, entry in LINEAGE.items()
+                     if not glob.has_magic(p) and fnmatch.fnmatch(p, rel)
+                     and _declared_inputs(p, entry)[1])
+        if paths:
+            proven, possible, scopes = set(), set(), set()
+            for path in sorted(paths):
+                sub_p, sub_a, sub_scope = ancestry(path, selector, _seen)
+                proven |= sub_p
+                possible |= sub_a
+                scopes.add(sub_scope)
+            scope = ('raw' if scopes == {'raw'} else
+                     'script' if scopes & {'script', 'none'} else 'output')
+            return proven, possible, scope
+    if artifact_stage(rel) == 'raw':
         return {rel}, {rel}, 'raw'
     entry = lineage_for(rel)
     if not entry:
@@ -559,8 +656,10 @@ def is_share_alike(licence):
     return any(lic and lic in (licence or '') for lic in SHARE_ALIKE_LICENCES)
 
 
-def share_alike_sources(anc):
+def share_alike_sources(anc, source_index=None):
     """The declared sources with `share_alike` true that cover an ancestor."""
+    if source_index is not None:
+        return [src for src in source_index.covering(anc) if src.get('share_alike')]
     out = []
     for src in SOURCES:
         if not src.get('share_alike'):
@@ -573,7 +672,7 @@ def share_alike_sources(anc):
     return out
 
 
-def share_alike_verdict(proven, possible, scope):
+def share_alike_verdict(proven, possible, scope, source_index=None):
     """`yes`, `no` or `undetermined` for one row.
 
     `yes` needs a PROVEN share-alike ancestor: claiming one from a
@@ -595,22 +694,22 @@ def share_alike_verdict(proven, possible, scope):
     """
     if scope == 'none':
         return 'undetermined'
-    if holds_share_alike(proven):
+    if holds_share_alike(proven, source_index):
         return 'yes'
-    if holds_share_alike(possible):
+    if holds_share_alike(possible, source_index):
         return 'undetermined'
     return 'no'
 
 
-def holds_share_alike(paths):
+def holds_share_alike(paths, source_index=None):
     """True where a path set carries the share-alike obligation - either
     through a declared share-alike SOURCE, or through a derived layer the
     city itself declared share-alike."""
-    return bool(share_alike_sources(paths)) or any(explicit_share_alike(p)
+    return bool(share_alike_sources(paths, source_index)) or any(explicit_share_alike(p)
                                                    for p in paths)
 
 
-def derived_provenance(rel, prov, anc):
+def derived_provenance(rel, prov, anc, source_index=None):
     """(source, source_url, retrieved) for a DERIVED file.
 
     source/url: the DECLARED sources covering its raw ancestors, in the
@@ -622,18 +721,22 @@ def derived_provenance(rel, prov, anc):
     if not anc:
         return '', '', ''
     names, urls = [], []
-    for src in SOURCES:
-        for prefix in src.get('provides') or []:
-            pfx = prefix.strip('/')
-            if any(a == pfx or a.startswith(pfx + '/') for a in anc):
-                if src.get('name') and src['name'] not in names:
-                    names.append(src['name'])
-                    if src.get('url'):
-                        urls.append(src['url'])
-                break
+    sources = source_index.covering(anc) if source_index is not None else SOURCES
+    seen_names = set()
+    for src in sources:
+        if source_index is None and not any(
+                a == prefix.strip('/') or a.startswith(prefix.strip('/') + '/')
+                for prefix in src.get('provides') or [] for a in anc):
+            continue
+        if src.get('name') and src['name'] not in seen_names:
+            seen_names.add(src['name'])
+            names.append(src['name'])
+            if src.get('url'):
+                urls.append(src['url'])
+    ancestors = set(anc)
     dates = [r.get('retrieved') for path, r in prov.items()
              if r.get('retrieved')
-             and any(path == a or path.startswith(a + '/') for a in anc)]
+             and any(prefix in ancestors for prefix in _path_prefixes(path))]
     return ' + '.join(names), ' + '.join(urls), (max(dates) if dates else '')
 
 
@@ -648,6 +751,13 @@ def record_for(rel, prov):
     """
     if rel in prov:
         return prov[rel]
+    # A provenance record is the package's own metadata, not an unpacked
+    # member of the archive beside it: under the ancestor rule it inherited
+    # the alphabetically first neighbour's source, licence and date (a fares
+    # record labelled with the operator's copyright; thirteen OSM relation
+    # histories labelled as a toll notification).
+    if os.path.basename(rel).startswith(('provenance', '_')):
+        return {}
     parts = rel.split('/')
     for cut in range(len(parts) - 1, 0, -1):
         here = '/'.join(parts[:cut])
@@ -661,7 +771,7 @@ def record_for(rel, prov):
     return {}
 
 
-def licence_for(rel, stage, pr):
+def licence_for(rel, stage, pr, source_index=None):
     """The licence a manifest row carries, by declaration (#117).
 
     raw: the declared source's licence where a source covers the path (the
@@ -671,7 +781,7 @@ def licence_for(rel, stage, pr):
     glob, else the package licence. A blank is a row nobody declared, and
     tests/check_manifest.py refuses it.
     """
-    src = source_for(rel)
+    src = source_for(rel, source_index)
     if stage == 'raw':
         if src and src.get('licence'):
             return src['licence']
@@ -711,6 +821,7 @@ def scan_paths():
 
 def main():
     prov = provenance_records()
+    source_index = SourceIndex(SOURCES)
     paths = scan_paths()
     # which producing scripts write exactly one row - resolved before any row,
     # because a sole output's script-level union IS its output-level ancestry
@@ -720,10 +831,9 @@ def main():
     for rel in paths:
         p = os.path.join(ROOT, rel.replace('/', os.sep))
         sz = os.path.getsize(p)
-        stage = 'raw' if rel.startswith(('data/raw', 'networks/osm', 'schedules/raw')) \
-            else 'processed'
+        stage = artifact_stage(rel)
         pr = record_for(rel, prov) if stage == 'raw' else prov.get(rel, {})
-        src = source_for(rel) if stage == 'raw' else None
+        src = source_for(rel, source_index) if stage == 'raw' else None
         source = (pr.get('description') or pr.get('source')
                   or (src or {}).get('name', ''))
         source_url = (pr.get('url') or pr.get('s3_key')
@@ -744,7 +854,7 @@ def main():
             # #159: that ancestry is now OUTPUT-level where the
             # producing script declares it, and says so in `lineage_scope`.
             source, source_url, retrieved = derived_provenance(rel, prov,
-                                                               possible)
+                                                               possible, source_index)
         files.append(dict(
             path=rel, bytes=sz, rows=count_rows(p),
             # EVERY file is hashed. Three were size-only under a 300 MB cap -
@@ -756,10 +866,10 @@ def main():
             stage=stage,
             produced_by=lineage_for(rel),
             source=source, source_url=source_url,
-            licence=licence_for(rel, stage, pr),
+            licence=licence_for(rel, stage, pr, source_index),
             retrieved=retrieved,
             lineage_scope=scope,
-            share_alike_ancestor=share_alike_verdict(proven, possible, scope)))
+            share_alike_ancestor=share_alike_verdict(proven, possible, scope, source_index)))
 
     total = sum(f['bytes'] for f in files)
     man = dict(
@@ -779,12 +889,12 @@ def main():
             v: sum(1 for f in files if f['share_alike_ancestor'] == v)
             for v in ('yes', 'no', 'undetermined')},
         files=files)
-    json.dump(man, open(os.path.join(ROOT, 'data', 'MANIFEST.json'), 'w', newline='\n'), indent=2)
+    with atomic_manifest_writer(os.path.join(ROOT, 'data', 'MANIFEST.json'), newline='\n') as fh:
+        json.dump(man, fh, indent=2)
     cols = ['path', 'stage', 'bytes', 'rows', 'produced_by', 'source', 'source_url',
             'licence', 'retrieved', 'lineage_scope', 'share_alike_ancestor',
             'sha256']
-    with open(os.path.join(ROOT, 'data', 'MANIFEST.csv'), 'w', newline='',
-          encoding='utf-8') as fh:
+    with atomic_manifest_writer(os.path.join(ROOT, 'data', 'MANIFEST.csv'), newline='') as fh:
         # `newline=''` hands the line ending to the csv module, whose default
         # is CRLF on every platform - so the manifest was written with CRLF,
         # git committed it as LF, and the file's own recorded hash stopped

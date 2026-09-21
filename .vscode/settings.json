@@ -16,5 +16,6 @@
   "java.import.gradle.enabled": false,
   "files.exclude": {
     "**/__pycache__": true
-  }
+  },
+  "git.ignoreLimitWarning": true
 }

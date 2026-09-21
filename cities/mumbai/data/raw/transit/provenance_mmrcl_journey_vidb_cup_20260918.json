@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_journey_vidb_cup_20260918_3a38c5df8cff7bed.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/journey-route/VIDB/CUP/station/station/least-distance/2026-09-18/one_way/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/journey-route/VIDB/CUP/station/station/least-distance/2026-09-18/one_way/",
+      "content_type": "application/json",
+      "source": "Metro 3 public adjacent-station journey VIDB to CUP, 18 September 2026",
+      "licence": "Public authority or operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:16:16.502070+00:00",
+      "sha256": "3a38c5df8cff7bedc0ff6ea48a55b511fdc9de75521d052f672868db317f7b88",
+      "bytes": 742,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "url": "https://cr.indianrailways.gov.in/cris//uploads/files/1763721416458-list%20of%20holidays%20for%20website.pdf",
+      "final_url": "https://cr.indianrailways.gov.in/cris//uploads/files/1763721416458-list%20of%20holidays%20for%20website.pdf",
+      "content_type": "application/pdf",
+      "retrieved": "2026-09-18T10:41:15.468Z",
+      "bytes": 77704,
+      "path": "data/raw/transit/cr_public_holidays_2026_22f2220419573626.pdf",
+      "sha256": "22f2220419573626930e8591808a693bd9f240f018be95bc8a1044690c946958",
+      "source": "Central Railway published holidays 2026",
+      "licence": "Operator publication; reuse terms unverified",
+      "coverage": "Linked from official Mumbai Suburban timetable index; effective dates, later amendments, station times and operating exceptions require validation.",
+      "producing_script": "extract/import_browser_acquisition.py",
+      "transport": "Connected Chrome public fetch; default certificate verification",
+      "validation_status": "acquired_unvalidated"
+    }
+  ]
+}

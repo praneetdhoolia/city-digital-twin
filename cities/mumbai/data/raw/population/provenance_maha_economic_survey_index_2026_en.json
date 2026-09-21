@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/maha_economic_survey_index_2026_en_3a72647b1d352953.html",
+      "url": "https://mahaces.maharashtra.gov.in/esm.do?type=R&lang=en",
+      "final_url": "https://mahaces.maharashtra.gov.in/esm.do?type=R&lang=en",
+      "content_type": "text/html;charset=UTF-8",
+      "source": "Maharashtra statistics commissionerate economic survey index English request",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:46:48.379913+00:00",
+      "sha256": "3a72647b1d35295318de204386ffec76a1134ec68f00c272637ac2e9b218b7ce",
+      "bytes": 97035,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official publication discovery with English language query; validate returned language and edition.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

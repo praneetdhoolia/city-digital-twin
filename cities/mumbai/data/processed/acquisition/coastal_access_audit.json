@@ -1,0 +1,1047 @@
+{
+  "source": "derived",
+  "source_sha256": {
+    "networks/osm/network_source.osm.gz": "a7865ea1b59589c9202dd59711f57658ea02bfa6ca75bab373e4687ed3d91cf5",
+    "geometry/coastal_road_review.json": "347fe71577efffa500912f9e64502d902f4af5abbe8f2fa3b3cb9de8bd435eaa",
+    "extract/transcriptions/coastal_road_order_187_20260825.json": "87bdb87b88e79ad39000b438156617c2763292c6255e113eef3b0a874bd25849"
+  },
+  "notification_source_sha256": "0f9a3682344331d51ed2430f4087fe231a2663b3b63d082f470ee9c3fb6c8dbe",
+  "notification_number": "187/Addl.cp./TRF/Permanent Notif./2026",
+  "notification_scope": "Mumbai Coastal Road and Bandra-Worli Sea Link, Marine Drive to Bandra Toll Plaza; both directions, bridges, underpasses and tunnels.",
+  "classification_counts": {
+    "approach_name_candidate": 7,
+    "corridor_name_candidate": 57,
+    "search_only_name_match": 44
+  },
+  "name_counts": {
+    "Bandra Worli Sea Link Flyover": 7,
+    "Chatrapati Sambhaji Road": 3,
+    "Chhatrapati Sambhaji Chowk": 1,
+    "Chhatrapati Sambhaji Path": 4,
+    "Coastal Road": 1,
+    "Coastal Road Phase 3": 2,
+    "Coastal Road Promenade": 1,
+    "Dharmaveer Sambhaji Raji Marg": 3,
+    "Mumbai Coastal Road": 25,
+    "Mumbai Coastal Road - Phase I": 17,
+    "Mumbai Coastal Road - Phase II": 12,
+    "Navi Mumbai Coastal Road": 7,
+    "Rajiv Gandhi Sea Link": 15,
+    "Sambhaji Nagar Road": 3,
+    "Sambhaji St": 1,
+    "Versova - Bandra Sea Link": 3,
+    "chhatrapati sambhaji path dombivili east near s. v. joshi high school": 1,
+    "coastal highway": 1,
+    "sambhajinagar road": 1
+  },
+  "candidate_way_count": 108,
+  "candidate_node_count": 1303,
+  "topology_component_count": 27,
+  "adjacent_way_count": 27,
+  "adjacent_ways": [
+    {
+      "osm_way_id": 22852497,
+      "shared_corridor_node_ids": [
+        2299255940
+      ],
+      "node_refs": [
+        2051567054,
+        2299255965,
+        2299255963,
+        2299255962,
+        768600205,
+        14138079814,
+        768600221,
+        11158364547,
+        768600224,
+        2299255958,
+        2299255956,
+        768600227,
+        13415319553,
+        2299255951,
+        768600231,
+        2299255948,
+        7425930331,
+        2299255946,
+        768600233,
+        4233167640,
+        5907165680,
+        768600235,
+        10750034993,
+        10248633818,
+        2299255944,
+        768600236,
+        10248623371,
+        768600237,
+        12373108295,
+        13959294530,
+        13959294538,
+        457462419,
+        2299255942,
+        2299255941,
+        2299255940
+      ],
+      "osm_tags": {
+        "cycleway:both": "no",
+        "highway": "primary",
+        "lanes": "2",
+        "maxspeed:type": "IN:urban",
+        "name": "Khan Abdul Gaffar Khan Marg",
+        "name:en": "Worli Sea Face",
+        "name:etymology:wikidata": "Q312966",
+        "oneway": "yes",
+        "parking:right": "no",
+        "sidewalk": "left",
+        "source": "GPS",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 48803910,
+      "shared_corridor_node_ids": [
+        583309182
+      ],
+      "node_refs": [
+        583309182,
+        346604261,
+        346604262,
+        2250795653,
+        346604263,
+        2250795655,
+        346604265,
+        2250795656,
+        2250795657,
+        346604266,
+        2250795658,
+        346604267
+      ],
+      "osm_tags": {
+        "highway": "motorway_link",
+        "lit": "yes",
+        "oneway": "yes"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 97370614,
+      "shared_corridor_node_ids": [
+        1127774801
+      ],
+      "node_refs": [
+        1127774638,
+        7349775232,
+        11072526032,
+        14016704427,
+        2184331813,
+        14016704435,
+        1127774807,
+        7346067780,
+        7346067781,
+        2184331816,
+        1127774812,
+        1127774813,
+        2246157797,
+        7104166103,
+        1127774801
+      ],
+      "osm_tags": {
+        "highway": "tertiary",
+        "oneway": "yes",
+        "source": "GPS"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 220843434,
+      "shared_corridor_node_ids": [
+        2299255940
+      ],
+      "node_refs": [
+        2299255940,
+        13959207825,
+        13959207834,
+        2299255933
+      ],
+      "osm_tags": {
+        "highway": "primary_link",
+        "maxspeed:type": "IN:urban",
+        "name": "Dr. R. G. Thadani Marg",
+        "oneway": "yes",
+        "source": "GPS",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 406854421,
+      "shared_corridor_node_ids": [
+        583309182
+      ],
+      "node_refs": [
+        583309182,
+        4089098765
+      ],
+      "osm_tags": {
+        "bicycle": "no",
+        "highway": "motorway",
+        "lit": "yes",
+        "name": "Western Express Highway",
+        "oneway": "yes"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 406854422,
+      "shared_corridor_node_ids": [
+        472814054
+      ],
+      "node_refs": [
+        4089098764,
+        346604059,
+        472814070,
+        11954345392,
+        472814054
+      ],
+      "osm_tags": {
+        "bicycle": "no",
+        "highway": "motorway",
+        "lit": "yes",
+        "name": "Western Express Highway",
+        "oneway": "yes"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 662360115,
+      "shared_corridor_node_ids": [
+        768599611,
+        2299255950,
+        12558408946
+      ],
+      "node_refs": [
+        2299255935,
+        2299255937,
+        768599611,
+        768599612,
+        768599614,
+        2299255943,
+        12373108294,
+        245659928,
+        457462427,
+        457462428,
+        10750034994,
+        13415319554,
+        245660127,
+        12558408946,
+        2299255945,
+        245660303,
+        2299255947,
+        2299255949,
+        457458982,
+        2299255950
+      ],
+      "osm_tags": {
+        "cycleway:both": "no",
+        "highway": "primary",
+        "lanes": "2",
+        "maxspeed:type": "IN:rural",
+        "name": "Khan Abdul Gaffar Khan Marg",
+        "name:en": "Worli Sea Face",
+        "name:etymology:wikidata": "Q312966",
+        "oneway": "yes",
+        "parking:right": "no",
+        "sidewalk": "left",
+        "source": "GPS",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1136622918,
+      "shared_corridor_node_ids": [
+        13338040638
+      ],
+      "node_refs": [
+        14173086877,
+        13236079124,
+        13338040638,
+        11727052525,
+        13073684413,
+        11727052526,
+        245654646,
+        245654667,
+        12121814713,
+        245654765,
+        489648861,
+        13997581450,
+        12555901905,
+        245654992,
+        489648866,
+        11762288189,
+        245655177,
+        13997581445,
+        245655227,
+        10720495864,
+        245655253,
+        245655311,
+        245655331,
+        11050748225,
+        10720459375,
+        12367371433,
+        245655408,
+        245655430,
+        245655488,
+        10720459377,
+        245655521,
+        2442510059,
+        7384417484
+      ],
+      "osm_tags": {
+        "alt_name": "Netaji Subhash Chandra Bose Rd",
+        "highway": "primary",
+        "lanes": "3",
+        "maxspeed": "65",
+        "maxspeed:type": "sign",
+        "name": "Marine Drive",
+        "name:hi": "मरीन ड्राइव",
+        "old_name": "Marine Drive",
+        "oneway": "yes",
+        "sidewalk:left": "separate",
+        "sidewalk:right": "no",
+        "surface": "asphalt",
+        "wikidata": "Q985828",
+        "wikipedia": "en:Marine Drive, Mumbai"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1138675561,
+      "shared_corridor_node_ids": [
+        1127774801
+      ],
+      "node_refs": [
+        10277863431,
+        2442510060,
+        8625417533,
+        486415768,
+        11054528614,
+        486415777,
+        2442510057,
+        486415794,
+        11050725771,
+        3306535086,
+        486415800,
+        10720459376,
+        486415809,
+        486415814,
+        3170331369,
+        486385346,
+        10720495863,
+        486385354,
+        13997581446,
+        11762288195,
+        13697631920,
+        1236410212,
+        11024144386,
+        11024144398,
+        11024144388,
+        12389780670,
+        13997581449,
+        486385366,
+        4307040404,
+        11762288205,
+        486385374,
+        486327580,
+        486327551,
+        1127774801,
+        486390417,
+        14173086876
+      ],
+      "osm_tags": {
+        "alt_name": "Netaji Subhash Chandra Road",
+        "highway": "primary",
+        "lanes": "3",
+        "lit": "yes",
+        "maxheight": "below_default",
+        "maxheight:signed": "no",
+        "maxspeed": "65",
+        "maxspeed:type": "sign",
+        "name": "Marine Drive",
+        "name:hi": "मरीन ड्राइव",
+        "old_name": "Marine Drive",
+        "oneway": "yes",
+        "sidewalk": "left",
+        "smoothness": "good",
+        "surface": "asphalt",
+        "wikidata": "Q985828",
+        "wikipedia": "en:Marine Drive, Mumbai"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1266293263,
+      "shared_corridor_node_ids": [
+        12558408931
+      ],
+      "node_refs": [
+        2299255935,
+        11762252834,
+        11762252836,
+        11762252837,
+        11762252840,
+        11762252841,
+        11762252844,
+        12558408928,
+        13040569942,
+        12558408929,
+        12558408930,
+        11762252842,
+        11762252843,
+        13118754349,
+        12558408931
+      ],
+      "osm_tags": {
+        "check_date": "2025-10-23",
+        "check_date:lit": "2025-10-23",
+        "check_date:surface": "2025-08-15",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "lit": "yes",
+        "maxspeed": "40",
+        "motorcycle": "no",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1266293272,
+      "shared_corridor_node_ids": [
+        11762288198
+      ],
+      "node_refs": [
+        11762288198,
+        11770646205,
+        11762288201,
+        486327564
+      ],
+      "osm_tags": {
+        "destination": "Marine Line Station;Kalbadevi",
+        "highway": "motorway_link",
+        "motorcycle": "no",
+        "oneway": "yes"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1356608689,
+      "shared_corridor_node_ids": [
+        12555901906
+      ],
+      "node_refs": [
+        245654765,
+        12555901906
+      ],
+      "osm_tags": {
+        "highway": "motorway_link",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1411373960,
+      "shared_corridor_node_ids": [
+        5907165679
+      ],
+      "node_refs": [
+        12968716941,
+        12968716942,
+        13118698145,
+        13118698146,
+        5907165679
+      ],
+      "osm_tags": {
+        "highway": "motorway_link",
+        "lanes": "2",
+        "layer": "-1",
+        "lit": "yes",
+        "maxheight": "5.5",
+        "maxspeed": "40",
+        "oneway": "yes",
+        "surface": "asphalt",
+        "tunnel": "yes"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1413609064,
+      "shared_corridor_node_ids": [
+        2299255940
+      ],
+      "node_refs": [
+        2299255940,
+        2299255939,
+        2299255938,
+        2299255936,
+        2299255934
+      ],
+      "osm_tags": {
+        "highway": "primary",
+        "name": "Khan Abdul Gaffar Khan Marg",
+        "name:en": "Worli Sea Face",
+        "name:etymology:wikidata": "Q312966",
+        "oneway": "yes",
+        "source": "GPS",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1424381924,
+      "shared_corridor_node_ids": [
+        13092400937
+      ],
+      "node_refs": [
+        13092400937,
+        13092400948,
+        13092400947,
+        13092400946,
+        13092400945,
+        13092400944,
+        13092400943,
+        13092400942,
+        13092400941,
+        13092400926,
+        13092400932,
+        13092400925,
+        13092400924,
+        13092400923,
+        13092400922,
+        13092400921,
+        13092340671
+      ],
+      "osm_tags": {
+        "highway": "motorway_link",
+        "lanes": "2",
+        "lit": "yes",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1424389012,
+      "shared_corridor_node_ids": [
+        13092400808
+      ],
+      "node_refs": [
+        13092400808,
+        13092400812,
+        13092400811,
+        13092400810,
+        13092400809,
+        13092400907,
+        13092400807,
+        13092340891
+      ],
+      "osm_tags": {
+        "bridge": "yes",
+        "destination": "Acharya Atr Jn.;Gopalrao Deshmukh Road",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "layer": "1",
+        "lit": "yes",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1424389016,
+      "shared_corridor_node_ids": [
+        13092400877
+      ],
+      "node_refs": [
+        13092340317,
+        13092400891,
+        13092400892,
+        13092400893,
+        13092400894,
+        13092400895,
+        13092400906,
+        13092400896,
+        13092400897,
+        13092400898,
+        13092400899,
+        13092400900,
+        13092400901,
+        13092400877
+      ],
+      "osm_tags": {
+        "bridge": "yes",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "layer": "1",
+        "lit": "yes",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1424389022,
+      "shared_corridor_node_ids": [
+        13092400979
+      ],
+      "node_refs": [
+        13092340772,
+        13092400963,
+        13092400964,
+        13092400965,
+        13092400966,
+        13092400967,
+        13092400968,
+        13092401002,
+        13092400969,
+        13092400970,
+        13092400971,
+        13092400972,
+        13092400973,
+        13092400974,
+        13092400975,
+        13092400976,
+        13092400977,
+        13092400978,
+        13092400979
+      ],
+      "osm_tags": {
+        "highway": "motorway_link",
+        "lanes": "2",
+        "lit": "yes",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1424494682,
+      "shared_corridor_node_ids": [
+        13093331172,
+        13093331191
+      ],
+      "node_refs": [
+        13093331172,
+        13093331174,
+        13093331175,
+        13093331176,
+        13093331177,
+        13093331178,
+        13093331179,
+        13093331180,
+        13093331181,
+        13093331182,
+        13093331187,
+        13093331183,
+        13093331184,
+        13093331185,
+        13093331186,
+        13093331188,
+        13093331189,
+        13093331190,
+        13093331191
+      ],
+      "osm_tags": {
+        "highway": "motorway_link",
+        "lanes": "1",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1424494685,
+      "shared_corridor_node_ids": [
+        13093331230
+      ],
+      "node_refs": [
+        13093330994,
+        13093331218,
+        13093331219,
+        13093331220,
+        13093331221,
+        13093331222,
+        13093331223,
+        13093331224,
+        13093331225,
+        13093331226,
+        13093331227,
+        13093331228,
+        13093331229,
+        13093331230
+      ],
+      "osm_tags": {
+        "highway": "motorway_link",
+        "lanes": "2",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1424494686,
+      "shared_corridor_node_ids": [
+        13093331249
+      ],
+      "node_refs": [
+        13093331249,
+        13093331248,
+        13093331247,
+        13093331246,
+        13093331245,
+        13093331244,
+        13093331243,
+        13093331242,
+        13093331241,
+        13093331240,
+        13093331239,
+        13093331231,
+        13093331232,
+        13093331233,
+        13093331234,
+        13093331235,
+        13093331236,
+        13093331237,
+        13093331238,
+        13093331290,
+        13093331291,
+        13093331292
+      ],
+      "osm_tags": {
+        "destination": "Bhulabhai Desai Road",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "oneway": "yes",
+        "sidewalk": "no",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1424494687,
+      "shared_corridor_node_ids": [
+        13093331210,
+        13093331263
+      ],
+      "node_refs": [
+        13093331210,
+        13093331250,
+        13093331251,
+        13093331252,
+        13093331253,
+        13093331254,
+        13093331255,
+        13093331256,
+        13093331257,
+        13093331258,
+        13093331259,
+        13093331260,
+        13093331261,
+        13093331262,
+        13093331263
+      ],
+      "osm_tags": {
+        "highway": "motorway_link",
+        "oneway": "yes"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1424494688,
+      "shared_corridor_node_ids": [
+        13093331267
+      ],
+      "node_refs": [
+        13093331267,
+        13093331266,
+        13093331265,
+        13093331264,
+        13093331098
+      ],
+      "osm_tags": {
+        "highway": "motorway_link",
+        "lanes": "2",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1424494689,
+      "shared_corridor_node_ids": [
+        13093331284
+      ],
+      "node_refs": [
+        13093331289,
+        13093331288,
+        13093331287,
+        13093331286,
+        13093331285,
+        13093331268,
+        13093331269,
+        13093331270,
+        13093331271,
+        13093331272,
+        13093331273,
+        13093331274,
+        13093331275,
+        13093331276,
+        13093331277,
+        13093331278,
+        13093331279,
+        13093331280,
+        13093331281,
+        13093331282,
+        13093331283,
+        13093331284
+      ],
+      "osm_tags": {
+        "highway": "motorway_link",
+        "lanes": "2",
+        "oneway": "yes",
+        "sidewalk": "no",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1535981499,
+      "shared_corridor_node_ids": [
+        13993415292
+      ],
+      "node_refs": [
+        13993415292,
+        13993415293,
+        13993415294,
+        13993415295,
+        13993415296,
+        13993415297,
+        13993415298,
+        13993415299,
+        13993415300,
+        13993429401,
+        13993429402,
+        13993429403,
+        13993429404,
+        13993429405,
+        13993429406,
+        13993429407,
+        13993429408,
+        13993429409,
+        13993429410,
+        13993429411,
+        13993429412,
+        13993429413,
+        13993429414,
+        13993429415,
+        13993429416,
+        13993429461,
+        13993429417,
+        13993429418,
+        13993429419,
+        13993429420,
+        13993429421,
+        13993429422,
+        13993429423,
+        13993429424,
+        13993429425,
+        13993429426
+      ],
+      "osm_tags": {
+        "bridge": "yes",
+        "highway": "construction",
+        "layer": "1",
+        "oneway": "yes"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1553960165,
+      "shared_corridor_node_ids": [
+        1650382577,
+        2299255950
+      ],
+      "node_refs": [
+        2299255950,
+        13118698144,
+        1650382577
+      ],
+      "osm_tags": {
+        "cycleway:both": "no",
+        "highway": "primary",
+        "lanes": "2",
+        "maxspeed:type": "IN:rural",
+        "name": "Khan Abdul Gaffar Khan Marg",
+        "name:en": "Worli Sea Face",
+        "name:etymology:wikidata": "Q312966",
+        "oneway": "yes",
+        "parking:right": "no",
+        "sidewalk": "left",
+        "source": "GPS",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    },
+    {
+      "osm_way_id": 1553960166,
+      "shared_corridor_node_ids": [
+        1650382577
+      ],
+      "node_refs": [
+        1650382577,
+        2299255957,
+        2299255959,
+        457458986,
+        13118698140,
+        245660503,
+        245660547,
+        2299255960,
+        2299255964,
+        2299255966,
+        1651517747,
+        2299255976
+      ],
+      "osm_tags": {
+        "cycleway:both": "no",
+        "highway": "primary",
+        "lanes": "2",
+        "maxspeed:type": "IN:rural",
+        "name": "Khan Abdul Gaffar Khan Marg",
+        "name:en": "Worli Sea Face",
+        "name:etymology:wikidata": "Q312966",
+        "oneway": "yes",
+        "parking:right": "no",
+        "sidewalk": "left",
+        "source": "GPS",
+        "surface": "asphalt"
+      },
+      "selection_status": "adjacent_topology_only"
+    }
+  ],
+  "tagged_corridor_nodes": [
+    {
+      "osm_node_id": 457459986,
+      "osm_tags": {
+        "barrier": "toll_booth",
+        "charge": "Rs 75"
+      },
+      "coordinates_lon_lat": [
+        72.8244914,
+        19.0431329
+      ]
+    },
+    {
+      "osm_node_id": 1650382575,
+      "osm_tags": {
+        "name": "Worli Seaface"
+      },
+      "coordinates_lon_lat": [
+        72.8166412,
+        19.0126931
+      ]
+    },
+    {
+      "osm_node_id": 4844510599,
+      "osm_tags": {
+        "barrier": "toll_booth"
+      },
+      "coordinates_lon_lat": [
+        72.8247602,
+        19.043502
+      ]
+    },
+    {
+      "osm_node_id": 5907165648,
+      "osm_tags": {
+        "highway": "motorway_junction"
+      },
+      "coordinates_lon_lat": [
+        72.811703,
+        19.0040978
+      ]
+    },
+    {
+      "osm_node_id": 5907165669,
+      "osm_tags": {
+        "junction": "yes"
+      },
+      "coordinates_lon_lat": [
+        72.8150994,
+        19.0101822
+      ]
+    },
+    {
+      "osm_node_id": 12558408942,
+      "osm_tags": {
+        "junction": "yes"
+      },
+      "coordinates_lon_lat": [
+        72.811672,
+        19.0082367
+      ]
+    },
+    {
+      "osm_node_id": 13092400808,
+      "osm_tags": {
+        "highway": "motorway_junction",
+        "name": "Barrister Rajni Patel Junction / Vatsalabai Desai Junction"
+      },
+      "coordinates_lon_lat": [
+        72.8108347,
+        18.9866244
+      ]
+    },
+    {
+      "osm_node_id": 13092400937,
+      "osm_tags": {
+        "highway": "motorway_junction",
+        "name": "Barrister Rajni Patel Junction / Vatsalabai Desai Junction"
+      },
+      "coordinates_lon_lat": [
+        72.805801,
+        18.9785091
+      ]
+    },
+    {
+      "osm_node_id": 13093331249,
+      "osm_tags": {
+        "highway": "motorway_junction",
+        "name": "Bhulabhai Desai Junction"
+      },
+      "coordinates_lon_lat": [
+        72.8015054,
+        18.9697153
+      ]
+    },
+    {
+      "osm_node_id": 13093331267,
+      "osm_tags": {
+        "highway": "motorway_junction",
+        "name": "Bhulabhai Desai Junction"
+      },
+      "coordinates_lon_lat": [
+        72.8004746,
+        18.9667775
+      ]
+    }
+  ],
+  "limitations": [
+    "Candidate names come from the acquired OSM source. A matching name does not prove the entire way is within the notification boundary.",
+    "All other matching names remain search-only results; no name match is a ban or permission.",
+    "Adjacent ways share native node references with corridor-name candidates. They are not necessarily legal turns, open links or parts of the notified corridor.",
+    "The Marine Drive and Bandra Toll Plaza limits, unnamed ramps, direction, current opening status and subsequent orders still require resolution."
+  ],
+  "model_permissions_assigned": false,
+  "crs": "OGC:CRS84; GeoJSON longitude, latitude in degrees"
+}

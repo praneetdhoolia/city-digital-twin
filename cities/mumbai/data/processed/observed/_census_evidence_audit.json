@@ -1,0 +1,1423 @@
+{
+  "pca_district_audits": [
+    {
+      "source_id": "census_mumbai_pca",
+      "district_name": "Mumbai",
+      "source_levels": {
+        "DISTRICT": 3,
+        "SUB-DISTRICT": 3,
+        "TOWN": 1,
+        "WARD": 39
+      },
+      "leaf_rows": 39,
+      "joint_partition_checks": 2400,
+      "reconciliation": {
+        "households_count": {
+          "leaf_total": 674339,
+          "published_district_total": 674339
+        },
+        "persons_count": {
+          "leaf_total": 3085411,
+          "published_district_total": 3085411
+        },
+        "male_persons_count": {
+          "leaf_total": 1684608,
+          "published_district_total": 1684608
+        },
+        "female_persons_count": {
+          "leaf_total": 1400803,
+          "published_district_total": 1400803
+        },
+        "persons_age_0_6_count": {
+          "leaf_total": 272886,
+          "published_district_total": 272886
+        },
+        "male_age_0_6_count": {
+          "leaf_total": 142566,
+          "published_district_total": 142566
+        },
+        "female_age_0_6_count": {
+          "leaf_total": 130320,
+          "published_district_total": 130320
+        },
+        "literate_persons_count": {
+          "leaf_total": 2509022,
+          "published_district_total": 2509022
+        },
+        "workers_count": {
+          "leaf_total": 1284396,
+          "published_district_total": 1284396
+        },
+        "main_workers_count": {
+          "leaf_total": 1209334,
+          "published_district_total": 1209334
+        },
+        "main_other_workers_count": {
+          "leaf_total": 1159502,
+          "published_district_total": 1159502
+        },
+        "marginal_workers_count": {
+          "leaf_total": 75062,
+          "published_district_total": 75062
+        },
+        "marginal_other_workers_count": {
+          "leaf_total": 67560,
+          "published_district_total": 67560
+        },
+        "non_workers_count": {
+          "leaf_total": 1801015,
+          "published_district_total": 1801015
+        },
+        "male_workers_count": {
+          "leaf_total": 1021009,
+          "published_district_total": 1021009
+        },
+        "female_workers_count": {
+          "leaf_total": 263387,
+          "published_district_total": 263387
+        },
+        "male_main_workers_count": {
+          "leaf_total": 975508,
+          "published_district_total": 975508
+        },
+        "female_main_workers_count": {
+          "leaf_total": 233826,
+          "published_district_total": 233826
+        },
+        "male_marginal_workers_count": {
+          "leaf_total": 45501,
+          "published_district_total": 45501
+        },
+        "female_marginal_workers_count": {
+          "leaf_total": 29561,
+          "published_district_total": 29561
+        },
+        "marginal_workers_3_to_6_months_count": {
+          "leaf_total": 63664,
+          "published_district_total": 63664
+        },
+        "male_marginal_workers_3_to_6_months_count": {
+          "leaf_total": 38123,
+          "published_district_total": 38123
+        },
+        "female_marginal_workers_3_to_6_months_count": {
+          "leaf_total": 25541,
+          "published_district_total": 25541
+        },
+        "marginal_workers_under_3_months_count": {
+          "leaf_total": 11398,
+          "published_district_total": 11398
+        },
+        "male_marginal_workers_under_3_months_count": {
+          "leaf_total": 7378,
+          "published_district_total": 7378
+        },
+        "female_marginal_workers_under_3_months_count": {
+          "leaf_total": 4020,
+          "published_district_total": 4020
+        },
+        "male_non_workers_count": {
+          "leaf_total": 663599,
+          "published_district_total": 663599
+        },
+        "female_non_workers_count": {
+          "leaf_total": 1137416,
+          "published_district_total": 1137416
+        },
+        "main_cultivators_count": {
+          "leaf_total": 3907,
+          "published_district_total": 3907
+        },
+        "male_main_cultivators_count": {
+          "leaf_total": 2700,
+          "published_district_total": 2700
+        },
+        "female_main_cultivators_count": {
+          "leaf_total": 1207,
+          "published_district_total": 1207
+        },
+        "main_agricultural_labourers_count": {
+          "leaf_total": 5086,
+          "published_district_total": 5086
+        },
+        "male_main_agricultural_labourers_count": {
+          "leaf_total": 4027,
+          "published_district_total": 4027
+        },
+        "female_main_agricultural_labourers_count": {
+          "leaf_total": 1059,
+          "published_district_total": 1059
+        },
+        "main_household_industry_workers_count": {
+          "leaf_total": 40839,
+          "published_district_total": 40839
+        },
+        "male_main_household_industry_workers_count": {
+          "leaf_total": 30385,
+          "published_district_total": 30385
+        },
+        "female_main_household_industry_workers_count": {
+          "leaf_total": 10454,
+          "published_district_total": 10454
+        },
+        "male_main_other_workers_count": {
+          "leaf_total": 938396,
+          "published_district_total": 938396
+        },
+        "female_main_other_workers_count": {
+          "leaf_total": 221106,
+          "published_district_total": 221106
+        },
+        "marginal_cultivators_count": {
+          "leaf_total": 2144,
+          "published_district_total": 2144
+        },
+        "male_marginal_cultivators_count": {
+          "leaf_total": 1095,
+          "published_district_total": 1095
+        },
+        "female_marginal_cultivators_count": {
+          "leaf_total": 1049,
+          "published_district_total": 1049
+        },
+        "marginal_agricultural_labourers_count": {
+          "leaf_total": 659,
+          "published_district_total": 659
+        },
+        "male_marginal_agricultural_labourers_count": {
+          "leaf_total": 399,
+          "published_district_total": 399
+        },
+        "female_marginal_agricultural_labourers_count": {
+          "leaf_total": 260,
+          "published_district_total": 260
+        },
+        "marginal_household_industry_workers_count": {
+          "leaf_total": 4699,
+          "published_district_total": 4699
+        },
+        "male_marginal_household_industry_workers_count": {
+          "leaf_total": 2151,
+          "published_district_total": 2151
+        },
+        "female_marginal_household_industry_workers_count": {
+          "leaf_total": 2548,
+          "published_district_total": 2548
+        },
+        "male_marginal_other_workers_count": {
+          "leaf_total": 41856,
+          "published_district_total": 41856
+        },
+        "female_marginal_other_workers_count": {
+          "leaf_total": 25704,
+          "published_district_total": 25704
+        },
+        "marginal_3_to_6_months_cultivators_count": {
+          "leaf_total": 2099,
+          "published_district_total": 2099
+        },
+        "male_marginal_3_to_6_months_cultivators_count": {
+          "leaf_total": 1071,
+          "published_district_total": 1071
+        },
+        "female_marginal_3_to_6_months_cultivators_count": {
+          "leaf_total": 1028,
+          "published_district_total": 1028
+        },
+        "marginal_3_to_6_months_agricultural_labourers_count": {
+          "leaf_total": 573,
+          "published_district_total": 573
+        },
+        "male_marginal_3_to_6_months_agricultural_labourers_count": {
+          "leaf_total": 343,
+          "published_district_total": 343
+        },
+        "female_marginal_3_to_6_months_agricultural_labourers_count": {
+          "leaf_total": 230,
+          "published_district_total": 230
+        },
+        "marginal_3_to_6_months_household_industry_workers_count": {
+          "leaf_total": 3495,
+          "published_district_total": 3495
+        },
+        "male_marginal_3_to_6_months_household_industry_workers_count": {
+          "leaf_total": 1587,
+          "published_district_total": 1587
+        },
+        "female_marginal_3_to_6_months_household_industry_workers_count": {
+          "leaf_total": 1908,
+          "published_district_total": 1908
+        },
+        "marginal_3_to_6_months_other_workers_count": {
+          "leaf_total": 57497,
+          "published_district_total": 57497
+        },
+        "male_marginal_3_to_6_months_other_workers_count": {
+          "leaf_total": 35122,
+          "published_district_total": 35122
+        },
+        "female_marginal_3_to_6_months_other_workers_count": {
+          "leaf_total": 22375,
+          "published_district_total": 22375
+        },
+        "marginal_under_3_months_cultivators_count": {
+          "leaf_total": 45,
+          "published_district_total": 45
+        },
+        "male_marginal_under_3_months_cultivators_count": {
+          "leaf_total": 24,
+          "published_district_total": 24
+        },
+        "female_marginal_under_3_months_cultivators_count": {
+          "leaf_total": 21,
+          "published_district_total": 21
+        },
+        "marginal_under_3_months_agricultural_labourers_count": {
+          "leaf_total": 86,
+          "published_district_total": 86
+        },
+        "male_marginal_under_3_months_agricultural_labourers_count": {
+          "leaf_total": 56,
+          "published_district_total": 56
+        },
+        "female_marginal_under_3_months_agricultural_labourers_count": {
+          "leaf_total": 30,
+          "published_district_total": 30
+        },
+        "marginal_under_3_months_household_industry_workers_count": {
+          "leaf_total": 1204,
+          "published_district_total": 1204
+        },
+        "male_marginal_under_3_months_household_industry_workers_count": {
+          "leaf_total": 564,
+          "published_district_total": 564
+        },
+        "female_marginal_under_3_months_household_industry_workers_count": {
+          "leaf_total": 640,
+          "published_district_total": 640
+        },
+        "marginal_under_3_months_other_workers_count": {
+          "leaf_total": 10063,
+          "published_district_total": 10063
+        },
+        "male_marginal_under_3_months_other_workers_count": {
+          "leaf_total": 6734,
+          "published_district_total": 6734
+        },
+        "female_marginal_under_3_months_other_workers_count": {
+          "leaf_total": 3329,
+          "published_district_total": 3329
+        },
+        "male_literate_persons_count": {
+          "leaf_total": 1410680,
+          "published_district_total": 1410680
+        },
+        "female_literate_persons_count": {
+          "leaf_total": 1098342,
+          "published_district_total": 1098342
+        },
+        "illiterate_persons_count": {
+          "leaf_total": 576389,
+          "published_district_total": 576389
+        },
+        "male_illiterate_persons_count": {
+          "leaf_total": 273928,
+          "published_district_total": 273928
+        },
+        "female_illiterate_persons_count": {
+          "leaf_total": 302461,
+          "published_district_total": 302461
+        }
+      }
+    },
+    {
+      "source_id": "census_suburban_pca",
+      "district_name": "Mumbai Suburban",
+      "source_levels": {
+        "DISTRICT": 3,
+        "SUB-DISTRICT": 3,
+        "TOWN": 1,
+        "WARD": 58
+      },
+      "leaf_rows": 58,
+      "joint_partition_checks": 3540,
+      "reconciliation": {
+        "households_count": {
+          "leaf_total": 2105604,
+          "published_district_total": 2105604
+        },
+        "persons_count": {
+          "leaf_total": 9356962,
+          "published_district_total": 9356962
+        },
+        "male_persons_count": {
+          "leaf_total": 5031323,
+          "published_district_total": 5031323
+        },
+        "female_persons_count": {
+          "leaf_total": 4325639,
+          "published_district_total": 4325639
+        },
+        "persons_age_0_6_count": {
+          "leaf_total": 930884,
+          "published_district_total": 930884
+        },
+        "male_age_0_6_count": {
+          "leaf_total": 486696,
+          "published_district_total": 486696
+        },
+        "female_age_0_6_count": {
+          "leaf_total": 444188,
+          "published_district_total": 444188
+        },
+        "literate_persons_count": {
+          "leaf_total": 7575485,
+          "published_district_total": 7575485
+        },
+        "workers_count": {
+          "leaf_total": 3735021,
+          "published_district_total": 3735021
+        },
+        "main_workers_count": {
+          "leaf_total": 3515922,
+          "published_district_total": 3515922
+        },
+        "main_other_workers_count": {
+          "leaf_total": 3383109,
+          "published_district_total": 3383109
+        },
+        "marginal_workers_count": {
+          "leaf_total": 219099,
+          "published_district_total": 219099
+        },
+        "marginal_other_workers_count": {
+          "leaf_total": 196288,
+          "published_district_total": 196288
+        },
+        "non_workers_count": {
+          "leaf_total": 5621941,
+          "published_district_total": 5621941
+        },
+        "male_workers_count": {
+          "leaf_total": 2944322,
+          "published_district_total": 2944322
+        },
+        "female_workers_count": {
+          "leaf_total": 790699,
+          "published_district_total": 790699
+        },
+        "male_main_workers_count": {
+          "leaf_total": 2811481,
+          "published_district_total": 2811481
+        },
+        "female_main_workers_count": {
+          "leaf_total": 704441,
+          "published_district_total": 704441
+        },
+        "male_marginal_workers_count": {
+          "leaf_total": 132841,
+          "published_district_total": 132841
+        },
+        "female_marginal_workers_count": {
+          "leaf_total": 86258,
+          "published_district_total": 86258
+        },
+        "marginal_workers_3_to_6_months_count": {
+          "leaf_total": 183283,
+          "published_district_total": 183283
+        },
+        "male_marginal_workers_3_to_6_months_count": {
+          "leaf_total": 109677,
+          "published_district_total": 109677
+        },
+        "female_marginal_workers_3_to_6_months_count": {
+          "leaf_total": 73606,
+          "published_district_total": 73606
+        },
+        "marginal_workers_under_3_months_count": {
+          "leaf_total": 35816,
+          "published_district_total": 35816
+        },
+        "male_marginal_workers_under_3_months_count": {
+          "leaf_total": 23164,
+          "published_district_total": 23164
+        },
+        "female_marginal_workers_under_3_months_count": {
+          "leaf_total": 12652,
+          "published_district_total": 12652
+        },
+        "male_non_workers_count": {
+          "leaf_total": 2087001,
+          "published_district_total": 2087001
+        },
+        "female_non_workers_count": {
+          "leaf_total": 3534940,
+          "published_district_total": 3534940
+        },
+        "main_cultivators_count": {
+          "leaf_total": 10396,
+          "published_district_total": 10396
+        },
+        "male_main_cultivators_count": {
+          "leaf_total": 6730,
+          "published_district_total": 6730
+        },
+        "female_main_cultivators_count": {
+          "leaf_total": 3666,
+          "published_district_total": 3666
+        },
+        "main_agricultural_labourers_count": {
+          "leaf_total": 17621,
+          "published_district_total": 17621
+        },
+        "male_main_agricultural_labourers_count": {
+          "leaf_total": 13511,
+          "published_district_total": 13511
+        },
+        "female_main_agricultural_labourers_count": {
+          "leaf_total": 4110,
+          "published_district_total": 4110
+        },
+        "main_household_industry_workers_count": {
+          "leaf_total": 104796,
+          "published_district_total": 104796
+        },
+        "male_main_household_industry_workers_count": {
+          "leaf_total": 72748,
+          "published_district_total": 72748
+        },
+        "female_main_household_industry_workers_count": {
+          "leaf_total": 32048,
+          "published_district_total": 32048
+        },
+        "male_main_other_workers_count": {
+          "leaf_total": 2718492,
+          "published_district_total": 2718492
+        },
+        "female_main_other_workers_count": {
+          "leaf_total": 664617,
+          "published_district_total": 664617
+        },
+        "marginal_cultivators_count": {
+          "leaf_total": 5690,
+          "published_district_total": 5690
+        },
+        "male_marginal_cultivators_count": {
+          "leaf_total": 2924,
+          "published_district_total": 2924
+        },
+        "female_marginal_cultivators_count": {
+          "leaf_total": 2766,
+          "published_district_total": 2766
+        },
+        "marginal_agricultural_labourers_count": {
+          "leaf_total": 3101,
+          "published_district_total": 3101
+        },
+        "male_marginal_agricultural_labourers_count": {
+          "leaf_total": 1878,
+          "published_district_total": 1878
+        },
+        "female_marginal_agricultural_labourers_count": {
+          "leaf_total": 1223,
+          "published_district_total": 1223
+        },
+        "marginal_household_industry_workers_count": {
+          "leaf_total": 14020,
+          "published_district_total": 14020
+        },
+        "male_marginal_household_industry_workers_count": {
+          "leaf_total": 5552,
+          "published_district_total": 5552
+        },
+        "female_marginal_household_industry_workers_count": {
+          "leaf_total": 8468,
+          "published_district_total": 8468
+        },
+        "male_marginal_other_workers_count": {
+          "leaf_total": 122487,
+          "published_district_total": 122487
+        },
+        "female_marginal_other_workers_count": {
+          "leaf_total": 73801,
+          "published_district_total": 73801
+        },
+        "marginal_3_to_6_months_cultivators_count": {
+          "leaf_total": 5484,
+          "published_district_total": 5484
+        },
+        "male_marginal_3_to_6_months_cultivators_count": {
+          "leaf_total": 2800,
+          "published_district_total": 2800
+        },
+        "female_marginal_3_to_6_months_cultivators_count": {
+          "leaf_total": 2684,
+          "published_district_total": 2684
+        },
+        "marginal_3_to_6_months_agricultural_labourers_count": {
+          "leaf_total": 2775,
+          "published_district_total": 2775
+        },
+        "male_marginal_3_to_6_months_agricultural_labourers_count": {
+          "leaf_total": 1656,
+          "published_district_total": 1656
+        },
+        "female_marginal_3_to_6_months_agricultural_labourers_count": {
+          "leaf_total": 1119,
+          "published_district_total": 1119
+        },
+        "marginal_3_to_6_months_household_industry_workers_count": {
+          "leaf_total": 10159,
+          "published_district_total": 10159
+        },
+        "male_marginal_3_to_6_months_household_industry_workers_count": {
+          "leaf_total": 4077,
+          "published_district_total": 4077
+        },
+        "female_marginal_3_to_6_months_household_industry_workers_count": {
+          "leaf_total": 6082,
+          "published_district_total": 6082
+        },
+        "marginal_3_to_6_months_other_workers_count": {
+          "leaf_total": 164865,
+          "published_district_total": 164865
+        },
+        "male_marginal_3_to_6_months_other_workers_count": {
+          "leaf_total": 101144,
+          "published_district_total": 101144
+        },
+        "female_marginal_3_to_6_months_other_workers_count": {
+          "leaf_total": 63721,
+          "published_district_total": 63721
+        },
+        "marginal_under_3_months_cultivators_count": {
+          "leaf_total": 206,
+          "published_district_total": 206
+        },
+        "male_marginal_under_3_months_cultivators_count": {
+          "leaf_total": 124,
+          "published_district_total": 124
+        },
+        "female_marginal_under_3_months_cultivators_count": {
+          "leaf_total": 82,
+          "published_district_total": 82
+        },
+        "marginal_under_3_months_agricultural_labourers_count": {
+          "leaf_total": 326,
+          "published_district_total": 326
+        },
+        "male_marginal_under_3_months_agricultural_labourers_count": {
+          "leaf_total": 222,
+          "published_district_total": 222
+        },
+        "female_marginal_under_3_months_agricultural_labourers_count": {
+          "leaf_total": 104,
+          "published_district_total": 104
+        },
+        "marginal_under_3_months_household_industry_workers_count": {
+          "leaf_total": 3861,
+          "published_district_total": 3861
+        },
+        "male_marginal_under_3_months_household_industry_workers_count": {
+          "leaf_total": 1475,
+          "published_district_total": 1475
+        },
+        "female_marginal_under_3_months_household_industry_workers_count": {
+          "leaf_total": 2386,
+          "published_district_total": 2386
+        },
+        "marginal_under_3_months_other_workers_count": {
+          "leaf_total": 31423,
+          "published_district_total": 31423
+        },
+        "male_marginal_under_3_months_other_workers_count": {
+          "leaf_total": 21343,
+          "published_district_total": 21343
+        },
+        "female_marginal_under_3_months_other_workers_count": {
+          "leaf_total": 10080,
+          "published_district_total": 10080
+        },
+        "male_literate_persons_count": {
+          "leaf_total": 4223029,
+          "published_district_total": 4223029
+        },
+        "female_literate_persons_count": {
+          "leaf_total": 3352456,
+          "published_district_total": 3352456
+        },
+        "illiterate_persons_count": {
+          "leaf_total": 1781477,
+          "published_district_total": 1781477
+        },
+        "male_illiterate_persons_count": {
+          "leaf_total": 808294,
+          "published_district_total": 808294
+        },
+        "female_illiterate_persons_count": {
+          "leaf_total": 973183,
+          "published_district_total": 973183
+        }
+      }
+    },
+    {
+      "source_id": "census_thane_pca",
+      "district_name": "Thane",
+      "source_levels": {
+        "DISTRICT": 3,
+        "SUB-DISTRICT": 45,
+        "TOWN": 51,
+        "VILLAGE": 1721,
+        "WARD": 837
+      },
+      "leaf_rows": 2558,
+      "joint_partition_checks": 153540,
+      "reconciliation": {
+        "households_count": {
+          "leaf_total": 2529165,
+          "published_district_total": 2529165
+        },
+        "persons_count": {
+          "leaf_total": 11060148,
+          "published_district_total": 11060148
+        },
+        "male_persons_count": {
+          "leaf_total": 5865078,
+          "published_district_total": 5865078
+        },
+        "female_persons_count": {
+          "leaf_total": 5195070,
+          "published_district_total": 5195070
+        },
+        "persons_age_0_6_count": {
+          "leaf_total": 1327146,
+          "published_district_total": 1327146
+        },
+        "male_age_0_6_count": {
+          "leaf_total": 689665,
+          "published_district_total": 689665
+        },
+        "female_age_0_6_count": {
+          "leaf_total": 637481,
+          "published_district_total": 637481
+        },
+        "literate_persons_count": {
+          "leaf_total": 8227161,
+          "published_district_total": 8227161
+        },
+        "workers_count": {
+          "leaf_total": 4492767,
+          "published_district_total": 4492767
+        },
+        "main_workers_count": {
+          "leaf_total": 3930511,
+          "published_district_total": 3930511
+        },
+        "main_other_workers_count": {
+          "leaf_total": 3286121,
+          "published_district_total": 3286121
+        },
+        "marginal_workers_count": {
+          "leaf_total": 562256,
+          "published_district_total": 562256
+        },
+        "marginal_other_workers_count": {
+          "leaf_total": 314250,
+          "published_district_total": 314250
+        },
+        "non_workers_count": {
+          "leaf_total": 6567381,
+          "published_district_total": 6567381
+        },
+        "male_workers_count": {
+          "leaf_total": 3363123,
+          "published_district_total": 3363123
+        },
+        "female_workers_count": {
+          "leaf_total": 1129644,
+          "published_district_total": 1129644
+        },
+        "male_main_workers_count": {
+          "leaf_total": 3059503,
+          "published_district_total": 3059503
+        },
+        "female_main_workers_count": {
+          "leaf_total": 871008,
+          "published_district_total": 871008
+        },
+        "male_marginal_workers_count": {
+          "leaf_total": 303620,
+          "published_district_total": 303620
+        },
+        "female_marginal_workers_count": {
+          "leaf_total": 258636,
+          "published_district_total": 258636
+        },
+        "marginal_workers_3_to_6_months_count": {
+          "leaf_total": 482414,
+          "published_district_total": 482414
+        },
+        "male_marginal_workers_3_to_6_months_count": {
+          "leaf_total": 263062,
+          "published_district_total": 263062
+        },
+        "female_marginal_workers_3_to_6_months_count": {
+          "leaf_total": 219352,
+          "published_district_total": 219352
+        },
+        "marginal_workers_under_3_months_count": {
+          "leaf_total": 79842,
+          "published_district_total": 79842
+        },
+        "male_marginal_workers_under_3_months_count": {
+          "leaf_total": 40558,
+          "published_district_total": 40558
+        },
+        "female_marginal_workers_under_3_months_count": {
+          "leaf_total": 39284,
+          "published_district_total": 39284
+        },
+        "male_non_workers_count": {
+          "leaf_total": 2501955,
+          "published_district_total": 2501955
+        },
+        "female_non_workers_count": {
+          "leaf_total": 4065426,
+          "published_district_total": 4065426
+        },
+        "main_cultivators_count": {
+          "leaf_total": 272871,
+          "published_district_total": 272871
+        },
+        "male_main_cultivators_count": {
+          "leaf_total": 169437,
+          "published_district_total": 169437
+        },
+        "female_main_cultivators_count": {
+          "leaf_total": 103434,
+          "published_district_total": 103434
+        },
+        "main_agricultural_labourers_count": {
+          "leaf_total": 273218,
+          "published_district_total": 273218
+        },
+        "male_main_agricultural_labourers_count": {
+          "leaf_total": 153460,
+          "published_district_total": 153460
+        },
+        "female_main_agricultural_labourers_count": {
+          "leaf_total": 119758,
+          "published_district_total": 119758
+        },
+        "main_household_industry_workers_count": {
+          "leaf_total": 98301,
+          "published_district_total": 98301
+        },
+        "male_main_household_industry_workers_count": {
+          "leaf_total": 61384,
+          "published_district_total": 61384
+        },
+        "female_main_household_industry_workers_count": {
+          "leaf_total": 36917,
+          "published_district_total": 36917
+        },
+        "male_main_other_workers_count": {
+          "leaf_total": 2675222,
+          "published_district_total": 2675222
+        },
+        "female_main_other_workers_count": {
+          "leaf_total": 610899,
+          "published_district_total": 610899
+        },
+        "marginal_cultivators_count": {
+          "leaf_total": 77060,
+          "published_district_total": 77060
+        },
+        "male_marginal_cultivators_count": {
+          "leaf_total": 33773,
+          "published_district_total": 33773
+        },
+        "female_marginal_cultivators_count": {
+          "leaf_total": 43287,
+          "published_district_total": 43287
+        },
+        "marginal_agricultural_labourers_count": {
+          "leaf_total": 144786,
+          "published_district_total": 144786
+        },
+        "male_marginal_agricultural_labourers_count": {
+          "leaf_total": 63289,
+          "published_district_total": 63289
+        },
+        "female_marginal_agricultural_labourers_count": {
+          "leaf_total": 81497,
+          "published_district_total": 81497
+        },
+        "marginal_household_industry_workers_count": {
+          "leaf_total": 26160,
+          "published_district_total": 26160
+        },
+        "male_marginal_household_industry_workers_count": {
+          "leaf_total": 8817,
+          "published_district_total": 8817
+        },
+        "female_marginal_household_industry_workers_count": {
+          "leaf_total": 17343,
+          "published_district_total": 17343
+        },
+        "male_marginal_other_workers_count": {
+          "leaf_total": 197741,
+          "published_district_total": 197741
+        },
+        "female_marginal_other_workers_count": {
+          "leaf_total": 116509,
+          "published_district_total": 116509
+        },
+        "marginal_3_to_6_months_cultivators_count": {
+          "leaf_total": 65104,
+          "published_district_total": 65104
+        },
+        "male_marginal_3_to_6_months_cultivators_count": {
+          "leaf_total": 29066,
+          "published_district_total": 29066
+        },
+        "female_marginal_3_to_6_months_cultivators_count": {
+          "leaf_total": 36038,
+          "published_district_total": 36038
+        },
+        "marginal_3_to_6_months_agricultural_labourers_count": {
+          "leaf_total": 121421,
+          "published_district_total": 121421
+        },
+        "male_marginal_3_to_6_months_agricultural_labourers_count": {
+          "leaf_total": 53843,
+          "published_district_total": 53843
+        },
+        "female_marginal_3_to_6_months_agricultural_labourers_count": {
+          "leaf_total": 67578,
+          "published_district_total": 67578
+        },
+        "marginal_3_to_6_months_household_industry_workers_count": {
+          "leaf_total": 19936,
+          "published_district_total": 19936
+        },
+        "male_marginal_3_to_6_months_household_industry_workers_count": {
+          "leaf_total": 6860,
+          "published_district_total": 6860
+        },
+        "female_marginal_3_to_6_months_household_industry_workers_count": {
+          "leaf_total": 13076,
+          "published_district_total": 13076
+        },
+        "marginal_3_to_6_months_other_workers_count": {
+          "leaf_total": 275953,
+          "published_district_total": 275953
+        },
+        "male_marginal_3_to_6_months_other_workers_count": {
+          "leaf_total": 173293,
+          "published_district_total": 173293
+        },
+        "female_marginal_3_to_6_months_other_workers_count": {
+          "leaf_total": 102660,
+          "published_district_total": 102660
+        },
+        "marginal_under_3_months_cultivators_count": {
+          "leaf_total": 11956,
+          "published_district_total": 11956
+        },
+        "male_marginal_under_3_months_cultivators_count": {
+          "leaf_total": 4707,
+          "published_district_total": 4707
+        },
+        "female_marginal_under_3_months_cultivators_count": {
+          "leaf_total": 7249,
+          "published_district_total": 7249
+        },
+        "marginal_under_3_months_agricultural_labourers_count": {
+          "leaf_total": 23365,
+          "published_district_total": 23365
+        },
+        "male_marginal_under_3_months_agricultural_labourers_count": {
+          "leaf_total": 9446,
+          "published_district_total": 9446
+        },
+        "female_marginal_under_3_months_agricultural_labourers_count": {
+          "leaf_total": 13919,
+          "published_district_total": 13919
+        },
+        "marginal_under_3_months_household_industry_workers_count": {
+          "leaf_total": 6224,
+          "published_district_total": 6224
+        },
+        "male_marginal_under_3_months_household_industry_workers_count": {
+          "leaf_total": 1957,
+          "published_district_total": 1957
+        },
+        "female_marginal_under_3_months_household_industry_workers_count": {
+          "leaf_total": 4267,
+          "published_district_total": 4267
+        },
+        "marginal_under_3_months_other_workers_count": {
+          "leaf_total": 38297,
+          "published_district_total": 38297
+        },
+        "male_marginal_under_3_months_other_workers_count": {
+          "leaf_total": 24448,
+          "published_district_total": 24448
+        },
+        "female_marginal_under_3_months_other_workers_count": {
+          "leaf_total": 13849,
+          "published_district_total": 13849
+        },
+        "male_literate_persons_count": {
+          "leaf_total": 4591396,
+          "published_district_total": 4591396
+        },
+        "female_literate_persons_count": {
+          "leaf_total": 3635765,
+          "published_district_total": 3635765
+        },
+        "illiterate_persons_count": {
+          "leaf_total": 2832987,
+          "published_district_total": 2832987
+        },
+        "male_illiterate_persons_count": {
+          "leaf_total": 1273682,
+          "published_district_total": 1273682
+        },
+        "female_illiterate_persons_count": {
+          "leaf_total": 1559305,
+          "published_district_total": 1559305
+        }
+      }
+    },
+    {
+      "source_id": "census_raigarh_pca",
+      "district_name": "Raigarh",
+      "source_levels": {
+        "DISTRICT": 3,
+        "SUB-DISTRICT": 45,
+        "TOWN": 42,
+        "VILLAGE": 1909,
+        "WARD": 249
+      },
+      "leaf_rows": 2158,
+      "joint_partition_checks": 129540,
+      "reconciliation": {
+        "households_count": {
+          "leaf_total": 611790,
+          "published_district_total": 611790
+        },
+        "persons_count": {
+          "leaf_total": 2634200,
+          "published_district_total": 2634200
+        },
+        "male_persons_count": {
+          "leaf_total": 1344345,
+          "published_district_total": 1344345
+        },
+        "female_persons_count": {
+          "leaf_total": 1289855,
+          "published_district_total": 1289855
+        },
+        "persons_age_0_6_count": {
+          "leaf_total": 300815,
+          "published_district_total": 300815
+        },
+        "male_age_0_6_count": {
+          "leaf_total": 155437,
+          "published_district_total": 155437
+        },
+        "female_age_0_6_count": {
+          "leaf_total": 145378,
+          "published_district_total": 145378
+        },
+        "literate_persons_count": {
+          "leaf_total": 1939994,
+          "published_district_total": 1939994
+        },
+        "workers_count": {
+          "leaf_total": 1072969,
+          "published_district_total": 1072969
+        },
+        "main_workers_count": {
+          "leaf_total": 858825,
+          "published_district_total": 858825
+        },
+        "main_other_workers_count": {
+          "leaf_total": 553389,
+          "published_district_total": 553389
+        },
+        "marginal_workers_count": {
+          "leaf_total": 214144,
+          "published_district_total": 214144
+        },
+        "marginal_other_workers_count": {
+          "leaf_total": 88504,
+          "published_district_total": 88504
+        },
+        "non_workers_count": {
+          "leaf_total": 1561231,
+          "published_district_total": 1561231
+        },
+        "male_workers_count": {
+          "leaf_total": 753843,
+          "published_district_total": 753843
+        },
+        "female_workers_count": {
+          "leaf_total": 319126,
+          "published_district_total": 319126
+        },
+        "male_main_workers_count": {
+          "leaf_total": 641655,
+          "published_district_total": 641655
+        },
+        "female_main_workers_count": {
+          "leaf_total": 217170,
+          "published_district_total": 217170
+        },
+        "male_marginal_workers_count": {
+          "leaf_total": 112188,
+          "published_district_total": 112188
+        },
+        "female_marginal_workers_count": {
+          "leaf_total": 101956,
+          "published_district_total": 101956
+        },
+        "marginal_workers_3_to_6_months_count": {
+          "leaf_total": 178226,
+          "published_district_total": 178226
+        },
+        "male_marginal_workers_3_to_6_months_count": {
+          "leaf_total": 94425,
+          "published_district_total": 94425
+        },
+        "female_marginal_workers_3_to_6_months_count": {
+          "leaf_total": 83801,
+          "published_district_total": 83801
+        },
+        "marginal_workers_under_3_months_count": {
+          "leaf_total": 35918,
+          "published_district_total": 35918
+        },
+        "male_marginal_workers_under_3_months_count": {
+          "leaf_total": 17763,
+          "published_district_total": 17763
+        },
+        "female_marginal_workers_under_3_months_count": {
+          "leaf_total": 18155,
+          "published_district_total": 18155
+        },
+        "male_non_workers_count": {
+          "leaf_total": 590502,
+          "published_district_total": 590502
+        },
+        "female_non_workers_count": {
+          "leaf_total": 970729,
+          "published_district_total": 970729
+        },
+        "main_cultivators_count": {
+          "leaf_total": 166000,
+          "published_district_total": 166000
+        },
+        "male_main_cultivators_count": {
+          "leaf_total": 104617,
+          "published_district_total": 104617
+        },
+        "female_main_cultivators_count": {
+          "leaf_total": 61383,
+          "published_district_total": 61383
+        },
+        "main_agricultural_labourers_count": {
+          "leaf_total": 115250,
+          "published_district_total": 115250
+        },
+        "male_main_agricultural_labourers_count": {
+          "leaf_total": 64838,
+          "published_district_total": 64838
+        },
+        "female_main_agricultural_labourers_count": {
+          "leaf_total": 50412,
+          "published_district_total": 50412
+        },
+        "main_household_industry_workers_count": {
+          "leaf_total": 24186,
+          "published_district_total": 24186
+        },
+        "male_main_household_industry_workers_count": {
+          "leaf_total": 15963,
+          "published_district_total": 15963
+        },
+        "female_main_household_industry_workers_count": {
+          "leaf_total": 8223,
+          "published_district_total": 8223
+        },
+        "male_main_other_workers_count": {
+          "leaf_total": 456237,
+          "published_district_total": 456237
+        },
+        "female_main_other_workers_count": {
+          "leaf_total": 97152,
+          "published_district_total": 97152
+        },
+        "marginal_cultivators_count": {
+          "leaf_total": 40975,
+          "published_district_total": 40975
+        },
+        "male_marginal_cultivators_count": {
+          "leaf_total": 19751,
+          "published_district_total": 19751
+        },
+        "female_marginal_cultivators_count": {
+          "leaf_total": 21224,
+          "published_district_total": 21224
+        },
+        "marginal_agricultural_labourers_count": {
+          "leaf_total": 75932,
+          "published_district_total": 75932
+        },
+        "male_marginal_agricultural_labourers_count": {
+          "leaf_total": 33338,
+          "published_district_total": 33338
+        },
+        "female_marginal_agricultural_labourers_count": {
+          "leaf_total": 42594,
+          "published_district_total": 42594
+        },
+        "marginal_household_industry_workers_count": {
+          "leaf_total": 8733,
+          "published_district_total": 8733
+        },
+        "male_marginal_household_industry_workers_count": {
+          "leaf_total": 3553,
+          "published_district_total": 3553
+        },
+        "female_marginal_household_industry_workers_count": {
+          "leaf_total": 5180,
+          "published_district_total": 5180
+        },
+        "male_marginal_other_workers_count": {
+          "leaf_total": 55546,
+          "published_district_total": 55546
+        },
+        "female_marginal_other_workers_count": {
+          "leaf_total": 32958,
+          "published_district_total": 32958
+        },
+        "marginal_3_to_6_months_cultivators_count": {
+          "leaf_total": 34452,
+          "published_district_total": 34452
+        },
+        "male_marginal_3_to_6_months_cultivators_count": {
+          "leaf_total": 16846,
+          "published_district_total": 16846
+        },
+        "female_marginal_3_to_6_months_cultivators_count": {
+          "leaf_total": 17606,
+          "published_district_total": 17606
+        },
+        "marginal_3_to_6_months_agricultural_labourers_count": {
+          "leaf_total": 62906,
+          "published_district_total": 62906
+        },
+        "male_marginal_3_to_6_months_agricultural_labourers_count": {
+          "leaf_total": 27976,
+          "published_district_total": 27976
+        },
+        "female_marginal_3_to_6_months_agricultural_labourers_count": {
+          "leaf_total": 34930,
+          "published_district_total": 34930
+        },
+        "marginal_3_to_6_months_household_industry_workers_count": {
+          "leaf_total": 6286,
+          "published_district_total": 6286
+        },
+        "male_marginal_3_to_6_months_household_industry_workers_count": {
+          "leaf_total": 2717,
+          "published_district_total": 2717
+        },
+        "female_marginal_3_to_6_months_household_industry_workers_count": {
+          "leaf_total": 3569,
+          "published_district_total": 3569
+        },
+        "marginal_3_to_6_months_other_workers_count": {
+          "leaf_total": 74582,
+          "published_district_total": 74582
+        },
+        "male_marginal_3_to_6_months_other_workers_count": {
+          "leaf_total": 46886,
+          "published_district_total": 46886
+        },
+        "female_marginal_3_to_6_months_other_workers_count": {
+          "leaf_total": 27696,
+          "published_district_total": 27696
+        },
+        "marginal_under_3_months_cultivators_count": {
+          "leaf_total": 6523,
+          "published_district_total": 6523
+        },
+        "male_marginal_under_3_months_cultivators_count": {
+          "leaf_total": 2905,
+          "published_district_total": 2905
+        },
+        "female_marginal_under_3_months_cultivators_count": {
+          "leaf_total": 3618,
+          "published_district_total": 3618
+        },
+        "marginal_under_3_months_agricultural_labourers_count": {
+          "leaf_total": 13026,
+          "published_district_total": 13026
+        },
+        "male_marginal_under_3_months_agricultural_labourers_count": {
+          "leaf_total": 5362,
+          "published_district_total": 5362
+        },
+        "female_marginal_under_3_months_agricultural_labourers_count": {
+          "leaf_total": 7664,
+          "published_district_total": 7664
+        },
+        "marginal_under_3_months_household_industry_workers_count": {
+          "leaf_total": 2447,
+          "published_district_total": 2447
+        },
+        "male_marginal_under_3_months_household_industry_workers_count": {
+          "leaf_total": 836,
+          "published_district_total": 836
+        },
+        "female_marginal_under_3_months_household_industry_workers_count": {
+          "leaf_total": 1611,
+          "published_district_total": 1611
+        },
+        "marginal_under_3_months_other_workers_count": {
+          "leaf_total": 13922,
+          "published_district_total": 13922
+        },
+        "male_marginal_under_3_months_other_workers_count": {
+          "leaf_total": 8660,
+          "published_district_total": 8660
+        },
+        "female_marginal_under_3_months_other_workers_count": {
+          "leaf_total": 5262,
+          "published_district_total": 5262
+        },
+        "male_literate_persons_count": {
+          "leaf_total": 1059692,
+          "published_district_total": 1059692
+        },
+        "female_literate_persons_count": {
+          "leaf_total": 880302,
+          "published_district_total": 880302
+        },
+        "illiterate_persons_count": {
+          "leaf_total": 694206,
+          "published_district_total": 694206
+        },
+        "male_illiterate_persons_count": {
+          "leaf_total": 284653,
+          "published_district_total": 284653
+        },
+        "female_illiterate_persons_count": {
+          "leaf_total": 409553,
+          "published_district_total": 409553
+        }
+      }
+    }
+  ],
+  "leaf_control_rows": 4813,
+  "commuting_rows": 1320,
+  "count_columns": 79,
+  "source_column_mapping": {
+    "No_HH": "households_count",
+    "TOT_P": "persons_count",
+    "TOT_M": "male_persons_count",
+    "TOT_F": "female_persons_count",
+    "P_06": "persons_age_0_6_count",
+    "M_06": "male_age_0_6_count",
+    "F_06": "female_age_0_6_count",
+    "P_LIT": "literate_persons_count",
+    "TOT_WORK_P": "workers_count",
+    "MAINWORK_P": "main_workers_count",
+    "MAIN_OT_P": "main_other_workers_count",
+    "MARGWORK_P": "marginal_workers_count",
+    "MARG_OT_P": "marginal_other_workers_count",
+    "NON_WORK_P": "non_workers_count",
+    "TOT_WORK_M": "male_workers_count",
+    "TOT_WORK_F": "female_workers_count",
+    "MAINWORK_M": "male_main_workers_count",
+    "MAINWORK_F": "female_main_workers_count",
+    "MARGWORK_M": "male_marginal_workers_count",
+    "MARGWORK_F": "female_marginal_workers_count",
+    "MARGWORK_3_6_P": "marginal_workers_3_to_6_months_count",
+    "MARGWORK_3_6_M": "male_marginal_workers_3_to_6_months_count",
+    "MARGWORK_3_6_F": "female_marginal_workers_3_to_6_months_count",
+    "MARGWORK_0_3_P": "marginal_workers_under_3_months_count",
+    "MARGWORK_0_3_M": "male_marginal_workers_under_3_months_count",
+    "MARGWORK_0_3_F": "female_marginal_workers_under_3_months_count",
+    "NON_WORK_M": "male_non_workers_count",
+    "NON_WORK_F": "female_non_workers_count",
+    "MAIN_CL_P": "main_cultivators_count",
+    "MAIN_CL_M": "male_main_cultivators_count",
+    "MAIN_CL_F": "female_main_cultivators_count",
+    "MAIN_AL_P": "main_agricultural_labourers_count",
+    "MAIN_AL_M": "male_main_agricultural_labourers_count",
+    "MAIN_AL_F": "female_main_agricultural_labourers_count",
+    "MAIN_HH_P": "main_household_industry_workers_count",
+    "MAIN_HH_M": "male_main_household_industry_workers_count",
+    "MAIN_HH_F": "female_main_household_industry_workers_count",
+    "MAIN_OT_M": "male_main_other_workers_count",
+    "MAIN_OT_F": "female_main_other_workers_count",
+    "MARG_CL_P": "marginal_cultivators_count",
+    "MARG_CL_M": "male_marginal_cultivators_count",
+    "MARG_CL_F": "female_marginal_cultivators_count",
+    "MARG_AL_P": "marginal_agricultural_labourers_count",
+    "MARG_AL_M": "male_marginal_agricultural_labourers_count",
+    "MARG_AL_F": "female_marginal_agricultural_labourers_count",
+    "MARG_HH_P": "marginal_household_industry_workers_count",
+    "MARG_HH_M": "male_marginal_household_industry_workers_count",
+    "MARG_HH_F": "female_marginal_household_industry_workers_count",
+    "MARG_OT_M": "male_marginal_other_workers_count",
+    "MARG_OT_F": "female_marginal_other_workers_count",
+    "MARG_CL_3_6_P": "marginal_3_to_6_months_cultivators_count",
+    "MARG_CL_3_6_M": "male_marginal_3_to_6_months_cultivators_count",
+    "MARG_CL_3_6_F": "female_marginal_3_to_6_months_cultivators_count",
+    "MARG_AL_3_6_P": "marginal_3_to_6_months_agricultural_labourers_count",
+    "MARG_AL_3_6_M": "male_marginal_3_to_6_months_agricultural_labourers_count",
+    "MARG_AL_3_6_F": "female_marginal_3_to_6_months_agricultural_labourers_count",
+    "MARG_HH_3_6_P": "marginal_3_to_6_months_household_industry_workers_count",
+    "MARG_HH_3_6_M": "male_marginal_3_to_6_months_household_industry_workers_count",
+    "MARG_HH_3_6_F": "female_marginal_3_to_6_months_household_industry_workers_count",
+    "MARG_OT_3_6_P": "marginal_3_to_6_months_other_workers_count",
+    "MARG_OT_3_6_M": "male_marginal_3_to_6_months_other_workers_count",
+    "MARG_OT_3_6_F": "female_marginal_3_to_6_months_other_workers_count",
+    "MARG_CL_0_3_P": "marginal_under_3_months_cultivators_count",
+    "MARG_CL_0_3_M": "male_marginal_under_3_months_cultivators_count",
+    "MARG_CL_0_3_F": "female_marginal_under_3_months_cultivators_count",
+    "MARG_AL_0_3_P": "marginal_under_3_months_agricultural_labourers_count",
+    "MARG_AL_0_3_M": "male_marginal_under_3_months_agricultural_labourers_count",
+    "MARG_AL_0_3_F": "female_marginal_under_3_months_agricultural_labourers_count",
+    "MARG_HH_0_3_P": "marginal_under_3_months_household_industry_workers_count",
+    "MARG_HH_0_3_M": "male_marginal_under_3_months_household_industry_workers_count",
+    "MARG_HH_0_3_F": "female_marginal_under_3_months_household_industry_workers_count",
+    "MARG_OT_0_3_P": "marginal_under_3_months_other_workers_count",
+    "MARG_OT_0_3_M": "male_marginal_under_3_months_other_workers_count",
+    "MARG_OT_0_3_F": "female_marginal_under_3_months_other_workers_count",
+    "M_LIT": "male_literate_persons_count",
+    "F_LIT": "female_literate_persons_count",
+    "P_ILL": "illiterate_persons_count",
+    "M_ILL": "male_illiterate_persons_count",
+    "F_ILL": "female_illiterate_persons_count"
+  },
+  "joint_partition_checks": 289020,
+  "limitations": [
+    "Four historical source districts are not the Mumbai Metropolitan Region boundary.",
+    "Thane 2011 includes areas that later became Palghar district.",
+    "Census ward identifiers do not directly equal current administrative or electoral wards.",
+    "Leaf counts reconcile to source district totals; no current-year projection is applied.",
+    "Work duration and four worker categories are retained jointly by sex at each leaf.",
+    "Main/marginal work describes annual duration, not weekly full-time/part-time hours.",
+    "Worker categories are residence-based and are not workplace industry or job locations.",
+    "B28 covers other workers only and combines tempo, autorickshaw and taxi in one category.",
+    "Total/Rural/Urban and Total/distance-band rows overlap; do not sum those dimensions together.",
+    "No current all-purpose mode share or OD matrix is inferred from commuting counts."
+  ]
+}

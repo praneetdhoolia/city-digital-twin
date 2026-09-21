@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/iitb_census_mumbaicity_b70171fa30c0e3f4.zip",
+      "url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/mumbaicity.zip",
+      "final_url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/mumbaicity.zip",
+      "source": "IIT Bombay mumbaicity census-linked village and ward GIS",
+      "licence": "IIT Bombay source reuse terms unverified",
+      "retrieved": "2026-09-18T08:44:04.274152+00:00",
+      "sha256": "b70171fa30c0e3f452e16eed74a65732af541e11cb5e56ad03ed7f3c8b44b927",
+      "bytes": 20503,
+      "content_type": "application/zip",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Research GIS linked to historical census; boundary completeness, coordinate reference system and permissions require audit."
+    }
+  ]
+}

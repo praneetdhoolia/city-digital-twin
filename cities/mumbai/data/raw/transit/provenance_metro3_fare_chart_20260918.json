@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/metro3_fare_chart_20260918_31df5bd9bc8cbb18.png",
+      "url": "https://mmrcl.com/static/media/en-fare-chart.3dba173ee80a81094818.png",
+      "final_url": "https://mmrcl.com/static/media/en-fare-chart.3dba173ee80a81094818.png",
+      "content_type": "image/png",
+      "source": "Metro 3 English fare chart used by current passenger website",
+      "licence": "Operator or public authority publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:24:33.145811+00:00",
+      "sha256": "31df5bd9bc8cbb188f78c7c0174177417ee00a548e19272ea0036fc0676f702a",
+      "bytes": 684834,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published evidence requiring units, effective dates and operational validation; throughput is not a truck or train movement count.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,2342 @@
+{
+  "source": "derived_from_mapper_reported_tags",
+  "input_sha256": {
+    "data/processed/network/osm_way_attributes.csv": "5fa59bda86a144f8606b38e37be880bf0909427e589661bdb943016277a2c89b",
+    "data/processed/acquisition/road_attribute_evidence_audit.json": "29ee612bb98d4607c597832850e0fd409367161d8e7e14b9fc2b35885f5c7335"
+  },
+  "native_inputs": [
+    {
+      "path": "networks/osm/network_source.osm.gz",
+      "sha256": "a7865ea1b59589c9202dd59711f57658ea02bfa6ca75bab373e4687ed3d91cf5"
+    }
+  ],
+  "documentation_references": [
+    {
+      "source_id": "osm_wiki_access_20260919",
+      "sha256": "61cb647c64a2c68845d733f4c552a322743a9b525480daf4f2cc67a15f9f1e05",
+      "url": "https://wiki.openstreetmap.org/wiki/Key:access"
+    },
+    {
+      "source_id": "osm_wiki_motorcar_20260919",
+      "sha256": "d6a13de1a735a5772fda5c2b9d31d5ede2592a64c24dd381f8ef89e3ff573fa1",
+      "url": "https://wiki.openstreetmap.org/wiki/Key:motorcar"
+    },
+    {
+      "source_id": "osm_wiki_psv_20260919",
+      "sha256": "8ce0d2fd2c480d9b396be8452320e9b42165753d9ec1e875ba0e98aa729a1afd",
+      "url": "https://wiki.openstreetmap.org/wiki/Key:psv"
+    },
+    {
+      "source_id": "osm_wiki_oneway_20260919",
+      "sha256": "c55f3903c96f53ad5d64d87407bd28a077ecfd498a2b4f98dfb51dedb13a9d77",
+      "url": "https://wiki.openstreetmap.org/wiki/Key:oneway"
+    }
+  ],
+  "ways": 232856,
+  "access_profiles": 249,
+  "ways_without_explicit_access_family_tags": 172644,
+  "transport_classes": [
+    "auto_rickshaw",
+    "bicycle",
+    "bus",
+    "foot",
+    "goods",
+    "hgv",
+    "minibus",
+    "moped",
+    "motorcar",
+    "motorcycle",
+    "share_taxi",
+    "taxi"
+  ],
+  "class_profile_rows": 2988,
+  "way_counts_by_transport_and_status": {
+    "auto_rickshaw": {
+      "not_tagged": 175170,
+      "qualified_or_scope_review_required": 521,
+      "requires_user_purpose_or_permission": 54152,
+      "tagged_designated_access": 10,
+      "tagged_prohibition": 876,
+      "tagged_public_access": 920,
+      "tagged_revocable_permission": 1175,
+      "unrecognised_or_ambiguous_value": 32
+    },
+    "bicycle": {
+      "not_tagged": 174233,
+      "qualified_or_scope_review_required": 1,
+      "requires_travel_behaviour_or_parallel_way": 5,
+      "requires_user_purpose_or_permission": 54380,
+      "tagged_designated_access": 423,
+      "tagged_prohibition": 1309,
+      "tagged_public_access": 1288,
+      "tagged_revocable_permission": 1187,
+      "unrecognised_or_ambiguous_value": 30
+    },
+    "bus": {
+      "not_tagged": 175119,
+      "qualified_or_scope_review_required": 541,
+      "requires_user_purpose_or_permission": 54138,
+      "tagged_designated_access": 34,
+      "tagged_prohibition": 859,
+      "tagged_public_access": 967,
+      "tagged_revocable_permission": 1175,
+      "unrecognised_or_ambiguous_value": 23
+    },
+    "foot": {
+      "not_tagged": 174278,
+      "qualified_or_scope_review_required": 1,
+      "requires_user_purpose_or_permission": 54405,
+      "tagged_designated_access": 444,
+      "tagged_prohibition": 842,
+      "tagged_public_access": 1679,
+      "tagged_revocable_permission": 1180,
+      "unrecognised_or_ambiguous_value": 27
+    },
+    "goods": {
+      "not_tagged": 175168,
+      "qualified_or_scope_review_required": 521,
+      "requires_user_purpose_or_permission": 54152,
+      "tagged_designated_access": 10,
+      "tagged_prohibition": 878,
+      "tagged_public_access": 920,
+      "tagged_revocable_permission": 1175,
+      "unrecognised_or_ambiguous_value": 32
+    },
+    "hgv": {
+      "not_tagged": 175158,
+      "qualified_or_scope_review_required": 521,
+      "requires_user_purpose_or_permission": 54152,
+      "tagged_designated_access": 10,
+      "tagged_prohibition": 889,
+      "tagged_public_access": 919,
+      "tagged_revocable_permission": 1175,
+      "unrecognised_or_ambiguous_value": 32
+    },
+    "minibus": {
+      "not_tagged": 175142,
+      "qualified_or_scope_review_required": 521,
+      "requires_user_purpose_or_permission": 54138,
+      "tagged_designated_access": 23,
+      "tagged_prohibition": 862,
+      "tagged_public_access": 972,
+      "tagged_revocable_permission": 1175,
+      "unrecognised_or_ambiguous_value": 23
+    },
+    "moped": {
+      "not_tagged": 175445,
+      "qualified_or_scope_review_required": 1,
+      "requires_user_purpose_or_permission": 54380,
+      "tagged_designated_access": 10,
+      "tagged_prohibition": 883,
+      "tagged_public_access": 925,
+      "tagged_revocable_permission": 1180,
+      "unrecognised_or_ambiguous_value": 32
+    },
+    "motorcar": {
+      "not_tagged": 175170,
+      "qualified_or_scope_review_required": 1,
+      "requires_user_purpose_or_permission": 54152,
+      "tagged_designated_access": 10,
+      "tagged_prohibition": 1392,
+      "tagged_public_access": 924,
+      "tagged_revocable_permission": 1175,
+      "unrecognised_or_ambiguous_value": 32
+    },
+    "motorcycle": {
+      "not_tagged": 175278,
+      "qualified_or_scope_review_required": 1,
+      "requires_user_purpose_or_permission": 54375,
+      "tagged_designated_access": 10,
+      "tagged_prohibition": 1302,
+      "tagged_public_access": 678,
+      "tagged_revocable_permission": 1180,
+      "unrecognised_or_ambiguous_value": 32
+    },
+    "share_taxi": {
+      "not_tagged": 175142,
+      "qualified_or_scope_review_required": 521,
+      "requires_user_purpose_or_permission": 54138,
+      "tagged_designated_access": 23,
+      "tagged_prohibition": 862,
+      "tagged_public_access": 972,
+      "tagged_revocable_permission": 1175,
+      "unrecognised_or_ambiguous_value": 23
+    },
+    "taxi": {
+      "not_tagged": 175142,
+      "qualified_or_scope_review_required": 521,
+      "requires_user_purpose_or_permission": 54138,
+      "tagged_designated_access": 23,
+      "tagged_prohibition": 862,
+      "tagged_public_access": 972,
+      "tagged_revocable_permission": 1175,
+      "unrecognised_or_ambiguous_value": 23
+    }
+  },
+  "by_highway_class": {
+    "bridleway": {
+      "auto_rickshaw": {
+        "not_tagged": 5,
+        "tagged_prohibition": 1
+      },
+      "bicycle": {
+        "not_tagged": 5,
+        "tagged_prohibition": 1
+      },
+      "bus": {
+        "not_tagged": 5,
+        "tagged_prohibition": 1
+      },
+      "foot": {
+        "not_tagged": 5,
+        "tagged_public_access": 1
+      },
+      "goods": {
+        "not_tagged": 5,
+        "tagged_prohibition": 1
+      },
+      "hgv": {
+        "not_tagged": 5,
+        "tagged_prohibition": 1
+      },
+      "minibus": {
+        "not_tagged": 5,
+        "tagged_prohibition": 1
+      },
+      "moped": {
+        "not_tagged": 5,
+        "tagged_prohibition": 1
+      },
+      "motorcar": {
+        "not_tagged": 5,
+        "tagged_prohibition": 1
+      },
+      "motorcycle": {
+        "not_tagged": 5,
+        "tagged_prohibition": 1
+      },
+      "share_taxi": {
+        "not_tagged": 5,
+        "tagged_prohibition": 1
+      },
+      "taxi": {
+        "not_tagged": 5,
+        "tagged_prohibition": 1
+      }
+    },
+    "bus_stop": {
+      "auto_rickshaw": {
+        "not_tagged": 3
+      },
+      "bicycle": {
+        "not_tagged": 3
+      },
+      "bus": {
+        "not_tagged": 1,
+        "tagged_public_access": 2
+      },
+      "foot": {
+        "not_tagged": 3
+      },
+      "goods": {
+        "not_tagged": 3
+      },
+      "hgv": {
+        "not_tagged": 3
+      },
+      "minibus": {
+        "not_tagged": 3
+      },
+      "moped": {
+        "not_tagged": 3
+      },
+      "motorcar": {
+        "not_tagged": 3
+      },
+      "motorcycle": {
+        "not_tagged": 3
+      },
+      "share_taxi": {
+        "not_tagged": 3
+      },
+      "taxi": {
+        "not_tagged": 3
+      }
+    },
+    "busway": {
+      "auto_rickshaw": {
+        "not_tagged": 63,
+        "tagged_prohibition": 11,
+        "tagged_public_access": 5
+      },
+      "bicycle": {
+        "not_tagged": 61,
+        "tagged_prohibition": 14,
+        "tagged_public_access": 4
+      },
+      "bus": {
+        "not_tagged": 46,
+        "tagged_designated_access": 11,
+        "tagged_public_access": 22
+      },
+      "foot": {
+        "not_tagged": 61,
+        "tagged_prohibition": 14,
+        "tagged_public_access": 4
+      },
+      "goods": {
+        "not_tagged": 63,
+        "tagged_prohibition": 11,
+        "tagged_public_access": 5
+      },
+      "hgv": {
+        "not_tagged": 63,
+        "tagged_prohibition": 11,
+        "tagged_public_access": 5
+      },
+      "minibus": {
+        "not_tagged": 46,
+        "tagged_public_access": 33
+      },
+      "moped": {
+        "not_tagged": 63,
+        "tagged_prohibition": 11,
+        "tagged_public_access": 5
+      },
+      "motorcar": {
+        "not_tagged": 63,
+        "tagged_prohibition": 11,
+        "tagged_public_access": 5
+      },
+      "motorcycle": {
+        "not_tagged": 63,
+        "tagged_prohibition": 11,
+        "tagged_public_access": 5
+      },
+      "share_taxi": {
+        "not_tagged": 46,
+        "tagged_public_access": 33
+      },
+      "taxi": {
+        "not_tagged": 46,
+        "tagged_public_access": 33
+      }
+    },
+    "construction": {
+      "auto_rickshaw": {
+        "not_tagged": 1174,
+        "requires_user_purpose_or_permission": 26,
+        "tagged_prohibition": 8,
+        "tagged_public_access": 7,
+        "tagged_revocable_permission": 1
+      },
+      "bicycle": {
+        "not_tagged": 1175,
+        "requires_user_purpose_or_permission": 26,
+        "tagged_prohibition": 13,
+        "tagged_public_access": 1,
+        "tagged_revocable_permission": 1
+      },
+      "bus": {
+        "not_tagged": 1174,
+        "requires_user_purpose_or_permission": 26,
+        "tagged_prohibition": 8,
+        "tagged_public_access": 7,
+        "tagged_revocable_permission": 1
+      },
+      "foot": {
+        "not_tagged": 1172,
+        "requires_user_purpose_or_permission": 27,
+        "tagged_prohibition": 15,
+        "tagged_public_access": 1,
+        "tagged_revocable_permission": 1
+      },
+      "goods": {
+        "not_tagged": 1174,
+        "requires_user_purpose_or_permission": 26,
+        "tagged_prohibition": 8,
+        "tagged_public_access": 7,
+        "tagged_revocable_permission": 1
+      },
+      "hgv": {
+        "not_tagged": 1174,
+        "requires_user_purpose_or_permission": 26,
+        "tagged_prohibition": 8,
+        "tagged_public_access": 7,
+        "tagged_revocable_permission": 1
+      },
+      "minibus": {
+        "not_tagged": 1174,
+        "requires_user_purpose_or_permission": 26,
+        "tagged_prohibition": 8,
+        "tagged_public_access": 7,
+        "tagged_revocable_permission": 1
+      },
+      "moped": {
+        "not_tagged": 1174,
+        "requires_user_purpose_or_permission": 26,
+        "tagged_prohibition": 8,
+        "tagged_public_access": 7,
+        "tagged_revocable_permission": 1
+      },
+      "motorcar": {
+        "not_tagged": 1174,
+        "requires_user_purpose_or_permission": 26,
+        "tagged_prohibition": 8,
+        "tagged_public_access": 7,
+        "tagged_revocable_permission": 1
+      },
+      "motorcycle": {
+        "not_tagged": 1174,
+        "requires_user_purpose_or_permission": 26,
+        "tagged_prohibition": 8,
+        "tagged_public_access": 7,
+        "tagged_revocable_permission": 1
+      },
+      "share_taxi": {
+        "not_tagged": 1174,
+        "requires_user_purpose_or_permission": 26,
+        "tagged_prohibition": 8,
+        "tagged_public_access": 7,
+        "tagged_revocable_permission": 1
+      },
+      "taxi": {
+        "not_tagged": 1174,
+        "requires_user_purpose_or_permission": 26,
+        "tagged_prohibition": 8,
+        "tagged_public_access": 7,
+        "tagged_revocable_permission": 1
+      }
+    },
+    "corridor": {
+      "auto_rickshaw": {
+        "not_tagged": 12
+      },
+      "bicycle": {
+        "not_tagged": 12
+      },
+      "bus": {
+        "not_tagged": 12
+      },
+      "foot": {
+        "not_tagged": 12
+      },
+      "goods": {
+        "not_tagged": 12
+      },
+      "hgv": {
+        "not_tagged": 12
+      },
+      "minibus": {
+        "not_tagged": 12
+      },
+      "moped": {
+        "not_tagged": 12
+      },
+      "motorcar": {
+        "not_tagged": 12
+      },
+      "motorcycle": {
+        "not_tagged": 12
+      },
+      "share_taxi": {
+        "not_tagged": 12
+      },
+      "taxi": {
+        "not_tagged": 12
+      }
+    },
+    "cycleway": {
+      "auto_rickshaw": {
+        "not_tagged": 429,
+        "requires_user_purpose_or_permission": 3,
+        "tagged_prohibition": 5,
+        "tagged_revocable_permission": 1
+      },
+      "bicycle": {
+        "not_tagged": 26,
+        "tagged_designated_access": 409,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 1
+      },
+      "bus": {
+        "not_tagged": 429,
+        "requires_user_purpose_or_permission": 3,
+        "tagged_prohibition": 5,
+        "tagged_revocable_permission": 1
+      },
+      "foot": {
+        "not_tagged": 19,
+        "tagged_designated_access": 410,
+        "tagged_public_access": 9
+      },
+      "goods": {
+        "not_tagged": 429,
+        "requires_user_purpose_or_permission": 3,
+        "tagged_prohibition": 5,
+        "tagged_revocable_permission": 1
+      },
+      "hgv": {
+        "not_tagged": 429,
+        "requires_user_purpose_or_permission": 3,
+        "tagged_prohibition": 5,
+        "tagged_revocable_permission": 1
+      },
+      "minibus": {
+        "not_tagged": 429,
+        "requires_user_purpose_or_permission": 3,
+        "tagged_prohibition": 5,
+        "tagged_revocable_permission": 1
+      },
+      "moped": {
+        "not_tagged": 429,
+        "requires_user_purpose_or_permission": 3,
+        "tagged_prohibition": 5,
+        "tagged_revocable_permission": 1
+      },
+      "motorcar": {
+        "not_tagged": 429,
+        "requires_user_purpose_or_permission": 3,
+        "tagged_prohibition": 5,
+        "tagged_revocable_permission": 1
+      },
+      "motorcycle": {
+        "not_tagged": 429,
+        "requires_user_purpose_or_permission": 3,
+        "tagged_prohibition": 5,
+        "tagged_revocable_permission": 1
+      },
+      "share_taxi": {
+        "not_tagged": 429,
+        "requires_user_purpose_or_permission": 3,
+        "tagged_prohibition": 5,
+        "tagged_revocable_permission": 1
+      },
+      "taxi": {
+        "not_tagged": 429,
+        "requires_user_purpose_or_permission": 3,
+        "tagged_prohibition": 5,
+        "tagged_revocable_permission": 1
+      }
+    },
+    "elevator": {
+      "auto_rickshaw": {
+        "not_tagged": 3,
+        "tagged_public_access": 1
+      },
+      "bicycle": {
+        "not_tagged": 3,
+        "tagged_public_access": 1
+      },
+      "bus": {
+        "not_tagged": 3,
+        "tagged_public_access": 1
+      },
+      "foot": {
+        "not_tagged": 3,
+        "tagged_public_access": 1
+      },
+      "goods": {
+        "not_tagged": 3,
+        "tagged_public_access": 1
+      },
+      "hgv": {
+        "not_tagged": 3,
+        "tagged_public_access": 1
+      },
+      "minibus": {
+        "not_tagged": 3,
+        "tagged_public_access": 1
+      },
+      "moped": {
+        "not_tagged": 3,
+        "tagged_public_access": 1
+      },
+      "motorcar": {
+        "not_tagged": 3,
+        "tagged_public_access": 1
+      },
+      "motorcycle": {
+        "not_tagged": 3,
+        "tagged_public_access": 1
+      },
+      "share_taxi": {
+        "not_tagged": 3,
+        "tagged_public_access": 1
+      },
+      "taxi": {
+        "not_tagged": 3,
+        "tagged_public_access": 1
+      }
+    },
+    "footway": {
+      "auto_rickshaw": {
+        "not_tagged": 5105,
+        "qualified_or_scope_review_required": 4,
+        "requires_user_purpose_or_permission": 333,
+        "tagged_prohibition": 146,
+        "tagged_public_access": 13,
+        "tagged_revocable_permission": 18
+      },
+      "bicycle": {
+        "not_tagged": 4996,
+        "requires_travel_behaviour_or_parallel_way": 5,
+        "requires_user_purpose_or_permission": 337,
+        "tagged_prohibition": 214,
+        "tagged_public_access": 45,
+        "tagged_revocable_permission": 22
+      },
+      "bus": {
+        "not_tagged": 5105,
+        "qualified_or_scope_review_required": 4,
+        "requires_user_purpose_or_permission": 333,
+        "tagged_prohibition": 146,
+        "tagged_public_access": 13,
+        "tagged_revocable_permission": 18
+      },
+      "foot": {
+        "not_tagged": 5043,
+        "requires_user_purpose_or_permission": 344,
+        "tagged_designated_access": 17,
+        "tagged_prohibition": 3,
+        "tagged_public_access": 195,
+        "tagged_revocable_permission": 17
+      },
+      "goods": {
+        "not_tagged": 5105,
+        "qualified_or_scope_review_required": 4,
+        "requires_user_purpose_or_permission": 333,
+        "tagged_prohibition": 146,
+        "tagged_public_access": 13,
+        "tagged_revocable_permission": 18
+      },
+      "hgv": {
+        "not_tagged": 5105,
+        "qualified_or_scope_review_required": 4,
+        "requires_user_purpose_or_permission": 333,
+        "tagged_prohibition": 146,
+        "tagged_public_access": 13,
+        "tagged_revocable_permission": 18
+      },
+      "minibus": {
+        "not_tagged": 5105,
+        "qualified_or_scope_review_required": 4,
+        "requires_user_purpose_or_permission": 333,
+        "tagged_prohibition": 146,
+        "tagged_public_access": 13,
+        "tagged_revocable_permission": 18
+      },
+      "moped": {
+        "not_tagged": 5106,
+        "requires_user_purpose_or_permission": 336,
+        "tagged_prohibition": 146,
+        "tagged_public_access": 13,
+        "tagged_revocable_permission": 18
+      },
+      "motorcar": {
+        "not_tagged": 5105,
+        "requires_user_purpose_or_permission": 333,
+        "tagged_prohibition": 150,
+        "tagged_public_access": 13,
+        "tagged_revocable_permission": 18
+      },
+      "motorcycle": {
+        "not_tagged": 5106,
+        "requires_user_purpose_or_permission": 336,
+        "tagged_prohibition": 146,
+        "tagged_public_access": 13,
+        "tagged_revocable_permission": 18
+      },
+      "share_taxi": {
+        "not_tagged": 5105,
+        "qualified_or_scope_review_required": 4,
+        "requires_user_purpose_or_permission": 333,
+        "tagged_prohibition": 146,
+        "tagged_public_access": 13,
+        "tagged_revocable_permission": 18
+      },
+      "taxi": {
+        "not_tagged": 5105,
+        "qualified_or_scope_review_required": 4,
+        "requires_user_purpose_or_permission": 333,
+        "tagged_prohibition": 146,
+        "tagged_public_access": 13,
+        "tagged_revocable_permission": 18
+      }
+    },
+    "living_street": {
+      "auto_rickshaw": {
+        "not_tagged": 2669,
+        "qualified_or_scope_review_required": 182,
+        "requires_user_purpose_or_permission": 143,
+        "tagged_prohibition": 21,
+        "tagged_public_access": 3,
+        "tagged_revocable_permission": 2,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "bicycle": {
+        "not_tagged": 2831,
+        "requires_user_purpose_or_permission": 166,
+        "tagged_prohibition": 3,
+        "tagged_public_access": 19,
+        "tagged_revocable_permission": 2
+      },
+      "bus": {
+        "not_tagged": 2669,
+        "qualified_or_scope_review_required": 182,
+        "requires_user_purpose_or_permission": 143,
+        "tagged_prohibition": 21,
+        "tagged_public_access": 3,
+        "tagged_revocable_permission": 2,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "foot": {
+        "not_tagged": 2833,
+        "requires_user_purpose_or_permission": 165,
+        "tagged_public_access": 21,
+        "tagged_revocable_permission": 2
+      },
+      "goods": {
+        "not_tagged": 2669,
+        "qualified_or_scope_review_required": 182,
+        "requires_user_purpose_or_permission": 143,
+        "tagged_prohibition": 21,
+        "tagged_public_access": 3,
+        "tagged_revocable_permission": 2,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "hgv": {
+        "not_tagged": 2669,
+        "qualified_or_scope_review_required": 182,
+        "requires_user_purpose_or_permission": 143,
+        "tagged_prohibition": 21,
+        "tagged_public_access": 3,
+        "tagged_revocable_permission": 2,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "minibus": {
+        "not_tagged": 2669,
+        "qualified_or_scope_review_required": 182,
+        "requires_user_purpose_or_permission": 143,
+        "tagged_prohibition": 21,
+        "tagged_public_access": 3,
+        "tagged_revocable_permission": 2,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "moped": {
+        "not_tagged": 2826,
+        "requires_user_purpose_or_permission": 168,
+        "tagged_prohibition": 21,
+        "tagged_public_access": 3,
+        "tagged_revocable_permission": 2,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "motorcar": {
+        "not_tagged": 2669,
+        "requires_user_purpose_or_permission": 143,
+        "tagged_prohibition": 203,
+        "tagged_public_access": 3,
+        "tagged_revocable_permission": 2,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "motorcycle": {
+        "not_tagged": 2825,
+        "requires_user_purpose_or_permission": 167,
+        "tagged_prohibition": 22,
+        "tagged_public_access": 4,
+        "tagged_revocable_permission": 2,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "share_taxi": {
+        "not_tagged": 2669,
+        "qualified_or_scope_review_required": 182,
+        "requires_user_purpose_or_permission": 143,
+        "tagged_prohibition": 21,
+        "tagged_public_access": 3,
+        "tagged_revocable_permission": 2,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "taxi": {
+        "not_tagged": 2669,
+        "qualified_or_scope_review_required": 182,
+        "requires_user_purpose_or_permission": 143,
+        "tagged_prohibition": 21,
+        "tagged_public_access": 3,
+        "tagged_revocable_permission": 2,
+        "unrecognised_or_ambiguous_value": 1
+      }
+    },
+    "motorway": {
+      "auto_rickshaw": {
+        "not_tagged": 460,
+        "tagged_prohibition": 1,
+        "tagged_public_access": 427
+      },
+      "bicycle": {
+        "not_tagged": 359,
+        "tagged_prohibition": 481,
+        "tagged_public_access": 48
+      },
+      "bus": {
+        "not_tagged": 440,
+        "qualified_or_scope_review_required": 20,
+        "tagged_prohibition": 1,
+        "tagged_public_access": 427
+      },
+      "foot": {
+        "not_tagged": 478,
+        "tagged_prohibition": 410
+      },
+      "goods": {
+        "not_tagged": 460,
+        "tagged_prohibition": 1,
+        "tagged_public_access": 427
+      },
+      "hgv": {
+        "not_tagged": 456,
+        "tagged_prohibition": 5,
+        "tagged_public_access": 427
+      },
+      "minibus": {
+        "not_tagged": 460,
+        "tagged_prohibition": 1,
+        "tagged_public_access": 427
+      },
+      "moped": {
+        "not_tagged": 460,
+        "tagged_prohibition": 1,
+        "tagged_public_access": 427
+      },
+      "motorcar": {
+        "not_tagged": 460,
+        "tagged_prohibition": 1,
+        "tagged_public_access": 427
+      },
+      "motorcycle": {
+        "not_tagged": 365,
+        "tagged_prohibition": 330,
+        "tagged_public_access": 193
+      },
+      "share_taxi": {
+        "not_tagged": 460,
+        "tagged_prohibition": 1,
+        "tagged_public_access": 427
+      },
+      "taxi": {
+        "not_tagged": 460,
+        "tagged_prohibition": 1,
+        "tagged_public_access": 427
+      }
+    },
+    "motorway_link": {
+      "auto_rickshaw": {
+        "not_tagged": 399,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 36,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "bicycle": {
+        "not_tagged": 365,
+        "tagged_prohibition": 44,
+        "tagged_public_access": 30,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "bus": {
+        "not_tagged": 399,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 36,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "foot": {
+        "not_tagged": 401,
+        "tagged_prohibition": 37,
+        "tagged_public_access": 1,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "goods": {
+        "not_tagged": 399,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 36,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "hgv": {
+        "not_tagged": 399,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 36,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "minibus": {
+        "not_tagged": 399,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 36,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "moped": {
+        "not_tagged": 399,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 36,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "motorcar": {
+        "not_tagged": 399,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 36,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "motorcycle": {
+        "not_tagged": 356,
+        "tagged_prohibition": 63,
+        "tagged_public_access": 20,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "share_taxi": {
+        "not_tagged": 399,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 36,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "taxi": {
+        "not_tagged": 399,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 36,
+        "unrecognised_or_ambiguous_value": 1
+      }
+    },
+    "path": {
+      "auto_rickshaw": {
+        "not_tagged": 4478,
+        "qualified_or_scope_review_required": 9,
+        "requires_user_purpose_or_permission": 200,
+        "tagged_designated_access": 3,
+        "tagged_prohibition": 78,
+        "tagged_public_access": 15,
+        "tagged_revocable_permission": 8
+      },
+      "bicycle": {
+        "not_tagged": 4444,
+        "requires_user_purpose_or_permission": 203,
+        "tagged_designated_access": 9,
+        "tagged_prohibition": 77,
+        "tagged_public_access": 47,
+        "tagged_revocable_permission": 11
+      },
+      "bus": {
+        "not_tagged": 4478,
+        "qualified_or_scope_review_required": 9,
+        "requires_user_purpose_or_permission": 200,
+        "tagged_designated_access": 3,
+        "tagged_prohibition": 78,
+        "tagged_public_access": 15,
+        "tagged_revocable_permission": 8
+      },
+      "foot": {
+        "not_tagged": 3964,
+        "requires_user_purpose_or_permission": 208,
+        "tagged_designated_access": 11,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 597,
+        "tagged_revocable_permission": 9
+      },
+      "goods": {
+        "not_tagged": 4478,
+        "qualified_or_scope_review_required": 9,
+        "requires_user_purpose_or_permission": 200,
+        "tagged_designated_access": 3,
+        "tagged_prohibition": 78,
+        "tagged_public_access": 15,
+        "tagged_revocable_permission": 8
+      },
+      "hgv": {
+        "not_tagged": 4478,
+        "qualified_or_scope_review_required": 9,
+        "requires_user_purpose_or_permission": 200,
+        "tagged_designated_access": 3,
+        "tagged_prohibition": 78,
+        "tagged_public_access": 15,
+        "tagged_revocable_permission": 8
+      },
+      "minibus": {
+        "not_tagged": 4478,
+        "qualified_or_scope_review_required": 9,
+        "requires_user_purpose_or_permission": 200,
+        "tagged_designated_access": 3,
+        "tagged_prohibition": 78,
+        "tagged_public_access": 15,
+        "tagged_revocable_permission": 8
+      },
+      "moped": {
+        "not_tagged": 4486,
+        "requires_user_purpose_or_permission": 201,
+        "tagged_designated_access": 3,
+        "tagged_prohibition": 78,
+        "tagged_public_access": 15,
+        "tagged_revocable_permission": 8
+      },
+      "motorcar": {
+        "not_tagged": 4478,
+        "requires_user_purpose_or_permission": 200,
+        "tagged_designated_access": 3,
+        "tagged_prohibition": 87,
+        "tagged_public_access": 15,
+        "tagged_revocable_permission": 8
+      },
+      "motorcycle": {
+        "not_tagged": 4486,
+        "requires_user_purpose_or_permission": 201,
+        "tagged_designated_access": 3,
+        "tagged_prohibition": 77,
+        "tagged_public_access": 16,
+        "tagged_revocable_permission": 8
+      },
+      "share_taxi": {
+        "not_tagged": 4478,
+        "qualified_or_scope_review_required": 9,
+        "requires_user_purpose_or_permission": 200,
+        "tagged_designated_access": 3,
+        "tagged_prohibition": 78,
+        "tagged_public_access": 15,
+        "tagged_revocable_permission": 8
+      },
+      "taxi": {
+        "not_tagged": 4478,
+        "qualified_or_scope_review_required": 9,
+        "requires_user_purpose_or_permission": 200,
+        "tagged_designated_access": 3,
+        "tagged_prohibition": 78,
+        "tagged_public_access": 15,
+        "tagged_revocable_permission": 8
+      }
+    },
+    "pedestrian": {
+      "auto_rickshaw": {
+        "not_tagged": 276,
+        "qualified_or_scope_review_required": 1,
+        "requires_user_purpose_or_permission": 45,
+        "tagged_prohibition": 19,
+        "tagged_public_access": 4
+      },
+      "bicycle": {
+        "not_tagged": 265,
+        "requires_user_purpose_or_permission": 45,
+        "tagged_prohibition": 19,
+        "tagged_public_access": 14,
+        "tagged_revocable_permission": 2
+      },
+      "bus": {
+        "not_tagged": 276,
+        "qualified_or_scope_review_required": 1,
+        "requires_user_purpose_or_permission": 45,
+        "tagged_prohibition": 19,
+        "tagged_public_access": 4
+      },
+      "foot": {
+        "not_tagged": 282,
+        "requires_user_purpose_or_permission": 45,
+        "tagged_prohibition": 5,
+        "tagged_public_access": 13
+      },
+      "goods": {
+        "not_tagged": 276,
+        "qualified_or_scope_review_required": 1,
+        "requires_user_purpose_or_permission": 45,
+        "tagged_prohibition": 19,
+        "tagged_public_access": 4
+      },
+      "hgv": {
+        "not_tagged": 276,
+        "qualified_or_scope_review_required": 1,
+        "requires_user_purpose_or_permission": 45,
+        "tagged_prohibition": 19,
+        "tagged_public_access": 4
+      },
+      "minibus": {
+        "not_tagged": 276,
+        "qualified_or_scope_review_required": 1,
+        "requires_user_purpose_or_permission": 45,
+        "tagged_prohibition": 19,
+        "tagged_public_access": 4
+      },
+      "moped": {
+        "not_tagged": 276,
+        "requires_user_purpose_or_permission": 45,
+        "tagged_prohibition": 20,
+        "tagged_public_access": 4
+      },
+      "motorcar": {
+        "not_tagged": 276,
+        "requires_user_purpose_or_permission": 45,
+        "tagged_prohibition": 20,
+        "tagged_public_access": 4
+      },
+      "motorcycle": {
+        "not_tagged": 276,
+        "requires_user_purpose_or_permission": 45,
+        "tagged_prohibition": 20,
+        "tagged_public_access": 4
+      },
+      "share_taxi": {
+        "not_tagged": 276,
+        "qualified_or_scope_review_required": 1,
+        "requires_user_purpose_or_permission": 45,
+        "tagged_prohibition": 19,
+        "tagged_public_access": 4
+      },
+      "taxi": {
+        "not_tagged": 276,
+        "qualified_or_scope_review_required": 1,
+        "requires_user_purpose_or_permission": 45,
+        "tagged_prohibition": 19,
+        "tagged_public_access": 4
+      }
+    },
+    "primary": {
+      "auto_rickshaw": {
+        "not_tagged": 4776,
+        "qualified_or_scope_review_required": 1,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 25
+      },
+      "bicycle": {
+        "not_tagged": 4719,
+        "tagged_prohibition": 18,
+        "tagged_public_access": 69
+      },
+      "bus": {
+        "not_tagged": 4776,
+        "qualified_or_scope_review_required": 1,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 25
+      },
+      "foot": {
+        "not_tagged": 4686,
+        "tagged_prohibition": 35,
+        "tagged_public_access": 85
+      },
+      "goods": {
+        "not_tagged": 4776,
+        "qualified_or_scope_review_required": 1,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 25
+      },
+      "hgv": {
+        "not_tagged": 4776,
+        "qualified_or_scope_review_required": 1,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 25
+      },
+      "minibus": {
+        "not_tagged": 4776,
+        "qualified_or_scope_review_required": 1,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 25
+      },
+      "moped": {
+        "not_tagged": 4777,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 25
+      },
+      "motorcar": {
+        "not_tagged": 4776,
+        "tagged_prohibition": 5,
+        "tagged_public_access": 25
+      },
+      "motorcycle": {
+        "not_tagged": 4762,
+        "tagged_prohibition": 19,
+        "tagged_public_access": 25
+      },
+      "share_taxi": {
+        "not_tagged": 4776,
+        "qualified_or_scope_review_required": 1,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 25
+      },
+      "taxi": {
+        "not_tagged": 4776,
+        "qualified_or_scope_review_required": 1,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 25
+      }
+    },
+    "primary_link": {
+      "auto_rickshaw": {
+        "not_tagged": 709,
+        "qualified_or_scope_review_required": 2,
+        "tagged_prohibition": 4,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "bicycle": {
+        "not_tagged": 709,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 2,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "bus": {
+        "not_tagged": 709,
+        "qualified_or_scope_review_required": 2,
+        "tagged_prohibition": 4,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "foot": {
+        "not_tagged": 711,
+        "tagged_prohibition": 3,
+        "tagged_public_access": 2
+      },
+      "goods": {
+        "not_tagged": 709,
+        "qualified_or_scope_review_required": 2,
+        "tagged_prohibition": 4,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "hgv": {
+        "not_tagged": 709,
+        "qualified_or_scope_review_required": 2,
+        "tagged_prohibition": 4,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "minibus": {
+        "not_tagged": 709,
+        "qualified_or_scope_review_required": 2,
+        "tagged_prohibition": 4,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "moped": {
+        "not_tagged": 710,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 1,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "motorcar": {
+        "not_tagged": 709,
+        "tagged_prohibition": 6,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "motorcycle": {
+        "not_tagged": 707,
+        "tagged_prohibition": 7,
+        "tagged_public_access": 1,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "share_taxi": {
+        "not_tagged": 709,
+        "qualified_or_scope_review_required": 2,
+        "tagged_prohibition": 4,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "taxi": {
+        "not_tagged": 709,
+        "qualified_or_scope_review_required": 2,
+        "tagged_prohibition": 4,
+        "unrecognised_or_ambiguous_value": 1
+      }
+    },
+    "proposed": {
+      "auto_rickshaw": {
+        "not_tagged": 17,
+        "tagged_public_access": 2
+      },
+      "bicycle": {
+        "not_tagged": 17,
+        "tagged_prohibition": 2
+      },
+      "bus": {
+        "not_tagged": 17,
+        "tagged_public_access": 2
+      },
+      "foot": {
+        "not_tagged": 17,
+        "tagged_prohibition": 2
+      },
+      "goods": {
+        "not_tagged": 17,
+        "tagged_public_access": 2
+      },
+      "hgv": {
+        "not_tagged": 17,
+        "tagged_public_access": 2
+      },
+      "minibus": {
+        "not_tagged": 17,
+        "tagged_public_access": 2
+      },
+      "moped": {
+        "not_tagged": 17,
+        "tagged_public_access": 2
+      },
+      "motorcar": {
+        "not_tagged": 17,
+        "tagged_public_access": 2
+      },
+      "motorcycle": {
+        "not_tagged": 17,
+        "tagged_public_access": 2
+      },
+      "share_taxi": {
+        "not_tagged": 17,
+        "tagged_public_access": 2
+      },
+      "taxi": {
+        "not_tagged": 17,
+        "tagged_public_access": 2
+      }
+    },
+    "residential": {
+      "auto_rickshaw": {
+        "not_tagged": 90883,
+        "qualified_or_scope_review_required": 204,
+        "requires_user_purpose_or_permission": 30279,
+        "tagged_designated_access": 6,
+        "tagged_prohibition": 264,
+        "tagged_public_access": 110,
+        "tagged_revocable_permission": 595,
+        "unrecognised_or_ambiguous_value": 13
+      },
+      "bicycle": {
+        "not_tagged": 90681,
+        "qualified_or_scope_review_required": 1,
+        "requires_user_purpose_or_permission": 30410,
+        "tagged_designated_access": 5,
+        "tagged_prohibition": 116,
+        "tagged_public_access": 531,
+        "tagged_revocable_permission": 597,
+        "unrecognised_or_ambiguous_value": 13
+      },
+      "bus": {
+        "not_tagged": 90882,
+        "qualified_or_scope_review_required": 204,
+        "requires_user_purpose_or_permission": 30279,
+        "tagged_designated_access": 6,
+        "tagged_prohibition": 265,
+        "tagged_public_access": 110,
+        "tagged_revocable_permission": 595,
+        "unrecognised_or_ambiguous_value": 13
+      },
+      "foot": {
+        "not_tagged": 91026,
+        "qualified_or_scope_review_required": 1,
+        "requires_user_purpose_or_permission": 30413,
+        "tagged_prohibition": 58,
+        "tagged_public_access": 244,
+        "tagged_revocable_permission": 600,
+        "unrecognised_or_ambiguous_value": 12
+      },
+      "goods": {
+        "not_tagged": 90883,
+        "qualified_or_scope_review_required": 204,
+        "requires_user_purpose_or_permission": 30279,
+        "tagged_designated_access": 6,
+        "tagged_prohibition": 264,
+        "tagged_public_access": 110,
+        "tagged_revocable_permission": 595,
+        "unrecognised_or_ambiguous_value": 13
+      },
+      "hgv": {
+        "not_tagged": 90882,
+        "qualified_or_scope_review_required": 204,
+        "requires_user_purpose_or_permission": 30279,
+        "tagged_designated_access": 6,
+        "tagged_prohibition": 266,
+        "tagged_public_access": 109,
+        "tagged_revocable_permission": 595,
+        "unrecognised_or_ambiguous_value": 13
+      },
+      "minibus": {
+        "not_tagged": 90883,
+        "qualified_or_scope_review_required": 204,
+        "requires_user_purpose_or_permission": 30279,
+        "tagged_designated_access": 6,
+        "tagged_prohibition": 264,
+        "tagged_public_access": 110,
+        "tagged_revocable_permission": 595,
+        "unrecognised_or_ambiguous_value": 13
+      },
+      "moped": {
+        "not_tagged": 90940,
+        "qualified_or_scope_review_required": 1,
+        "requires_user_purpose_or_permission": 30417,
+        "tagged_designated_access": 6,
+        "tagged_prohibition": 266,
+        "tagged_public_access": 112,
+        "tagged_revocable_permission": 599,
+        "unrecognised_or_ambiguous_value": 13
+      },
+      "motorcar": {
+        "not_tagged": 90883,
+        "qualified_or_scope_review_required": 1,
+        "requires_user_purpose_or_permission": 30279,
+        "tagged_designated_access": 6,
+        "tagged_prohibition": 467,
+        "tagged_public_access": 110,
+        "tagged_revocable_permission": 595,
+        "unrecognised_or_ambiguous_value": 13
+      },
+      "motorcycle": {
+        "not_tagged": 90936,
+        "qualified_or_scope_review_required": 1,
+        "requires_user_purpose_or_permission": 30415,
+        "tagged_designated_access": 6,
+        "tagged_prohibition": 270,
+        "tagged_public_access": 114,
+        "tagged_revocable_permission": 599,
+        "unrecognised_or_ambiguous_value": 13
+      },
+      "share_taxi": {
+        "not_tagged": 90883,
+        "qualified_or_scope_review_required": 204,
+        "requires_user_purpose_or_permission": 30279,
+        "tagged_designated_access": 6,
+        "tagged_prohibition": 264,
+        "tagged_public_access": 110,
+        "tagged_revocable_permission": 595,
+        "unrecognised_or_ambiguous_value": 13
+      },
+      "taxi": {
+        "not_tagged": 90883,
+        "qualified_or_scope_review_required": 204,
+        "requires_user_purpose_or_permission": 30279,
+        "tagged_designated_access": 6,
+        "tagged_prohibition": 264,
+        "tagged_public_access": 110,
+        "tagged_revocable_permission": 595,
+        "unrecognised_or_ambiguous_value": 13
+      }
+    },
+    "road": {
+      "auto_rickshaw": {
+        "not_tagged": 33
+      },
+      "bicycle": {
+        "not_tagged": 33
+      },
+      "bus": {
+        "not_tagged": 33
+      },
+      "foot": {
+        "not_tagged": 33
+      },
+      "goods": {
+        "not_tagged": 33
+      },
+      "hgv": {
+        "not_tagged": 33
+      },
+      "minibus": {
+        "not_tagged": 33
+      },
+      "moped": {
+        "not_tagged": 33
+      },
+      "motorcar": {
+        "not_tagged": 33
+      },
+      "motorcycle": {
+        "not_tagged": 33
+      },
+      "share_taxi": {
+        "not_tagged": 33
+      },
+      "taxi": {
+        "not_tagged": 33
+      }
+    },
+    "secondary": {
+      "auto_rickshaw": {
+        "not_tagged": 5561,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 61,
+        "tagged_revocable_permission": 1
+      },
+      "bicycle": {
+        "not_tagged": 5481,
+        "tagged_prohibition": 11,
+        "tagged_public_access": 132,
+        "tagged_revocable_permission": 1
+      },
+      "bus": {
+        "not_tagged": 5556,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 66,
+        "tagged_revocable_permission": 1
+      },
+      "foot": {
+        "not_tagged": 5454,
+        "tagged_designated_access": 2,
+        "tagged_prohibition": 14,
+        "tagged_public_access": 154,
+        "tagged_revocable_permission": 1
+      },
+      "goods": {
+        "not_tagged": 5559,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 61,
+        "tagged_revocable_permission": 1
+      },
+      "hgv": {
+        "not_tagged": 5559,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 61,
+        "tagged_revocable_permission": 1
+      },
+      "minibus": {
+        "not_tagged": 5556,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 66,
+        "tagged_revocable_permission": 1
+      },
+      "moped": {
+        "not_tagged": 5561,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 61,
+        "tagged_revocable_permission": 1
+      },
+      "motorcar": {
+        "not_tagged": 5561,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 61,
+        "tagged_revocable_permission": 1
+      },
+      "motorcycle": {
+        "not_tagged": 5561,
+        "tagged_prohibition": 8,
+        "tagged_public_access": 55,
+        "tagged_revocable_permission": 1
+      },
+      "share_taxi": {
+        "not_tagged": 5556,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 66,
+        "tagged_revocable_permission": 1
+      },
+      "taxi": {
+        "not_tagged": 5556,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 66,
+        "tagged_revocable_permission": 1
+      }
+    },
+    "secondary_link": {
+      "auto_rickshaw": {
+        "not_tagged": 754,
+        "qualified_or_scope_review_required": 7,
+        "tagged_public_access": 1
+      },
+      "bicycle": {
+        "not_tagged": 760,
+        "tagged_public_access": 2
+      },
+      "bus": {
+        "not_tagged": 754,
+        "qualified_or_scope_review_required": 7,
+        "tagged_public_access": 1
+      },
+      "foot": {
+        "not_tagged": 762
+      },
+      "goods": {
+        "not_tagged": 754,
+        "qualified_or_scope_review_required": 7,
+        "tagged_public_access": 1
+      },
+      "hgv": {
+        "not_tagged": 754,
+        "qualified_or_scope_review_required": 7,
+        "tagged_public_access": 1
+      },
+      "minibus": {
+        "not_tagged": 754,
+        "qualified_or_scope_review_required": 7,
+        "tagged_public_access": 1
+      },
+      "moped": {
+        "not_tagged": 761,
+        "tagged_public_access": 1
+      },
+      "motorcar": {
+        "not_tagged": 754,
+        "tagged_prohibition": 7,
+        "tagged_public_access": 1
+      },
+      "motorcycle": {
+        "not_tagged": 761,
+        "tagged_public_access": 1
+      },
+      "share_taxi": {
+        "not_tagged": 754,
+        "qualified_or_scope_review_required": 7,
+        "tagged_public_access": 1
+      },
+      "taxi": {
+        "not_tagged": 754,
+        "qualified_or_scope_review_required": 7,
+        "tagged_public_access": 1
+      }
+    },
+    "service": {
+      "auto_rickshaw": {
+        "not_tagged": 19010,
+        "qualified_or_scope_review_required": 91,
+        "requires_user_purpose_or_permission": 22845,
+        "tagged_designated_access": 1,
+        "tagged_prohibition": 251,
+        "tagged_public_access": 23,
+        "tagged_revocable_permission": 493,
+        "unrecognised_or_ambiguous_value": 14
+      },
+      "bicycle": {
+        "not_tagged": 19055,
+        "requires_user_purpose_or_permission": 22913,
+        "tagged_prohibition": 213,
+        "tagged_public_access": 39,
+        "tagged_revocable_permission": 496,
+        "unrecognised_or_ambiguous_value": 12
+      },
+      "bus": {
+        "not_tagged": 19004,
+        "qualified_or_scope_review_required": 91,
+        "requires_user_purpose_or_permission": 22831,
+        "tagged_designated_access": 14,
+        "tagged_prohibition": 244,
+        "tagged_public_access": 46,
+        "tagged_revocable_permission": 493,
+        "unrecognised_or_ambiguous_value": 5
+      },
+      "foot": {
+        "not_tagged": 19075,
+        "requires_user_purpose_or_permission": 22921,
+        "tagged_designated_access": 2,
+        "tagged_prohibition": 177,
+        "tagged_public_access": 46,
+        "tagged_revocable_permission": 495,
+        "unrecognised_or_ambiguous_value": 12
+      },
+      "goods": {
+        "not_tagged": 19010,
+        "qualified_or_scope_review_required": 91,
+        "requires_user_purpose_or_permission": 22845,
+        "tagged_designated_access": 1,
+        "tagged_prohibition": 251,
+        "tagged_public_access": 23,
+        "tagged_revocable_permission": 493,
+        "unrecognised_or_ambiguous_value": 14
+      },
+      "hgv": {
+        "not_tagged": 19010,
+        "qualified_or_scope_review_required": 91,
+        "requires_user_purpose_or_permission": 22845,
+        "tagged_designated_access": 1,
+        "tagged_prohibition": 251,
+        "tagged_public_access": 23,
+        "tagged_revocable_permission": 493,
+        "unrecognised_or_ambiguous_value": 14
+      },
+      "minibus": {
+        "not_tagged": 19004,
+        "qualified_or_scope_review_required": 91,
+        "requires_user_purpose_or_permission": 22831,
+        "tagged_designated_access": 14,
+        "tagged_prohibition": 248,
+        "tagged_public_access": 42,
+        "tagged_revocable_permission": 493,
+        "unrecognised_or_ambiguous_value": 5
+      },
+      "moped": {
+        "not_tagged": 19038,
+        "requires_user_purpose_or_permission": 22904,
+        "tagged_designated_access": 1,
+        "tagged_prohibition": 252,
+        "tagged_public_access": 25,
+        "tagged_revocable_permission": 494,
+        "unrecognised_or_ambiguous_value": 14
+      },
+      "motorcar": {
+        "not_tagged": 19010,
+        "requires_user_purpose_or_permission": 22845,
+        "tagged_designated_access": 1,
+        "tagged_prohibition": 338,
+        "tagged_public_access": 27,
+        "tagged_revocable_permission": 493,
+        "unrecognised_or_ambiguous_value": 14
+      },
+      "motorcycle": {
+        "not_tagged": 19038,
+        "requires_user_purpose_or_permission": 22902,
+        "tagged_designated_access": 1,
+        "tagged_prohibition": 252,
+        "tagged_public_access": 27,
+        "tagged_revocable_permission": 494,
+        "unrecognised_or_ambiguous_value": 14
+      },
+      "share_taxi": {
+        "not_tagged": 19004,
+        "qualified_or_scope_review_required": 91,
+        "requires_user_purpose_or_permission": 22831,
+        "tagged_designated_access": 14,
+        "tagged_prohibition": 248,
+        "tagged_public_access": 42,
+        "tagged_revocable_permission": 493,
+        "unrecognised_or_ambiguous_value": 5
+      },
+      "taxi": {
+        "not_tagged": 19004,
+        "qualified_or_scope_review_required": 91,
+        "requires_user_purpose_or_permission": 22831,
+        "tagged_designated_access": 14,
+        "tagged_prohibition": 248,
+        "tagged_public_access": 42,
+        "tagged_revocable_permission": 493,
+        "unrecognised_or_ambiguous_value": 5
+      }
+    },
+    "services": {
+      "auto_rickshaw": {
+        "not_tagged": 5
+      },
+      "bicycle": {
+        "not_tagged": 5
+      },
+      "bus": {
+        "not_tagged": 5
+      },
+      "foot": {
+        "not_tagged": 5
+      },
+      "goods": {
+        "not_tagged": 5
+      },
+      "hgv": {
+        "not_tagged": 5
+      },
+      "minibus": {
+        "not_tagged": 5
+      },
+      "moped": {
+        "not_tagged": 5
+      },
+      "motorcar": {
+        "not_tagged": 5
+      },
+      "motorcycle": {
+        "not_tagged": 5
+      },
+      "share_taxi": {
+        "not_tagged": 5
+      },
+      "taxi": {
+        "not_tagged": 5
+      }
+    },
+    "steps": {
+      "auto_rickshaw": {
+        "not_tagged": 2118,
+        "qualified_or_scope_review_required": 2,
+        "requires_user_purpose_or_permission": 58,
+        "tagged_prohibition": 10,
+        "tagged_public_access": 48,
+        "tagged_revocable_permission": 1
+      },
+      "bicycle": {
+        "not_tagged": 2120,
+        "requires_user_purpose_or_permission": 60,
+        "tagged_prohibition": 5,
+        "tagged_public_access": 51,
+        "tagged_revocable_permission": 1
+      },
+      "bus": {
+        "not_tagged": 2118,
+        "qualified_or_scope_review_required": 2,
+        "requires_user_purpose_or_permission": 58,
+        "tagged_prohibition": 10,
+        "tagged_public_access": 48,
+        "tagged_revocable_permission": 1
+      },
+      "foot": {
+        "not_tagged": 2116,
+        "requires_user_purpose_or_permission": 60,
+        "tagged_prohibition": 1,
+        "tagged_public_access": 59,
+        "tagged_revocable_permission": 1
+      },
+      "goods": {
+        "not_tagged": 2118,
+        "qualified_or_scope_review_required": 2,
+        "requires_user_purpose_or_permission": 58,
+        "tagged_prohibition": 10,
+        "tagged_public_access": 48,
+        "tagged_revocable_permission": 1
+      },
+      "hgv": {
+        "not_tagged": 2118,
+        "qualified_or_scope_review_required": 2,
+        "requires_user_purpose_or_permission": 58,
+        "tagged_prohibition": 10,
+        "tagged_public_access": 48,
+        "tagged_revocable_permission": 1
+      },
+      "minibus": {
+        "not_tagged": 2118,
+        "qualified_or_scope_review_required": 2,
+        "requires_user_purpose_or_permission": 58,
+        "tagged_prohibition": 10,
+        "tagged_public_access": 48,
+        "tagged_revocable_permission": 1
+      },
+      "moped": {
+        "not_tagged": 2118,
+        "requires_user_purpose_or_permission": 60,
+        "tagged_prohibition": 10,
+        "tagged_public_access": 48,
+        "tagged_revocable_permission": 1
+      },
+      "motorcar": {
+        "not_tagged": 2118,
+        "requires_user_purpose_or_permission": 58,
+        "tagged_prohibition": 12,
+        "tagged_public_access": 48,
+        "tagged_revocable_permission": 1
+      },
+      "motorcycle": {
+        "not_tagged": 2118,
+        "requires_user_purpose_or_permission": 60,
+        "tagged_prohibition": 10,
+        "tagged_public_access": 48,
+        "tagged_revocable_permission": 1
+      },
+      "share_taxi": {
+        "not_tagged": 2118,
+        "qualified_or_scope_review_required": 2,
+        "requires_user_purpose_or_permission": 58,
+        "tagged_prohibition": 10,
+        "tagged_public_access": 48,
+        "tagged_revocable_permission": 1
+      },
+      "taxi": {
+        "not_tagged": 2118,
+        "qualified_or_scope_review_required": 2,
+        "requires_user_purpose_or_permission": 58,
+        "tagged_prohibition": 10,
+        "tagged_public_access": 48,
+        "tagged_revocable_permission": 1
+      }
+    },
+    "stop": {
+      "auto_rickshaw": {
+        "not_tagged": 1
+      },
+      "bicycle": {
+        "not_tagged": 1
+      },
+      "bus": {
+        "not_tagged": 1
+      },
+      "foot": {
+        "not_tagged": 1
+      },
+      "goods": {
+        "not_tagged": 1
+      },
+      "hgv": {
+        "not_tagged": 1
+      },
+      "minibus": {
+        "not_tagged": 1
+      },
+      "moped": {
+        "not_tagged": 1
+      },
+      "motorcar": {
+        "not_tagged": 1
+      },
+      "motorcycle": {
+        "not_tagged": 1
+      },
+      "share_taxi": {
+        "not_tagged": 1
+      },
+      "taxi": {
+        "not_tagged": 1
+      }
+    },
+    "tertiary": {
+      "auto_rickshaw": {
+        "not_tagged": 11808,
+        "requires_user_purpose_or_permission": 69,
+        "tagged_prohibition": 17,
+        "tagged_public_access": 45,
+        "tagged_revocable_permission": 31
+      },
+      "bicycle": {
+        "not_tagged": 11710,
+        "requires_user_purpose_or_permission": 68,
+        "tagged_prohibition": 10,
+        "tagged_public_access": 150,
+        "tagged_revocable_permission": 31,
+        "unrecognised_or_ambiguous_value": 1
+      },
+      "bus": {
+        "not_tagged": 11808,
+        "requires_user_purpose_or_permission": 69,
+        "tagged_prohibition": 17,
+        "tagged_public_access": 45,
+        "tagged_revocable_permission": 31
+      },
+      "foot": {
+        "not_tagged": 11732,
+        "requires_user_purpose_or_permission": 68,
+        "tagged_designated_access": 2,
+        "tagged_prohibition": 5,
+        "tagged_public_access": 132,
+        "tagged_revocable_permission": 31
+      },
+      "goods": {
+        "not_tagged": 11808,
+        "requires_user_purpose_or_permission": 69,
+        "tagged_prohibition": 17,
+        "tagged_public_access": 45,
+        "tagged_revocable_permission": 31
+      },
+      "hgv": {
+        "not_tagged": 11805,
+        "requires_user_purpose_or_permission": 69,
+        "tagged_prohibition": 20,
+        "tagged_public_access": 45,
+        "tagged_revocable_permission": 31
+      },
+      "minibus": {
+        "not_tagged": 11808,
+        "requires_user_purpose_or_permission": 69,
+        "tagged_prohibition": 17,
+        "tagged_public_access": 45,
+        "tagged_revocable_permission": 31
+      },
+      "moped": {
+        "not_tagged": 11808,
+        "requires_user_purpose_or_permission": 69,
+        "tagged_prohibition": 17,
+        "tagged_public_access": 45,
+        "tagged_revocable_permission": 31
+      },
+      "motorcar": {
+        "not_tagged": 11808,
+        "requires_user_purpose_or_permission": 69,
+        "tagged_prohibition": 17,
+        "tagged_public_access": 45,
+        "tagged_revocable_permission": 31
+      },
+      "motorcycle": {
+        "not_tagged": 11806,
+        "requires_user_purpose_or_permission": 69,
+        "tagged_prohibition": 19,
+        "tagged_public_access": 45,
+        "tagged_revocable_permission": 31
+      },
+      "share_taxi": {
+        "not_tagged": 11808,
+        "requires_user_purpose_or_permission": 69,
+        "tagged_prohibition": 17,
+        "tagged_public_access": 45,
+        "tagged_revocable_permission": 31
+      },
+      "taxi": {
+        "not_tagged": 11808,
+        "requires_user_purpose_or_permission": 69,
+        "tagged_prohibition": 17,
+        "tagged_public_access": 45,
+        "tagged_revocable_permission": 31
+      }
+    },
+    "tertiary_link": {
+      "auto_rickshaw": {
+        "not_tagged": 979,
+        "qualified_or_scope_review_required": 10,
+        "requires_user_purpose_or_permission": 5
+      },
+      "bicycle": {
+        "not_tagged": 984,
+        "requires_user_purpose_or_permission": 5,
+        "tagged_public_access": 5
+      },
+      "bus": {
+        "not_tagged": 979,
+        "qualified_or_scope_review_required": 10,
+        "requires_user_purpose_or_permission": 5
+      },
+      "foot": {
+        "not_tagged": 987,
+        "requires_user_purpose_or_permission": 5,
+        "tagged_public_access": 2
+      },
+      "goods": {
+        "not_tagged": 979,
+        "qualified_or_scope_review_required": 10,
+        "requires_user_purpose_or_permission": 5
+      },
+      "hgv": {
+        "not_tagged": 979,
+        "qualified_or_scope_review_required": 10,
+        "requires_user_purpose_or_permission": 5
+      },
+      "minibus": {
+        "not_tagged": 979,
+        "qualified_or_scope_review_required": 10,
+        "requires_user_purpose_or_permission": 5
+      },
+      "moped": {
+        "not_tagged": 986,
+        "requires_user_purpose_or_permission": 5,
+        "tagged_prohibition": 3
+      },
+      "motorcar": {
+        "not_tagged": 979,
+        "requires_user_purpose_or_permission": 5,
+        "tagged_prohibition": 10
+      },
+      "motorcycle": {
+        "not_tagged": 986,
+        "requires_user_purpose_or_permission": 5,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 1
+      },
+      "share_taxi": {
+        "not_tagged": 979,
+        "qualified_or_scope_review_required": 10,
+        "requires_user_purpose_or_permission": 5
+      },
+      "taxi": {
+        "not_tagged": 979,
+        "qualified_or_scope_review_required": 10,
+        "requires_user_purpose_or_permission": 5
+      }
+    },
+    "track": {
+      "auto_rickshaw": {
+        "not_tagged": 9258,
+        "qualified_or_scope_review_required": 3,
+        "requires_user_purpose_or_permission": 40,
+        "tagged_prohibition": 24,
+        "tagged_public_access": 22,
+        "tagged_revocable_permission": 6
+      },
+      "bicycle": {
+        "not_tagged": 9264,
+        "requires_user_purpose_or_permission": 40,
+        "tagged_prohibition": 10,
+        "tagged_public_access": 34,
+        "tagged_revocable_permission": 5
+      },
+      "bus": {
+        "not_tagged": 9258,
+        "qualified_or_scope_review_required": 3,
+        "requires_user_purpose_or_permission": 40,
+        "tagged_prohibition": 24,
+        "tagged_public_access": 22,
+        "tagged_revocable_permission": 6
+      },
+      "foot": {
+        "not_tagged": 9247,
+        "requires_user_purpose_or_permission": 41,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 58,
+        "tagged_revocable_permission": 5
+      },
+      "goods": {
+        "not_tagged": 9258,
+        "qualified_or_scope_review_required": 3,
+        "requires_user_purpose_or_permission": 40,
+        "tagged_prohibition": 24,
+        "tagged_public_access": 22,
+        "tagged_revocable_permission": 6
+      },
+      "hgv": {
+        "not_tagged": 9258,
+        "qualified_or_scope_review_required": 3,
+        "requires_user_purpose_or_permission": 40,
+        "tagged_prohibition": 24,
+        "tagged_public_access": 22,
+        "tagged_revocable_permission": 6
+      },
+      "minibus": {
+        "not_tagged": 9258,
+        "qualified_or_scope_review_required": 3,
+        "requires_user_purpose_or_permission": 40,
+        "tagged_prohibition": 24,
+        "tagged_public_access": 22,
+        "tagged_revocable_permission": 6
+      },
+      "moped": {
+        "not_tagged": 9261,
+        "requires_user_purpose_or_permission": 40,
+        "tagged_prohibition": 24,
+        "tagged_public_access": 22,
+        "tagged_revocable_permission": 6
+      },
+      "motorcar": {
+        "not_tagged": 9258,
+        "requires_user_purpose_or_permission": 40,
+        "tagged_prohibition": 27,
+        "tagged_public_access": 22,
+        "tagged_revocable_permission": 6
+      },
+      "motorcycle": {
+        "not_tagged": 9260,
+        "requires_user_purpose_or_permission": 40,
+        "tagged_prohibition": 24,
+        "tagged_public_access": 23,
+        "tagged_revocable_permission": 6
+      },
+      "share_taxi": {
+        "not_tagged": 9258,
+        "qualified_or_scope_review_required": 3,
+        "requires_user_purpose_or_permission": 40,
+        "tagged_prohibition": 24,
+        "tagged_public_access": 22,
+        "tagged_revocable_permission": 6
+      },
+      "taxi": {
+        "not_tagged": 9258,
+        "qualified_or_scope_review_required": 3,
+        "requires_user_purpose_or_permission": 40,
+        "tagged_prohibition": 24,
+        "tagged_public_access": 22,
+        "tagged_revocable_permission": 6
+      }
+    },
+    "trunk": {
+      "auto_rickshaw": {
+        "not_tagged": 3041,
+        "tagged_public_access": 61
+      },
+      "bicycle": {
+        "not_tagged": 3011,
+        "tagged_prohibition": 49,
+        "tagged_public_access": 42
+      },
+      "bus": {
+        "not_tagged": 3041,
+        "tagged_public_access": 61
+      },
+      "foot": {
+        "not_tagged": 3022,
+        "tagged_prohibition": 56,
+        "tagged_public_access": 24
+      },
+      "goods": {
+        "not_tagged": 3041,
+        "tagged_public_access": 61
+      },
+      "hgv": {
+        "not_tagged": 3039,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 61
+      },
+      "minibus": {
+        "not_tagged": 3041,
+        "tagged_public_access": 61
+      },
+      "moped": {
+        "not_tagged": 3041,
+        "tagged_public_access": 61
+      },
+      "motorcar": {
+        "not_tagged": 3041,
+        "tagged_public_access": 61
+      },
+      "motorcycle": {
+        "not_tagged": 3038,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 62
+      },
+      "share_taxi": {
+        "not_tagged": 3041,
+        "tagged_public_access": 61
+      },
+      "taxi": {
+        "not_tagged": 3041,
+        "tagged_public_access": 61
+      }
+    },
+    "trunk_link": {
+      "auto_rickshaw": {
+        "not_tagged": 957,
+        "qualified_or_scope_review_required": 2,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 2
+      },
+      "bicycle": {
+        "not_tagged": 956,
+        "tagged_public_access": 7
+      },
+      "bus": {
+        "not_tagged": 957,
+        "qualified_or_scope_review_required": 2,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 2
+      },
+      "foot": {
+        "not_tagged": 959,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 2
+      },
+      "goods": {
+        "not_tagged": 957,
+        "qualified_or_scope_review_required": 2,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 2
+      },
+      "hgv": {
+        "not_tagged": 957,
+        "qualified_or_scope_review_required": 2,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 2
+      },
+      "minibus": {
+        "not_tagged": 957,
+        "qualified_or_scope_review_required": 2,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 2
+      },
+      "moped": {
+        "not_tagged": 959,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 2
+      },
+      "motorcar": {
+        "not_tagged": 957,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 2
+      },
+      "motorcycle": {
+        "not_tagged": 959,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 2
+      },
+      "share_taxi": {
+        "not_tagged": 957,
+        "qualified_or_scope_review_required": 2,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 2
+      },
+      "taxi": {
+        "not_tagged": 957,
+        "qualified_or_scope_review_required": 2,
+        "tagged_prohibition": 2,
+        "tagged_public_access": 2
+      }
+    },
+    "unclassified": {
+      "auto_rickshaw": {
+        "not_tagged": 10184,
+        "qualified_or_scope_review_required": 3,
+        "requires_user_purpose_or_permission": 106,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 9,
+        "tagged_revocable_permission": 18,
+        "unrecognised_or_ambiguous_value": 2
+      },
+      "bicycle": {
+        "not_tagged": 10182,
+        "requires_user_purpose_or_permission": 107,
+        "tagged_prohibition": 3,
+        "tagged_public_access": 14,
+        "tagged_revocable_permission": 18,
+        "unrecognised_or_ambiguous_value": 2
+      },
+      "bus": {
+        "not_tagged": 10184,
+        "qualified_or_scope_review_required": 3,
+        "requires_user_purpose_or_permission": 106,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 9,
+        "tagged_revocable_permission": 18,
+        "unrecognised_or_ambiguous_value": 2
+      },
+      "foot": {
+        "not_tagged": 10169,
+        "requires_user_purpose_or_permission": 108,
+        "tagged_prohibition": 1,
+        "tagged_public_access": 28,
+        "tagged_revocable_permission": 18,
+        "unrecognised_or_ambiguous_value": 2
+      },
+      "goods": {
+        "not_tagged": 10184,
+        "qualified_or_scope_review_required": 3,
+        "requires_user_purpose_or_permission": 106,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 9,
+        "tagged_revocable_permission": 18,
+        "unrecognised_or_ambiguous_value": 2
+      },
+      "hgv": {
+        "not_tagged": 10184,
+        "qualified_or_scope_review_required": 3,
+        "requires_user_purpose_or_permission": 106,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 9,
+        "tagged_revocable_permission": 18,
+        "unrecognised_or_ambiguous_value": 2
+      },
+      "minibus": {
+        "not_tagged": 10184,
+        "qualified_or_scope_review_required": 3,
+        "requires_user_purpose_or_permission": 106,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 9,
+        "tagged_revocable_permission": 18,
+        "unrecognised_or_ambiguous_value": 2
+      },
+      "moped": {
+        "not_tagged": 10187,
+        "requires_user_purpose_or_permission": 106,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 9,
+        "tagged_revocable_permission": 18,
+        "unrecognised_or_ambiguous_value": 2
+      },
+      "motorcar": {
+        "not_tagged": 10184,
+        "requires_user_purpose_or_permission": 106,
+        "tagged_prohibition": 7,
+        "tagged_public_access": 9,
+        "tagged_revocable_permission": 18,
+        "unrecognised_or_ambiguous_value": 2
+      },
+      "motorcycle": {
+        "not_tagged": 10187,
+        "requires_user_purpose_or_permission": 106,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 9,
+        "tagged_revocable_permission": 18,
+        "unrecognised_or_ambiguous_value": 2
+      },
+      "share_taxi": {
+        "not_tagged": 10184,
+        "qualified_or_scope_review_required": 3,
+        "requires_user_purpose_or_permission": 106,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 9,
+        "tagged_revocable_permission": 18,
+        "unrecognised_or_ambiguous_value": 2
+      },
+      "taxi": {
+        "not_tagged": 10184,
+        "qualified_or_scope_review_required": 3,
+        "requires_user_purpose_or_permission": 106,
+        "tagged_prohibition": 4,
+        "tagged_public_access": 9,
+        "tagged_revocable_permission": 18,
+        "unrecognised_or_ambiguous_value": 2
+      }
+    }
+  },
+  "simulation_permissions_established": 0,
+  "limitations": [
+    "Profiles preserve explicit access-family tags only; missing tags do not imply permission or prohibition.",
+    "OSM transport categories are not automatic assignments to local legal classes, model modes or vehicle types.",
+    "Direction, reserved lanes, physical suitability, gates, barriers, turn restrictions, traffic notices and current law must be joined separately.",
+    "Conditional, directional, lane and nonstandard qualified access tags are retained without evaluation.",
+    "Private, destination, customer and permit access requires traveller-specific treatment; neither generic through access nor blanket deletion is established.",
+    "Motorcar tags can have disputed scope for other double-tracked vehicles. Those profiles retain a scope warning instead of silently assigning it.",
+    "All highway-tagged linear evidence remains present, including inactive or non-road features; no class is declared operational by this extraction.",
+    "No MATSim network was written or modified. A tagged grant does not establish a routable link."
+  ]
+}

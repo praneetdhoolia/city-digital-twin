@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/bus_gtfs_licence_992e482b5c39c5cd.txt",
+      "url": "https://raw.githubusercontent.com/croyla/mumbai-gtfs/64f9f774ee1f30389b86a7c26bc0dcca497a32ef/LICENSE",
+      "final_url": "https://raw.githubusercontent.com/croyla/mumbai-gtfs/64f9f774ee1f30389b86a7c26bc0dcca497a32ef/LICENSE",
+      "source": "GTFS source licence",
+      "licence": "MIT-0",
+      "retrieved": "2026-09-18T08:24:38.257302+00:00",
+      "sha256": "992e482b5c39c5cd25c67c625c5aac87f2ef5e9dcbf39be2af9d68e5944ea163",
+      "bytes": 892,
+      "content_type": "text/plain; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Licence text; not an assertion of upstream permissions."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_stzm_3e839cbd2769c75e.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/STZM/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/STZM/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Santacruz Metro",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:23.074060+00:00",
+      "sha256": "3e839cbd2769c75e52047a14caa00f05b79b327f9047311e7cfdb91556d9ae93",
+      "bytes": 24287,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

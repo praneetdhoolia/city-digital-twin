@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/iitb_census_map_index_50847a51bcda9046.html",
+      "url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/",
+      "final_url": "https://www.cse.iitb.ac.in/dummy",
+      "source": "IIT Bombay Maharashtra Census map",
+      "licence": "Reuse terms unverified",
+      "retrieved": "2026-09-18T08:39:55.642537+00:00",
+      "sha256": "50847a51bcda90465d983e94f65ad7b380ff8aff7c28b788aa753b26c2053f4b",
+      "bytes": 17893,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Candidate village and ward GIS with census linkage; source and licence require inspection."
+    }
+  ]
+}

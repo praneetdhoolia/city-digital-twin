@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/iitb_boundary_raigad_24f9cb3d7e86badc.zip",
+      "url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/raigad.zip",
+      "final_url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/raigad.zip",
+      "source": "IIT Bombay raigad district and taluka boundaries",
+      "licence": "IIT Bombay source reuse terms unverified",
+      "retrieved": "2026-09-18T08:44:03.924136+00:00",
+      "sha256": "24f9cb3d7e86badce003b1c6df644abe999769a406df2b41dd3b45e291b664d2",
+      "bytes": 288257,
+      "content_type": "application/zip",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Research GIS linked to historical census; boundary completeness, coordinate reference system and permissions require audit."
+    }
+  ]
+}

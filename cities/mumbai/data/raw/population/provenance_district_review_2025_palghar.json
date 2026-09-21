@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/district_review_2025_palghar_80c3ddd199a7a6e9.pdf",
+      "url": "https://cdnbbsr.s3waas.gov.in/s31c87860778df9675a35aa14d3bee8776/uploads/2025/12/20251216907590689.pdf",
+      "final_url": "https://cdnbbsr.s3waas.gov.in/s31c87860778df9675a35aa14d3bee8776/uploads/2025/12/20251216907590689.pdf",
+      "content_type": "application/pdf",
+      "source": "District Social and Economic Review 2025 Dist. Palghar",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:11:00.676999+00:00",
+      "sha256": "80c3ddd199a7a6e95fb5d9114f568e5d6427b93cf13f55743d3846aa61277daa",
+      "bytes": 9753319,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Government district socioeconomic review 2025. Each table has its own reference period; published projections remain projections.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

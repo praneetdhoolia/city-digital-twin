@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mbmt_route_alignments.zip",
+      "url": "https://mbmcwebportal.amnex.com/ListofRoutesLocations/PlotRoutesOnMap/",
+      "source": "MBMT public route alignments, one passenger-map query per route",
+      "licence": "Operator/vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:06:37.501911+00:00",
+      "retrieved_first": "2026-09-18T16:03:26.951642+00:00",
+      "sha256": "084b8fb3f5980860c5de656e47fb2c2c9187806ebcfa44ffbac8c44b75272348",
+      "bytes": 1196060,
+      "content_type": "application/zip",
+      "producing_script": "extract/acquire_mbmt_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Passenger map geometry. Direction, road matching and current operation need validation.",
+      "method": "POST",
+      "harvest": true,
+      "member_count": 118,
+      "members_listing": "_members.csv",
+      "formats": [
+        "json"
+      ],
+      "packed": "2026-09-21T06:16:03.858799+00:00"
+    }
+  ]
+}

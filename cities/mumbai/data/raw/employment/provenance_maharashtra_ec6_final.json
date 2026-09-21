@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/maharashtra_ec6_final_e1d10089c2662f20.pdf",
+      "url": "https://mahasdb.maharashtra.gov.in/SDB_Reports/Economic_Census/EC_1998_2005/PDF/Sixtheconomic_census.pdf",
+      "final_url": "https://mahasdb.maharashtra.gov.in/SDB_Reports/Economic_Census/EC_1998_2005/PDF/Sixtheconomic_census.pdf",
+      "content_type": "application/pdf",
+      "source": "Sixth Economic Census Maharashtra final report",
+      "licence": "Reuse terms unverified",
+      "retrieved": "2026-09-18T10:32:23.474199+00:00",
+      "sha256": "e1d10089c2662f20badfdd7c517287db0598bba25ba24d8c3dfbe760134500da",
+      "bytes": 15911003,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical establishment and employment counts; source universe and district boundaries require reconciliation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_public_menu_e2045a61de198a48.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/menu-list/passenger-main-menu/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/menu-list/passenger-main-menu/",
+      "content_type": "application/json",
+      "source": "Line 3 passenger information menu",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:03:37.885534+00:00",
+      "sha256": "e2045a61de198a48f13307a067d31c3ea72b956d1caa4294ca91b1ec3cbfa18a",
+      "bytes": 1475,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public passenger website response; inspect source period and completeness before model use.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_rti_publication_index_20260919_222ffec7d6d0b90c.html",
+      "url": "https://www.bestundertaking.com/RTI2005.asp",
+      "final_url": "https://www.bestundertaking.com/RTI2005.asp",
+      "source": "BEST public RTI disclosures index",
+      "licence": "BEST public disclosure; reuse terms unverified",
+      "retrieved": "2026-09-18T15:48:21.643331+00:00",
+      "sha256": "222ffec7d6d0b90c8d9d93099ba939a4864a6c5568cfab6e1999af150bbe38c5",
+      "bytes": 84569,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Read-only public disclosure catalogue, not an RTI submission."
+    }
+  ]
+}

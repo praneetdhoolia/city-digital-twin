@@ -1,0 +1,100 @@
+{
+  "base_network": {
+    "bytes": 27516694,
+    "km": 101306.0,
+    "links": 846699,
+    "links_by_mode": {
+      "bike": 1480,
+      "bus": 824585,
+      "car": 824536,
+      "light_rail": 2177,
+      "pt": 49,
+      "rail": 18352,
+      "walk": 1632
+    },
+    "nodes": 377443,
+    "path_access_overrides": {
+      "bicycle=no denies bike": 18,
+      "links_rewritten": 18
+    }
+  },
+  "crs": "EPSG:32643",
+  "gtfs_day_param": "all",
+  "schedules": {
+    "baseline_bus": {
+      "artificial_link_refs": 1453,
+      "artificial_share_pct": 0.65,
+      "departures": 99080,
+      "feed": "schedules/baseline_bus.zip",
+      "gtfs_seconds": 3.8,
+      "mapping_seconds": 80.6,
+      "modes": {
+        "bus": 1120
+      },
+      "network_bytes": 27511050,
+      "route_link_fingerprint": "33e2c28f4fb00da9d73418580faa12db17619a5bda74e5b0feb2c7e7b2f8a89d",
+      "route_link_refs": 222109,
+      "schedule_bytes": 2797450,
+      "stop_facilities": 12253,
+      "stop_link_fingerprint": "9e5c300981671733cc2b29a272bcc9856a471648acc4429d90a044a1eb612bce",
+      "stops_with_link": 12253,
+      "stops_without_link": 0,
+      "transit_lines": 1609,
+      "transit_routes": 1120
+    },
+    "baseline_multimodal": {
+      "artificial_link_refs": 1467,
+      "artificial_share_pct": 0.65,
+      "departures": 103892,
+      "feed": "schedules/baseline_multimodal.zip",
+      "gtfs_seconds": 3.9,
+      "mapping_seconds": 83.7,
+      "modes": {
+        "bus": 1120,
+        "ferry": 4,
+        "rail": 31,
+        "subway": 14
+      },
+      "network_bytes": 27512276,
+      "route_link_fingerprint": "27e2a44950b374e20926e48cde5b0b8bda9282083457c03bad59a3d07c158563",
+      "route_link_refs": 226496,
+      "schedule_bytes": 2883542,
+      "stop_facilities": 12795,
+      "stop_link_fingerprint": "1a6e6de6210d7d068ebd5197c52676803988dbb221544ccdfb09e594e5b46a80",
+      "stops_with_link": 12795,
+      "stops_without_link": 0,
+      "transit_lines": 1658,
+      "transit_routes": 1169
+    },
+    "baseline_regional": {
+      "artificial_link_refs": 1921,
+      "artificial_share_pct": 0.54,
+      "departures": 114670,
+      "feed": "schedules/baseline_regional.zip",
+      "gtfs_seconds": 4.4,
+      "mapping_seconds": 114.1,
+      "modes": {
+        "bus": 1802,
+        "ferry": 4,
+        "rail": 31,
+        "subway": 14
+      },
+      "network_bytes": 27523827,
+      "route_link_fingerprint": "1c8e7f031ab3de86c138a10b96bff188dd311c5dcd2a8d962c4bfe6141be122b",
+      "route_link_refs": 354283,
+      "schedule_bytes": 3837775,
+      "stop_facilities": 18105,
+      "stop_link_fingerprint": "bb665ecdb2a9b9481d9f97f4b4f569cfc18fc3c3ed093aba4b23cc6e0888817e",
+      "stops_with_link": 18105,
+      "stops_without_link": 0,
+      "transit_lines": 2340,
+      "transit_routes": 1851
+    }
+  },
+  "toolchain": {
+    "jdk": "25.0.4+7",
+    "maven": "3.9.9",
+    "pt2matsim": "26.6",
+    "run-stack": "2027.0-2026w25"
+  }
+}

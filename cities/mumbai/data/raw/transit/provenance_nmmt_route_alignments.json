@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_route_alignments.zip",
+      "url": "https://nmmtitmsmobileapi.amnex.co.in/api/BusTracking/GetRoutePathData",
+      "source": "NMMT public route alignments, one passenger-map query per current route",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-21T06:14:04.487652+00:00",
+      "retrieved_first": "2026-09-18T11:14:41.299747+00:00",
+      "sha256": "cacd53e718f61fb120d210e3a4caa1d6e099793fc8f82943aa47712ba3832ae8",
+      "bytes": 8887174,
+      "content_type": "application/zip",
+      "producing_script": "extract/acquire_nmmt_paths.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Passenger map geometry. Direction, road matching and current operation need validation.",
+      "method": "POST",
+      "harvest": true,
+      "member_count": 619,
+      "members_listing": "_members.csv",
+      "formats": [
+        "json"
+      ],
+      "packed": "2026-09-21T06:14:04.798281+00:00"
+    }
+  ]
+}

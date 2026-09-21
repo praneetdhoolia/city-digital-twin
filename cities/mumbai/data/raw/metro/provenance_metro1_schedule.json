@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/metro/metro1_schedule_3806203a80a015c3.html",
+      "url": "https://www.reliancemumbaimetro.com/metro-train-schedule",
+      "final_url": "https://www.reliancemumbaimetro.com/metro-train-schedule",
+      "content_type": "text/html; charset=utf-8",
+      "source": "Mumbai Metro One train schedule",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:37:43.265494+00:00",
+      "sha256": "3806203a80a015c370e9691d007f308d5de77c70c04fefb79cd931938cd9ed50",
+      "bytes": 30842,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published first/last departures and variable headways, not a full working timetable.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

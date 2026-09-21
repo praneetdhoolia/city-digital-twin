@@ -56,8 +56,11 @@ RESULTS = os.path.join(ROOT, 'results')
 # script's own: it is the declared sweep FLOOR of RUN.controler.last_iteration,
 # whose basis reads "the largest value MEASURED to be insufficient"
 # (DECISIONS.md 9.7, 9.43) - exactly the probe/arm boundary.
-PROBE_ITERATIONS_CEILING = _registry.load().sweep(
-    'RUN.controler.last_iteration')['interval'][0]
+_config = _registry.load()
+# A development city may have a smoke configuration before an arm horizon.
+# Explicit run_kind identifies those cases without inventing a threshold.
+PROBE_ITERATIONS_CEILING = (_config.sweep('RUN.controler.last_iteration')['interval'][0]
+                          if 'RUN.controler.last_iteration' in _config else None)
 
 
 def load_families():
@@ -76,6 +79,10 @@ def launch_stamp(name):
 
 
 def family_of(name, fams, overrides):
+    records = results_store.resolve_records(name)
+    meta = _load(records, '_meta.json') if records else None
+    if meta and meta.get('run_kind') == 'behavioural_smoke':
+        return None, 'behavioural development case; no calibration family'
     if name in overrides:
         return overrides[name].get('family'), overrides[name].get('note', '')
     stamp = launch_stamp(name)
@@ -119,7 +126,9 @@ def scan_run(name, fams, overrides):
     completion = (record or {}).get('completion', 'ran_to_last_iteration')
     if not has_record:
         run_class = status if status in ('failed', 'aborted') else 'no-record'
-    elif (record.get('iterations') or 0) < PROBE_ITERATIONS_CEILING:
+    elif (meta.get('run_kind') == 'behavioural_smoke'
+          or (PROBE_ITERATIONS_CEILING is not None
+              and (record.get('iterations') or 0) < PROBE_ITERATIONS_CEILING)):
         run_class = 'probe'
     elif completion != 'ran_to_last_iteration':
         run_class = 'stopped-arm'
@@ -205,9 +214,12 @@ def build():
         f.write('One row per run directory. **Comparisons are legitimate only '
                 'inside one family at one fraction** (DECISIONS.md 3.5 and the '
                 'family boundaries in docs/run_families.json). A run '
-                'without `_run.json` is not a result; a `probe` (under %d '
-                'iterations, DECISIONS.md 9.7/9.43) is plumbing/timing '
-                'evidence, never a result.\n\n' % PROBE_ITERATIONS_CEILING)
+                'without `_run.json` is not a result; a `probe` is '
+                'plumbing/timing evidence, never a calibrated result. '
+                'Explicit behavioural smoke cases have no calibration family.\n\n')
+        if PROBE_ITERATIONS_CEILING is not None:
+            f.write('The selected city\'s declared probe threshold is %s iterations '
+                    '(DECISIONS.md 9.7/9.43).\n\n' % PROBE_ITERATIONS_CEILING)
         f.write('| run | class | status | record | relaxed | family | S | day '
                 '| frac | iters | seed | thr | med s/it | fit MAE pp |\n')
         f.write('|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n')

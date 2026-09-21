@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/mospi_tus_filters_5_1dcba95fc3f9c1c9.json",
+      "url": "https://api.mospi.gov.in/api/tus/getTusFilterByIndicatorId?indicator_code=5",
+      "final_url": "https://api.mospi.gov.in/api/tus/getTusFilterByIndicatorId?indicator_code=5",
+      "content_type": "application/json; charset=utf-8",
+      "source": "NSO public TUS aggregate indicator 5 filters",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:22:24.850508+00:00",
+      "sha256": "1dcba95fc3f9c1c98eb1deeadaaeed4122d140859ff1cc62e799be47e9bcbf7c",
+      "bytes": 27348,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public aggregate dimensions and allowed filter codes, not household unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/roads/osm_relation_11179935_history_20260919_a1d1fc2edde0a229.xml",
+      "url": "https://api.openstreetmap.org/api/0.6/relation/11179935/history",
+      "final_url": "https://api.openstreetmap.org/api/0.6/relation/11179935/history",
+      "source": "OSM history of incomplete turn restriction 11179935",
+      "licence": "ODbL 1.0; OpenStreetMap contributors",
+      "retrieved": "2026-09-19T02:05:50.344141+00:00",
+      "sha256": "a1d1fc2edde0a229d6966faa707404688cf9cb1f3001033a21309e10eeed7a2e",
+      "bytes": 947,
+      "content_type": "application/xml; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public object history for source defect diagnosis; historical members are not current operating rules."
+    }
+  ]
+}

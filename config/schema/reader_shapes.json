@@ -86,7 +86,13 @@
         "occupation": "counts in occupation_labels() order, all ages 15+ and both sexes summed",
         "income": "counts in income_band_labels() order, all ages 15+ and both sexes summed"
       },
-      "note": "Adapted 3 Sep 2026 (DECISIONS.md 9.140). The framework forms every rate itself from these counts, so the synthetic population is byte-identical to the one built when the synthesiser read the ABS columns directly (verified on the 9.131 population). A second city's adapter returns the same shapes from its own census; the occupation and income labels it returns become that city's B1 vocabulary."
+      "note": "Adapted 3 Sep 2026 (DECISIONS.md 9.140). The framework forms every rate itself from these counts, so the synthetic population is byte-identical to the one built when the synthesiser read the ABS columns directly (verified on the 9.131 population). A second city's adapter returns the same shapes from its own census; the occupation and income labels it returns become that city's B1 vocabulary.",
+      "semantic_limitations": [
+        "The legacy synthesiser requires weekly full-time/part-time employment counts. Annual work-duration categories are not interchangeable with them.",
+        "The legacy vehicle marginal is a count of motor vehicles per dwelling. Possession percentages for overlapping asset types cannot be substituted.",
+        "An adapter must not manufacture these concepts merely to satisfy the reader shape. A city with different observations needs an evidenced derivation or a compatible synthesiser.",
+        "Person permittedModes attributes can restrict arbitrary configured modes independently of car access; see docs/person_modes.md. They do not derive household fleets or demographic joint distributions."
+      ]
     }
   }
 }

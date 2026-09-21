@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/demand/tus_2024_codes_9399c2adb482f0e7.xlsx",
+      "url": "https://microdata.gov.in/NADA/index.php/catalog/236/download/2600",
+      "final_url": "https://microdata.gov.in/NADA/index.php/catalog/236/download/2600",
+      "content_type": "application/octet-stream",
+      "source": "Time Use Survey 2024 codes",
+      "licence": "Government publication; reuse terms and microdata access conditions require review",
+      "retrieved": "2026-09-18T10:03:09.617046+00:00",
+      "sha256": "9399c2adb482f0e71190af0141eb7485065a1e26606a42875fd7ffaf80939de9",
+      "bytes": 20076,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public statistical evidence; survey weights, age and geographic coverage require validation. Catalogue access is not acquisition of unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

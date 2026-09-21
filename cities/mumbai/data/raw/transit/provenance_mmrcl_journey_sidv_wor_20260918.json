@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_journey_sidv_wor_20260918_f52b5b151996ce27.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/journey-route/SIDV/WOR/station/station/least-distance/2026-09-18/one_way/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/journey-route/SIDV/WOR/station/station/least-distance/2026-09-18/one_way/",
+      "content_type": "application/json",
+      "source": "Metro 3 public adjacent-station journey SIDV to WOR, 18 September 2026",
+      "licence": "Public authority or operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:16:09.458124+00:00",
+      "sha256": "f52b5b151996ce2722b2ca5fee7e5266b2be5858f3868312499b1a9db9c4769b",
+      "bytes": 555,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

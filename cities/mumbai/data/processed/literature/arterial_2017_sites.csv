@@ -1,0 +1,13 @@
+source,source_id,source_sha256,source_pdf_page,source_table,model_assignment_status,section_id,city_name,total_road_lanes,CS_traffic_share_percent,CB_traffic_share_percent,HV_traffic_share_percent,3W_traffic_share_percent,2W_traffic_share_percent
+literature,urban_arterial_operating_speed_capacity_2017_pdf,62cf654c280e09ef133cc86b6ce4f4047fc557b719f98e3dbeb5f3fadaef2aaf,2,1,not_adopted_requires_local_evidence,D-6-1,Delhi,6,46.49,7.55,3.64,12.70,29.62
+literature,urban_arterial_operating_speed_capacity_2017_pdf,62cf654c280e09ef133cc86b6ce4f4047fc557b719f98e3dbeb5f3fadaef2aaf,2,1,not_adopted_requires_local_evidence,D-6-2,Delhi,6,38.30,5.10,2.60,20.60,33.40
+literature,urban_arterial_operating_speed_capacity_2017_pdf,62cf654c280e09ef133cc86b6ce4f4047fc557b719f98e3dbeb5f3fadaef2aaf,2,1,not_adopted_requires_local_evidence,D-6-3,Delhi,6,46.54,7.11,1.65,16.63,28.06
+literature,urban_arterial_operating_speed_capacity_2017_pdf,62cf654c280e09ef133cc86b6ce4f4047fc557b719f98e3dbeb5f3fadaef2aaf,2,1,not_adopted_requires_local_evidence,J-6-1,Jaipur,6,30.81,6.06,3.28,7.65,52.20
+literature,urban_arterial_operating_speed_capacity_2017_pdf,62cf654c280e09ef133cc86b6ce4f4047fc557b719f98e3dbeb5f3fadaef2aaf,2,1,not_adopted_requires_local_evidence,J-6-2,Jaipur,6,24.51,8.66,3.57,8.72,54.54
+literature,urban_arterial_operating_speed_capacity_2017_pdf,62cf654c280e09ef133cc86b6ce4f4047fc557b719f98e3dbeb5f3fadaef2aaf,2,1,not_adopted_requires_local_evidence,J-6-3,Jaipur,6,26.50,4.00,1.52,10.48,57.50
+literature,urban_arterial_operating_speed_capacity_2017_pdf,62cf654c280e09ef133cc86b6ce4f4047fc557b719f98e3dbeb5f3fadaef2aaf,2,1,not_adopted_requires_local_evidence,B-6-1,Bengaluru,6,30.12,10.38,10.35,15.43,33.72
+literature,urban_arterial_operating_speed_capacity_2017_pdf,62cf654c280e09ef133cc86b6ce4f4047fc557b719f98e3dbeb5f3fadaef2aaf,2,1,not_adopted_requires_local_evidence,C-6-1,Chandigarh,6,32.80,3.65,2.28,8.00,53.27
+literature,urban_arterial_operating_speed_capacity_2017_pdf,62cf654c280e09ef133cc86b6ce4f4047fc557b719f98e3dbeb5f3fadaef2aaf,2,1,not_adopted_requires_local_evidence,D-4-1,Delhi,4,58.08,11.04,2.03,7.71,21.14
+literature,urban_arterial_operating_speed_capacity_2017_pdf,62cf654c280e09ef133cc86b6ce4f4047fc557b719f98e3dbeb5f3fadaef2aaf,2,1,not_adopted_requires_local_evidence,D-4-2,Delhi,4,49.00,8.80,2.50,18.90,20.80
+literature,urban_arterial_operating_speed_capacity_2017_pdf,62cf654c280e09ef133cc86b6ce4f4047fc557b719f98e3dbeb5f3fadaef2aaf,2,1,not_adopted_requires_local_evidence,D-4-3,Delhi,4,45.76,5.76,4.13,18.41,25.94
+literature,urban_arterial_operating_speed_capacity_2017_pdf,62cf654c280e09ef133cc86b6ce4f4047fc557b719f98e3dbeb5f3fadaef2aaf,2,1,not_adopted_requires_local_evidence,J-4-1,Jaipur,4,24.29,10.05,5.19,8.31,52.17

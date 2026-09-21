@@ -1,0 +1,62 @@
+{
+  "source_id": "mmrda_thane_borivali_tunnel_dpr",
+  "source_sha256": "0eacba038c43131f4926e2e218755e683f6d1e11df0ed2549c70cc08d8d1245b",
+  "site_rows": 20,
+  "aggregate_rows": 11,
+  "mean_checks": [
+    {
+      "class_as_printed": "Cars",
+      "mean_of_printed_sites": "56915.25",
+      "printed_mean": 56915,
+      "residual_daily_count": "-0.25",
+      "propagated_integer_rounding_envelope": "1.0",
+      "status": "rounding_compatible"
+    },
+    {
+      "class_as_printed": "LCV",
+      "mean_of_printed_sites": "8042.5",
+      "printed_mean": 8043,
+      "residual_daily_count": "0.5",
+      "propagated_integer_rounding_envelope": "1.0",
+      "status": "rounding_compatible"
+    },
+    {
+      "class_as_printed": "Trucks",
+      "mean_of_printed_sites": "5762",
+      "printed_mean": 5762,
+      "residual_daily_count": "0",
+      "propagated_integer_rounding_envelope": "1.0",
+      "status": "exact"
+    },
+    {
+      "class_as_printed": "Bus",
+      "mean_of_printed_sites": "4624",
+      "printed_mean": 4624,
+      "residual_daily_count": "0",
+      "propagated_integer_rounding_envelope": "1.0",
+      "status": "exact"
+    },
+    {
+      "class_as_printed": "Others/MAV",
+      "mean_of_printed_sites": "415",
+      "printed_mean": 415,
+      "residual_daily_count": "0",
+      "propagated_integer_rounding_envelope": "1.0",
+      "status": "exact"
+    }
+  ],
+  "aggregate_sum_daily_count": 75759,
+  "aggregate_sum_status": "exact",
+  "source_seasonality_factor": 1,
+  "source_seasonality_status": "report_assumption_not_adopted",
+  "limitations": [
+    "Report hosted in 2024 and dated October 2022 contains a count survey from 2018.",
+    "31-Mar-18 labels a base case; exact seven-day survey dates remain unresolved.",
+    "The four-site average is neither a single link flow nor a regional traffic total.",
+    "Location 1 is listed as Magathane Midblock (WEH), but page 44 places CVC1 on Dattapada Road. Do not assign it to the WEH mainline without resolving the map.",
+    "Others/MAV and Trucks are relabelled Multi Axle Truck and Truck 2 Axle in the report aggregate. That crosswalk has not been independently established.",
+    "The five published groups do not establish coverage of motorcycles, three-wheelers, walking or cycling; no absent mode is assigned zero.",
+    "FY2023 and FY2029 traffic is projected using the later growth table; it is not a new count survey.",
+    "No proposed tunnel geometry, seasonality factor or growth rate is adopted as an operational model input."
+  ]
+}

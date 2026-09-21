@@ -1,0 +1,47 @@
+{
+  "source": "derived_native_osm_geometry",
+  "input_sha256": [
+    "a7865ea1b59589c9202dd59711f57658ea02bfa6ca75bab373e4687ed3d91cf5"
+  ],
+  "projected_crs": "EPSG:32643",
+  "nodes": 48273,
+  "ways": 5643,
+  "segments": 49625,
+  "identical_way_copies_deduplicated": 0,
+  "identical_node_copies_deduplicated": 0,
+  "by_railway_tag": {
+    "": 3,
+    "abandoned": 38,
+    "construction": 284,
+    "disused": 26,
+    "funicular": 1,
+    "miniature": 7,
+    "monorail": 37,
+    "narrow_gauge": 9,
+    "platform": 538,
+    "platform_edge": 10,
+    "proposed": 18,
+    "rail": 4124,
+    "razed": 2,
+    "station": 65,
+    "subway": 438,
+    "technical_station": 2,
+    "traverser": 6,
+    "turntable": 1,
+    "workshop": 32,
+    "yard": 2
+  },
+  "by_geometry_role": {
+    "area_boundary": 452,
+    "native_way_geometry": 5191
+  },
+  "zero_length_segments": 0,
+  "limitations": [
+    "All railway-tagged ways are evidence; station outlines, platforms, inactive tracks and construction are not operating links.",
+    "Adjacent native node references are preserved without snapping, simplification, clipping or a minimum length.",
+    "Geodesic lengths use the OSM WGS84 ellipsoid; projected lengths use the supplied metre CRS. Neither includes vertical grade.",
+    "Source node order is not an operating direction. Missing directions, speeds, gauge and capacity remain unspecified.",
+    "Node and way tags retain signal, switch, level and service evidence without supplying a block or train-control model.",
+    "Only nodes referenced by retained ways are included; standalone railway features need their separate inventory."
+  ]
+}

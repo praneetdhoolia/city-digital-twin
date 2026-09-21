@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mbmt_ticket_monitoring_agreement_b076204722a74f29.pdf",
+      "url": "https://www.mbmc.gov.in/assets/uploads/file-8288.pdf",
+      "final_url": "https://www.mbmc.gov.in/assets/uploads/file-8288.pdf",
+      "source": "MBMT Agreement for ticket collection supervision and monitoring at Mira Bhayandar",
+      "licence": "Municipal/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:02:59.061803+00:00",
+      "sha256": "b076204722a74f29f00e72ab5d1ea4352be56b45ad8bec3fa4a99f4986d4c7c9",
+      "bytes": 9596682,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published contract, budget or notice. Procurement and planned service are not current operating observations."
+    }
+  ]
+}

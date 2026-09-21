@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/vehicles/vehicle_stock_2025_66426e585d9e275d.pdf",
+      "url": "https://transport.maharashtra.gov.in/Site/Upload/pdf/Statistics_Information_24-25.pdf",
+      "final_url": "https://transport.maharashtra.gov.in/Site/Upload/pdf/Statistics_Information_24-25.pdf",
+      "source": "RTO vehicle population at 31 March 2025",
+      "licence": "Reuse terms unverified",
+      "retrieved": "2026-09-18T08:24:46.487650+00:00",
+      "sha256": "66426e585d9e275def066a350067f2649b7526416f94e8dda8ff831ef5819e5c",
+      "bytes": 742612,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "RTO stock totals; administrative boundary reconciliation required."
+    }
+  ]
+}

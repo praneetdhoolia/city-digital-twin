@@ -5,6 +5,8 @@ Deliberately dependency-light (lxml only) so the pipeline reproduces anywhere
 without a GDAL/GEOS toolchain.
 """
 import math
+import gzip
+from pathlib import Path
 from lxml import etree
 
 
@@ -14,7 +16,13 @@ def parse(path):
         ('way',  id, [node_refs], tags)
         ('rel',  id, [(type, ref, role)], tags)
     """
-    ctx = etree.iterparse(path, events=('end',), tag=('node', 'way', 'relation'))
+    opener = gzip.open if str(path).endswith('.gz') else open
+    with opener(Path(path), 'rb') as stream:
+        yield from _parse_stream(stream)
+
+
+def _parse_stream(stream):
+    ctx = etree.iterparse(stream, events=('end',), tag=('node', 'way', 'relation'))
     for _, el in ctx:
         tags = {t.get('k'): t.get('v') for t in el.findall('tag')}
         if el.tag == 'node':

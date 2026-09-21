@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "source_id": "mtp_notice_823227",
+  "source_sha256": "0f9a3682344331d51ed2430f4087fe231a2663b3b63d082f470ee9c3fb6c8dbe",
+  "notification_number": "187/Addl.cp./TRF/Permanent Notif./2026",
+  "issued_date": "2026-08-25",
+  "source_pages_1_based": [
+    3,
+    4
+  ],
+  "method": "Visual transcription of English notification pages; compared with English press note pages 7-8.",
+  "status": "single_pass_transcription_spatial_and_supersession_checks_pending",
+  "scope": "Mumbai Coastal Road and Bandra-Worli Sea Link, Marine Drive to Bandra Toll Plaza; both directions, bridges, underpasses and tunnels.",
+  "valid_until": "further_orders",
+  "supersession": "Order states previous temporary notifications for this corridor are repealed; individual predecessor IDs are not listed.",
+  "hours": "24x7",
+  "speed_limits": [
+    {
+      "road_part": "straight_road",
+      "maximum_speed_km_h": 80
+    },
+    {
+      "road_part": "tunnel",
+      "maximum_speed_km_h": 60
+    },
+    {
+      "road_part": "turning_point_or_road_merger",
+      "maximum_speed_km_h": 40
+    }
+  ],
+  "entry_prohibitions": [
+    {
+      "source_class": "goods_carriers_and_heavy_vehicles",
+      "examples": [
+        "tempo",
+        "truck",
+        "trailer",
+        "mixer",
+        "tractor"
+      ],
+      "exceptions": [
+        "BEST bus",
+        "ST bus",
+        "other passenger bus",
+        "ambulance",
+        "fire brigade",
+        "other emergency service heavy vehicle"
+      ]
+    },
+    {
+      "source_class": "two_wheelers",
+      "examples": [
+        "cycle",
+        "moped",
+        "adapted vehicle",
+        "scooter",
+        "scooter with sidecar"
+      ],
+      "exceptions": []
+    },
+    {
+      "source_class": "three_wheelers",
+      "examples": [],
+      "exceptions": []
+    },
+    {
+      "source_class": "animal_drawn_and_hand_carts",
+      "examples": [
+        "tanga",
+        "bullock cart",
+        "horse cart",
+        "hand cart"
+      ],
+      "exceptions": []
+    },
+    {
+      "source_class": "pedestrians",
+      "examples": [],
+      "exceptions": []
+    }
+  ],
+  "stopping": {
+    "prohibited": true,
+    "passenger_pickup_dropoff_prohibited": true,
+    "exceptions": [
+      "BEST bus"
+    ],
+    "source_scope_note": "BEST exception appears after passenger pickup/drop-off in clause E; precise scope must be retained for review."
+  },
+  "access_points": {
+    "southbound_entry": [
+      "Bandra Toll Plaza",
+      "J. K. Kapoor Circle Underpass",
+      "Swa. Bindu Madhav Thackray Junction",
+      "Barrister Rajni Patel Junction (Lotus Junction)",
+      "Vatsalabai Desai Junction (Haji Ali Junction)",
+      "Amarsons Garden"
+    ],
+    "southbound_exit": [
+      "Worli Sea Link Gate",
+      "Barrister Rajni Patel Junction (Lotus Junction)",
+      "Vatsalabai Desai Junction (Haji Ali Junction)",
+      "Amarsons Garden",
+      "Marine Drive (Princess Street Bridge)"
+    ],
+    "northbound_entry": [
+      "Marine Drive (Princess Street Bridge)",
+      "Amarsons Garden",
+      "Vatsalabai Desai Junction (Haji Ali Junction)",
+      "Barrister Rajni Patel Junction (Lotus Junction)",
+      "Swa. Bindu Madhav Thackray Junction",
+      "J. K. Kapoor Circle Underpass"
+    ],
+    "northbound_exit": [
+      "Amarsons Garden",
+      "Vatsalabai Desai Junction (Haji Ali Junction)",
+      "Barrister Rajni Patel Junction (Lotus Junction)",
+      "Swa. Bindu Madhav Thackray Junction",
+      "Worli Sea Link Gate",
+      "Bandra Toll Plaza"
+    ]
+  },
+  "source_discrepancies": [
+    "Southbound exit numbering repeats 5 and has an orphan 4; five named locations retained in printed order.",
+    "Press note page 8 abbreviates heavy-vehicle exceptions. Notification page 4 explicitly includes other passenger buses and emergency vehicles; use the notification for rule interpretation."
+  ],
+  "model_mapping_status": "No OSM way, junction or mode permissions assigned yet."
+}

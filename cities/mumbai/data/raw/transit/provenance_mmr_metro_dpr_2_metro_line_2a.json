@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_metro_dpr_2_metro_line_2a_4c8f5c551275f42a.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%202A_0.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%202A_0.pdf",
+      "content_type": "application/pdf",
+      "source": "2 Metro Line 2A (Dahisar to D. N. Nagar Download (13.39 MB)",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:17:04.708896+00:00",
+      "sha256": "4c8f5c551275f42a48ba289a40b8f90194b15b32c8eb6967697353a921bb2ceb",
+      "bytes": 14041844,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}
