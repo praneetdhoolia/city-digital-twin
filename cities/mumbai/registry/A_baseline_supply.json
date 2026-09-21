@@ -29,15 +29,15 @@
         "network": "networks/matsim/schedules/baseline_regional/network.xml.gz",
         "schedule": "networks/matsim/schedules/baseline_regional/transitSchedule.xml.gz",
         "transit_vehicles": "networks/matsim/schedules/baseline_regional/transitVehicles.xml.gz",
-        "plans": "demand/baseline/plans_with_choices.xml.gz",
+        "plans": "demand/baseline/plans_core_sample.xml.gz",
         "boarding_fares": "params/baseline/boarding_fares.csv",
         "hired_fleet": "params/baseline/hired_fleet.json"
       },
       "units": "city_relative_paths",
       "source": "definition",
       "status": "active",
-      "description": "The prepared baseline inputs the scenario assembly reads: the mapped regional network and combined feed (one pt2matsim build), the explicit population with its initial mode alternatives, the boarding-fare table and the hired-fleet derivation. The assembly writes scenarios/matsim/BASE/ and demand/plans/matsim/population_WEEKDAY.xml.gz for the harness (9.204).",
-      "decisions_ref": "9.204",
+      "description": "The prepared baseline inputs the scenario assembly reads: the mapped regional network and combined feed (one pt2matsim build), the citywide plans written at B.population.plans_build_fraction from the synthesised core population (build_plans.py, 9.205), the boarding-fare table and the hired-fleet derivation. The assembly writes scenarios/matsim/BASE/, demand/plans/matsim/population_WEEKDAY.xml.gz and the plans report the launcher reads for the build fraction.",
+      "decisions_ref": "9.205",
       "consumers": [
         "cities/mumbai/build/build_baseline_run_inputs.py"
       ]

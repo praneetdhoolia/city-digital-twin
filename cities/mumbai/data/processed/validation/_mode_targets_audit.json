@@ -1,0 +1,47 @@
+{
+  "source": "derived",
+  "published_split": {
+    "area": "Mumbai Metropolitan Region",
+    "year": 2017,
+    "active_share_pct": 47.0,
+    "motorised_shares": {
+      "Metro & Mono": 2.2,
+      "Train": 43.2,
+      "Bus": 20.0,
+      "Rickshaw": 5.1,
+      "Taxi": 8.7,
+      "Two-Wheeler": 12.5,
+      "Car": 8.5,
+      "Total": 100.0,
+      "PV (Car & TW)": 20.9,
+      "IPT (Auto & Taxi)": 13.7,
+      "PT (Train & Bus)": 65.3
+    }
+  },
+  "bicycle_share_of_active": 0.08257554272372616,
+  "car_passenger_share": 0.3539753807900478,
+  "car_household_persons": {
+    "drivers": 1631645,
+    "riders": 894025
+  },
+  "ferry": {
+    "financial_year": "2024-25",
+    "annual_passengers": 17539639.0,
+    "daily_trips_all_modes": 35433962.26415094
+  },
+  "sum_of_share_targets_pct": 100.2416,
+  "inputs_sha256": {
+    "data/processed/observed/published_mode_splits.csv": "206a0d2dc547302f5ae30b01d3a78b2295770c106898932eb4c9641582932891",
+    "data/processed/observed/census_2011_b28_commuting.csv": "2a6d4efba74a86d175d2926a0ae2b82ba4838a5d25caefdbabe3b8f521e7c077",
+    "data/processed/observed/water_annual_passengers.csv": "f5e590e11ce117b18f5f839b347fed33923fcaf737e178bee2d4fc786d007509",
+    "demand/population/B1_synthetic_population.csv": "fd686027971b9ca23f3da63d4e67e168b67f21bc16a1d9cef45ca2138bf957fe",
+    "registry/B_targets.json": "6dc001cedd94da16862c2f5b18d1ee2042e4273e4b3514e7613814c261a95195"
+  },
+  "limitations": [
+    "Survey years 2017 (CTS), 2014 (CMP), 2011 (B-28), 2024-25 (MMB) against a 2026 base year; no projection is applied.",
+    "The active share is printed \"about 47 %\"; the sweep on every derived row carries +/- B.targets.active_share_sweep_pp.",
+    "The car-driver split rests on the synthesised licence assumption, not a survey.",
+    "The ferry passenger count's journey definition is unverified.",
+    "The 67/143 validation split of the reference city has no counterpart here; every row is a calibration target and no holdout exists yet."
+  ]
+}

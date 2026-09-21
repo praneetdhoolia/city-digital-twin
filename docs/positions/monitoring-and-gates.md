@@ -2,12 +2,12 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 21 September 2026 (fifty-seventh session) · **Record read through:** §9.204 · **Written against family:** `F35`
+**Updated:** 21 September 2026 (fifty-seventh session) · **Record read through:** §9.205 · **Written against family:** `F35`
 
 ## What is built
 
 - **The city contract is a gate for every city in the tree and passes for both** (§9.202, §9.203): `check_city.py --all` PASS 66 FAIL 0 (from FAIL 38 with the second city uncommitted); a framework builder change is verified by regenerating the reference city's artefact and diffing it against the committed one — the manifest took 14 s and found two regressions. `prepare_fleet` reports vehicles per profile, not a per-vehicle map.
-- **One launch path for every city, and readers that say what a city lacks** (§9.204, #238): the second city's own launcher is deleted; a record and the board's runs block carry `city`; a run with no home-zone table counts its `person`-labelled agents as residents, no count-station map or C3 is an empty count side that says so, no survey reader an empty HTS map, and the twelve-mode reporter refuses a city by name until its `mode_targets_by_mode.csv` exists.
+- **One launch path for every city; readers say what a city lacks** (§9.204, §9.205, #238 #242): the second city's launcher is deleted; a record carries `city`; no home-zone table → residents by subpopulation label and no residents map at launch; no count map or C3 → an empty count side; no survey reader → an empty HTS map; a run above the plans' build fraction is refused (`refuse_fraction_above_build`).
 - **The main ruleset requires the nine test jobs as status checks** (§9.172, #202; ruleset 21121872, the user's decision D3): a red run is no longer mergeable.
 - **PT boardings come from one source** — the legs table first, the experienced plans only where no table exists (`src/analyse/iteration_trips.py`, §9.166); `station_of` matches the station name whole.
 - **A run with no automatic stop is refused before the JVM starts**: `run_matsim.py` refuses when the gate watcher AND `RUN.gate.wall_ceiling_h` are both off (§9.163, #169). **Every watcher lives in the harness**: when the routers pair's harness died at iteration 34 the ceiling, stall and gate watchers, the record writer and the viewer on 8731 died with it and the JVM ran unwatched to 250 (§9.176, #225).
@@ -73,6 +73,7 @@
 
 ## History
 
+- §9.205 — build-fraction refusal
 - §9.204 — one launch path; readers degrade
 - §9.203 — both cities pass the contract
 - §9.178 — native Codex skills and workflow
@@ -87,4 +88,3 @@
 - §9.168 — scoreboard skips a failed run
 - §9.167 — the eighth report worked down
 - §9.166 — one boardings source; eighth report
-- §9.164 — ceiling watcher fires; gate needs monitor

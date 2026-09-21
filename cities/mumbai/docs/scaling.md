@@ -104,3 +104,33 @@ missing active assignments, invalid capacities and mismatched mapped-build
 hashes. Mumbai does not yet supply a validated assignment file or the physical
 base-type configurations. Scaling a generic average correctly would still give
 the wrong boarding and crowding behaviour.
+
+## What the first citywide case measured (21 September 2026, §9.205)
+
+The core plans are written at `B.population.plans_build_fraction` 0.05 by the
+harness's own nested household hash (1,352,144 persons in 303,384 households),
+and `20260921T220701_2it_0.1pct` ran 0.001 of the core (26,884 persons, 2
+iterations, 354 s, 88 s an iteration) through the harness on the full mapped
+regional network (846,699 links) and combined feed. It is a structural check
+and nothing else, and it measured the two constraints that decide the fraction:
+
+- **Memory.** 17.30 GiB peak against 13.74 GiB for a negligible population:
+  about 140 KB an agent at two plans, the reference city's rate. The heap rule
+  is now measured on two points (`RUN.machine.heap_floor_gib` 13.7,
+  `RUN.machine.heap_per_fraction_gib` 3,600): 1 % of the core needs 50 GiB,
+  5 % needs 194 GiB, 25 % (the reference city's fraction) 914 GiB. The host has
+  63 GB.
+- **Flow granularity.** The capacity factors are identities on the fraction, so
+  at 0.001 a 1,800 veh/h lane passes 1.8 vehicles an hour and every second car
+  on a link waits half an hour: the case's median car trip of 4.5 km took
+  194 min and its pt trips 13 h, and 5,454 agents were removed stuck. That is
+  the discrete queue at a fraction far below what a reading can stand, not the
+  city. The reference city reads at 25 %; the MATSim literature's floor is
+  about 10 %.
+
+So on this host Mumbai can execute at about 1 % and read at none: a defensible
+reading needs either a host of the order of 200-900 GB, or a leaner agent (plan
+memory, event handling and telemetry measured per agent) and the equivalence
+experiments above at the fraction that then fits. That is decision D14, the
+user's. No fraction has been shown to preserve behaviour.
+

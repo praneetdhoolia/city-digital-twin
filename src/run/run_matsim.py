@@ -283,6 +283,7 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
     base = os.path.join(SETS, scenario)
 
     plans_src = os.path.join(PLANS, 'population_%s.xml.gz' % day)
+    refuse_fraction_above_build(fraction)
     plans_dst = os.path.join(run_dir, 'plans.xml.gz')
     veh_src = os.path.join(src_dir, 'transitVehicles.xml.gz')
     veh_dst = os.path.join(run_dir, 'transitVehicles.xml.gz')
@@ -315,7 +316,14 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
         # later demand rebuild cannot change what this run's readings
         # count as a resident (#213; before this, every reader resolved
         # residents through the city's CURRENT B1 table).
-        write_residents(run_dir, kept)
+        if _has_home_zone_table():
+            write_residents(run_dir, kept)
+        else:
+            # a city without the tables (9.204, #242): the readers resolve
+            # residents from the run's own plans by subpopulation label
+            print('residents: no home-zone table for this city; the readers '
+                  'resolve residents from the plans by subpopulation (#242)',
+                  flush=True)
         # The sampling UNIT is declared (DECISIONS.md 9.45). A person-wise
         # sample shreds households, and every household-coupled mechanism
         # then depends on the fraction rather than on the demand - which is
@@ -341,6 +349,37 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
                              unit=cfg.get('RUN.sample.unit'),
                              persons_without_household=n_hhless,
                              transit_capacity_scaled=sorted(set(scaled)))
+
+
+def plans_build_fraction():
+    """The fraction the day-type plans were BUILT at, from the plans report
+    (`_plans_report.json`, `build_fraction`), 1.0 when the report is absent or
+    silent - the reference city writes everyone. A city whose population is too
+    large for a file of everyone writes the households the sampler's nested
+    inclusion hash keeps at its build fraction (9.205), so a run at or below
+    that fraction keeps exactly what a file of everyone would have given."""
+    path = os.path.join(PLANS, '_plans_report.json')
+    try:
+        return float(json.load(open(path, encoding='utf-8')).get('build_fraction') or 1.0)
+    except (OSError, ValueError):
+        return 1.0
+
+
+def refuse_fraction_above_build(fraction):
+    built = plans_build_fraction()
+    if float(fraction) > built + 1e-12:
+        raise SystemExit(
+            'REFUSED: RUN.sample.fraction = %g is above the fraction the plans were '
+            'built at (%g, demand/plans/matsim/_plans_report.json build_fraction): '
+            'the file holds only the households the nested inclusion hash keeps '
+            'at that fraction, so a larger run would sample a population that is '
+            'not there. Rebuild the plans at a larger build fraction, or run at '
+            'or below it.' % (float(fraction), built))
+
+
+def _has_home_zone_table():
+    import extract_metrics as _em                              # noqa: PLC0415
+    return _em.has_home_zone_table()
 
 
 def write_residents(run_dir, person_ids=None):

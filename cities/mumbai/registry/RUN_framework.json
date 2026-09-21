@@ -212,31 +212,31 @@
       "source": "measured",
       "status": "active",
       "value": 13.7,
-      "description": "The sample-independent part of the heap rule. MEASURED for this city: the whole explicit population (RUN.sample.fraction 1.0) peaked at 13.74 GiB of a 16g heap in the gc.log of 20260921T182708_2it_100pct, the first case launched through the harness; a two-iteration case sees no plan-memory growth, so the peak of a longer horizon is re-read from its own gc.log.",
-      "decisions_ref": "9.204",
+      "description": "The sample-independent part of the heap rule. MEASURED: 13.74 GiB of 16g in the gc.log of 20260921T182708_2it_100pct, the explicit 1,000-person case - the mapped regional network, the combined feed and the routers before any population to speak of.",
+      "decisions_ref": "9.205",
       "consumers": [
         "src/run/run_matsim.py"
       ],
       "held_fixed": {
-        "rule": "the peak of the whole-population case read from its own gc.log; re-read from the gc.log of every longer case and never varied",
-        "decisions_ref": "9.204",
-        "departure_requires": "a higher peak in a later Mumbai gc.log"
+        "rule": "the peak of the explicit 1,000-person case (the network, the combined feed and the routers, no population to speak of), read from its gc.log; re-read from every longer case",
+        "decisions_ref": "9.205",
+        "departure_requires": "a higher peak at a negligible population in a later Mumbai gc.log"
       }
     },
     "RUN.machine.heap_per_fraction_gib": {
       "units": "GiB_per_unit_fraction",
-      "source": "assumed",
+      "source": "measured",
       "status": "active",
-      "value": 0.0,
-      "description": "The sample-dependent part of the heap rule. Held at 0 for this city: the one measured peak (13.74 GiB at fraction 1.0) sits entirely in RUN.machine.heap_floor_gib until a case at another fraction gives the rule a second point.",
-      "decisions_ref": "9.204",
+      "value": 3600.0,
+      "description": "The sample-dependent part of the heap rule, per unit of RUN.sample.fraction of the 27.06 M-person core: 3,600 GiB - so 1 % of the core (270,000 agents) needs 50 GiB and 5 % (1.35 M agents) 194 GiB. The launcher refuses what this host cannot hold; the fraction a defensible reading needs is the open question of docs/scaling.md.",
+      "decisions_ref": "9.205",
       "consumers": [
         "src/run/run_matsim.py"
       ],
       "held_fixed": {
-        "rule": "the explicit population is simulated whole (RUN.sample.fraction 1.0), so one measured peak cannot separate a floor from a slope; the whole peak is carried by the floor and the slope is held at zero",
-        "decisions_ref": "9.204",
-        "departure_requires": "a second peak at a sample fraction below one, from its own gc.log"
+        "rule": "the slope between the two measured peaks: 13.74 GiB at a negligible population and 17.30 GiB at 0.001 of the core households (26,884 agents, 20260921T220701_2it_0.1pct), 3.56 GiB per 0.001 - about 140 KB an agent at two plans, the reference city rate; re-read at every new fraction",
+        "decisions_ref": "9.205",
+        "departure_requires": "a peak at another fraction in a Mumbai gc.log"
       }
     },
     "RUN.machine.jfr_profile": {
@@ -991,14 +991,14 @@
       "source": "assumed",
       "status": "active",
       "value": 1.0,
-      "description": "Share of the explicit baseline population simulated. 1.0: the 1,000-person development population runs whole; no city expansion weight exists.",
+      "description": "Share of the population simulated. 1.0 for the explicit 1,000-person development case; a citywide case runs the plans built at B.population.plans_build_fraction at a fraction at or below it, declared on its overlay.",
       "decisions_ref": "9.202",
       "sweep": {
         "interval": [
-          0.01,
+          0.001,
           1.0
         ],
-        "basis": "the explicit baseline population is 1,000 persons and is simulated whole; a sample fraction below one has no measured fidelity for this city (docs/scaling.md)"
+        "basis": "the synthesised core population is 27.06 M persons (9.204) and the plans are written at B.population.plans_build_fraction (9.205); a fraction below one has no measured fidelity for this city (docs/scaling.md), and the floor admits the first citywide case the machine can run"
       },
       "sweep_role": "uncertainty"
     },
@@ -1064,14 +1064,14 @@
       "units": "enum",
       "source": "derived",
       "status": "active",
-      "value": "person",
-      "description": "Whether the population subsample keeps whole households or independent persons. `person`: the baseline population has no households.",
-      "decisions_ref": "9.202",
+      "value": "household",
+      "description": "Whether the population subsample keeps whole households or independent persons. `household` since the citywide plans (9.205); the explicit 1,000-person development population had none.",
+      "decisions_ref": "9.205",
       "derived_from": {
         "fields": [
           "B.seed.master"
         ],
-        "identity": "the baseline population carries no householdId, so the only inclusion unit the sampler can hash is the person"
+        "identity": "the citywide plans carry householdId (build_plans.py writes the households the nested hash keeps), so the sampler keeps whole households, as the reference city does"
       }
     },
     "RUN.scoring.brain_exp_beta": {

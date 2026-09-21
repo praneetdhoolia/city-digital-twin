@@ -1,9 +1,13 @@
 {
   "overlay": "smoke_hired_fleet",
-  "description": "Bounded real-wait pooled taxi/auto supply case on the choice baseline, through the harness: the registration-stock proxy fleet, nine iterations, stopped by its own ceiling at one hour. Not calibrated dispatch and not a result. Decisions 9.199, 9.204.",
+  "description": "Bounded pooled taxi/auto supply case on the citywide plans at a 0.2 % household sample with the registration-stock fleet scaled to it, nine iterations, stopped by its own ceiling at four hours. Not calibrated dispatch and not a result. Decisions 9.199, 9.205.",
   "set": {
+    "RUN.sample.fraction": 0.002,
     "RUN.controler.last_iteration": 9,
     "B.hired_fleet.representation": "pooled_queue",
-    "RUN.gate.wall_ceiling_h": 1.0
+    "RUN.gate.wall_ceiling_h": 4.0,
+    "RUN.machine.xmx": "24g",
+    "RUN.machine.threads": 8,
+    "RUN.machine.replanning_threads": 8
   }
 }
