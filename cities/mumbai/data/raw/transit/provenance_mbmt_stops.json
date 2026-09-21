@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mbmt_stops_bd897cd64275a4e5.json",
+      "url": "https://mbmcwebportal.amnex.com/ListofRoutes/getAllStation",
+      "final_url": "https://mbmcwebportal.amnex.com/ListofRoutes/getAllStation",
+      "source": "MBMT public mapped stops",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:46:02.229901+00:00",
+      "sha256": "bd897cd64275a4e5b5efdc89664474afaeea3dc320d63351189f068045d190ed",
+      "bytes": 65429,
+      "content_type": "application/json; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation."
+    }
+  ]
+}

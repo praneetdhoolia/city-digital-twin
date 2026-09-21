@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/mmr_ena_palghar_plan_notice_20250918_424e86a558dffdbe.pdf",
+      "url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2025-09/mmrs_extended_notified_area_in_palghar_district_3.pdf",
+      "final_url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2025-09/mmrs_extended_notified_area_in_palghar_district_3.pdf",
+      "content_type": "application/pdf",
+      "source": "MMR extended area Palghar development plan intention notice",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:15:47.647409+00:00",
+      "sha256": "424e86a558dffdbee2fd6f34ab941ba3fe6f8daac530ce42cfbffcdbdbbfaf6e",
+      "bytes": 2724005,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Planning-area notification and listed villages; distinguish SPA from whole metropolitan boundary.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

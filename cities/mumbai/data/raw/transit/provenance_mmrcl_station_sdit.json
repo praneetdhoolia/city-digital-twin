@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_sdit_0dea1492ffa658aa.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/SDIT/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/SDIT/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Shitala Devi Mandir",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:27.492064+00:00",
+      "sha256": "0dea1492ffa658aaf98b8da28c67f215b1bb79bb33b7b683e2e4a018d97aea21",
+      "bytes": 25447,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

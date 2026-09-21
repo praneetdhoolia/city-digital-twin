@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/ec_2013_instructions_5b530667a743655a.pdf",
+      "url": "https://microdata.gov.in/NADA/index.php/catalog/47/download/452",
+      "final_url": "https://microdata.gov.in/NADA/index.php/catalog/47/download/452",
+      "content_type": "application/octet-stream",
+      "source": "ec 2013 instructions",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:20:44.773015+00:00",
+      "sha256": "5b530667a743655aa403ba66055c3e78c5c10900523514950c9415f021a1302a",
+      "bytes": 1189368,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public economic census documentation or aggregate data catalogue; not acquired restricted unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

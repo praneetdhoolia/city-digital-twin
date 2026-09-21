@@ -284,8 +284,13 @@ class _StubReader:
     GATE_PASS_PCT = 10.0
     GATE_STOP_PCT = 20.0
 
-    def __init__(self, rows):
+    def __init__(self, rows, required_modes=None):
         self.LAST = {'rows': rows}
+        self.required_modes = (required_modes if required_modes is not None
+                               else [r['mode'] for r in rows])
+
+    def load_targets(self):
+        return dict.fromkeys(self.required_modes)
 
     def report(self, run_dir, iteration):
         return []
@@ -326,6 +331,29 @@ def test_truck_and_freight_rail_are_reported_and_never_optimised_against(
     # reported, not dropped: a mode that vanishes from the block is a mode
     # nobody notices is unscored
     assert len(g['modes']) == 3
+    assert g['scored_modes_within_band'] is True
+    assert g['coverage_complete'] is False
+    assert g['goal_met'] is False
+    assert g['unscorable_modes'] == ['freight_train', 'truck']
+
+
+def test_a_missing_declared_mode_prevents_goal_completion(monkeypatch):
+    stub = _StubReader([_row('car', 1.0)], required_modes=['car', 'ferry'])
+    monkeypatch.setitem(__import__('sys').modules, 'report_mode_ridership', stub)
+    g = fit.score_goal_modes('/nowhere', 100)
+    assert g['missing_modes'] == ['ferry']
+    assert g['scored_modes_within_band'] is True
+    assert g['goal_met'] is False
+
+
+def test_non_finite_mode_errors_cannot_certify_accuracy(monkeypatch):
+    for invalid in (float('nan'), float('inf'), float('-inf')):
+        g = _goal(monkeypatch, [_row('car', 1.0), _row('bus', invalid)])
+        assert g['n'] == 1
+        assert g['unscorable_modes'] == ['bus']
+        assert g['goal_met'] is False
+        assert g['modes'][1]['deviation_pct'] is None
+        __import__('json').dumps(g, allow_nan=False)
 
 
 def test_the_objective_is_inside_the_band_exactly_when_every_mode_is(

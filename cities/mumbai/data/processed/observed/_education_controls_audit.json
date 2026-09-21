@@ -1,0 +1,63 @@
+{
+  "rows": 173,
+  "queries": [
+    {
+      "source_id": "mospi_udise_2024-25_maharashtra_indicator_1_page_1",
+      "rows": 1,
+      "all_pages_acquired": true,
+      "requested_state_and_year_match": true
+    },
+    {
+      "source_id": "mospi_udise_2024-25_maharashtra_indicator_2_page_1",
+      "rows": 1,
+      "all_pages_acquired": true,
+      "requested_state_and_year_match": true
+    },
+    {
+      "source_id": "mospi_udise_2024-25_maharashtra_indicator_3_page_1",
+      "rows": 1,
+      "all_pages_acquired": true,
+      "requested_state_and_year_match": true
+    },
+    {
+      "source_id": "mospi_udise_2024-25_maharashtra_indicator_28_page_1",
+      "rows": 120,
+      "all_pages_acquired": true,
+      "requested_state_and_year_match": true
+    },
+    {
+      "source_id": "mospi_aishe_2021-22_maharashtra_indicator_1_page_1",
+      "rows": 1,
+      "all_pages_acquired": true,
+      "requested_state_and_year_match": true
+    },
+    {
+      "source_id": "mospi_aishe_2021-22_maharashtra_indicator_2_page_1",
+      "rows": 1,
+      "all_pages_acquired": true,
+      "requested_state_and_year_match": true
+    },
+    {
+      "source_id": "mospi_aishe_2021-22_maharashtra_indicator_3_page_1",
+      "rows": 27,
+      "all_pages_acquired": true,
+      "requested_state_and_year_match": true
+    },
+    {
+      "source_id": "mospi_aishe_2021-22_maharashtra_indicator_9_page_1",
+      "rows": 21,
+      "all_pages_acquired": true,
+      "requested_state_and_year_match": true
+    }
+  ],
+  "gender_groups_reconciled": 56,
+  "status": "publication_checks_passed_local_allocation_unresolved",
+  "limitations": [
+    "State API codes differ by dataset; geography was selected by metadata label and checked in every response.",
+    "State totals cannot substitute for metropolitan or school-level controls.",
+    "Enrolments do not establish attendance, travel days, mode or daily trip rates.",
+    "Combined education levels and all-management categories overlap components.",
+    "AISHE enrolment is labelled estimated by its publisher.",
+    "The returned reference years differ and do not establish 2026 conditions."
+  ]
+}

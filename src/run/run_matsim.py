@@ -1951,6 +1951,12 @@ def close_out(run_dir, completion, rc, wall_s, reached_iteration=None,
         print('run record could not be written for %s: %s' % (name, e),
               flush=True)
         return None
+    if doc.get('run_kind') == 'behavioural_smoke':
+        # Development cities need not have calibration targets, relaxation
+        # rules or a storage budget yet. Keep their native completion record;
+        # the baseline reader reports execution without fitting it to targets.
+        results_store.mirror(run_dir)
+        return doc
     # `_summary.json` against its declared schema and `SUMMARY.md` for a person.
     # It reports the state of the RUN and refuses to report a finding: no mode
     # share, no fit statistic, no validation target.

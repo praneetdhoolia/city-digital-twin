@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_route_tracking_component_8793fb2e91b9e4a4.js",
+      "url": "https://nmmtitmswebportal.amnex.co.in/chunk-FTN265ZI.js",
+      "final_url": "https://nmmtitmswebportal.amnex.co.in/chunk-FTN265ZI.js",
+      "source": "NMMT public route tracking component",
+      "licence": "Operator/vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:11:06.973926+00:00",
+      "sha256": "8793fb2e91b9e4a497b3ce204bcd34243aa619ec75a22f36f81d9679398a6444",
+      "bytes": 106212,
+      "content_type": "application/javascript",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public client documentation for read-only service information. No account actions or embedded credentials are used."
+    }
+  ]
+}

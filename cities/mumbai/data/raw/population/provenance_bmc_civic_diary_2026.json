@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/bmc_civic_diary_2026_3d73e43c2dde81b2.pdf",
+      "url": "https://portal.mcgm.gov.in/irj/go/km/docs/documents/HomePage%20Data/BMC_English%20Civic%20Diary_2026.pdf",
+      "final_url": "https://portal.mcgm.gov.in/irj/go/km/docs/documents/HomePage%20Data/BMC_English%20Civic%20Diary_2026.pdf",
+      "source": "BMC Civic Diary 2026 English",
+      "licence": "BMC publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:37:38.582987+00:00",
+      "sha256": "3d73e43c2dde81b294ecbedbfcd2b14803f1c161a64b69d4304659d392a3a291",
+      "bytes": 7202319,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Greater Mumbai civic statistics; verify population reference year and ward geography before use."
+    }
+  ]
+}

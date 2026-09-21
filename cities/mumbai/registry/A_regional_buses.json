@@ -1,0 +1,117 @@
+{
+  "layer": "A",
+  "title": "Regional bus evidence integration",
+  "fields": {
+    "A.regional_bus.running_time": {
+      "value": {
+        "speed_ms": 8.333333333333334,
+        "distance_multiplier": 1.25,
+        "dwell_s": 20,
+        "maximum_delay_ratio": 4
+      },
+      "units": "metres_per_second_ratio_seconds",
+      "source": "assumed",
+      "status": "active",
+      "description": "Geographic minimum running time and dwell where published segment times are unusable; longer usable median published intervals take precedence. Mapped-path feasibility is checked by the native run preparation. Published segment medians exceeding four times the distance-derived interval are flagged and replaced by geographic derivation; source clocks remain unchanged.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_regional_bus_feed.py"
+      ],
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad service sensitivity, not calibrated ridership or corridor precision."
+    },
+    "A.regional_bus.max_published_segment_s": {
+      "value": 3600,
+      "units": "seconds",
+      "source": "assumed",
+      "status": "active",
+      "description": "Reject implausibly long single-stop clock differences; negative/zero clock differences are derived from other trips or geometry.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_regional_bus_feed.py"
+      ],
+      "sweep": [
+        1800,
+        7200
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad service sensitivity, not calibrated ridership or corridor precision."
+    },
+    "A.regional_bus.allocation_day_label": {
+      "value": "Monday.to.Friday.",
+      "units": "source_label",
+      "source": "definition",
+      "status": "active",
+      "description": "Exact weekday label in acquired MBMT municipal route-bus allocation cells. Sum route cells; do not substitute the inconsistent printed subtotal.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_regional_bus_feed.py"
+      ]
+    },
+    "A.regional_bus.terminal_layover_s": {
+      "value": 300,
+      "units": "seconds_per_directed_pattern",
+      "source": "assumed",
+      "status": "active",
+      "description": "Terminal allowance in the pooled MBMT fleet-hours frequency derivation; not observed vehicle circulation.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_regional_bus_feed.py"
+      ],
+      "sweep": [
+        120,
+        900
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad service sensitivity, not calibrated ridership or corridor precision."
+    },
+    "A.regional_bus.service_window_s": {
+      "value": [
+        18000,
+        86400
+      ],
+      "units": "seconds_after_midnight",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional MBMT departure window. NMMT retains acquired departure clocks.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_regional_bus_feed.py"
+      ],
+      "sweep": [
+        14400,
+        90000
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad service sensitivity, not calibrated ridership or corridor precision."
+    },
+    "A.regional_bus.agency_urls": {
+      "value": {
+        "NMMT": "https://nmmtservice.infinium.management",
+        "MBMT": "https://mbmc.gov.in"
+      },
+      "units": "URLs",
+      "source": "definition",
+      "status": "active",
+      "description": "Operator publication attribution in the generated GTFS agency table.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_regional_bus_feed.py"
+      ]
+    },
+    "A.regional_bus.timezone": {
+      "value": "Asia/Kolkata",
+      "units": "IANA_timezone",
+      "source": "definition",
+      "status": "active",
+      "description": "Local clock basis for published departures.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_regional_bus_feed.py"
+      ]
+    }
+  }
+}

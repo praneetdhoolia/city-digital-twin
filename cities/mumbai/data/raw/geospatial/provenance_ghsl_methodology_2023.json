@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/geospatial/ghsl_methodology_2023_8b856f6e7e51066b.pdf",
+      "url": "https://human-settlement.emergency.copernicus.eu/documents/GHSL_Data_Package_2023.pdf",
+      "final_url": "https://human-settlement.emergency.copernicus.eu/documents/GHSL_Data_Package_2023.pdf",
+      "source": "GHSL data package 2023 methodology",
+      "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
+      "retrieved": "2026-09-18T09:56:49.354627+00:00",
+      "sha256": "8b856f6e7e51066be62cb18e48476492f839211c89b40986259658de20bbde08",
+      "bytes": 15139500,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Spatial-support source. GHSL population is modelled; DSM includes buildings and vegetation and is not surveyed road elevation."
+    }
+  ]
+}

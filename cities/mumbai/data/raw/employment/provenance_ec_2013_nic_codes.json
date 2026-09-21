@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/ec_2013_nic_codes_dad7aa7b07edcb85.xls",
+      "url": "https://microdata.gov.in/NADA/index.php/catalog/47/download/456",
+      "final_url": "https://microdata.gov.in/NADA/index.php/catalog/47/download/456",
+      "content_type": "application/octet-stream",
+      "source": "ec 2013 nic codes",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:20:49.969090+00:00",
+      "sha256": "dad7aa7b07edcb8542996ee6af62e2b427ba1d0ba468360c868d12b2194b7b05",
+      "bytes": 49152,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public economic census documentation or aggregate data catalogue; not acquired restricted unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

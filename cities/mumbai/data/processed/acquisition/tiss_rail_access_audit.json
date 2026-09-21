@@ -1,0 +1,37 @@
+{
+  "source_id": "mrvc_gender_tiss_study",
+  "source_sha256": "f3b77e0729ee49dcccdf0edf93834a05e846f788403987c7c8319254104b37f9",
+  "publication_year": 2016,
+  "source_pdf_pages": [
+    19,
+    27
+  ],
+  "visually_checked_table_columns": true,
+  "total_survey_respondents_persons": 1000,
+  "offpeak_respondents_persons": 395,
+  "peak_respondents_persons": 605,
+  "sample_strata_rows": 12,
+  "access_mode_rows": 7,
+  "derived_access_table_respondents_persons": 994,
+  "difference_from_full_sample_persons": 6,
+  "strata_rounding_discrepancies": [
+    {
+      "line": "Central Line",
+      "travel_class": "Other Class (Disabled and Luggage)",
+      "reported_share_percent": "31.59",
+      "recomputed_share_percent": "31.57894736842105263157894737"
+    }
+  ],
+  "access_rounding_discrepancies": [],
+  "model_parameters_adopted": false,
+  "limitations": [
+    "This 2016 report concerns a stratified sample of women rail users, not all residents, genders, trips or current travellers.",
+    "Line/class/time strata overlap; all-class totals must not be added to their component class counts.",
+    "The report defines off-peak to include weekends and travel against the heavy flow; it is not solely a clock-hour category.",
+    "Access mode combines auto and shared auto, and combines own/private vehicles; no finer mode split is invented.",
+    "The access-table denominator is derived from its numeric cells. Its difference from the full sample is unexplained here, not imputed nonresponse.",
+    "Printed N/A remains missing/not-applicable, never a zero. Printed percentage discrepancies remain visible, not corrected in the source observations.",
+    "Selection probabilities, population expansion weights and the full survey fieldwork dates are not established by these extracted sections.",
+    "The source statement about walking time is qualitative narrative here, not a measured access-time distribution or current model coefficient."
+  ]
+}

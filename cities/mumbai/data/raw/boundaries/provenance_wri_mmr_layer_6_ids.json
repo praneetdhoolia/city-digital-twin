@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/wri_mmr_layer_6_ids_9e872c933ef3cf84.json",
+      "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/6/query?where=1%3D1&returnIdsOnly=true&f=json",
+      "final_url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/6/query?where=1%3D1&returnIdsOnly=true&f=json",
+      "source": "Public MMR layer 6 object IDs for completeness audit",
+      "licence": "Public ArcGIS item; reuse terms unverified",
+      "retrieved": "2026-09-18T09:18:47.411605+00:00",
+      "sha256": "9e872c933ef3cf8427edb8a00aff1ea162abb5a9bc52bd1df1a33e4f9f9569ad",
+      "bytes": 326,
+      "content_type": "application/json; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "url": "https://cr.indianrailways.gov.in/cris//uploads/files/1777550442158-HB%20AC%20PTT%20WEF%2001.05.2026%20(1).pdf",
+      "final_url": "https://cr.indianrailways.gov.in/cris//uploads/files/1777550442158-HB%20AC%20PTT%20WEF%2001.05.2026%20(1).pdf",
+      "content_type": "application/pdf",
+      "retrieved": "2026-09-18T10:40:38.670Z",
+      "bytes": 107037,
+      "path": "data/raw/transit/cr_public_harbour_ac_20260501_f8148949f167838c.pdf",
+      "sha256": "f8148949f167838c6c46933dbdf6a8913a9e64e45f844ec80411d6191d15fc4c",
+      "source": "Central Railway published harbour ac 20260501",
+      "licence": "Operator publication; reuse terms unverified",
+      "coverage": "Linked from official Mumbai Suburban timetable index; effective dates, later amendments, station times and operating exceptions require validation.",
+      "producing_script": "extract/import_browser_acquisition.py",
+      "transport": "Connected Chrome public fetch; default certificate verification",
+      "validation_status": "acquired_unvalidated"
+    }
+  ]
+}

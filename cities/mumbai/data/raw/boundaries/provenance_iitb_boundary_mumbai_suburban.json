@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/iitb_boundary_mumbai_suburban_29023227dc794aef.zip",
+      "url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/Mumbai_Suburban.zip",
+      "final_url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/Mumbai_Suburban.zip",
+      "source": "IIT Bombay mumbai_suburban district and taluka boundaries",
+      "licence": "IIT Bombay source reuse terms unverified",
+      "retrieved": "2026-09-18T08:44:02.114692+00:00",
+      "sha256": "29023227dc794aefa535a18bfc28ffafed5cd5b4b9037588d3d28c7e62064e4e",
+      "bytes": 15193,
+      "content_type": "application/zip",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Research GIS linked to historical census; boundary completeness, coordinate reference system and permissions require audit."
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_transport_engineering_manual_8bdbc4d809017ce9.pdf",
+      "url": "https://www.bestundertaking.com/assets/pdf/Transport_Engineering.pdf",
+      "final_url": "https://www.bestundertaking.com/assets/pdf/Transport_Engineering.pdf",
+      "source": "BEST Transport Engineering public manual",
+      "licence": "BEST public disclosure; reuse terms unverified",
+      "retrieved": "2026-09-18T15:49:04.062391+00:00",
+      "sha256": "8bdbc4d809017ce90d582a50560e43b240877d579c2f35e5e7c479c9a32336a2",
+      "bytes": 639791,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public department manual linked from RTI disclosures. Historical or undated; inspect fleet, operations and statistical definitions before use."
+    }
+  ]
+}

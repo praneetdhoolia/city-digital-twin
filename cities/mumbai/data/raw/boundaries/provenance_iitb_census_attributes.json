@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/iitb_census_attributes_7085a2e2808f40a9.html",
+      "url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Attribute.html",
+      "final_url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Attribute.html",
+      "source": "IIT Bombay census GIS attribute definitions",
+      "licence": "IIT Bombay source reuse terms unverified",
+      "retrieved": "2026-09-18T08:44:00.796994+00:00",
+      "sha256": "7085a2e2808f40a9599b5f26a525dc33165b90922e79a4b1dbbe092f0dfd1b63",
+      "bytes": 71103,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Research GIS linked to historical census; boundary completeness, coordinate reference system and permissions require audit."
+    }
+  ]
+}

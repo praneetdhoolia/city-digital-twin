@@ -122,6 +122,35 @@ def _expand_units(units, doc):
     return units
 
 
+def manifest_paths(city_dir):
+    """The city-relative paths the city's manifest carries (empty without one)."""
+    path = os.path.join(city_dir, 'data', 'MANIFEST.csv')
+    if not os.path.exists(path):
+        return []
+    from manifest_io import manifest_reader
+    with io.open(path, newline='', encoding='utf-8') as fh:
+        return [row['path'] for row in manifest_reader(fh)]
+
+
+def manifest_producers(city_dir):
+    """The framework builders the city's manifest names as producers - the
+    evidence that this city's package went through them. A producer may carry
+    a tool suffix (`src/build/build_matsim_network.py (pt2matsim 26.6)`)."""
+    path = os.path.join(city_dir, 'data', 'MANIFEST.csv')
+    if not os.path.exists(path):
+        return set()
+    import csv
+    from manifest_io import manifest_reader
+    out = set()
+    with io.open(path, newline='', encoding='utf-8') as fh:
+        for row in manifest_reader(fh):
+            for script in (row.get('produced_by') or '').split('+'):
+                script = script.strip().split(' (')[0]
+                if script:
+                    out.add(script)
+    return out
+
+
 def check_fields(city_dir, name, doc):
     """Every required key is declared, with the right units and value type."""
     required = read_json(os.path.join(SCHEMA_DIR, 'required_fields.json'))['fields']
@@ -139,20 +168,38 @@ def check_fields(city_dir, name, doc):
     not_applicable = {k for k, spec in required.items()
                       if spec.get('required_if_mode')
                       and spec['required_if_mode'] not in modes}
-    applicable = set(required) - not_applicable
+    # The second derived narrowing (render_schema.required_by): a field only
+    # the framework's BUILDERS read is required of a city whose package one of
+    # those builders produced - read from the city's own manifest, never
+    # judged - and a field only the reference city's own scripts read is
+    # required of no other city.
+    producers = manifest_producers(city_dir)
+    not_this_city = set()
+    for k, spec in required.items():
+        who = spec.get('required_by', 'run')
+        if who == 'run':
+            continue
+        if who == 'reference_city' or not any(b in producers for b in who):
+            not_this_city.add(k)
+    applicable = set(required) - not_applicable - not_this_city
 
     missing = sorted(applicable - set(fields))
     extra = sorted(set(fields) - set(required))
     for k in missing[:15]:
         check(False, '%s: required field not declared: %s (%s)'
               % (name, k, required[k]['units']))
+    narrowing = []
+    if not_applicable:
+        narrowing.append('%d not applicable: this city does not run %s'
+                         % (len(not_applicable),
+                            ', '.join(sorted({required[k]['required_if_mode']
+                                              for k in not_applicable}))))
+    if not_this_city:
+        narrowing.append('%d read only by builders this package did not run or by the '
+                         'reference city\'s own scripts' % len(not_this_city))
     check(not missing, '%s: all %d required fields declared%s'
           % (name, len(applicable),
-             '' if not not_applicable else
-             ' (%d not applicable: this city does not run %s)'
-             % (len(not_applicable),
-                ', '.join(sorted({required[k]['required_if_mode']
-                                  for k in not_applicable})))))
+             '' if not narrowing else ' (%s)' % '; '.join(narrowing)))
     declared_foreign = sorted(not_applicable & set(fields))
     check(not declared_foreign,
           '%s: no field is declared for a mode this city does not run%s'
@@ -265,6 +312,11 @@ def check_layers(city_dir, name, doc):
                     concrete[x] = a
         elif a['kind'] != 'pattern':
             concrete[p] = a
+    declared_osm = (doc or {}).get('osm_network_inputs', [])
+    if isinstance(declared_osm, list):
+        for p in declared_osm:
+            if isinstance(p, str):  # malformed entries are reported by the schema check
+                concrete[p] = {'kind': 'file', 'read_by': ['src/build/build_matsim_network.py']}
     absent = sorted(p for p in concrete
                     if not os.path.exists(os.path.join(city_dir, p)))
     check(True, '%s: %d of %d contracted artefacts present'
@@ -445,8 +497,12 @@ def check_city(name):
     print('\n=== %s (%s) ===' % (name, city_dir))
     if not check(os.path.isdir(city_dir), '%s: directory present' % name):
         return
+    # A layer whose every file is gitignored bulk (a city's GTFS feeds) has no
+    # directory in a fresh checkout; the manifest naming files under it is the
+    # evidence the layer exists, the same evidence check_manifest.py accepts.
+    carried = {row.split('/', 1)[0] for row in manifest_paths(city_dir)}
     missing = [d for d in citymod.LAYERS
-               if not os.path.isdir(os.path.join(city_dir, d))]
+               if not os.path.isdir(os.path.join(city_dir, d)) and d not in carried]
     for d in missing:
         check(False, '%s: missing directory %s/' % (name, d))
     check(not missing, '%s: every expected subdirectory present' % name)

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/bmc_best_public_map_b707b90c1b9a199c.html",
+      "url": "https://portal.mcgm.gov.in/irj/portal/anonymous/BMC-on-Map-Transport-BEST",
+      "final_url": "https://portal.mcgm.gov.in/irj/portal/anonymous/BMC-on-Map-Transport-BEST",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "BMC public BEST facilities map index",
+      "licence": "Government website publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:03:02.976423+00:00",
+      "sha256": "b707b90c1b9a199cb26756b4aff3c900d69a20e3575417bab1bbec7ad27ffccc",
+      "bytes": 1872,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official map entry for stops terminals and depots; inspect embedded public map data.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/iitb_census_missing_geometry_ddf4742d00ed17f4.html",
+      "url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/No_geom.html",
+      "final_url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/No_geom.html",
+      "source": "IIT Bombay census features without geometry",
+      "licence": "IIT Bombay source reuse terms unverified",
+      "retrieved": "2026-09-18T08:44:01.450439+00:00",
+      "sha256": "ddf4742d00ed17f493ef8d9a5aefcdd827def50fd04874fea40660960c55a0da",
+      "bytes": 334817,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Research GIS linked to historical census; boundary completeness, coordinate reference system and permissions require audit."
+    }
+  ]
+}

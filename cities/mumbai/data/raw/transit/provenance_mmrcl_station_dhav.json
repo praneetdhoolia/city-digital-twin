@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_dhav_e743a16db5fea119.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/DHAV/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/DHAV/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Dharavi",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:26.359410+00:00",
+      "sha256": "e743a16db5fea119816b94a3162c3f015732e407ed8005067ea37fbb88c4273c",
+      "bytes": 22590,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

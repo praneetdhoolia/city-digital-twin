@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/mmr_boundary_2019_8c553fe3d40d81dc.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-09/MMR_Extension_Notification_0.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-09/MMR_Extension_Notification_0.pdf",
+      "content_type": "application/pdf",
+      "source": "MMR extension notification",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:30:16.190616+00:00",
+      "sha256": "8c553fe3d40d81dc090bdd168aa0b8af220651e95b8fe138d1dc256cfe7eaff2",
+      "bytes": 171014,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Legal extent; geometry must be extracted and checked.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

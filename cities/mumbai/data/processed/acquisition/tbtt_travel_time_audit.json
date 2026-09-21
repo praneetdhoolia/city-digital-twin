@@ -1,0 +1,221 @@
+{
+  "source_id": "mmrda_thane_borivali_tunnel_dpr",
+  "source_sha256": "0eacba038c43131f4926e2e218755e683f6d1e11df0ed2549c70cc08d8d1245b",
+  "rows": 6,
+  "arithmetic_checks": [
+    {
+      "source_row": 1,
+      "derived_from": "60 * distance_km / journey_minutes",
+      "speed_kind": "journey",
+      "calculated_speed_kmh": "16.87122736418511066398390342",
+      "reported_speed_kmh": "16.87",
+      "residual_kmh": "-0.00122736418511066398390342",
+      "calculated_rounding_interval_kmh": [
+        "16.85189841589137540859944682",
+        "16.89056603773584905660377358"
+      ],
+      "reported_rounding_interval_kmh": [
+        "16.865",
+        "16.875"
+      ],
+      "status": "rounding_compatible"
+    },
+    {
+      "source_row": 1,
+      "derived_from": "60 * distance_km / (journey_minutes - delay_minutes)",
+      "speed_kind": "running",
+      "calculated_speed_kmh": "27.77179763186221743810548977",
+      "reported_speed_kmh": "27.77",
+      "residual_kmh": "-0.00179763186221743810548977",
+      "calculated_rounding_interval_kmh": [
+        "27.73432650527622594661700807",
+        "27.80930290353311518866752268"
+      ],
+      "reported_rounding_interval_kmh": [
+        "27.765",
+        "27.775"
+      ],
+      "status": "rounding_compatible"
+    },
+    {
+      "source_row": 2,
+      "derived_from": "60 * distance_km / journey_minutes",
+      "speed_kind": "journey",
+      "calculated_speed_kmh": "24.84444444444444444444444444",
+      "reported_speed_kmh": "24.84",
+      "residual_kmh": "-0.00444444444444444444444444",
+      "calculated_rounding_interval_kmh": [
+        "24.73062730627306273062730627",
+        "24.95910780669144981412639405"
+      ],
+      "reported_rounding_interval_kmh": [
+        "24.835",
+        "24.845"
+      ],
+      "status": "rounding_compatible"
+    },
+    {
+      "source_row": 2,
+      "derived_from": "60 * distance_km / (journey_minutes - delay_minutes)",
+      "speed_kind": "running",
+      "calculated_speed_kmh": "29.40815431828145550197281894",
+      "reported_speed_kmh": "29.4",
+      "residual_kmh": "-0.00815431828145550197281894",
+      "calculated_rounding_interval_kmh": [
+        "29.25232421107764829121382742",
+        "29.56537055792857457395746180"
+      ],
+      "reported_rounding_interval_kmh": [
+        "29.35",
+        "29.45"
+      ],
+      "status": "rounding_compatible"
+    },
+    {
+      "source_row": 3,
+      "derived_from": "60 * distance_km / journey_minutes",
+      "speed_kind": "journey",
+      "calculated_speed_kmh": "19.29804372842347525891829689",
+      "reported_speed_kmh": "19.29",
+      "residual_kmh": "-0.00804372842347525891829689",
+      "calculated_rounding_interval_kmh": [
+        "19.27523727351164797238999137",
+        "19.32086330935251798561151079"
+      ],
+      "reported_rounding_interval_kmh": [
+        "19.285",
+        "19.295"
+      ],
+      "status": "rounding_compatible"
+    },
+    {
+      "source_row": 3,
+      "derived_from": "60 * distance_km / (journey_minutes - delay_minutes)",
+      "speed_kind": "running",
+      "calculated_speed_kmh": "22.59346581340518693162681037",
+      "reported_speed_kmh": "22.59",
+      "residual_kmh": "-0.00346581340518693162681037",
+      "calculated_rounding_interval_kmh": [
+        "22.56489680482138648530352513",
+        "22.62205599919134741736581421"
+      ],
+      "reported_rounding_interval_kmh": [
+        "22.585",
+        "22.595"
+      ],
+      "status": "rounding_compatible"
+    },
+    {
+      "source_row": 4,
+      "derived_from": "60 * distance_km / journey_minutes",
+      "speed_kind": "journey",
+      "calculated_speed_kmh": "15.38532110091743119266055046",
+      "reported_speed_kmh": "15.39",
+      "residual_kmh": "0.00467889908256880733944954",
+      "calculated_rounding_interval_kmh": [
+        "15.33638443935926773455377574",
+        "15.43448275862068965517241379"
+      ],
+      "reported_rounding_interval_kmh": [
+        "15.385",
+        "15.395"
+      ],
+      "status": "rounding_compatible"
+    },
+    {
+      "source_row": 4,
+      "derived_from": "60 * distance_km / (journey_minutes - delay_minutes)",
+      "speed_kind": "running",
+      "calculated_speed_kmh": "19.02439024390243902439024390",
+      "reported_speed_kmh": "19.02",
+      "residual_kmh": "-0.00439024390243902439024390",
+      "calculated_rounding_interval_kmh": [
+        "18.94826123833757421543681086",
+        "19.10099573257467994310099573"
+      ],
+      "reported_rounding_interval_kmh": [
+        "19.015",
+        "19.025"
+      ],
+      "status": "rounding_compatible"
+    },
+    {
+      "source_row": 5,
+      "derived_from": "60 * distance_km / journey_minutes",
+      "speed_kind": "journey",
+      "calculated_speed_kmh": "22.40480961923847695390781563",
+      "reported_speed_kmh": "22.41",
+      "residual_kmh": "0.00519038076152304609218437",
+      "calculated_rounding_interval_kmh": [
+        "22.37729549248747913188647746",
+        "22.43234213164049448713665219"
+      ],
+      "reported_rounding_interval_kmh": [
+        "22.405",
+        "22.415"
+      ],
+      "status": "rounding_compatible"
+    },
+    {
+      "source_row": 5,
+      "derived_from": "60 * distance_km / (journey_minutes - delay_minutes)",
+      "speed_kind": "running",
+      "calculated_speed_kmh": "26.66136724960254372019077901",
+      "reported_speed_kmh": "26.68",
+      "residual_kmh": "0.01863275039745627980922099",
+      "calculated_rounding_interval_kmh": [
+        "26.61636219221604447974583002",
+        "26.70644391408114558472553699"
+      ],
+      "reported_rounding_interval_kmh": [
+        "26.675",
+        "26.685"
+      ],
+      "status": "rounding_compatible"
+    },
+    {
+      "source_row": 6,
+      "derived_from": "60 * distance_km / journey_minutes",
+      "speed_kind": "journey",
+      "calculated_speed_kmh": "12.50093179276928811032426388",
+      "reported_speed_kmh": "12.5",
+      "residual_kmh": "-0.00093179276928811032426388",
+      "calculated_rounding_interval_kmh": [
+        "12.48742314141978759083286752",
+        "12.51444547996272134203168686"
+      ],
+      "reported_rounding_interval_kmh": [
+        "12.45",
+        "12.55"
+      ],
+      "status": "rounding_compatible"
+    },
+    {
+      "source_row": 6,
+      "derived_from": "60 * distance_km / (journey_minutes - delay_minutes)",
+      "speed_kind": "running",
+      "calculated_speed_kmh": "17.43243243243243243243243243",
+      "reported_speed_kmh": "17.44",
+      "residual_kmh": "0.00756756756756756756756757",
+      "calculated_rounding_interval_kmh": [
+        "17.40779220779220779220779221",
+        "17.45709828393135725429017161"
+      ],
+      "reported_rounding_interval_kmh": [
+        "17.435",
+        "17.445"
+      ],
+      "status": "rounding_compatible"
+    }
+  ],
+  "source_disagreements": 0,
+  "extraction_review": "PDF pages 54 and 55 visually reviewed including merged route and distance cells.",
+  "limitations": [
+    "The two routes are reverse circuits through Ghodbunder Road and JVLR, not single legs between endpoints.",
+    "The count survey is dated 2018 elsewhere; the speed-delay section does not independently date its measurements.",
+    "Clock labels are survey windows, not timetabled departures or precise observation timestamps.",
+    "Rounding intervals test printed arithmetic only; they are not measurement uncertainty or confidence intervals.",
+    "Moving-observer running speed excludes recorded stopping delay, but remains a traffic-condition measurement, not free-flow speed.",
+    "Exact route geometry, test vehicle class, repetitions and day types remain unresolved."
+  ]
+}

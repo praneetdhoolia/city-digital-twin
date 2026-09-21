@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/roads/vm_lal_committee_report_2000_90dab720c3539aec.pdf",
+      "url": "https://cat.org.in/wp-content/uploads/2017/03/V.-M.-Lal-Committee-Report.pdf",
+      "final_url": "https://cat.org.in/wp-content/uploads/2017/03/V.-M.-Lal-Committee-Report.pdf",
+      "content_type": "application/pdf",
+      "source": "V. M. Lal committee report on vehicular pollution and traffic in Greater Mumbai",
+      "licence": "Committee report hosted by Conservation Action Trust; reuse terms unverified",
+      "retrieved": "2026-09-18T18:30:57.710755+00:00",
+      "sha256": "90dab720c3539aec991142f79d8c6e3a900d7f11312f3b8bdf896a7d2eaac645",
+      "bytes": 715209,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical court-appointed committee report and annexures. Island-city boundary description and transport evidence require reference-date and legal-effect checks; recommendations are not current traffic orders.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

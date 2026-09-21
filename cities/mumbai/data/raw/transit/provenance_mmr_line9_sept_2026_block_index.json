@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_line9_sept_2026_block_index_adaf96cd3be1087e.html",
+      "url": "https://mmrda.maharashtra.gov.in/en/news-and-announcements/metro-line-9-phase-2-nears-commissioning-special-morning-block",
+      "final_url": "https://mmrda.maharashtra.gov.in/en/news-and-announcements/metro-line-9-phase-2-nears-commissioning-special-morning-block",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "MMRDA September 2026 Line 9 phase 2 integration block",
+      "licence": "Public authority publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:47:26.120834+00:00",
+      "sha256": "adaf96cd3be1087e5dfdac33bf661bd59c8644e7e9df152cd5ebbb72719a5c02",
+      "bytes": 100533,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Dated service evidence; operating changes and attachment completeness require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

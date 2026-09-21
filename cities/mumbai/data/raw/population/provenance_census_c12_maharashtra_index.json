@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_c12_maharashtra_index_eef2e3eb21cd3b52.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/2658",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/2658",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "School attendance by age and economic activity Maharashtra 2011 catalogue search",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:53:50.554293+00:00",
+      "sha256": "eef2e3eb21cd3b5262c3ff22f786540b18f169063113b413b5774f280e86b61e",
+      "bytes": 96637,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical census control; definition, geographical universe and contemporary adjustment require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "status": "published_controls_not_validated_current_bus_operations",
+  "fare_cells": 40,
+  "pass_cells": 48,
+  "depots": 27,
+  "depot_route_mentions": 495,
+  "distinct_route_labels": 484,
+  "duplicate_depot_route_mentions": [],
+  "html_syntax_repairs": [
+    {
+      "before": "Wadala, Mumbai/td>",
+      "after": "Wadala, Mumbai</td>"
+    },
+    {
+      "before": "<td>GR/td>",
+      "after": "<td>GR</td>"
+    }
+  ],
+  "fare_rules": {
+    "source_page_1_based": 1,
+    "over_50_km_additional_stage_km": 5,
+    "over_50_km_additional_stage_fare_inr": 5,
+    "over_50_km_concessional_application": "The extra-stage cell spans adult and concessional columns; separate concession treatment is not explicit.",
+    "outside_bmc_toll_point_addition_inr": 2,
+    "outside_bmc_toll_point_scope": "The note applies an addition to Non-AC and AC journeys through toll points outside municipal limits; the count of chargeable crossings and mapping require verification.",
+    "luggage_basis": "Corresponding adult fare, subject to the stated ceiling.",
+    "luggage_non_ac_maximum_inr": 30,
+    "luggage_ac_maximum_inr": 35,
+    "nutrition_surcharge_included_paise": 15,
+    "ac_gst_additional_percent": 5,
+    "distance_basis": "Distance between fare stages, not distance between the two bus stops.",
+    "distance_notification_reference": "Maharashtra Home Department notification dated 8 July 2011, cited on page 1; original notification and stage-point list not yet acquired."
+  },
+  "pass_rules": {
+    "source_page_1_based": 2,
+    "senior_discount_inr": 50,
+    "senior_eligible_trip_products": [
+      60,
+      90,
+      120
+    ],
+    "electronic_purchase_extra_trips_percent_as_printed": 5,
+    "electronic_purchase_examples": [
+      {
+        "base_trips": 60,
+        "extra_trips": 3
+      },
+      {
+        "base_trips": 90,
+        "extra_trips": 5
+      },
+      {
+        "base_trips": 120,
+        "extra_trips": 6
+      }
+    ],
+    "wallet_credit_bonus_percent": 5,
+    "wallet_credit_example": {
+      "payment_inr": 100,
+      "bonus_inr": 5,
+      "credited_inr": 105
+    },
+    "ac_and_non_ac_product_eligibility": "The pass table does not separate AC and Non-AC columns; do not infer universal eligibility or GST handling."
+  },
+  "limitations": [
+    "This document is linked by the official transport page but does not prove no later amendment exists.",
+    "A separate current concession-eligibility rule is needed; the fare column label alone does not identify all eligible passengers.",
+    "The undated facilities webpage and this dated PDF differ on AC concession availability; both sources must be retained.",
+    "Actual fare-stage locations, rounding, tax collection, transfer charging and electronic product eligibility remain unresolved.",
+    "These ordinary fare tables do not establish premium Chalo fares or pass validity on premium services.",
+    "No passenger uptake, trip frequency or pass ownership is inferred from a fare product.",
+    "Depot route listings do not establish a current timetable, route geometry or vehicle allocation.",
+    "Route identifiers retain leading zeros, suffixes and direction/variant text.",
+    "FORT FERRY labels in this source identify bus services, not water transport.",
+    "No ridership, headway or capacity is inferred from the number of route mentions."
+  ]
+}

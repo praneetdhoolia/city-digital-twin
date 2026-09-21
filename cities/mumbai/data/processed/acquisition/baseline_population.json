@@ -1,0 +1,35 @@
+{
+  "source": "synthetic_provisional_behavioural_smoke",
+  "input_sha256": {
+    "registry/B_baseline_demand.json": "0c85257bfa8359e07986f6a78e0f3562cb018d754eef9922732757f02c5d3891",
+    "data/processed/geospatial/census_2011_geographies.gpkg": "bed805bb29e5642f2dfe01605721297bb07ff358cf40df1bba9e2ac8f6648b5f",
+    "data/processed/observed/census_2011_age_sex.csv": "3e49d6dc705ec9d88c6753f9ccb5321ab23b2df9003175b0c29bdcfbf5ed3a1b",
+    "data/processed/observed/census_2011_household_assets.csv": "9678c99177975a8444addb35407d90263a52c4639f2f44e01fbc8c3def47b9a6"
+  },
+  "persons_count": 1000,
+  "source_geographies_count": 3662,
+  "source_historical_persons_count": 17158597,
+  "purposes": {
+    "education": 187,
+    "work": 394,
+    "other": 338,
+    "home_only": 81
+  },
+  "initial_exploration_modes": {
+    "walk": 245,
+    "auto_rickshaw": 175,
+    "pt": 254,
+    "taxi": 170,
+    "bike": 22,
+    "motorbike": 23,
+    "ride": 17,
+    "car": 13
+  },
+  "limitations": [
+    "Representative persons, not coupled households.",
+    "Historical asset ownership proxies personal access; joint distribution is provisional.",
+    "Resident worker locations proxy employment attractions; income and activity timing are provisional.",
+    "Initial modes explore available options uniformly; these are not simulated ridership.",
+    "Research geography and missing polygons do not define a current full-city population."
+  ]
+}

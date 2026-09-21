@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mahametro_annual_directory_20260918_eedf768b4a3eec01.json",
+      "url": "https://livewebapi.metrorailnagpur.com/annualReport",
+      "final_url": "https://livewebapi.metrorailnagpur.com/annualReport",
+      "source": "Maha Metro public annual report directory",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T12:06:19.964235+00:00",
+      "sha256": "eedf768b4a3eec0138e174e105fd831482ee5cc03ccbef6b2809ec2bb3f98c94",
+      "bytes": 2795,
+      "content_type": "application/json; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Annual report links from the public corporate site."
+    }
+  ]
+}

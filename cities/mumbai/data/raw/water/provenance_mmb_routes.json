@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/water/mmb_routes_1e7db7900997fb74.json",
+      "url": "https://maharashtramaritimeboard.com/api/v1/passenger-water-transport/route-service-info/pwt-routes",
+      "final_url": "https://maharashtramaritimeboard.com/api/v1/passenger-water-transport/route-service-info/pwt-routes",
+      "source": "MMB public passenger routes",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:37:06.885670+00:00",
+      "sha256": "1e7db7900997fb74e1b435c7adde0c7a2f069fdc7e3f823f563c3e878dbb83d4",
+      "bytes": 19158,
+      "content_type": "application/json; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official website public read API; inspect routes and operating status."
+    }
+  ]
+}

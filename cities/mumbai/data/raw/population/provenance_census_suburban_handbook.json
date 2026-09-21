@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_suburban_handbook_23482fd2495cc2e9.pdf",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/807/download/2878/DH_2011_2722_PART_B_DCHB_MUMBAI_SUBURBAN.pdf",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/807/download/2878/DH_2011_2722_PART_B_DCHB_MUMBAI_SUBURBAN.pdf",
+      "content_type": "application/octet-stream",
+      "source": "Mumbai Suburban district census handbook part B",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:32:40.838780+00:00",
+      "sha256": "23482fd2495cc2e968498138e612354ad5b17a47ae095e9c5afa1381a612ab5a",
+      "bytes": 3257358,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "2011 census; historical demographic controls.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

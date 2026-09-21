@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_b01_maharashtra_search_b9cf70950349358d.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/?sk=PC11_B01-27",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/?sk=PC11_B01-27",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Census workers by age and sex Maharashtra 2011 catalogue search",
+      "licence": "Government publication; reuse terms and microdata access conditions require review",
+      "retrieved": "2026-09-18T10:03:19.308857+00:00",
+      "sha256": "b9cf70950349358d0fa8e4b079d590cd015b4ef0574811a6345cf08c639f8bbe",
+      "bytes": 108318,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public statistical evidence; survey weights, age and geographic coverage require validation. Catalogue access is not acquisition of unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

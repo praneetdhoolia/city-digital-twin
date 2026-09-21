@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_suburban_handbook_index_52bd2aa938fe8adf.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/807",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/807",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "2011 Mumbai Suburban district census handbook catalogue",
+      "licence": "ORGI copyright; reuse terms unverified",
+      "retrieved": "2026-09-18T08:30:09.230289+00:00",
+      "sha256": "52bd2aa938fe8adf1a7ed144ff075ad49f5e80b5df0a72a15873587c336df44e",
+      "bytes": 36742,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Census 2011 observations; 2026 projection must be derived separately.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_metro_dpr_3_metro_line_2b_f78d1d06891d5d82.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%202B_0.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%202B_0.pdf",
+      "content_type": "application/pdf",
+      "source": "3 Metro Line 2B (D. N. Nagar to Mandale) Download (31.76 MB)",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:17:27.585005+00:00",
+      "sha256": "f78d1d06891d5d826d245f476d4b0d5dd0b4a874d923ab656b0d605ec707a85e",
+      "bytes": 33305183,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

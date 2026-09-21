@@ -460,6 +460,102 @@
    "status": "open",
    "evidence": null,
    "updated": null
+  },
+  {
+   "id": "20260918T182209:1",
+   "report": "20260918T182209",
+   "rank": 1,
+   "what": "Scale both seats and standing places.",
+   "repeat_of": null,
+   "opens_family": true,
+   "category": "code",
+   "status": "taken",
+   "evidence": "§9.185 scaled both components; §9.203 verified on the real WEEKDAY population at 25 % (Tram 15 + 52 against 15 + 210 on every F35 arm) and filed #237 for the first arm's measurement",
+   "updated": "2026-09-21"
+  },
+  {
+   "id": "20260918T182209:2",
+   "report": "20260918T182209",
+   "rank": 2,
+   "what": "Require every city mode before declaring goal completion.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "code",
+   "status": "taken",
+   "evidence": "§9.185: fit.py's goal_met requires every declared target mode scored and finite; the F35 result's _fit.json now reads goal_met None with 31 unscorable listed (§9.203)",
+   "updated": "2026-09-21"
+  },
+  {
+   "id": "20260918T182209:3",
+   "report": "20260918T182209",
+   "rank": 3,
+   "what": "Acquire a Mumbai inventory with observation dates and units.",
+   "repeat_of": null,
+   "opens_family": true,
+   "category": "data",
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260918T182209:4",
+   "report": "20260918T182209",
+   "rank": 4,
+   "what": "Prove mode-specific sample fidelity.",
+   "repeat_of": null,
+   "opens_family": true,
+   "category": "model",
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260918T182209:5",
+   "report": "20260918T182209",
+   "rank": 5,
+   "what": "Represent on-demand empty travel and served waits.",
+   "repeat_of": null,
+   "opens_family": true,
+   "category": "model",
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260918T182209:6",
+   "report": "20260918T182209",
+   "rank": 6,
+   "what": "Make fares and fleet types city-declared.",
+   "repeat_of": null,
+   "opens_family": true,
+   "category": "code",
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260918T182209:7",
+   "report": "20260918T182209",
+   "rank": 7,
+   "what": "Resolve the separate package audit before a new arm.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "code",
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260918T182209:8",
+   "report": "20260918T182209",
+   "rank": 8,
+   "what": "Finish the interrupted review scopes.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "process",
+   "status": "open",
+   "evidence": null,
+   "updated": null
   }
  ]
 }

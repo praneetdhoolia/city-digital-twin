@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mbmt_public_map_script_27f5138ad460ac99.js",
+      "url": "https://mbmcwebportal.amnex.com/Scripts/PortalScripts/Map_Common.js",
+      "final_url": "https://mbmcwebportal.amnex.com/Scripts/PortalScripts/Map_Common.js",
+      "source": "MBMT public passenger map client",
+      "licence": "Operator/vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:02:23.760490+00:00",
+      "sha256": "27f5138ad460ac9965b2ba9dcda6337934b89774ac15376f3cb8d48fd2aab4b6",
+      "bytes": 25796,
+      "content_type": "application/javascript",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Read-only endpoint discovery; never execute downloaded code."
+    }
+  ]
+}

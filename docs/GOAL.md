@@ -21,6 +21,16 @@ design for that question is kept as the frozen origin document at
 [`newcastle-lr-proposal.md`](../cities/newcastle/docs/archived/design/newcastle-lr-proposal.md). The twin
 comes first; the questions are applications of it.
 
+## Delivery priority from 19 September 2026
+
+The user prioritises a running broad all-mode Mumbai simulator before precise
+corridor replication. People's mode choices and the factors that shape them
+come first; ridership must emerge from those choices, not imposed target shares.
+Provisional, labelled supply and behaviour inputs are permitted for this first
+baseline. Refine corridors afterwards. The requirements below remain the final
+validation standard, not a reason to block the broad executable baseline.
+See the decision record, section 9.187.
+
 ## Hard requirements
 
 1. **Exact replica of real life, physically.** Real roads, real lane and

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/bus_gtfs_readme_23dd76dcc70543fe.md",
+      "url": "https://raw.githubusercontent.com/croyla/mumbai-gtfs/64f9f774ee1f30389b86a7c26bc0dcca497a32ef/README.md",
+      "final_url": "https://raw.githubusercontent.com/croyla/mumbai-gtfs/64f9f774ee1f30389b86a7c26bc0dcca497a32ef/README.md",
+      "source": "GTFS source documentation",
+      "licence": "MIT-0",
+      "retrieved": "2026-09-18T08:24:37.979918+00:00",
+      "sha256": "23dd76dcc70543fe2a876c1cb02db0fc57d3524def90aa8b9a2f4d85f29007b3",
+      "bytes": 614,
+      "content_type": "text/plain; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Source and format notes."
+    }
+  ]
+}

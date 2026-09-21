@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/iips_district_projections_index_49a50e929c8dc22c.html",
+      "url": "https://iipsindia.ac.in/content/projection-district-level-annual-population-quinquennial-age-group-and-sex-2012-2031-india",
+      "final_url": "https://iipsindia.ac.in/content/projection-district-level-annual-population-quinquennial-age-group-and-sex-2012-2031-india",
+      "content_type": "text/html; charset=utf-8",
+      "source": "IIPS completed district population projection project 2022-23",
+      "licence": "IIPS publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:38:47.935591+00:00",
+      "sha256": "49a50e929c8dc22c67c38df6555de5b799f539354848a541a742b15c45c8c72e",
+      "bytes": 49817,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published district projections; inspect method, dates and historical district geography before use. Not observed current counts.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

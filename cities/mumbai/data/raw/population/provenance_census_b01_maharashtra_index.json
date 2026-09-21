@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_b01_maharashtra_index_bfa9f0de210aee06.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/12624",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/12624",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "B-01: Main workers, marginal workers, non-workers and those marginal workers, non-workers seeking/available for work classified by age and sex (total), Maharashtra - 2011",
+      "licence": "Government publication; reuse terms and microdata access conditions require review",
+      "retrieved": "2026-09-18T10:03:44.541249+00:00",
+      "sha256": "bfa9f0de210aee06da4668e467ffc5c5f882e190dbec3bfb43c821e6b3b295fd",
+      "bytes": 94874,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public statistical evidence; survey weights, age and geographic coverage require validation. Catalogue access is not acquisition of unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

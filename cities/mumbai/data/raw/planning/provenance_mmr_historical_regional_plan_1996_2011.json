@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/mmr_historical_regional_plan_1996_2011_3b7c0c9b7f6fb193.zip",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-09/Part_1.zip",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-09/Part_1.zip",
+      "content_type": "application/zip",
+      "source": "Mumbai Metropolitan Region (MMR), 1996-2011 (4.5 MB)",
+      "licence": "MMRDA publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:08:36.263647+00:00",
+      "sha256": "3b7c0c9b7f6fb19333321435d7efae70cbee3a2f3d6764996a9c81cf0fcebb92",
+      "bytes": 4718126,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official spatial planning evidence. Proposed land use and future infrastructure are not observed current activity or operating transport.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

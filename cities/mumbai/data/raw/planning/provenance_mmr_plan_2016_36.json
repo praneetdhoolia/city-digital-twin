@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/mmr_plan_2016_36_77168744e3e6162b.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Final%20Regional%20Plan%20for%20Mumbai%20Metropolitan%20Region%20Report%20%28English%29.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Final%20Regional%20Plan%20for%20Mumbai%20Metropolitan%20Region%20Report%20%28English%29.pdf",
+      "content_type": "application/pdf",
+      "source": "Final MMR regional plan English report",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:32:04.822555+00:00",
+      "sha256": "77168744e3e6162bd9522c572a602fc9d18ee3a57bda2c36f4e17e8802d52c8f",
+      "bytes": 100236787,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Observed survey vintages and planning projections must remain separate.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

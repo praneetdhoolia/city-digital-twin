@@ -1,0 +1,852 @@
+{
+  "selected_sources": 19,
+  "acquired_sources": 19,
+  "missing_source_ids": [],
+  "sources": [
+    {
+      "source_id": "ghs_pop_e2020_globe_r2023a_54009_100_v1_0_r7_c26",
+      "sha256": "cecea8e638708127ac48728e1b740e205b3d45c3294f44c64c3e61b4cf9348f4",
+      "bytes": 70769233,
+      "zip_crc_verified": true,
+      "layers": [
+        {
+          "member": "GHS_POP_E2020_GLOBE_R2023A_54009_100_V1_0_R7_C26.tif",
+          "crs": "ESRI:54009",
+          "width": 10000,
+          "height": 10000,
+          "bands": 1,
+          "dtypes": [
+            "float64"
+          ],
+          "nodata": -200.0,
+          "bounds_native": [
+            6959000.0,
+            2000000.0,
+            7959000.0,
+            3000000.0
+          ],
+          "bounds_wgs84": [
+            71.20780024216887,
+            16.25916876999866,
+            84.20695135617405,
+            24.552553756517728
+          ],
+          "pixel_size_native": [
+            100.0,
+            100.0
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "ghs_pop_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
+      "sha256": "35f4d535a7474a582d6ffc4bb895ea8f684592fe968066bc771738907079d8f2",
+      "bytes": 75962213,
+      "zip_crc_verified": true,
+      "layers": [
+        {
+          "member": "GHS_POP_E2025_GLOBE_R2023A_54009_100_V1_0_R7_C26.tif",
+          "crs": "ESRI:54009",
+          "width": 10000,
+          "height": 10000,
+          "bands": 1,
+          "dtypes": [
+            "float64"
+          ],
+          "nodata": -200.0,
+          "bounds_native": [
+            6959000.0,
+            2000000.0,
+            7959000.0,
+            3000000.0
+          ],
+          "bounds_wgs84": [
+            71.20780024216887,
+            16.25916876999866,
+            84.20695135617405,
+            24.552553756517728
+          ],
+          "pixel_size_native": [
+            100.0,
+            100.0
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "ghs_built_s_e2020_globe_r2023a_54009_100_v1_0_r7_c26",
+      "sha256": "a0b64c06269d82010b34a8064142cf66c49e5cc27baac0775b9e96b5eab554c1",
+      "bytes": 31171839,
+      "zip_crc_verified": true,
+      "layers": [
+        {
+          "member": "GHS_BUILT_S_E2020_GLOBE_R2023A_54009_100_V1_0_R7_C26.tif",
+          "crs": "ESRI:54009",
+          "width": 10000,
+          "height": 10000,
+          "bands": 1,
+          "dtypes": [
+            "uint16"
+          ],
+          "nodata": 65535.0,
+          "bounds_native": [
+            6959000.0,
+            2000000.0,
+            7959000.0,
+            3000000.0
+          ],
+          "bounds_wgs84": [
+            71.20780024216887,
+            16.25916876999866,
+            84.20695135617405,
+            24.552553756517728
+          ],
+          "pixel_size_native": [
+            100.0,
+            100.0
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "ghs_built_s_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
+      "sha256": "7deb436d3f3707ed285184520524a46f130926e5af0415bb3aadfb160baced69",
+      "bytes": 33304976,
+      "zip_crc_verified": true,
+      "layers": [
+        {
+          "member": "GHS_BUILT_S_E2025_GLOBE_R2023A_54009_100_V1_0_R7_C26.tif",
+          "crs": "ESRI:54009",
+          "width": 10000,
+          "height": 10000,
+          "bands": 1,
+          "dtypes": [
+            "uint16"
+          ],
+          "nodata": 65535.0,
+          "bounds_native": [
+            6959000.0,
+            2000000.0,
+            7959000.0,
+            3000000.0
+          ],
+          "bounds_wgs84": [
+            71.20780024216887,
+            16.25916876999866,
+            84.20695135617405,
+            24.552553756517728
+          ],
+          "pixel_size_native": [
+            100.0,
+            100.0
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "ghs_built_s_nres_e2020_globe_r2023a_54009_100_v1_0_r7_c26",
+      "sha256": "e796984d3ac8685743ed8456d82ca7c37d4bb00e4074041e8eded53818ef93a5",
+      "bytes": 1894580,
+      "zip_crc_verified": true,
+      "layers": [
+        {
+          "member": "GHS_BUILT_S_NRES_E2020_GLOBE_R2023A_54009_100_V1_0_R7_C26.tif",
+          "crs": "ESRI:54009",
+          "width": 10000,
+          "height": 10000,
+          "bands": 1,
+          "dtypes": [
+            "uint16"
+          ],
+          "nodata": 65535.0,
+          "bounds_native": [
+            6959000.0,
+            2000000.0,
+            7959000.0,
+            3000000.0
+          ],
+          "bounds_wgs84": [
+            71.20780024216887,
+            16.25916876999866,
+            84.20695135617405,
+            24.552553756517728
+          ],
+          "pixel_size_native": [
+            100.0,
+            100.0
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "ghs_built_s_nres_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
+      "sha256": "b062ab1aa3e8ac5ff560d7306ff6e469510fa649765262c38a22568b96fedb3b",
+      "bytes": 1909457,
+      "zip_crc_verified": true,
+      "layers": [
+        {
+          "member": "GHS_BUILT_S_NRES_E2025_GLOBE_R2023A_54009_100_V1_0_R7_C26.tif",
+          "crs": "ESRI:54009",
+          "width": 10000,
+          "height": 10000,
+          "bands": 1,
+          "dtypes": [
+            "uint16"
+          ],
+          "nodata": 65535.0,
+          "bounds_native": [
+            6959000.0,
+            2000000.0,
+            7959000.0,
+            3000000.0
+          ],
+          "bounds_wgs84": [
+            71.20780024216887,
+            16.25916876999866,
+            84.20695135617405,
+            24.552553756517728
+          ],
+          "pixel_size_native": [
+            100.0,
+            100.0
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "ghs_built_v_e2020_globe_r2023a_54009_100_v1_0_r7_c26",
+      "sha256": "c77fe1d5f5701b191c7be853dce30f198873ff5ff27ffc54350933fef2ce394b",
+      "bytes": 38080889,
+      "zip_crc_verified": true,
+      "layers": [
+        {
+          "member": "GHS_BUILT_V_E2020_GLOBE_R2023A_54009_100_V1_0_R7_C26.tif",
+          "crs": "ESRI:54009",
+          "width": 10000,
+          "height": 10000,
+          "bands": 1,
+          "dtypes": [
+            "uint32"
+          ],
+          "nodata": 4294967295.0,
+          "bounds_native": [
+            6959000.0,
+            2000000.0,
+            7959000.0,
+            3000000.0
+          ],
+          "bounds_wgs84": [
+            71.20780024216887,
+            16.25916876999866,
+            84.20695135617405,
+            24.552553756517728
+          ],
+          "pixel_size_native": [
+            100.0,
+            100.0
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "ghs_built_v_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
+      "sha256": "8652e081925b16442feb9432668bb38fe40eb556b83288456bf0d8b14b0afc6d",
+      "bytes": 40967190,
+      "zip_crc_verified": true,
+      "layers": [
+        {
+          "member": "GHS_BUILT_V_E2025_GLOBE_R2023A_54009_100_V1_0_R7_C26.tif",
+          "crs": "ESRI:54009",
+          "width": 10000,
+          "height": 10000,
+          "bands": 1,
+          "dtypes": [
+            "uint32"
+          ],
+          "nodata": 4294967295.0,
+          "bounds_native": [
+            6959000.0,
+            2000000.0,
+            7959000.0,
+            3000000.0
+          ],
+          "bounds_wgs84": [
+            71.20780024216887,
+            16.25916876999866,
+            84.20695135617405,
+            24.552553756517728
+          ],
+          "pixel_size_native": [
+            100.0,
+            100.0
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "ghs_built_v_nres_e2020_globe_r2023a_54009_100_v1_0_r7_c26",
+      "sha256": "76d3b7188e396b9bb3b4dc9da0b259b6ad176cce8f9c9e6734386e21724a7b3e",
+      "bytes": 2083310,
+      "zip_crc_verified": true,
+      "layers": [
+        {
+          "member": "GHS_BUILT_V_NRES_E2020_GLOBE_R2023A_54009_100_V1_0_R7_C26.tif",
+          "crs": "ESRI:54009",
+          "width": 10000,
+          "height": 10000,
+          "bands": 1,
+          "dtypes": [
+            "uint32"
+          ],
+          "nodata": 4294967295.0,
+          "bounds_native": [
+            6959000.0,
+            2000000.0,
+            7959000.0,
+            3000000.0
+          ],
+          "bounds_wgs84": [
+            71.20780024216887,
+            16.25916876999866,
+            84.20695135617405,
+            24.552553756517728
+          ],
+          "pixel_size_native": [
+            100.0,
+            100.0
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "ghs_built_v_nres_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
+      "sha256": "4588734378fc7305ef73024458b36c89af895ef079f868cb15ebb09802276546",
+      "bytes": 2106416,
+      "zip_crc_verified": true,
+      "layers": [
+        {
+          "member": "GHS_BUILT_V_NRES_E2025_GLOBE_R2023A_54009_100_V1_0_R7_C26.tif",
+          "crs": "ESRI:54009",
+          "width": 10000,
+          "height": 10000,
+          "bands": 1,
+          "dtypes": [
+            "uint32"
+          ],
+          "nodata": 4294967295.0,
+          "bounds_native": [
+            6959000.0,
+            2000000.0,
+            7959000.0,
+            3000000.0
+          ],
+          "bounds_wgs84": [
+            71.20780024216887,
+            16.25916876999866,
+            84.20695135617405,
+            24.552553756517728
+          ],
+          "pixel_size_native": [
+            100.0,
+            100.0
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "ghs_built_h_agbh_e2018_globe_r2023a_54009_100_v1_0_r7_c26",
+      "sha256": "5afa7fbb3a1c78247f27bc239a646c70bebfbff1ea96d49db08760059f5dcf7f",
+      "bytes": 71082808,
+      "zip_crc_verified": true,
+      "layers": [
+        {
+          "member": "GHS_BUILT_H_AGBH_E2018_GLOBE_R2023A_54009_100_V1_0_R7_C26.tif",
+          "crs": "ESRI:54009",
+          "width": 10000,
+          "height": 10000,
+          "bands": 1,
+          "dtypes": [
+            "float32"
+          ],
+          "nodata": -1.0,
+          "bounds_native": [
+            6959000.0,
+            2000000.0,
+            7959000.0,
+            3000000.0
+          ],
+          "bounds_wgs84": [
+            71.20780024216887,
+            16.25916876999866,
+            84.20695135617405,
+            24.552553756517728
+          ],
+          "pixel_size_native": [
+            100.0,
+            100.0
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "ghs_built_h_anbh_e2018_globe_r2023a_54009_100_v1_0_r7_c26",
+      "sha256": "5a6257115515399b0daa260a5e4c34c10952c155b88257ed4aa71aa25cc82c2a",
+      "bytes": 18752655,
+      "zip_crc_verified": true,
+      "layers": [
+        {
+          "member": "GHS_BUILT_H_ANBH_E2018_GLOBE_R2023A_54009_100_V1_0_R7_C26.tif",
+          "crs": "ESRI:54009",
+          "width": 10000,
+          "height": 10000,
+          "bands": 1,
+          "dtypes": [
+            "float32"
+          ],
+          "nodata": 255.0,
+          "bounds_native": [
+            6959000.0,
+            2000000.0,
+            7959000.0,
+            3000000.0
+          ],
+          "bounds_wgs84": [
+            71.20780024216887,
+            16.25916876999866,
+            84.20695135617405,
+            24.552553756517728
+          ],
+          "pixel_size_native": [
+            100.0,
+            100.0
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "copernicus_dsm_cog_10_n17_00_e073_00_dem",
+      "sha256": "8a8c7a13062dd3a9a1a8876a7b7ab9ffb4751cdb55d911e4681deee29c95a0e0",
+      "bytes": 39000932,
+      "zip_crc_verified": null,
+      "layers": [
+        {
+          "member": "copernicus_dsm_cog_10_n17_00_e073_00_dem_8a8c7a13062dd3a9.tif",
+          "crs": "EPSG:4326",
+          "width": 3600,
+          "height": 3600,
+          "bands": 1,
+          "dtypes": [
+            "float32"
+          ],
+          "nodata": null,
+          "bounds_native": [
+            72.99986111111112,
+            17.000138888888888,
+            73.99986111111112,
+            18.000138888888888
+          ],
+          "bounds_wgs84": [
+            72.99986111111112,
+            17.000138888888888,
+            73.99986111111112,
+            18.000138888888888
+          ],
+          "pixel_size_native": [
+            0.0002777777777777778,
+            0.0002777777777777778
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "copernicus_dsm_cog_10_n18_00_e072_00_dem",
+      "sha256": "5b5e3ac02d569235d1f74ae9f092faa01094449786aeffec2c2862c51e95f15b",
+      "bytes": 4027713,
+      "zip_crc_verified": null,
+      "layers": [
+        {
+          "member": "copernicus_dsm_cog_10_n18_00_e072_00_dem_5b5e3ac02d569235.tif",
+          "crs": "EPSG:4326",
+          "width": 3600,
+          "height": 3600,
+          "bands": 1,
+          "dtypes": [
+            "float32"
+          ],
+          "nodata": null,
+          "bounds_native": [
+            71.99986111111112,
+            18.000138888888888,
+            72.99986111111112,
+            19.000138888888888
+          ],
+          "bounds_wgs84": [
+            71.99986111111112,
+            18.000138888888888,
+            72.99986111111112,
+            19.000138888888888
+          ],
+          "pixel_size_native": [
+            0.0002777777777777778,
+            0.0002777777777777778
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "copernicus_dsm_cog_10_n18_00_e073_00_dem",
+      "sha256": "e5e127b1a1b56c0415276707bbb8c4e7bb357cf0976030a19f8d166cd9d590c9",
+      "bytes": 45785199,
+      "zip_crc_verified": null,
+      "layers": [
+        {
+          "member": "copernicus_dsm_cog_10_n18_00_e073_00_dem_e5e127b1a1b56c04.tif",
+          "crs": "EPSG:4326",
+          "width": 3600,
+          "height": 3600,
+          "bands": 1,
+          "dtypes": [
+            "float32"
+          ],
+          "nodata": null,
+          "bounds_native": [
+            72.99986111111112,
+            18.000138888888888,
+            73.99986111111112,
+            19.000138888888888
+          ],
+          "bounds_wgs84": [
+            72.99986111111112,
+            18.000138888888888,
+            73.99986111111112,
+            19.000138888888888
+          ],
+          "pixel_size_native": [
+            0.0002777777777777778,
+            0.0002777777777777778
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "copernicus_dsm_cog_10_n19_00_e072_00_dem",
+      "sha256": "b90f91a2b8cd69da327d8c133417d119a44f9880c8bb080114be5d8e9cf3dcdd",
+      "bytes": 13336459,
+      "zip_crc_verified": null,
+      "layers": [
+        {
+          "member": "copernicus_dsm_cog_10_n19_00_e072_00_dem_b90f91a2b8cd69da.tif",
+          "crs": "EPSG:4326",
+          "width": 3600,
+          "height": 3600,
+          "bands": 1,
+          "dtypes": [
+            "float32"
+          ],
+          "nodata": null,
+          "bounds_native": [
+            71.99986111111112,
+            19.000138888888888,
+            72.99986111111112,
+            20.000138888888888
+          ],
+          "bounds_wgs84": [
+            71.99986111111112,
+            19.000138888888888,
+            72.99986111111112,
+            20.000138888888888
+          ],
+          "pixel_size_native": [
+            0.0002777777777777778,
+            0.0002777777777777778
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "copernicus_dsm_cog_10_n19_00_e073_00_dem",
+      "sha256": "9e2f952a8d5b1a880382a4e440bd44637c6f0011edf59ca35a4e352c7f4bfceb",
+      "bytes": 45865641,
+      "zip_crc_verified": null,
+      "layers": [
+        {
+          "member": "copernicus_dsm_cog_10_n19_00_e073_00_dem_9e2f952a8d5b1a88.tif",
+          "crs": "EPSG:4326",
+          "width": 3600,
+          "height": 3600,
+          "bands": 1,
+          "dtypes": [
+            "float32"
+          ],
+          "nodata": null,
+          "bounds_native": [
+            72.99986111111112,
+            19.000138888888888,
+            73.99986111111112,
+            20.000138888888888
+          ],
+          "bounds_wgs84": [
+            72.99986111111112,
+            19.000138888888888,
+            73.99986111111112,
+            20.000138888888888
+          ],
+          "pixel_size_native": [
+            0.0002777777777777778,
+            0.0002777777777777778
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "copernicus_dsm_cog_10_n20_00_e072_00_dem",
+      "sha256": "a7fbf68f8dddbb809676f88adfc4abdf6dd11cdd749399e9937ca900626b6f3a",
+      "bytes": 10404171,
+      "zip_crc_verified": null,
+      "layers": [
+        {
+          "member": "copernicus_dsm_cog_10_n20_00_e072_00_dem_a7fbf68f8dddbb80.tif",
+          "crs": "EPSG:4326",
+          "width": 3600,
+          "height": 3600,
+          "bands": 1,
+          "dtypes": [
+            "float32"
+          ],
+          "nodata": null,
+          "bounds_native": [
+            71.99986111111112,
+            20.000138888888888,
+            72.99986111111112,
+            21.000138888888888
+          ],
+          "bounds_wgs84": [
+            71.99986111111112,
+            20.000138888888888,
+            72.99986111111112,
+            21.000138888888888
+          ],
+          "pixel_size_native": [
+            0.0002777777777777778,
+            0.0002777777777777778
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "source_id": "copernicus_dsm_cog_10_n20_00_e073_00_dem",
+      "sha256": "4fc2ff36a7a830233e5fb86b8a33a8ad2ed4824fb6e247a7fc45e28f284aa3af",
+      "bytes": 45802519,
+      "zip_crc_verified": null,
+      "layers": [
+        {
+          "member": "copernicus_dsm_cog_10_n20_00_e073_00_dem_4fc2ff36a7a83023.tif",
+          "crs": "EPSG:4326",
+          "width": 3600,
+          "height": 3600,
+          "bands": 1,
+          "dtypes": [
+            "float32"
+          ],
+          "nodata": null,
+          "bounds_native": [
+            72.99986111111112,
+            20.000138888888888,
+            73.99986111111112,
+            21.000138888888888
+          ],
+          "bounds_wgs84": [
+            72.99986111111112,
+            20.000138888888888,
+            73.99986111111112,
+            21.000138888888888
+          ],
+          "pixel_size_native": [
+            0.0002777777777777778,
+            0.0002777777777777778
+          ],
+          "units": [
+            null
+          ],
+          "scales": [
+            1.0
+          ],
+          "offsets": [
+            0.0
+          ]
+        }
+      ]
+    }
+  ],
+  "acquisition_complete": true,
+  "limitations": [
+    "Metadata and container audit only; pixel values are not validated observations.",
+    "Missing DEM tiles are not filled with zero elevation.",
+    "Copernicus DEM is a digital surface model, not bare-earth road elevation.",
+    "GHSL estimates need independent demographic controls and uncertainty assessment.",
+    "Research envelope overcovers the intended city; whole-tile totals are not city totals.",
+    "Product units must be read from the product documentation when TIFF units are absent."
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/freight/ports_statistics_2024_25_c443531e8b7acd3d.pdf",
+      "url": "https://shipmin.gov.in/sites/default/files/BPS%202024-25_compressed.pdf",
+      "final_url": "https://shipmin.gov.in/sites/default/files/BPS%202024-25_compressed.pdf",
+      "content_type": "application/pdf",
+      "source": "Basic Port Statistics India 2024-25",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:38:19.686575+00:00",
+      "sha256": "c443531e8b7acd3d6912b25b99c97b2b2388fcba9d18d60123e2513fcd76e478",
+      "bytes": 2469332,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Primary annual cargo and passenger port series.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

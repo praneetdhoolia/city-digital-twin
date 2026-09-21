@@ -1,0 +1,330 @@
+{
+  "layer": "RUN",
+  "title": "Bounded behavioural smoke",
+  "fields": {
+    "RUN.replanning.subpopulations": {
+      "value": [
+        "resident",
+        "freight"
+      ],
+      "units": "subpopulation_names",
+      "source": "definition",
+      "status": "active",
+      "description": "Smoke traveller population.",
+      "decisions_ref": "9.187"
+    },
+    "RUN.replanning.strategy_subpopulations": {
+      "value": {
+        "SubtourModeChoice": [
+          "resident"
+        ]
+      },
+      "units": "subpopulation_names_per_strategy",
+      "source": "definition",
+      "status": "active",
+      "description": "Apply baseline choice strategies to residents.",
+      "decisions_ref": "9.187"
+    },
+    "RUN.smoke.inputs": {
+      "value": {
+        "network": "networks/matsim/schedules/baseline_regional/network.xml.gz",
+        "schedule": "networks/matsim/schedules/baseline_regional/transitSchedule.xml.gz",
+        "transit_vehicles": "networks/matsim/schedules/baseline_regional/transitVehicles.xml.gz",
+        "plans": "demand/baseline/plans_with_freight.xml.gz",
+        "boarding_fares": "params/baseline/boarding_fares.csv"
+      },
+      "units": "city_relative_paths",
+      "source": "definition",
+      "status": "active",
+      "description": "Prepared broad regional baseline including acquired NMMT departures and derived MBMT service supply.",
+      "decisions_ref": "9.187"
+    },
+    "RUN.smoke.wall_ceiling_s": {
+      "value": 900,
+      "units": "seconds",
+      "source": "definition",
+      "status": "active",
+      "description": "Automatic short smoke ceiling; this path refuses multi-hour budgets.",
+      "decisions_ref": "9.187"
+    },
+    "RUN.smoke.road_mode_exclusions": {
+      "value": {
+        "car": [],
+        "ride": [],
+        "walk": [
+          "motorway",
+          "motorway_link"
+        ],
+        "bike": [
+          "motorway",
+          "motorway_link"
+        ],
+        "motorbike": [],
+        "taxi": [],
+        "auto_rickshaw": [
+          "motorway",
+          "motorway_link"
+        ]
+      },
+      "units": "highway_classes_by_mode",
+      "source": "definition",
+      "status": "active",
+      "description": "Coarse class-based availability pending refined corridor access rules.",
+      "decisions_ref": "9.187"
+    },
+    "RUN.smoke.vehicle_speed_ms": {
+      "value": {
+        "car": 30.0,
+        "ride": 30.0,
+        "walk": 1.2,
+        "bike": 4.0,
+        "motorbike": 25.0,
+        "taxi": 30.0,
+        "auto_rickshaw": 15.0,
+        "truck": 20.0,
+        "freight_rail": 16.666666666666668
+      },
+      "units": "m/s",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional per-mode movement caps.",
+      "decisions_ref": "9.187",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural smoke coefficient; not calibrated to ridership."
+    },
+    "RUN.smoke.vehicle_pcu": {
+      "value": {
+        "car": 1.0,
+        "ride": 1.0,
+        "walk": 0.1,
+        "bike": 0.2,
+        "motorbike": 0.4,
+        "taxi": 1.0,
+        "auto_rickshaw": 0.7,
+        "truck": 2.5,
+        "freight_rail": 93.33333333333333
+      },
+      "units": "passenger_car_units",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional network occupancy; ride uses an independent vehicle proxy in this smoke.",
+      "decisions_ref": "9.187",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural smoke coefficient; not calibrated to ridership."
+    },
+    "RUN.smoke.vehicle_length_m": {
+      "value": {
+        "car": 5.0,
+        "ride": 5.0,
+        "walk": 0.5,
+        "bike": 2.0,
+        "motorbike": 2.0,
+        "taxi": 5.0,
+        "auto_rickshaw": 3.0,
+        "truck": 12.0,
+        "freight_rail": 700.0
+      },
+      "units": "metres",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional vehicle lengths.",
+      "decisions_ref": "9.187",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural smoke coefficient; not calibrated to ridership."
+    },
+    "RUN.smoke.transit_timing": {
+      "value": {
+        "speed_ms": {
+          "bus": 8.333333333333334,
+          "rail": 16.666666666666668,
+          "subway": 16.666666666666668,
+          "ferry": 4.166666666666667
+        },
+        "dwell_s": {
+          "bus": 20,
+          "rail": 30,
+          "subway": 30,
+          "ferry": 120
+        }
+      },
+      "units": "metres_per_second_and_seconds",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional moving-speed caps and intermediate-stop dwell derive physically feasible timetable offsets from the mapped path. Later source times are retained; no observed timetable is overwritten.",
+      "decisions_ref": "9.187",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad behavioural baseline; validate with observed choices before calibration.",
+      "consumers": [
+        "src/run/baseline_smoke.py"
+      ]
+    },
+    "C.smoke.crowding_price": {
+      "value": 6.0,
+      "units": "utility_per_hour",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional price of additional perceived in-vehicle time due to crowding.",
+      "decisions_ref": "9.187",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad behavioural baseline; validate with observed choices before calibration.",
+      "matsim_param": "ptCrowding.penaltyUtilsPerHour"
+    },
+    "C.smoke.headway_price": {
+      "value": 0.05,
+      "units": "utility_per_minute",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional schedule-delay price: half an in-vehicle minute per headway minute.",
+      "decisions_ref": "9.187",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad behavioural baseline; validate with observed choices before calibration.",
+      "matsim_param": "serviceQuality.headwayUtilsPerMin"
+    },
+    "C.smoke.reliability_price": {
+      "value": 0.13,
+      "units": "utility_per_minute",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional price of delay standard deviation measured from the preceding iteration.",
+      "decisions_ref": "9.187",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad behavioural baseline; validate with observed choices before calibration.",
+      "matsim_param": "serviceQuality.reliabilityUtilsPerMin"
+    },
+    "C.smoke.headway_cap": {
+      "value": 120.0,
+      "units": "minutes",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional cap for sparse/single-departure service headway scoring.",
+      "decisions_ref": "9.187",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad behavioural baseline; validate with observed choices before calibration.",
+      "matsim_param": "serviceQuality.headwayCapMin"
+    },
+    "RUN.smoke.dedicated_transit_headway_s": {
+      "value": {
+        "rail": 90,
+        "light_rail": 90,
+        "subway": 90,
+        "ferry": 900
+      },
+      "units": "seconds_per_vehicle",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional dedicated-link service envelope. Flow capacity derives as maximum mapped vehicle PCU times 3600/headway, preserving any greater mapped capacity. This avoids interpreting a train headway as car-equivalent flow and is not a validated signalling capacity.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "src/run/baseline_smoke.py"
+      ],
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Dedicated-mode headway sensitivity; replace with observed sectional signalling and vessel constraints."
+    },
+    "RUN.smoke.transit_mode_aliases": {
+      "value": {
+        "light_rail": "subway"
+      },
+      "units": "mode_mapping",
+      "source": "definition",
+      "status": "active",
+      "description": "Mapped metro track permission uses light_rail; mapped metro vehicle profiles use subway.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "src/run/baseline_smoke.py"
+      ]
+    },
+    "RUN.smoke.network_mode_sources": {
+      "value": {
+        "truck": "car",
+        "freight_rail": "rail"
+      },
+      "units": "mode_mapping",
+      "source": "definition",
+      "status": "active",
+      "description": "Provisional goods modes share their source network, with connected components audited. Detailed HGV and freight operating restrictions remain incomplete.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "src/run/baseline_smoke.py"
+      ]
+    },
+    "RUN.smoke.incomeScoring.excludeSubpopulations": {
+      "value": "freight",
+      "units": "subpopulation_names",
+      "source": "definition",
+      "status": "active",
+      "description": "Background goods movements are exogenous volumes, not passenger budgets.",
+      "decisions_ref": "9.187",
+      "matsim_param": "incomeScoring.excludeSubpopulations"
+    },
+    "RUN.smoke.boardingFare.routeChoice": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Price each candidate transit boarding with the same city fare table and person-specific money utility as executed scoring, before RAPTOR prunes paths. This enables a mechanism, not a calibrated preference.",
+      "decisions_ref": "9.192",
+      "matsim_param": "boardingFare.routeChoice"
+    },
+    "RUN.smoke.road_capacity_factors": {
+      "value": {
+        "motorway": 1.0,
+        "motorway_link": 1.0,
+        "trunk": 1.0,
+        "trunk_link": 1.0,
+        "primary": 1.0,
+        "primary_link": 1.0,
+        "secondary": 1.0,
+        "secondary_link": 1.0,
+        "tertiary": 1.0,
+        "tertiary_link": 1.0,
+        "residential": 1.0,
+        "living_street": 1.0,
+        "service": 1.0,
+        "unclassified": 1.0,
+        "road": 1.0,
+        "busway": 1.0
+      },
+      "units": "dimensionless_flow_capacity_factor",
+      "source": "assumed",
+      "status": "active",
+      "description": "Declared class sensitivity factors on the already mapped network. Identity preserves source capacities; this is not population sampling or evidence of correct road capacity. Geometry, lanes, speed and service departures are retained.",
+      "decisions_ref": "9.196",
+      "consumers": [
+        "src/run/baseline_smoke.py"
+      ],
+      "sweep": [
+        0.5,
+        3.0
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional flow-capacity sensitivity envelope, not fitted or observed Mumbai capacities."
+    }
+  }
+}

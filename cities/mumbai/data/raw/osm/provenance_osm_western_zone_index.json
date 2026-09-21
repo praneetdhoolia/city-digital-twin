@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/osm/osm_western_zone_index_f19635447dd6cf85.html",
+      "url": "https://download.geofabrik.de/asia/india/western-zone.html",
+      "final_url": "https://download.geofabrik.de/asia/india/western-zone.html",
+      "source": "Geofabrik Western Zone source index",
+      "licence": "Geofabrik website; OSM datasets ODbL 1.0",
+      "retrieved": "2026-09-18T08:39:53.346070+00:00",
+      "sha256": "f19635447dd6cf85a07b2a9478c13d55782f539605b31b81867e5dc1093b3bc8",
+      "bytes": 18509,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Extract metadata and dated download list."
+    }
+  ]
+}

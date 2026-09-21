@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_mumbai_pca_search_ddccfc5b87d376cb.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/?sk=PC11_PCA-TV-2723&ps=15",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/?sk=PC11_PCA-TV-2723&ps=15",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Census Mumbai City PCA catalogue search",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:41:38.292278+00:00",
+      "sha256": "ddccfc5b87d376cba5e336f3146698e9c93061bd1bafaa87f8ccaee5ced6b7ca",
+      "bytes": 108191,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Locate official district workbook.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

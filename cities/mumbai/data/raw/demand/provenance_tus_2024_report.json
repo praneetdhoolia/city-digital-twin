@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/demand/tus_2024_report_a4380137658c8869.pdf",
+      "url": "https://mospi.gov.in/sites/default/files/publication_reports/TUS_Report_2024_28.03.2025F.pdf",
+      "final_url": "https://mospi.gov.in/sites/default/files/publication_reports/TUS_Report_2024_28.03.2025F.pdf",
+      "content_type": "application/pdf",
+      "source": "Time Use in India 2024 full NSO report",
+      "licence": "Government publication; reuse terms and microdata access conditions require review",
+      "retrieved": "2026-09-18T10:03:10.009467+00:00",
+      "sha256": "a4380137658c886985c5312c199dc71a8e95c0b39d7b969396ca2f4c859788c9",
+      "bytes": 19594975,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public statistical evidence; survey weights, age and geographic coverage require validation. Catalogue access is not acquisition of unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

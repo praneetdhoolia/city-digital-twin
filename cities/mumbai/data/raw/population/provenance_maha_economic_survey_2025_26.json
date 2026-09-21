@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/maha_economic_survey_2025_26_954fceeb3803c2a7.pdf",
+      "url": "https://mahaces.maharashtra.gov.in/files/EconomicSurvey/esm_2526_e.pdf",
+      "final_url": "https://mahaces.maharashtra.gov.in/files/EconomicSurvey/esm_2526_e.pdf",
+      "content_type": "application/pdf",
+      "source": "Economic Survey of Maharashtra 2025-26 English full report",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:47:21.604554+00:00",
+      "sha256": "954fceeb3803c2a79f2f50c615a7e7ec1d2f2e75fdbdb8fe0aa84ac9cd8f9885",
+      "bytes": 13968784,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "State and district socio-economic, infrastructure and transport controls; distinguish estimates, dates and geographic universes.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

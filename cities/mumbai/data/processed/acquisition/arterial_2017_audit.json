@@ -1,0 +1,393 @@
+{
+  "source": "derived",
+  "source_id": "urban_arterial_operating_speed_capacity_2017_pdf",
+  "source_sha256": "62cf654c280e09ef133cc86b6ce4f4047fc557b719f98e3dbeb5f3fadaef2aaf",
+  "row_counts": {
+    "sites": 12,
+    "vehicle_dimensions": 5,
+    "pcu": 48,
+    "capacity": 12,
+    "validation": 2
+  },
+  "equation_2_coefficients": [
+    {
+      "term": "intercept",
+      "equation_2_value": "2694",
+      "table_5_value": "2694",
+      "table_5_t_statistic": "4.64",
+      "table_5_p_value": "0.0012"
+    },
+    {
+      "term": "linear_magnitude",
+      "equation_2_value": "49.53",
+      "table_5_value": "49.53",
+      "table_5_t_statistic": "3.04",
+      "table_5_p_value": "0.011"
+    },
+    {
+      "term": "quadratic",
+      "equation_2_value": "0.496",
+      "table_5_value": "0.497",
+      "table_5_t_statistic": "4.41",
+      "table_5_p_value": "0.0017"
+    }
+  ],
+  "checks": [
+    {
+      "check": "composition_sums_to_100_percent",
+      "key": "D-6-1",
+      "published": "100",
+      "calculated": "100.00",
+      "difference": "0.00",
+      "rounding_bound": "0.025",
+      "status": "exact"
+    },
+    {
+      "check": "composition_sums_to_100_percent",
+      "key": "D-6-2",
+      "published": "100",
+      "calculated": "100.00",
+      "difference": "0.00",
+      "rounding_bound": "0.025",
+      "status": "exact"
+    },
+    {
+      "check": "composition_sums_to_100_percent",
+      "key": "D-6-3",
+      "published": "100",
+      "calculated": "99.99",
+      "difference": "0.01",
+      "rounding_bound": "0.025",
+      "status": "rounding_compatible"
+    },
+    {
+      "check": "composition_sums_to_100_percent",
+      "key": "J-6-1",
+      "published": "100",
+      "calculated": "100.00",
+      "difference": "0.00",
+      "rounding_bound": "0.025",
+      "status": "exact"
+    },
+    {
+      "check": "composition_sums_to_100_percent",
+      "key": "J-6-2",
+      "published": "100",
+      "calculated": "100.00",
+      "difference": "0.00",
+      "rounding_bound": "0.025",
+      "status": "exact"
+    },
+    {
+      "check": "composition_sums_to_100_percent",
+      "key": "J-6-3",
+      "published": "100",
+      "calculated": "100.00",
+      "difference": "0.00",
+      "rounding_bound": "0.025",
+      "status": "exact"
+    },
+    {
+      "check": "composition_sums_to_100_percent",
+      "key": "B-6-1",
+      "published": "100",
+      "calculated": "100.00",
+      "difference": "0.00",
+      "rounding_bound": "0.025",
+      "status": "exact"
+    },
+    {
+      "check": "composition_sums_to_100_percent",
+      "key": "C-6-1",
+      "published": "100",
+      "calculated": "100.00",
+      "difference": "0.00",
+      "rounding_bound": "0.025",
+      "status": "exact"
+    },
+    {
+      "check": "composition_sums_to_100_percent",
+      "key": "D-4-1",
+      "published": "100",
+      "calculated": "100.00",
+      "difference": "0.00",
+      "rounding_bound": "0.025",
+      "status": "exact"
+    },
+    {
+      "check": "composition_sums_to_100_percent",
+      "key": "D-4-2",
+      "published": "100",
+      "calculated": "100.00",
+      "difference": "0.00",
+      "rounding_bound": "0.025",
+      "status": "exact"
+    },
+    {
+      "check": "composition_sums_to_100_percent",
+      "key": "D-4-3",
+      "published": "100",
+      "calculated": "100.00",
+      "difference": "0.00",
+      "rounding_bound": "0.025",
+      "status": "exact"
+    },
+    {
+      "check": "composition_sums_to_100_percent",
+      "key": "J-4-1",
+      "published": "100",
+      "calculated": "100.01",
+      "difference": "-0.01",
+      "rounding_bound": "0.025",
+      "status": "rounding_compatible"
+    },
+    {
+      "check": "published_area_equals_length_times_width_m2",
+      "key": "CS",
+      "published": "5.36",
+      "calculated": "5.3568",
+      "difference": "0.0032",
+      "rounding_bound": "0.005",
+      "status": "rounding_compatible"
+    },
+    {
+      "check": "published_area_equals_length_times_width_m2",
+      "key": "CB",
+      "published": "8.11",
+      "calculated": "8.1066",
+      "difference": "0.0034",
+      "rounding_bound": "0.005",
+      "status": "rounding_compatible"
+    },
+    {
+      "check": "published_area_equals_length_times_width_m2",
+      "key": "HV",
+      "published": "24.54",
+      "calculated": "24.5430",
+      "difference": "-0.0030",
+      "rounding_bound": "0.005",
+      "status": "rounding_compatible"
+    },
+    {
+      "check": "published_area_equals_length_times_width_m2",
+      "key": "3 W",
+      "published": "4.48",
+      "calculated": "4.4800",
+      "difference": "0.0000",
+      "rounding_bound": "0.005",
+      "status": "exact"
+    },
+    {
+      "check": "published_area_equals_length_times_width_m2",
+      "key": "2 W",
+      "published": "1.20",
+      "calculated": "1.1968",
+      "difference": "0.0032",
+      "rounding_bound": "0.005",
+      "status": "rounding_compatible"
+    },
+    {
+      "check": "directional_capacity_equals_lane_capacity_times_directional_lanes",
+      "key": "D-6-1",
+      "published": "6075",
+      "calculated": "6075",
+      "difference": "0",
+      "rounding_bound": "2",
+      "status": "exact"
+    },
+    {
+      "check": "directional_capacity_equals_lane_capacity_times_directional_lanes",
+      "key": "D-6-2",
+      "published": "6000",
+      "calculated": "6000",
+      "difference": "0",
+      "rounding_bound": "2",
+      "status": "exact"
+    },
+    {
+      "check": "directional_capacity_equals_lane_capacity_times_directional_lanes",
+      "key": "D-6-3",
+      "published": "6315",
+      "calculated": "6315",
+      "difference": "0",
+      "rounding_bound": "2",
+      "status": "exact"
+    },
+    {
+      "check": "directional_capacity_equals_lane_capacity_times_directional_lanes",
+      "key": "J-6-1",
+      "published": "4944",
+      "calculated": "4944",
+      "difference": "0",
+      "rounding_bound": "2",
+      "status": "exact"
+    },
+    {
+      "check": "directional_capacity_equals_lane_capacity_times_directional_lanes",
+      "key": "J-6-2",
+      "published": "4902",
+      "calculated": "4902",
+      "difference": "0",
+      "rounding_bound": "2",
+      "status": "exact"
+    },
+    {
+      "check": "directional_capacity_equals_lane_capacity_times_directional_lanes",
+      "key": "J-6-3",
+      "published": "4956",
+      "calculated": "4956",
+      "difference": "0",
+      "rounding_bound": "2",
+      "status": "exact"
+    },
+    {
+      "check": "directional_capacity_equals_lane_capacity_times_directional_lanes",
+      "key": "B-6-1",
+      "published": "5250",
+      "calculated": "5250",
+      "difference": "0",
+      "rounding_bound": "2",
+      "status": "exact"
+    },
+    {
+      "check": "directional_capacity_equals_lane_capacity_times_directional_lanes",
+      "key": "C-6-1",
+      "published": "4500",
+      "calculated": "4500",
+      "difference": "0",
+      "rounding_bound": "2",
+      "status": "exact"
+    },
+    {
+      "check": "directional_capacity_equals_lane_capacity_times_directional_lanes",
+      "key": "D-4-1",
+      "published": "4086",
+      "calculated": "4086",
+      "difference": "0",
+      "rounding_bound": "1.5",
+      "status": "exact"
+    },
+    {
+      "check": "directional_capacity_equals_lane_capacity_times_directional_lanes",
+      "key": "D-4-2",
+      "published": "3142",
+      "calculated": "3112",
+      "difference": "30",
+      "rounding_bound": "1.5",
+      "status": "source_disagreement"
+    },
+    {
+      "check": "directional_capacity_equals_lane_capacity_times_directional_lanes",
+      "key": "D-4-3",
+      "published": "3272",
+      "calculated": "3272",
+      "difference": "0",
+      "rounding_bound": "1.5",
+      "status": "exact"
+    },
+    {
+      "check": "directional_capacity_equals_lane_capacity_times_directional_lanes",
+      "key": "J-4-1",
+      "published": "2964",
+      "calculated": "2964",
+      "difference": "0",
+      "rounding_bound": "1.5",
+      "status": "exact"
+    },
+    {
+      "check": "equation_and_coefficient_table_agree",
+      "key": "intercept",
+      "published": "2694",
+      "calculated": "2694",
+      "difference": "0",
+      "rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "check": "equation_and_coefficient_table_agree",
+      "key": "linear_magnitude",
+      "published": "49.53",
+      "calculated": "49.53",
+      "difference": "0.00",
+      "rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "check": "equation_and_coefficient_table_agree",
+      "key": "quadratic",
+      "published": "0.497",
+      "calculated": "0.496",
+      "difference": "0.001",
+      "rounding_bound": "0",
+      "status": "source_disagreement"
+    },
+    {
+      "check": "printed_equation_reproduces_table_6_capacity",
+      "key": "D-6-7",
+      "published": "2110",
+      "calculated": "2110.0122400",
+      "difference": "-0.0122400",
+      "rounding_bound": "0.5",
+      "status": "rounding_compatible"
+    },
+    {
+      "check": "table_6_relative_error_percent_from_printed_capacities",
+      "key": "D-6-7",
+      "published": "0.10",
+      "calculated": "0.4761904761904761904761904762",
+      "difference": "-0.3761904761904761904761904762",
+      "rounding_bound": "0.005",
+      "status": "source_disagreement"
+    },
+    {
+      "check": "printed_equation_reproduces_table_6_capacity",
+      "key": "J-4-2",
+      "published": "1545",
+      "calculated": "1545.1105264",
+      "difference": "-0.1105264",
+      "rounding_bound": "0.5",
+      "status": "rounding_compatible"
+    },
+    {
+      "check": "table_6_relative_error_percent_from_printed_capacities",
+      "key": "J-4-2",
+      "published": "0.05",
+      "calculated": "0.3225806451612903225806451613",
+      "difference": "-0.2725806451612903225806451613",
+      "rounding_bound": "0.005",
+      "status": "source_disagreement"
+    },
+    {
+      "check": "narrative_and_table_6_speed_km_h",
+      "key": "D-6-7",
+      "published": "86.20",
+      "calculated": "86.20",
+      "difference": "0.00",
+      "rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "check": "narrative_and_table_6_speed_km_h",
+      "key": "J-4-2",
+      "published": "62.22",
+      "calculated": "63.22",
+      "difference": "-1.00",
+      "rounding_bound": "0",
+      "status": "source_disagreement"
+    }
+  ],
+  "check_status_counts": {
+    "exact": 25,
+    "rounding_compatible": 8,
+    "source_disagreement": 5
+  },
+  "applicability": [
+    "Other Indian cities; no observed Mumbai road capacities or assigned model values.",
+    "Four- and six-lane divided, flat midblocks selected to exclude junctions, stops, parking and other side friction.",
+    "Capacity was estimated by fitting speed-density curves; most sites did not reach capacity during observation.",
+    "Operating speed is a measured 85th percentile for standard cars in free flow, not a posted speed limit.",
+    "PCU factors depend on measured relative speeds and projected areas; they are not universal vehicle constants.",
+    "Printed equations, validation claims and capacity cells disagree; retain alternatives pending corroboration.",
+    "Table 5 prints the linear coefficient magnitude without the negative sign used in Equation 2."
+  ]
+}

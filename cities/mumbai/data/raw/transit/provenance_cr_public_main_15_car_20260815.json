@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "url": "https://cr.indianrailways.gov.in/cris//uploads/files/1786691264142-PTT%20OF%2015%20CAR%20TT%20ON%20MAINLINE%20WEF%2015%20AUG%2026.pdf",
+      "final_url": "https://cr.indianrailways.gov.in/cris//uploads/files/1786691264142-PTT%20OF%2015%20CAR%20TT%20ON%20MAINLINE%20WEF%2015%20AUG%2026.pdf",
+      "content_type": "application/pdf",
+      "retrieved": "2026-09-18T10:40:51.249Z",
+      "bytes": 407964,
+      "path": "data/raw/transit/cr_public_main_15_car_20260815_15e93c4a214063a0.pdf",
+      "sha256": "15e93c4a214063a0e95275a91b43db78d8ff1beb316b109ffaffbcd1d48cd81c",
+      "source": "Central Railway published main 15 car 20260815",
+      "licence": "Operator publication; reuse terms unverified",
+      "coverage": "Linked from official Mumbai Suburban timetable index; effective dates, later amendments, station times and operating exceptions require validation.",
+      "producing_script": "extract/import_browser_acquisition.py",
+      "transport": "Connected Chrome public fetch; default certificate verification",
+      "validation_status": "acquired_unvalidated"
+    }
+  ]
+}

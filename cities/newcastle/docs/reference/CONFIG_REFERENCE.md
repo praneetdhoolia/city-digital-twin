@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 567 fields are made of
+## What the 571 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 42 | computed from observed data in this package |
 | `derived` | 46 | follows from another registry field by identity |
 | `literature` | 82 | a published value, not specific to this city |
-| `assumed` | 211 | chosen without direct empirical support |
-| `definition` | 147 | fixed by the formulation, not an empirical quantity |
+| `assumed` | 212 | chosen without direct empirical support |
+| `definition` | 150 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 546 | usable point value |
+| `active` | 550 | usable point value |
 | `computed` | 11 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 326 sweeps are for
+### What the 327 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 19 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 283 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 284 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 24 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -131,7 +131,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 203 fields*
+*`cities/newcastle/registry/A_supply.json` - 205 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -239,6 +239,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.network.keep_tags_as_attributes` | `true` | boolean | `definition` | - |
 | `A.network.keep_ways_with_public_transit` | `true` | boolean | `definition` | - |
 | `A.network.max_link_length_m` | `500.0` | metres | `assumed` | 200 - 2000 |
+| `A.network.mode_access_strategy` | `legacy_companions` | policy | `definition` | - |
 | `A.network.parse_turn_restrictions` | `true` | boolean | `definition` | - |
 | `A.network.path_access_overrides` | `{"keys": {"access": "all", "foot": "walk", "bicycle": "bike"}, "grant": ["yes", "designated", "permissive",...` | osm_access_vocabulary | `definition` | - |
 | `A.network.path_lane_capacity_veh_h` | `9999.0` | vehicles_per_hour | `definition` | - |
@@ -325,6 +326,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.transit.ferry_capacity_seated` | `149` | persons_per_vehicle | `literature` | **held fixed** |
 | `A.transit.ferry_capacity_standing` | `51` | persons_per_vehicle | `derived` | derived: ferry_capacity_standing = ferry_capacity_total - ferry_capacity_seated |
 | `A.transit.ferry_capacity_total` | `200` | persons_per_vehicle | `literature` | **held fixed** |
+| `A.transit.fleet_assignment_mode` | `mode_capacity` | enum | `assumed` | `mode_capacity`, `explicit_vehicle` |
 | `A.transit.interchange_radius_m` | `250` | metres | `assumed` | 150 - 400 |
 | `A.transit.platform_height_lr_mm` | `300` | millimetres | `literature` | **held fixed** |
 | `A.transit.platform_height_rail_mm` | `1080` | millimetres | `literature` | **held fixed** |
@@ -1069,6 +1071,12 @@ Longest MATSim link before a way is split. Decided in the network builder as a l
 
 > **Sweep basis.** no measurement bears on it: it trades link count against the spatial resolution of a queue. The lower bound is about a city block, the upper long enough that a rural link is not split for its own sake. Swept because link length changes where congestion can form.
 
+#### `A.network.mode_access_strategy`
+
+Whether run-network assembly applies the existing road companion, nonmotor reverse-link and largest-component rules (legacy_companions), or preserves every mapped link permission and direction (preserve_mapped). The latter requires an upstream network with evidenced per-mode permissions and refuses a requested routing mode with no permitted links. It does not infer lawful access, add connectivity, delete disconnected islands or implement conditional restrictions. Scenario lane/capacity patches still apply. This city retains its existing assembly until a reviewed access model replaces it.
+
+***definition** · status **active** · DECISIONS.md §9.183*
+
 #### `A.network.parse_turn_restrictions`
 
 Whether OSM turn restrictions become MATSim disallowed next links. The base network carries 1,240 of them and the E1 variants add banned turn movements on the corridor, so the road-space externality of proposal 3.3 depends on this being true.
@@ -1702,6 +1710,14 @@ Published capacity of the Stockton ferries MV Shortland and MV Hunter. The mappe
 > **Held fixed.** A published vessel capacity is a fact about the boat, not a behavioural parameter, and sweeping it would assert an uncertainty that does not exist. Both Stockton ferries carry the same published figure.
 >
 > *Departure requires: a different vessel entering service on the Stockton route*
+
+#### `A.transit.fleet_assignment_mode`
+
+Transit fleet capacity representation. mode_capacity retains the existing registry capacities by mapper type. explicit_vehicle requires networks/matsim/schedules/<scenario>/fleet_assignments.json and resolves distinct registry capacity fields for every active vehicle; no missing-type fallback.
+
+***assumed** · status **active** · DECISIONS.md §9.179 · sweep role **uncertainty***
+
+> **Sweep basis.** The existing city build uses one declared capacity per mapped transit mode. Explicit assignment requires an evidenced vehicle/configuration crosswalk tied to the mapped build; it must not be enabled by inventing assignments.
 
 #### `A.transit.interchange_radius_m`
 
@@ -4091,7 +4107,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 109 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 111 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -4145,6 +4161,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.qsim.end_time_h` | `30` | hours | `definition` | - |
 | `RUN.qsim.link_dynamics` | `PassingQ` | enum | `definition` | - |
 | `RUN.qsim.main_mode` | `["car", "truck", "motorbike", "walk", "bike", "taxi"]` | enum | `definition` | - |
+| `RUN.qsim.mode_vehicle_fields` | `{}` | registry_field_mapping | `definition` | - |
 | `RUN.qsim.remove_stuck_vehicles` | `false` | boolean | `assumed` | `False`, `True` |
 | `RUN.qsim.snapshot_period` | `00:00:00` | hh:mm:ss | `definition` | - |
 | `RUN.qsim.start_time_h` | `0` | hours | `definition` | - |
@@ -4167,6 +4184,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.routing.access_egress_type` | `accessEgressModeToLink` | policy | `assumed` | `none`, `accessEgressModeToLink` |
 | `RUN.routing.access_walk_beeline_factor` | `1.6938` | ratio | `measured` | 1.286 - 1.741 |
 | `RUN.routing.access_walk_speed_ms` | `1.25` | m/s | `derived` | derived: the same physical walking speed - the access/egress stub walk to and f |
+| `RUN.routing.activity_link_assignment` | `common_modes` | policy | `definition` | - |
 | `RUN.routing.clear_default_teleported_params` | `true` | boolean | `definition` | - |
 | `RUN.routing.network_modes` | `["car", "ride", "truck", "motorbike", "walk", "bike", "taxi"]` | enum | `definition` | - |
 | `RUN.routing.pt_submode_scoring` | `per_submode` | enum | `assumed` | `per_submode`, `aggregate` |
@@ -4525,6 +4543,12 @@ The modes physically simulated in the mobsim: car; truck (9.49) and motorbike (9
 
 ***definition** · status **active** · DECISIONS.md §9.54, 9.86 · MATSim `qsim.mainMode`*
 
+#### `RUN.qsim.mode_vehicle_fields`
+
+Explicit network-mode vehicle definitions. A nonempty mapping must cover exactly RUN.routing.network_modes and references scalar registry fields for length, width, PCE and explicit seated/standing passenger capacities, with an optional speed cap. All references resolve for each run, including overlays. Empty preserves the existing writer during migration; this city retains its present vehicle physics. No link permission, routing-time model, fleet dispatch or demand follows from declaring a type.
+
+***definition** · status **active** · DECISIONS.md §9.182*
+
 #### `RUN.qsim.remove_stuck_vehicles`
 
 What the mobsim does with a vehicle that has been stuck for RUN.qsim.stuck_time_s: false forces it onto the next link regardless of capacity, true removes it and aborts the plan. One of the 21 undeclared defaults (#155), declared at the framework's false so the shipped model is unchanged.
@@ -4686,6 +4710,12 @@ Speed of the teleported access/egress stub walk (non_network_walk) that connects
 ***derived** · status **active** · DECISIONS.md §9.54 · MATSim `routing.teleportedModeParameters[non_network_walk].teleportedModeSpeed`*
 
 > **Derived from** `A.transit.walk_speed_ms`: the same physical walking speed - the access/egress stub walk to and from a network link is walking, at the one declared walking speed
+
+#### `RUN.routing.activity_link_assignment`
+
+Activity-to-road assignment policy. common_modes retains the existing intersection of all usable mode networks. mode_specific_access retains each activity location and link and delegates mode-specific boarding/alighting connections to routed access/egress. The latter requires accessEgressModeToLink or accessEgressModeToLinkPlusTimeConstant and independently validated access routing; it does not confer legal road access or supply a passenger fleet.
+
+***definition** · status **active** · DECISIONS.md §9.184 · MATSim `activityLinks.assignment`*
 
 #### `RUN.routing.clear_default_teleported_params`
 

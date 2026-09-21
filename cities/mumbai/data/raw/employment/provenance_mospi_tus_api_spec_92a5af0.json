@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/mospi_tus_api_spec_92a5af0_173544cce82bb779.yaml",
+      "url": "https://raw.githubusercontent.com/nso-india/esankhyiki-mcp/92a5af0defa22785d073a26c71b2758c40d0564d/swagger/swagger_user_tus.yaml",
+      "final_url": "https://raw.githubusercontent.com/nso-india/esankhyiki-mcp/92a5af0defa22785d073a26c71b2758c40d0564d/swagger/swagger_user_tus.yaml",
+      "source": "Official NSO TUS public API specification",
+      "licence": "MIT (API specification only)",
+      "retrieved": "2026-09-18T10:22:33.001075+00:00",
+      "sha256": "173544cce82bb77901c9c0a76d968a2e2f7ea9afd4b10eaf376fc143b6cd8d0b",
+      "bytes": 15523,
+      "content_type": "text/plain; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Pinned API request definitions; data licence remains separate."
+    }
+  ]
+}

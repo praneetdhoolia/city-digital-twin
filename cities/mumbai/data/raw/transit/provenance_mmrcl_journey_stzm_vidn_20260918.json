@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_journey_stzm_vidn_20260918_01861468535b6a5c.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/journey-route/STZM/VIDN/station/station/least-distance/2026-09-18/one_way/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/journey-route/STZM/VIDN/station/station/least-distance/2026-09-18/one_way/",
+      "content_type": "application/json",
+      "source": "Metro 3 public adjacent-station journey STZM to VIDN, 18 September 2026",
+      "licence": "Public authority or operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:16:06.002779+00:00",
+      "sha256": "01861468535b6a5cb45f1ff97050ee429168d3db34cde02b3907b465f32e1d50",
+      "bytes": 586,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

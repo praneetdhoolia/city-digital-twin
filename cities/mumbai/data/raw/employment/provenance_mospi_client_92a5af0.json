@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/mospi_client_92a5af0_a735cf3d7a764b67.py",
+      "url": "https://raw.githubusercontent.com/nso-india/esankhyiki-mcp/92a5af0defa22785d073a26c71b2758c40d0564d/mospi/client.py",
+      "final_url": "https://raw.githubusercontent.com/nso-india/esankhyiki-mcp/92a5af0defa22785d073a26c71b2758c40d0564d/mospi/client.py",
+      "source": "Official NSO public API implementation reference mospi_client_92a5af0",
+      "licence": "MIT",
+      "retrieved": "2026-09-18T10:21:11.137505+00:00",
+      "sha256": "a735cf3d7a764b673af97eef4cb5850f7b2a5a55536866862c48fb88a40673f3",
+      "bytes": 82430,
+      "content_type": "text/plain; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Pinned public API documentation/source code; read only, not executed. Software licence does not license underlying data."
+    }
+  ]
+}

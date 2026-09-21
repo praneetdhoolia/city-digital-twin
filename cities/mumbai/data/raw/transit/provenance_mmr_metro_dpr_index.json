@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_metro_dpr_index_e5e14b57e382af44.html",
+      "url": "https://mmrda.maharashtra.gov.in/en/divisions/transport-communications/metro-dprs",
+      "final_url": "https://mmrda.maharashtra.gov.in/en/divisions/transport-communications/metro-dprs",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "MMRDA published metro detailed project reports",
+      "licence": "Public authority or operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:15:44.446938+00:00",
+      "sha256": "e5e14b57e382af440a51f74fea25d23a76b603327cdba44caaf3fd7bfabb7a25",
+      "bytes": 132992,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

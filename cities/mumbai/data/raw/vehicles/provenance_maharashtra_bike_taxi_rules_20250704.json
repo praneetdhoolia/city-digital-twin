@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/vehicles/maharashtra_bike_taxi_rules_20250704_e04c265c8711c0f0.pdf",
+      "url": "https://cdnbbsr.s3waas.gov.in/s3d446e76a7b26f214b3f29f4441e6eb87/uploads/2025/09/202509221724993583.pdf",
+      "final_url": "https://cdnbbsr.s3waas.gov.in/s3d446e76a7b26f214b3f29f4441e6eb87/uploads/2025/09/202509221724993583.pdf",
+      "content_type": "application/pdf",
+      "source": "Maharashtra Bike Taxi Rules notification 4 July 2025",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:27:12.142056+00:00",
+      "sha256": "e04c265c8711c0f058d6a4d607c2a7c55e6710d8b5d13659300289da7b2bdab8",
+      "bytes": 65239,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Policy and licensing conditions; not proof of active operators, current licences or observed services.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

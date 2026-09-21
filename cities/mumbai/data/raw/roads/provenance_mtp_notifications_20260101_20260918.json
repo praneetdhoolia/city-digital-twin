@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "path": "data/raw/roads/mtp_notifications_20260101_20260918_6de6022c14fc939a.html",
+      "url": "https://mtperp.mahatrafficechallan.gov.in/PublicNotice.htm",
+      "final_url": "https://mtperp.mahatrafficechallan.gov.in/PublicNotice.htm",
+      "content_type": "text/html;charset=UTF-8",
+      "source": "Mumbai Traffic Police notification index January to September 2026",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:53:23.200676+00:00",
+      "sha256": "6de6022c14fc939a6ae0396367758be3e723d2ec484a6bfeedacda3907c7891d",
+      "bytes": 1500943,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public date-filter query; returned count, coverage and supersession require validation.",
+      "transport": "Windows system TLS; certificate verification enabled",
+      "method": "POST",
+      "request_form": {
+        "fDate": "01/01/2026",
+        "tDate": "18/09/2026"
+      }
+    }
+  ]
+}

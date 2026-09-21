@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_mclm_6066ee6506f22cde.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/MCLM/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/MCLM/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Jagannath Shankar Sheth Metro",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:35.319893+00:00",
+      "sha256": "6066ee6506f22cdef6a319066fc9b7e3939f7433ba27cca3172cdb5d162b9b1a",
+      "bytes": 32316,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

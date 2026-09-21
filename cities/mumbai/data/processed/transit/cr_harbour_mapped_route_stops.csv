@@ -1,0 +1,402 @@
+osm_route_relation_id,route_stop_sequence,source_member_order,source_member_role,osm_node_id,station_keys_json,native_node_tags_json,route_node_index_zero_based,chain_status
+8130328,1,3,stop_entry_only,316306549,"[""CR_HB_LABEL:mumbai csmt""]","{""level"":""0"",""loc_name"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:en"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:mr"":""मुंबई छत्रपती शिवाजी टर्मिनस (उपनगरी)"",""name"":""Mumbai CSMT (Suburban)"",""name:en"":""Mumbai CSMT (Suburban)"",""name:mr"":""मुंबई सीएसएमटी (उपनगरी)"",""official_name"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:en"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:mr"":""मुंबई छत्रपती शिवाजी महाराज टर्मिनस (उपनगरी)"",""old_name"":""Victoria Terminus (Suburban)"",""old_name:en"":""Victoria Terminus (Suburban)"",""old_name:mr"":""व्हिक्टोरिया टर्मिनस (उपनगरी)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""short_name"":""CSMT;CST;VT"",""short_name:en"":""CSMT;CST;VT"",""short_name:hi"":""सीएसएमटी;सीएसटी;व्हीटी"",""short_name:mr"":""सीएसएमटी;सीएसटी;व्हीटी"",""source"":""Esri World imagery (2024-09-14)"",""tactile_paving"":""yes"",""train"":""yes""}",0,present_in_order
+8130328,2,5,stop,621906366,"[""CR_HB_LABEL:masjid""]","{""alt_name"":""Masjid Bunder"",""alt_name:en"":""Masjid Bunder"",""alt_name:hi"":""मस्जिद बंदर;मशीद बंदर"",""alt_name:mr"":""मस्जिद बंदर"",""name"":""Masjid"",""name:en"":""Masjid"",""name:hi"":""मस्जिद"",""name:mr"":""मस्जिद"",""official_name:hi"":""मशीद"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",44,present_in_order
+8130328,3,7,stop,2178163626,"[""CR_HB_LABEL:sandhurst road""]","{""name"":""Sandhurst Road"",""name:en"":""Sandhurst Road"",""name:hi"":""सैंडहर्स्ट रोड"",""name:ml"":""സാൻഡ്ഹർസ്റ്റ് റോഡ്"",""name:mr"":""सँडहर्स्ट रोड"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",62,present_in_order
+8130328,4,9,stop,5389227991,"[""CR_HB_LABEL:dockyard road""]","{""name"":""Dockyard Road"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",74,present_in_order
+8130328,5,11,stop,7510862063,"[""CR_HB_LABEL:reay road""]","{""name"":""Reay Road"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",97,present_in_order
+8130328,6,13,stop,5389227965,"[""CR_HB_LABEL:cotton green""]","{""name"":""Cotton Green"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",109,present_in_order
+8130328,7,15,stop,5389227951,"[""CR_HB_LABEL:sewri""]","{""name"":""Sewri"",""name:hi"":""शिवड़ी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",123,present_in_order
+8130328,8,17,stop,7510862066,"[""CR_HB_LABEL:vadala road""]","{""alt_name"":""Wadala Road"",""alt_name:en"":""Wadala Road"",""name"":""Vadala Road"",""name:en"":""Vadala Road"",""name:hi"":""वडाला रोड"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",154,present_in_order
+8130328,9,19,stop,7818093994,"[""CR_HB_LABEL:gtb nagar""]","{""name"":""Guru Tegh Bahadur Nagar"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""short_name"":""GTB Nagar"",""train"":""yes""}",197,present_in_order
+8130328,10,21,stop,7818099446,"[""CR_HB_LABEL:chunabhatti""]","{""name"":""Chuna Bhatti"",""name:en"":""Chuna Bhatti"",""name:hi"":""चुना भट्टी"",""name:mr"":""चुना भट्टी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",217,present_in_order
+8130328,11,23,stop,1367093212,"[""CR_HB_LABEL:kurla""]","{""name"":""Kurla"",""name:en"":""Kurla"",""name:hi"":""कुर्ला"",""name:ml"":""കുർള"",""name:mr"":""कुर्ला"",""official_name"":""Kurla Junction"",""official_name:en"":""Kurla Junction"",""official_name:hi"":""कुर्ला जंक्शन"",""official_name:mr"":""कुर्ला जंक्शन"",""old_name"":""Coorla"",""old_name:en"":""Coorla"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""7"",""train"":""yes""}",247,present_in_order
+8130328,12,25,stop,651265045,"[""CR_HB_LABEL:chembur""]","{""name"":""Chembur"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",280,present_in_order
+8130328,13,27,stop,7818024713,"[""CR_HB_LABEL:tilaknagar""]","{""name"":""Tilak Nagar"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",,out_of_order
+8130328,14,30,stop,1366986900,"[""CR_HB_LABEL:govandi""]","{""name"":""Govandi"",""public_transport"":""stop_position"",""ref"":""1"",""train"":""yes""}",293,present_in_order
+8130328,15,32,stop,246631903,"[""CR_HB_LABEL:mankhurd""]","{""name"":""Mankhurd"",""name:en"":""Mankhurd"",""name:hi"":""मानखुर्द"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",312,present_in_order
+8130328,16,35,stop,241160689,"[""CR_HB_LABEL:vashi"",""CR_THB_CODE:VSH""]","{""name"":""Vashi"",""name:hi"":""वाशी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",371,present_in_order
+8130328,17,38,stop,7818022403,"[""CR_HB_LABEL:sanpada"",""CR_THB_CODE:SNPD""]","{""name"":""Sanpada"",""name:hi"":""सानपाडा"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",384,present_in_order
+8130328,18,41,stop,7817978922,"[""CR_HB_LABEL:juinagar"",""CR_THB_CODE:JNJ""]","{""name"":""Juinagar"",""name:en"":""Juinagar"",""name:hi"":""जुईनगर"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",417,present_in_order
+8130328,19,44,stop,7818050099,"[""CR_THB_CODE:NEU""]","{""name"":""Nerul"",""name:en"":""Nerul"",""name:hi"":""नेरुल"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",445,present_in_order
+8130328,20,47,stop,7818030804,"[""CR_THB_CODE:SWDV""]","{""name"":""Seawoods"",""name:en"":""Seawoods"",""name:hi"":""सीवुड्ज़"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",473,present_in_order
+8130328,21,50,stop,7818124497,"[""CR_THB_CODE:BEPR""]","{""name"":""CBD Belapur"",""name:mr"":""सी बी डी बेलापूर"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",507,present_in_order
+8130328,22,53,stop,7818064487,"[""CR_THB_CODE:KHAG""]","{""name"":""Kharghar"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",538,present_in_order
+8130328,23,56,stop,7818067423,"[""CR_THB_CODE:MANR""]","{""name"":""Mansarovar"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",569,present_in_order
+8130328,24,59,stop,7818098639,"[""CR_THB_CODE:KNDS""]","{""name"":""Khandeshwar"",""name:hi"":""खांदेश्वर"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",582,present_in_order
+8130328,25,62,stop_exit_only,7510862053,"[""CR_THB_CODE:PNVL""]","{""name"":""Panvel"",""name:mr"":""पनवेल"",""public_transport"":""stop_position"",""ref"":""2"",""train"":""yes""}",618,present_in_order
+8414240,1,1,stop,1647133382,"[""CR_THB_CODE:TNA""]","{""alt_name:ar"":""ثين"",""name"":""Thane"",""name:ar"":""تاني"",""name:en"":""Thane"",""name:fa"":""تانه"",""name:hi"":""ठाणे"",""name:ml"":""താനെ"",""name:mr"":""ठाणे"",""name:pnb"":""تہانہ"",""name:ps"":""تانی"",""name:ur"":""تھانے"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""9"",""train"":""yes""}",1,present_in_order
+8414240,2,2,stop,13032197037,"[""CR_THB_CODE:DIGH""]","{""name"":""Digha Gaon"",""name:en"":""Digha Gaon"",""name:hi"":""दिघा गाँव"",""name:mr"":""दिघा गाँव"",""public_transport"":""stop_position"",""railway"":""stop"",""start_date"":""2024-01-12"",""train"":""yes""}",47,present_in_order
+8414240,3,3,stop,7818210885,"[""CR_THB_CODE:AIRL""]","{""name"":""Airoli"",""name:en"":""Airoli"",""official_name"":""Airavali"",""official_name:en"":""Airavali"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",73,present_in_order
+8414240,4,4,stop,7818144558,"[""CR_THB_CODE:RABE""]","{""name"":""Rabale"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",101,present_in_order
+8414240,5,5,stop,7818209607,"[""CR_THB_CODE:GNSL""]","{""name"":""Ghansoli"",""name:hi"":""घनसोली"",""name:mr"":""घणसोली"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",124,present_in_order
+8414240,6,6,stop,7818118169,"[""CR_THB_CODE:KPHN""]","{""name"":""Koparkhairne"",""name:hi"":""कोपरखैरने"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",139,present_in_order
+8414240,7,7,stop,7818206408,"[""CR_THB_CODE:TUH""]","{""name"":""Turbhe"",""name:hi"":""तुर्भे"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",170,present_in_order
+8414240,8,8,stop,1990672673,"[""CR_HB_LABEL:sanpada"",""CR_THB_CODE:SNPD""]","{""name"":""Sanpada"",""name:hi"":""सानपाडा"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",216,present_in_order
+8414240,9,9,stop,4822210993,"[""CR_HB_LABEL:vashi"",""CR_THB_CODE:VSH""]","{""name"":""Vashi"",""name:hi"":""वाशी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",228,present_in_order
+8418422,1,1,stop,11612789147,[],{},7,present_in_order
+8418422,2,2,stop,11612789145,[],{},21,present_in_order
+8418422,3,3,stop,11612789135,[],{},31,present_in_order
+8418422,4,4,stop,11612768450,[],{},44,present_in_order
+8418422,5,5,stop,7818268525,[],{},105,present_in_order
+8418422,6,6,stop,7818310738,[],{},117,present_in_order
+8418422,7,7,stop,7818030807,"[""CR_THB_CODE:SWDV""]","{""name"":""Seawoods"",""name:en"":""Seawoods"",""name:hi"":""सीवुड्ज़"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",187,present_in_order
+8418422,8,8,stop,7818050103,"[""CR_THB_CODE:NEU""]","{""name"":""Nerul"",""name:en"":""Nerul"",""name:hi"":""नेरुल"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""train"":""yes""}",213,present_in_order
+9622461,1,2,stop_entry_only,7510862054,"[""CR_THB_CODE:PNVL""]","{""name"":""Panvel"",""name:mr"":""पनवेल"",""public_transport"":""stop_position"",""ref"":""1"",""train"":""yes""}",0,present_in_order
+9622461,2,4,stop,7818098638,"[""CR_THB_CODE:KNDS""]","{""name"":""Khandeshwar"",""name:hi"":""खांदेश्वर"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",39,present_in_order
+9622461,3,7,stop,7818067424,"[""CR_THB_CODE:MANR""]","{""name"":""Mansarovar"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",58,present_in_order
+9622461,4,10,stop,7818064488,"[""CR_THB_CODE:KHAG""]","{""name"":""Kharghar"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",89,present_in_order
+9622461,5,13,stop,7818124494,"[""CR_THB_CODE:BEPR""]","{""name"":""CBD Belapur"",""name:mr"":""सी बी डी बेलापूर"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",122,present_in_order
+9622461,6,16,stop,7818030805,"[""CR_THB_CODE:SWDV""]","{""name"":""Seawoods"",""name:en"":""Seawoods"",""name:hi"":""सीवुड्ज़"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",159,present_in_order
+9622461,7,19,stop,7818050098,"[""CR_THB_CODE:NEU""]","{""name"":""Nerul"",""name:en"":""Nerul"",""name:hi"":""नेरुल"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",190,present_in_order
+9622461,8,22,stop,7817978923,"[""CR_HB_LABEL:juinagar"",""CR_THB_CODE:JNJ""]","{""name"":""Juinagar"",""name:en"":""Juinagar"",""name:hi"":""जुईनगर"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",220,present_in_order
+9622461,9,25,stop,4822210969,"[""CR_HB_LABEL:sanpada"",""CR_THB_CODE:SNPD""]","{""name"":""Sanpada"",""name:hi"":""सानपाडा"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",252,present_in_order
+9622461,10,28,stop,4819972201,"[""CR_HB_LABEL:vashi"",""CR_THB_CODE:VSH""]","{""name"":""Vashi"",""name:hi"":""वाशी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",264,present_in_order
+9622461,11,30,stop,1366794765,"[""CR_HB_LABEL:mankhurd""]","{""name"":""Mankhurd"",""name:en"":""Mankhurd"",""name:hi"":""मानखुर्द"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",314,present_in_order
+9622461,12,32,stop,3878560519,"[""CR_HB_LABEL:govandi""]","{""name"":""Govandi"",""public_transport"":""stop_position"",""ref"":""2"",""train"":""yes""}",342,present_in_order
+9622461,13,34,stop,1367093081,"[""CR_HB_LABEL:chembur""]","{""name"":""Chembur"",""name:en"":""Chembur"",""name:hi"":""चेंबुर"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",352,present_in_order
+9622461,14,36,stop,6171366460,"[""CR_HB_LABEL:tilaknagar""]","{""name"":""Tilak Nagar"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",363,present_in_order
+9622461,15,38,stop,1367093210,"[""CR_HB_LABEL:kurla""]","{""name"":""Kurla"",""name:en"":""Kurla"",""name:hi"":""कुर्ला"",""name:ml"":""കുർള"",""name:mr"":""कुर्ला"",""official_name"":""Kurla Junction"",""official_name:en"":""Kurla Junction"",""official_name:hi"":""कुर्ला जंक्शन"",""official_name:mr"":""कुर्ला जंक्शन"",""old_name"":""Coorla"",""old_name:en"":""Coorla"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""8"",""train"":""yes""}",383,present_in_order
+9622461,16,40,stop,7818099445,"[""CR_HB_LABEL:chunabhatti""]","{""name"":""Chuna Bhatti"",""name:en"":""Chuna Bhatti"",""name:hi"":""चुना भट्टी"",""name:mr"":""चुना भट्टी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",414,present_in_order
+9622461,17,42,stop,7818093995,"[""CR_HB_LABEL:gtb nagar""]","{""name"":""Guru Tegh Bahadur Nagar"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""short_name"":""GTB Nagar"",""train"":""yes""}",430,present_in_order
+9622461,18,44,stop,7510862064,"[""CR_HB_LABEL:vadala road""]","{""alt_name"":""Wadala Road"",""alt_name:en"":""Wadala Road"",""name"":""Vadala Road"",""name:en"":""Vadala Road"",""name:hi"":""वडाला रोड"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",476,present_in_order
+9622461,19,46,stop,619290284,"[""CR_HB_LABEL:sewri""]","{""name"":""Sewri"",""name:hi"":""शिवड़ी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",510,present_in_order
+9622461,20,48,stop,4264980597,"[""CR_HB_LABEL:cotton green""]","{""name"":""Cotton Green"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",523,present_in_order
+9622461,21,50,stop,7510862062,"[""CR_HB_LABEL:reay road""]","{""name"":""Reay Road"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",534,present_in_order
+9622461,22,52,stop,619290482,"[""CR_HB_LABEL:dockyard road""]","{""name"":""Dockyard Road"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",555,present_in_order
+9622461,23,54,stop,2178163625,"[""CR_HB_LABEL:sandhurst road""]","{""name"":""Sandhurst Road"",""name:en"":""Sandhurst Road"",""name:hi"":""सैंडहर्स्ट रोड"",""name:ml"":""സാൻഡ്ഹർസ്റ്റ് റോഡ്"",""name:mr"":""सँडहर्स्ट रोड"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",569,present_in_order
+9622461,24,56,stop,2176850501,"[""CR_HB_LABEL:masjid""]","{""alt_name"":""Masjid Bunder"",""alt_name:en"":""Masjid Bunder"",""alt_name:hi"":""मस्जिद बंदर;मशीद बंदर"",""alt_name:mr"":""मस्जिद बंदर"",""name"":""Masjid"",""name:en"":""Masjid"",""name:hi"":""मस्जिद"",""name:mr"":""मस्जिद"",""official_name:hi"":""मशीद"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",587,present_in_order
+9622461,25,59,stop_exit_only,2166817452,"[""CR_HB_LABEL:mumbai csmt""]","{""level"":""0"",""loc_name"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:en"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:mr"":""मुंबई छत्रपती शिवाजी टर्मिनस (उपनगरी)"",""name"":""Mumbai CSMT (Suburban)"",""name:en"":""Mumbai CSMT (Suburban)"",""name:mr"":""मुंबई सीएसएमटी (उपनगरी)"",""official_name"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:en"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:mr"":""मुंबई छत्रपती शिवाजी महाराज टर्मिनस (उपनगरी)"",""old_name"":""Victoria Terminus (Suburban)"",""old_name:en"":""Victoria Terminus (Suburban)"",""old_name:mr"":""व्हिक्टोरिया टर्मिनस (उपनगरी)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""short_name"":""CSMT;CST;VT"",""short_name:en"":""CSMT;CST;VT"",""short_name:hi"":""सीएसएमटी;सीएसटी;व्हीटी"",""short_name:mr"":""सीएसएमटी;सीएसटी;व्हीटी"",""source"":""Esri World imagery (2024-09-14)"",""tactile_paving"":""yes"",""train"":""yes""}",620,present_in_order
+9623798,1,3,stop,316306549,"[""CR_HB_LABEL:mumbai csmt""]","{""level"":""0"",""loc_name"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:en"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:mr"":""मुंबई छत्रपती शिवाजी टर्मिनस (उपनगरी)"",""name"":""Mumbai CSMT (Suburban)"",""name:en"":""Mumbai CSMT (Suburban)"",""name:mr"":""मुंबई सीएसएमटी (उपनगरी)"",""official_name"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:en"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:mr"":""मुंबई छत्रपती शिवाजी महाराज टर्मिनस (उपनगरी)"",""old_name"":""Victoria Terminus (Suburban)"",""old_name:en"":""Victoria Terminus (Suburban)"",""old_name:mr"":""व्हिक्टोरिया टर्मिनस (उपनगरी)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""short_name"":""CSMT;CST;VT"",""short_name:en"":""CSMT;CST;VT"",""short_name:hi"":""सीएसएमटी;सीएसटी;व्हीटी"",""short_name:mr"":""सीएसएमटी;सीएसटी;व्हीटी"",""source"":""Esri World imagery (2024-09-14)"",""tactile_paving"":""yes"",""train"":""yes""}",0,present_in_order
+9623798,2,5,stop,621906366,"[""CR_HB_LABEL:masjid""]","{""alt_name"":""Masjid Bunder"",""alt_name:en"":""Masjid Bunder"",""alt_name:hi"":""मस्जिद बंदर;मशीद बंदर"",""alt_name:mr"":""मस्जिद बंदर"",""name"":""Masjid"",""name:en"":""Masjid"",""name:hi"":""मस्जिद"",""name:mr"":""मस्जिद"",""official_name:hi"":""मशीद"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",44,present_in_order
+9623798,3,7,stop,2178163626,"[""CR_HB_LABEL:sandhurst road""]","{""name"":""Sandhurst Road"",""name:en"":""Sandhurst Road"",""name:hi"":""सैंडहर्स्ट रोड"",""name:ml"":""സാൻഡ്ഹർസ്റ്റ് റോഡ്"",""name:mr"":""सँडहर्स्ट रोड"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",62,present_in_order
+9623798,4,9,stop,5389227991,"[""CR_HB_LABEL:dockyard road""]","{""name"":""Dockyard Road"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",74,present_in_order
+9623798,5,11,stop,7510862063,"[""CR_HB_LABEL:reay road""]","{""name"":""Reay Road"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",97,present_in_order
+9623798,6,13,stop,5389227965,"[""CR_HB_LABEL:cotton green""]","{""name"":""Cotton Green"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",109,present_in_order
+9623798,7,15,stop,5389227951,"[""CR_HB_LABEL:sewri""]","{""name"":""Sewri"",""name:hi"":""शिवड़ी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",123,present_in_order
+9623798,8,17,stop,7510862067,"[""CR_HB_LABEL:vadala road""]","{""alt_name"":""Wadala Road"",""alt_name:en"":""Wadala Road"",""name"":""Vadala Road"",""name:en"":""Vadala Road"",""name:hi"":""वडाला रोड"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",153,present_in_order
+9623798,9,19,stop,2444154308,"[""CR_HB_LABEL:king's circle""]","{""name"":""King's Circle"",""name:mr"":""किंग्ज सर्कल"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",189,present_in_order
+9623798,10,22,stop,1365560232,"[""CR_HB_LABEL:mahim jn""]","{""name"":""Mahim Junction"",""name:en"":""Mahim Junction"",""name:mr"":""माहिम रेल्वे स्थानक"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""5"",""train"":""yes""}",215,present_in_order
+9623798,11,24,stop,1233481375,"[""CR_HB_LABEL:bandra""]","{""name"":""Bandra"",""name:en"":""Bandra"",""name:hi"":""बांद्रा"",""name:mr"":""वांद्रे"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""train"":""yes""}",236,present_in_order
+9623798,12,26,stop,4345706693,"[""CR_HB_LABEL:khar road""]","{""name"":""Khar Road"",""name:en"":""Khar Road"",""name:hi"":""खार रोड"",""name:mr"":""खार रोड"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",260,present_in_order
+9623798,13,28,stop,7510862785,"[""CR_HB_LABEL:santacruz""]","{""name"":""Santa Cruz (CR)"",""name:en"":""Santa Cruz (CR)"",""name:mr"":""सांताक्रूझ"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",278,present_in_order
+9623798,14,30,stop,7510862079,"[""CR_HB_LABEL:vileparle""]","{""name"":""Vile Parle"",""name:en"":""Vile Parle"",""name:mr"":""विले पार्ले"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",288,present_in_order
+9623798,15,32,stop,7510862070,"[""CR_HB_LABEL:andheri""]","{""name"":""Andheri"",""name:en"":""Andheri"",""name:mr"":""अंधेरी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",307,present_in_order
+9623798,16,34,stop,10879528558,"[""CR_HB_LABEL:jogeshwari""]","{""name"":""Jogeshwari (Harbour Line)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",321,present_in_order
+9623798,17,36,stop,7817991347,"[""CR_HB_LABEL:ramnagar""]","{""name"":""Ram Mandir"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",333,present_in_order
+9623798,18,38,stop_exit_only,9156468960,"[""CR_HB_LABEL:goregaon""]","{""name"":""Goregaon"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",346,present_in_order
+9953729,1,2,stop_entry_only,12171153816,[],{},0,present_in_order
+9953729,2,4,stop,12171153819,[],{},44,present_in_order
+9953729,3,6,stop,1647133407,"[""CR_THB_CODE:TNA""]","{""alt_name:ar"":""ثين"",""name"":""Thane"",""name:ar"":""تاني"",""name:en"":""Thane"",""name:fa"":""تانه"",""name:hi"":""ठाणे"",""name:ml"":""താനെ"",""name:mr"":""ठाणे"",""name:pnb"":""تہانہ"",""name:ps"":""تانی"",""name:ur"":""تھانے"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""train"":""yes""}",125,present_in_order
+9953729,4,8,stop,7817668012,[],{},232,present_in_order
+9953729,5,10,stop,1367093215,"[""CR_HB_LABEL:kurla""]","{""name"":""Kurla"",""name:en"":""Kurla"",""name:hi"":""कुर्ला"",""name:ml"":""കുർള"",""name:mr"":""कुर्ला"",""official_name"":""Kurla Junction"",""official_name:en"":""Kurla Junction"",""official_name:hi"":""कुर्ला जंक्शन"",""official_name:mr"":""कुर्ला जंक्शन"",""old_name"":""Coorla"",""old_name:en"":""Coorla"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""train"":""yes""}",257,present_in_order
+9953729,6,12,stop,353471603,[],{},293,present_in_order
+9953729,7,14,stop,3501419615,[],{},327,present_in_order
+9953729,8,17,stop_exit_only,2166817453,"[""CR_HB_LABEL:mumbai csmt""]","{""level"":""0"",""loc_name"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:en"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:mr"":""मुंबई छत्रपती शिवाजी टर्मिनस (उपनगरी)"",""name"":""Mumbai CSMT (Suburban)"",""name:en"":""Mumbai CSMT (Suburban)"",""name:mr"":""मुंबई सीएसएमटी (उपनगरी)"",""official_name"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:en"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:mr"":""मुंबई छत्रपती शिवाजी महाराज टर्मिनस (उपनगरी)"",""old_name"":""Victoria Terminus (Suburban)"",""old_name:en"":""Victoria Terminus (Suburban)"",""old_name:mr"":""व्हिक्टोरिया टर्मिनस (उपनगरी)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""short_name"":""CSMT;CST;VT"",""short_name:en"":""CSMT;CST;VT"",""short_name:hi"":""सीएसएमटी;सीएसटी;व्हीटी"",""short_name:mr"":""सीएसएमटी;सीएसटी;व्हीटी"",""source"":""Esri World imagery (2024-09-14)"",""tactile_paving"":""yes"",""train"":""yes""}",406,present_in_order
+9953730,1,3,stop_entry_only,2166817451,"[""CR_HB_LABEL:mumbai csmt""]","{""level"":""0"",""loc_name"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:en"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:mr"":""मुंबई छत्रपती शिवाजी टर्मिनस (उपनगरी)"",""name"":""Mumbai CSMT (Suburban)"",""name:en"":""Mumbai CSMT (Suburban)"",""name:mr"":""मुंबई सीएसएमटी (उपनगरी)"",""official_name"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:en"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:mr"":""मुंबई छत्रपती शिवाजी महाराज टर्मिनस (उपनगरी)"",""old_name"":""Victoria Terminus (Suburban)"",""old_name:en"":""Victoria Terminus (Suburban)"",""old_name:mr"":""व्हिक्टोरिया टर्मिनस (उपनगरी)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""5"",""short_name"":""CSMT;CST;VT"",""short_name:en"":""CSMT;CST;VT"",""short_name:hi"":""सीएसएमटी;सीएसटी;व्हीटी"",""short_name:mr"":""सीएसएमटी;सीएसटी;व्हीटी"",""source"":""Esri World imagery (2024-09-14)"",""tactile_paving"":""yes"",""train"":""yes""}",0,present_in_order
+9953730,2,5,stop,2178254483,[],{},81,present_in_order
+9953730,3,7,stop,2163597903,[],{},114,present_in_order
+9953730,4,9,stop,1367093217,"[""CR_HB_LABEL:kurla""]","{""name"":""Kurla"",""name:en"":""Kurla"",""name:hi"":""कुर्ला"",""name:ml"":""കുർള"",""name:mr"":""कुर्ला"",""official_name"":""Kurla Junction"",""official_name:en"":""Kurla Junction"",""official_name:hi"":""कुर्ला जंक्शन"",""official_name:mr"":""कुर्ला जंक्शन"",""old_name"":""Coorla"",""old_name:en"":""Coorla"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""5"",""train"":""yes""}",148,present_in_order
+9953730,5,11,stop,7817668011,[],{},171,present_in_order
+9953730,6,13,stop,1647133433,"[""CR_THB_CODE:TNA""]","{""alt_name:ar"":""ثين"",""name"":""Thane"",""name:ar"":""تاني"",""name:en"":""Thane"",""name:fa"":""تانه"",""name:hi"":""ठाणे"",""name:ml"":""താനെ"",""name:mr"":""ठाणे"",""name:pnb"":""تہانہ"",""name:ps"":""تانی"",""name:ur"":""تھانے"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""5"",""train"":""yes""}",278,present_in_order
+9953730,7,15,stop,7817547754,[],{},360,present_in_order
+9953730,8,17,stop_exit_only,12171153815,[],{},406,present_in_order
+11093105,1,2,stop_entry_only,7817951294,"[""CR_HB_LABEL:goregaon""]","{""name"":""Goregaon"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",0,present_in_order
+11093105,2,4,stop,7817991346,"[""CR_HB_LABEL:ramnagar""]","{""name"":""Ram Mandir"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",11,present_in_order
+11093105,3,6,stop,10879528557,"[""CR_HB_LABEL:jogeshwari""]","{""name"":""Jogeshwari (Harbour Line)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",22,present_in_order
+11093105,4,8,stop,7510862071,"[""CR_HB_LABEL:andheri""]","{""name"":""Andheri"",""name:en"":""Andheri"",""name:mr"":""अंधेरी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",34,present_in_order
+11093105,5,10,stop,3347771408,"[""CR_HB_LABEL:vileparle""]","{""name"":""Vile Parle"",""name:en"":""Vile Parle"",""name:mr"":""विले पार्ले"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",50,present_in_order
+11093105,6,12,stop,7510862080,"[""CR_HB_LABEL:santacruz""]","{""name"":""Santa Cruz (CR)"",""name:en"":""Santa Cruz (CR)"",""name:mr"":""सांताक्रूझ"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",59,present_in_order
+11093105,7,14,stop,7510862789,"[""CR_HB_LABEL:khar road""]","{""name"":""Khar Road"",""name:en"":""Khar Road"",""name:hi"":""खार रोड"",""name:mr"":""खार रोड"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",77,present_in_order
+11093105,8,16,stop,1233481362,"[""CR_HB_LABEL:bandra""]","{""name"":""Bandra"",""name:en"":""Bandra"",""name:hi"":""बांद्रा"",""name:mr"":""वांद्रे"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""7"",""train"":""yes""}",108,present_in_order
+11093105,9,18,stop,619252274,"[""CR_HB_LABEL:mahim jn""]","{""name"":""Mahim Junction"",""name:en"":""Mahim Junction"",""name:mr"":""माहिम रेल्वे स्थानक"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""train"":""yes""}",130,present_in_order
+11093105,10,20,stop,2444154310,"[""CR_HB_LABEL:king's circle""]","{""name"":""King's Circle"",""name:mr"":""किंग्ज सर्कल"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",155,present_in_order
+11093105,11,22,stop,7510862065,"[""CR_HB_LABEL:vadala road""]","{""alt_name"":""Wadala Road"",""alt_name:en"":""Wadala Road"",""name"":""Vadala Road"",""name:en"":""Vadala Road"",""name:hi"":""वडाला रोड"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",192,present_in_order
+11093105,12,24,stop,619290284,"[""CR_HB_LABEL:sewri""]","{""name"":""Sewri"",""name:hi"":""शिवड़ी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",224,present_in_order
+11093105,13,26,stop,4264980597,"[""CR_HB_LABEL:cotton green""]","{""name"":""Cotton Green"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",237,present_in_order
+11093105,14,28,stop,7510862062,"[""CR_HB_LABEL:reay road""]","{""name"":""Reay Road"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",248,present_in_order
+11093105,15,30,stop,619290482,"[""CR_HB_LABEL:dockyard road""]","{""name"":""Dockyard Road"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",269,present_in_order
+11093105,16,32,stop,2178163625,"[""CR_HB_LABEL:sandhurst road""]","{""name"":""Sandhurst Road"",""name:en"":""Sandhurst Road"",""name:hi"":""सैंडहर्स्ट रोड"",""name:ml"":""സാൻഡ്ഹർസ്റ്റ് റോഡ്"",""name:mr"":""सँडहर्स्ट रोड"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",283,present_in_order
+11093105,17,34,stop,2176850501,"[""CR_HB_LABEL:masjid""]","{""alt_name"":""Masjid Bunder"",""alt_name:en"":""Masjid Bunder"",""alt_name:hi"":""मस्जिद बंदर;मशीद बंदर"",""alt_name:mr"":""मस्जिद बंदर"",""name"":""Masjid"",""name:en"":""Masjid"",""name:hi"":""मस्जिद"",""name:mr"":""मस्जिद"",""official_name:hi"":""मशीद"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",301,present_in_order
+11093105,18,37,stop_exit_only,2166817452,"[""CR_HB_LABEL:mumbai csmt""]","{""level"":""0"",""loc_name"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:en"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:mr"":""मुंबई छत्रपती शिवाजी टर्मिनस (उपनगरी)"",""name"":""Mumbai CSMT (Suburban)"",""name:en"":""Mumbai CSMT (Suburban)"",""name:mr"":""मुंबई सीएसएमटी (उपनगरी)"",""official_name"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:en"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:mr"":""मुंबई छत्रपती शिवाजी महाराज टर्मिनस (उपनगरी)"",""old_name"":""Victoria Terminus (Suburban)"",""old_name:en"":""Victoria Terminus (Suburban)"",""old_name:mr"":""व्हिक्टोरिया टर्मिनस (उपनगरी)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""short_name"":""CSMT;CST;VT"",""short_name:en"":""CSMT;CST;VT"",""short_name:hi"":""सीएसएमटी;सीएसटी;व्हीटी"",""short_name:mr"":""सीएसएमटी;सीएसटी;व्हीटी"",""source"":""Esri World imagery (2024-09-14)"",""tactile_paving"":""yes"",""train"":""yes""}",334,present_in_order
+11094508,1,1,stop,5073274501,[],{},2,present_in_order
+11094508,2,3,stop,3346011166,[],{},18,present_in_order
+11094508,3,5,stop,7512478913,[],{},38,present_in_order
+11094508,4,7,stop,3346016693,[],{},53,present_in_order
+11094508,5,9,stop,7512478925,[],{},86,present_in_order
+11094508,6,11,stop,7512478929,[],{},112,present_in_order
+11094508,7,13,stop,3345986823,[],{},124,present_in_order
+11094508,8,15,stop,3347009347,"[""CR_EXTERNAL_CODE:BVI""]","{""name"":""Borivali"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""7"",""train"":""yes""}",149,present_in_order
+11094508,9,17,stop,1646774128,"[""CR_HB_LABEL:andheri""]","{""name"":""Andheri"",""name:en"":""Andheri"",""name:mr"":""अंधेरी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""7"",""train"":""yes""}",231,present_in_order
+11094508,10,18,stop,1233481359,"[""CR_HB_LABEL:bandra""]","{""name"":""Bandra"",""name:en"":""Bandra"",""name:hi"":""बांद्रा"",""name:mr"":""वांद्रे"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""5"",""train"":""yes""}",305,present_in_order
+11094508,11,19,stop,1365570210,[],{},353,present_in_order
+11094508,12,20,stop,2178269313,[],{},409,present_in_order
+11094508,13,22,stop,528074116,[],{},420,present_in_order
+11094508,14,24,stop,528082473,[],{},440,present_in_order
+11094508,15,26,stop,1236410240,[],{},447,present_in_order
+11094508,16,28,stop,1236334975,[],{},468,present_in_order
+11094509,1,1,stop,1236334975,[],{},1,present_in_order
+11094509,2,3,stop,1236410131,[],{},23,present_in_order
+11094509,3,5,stop,528082558,[],{},31,present_in_order
+11094509,4,7,stop,528074073,[],{},51,present_in_order
+11094509,5,9,stop,2178269316,[],{},61,present_in_order
+11094509,6,11,stop,631525245,[],{},117,present_in_order
+11094509,7,13,stop,7510862069,"[""CR_HB_LABEL:bandra""]","{""name"":""Bandra"",""name:en"":""Bandra"",""name:hi"":""बांद्रा"",""name:mr"":""वांद्रे"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",160,present_in_order
+11094509,8,15,stop,1646774129,"[""CR_HB_LABEL:andheri""]","{""name"":""Andheri"",""name:en"":""Andheri"",""name:mr"":""अंधेरी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""train"":""yes""}",223,present_in_order
+11094509,9,17,stop,3345986875,"[""CR_EXTERNAL_CODE:BVI""]","{""name"":""Borivali"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""train"":""yes""}",297,present_in_order
+11094509,10,19,stop,3345986891,[],{},328,present_in_order
+11094509,11,21,stop,7512478930,[],{},340,present_in_order
+11094509,12,23,stop,3345986793,[],{},362,present_in_order
+11094509,13,25,stop,3346016712,[],{},393,present_in_order
+11094509,14,27,stop,7512478914,[],{},407,present_in_order
+11094509,15,29,stop,3346014803,[],{},421,present_in_order
+11094509,16,31,stop,5073274501,[],{},438,present_in_order
+11491270,1,2,stop_entry_only,12171153816,[],{},0,present_in_order
+11491270,2,4,stop,4005517059,[],{},24,present_in_order
+11491270,3,6,stop,7817547752,[],{},39,present_in_order
+11491270,4,8,stop,7802044463,[],{},50,present_in_order
+11491270,5,10,stop,7817537150,[],{},72,present_in_order
+11491270,6,12,stop,7554999900,[],{},114,present_in_order
+11491270,7,14,stop,5689747204,[],{},186,present_in_order
+11491270,8,16,stop,1647133443,"[""CR_THB_CODE:TNA""]","{""alt_name:ar"":""ثين"",""name"":""Thane"",""name:ar"":""تاني"",""name:en"":""Thane"",""name:fa"":""تانه"",""name:hi"":""ठाणे"",""name:ml"":""താനെ"",""name:mr"":""ठाणे"",""name:pnb"":""تہانہ"",""name:ps"":""تانی"",""name:ur"":""تھانے"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",216,present_in_order
+11491270,9,18,stop,630676214,[],{},239,present_in_order
+11491270,10,20,stop,4008815042,[],{},263,present_in_order
+11491270,11,22,stop,7817536592,[],{},276,present_in_order
+11491270,12,24,stop,4010213288,[],{},293,present_in_order
+11491270,13,26,stop,4258411011,[],{},306,present_in_order
+11491270,14,28,stop,7817668010,[],{},326,present_in_order
+11491270,15,30,stop,1366054340,[],{},338,present_in_order
+11491270,16,32,stop,339078717,"[""CR_HB_LABEL:kurla""]","{""name"":""Kurla"",""name:en"":""Kurla"",""name:hi"":""कुर्ला"",""name:ml"":""കുർള"",""name:mr"":""कुर्ला"",""official_name"":""Kurla Junction"",""official_name:en"":""Kurla Junction"",""official_name:hi"":""कुर्ला जंक्शन"",""official_name:mr"":""कुर्ला जंक्शन"",""old_name"":""Coorla"",""old_name:en"":""Coorla"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",350,present_in_order
+11491270,17,34,stop,7817519127,[],{},369,present_in_order
+11491270,18,36,stop,7802217072,[],{},380,present_in_order
+11491270,19,38,stop,3501419682,[],{},388,present_in_order
+11491270,20,40,stop,7802203492,[],{},399,present_in_order
+11491270,21,42,stop,9135966843,[],{},412,present_in_order
+11491270,22,44,stop,3501419652,[],{},421,present_in_order
+11491270,23,46,stop,3501419617,[],{},432,present_in_order
+11491270,24,48,stop,3501419203,"[""CR_HB_LABEL:sandhurst road""]","{""name"":""Sandhurst Road"",""name:en"":""Sandhurst Road"",""name:hi"":""सैंडहर्स्ट रोड"",""name:ml"":""സാൻഡ്ഹർസ്റ്റ് റോഡ്"",""name:mr"":""सँडहर्स्ट रोड"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",476,present_in_order
+11491270,25,50,stop,3501418269,"[""CR_HB_LABEL:masjid""]","{""alt_name"":""Masjid Bunder"",""alt_name:en"":""Masjid Bunder"",""alt_name:hi"":""मस्जिद बंदर;मशीद बंदर"",""alt_name:mr"":""मस्जिद बंदर"",""name"":""Masjid"",""name:en"":""Masjid"",""name:hi"":""मस्जिद"",""name:mr"":""मस्जिद"",""official_name:hi"":""मशीद"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",497,present_in_order
+11491270,26,53,stop_exit_only,619293646,"[""CR_HB_LABEL:mumbai csmt""]","{""level"":""0"",""loc_name"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:en"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:mr"":""मुंबई छत्रपती शिवाजी टर्मिनस (उपनगरी)"",""name"":""Mumbai CSMT (Suburban)"",""name:en"":""Mumbai CSMT (Suburban)"",""name:mr"":""मुंबई सीएसएमटी (उपनगरी)"",""official_name"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:en"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:mr"":""मुंबई छत्रपती शिवाजी महाराज टर्मिनस (उपनगरी)"",""old_name"":""Victoria Terminus (Suburban)"",""old_name:en"":""Victoria Terminus (Suburban)"",""old_name:mr"":""व्हिक्टोरिया टर्मिनस (उपनगरी)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""short_name"":""CSMT;CST;VT"",""short_name:en"":""CSMT;CST;VT"",""short_name:hi"":""सीएसएमटी;सीएसटी;व्हीटी"",""short_name:mr"":""सीएसएमटी;सीएसटी;व्हीटी"",""source"":""Esri World imagery (2024-09-14)"",""tactile_paving"":""yes"",""train"":""yes""}",528,present_in_order
+11491271,1,2,stop_entry_only,1234823928,"[""CR_HB_LABEL:mumbai csmt""]","{""level"":""0"",""loc_name"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:en"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:mr"":""मुंबई छत्रपती शिवाजी टर्मिनस (उपनगरी)"",""name"":""Mumbai CSMT (Suburban)"",""name:en"":""Mumbai CSMT (Suburban)"",""name:mr"":""मुंबई सीएसएमटी (उपनगरी)"",""official_name"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:en"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:mr"":""मुंबई छत्रपती शिवाजी महाराज टर्मिनस (उपनगरी)"",""old_name"":""Victoria Terminus (Suburban)"",""old_name:en"":""Victoria Terminus (Suburban)"",""old_name:mr"":""व्हिक्टोरिया टर्मिनस (उपनगरी)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""short_name"":""CSMT;CST;VT"",""short_name:en"":""CSMT;CST;VT"",""short_name:hi"":""सीएसएमटी;सीएसटी;व्हीटी"",""short_name:mr"":""सीएसएमटी;सीएसटी;व्हीटी"",""source"":""Esri World imagery (2024-09-14)"",""tactile_paving"":""yes"",""train"":""yes""}",0,present_in_order
+11491271,2,4,stop,619293660,"[""CR_HB_LABEL:masjid""]","{""alt_name"":""Masjid Bunder"",""alt_name:en"":""Masjid Bunder"",""alt_name:hi"":""मस्जिद बंदर;मशीद बंदर"",""alt_name:mr"":""मस्जिद बंदर"",""name"":""Masjid"",""name:en"":""Masjid"",""name:hi"":""मस्जिद"",""name:mr"":""मस्जिद"",""official_name:hi"":""मशीद"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",36,present_in_order
+11491271,3,6,stop,619293667,"[""CR_HB_LABEL:sandhurst road""]","{""name"":""Sandhurst Road"",""name:en"":""Sandhurst Road"",""name:hi"":""सैंडहर्स्ट रोड"",""name:ml"":""സാൻഡ്ഹർസ്റ്റ് റോഡ്"",""name:mr"":""सँडहर्स्ट रोड"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",56,present_in_order
+11491271,4,8,stop,2178254482,[],{},100,present_in_order
+11491271,5,10,stop,619293686,[],{},102,present_in_order
+11491271,6,12,stop,9140706757,[],{},104,present_in_order
+11491271,7,14,stop,7802203490,[],{},122,present_in_order
+11491271,8,16,stop,12171153821,[],{},132,present_in_order
+11491271,9,18,stop,7802217071,[],{},141,present_in_order
+11491271,10,20,stop,7817519128,[],{},155,present_in_order
+11491271,11,22,stop,620015554,"[""CR_HB_LABEL:kurla""]","{""name"":""Kurla"",""name:en"":""Kurla"",""name:hi"":""कुर्ला"",""name:ml"":""കുർള"",""name:mr"":""कुर्ला"",""official_name"":""Kurla Junction"",""official_name:en"":""Kurla Junction"",""official_name:hi"":""कुर्ला जंक्शन"",""official_name:mr"":""कुर्ला जंक्शन"",""old_name"":""Coorla"",""old_name:en"":""Coorla"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",171,present_in_order
+11491271,12,24,stop,6175360982,[],{},181,present_in_order
+11491271,13,26,stop,7817668009,[],{},194,present_in_order
+11491271,14,28,stop,620002682,[],{},219,present_in_order
+11491271,15,30,stop,7817543286,[],{},234,present_in_order
+11491271,16,32,stop,12171153820,[],{},252,present_in_order
+11491271,17,34,stop,7817547051,[],{},266,present_in_order
+11491271,18,36,stop,1643352023,[],{},292,present_in_order
+11491271,19,38,stop,630673338,"[""CR_THB_CODE:TNA""]","{""alt_name:ar"":""ثين"",""name"":""Thane"",""name:ar"":""تاني"",""name:en"":""Thane"",""name:fa"":""تانه"",""name:hi"":""ठाणे"",""name:ml"":""താനെ"",""name:mr"":""ठाणे"",""name:pnb"":""تہانہ"",""name:ps"":""تانی"",""name:ur"":""تھانے"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",313,present_in_order
+11491271,20,40,stop,6176092580,[],{},339,present_in_order
+11491271,21,42,stop,7554999796,[],{},411,present_in_order
+11491271,22,44,stop,7817537151,[],{},451,present_in_order
+11491271,23,46,stop,2143530518,[],{},474,present_in_order
+11491271,24,48,stop,7817547753,[],{},482,present_in_order
+11491271,25,50,stop,4005517060,[],{},499,present_in_order
+11491271,26,52,stop_exit_only,12171153815,[],{},531,present_in_order
+11511059,1,1,stop,5073274501,[],{},2,present_in_order
+11511059,2,2,stop,3346014880,[],{},18,present_in_order
+11511059,3,3,stop,3346014830,[],{},30,present_in_order
+11511059,4,4,stop,3346014841,[],{},49,present_in_order
+11511059,5,5,stop,7512478926,[],{},81,present_in_order
+11511059,6,6,stop,7512478931,[],{},96,present_in_order
+11511059,7,7,stop,3345986845,[],{},108,present_in_order
+11511059,8,8,stop,3345986857,"[""CR_EXTERNAL_CODE:BVI""]","{""name"":""Borivali"",""public_transport"":""stop_position"",""train"":""yes""}",138,present_in_order
+11511059,9,9,stop,7552344493,[],{},152,present_in_order
+11511059,10,10,stop,7552167806,[],{},166,present_in_order
+11511059,11,11,stop,7817951293,"[""CR_HB_LABEL:goregaon""]","{""name"":""Goregaon"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",182,present_in_order
+11511059,12,12,stop,7817991348,"[""CR_HB_LABEL:ramnagar""]","{""name"":""Ram Mandir"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",190,present_in_order
+11511059,13,13,stop,7817967702,"[""CR_HB_LABEL:jogeshwari""]","{""name"":""Jogeshwari (Western Line)"",""name:mr"":""जोगेश्‍वरी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",201,present_in_order
+11511059,14,14,stop,1646774130,"[""CR_HB_LABEL:andheri""]","{""name"":""Andheri"",""name:en"":""Andheri"",""name:mr"":""अंधेरी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""5"",""train"":""yes""}",213,present_in_order
+11511059,15,15,stop,7510862078,"[""CR_HB_LABEL:vileparle""]","{""name"":""Vile Parle"",""name:en"":""Vile Parle"",""name:mr"":""विले पार्ले"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",231,present_in_order
+11511059,16,16,stop,7510862083,"[""CR_HB_LABEL:santacruz""]","{""name"":""Santa Cruz (WR)"",""name:en"":""Santa Cruz (WR)"",""name:mr"":""सांताक्रूझ"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",239,present_in_order
+11511059,17,17,stop,7510862787,"[""CR_HB_LABEL:khar road""]","{""name"":""Khar Road"",""name:en"":""Khar Road"",""name:hi"":""खार रोड"",""name:mr"":""खार रोड"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""4"",""train"":""yes""}",254,present_in_order
+11511059,18,18,stop,7510862068,"[""CR_HB_LABEL:bandra""]","{""name"":""Bandra"",""name:en"":""Bandra"",""name:hi"":""बांद्रा"",""name:mr"":""वांद्रे"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",291,present_in_order
+11511059,19,19,stop,1365560229,"[""CR_HB_LABEL:mahim jn""]","{""name"":""Mahim Junction"",""name:en"":""Mahim Junction"",""name:mr"":""माहिम रेल्वे स्थानक"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",305,present_in_order
+11511059,20,20,stop,1365560118,[],{},321,present_in_order
+11511059,21,21,stop,1365570212,[],{},330,present_in_order
+11511059,22,22,stop,2622213367,[],{},342,present_in_order
+11511059,23,23,stop,7817952880,[],{},353,present_in_order
+11511059,24,24,stop,7511298719,[],{},370,present_in_order
+11511059,25,25,stop,528216004,[],{},394,present_in_order
+11511059,26,26,stop,527987797,[],{},403,present_in_order
+11511059,27,27,stop,527987828,[],{},422,present_in_order
+11511059,28,28,stop,528115484,[],{},429,present_in_order
+11511059,29,29,stop,621948374,[],{},450,present_in_order
+11511060,1,1,stop,621948374,[],{},1,present_in_order
+11511060,2,2,stop,528115491,[],{},23,present_in_order
+11511060,3,3,stop,528079150,[],{},32,present_in_order
+11511060,4,4,stop,6661895499,[],{},51,present_in_order
+11511060,5,5,stop,6166727726,[],{},60,present_in_order
+11511060,6,6,stop,7511298720,[],{},82,present_in_order
+11511060,7,7,stop,7817952879,[],{},96,present_in_order
+11511060,8,8,stop,631547822,[],{},106,present_in_order
+11511060,9,9,stop,631525247,[],{},117,present_in_order
+11511060,10,10,stop,631525335,[],{},126,present_in_order
+11511060,11,11,stop,619252273,"[""CR_HB_LABEL:mahim jn""]","{""name"":""Mahim Junction"",""name:en"":""Mahim Junction"",""name:mr"":""माहिम रेल्वे स्थानक"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",141,present_in_order
+11511060,12,12,stop,1233481385,"[""CR_HB_LABEL:bandra""]","{""name"":""Bandra"",""name:en"":""Bandra"",""name:hi"":""बांद्रा"",""name:mr"":""वांद्रे"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",157,present_in_order
+11511060,13,13,stop,7510862788,"[""CR_HB_LABEL:khar road""]","{""name"":""Khar Road"",""name:en"":""Khar Road"",""name:hi"":""खार रोड"",""name:mr"":""खार रोड"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",194,present_in_order
+11511060,14,14,stop,7510862084,"[""CR_HB_LABEL:santacruz""]","{""name"":""Santa Cruz (WR)"",""name:en"":""Santa Cruz (WR)"",""name:mr"":""सांताक्रूझ"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",209,present_in_order
+11511060,15,15,stop,621276256,"[""CR_HB_LABEL:vileparle""]","{""name"":""Vile Parle"",""name:en"":""Vile Parle"",""name:mr"":""विले पार्ले"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",222,present_in_order
+11511060,16,16,stop,1646774132,"[""CR_HB_LABEL:andheri""]","{""name"":""Andheri"",""name:en"":""Andheri"",""name:mr"":""अंधेरी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",236,present_in_order
+11511060,17,17,stop,7817967703,"[""CR_HB_LABEL:jogeshwari""]","{""name"":""Jogeshwari (Western Line)"",""name:mr"":""जोगेश्‍वरी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",246,present_in_order
+11511060,18,18,stop,7817991345,"[""CR_HB_LABEL:ramnagar""]","{""name"":""Ram Mandir"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",259,present_in_order
+11511060,19,19,stop,213030694,"[""CR_HB_LABEL:goregaon""]","{""name"":""Goregaon"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",267,present_in_order
+11511060,20,20,stop,213030688,[],{},284,present_in_order
+11511060,21,21,stop,7552344494,[],{},298,present_in_order
+11511060,22,22,stop,3186571161,"[""CR_EXTERNAL_CODE:BVI""]","{""name"":""Borivali"",""public_transport"":""stop_position"",""train"":""yes""}",311,present_in_order
+11511060,23,23,stop,3345962769,[],{},337,present_in_order
+11511060,24,24,stop,702054142,[],{},349,present_in_order
+11511060,25,25,stop,7512478928,[],{},365,present_in_order
+11511060,26,26,stop,3230936698,[],{},400,present_in_order
+11511060,27,27,stop,7512478915,[],{},418,present_in_order
+11511060,28,28,stop,30520645,[],{},431,present_in_order
+11511060,29,29,stop,4367766784,[],{},453,present_in_order
+11511942,1,1,stop,1647133382,"[""CR_THB_CODE:TNA""]","{""alt_name:ar"":""ثين"",""name"":""Thane"",""name:ar"":""تاني"",""name:en"":""Thane"",""name:fa"":""تانه"",""name:hi"":""ठाणे"",""name:ml"":""താനെ"",""name:mr"":""ठाणे"",""name:pnb"":""تہانہ"",""name:ps"":""تانی"",""name:ur"":""تھانے"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""9"",""train"":""yes""}",1,present_in_order
+11511942,2,2,stop,13032197037,"[""CR_THB_CODE:DIGH""]","{""name"":""Digha Gaon"",""name:en"":""Digha Gaon"",""name:hi"":""दिघा गाँव"",""name:mr"":""दिघा गाँव"",""public_transport"":""stop_position"",""railway"":""stop"",""start_date"":""2024-01-12"",""train"":""yes""}",47,present_in_order
+11511942,3,3,stop,7818210885,"[""CR_THB_CODE:AIRL""]","{""name"":""Airoli"",""name:en"":""Airoli"",""official_name"":""Airavali"",""official_name:en"":""Airavali"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",73,present_in_order
+11511942,4,4,stop,7818144558,"[""CR_THB_CODE:RABE""]","{""name"":""Rabale"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",101,present_in_order
+11511942,5,5,stop,7818209607,"[""CR_THB_CODE:GNSL""]","{""name"":""Ghansoli"",""name:hi"":""घनसोली"",""name:mr"":""घणसोली"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",124,present_in_order
+11511942,6,6,stop,7818118169,"[""CR_THB_CODE:KPHN""]","{""name"":""Koparkhairne"",""name:hi"":""कोपरखैरने"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",139,present_in_order
+11511942,7,7,stop,7818206410,"[""CR_THB_CODE:TUH""]","{""name"":""Turbhe"",""name:hi"":""तुर्भे"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",169,present_in_order
+11511942,8,8,stop,7817978920,"[""CR_HB_LABEL:juinagar"",""CR_THB_CODE:JNJ""]","{""name"":""Juinagar"",""name:en"":""Juinagar"",""name:hi"":""जुईनगर"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",193,present_in_order
+11511942,9,9,stop,7818050101,"[""CR_THB_CODE:NEU""]","{""name"":""Nerul"",""name:en"":""Nerul"",""name:hi"":""नेरुल"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",216,present_in_order
+11511942,10,10,stop,7818030804,"[""CR_THB_CODE:SWDV""]","{""name"":""Seawoods"",""name:en"":""Seawoods"",""name:hi"":""सीवुड्ज़"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",244,present_in_order
+11511942,11,11,stop,7818124497,"[""CR_THB_CODE:BEPR""]","{""name"":""CBD Belapur"",""name:mr"":""सी बी डी बेलापूर"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",278,present_in_order
+11511942,12,12,stop,7818064487,"[""CR_THB_CODE:KHAG""]","{""name"":""Kharghar"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",309,present_in_order
+11511942,13,13,stop,7818067423,"[""CR_THB_CODE:MANR""]","{""name"":""Mansarovar"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",340,present_in_order
+11511942,14,14,stop,7818098639,"[""CR_THB_CODE:KNDS""]","{""name"":""Khandeshwar"",""name:hi"":""खांदेश्वर"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",353,present_in_order
+11511950,1,1,stop,4822210993,"[""CR_HB_LABEL:vashi"",""CR_THB_CODE:VSH""]","{""name"":""Vashi"",""name:hi"":""वाशी"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",5,present_in_order
+11511950,2,2,stop,1990668445,"[""CR_HB_LABEL:sanpada"",""CR_THB_CODE:SNPD""]","{""name"":""Sanpada"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""1"",""train"":""yes""}",18,present_in_order
+11511950,3,3,stop,7818206407,"[""CR_THB_CODE:TUH""]","{""name"":""Turbhe"",""name:hi"":""तुर्भे"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",66,present_in_order
+11511950,4,4,stop,7818118170,"[""CR_THB_CODE:KPHN""]","{""name"":""Koparkhairne"",""name:hi"":""कोपरखैरने"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",131,present_in_order
+11511950,5,5,stop,7818209608,"[""CR_THB_CODE:GNSL""]","{""name"":""Ghansoli"",""name:hi"":""घनसोली"",""name:mr"":""घणसोली"",""network"":""train"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""platform no.2"",""train"":""yes""}",156,present_in_order
+11511950,6,6,stop,7818144559,"[""CR_THB_CODE:RABE""]","{""name"":""Rabale"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",197,present_in_order
+11511950,7,7,stop,7818210886,"[""CR_THB_CODE:AIRL""]","{""name"":""Airoli"",""name:en"":""Airoli"",""official_name"":""Airavali"",""official_name:en"":""Airavali"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",226,present_in_order
+11511950,8,8,stop,13032197036,"[""CR_THB_CODE:DIGH""]","{""name"":""Digha Gaon"",""name:en"":""Digha Gaon"",""name:hi"":""दिघा गाँव"",""name:mr"":""दिघा गाँव"",""public_transport"":""stop_position"",""railway"":""stop"",""start_date"":""2024-01-12"",""train"":""yes""}",251,present_in_order
+11511950,9,9,stop,1647133382,"[""CR_THB_CODE:TNA""]","{""alt_name:ar"":""ثين"",""name"":""Thane"",""name:ar"":""تاني"",""name:en"":""Thane"",""name:fa"":""تانه"",""name:hi"":""ठाणे"",""name:ml"":""താനെ"",""name:mr"":""ठाणे"",""name:pnb"":""تہانہ"",""name:ps"":""تانی"",""name:ur"":""تھانے"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""9"",""train"":""yes""}",298,present_in_order
+11511951,1,1,stop,7510862052,"[""CR_THB_CODE:PNVL""]","{""name"":""Panvel"",""name:mr"":""पनवेल"",""public_transport"":""stop_position"",""ref"":""3"",""train"":""yes""}",1,present_in_order
+11511951,2,2,stop,7818098638,"[""CR_THB_CODE:KNDS""]","{""name"":""Khandeshwar"",""name:hi"":""खांदेश्वर"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",38,present_in_order
+11511951,3,3,stop,7818067424,"[""CR_THB_CODE:MANR""]","{""name"":""Mansarovar"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",57,present_in_order
+11511951,4,4,stop,7818064488,"[""CR_THB_CODE:KHAG""]","{""name"":""Kharghar"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",88,present_in_order
+11511951,5,5,stop,7818124494,"[""CR_THB_CODE:BEPR""]","{""name"":""CBD Belapur"",""name:mr"":""सी बी डी बेलापूर"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",121,present_in_order
+11511951,6,6,stop,7818030805,"[""CR_THB_CODE:SWDV""]","{""name"":""Seawoods"",""name:en"":""Seawoods"",""name:hi"":""सीवुड्ज़"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",158,present_in_order
+11511951,7,7,stop,7818050100,"[""CR_THB_CODE:NEU""]","{""name"":""Nerul"",""name:en"":""Nerul"",""name:hi"":""नेरुल"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",188,present_in_order
+11511951,8,8,stop,7817978921,"[""CR_HB_LABEL:juinagar"",""CR_THB_CODE:JNJ""]","{""name"":""Juinagar"",""name:en"":""Juinagar"",""name:hi"":""जुईनगर"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""2"",""train"":""yes""}",214,present_in_order
+11511951,9,9,stop,7818206409,"[""CR_THB_CODE:TUH""]","{""name"":""Turbhe"",""name:hi"":""तुर्भे"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",240,present_in_order
+11511951,10,10,stop,7818118170,"[""CR_THB_CODE:KPHN""]","{""name"":""Koparkhairne"",""name:hi"":""कोपरखैरने"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",303,present_in_order
+11511951,11,11,stop,7818209608,"[""CR_THB_CODE:GNSL""]","{""name"":""Ghansoli"",""name:hi"":""घनसोली"",""name:mr"":""घणसोली"",""network"":""train"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""platform no.2"",""train"":""yes""}",328,present_in_order
+11511951,12,12,stop,7818144559,"[""CR_THB_CODE:RABE""]","{""name"":""Rabale"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",369,present_in_order
+11511951,13,13,stop,7818210886,"[""CR_THB_CODE:AIRL""]","{""name"":""Airoli"",""name:en"":""Airoli"",""official_name"":""Airavali"",""official_name:en"":""Airavali"",""public_transport"":""stop_position"",""railway"":""stop"",""train"":""yes""}",398,present_in_order
+11511951,14,14,stop,13032197036,"[""CR_THB_CODE:DIGH""]","{""name"":""Digha Gaon"",""name:en"":""Digha Gaon"",""name:hi"":""दिघा गाँव"",""name:mr"":""दिघा गाँव"",""public_transport"":""stop_position"",""railway"":""stop"",""start_date"":""2024-01-12"",""train"":""yes""}",423,present_in_order
+11511951,15,15,stop,1647133382,"[""CR_THB_CODE:TNA""]","{""alt_name:ar"":""ثين"",""name"":""Thane"",""name:ar"":""تاني"",""name:en"":""Thane"",""name:fa"":""تانه"",""name:hi"":""ठाणे"",""name:ml"":""താനെ"",""name:mr"":""ठाणे"",""name:pnb"":""تہانہ"",""name:ps"":""تانی"",""name:ur"":""تھانے"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""9"",""train"":""yes""}",470,present_in_order
+11512075,1,1,stop,7818050102,"[""CR_THB_CODE:NEU""]","{""name"":""Nerul"",""name:en"":""Nerul"",""name:hi"":""नेरुल"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""5"",""train"":""yes""}",1,present_in_order
+11512075,2,2,stop,7818030806,"[""CR_THB_CODE:SWDV""]","{""name"":""Seawoods"",""name:en"":""Seawoods"",""name:hi"":""सीवुड्ज़"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""3"",""train"":""yes""}",30,present_in_order
+11512075,3,3,stop,7818310739,[],{},102,present_in_order
+11512075,4,4,stop,7818268524,[],{},114,present_in_order
+11512075,5,5,stop,11612768449,[],{},171,present_in_order
+11512075,6,6,stop,11612789134,[],{},182,present_in_order
+11512075,7,7,stop,11612789144,[],{},192,present_in_order
+11512075,8,8,stop,11612789146,[],{},206,present_in_order
+11514142,1,3,stop_entry_only,2166817451,"[""CR_HB_LABEL:mumbai csmt""]","{""level"":""0"",""loc_name"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:en"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:mr"":""मुंबई छत्रपती शिवाजी टर्मिनस (उपनगरी)"",""name"":""Mumbai CSMT (Suburban)"",""name:en"":""Mumbai CSMT (Suburban)"",""name:mr"":""मुंबई सीएसएमटी (उपनगरी)"",""official_name"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:en"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:mr"":""मुंबई छत्रपती शिवाजी महाराज टर्मिनस (उपनगरी)"",""old_name"":""Victoria Terminus (Suburban)"",""old_name:en"":""Victoria Terminus (Suburban)"",""old_name:mr"":""व्हिक्टोरिया टर्मिनस (उपनगरी)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""5"",""short_name"":""CSMT;CST;VT"",""short_name:en"":""CSMT;CST;VT"",""short_name:hi"":""सीएसएमटी;सीएसटी;व्हीटी"",""short_name:mr"":""सीएसएमटी;सीएसटी;व्हीटी"",""source"":""Esri World imagery (2024-09-14)"",""tactile_paving"":""yes"",""train"":""yes""}",0,present_in_order
+11514142,2,5,stop,2178254483,[],{},81,present_in_order
+11514142,3,7,stop,2163597903,[],{},114,present_in_order
+11514142,4,9,stop,1367093217,"[""CR_HB_LABEL:kurla""]","{""name"":""Kurla"",""name:en"":""Kurla"",""name:hi"":""कुर्ला"",""name:ml"":""കുർള"",""name:mr"":""कुर्ला"",""official_name"":""Kurla Junction"",""official_name:en"":""Kurla Junction"",""official_name:hi"":""कुर्ला जंक्शन"",""official_name:mr"":""कुर्ला जंक्शन"",""old_name"":""Coorla"",""old_name:en"":""Coorla"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""5"",""train"":""yes""}",148,present_in_order
+11514142,5,11,stop,7817668011,[],{},171,present_in_order
+11514142,6,13,stop,1647133433,"[""CR_THB_CODE:TNA""]","{""alt_name:ar"":""ثين"",""name"":""Thane"",""name:ar"":""تاني"",""name:en"":""Thane"",""name:fa"":""تانه"",""name:hi"":""ठाणे"",""name:ml"":""താനെ"",""name:mr"":""ठाणे"",""name:pnb"":""تہانہ"",""name:ps"":""تانی"",""name:ur"":""تھانے"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""5"",""train"":""yes""}",278,present_in_order
+11514142,7,15,stop,7817547754,[],{},431,present_in_order
+11514142,8,17,stop,4005746306,[],{},474,present_in_order
+11514142,9,19,stop,276561157,[],{},508,present_in_order
+11514142,10,21,stop,12171153793,[],{},531,present_in_order
+11514142,11,23,stop,12171153791,[],{},575,present_in_order
+11514142,12,25,stop,12171153788,[],{},634,present_in_order
+11514142,13,27,stop,6177725071,[],{},683,present_in_order
+11514142,14,29,stop,6177725082,[],{},722,present_in_order
+11514142,15,31,stop,6177725081,[],{},821,present_in_order
+11514142,16,33,stop,13729593410,[],{},864,present_in_order
+11514142,17,35,stop,2520395853,[],{},912,present_in_order
+11514142,18,37,stop,13727998108,[],{},967,present_in_order
+11514142,19,39,stop_exit_only,12171153757,[],{},1066,present_in_order
+11514143,1,3,stop_entry_only,2166817451,"[""CR_HB_LABEL:mumbai csmt""]","{""level"":""0"",""loc_name"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:en"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:mr"":""मुंबई छत्रपती शिवाजी टर्मिनस (उपनगरी)"",""name"":""Mumbai CSMT (Suburban)"",""name:en"":""Mumbai CSMT (Suburban)"",""name:mr"":""मुंबई सीएसएमटी (उपनगरी)"",""official_name"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:en"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:mr"":""मुंबई छत्रपती शिवाजी महाराज टर्मिनस (उपनगरी)"",""old_name"":""Victoria Terminus (Suburban)"",""old_name:en"":""Victoria Terminus (Suburban)"",""old_name:mr"":""व्हिक्टोरिया टर्मिनस (उपनगरी)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""5"",""short_name"":""CSMT;CST;VT"",""short_name:en"":""CSMT;CST;VT"",""short_name:hi"":""सीएसएमटी;सीएसटी;व्हीटी"",""short_name:mr"":""सीएसएमटी;सीएसटी;व्हीटी"",""source"":""Esri World imagery (2024-09-14)"",""tactile_paving"":""yes"",""train"":""yes""}",0,present_in_order
+11514143,2,5,stop,2178254483,[],{},81,present_in_order
+11514143,3,7,stop,2163597903,[],{},114,present_in_order
+11514143,4,9,stop,1367093217,"[""CR_HB_LABEL:kurla""]","{""name"":""Kurla"",""name:en"":""Kurla"",""name:hi"":""कुर्ला"",""name:ml"":""കുർള"",""name:mr"":""कुर्ला"",""official_name"":""Kurla Junction"",""official_name:en"":""Kurla Junction"",""official_name:hi"":""कुर्ला जंक्शन"",""official_name:mr"":""कुर्ला जंक्शन"",""old_name"":""Coorla"",""old_name:en"":""Coorla"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""5"",""train"":""yes""}",148,present_in_order
+11514143,5,11,stop,7817668011,[],{},171,present_in_order
+11514143,6,13,stop,1647133433,"[""CR_THB_CODE:TNA""]","{""alt_name:ar"":""ثين"",""name"":""Thane"",""name:ar"":""تاني"",""name:en"":""Thane"",""name:fa"":""تانه"",""name:hi"":""ठाणे"",""name:ml"":""താനെ"",""name:mr"":""ठाणे"",""name:pnb"":""تہانہ"",""name:ps"":""تانی"",""name:ur"":""تھانے"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""5"",""train"":""yes""}",278,present_in_order
+11514143,7,15,stop,7817547754,[],{},431,present_in_order
+11514143,8,17,stop,6199256259,[],{},478,present_in_order
+11514143,9,19,stop,12171153749,[],{},506,present_in_order
+11514143,10,21,stop,6586251090,[],{},531,present_in_order
+11514143,11,23,stop,12171153727,[],{},557,present_in_order
+11514143,12,25,stop,5764394178,[],{},604,present_in_order
+11514143,13,27,stop,6586251093,[],{},678,present_in_order
+11514143,14,29,stop,11033681712,[],{},709,present_in_order
+11514143,15,31,stop,4769141835,[],{},735,present_in_order
+11514143,16,33,stop,4769570913,[],{},784,present_in_order
+11514143,17,35,stop,12170585803,[],{},828,present_in_order
+11514143,18,37,stop,2869362286,[],{},893,present_in_order
+11514143,19,39,stop,12171153702,[],{},946,present_in_order
+11514143,20,41,stop,11517052436,[],{},956,present_in_order
+11514143,21,43,stop,2629004884,[],{},983,present_in_order
+11514143,22,44,stop_exit_only,12171122300,[],{},1013,present_in_order
+11514202,1,2,stop_entry_only,12171122299,[],{},1,present_in_order
+11514202,2,4,stop,2629004884,[],{},35,present_in_order
+11514202,3,6,stop,11517052436,[],{},62,present_in_order
+11514202,4,8,stop,12171153702,[],{},72,present_in_order
+11514202,5,10,stop,2869362286,[],{},125,present_in_order
+11514202,6,12,stop,12170585803,[],{},190,present_in_order
+11514202,7,14,stop,6586251097,[],{},233,present_in_order
+11514202,8,16,stop,6586251096,[],{},285,present_in_order
+11514202,9,18,stop,11033681716,[],{},307,present_in_order
+11514202,10,20,stop,276563396,[],{},340,present_in_order
+11514202,11,22,stop,1108915960,[],{},409,present_in_order
+11514202,12,24,stop,6586251091,[],{},454,present_in_order
+11514202,13,26,stop,1682282854,[],{},475,present_in_order
+11514202,14,28,stop,12171153748,[],{},489,present_in_order
+11514202,15,30,stop,7554999642,[],{},512,present_in_order
+11514202,16,32,stop,12171153819,[],{},562,present_in_order
+11514202,17,34,stop,1647133407,"[""CR_THB_CODE:TNA""]","{""alt_name:ar"":""ثين"",""name"":""Thane"",""name:ar"":""تاني"",""name:en"":""Thane"",""name:fa"":""تانه"",""name:hi"":""ठाणे"",""name:ml"":""താനെ"",""name:mr"":""ठाणे"",""name:pnb"":""تہانہ"",""name:ps"":""تانی"",""name:ur"":""تھانے"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""train"":""yes""}",718,present_in_order
+11514202,18,36,stop,7817668012,[],{},825,present_in_order
+11514202,19,38,stop,1367093215,"[""CR_HB_LABEL:kurla""]","{""name"":""Kurla"",""name:en"":""Kurla"",""name:hi"":""कुर्ला"",""name:ml"":""കുർള"",""name:mr"":""कुर्ला"",""official_name"":""Kurla Junction"",""official_name:en"":""Kurla Junction"",""official_name:hi"":""कुर्ला जंक्शन"",""official_name:mr"":""कुर्ला जंक्शन"",""old_name"":""Coorla"",""old_name:en"":""Coorla"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""train"":""yes""}",850,present_in_order
+11514202,20,40,stop,353471603,[],{},886,present_in_order
+11514202,21,42,stop,3501419615,[],{},920,present_in_order
+11514202,22,45,stop_exit_only,2166817453,"[""CR_HB_LABEL:mumbai csmt""]","{""level"":""0"",""loc_name"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:en"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:mr"":""मुंबई छत्रपती शिवाजी टर्मिनस (उपनगरी)"",""name"":""Mumbai CSMT (Suburban)"",""name:en"":""Mumbai CSMT (Suburban)"",""name:mr"":""मुंबई सीएसएमटी (उपनगरी)"",""official_name"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:en"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:mr"":""मुंबई छत्रपती शिवाजी महाराज टर्मिनस (उपनगरी)"",""old_name"":""Victoria Terminus (Suburban)"",""old_name:en"":""Victoria Terminus (Suburban)"",""old_name:mr"":""व्हिक्टोरिया टर्मिनस (उपनगरी)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""short_name"":""CSMT;CST;VT"",""short_name:en"":""CSMT;CST;VT"",""short_name:hi"":""सीएसएमटी;सीएसटी;व्हीटी"",""short_name:mr"":""सीएसएमटी;सीएसटी;व्हीटी"",""source"":""Esri World imagery (2024-09-14)"",""tactile_paving"":""yes"",""train"":""yes""}",999,present_in_order
+11514203,1,2,stop_entry_only,12171153757,[],{},0,present_in_order
+11514203,2,4,stop,13727998109,[],{},102,present_in_order
+11514203,3,6,stop,13729593411,[],{},230,present_in_order
+11514203,4,8,stop,5178015727,[],{},,out_of_order
+11514203,5,10,stop,2520395695,[],{},290,present_in_order
+11514203,6,12,stop,2520395518,[],{},413,present_in_order
+11514203,7,14,stop,2520395437,[],{},475,present_in_order
+11514203,8,16,stop,12171153790,[],{},540,present_in_order
+11514203,9,18,stop,12171153792,[],{},611,present_in_order
+11514203,10,20,stop,12171153794,[],{},659,present_in_order
+11514203,11,22,stop,2520704672,[],{},687,present_in_order
+11514203,12,24,stop,7554999644,[],{},721,present_in_order
+11514203,13,26,stop,12171153819,[],{},772,present_in_order
+11514203,14,28,stop,1647133407,"[""CR_THB_CODE:TNA""]","{""alt_name:ar"":""ثين"",""name"":""Thane"",""name:ar"":""تاني"",""name:en"":""Thane"",""name:fa"":""تانه"",""name:hi"":""ठाणे"",""name:ml"":""താനെ"",""name:mr"":""ठाणे"",""name:pnb"":""تہانہ"",""name:ps"":""تانی"",""name:ur"":""تھانے"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""train"":""yes""}",928,present_in_order
+11514203,15,30,stop,7817668012,[],{},1035,present_in_order
+11514203,16,32,stop,1367093215,"[""CR_HB_LABEL:kurla""]","{""name"":""Kurla"",""name:en"":""Kurla"",""name:hi"":""कुर्ला"",""name:ml"":""കുർള"",""name:mr"":""कुर्ला"",""official_name"":""Kurla Junction"",""official_name:en"":""Kurla Junction"",""official_name:hi"":""कुर्ला जंक्शन"",""official_name:mr"":""कुर्ला जंक्शन"",""old_name"":""Coorla"",""old_name:en"":""Coorla"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""train"":""yes""}",1060,present_in_order
+11514203,17,34,stop,353471603,[],{},1096,present_in_order
+11514203,18,36,stop,3501419615,[],{},1130,present_in_order
+11514203,19,39,stop_exit_only,2166817453,"[""CR_HB_LABEL:mumbai csmt""]","{""level"":""0"",""loc_name"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:en"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:mr"":""मुंबई छत्रपती शिवाजी टर्मिनस (उपनगरी)"",""name"":""Mumbai CSMT (Suburban)"",""name:en"":""Mumbai CSMT (Suburban)"",""name:mr"":""मुंबई सीएसएमटी (उपनगरी)"",""official_name"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:en"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:mr"":""मुंबई छत्रपती शिवाजी महाराज टर्मिनस (उपनगरी)"",""old_name"":""Victoria Terminus (Suburban)"",""old_name:en"":""Victoria Terminus (Suburban)"",""old_name:mr"":""व्हिक्टोरिया टर्मिनस (उपनगरी)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""short_name"":""CSMT;CST;VT"",""short_name:en"":""CSMT;CST;VT"",""short_name:hi"":""सीएसएमटी;सीएसटी;व्हीटी"",""short_name:mr"":""सीएसएमटी;सीएसटी;व्हीटी"",""source"":""Esri World imagery (2024-09-14)"",""tactile_paving"":""yes"",""train"":""yes""}",1209,present_in_order
+18029245,1,2,stop_entry_only,2257797444,[],{},,route_geometry_unresolved
+18029245,2,4,stop,2270270792,[],{},,route_geometry_unresolved
+18029245,3,6,stop,1647133407,"[""CR_THB_CODE:TNA""]","{""alt_name:ar"":""ثين"",""name"":""Thane"",""name:ar"":""تاني"",""name:en"":""Thane"",""name:fa"":""تانه"",""name:hi"":""ठाणे"",""name:ml"":""താനെ"",""name:mr"":""ठाणे"",""name:pnb"":""تہانہ"",""name:ps"":""تانی"",""name:ur"":""تھانے"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""6"",""train"":""yes""}",,route_geometry_unresolved
+18029245,4,8,stop,353471603,[],{},,route_geometry_unresolved
+18029245,5,10,stop_exit_only,1234805948,"[""CR_HB_LABEL:mumbai csmt""]","{""level"":""0"",""loc_name"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:en"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:mr"":""मुंबई छत्रपती शिवाजी टर्मिनस (उपनगरी)"",""name"":""Mumbai CSMT (Suburban)"",""name:en"":""Mumbai CSMT (Suburban)"",""name:mr"":""मुंबई सीएसएमटी (उपनगरी)"",""official_name"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:en"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:mr"":""मुंबई छत्रपती शिवाजी महाराज टर्मिनस (उपनगरी)"",""old_name"":""Victoria Terminus (Suburban)"",""old_name:en"":""Victoria Terminus (Suburban)"",""old_name:mr"":""व्हिक्टोरिया टर्मिनस (उपनगरी)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""8"",""short_name"":""CSMT;CST;VT"",""short_name:en"":""CSMT;CST;VT"",""short_name:hi"":""सीएसएमटी;सीएसटी;व्हीटी"",""short_name:mr"":""सीएसएमटी;सीएसटी;व्हीटी"",""source"":""Esri World imagery (2024-09-14)"",""tactile_paving"":""yes"",""train"":""yes""}",,route_geometry_unresolved
+18029245,6,12,stop,4031660717,[],{},,route_geometry_unresolved
+18029246,1,2,stop_entry_only,1234805948,"[""CR_HB_LABEL:mumbai csmt""]","{""level"":""0"",""loc_name"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:en"":""Mumbai Chhatrapati Shivaji Terminus (Suburban)"",""loc_name:mr"":""मुंबई छत्रपती शिवाजी टर्मिनस (उपनगरी)"",""name"":""Mumbai CSMT (Suburban)"",""name:en"":""Mumbai CSMT (Suburban)"",""name:mr"":""मुंबई सीएसएमटी (उपनगरी)"",""official_name"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:en"":""Mumbai Chhatrapati Shivaji Maharaj Terminus (Suburban)"",""official_name:mr"":""मुंबई छत्रपती शिवाजी महाराज टर्मिनस (उपनगरी)"",""old_name"":""Victoria Terminus (Suburban)"",""old_name:en"":""Victoria Terminus (Suburban)"",""old_name:mr"":""व्हिक्टोरिया टर्मिनस (उपनगरी)"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""8"",""short_name"":""CSMT;CST;VT"",""short_name:en"":""CSMT;CST;VT"",""short_name:hi"":""सीएसएमटी;सीएसटी;व्हीटी"",""short_name:mr"":""सीएसएमटी;सीएसटी;व्हीटी"",""source"":""Esri World imagery (2024-09-14)"",""tactile_paving"":""yes"",""train"":""yes""}",,route_geometry_unresolved
+18029246,2,4,stop,631525227,[],{},,route_geometry_unresolved
+18029246,3,6,stop,1647133433,"[""CR_THB_CODE:TNA""]","{""alt_name:ar"":""ثين"",""name"":""Thane"",""name:ar"":""تاني"",""name:en"":""Thane"",""name:fa"":""تانه"",""name:hi"":""ठाणे"",""name:ml"":""താനെ"",""name:mr"":""ठाणे"",""name:pnb"":""تہانہ"",""name:ps"":""تانی"",""name:ur"":""تھانے"",""public_transport"":""stop_position"",""railway"":""stop"",""ref"":""5"",""train"":""yes""}",,route_geometry_unresolved
+18029246,4,8,stop,6586492650,[],{},,route_geometry_unresolved
+18029246,5,10,stop,2270270796,[],{},,route_geometry_unresolved
+18029246,6,12,stop_exit_only,2257797444,[],{},,route_geometry_unresolved

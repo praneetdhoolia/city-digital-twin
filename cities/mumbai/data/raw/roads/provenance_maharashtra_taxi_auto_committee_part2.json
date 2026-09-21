@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/roads/maharashtra_taxi_auto_committee_part2_de5ad6c6ea52190e.pdf",
+      "url": "https://transport.maharashtra.gov.in/Site/Upload/GR/Part%202.pdf",
+      "final_url": "https://transport.maharashtra.gov.in/Site/Upload/GR/Part%202.pdf",
+      "content_type": "application/pdf",
+      "source": "Maharashtra taxi and auto committee report part two",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:52:38.379676+00:00",
+      "sha256": "de5ad6c6ea52190ede593112b44f479dcc96ec8a3d309c7d00fbd5e0f399a4a1",
+      "bytes": 40176845,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical policy, restrictions or toll evidence; current applicability and later orders require reconciliation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,593 @@
+{
+  "source": "derived",
+  "source_id": "jvlr_conference_poster_2026_response",
+  "source_sha256": "3cd8dd8cf3e6ac4f86b1ad7ca1d5fbe147788c49f13df677d53ffc52d4906d00",
+  "poster_sha256": "6f85108270324e7d1dc4dd58f209c036d1ec58e9787369c1e32eac1b03b311d9",
+  "transcription_sha256": "5c7f90df0ac6651df8f5b083e12990ff8c97b72c169ee10c6edfe87565ff8d45",
+  "rows": 18,
+  "checks": [
+    {
+      "row_id": "1.1",
+      "field": "flow_pcu_h_lane",
+      "printed": "1023",
+      "calculated": "1023",
+      "delta": "0",
+      "printed_half_quantum": "0.5",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "1.1",
+      "field": "density_pcu_km",
+      "printed": "29.23",
+      "calculated": "29.22857142857142857142857143",
+      "delta": "0.00142857142857142857142857",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "1.1",
+      "field": "density_pcu_km_lane",
+      "printed": "14.62",
+      "calculated": "14.61428571428571428571428572",
+      "delta": "0.00571428571428571428571428",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0.0025",
+      "status": "intermediate_rounding_compatible"
+    },
+    {
+      "row_id": "1.2",
+      "field": "flow_pcu_h_lane",
+      "printed": "1102.5",
+      "calculated": "1102.5",
+      "delta": "0.0",
+      "printed_half_quantum": "0.05",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "1.2",
+      "field": "density_pcu_km",
+      "printed": "44.1",
+      "calculated": "44.1",
+      "delta": "0.0",
+      "printed_half_quantum": "0.05",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "1.2",
+      "field": "density_pcu_km_lane",
+      "printed": "22.05",
+      "calculated": "22.05",
+      "delta": "0.00",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0.025",
+      "status": "exact"
+    },
+    {
+      "row_id": "1.3",
+      "field": "flow_pcu_h_lane",
+      "printed": "319.5",
+      "calculated": "319.5",
+      "delta": "0.0",
+      "printed_half_quantum": "0.05",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "1.3",
+      "field": "density_pcu_km",
+      "printed": "9.13",
+      "calculated": "9.128571428571428571428571429",
+      "delta": "0.001428571428571428571428571",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "1.3",
+      "field": "density_pcu_km_lane",
+      "printed": "4.57",
+      "calculated": "4.564285714285714285714285714",
+      "delta": "0.005714285714285714285714286",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0.0025",
+      "status": "intermediate_rounding_compatible"
+    },
+    {
+      "row_id": "1.4",
+      "field": "flow_pcu_h_lane",
+      "printed": "1074",
+      "calculated": "1074",
+      "delta": "0",
+      "printed_half_quantum": "0.5",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "1.4",
+      "field": "density_pcu_km",
+      "printed": "42.96",
+      "calculated": "42.96",
+      "delta": "0.00",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "1.4",
+      "field": "density_pcu_km_lane",
+      "printed": "21.48",
+      "calculated": "21.48",
+      "delta": "0.00",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0.0025",
+      "status": "exact"
+    },
+    {
+      "row_id": "2.1",
+      "field": "flow_pcu_h_lane",
+      "printed": "1221",
+      "calculated": "1221",
+      "delta": "0",
+      "printed_half_quantum": "0.5",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "2.1",
+      "field": "density_pcu_km",
+      "printed": "52.33",
+      "calculated": "52.32857142857142857142857143",
+      "delta": "0.00142857142857142857142857",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "2.1",
+      "field": "density_pcu_km_lane",
+      "printed": "17.44",
+      "calculated": "17.44285714285714285714285714",
+      "delta": "-0.00285714285714285714285714",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0.001666666666666666666666666667",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "2.2",
+      "field": "flow_pcu_h_lane",
+      "printed": "1114",
+      "calculated": "1114",
+      "delta": "0",
+      "printed_half_quantum": "0.5",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "2.2",
+      "field": "density_pcu_km",
+      "printed": "47.74",
+      "calculated": "47.74285714285714285714285714",
+      "delta": "-0.00285714285714285714285714",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "2.2",
+      "field": "density_pcu_km_lane",
+      "printed": "15.91",
+      "calculated": "15.91428571428571428571428571",
+      "delta": "-0.00428571428571428571428571",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0.001666666666666666666666666667",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "3.1",
+      "field": "flow_pcu_h_lane",
+      "printed": "1743",
+      "calculated": "1743",
+      "delta": "0",
+      "printed_half_quantum": "0.5",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "3.1",
+      "field": "density_pcu_km",
+      "printed": "74.7",
+      "calculated": "74.7",
+      "delta": "0.0",
+      "printed_half_quantum": "0.05",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "3.1",
+      "field": "density_pcu_km_lane",
+      "printed": "24.9",
+      "calculated": "24.9",
+      "delta": "0.0",
+      "printed_half_quantum": "0.05",
+      "intermediate_rounding_bound": "0.01666666666666666666666666667",
+      "status": "exact"
+    },
+    {
+      "row_id": "3.2",
+      "field": "flow_pcu_h_lane",
+      "printed": "2307",
+      "calculated": "2307",
+      "delta": "0",
+      "printed_half_quantum": "0.5",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "3.2",
+      "field": "density_pcu_km",
+      "printed": "98.87",
+      "calculated": "98.87142857142857142857142857",
+      "delta": "-0.00142857142857142857142857",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "3.2",
+      "field": "density_pcu_km_lane",
+      "printed": "32.96",
+      "calculated": "32.95714285714285714285714286",
+      "delta": "0.00285714285714285714285714",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0.001666666666666666666666666667",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "3.3",
+      "field": "flow_pcu_h_lane",
+      "printed": "69",
+      "calculated": "69",
+      "delta": "0",
+      "printed_half_quantum": "0.5",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "3.3",
+      "field": "density_pcu_km",
+      "printed": "4.6",
+      "calculated": "4.6",
+      "delta": "0.0",
+      "printed_half_quantum": "0.05",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "3.3",
+      "field": "density_pcu_km_lane",
+      "printed": "2.3",
+      "calculated": "2.3",
+      "delta": "0.0",
+      "printed_half_quantum": "0.05",
+      "intermediate_rounding_bound": "0.025",
+      "status": "exact"
+    },
+    {
+      "row_id": "4.1",
+      "field": "flow_pcu_h_lane",
+      "printed": "375",
+      "calculated": "375",
+      "delta": "0",
+      "printed_half_quantum": "0.5",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "4.1",
+      "field": "density_pcu_km",
+      "printed": "28.13",
+      "calculated": "28.125",
+      "delta": "0.005",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "4.1",
+      "field": "density_pcu_km_lane",
+      "printed": "9.38",
+      "calculated": "9.375",
+      "delta": "0.005",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0.001666666666666666666666666667",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "4.2",
+      "field": "flow_pcu_h_lane",
+      "printed": "917.25",
+      "calculated": "917.25",
+      "delta": "0.00",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "4.2",
+      "field": "density_pcu_km",
+      "printed": "52.41",
+      "calculated": "52.41428571428571428571428571",
+      "delta": "-0.00428571428571428571428571",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "4.2",
+      "field": "density_pcu_km_lane",
+      "printed": "13.1",
+      "calculated": "13.10357142857142857142857143",
+      "delta": "-0.00357142857142857142857143",
+      "printed_half_quantum": "0.05",
+      "intermediate_rounding_bound": "0.00125",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "4.3",
+      "field": "flow_pcu_h_lane",
+      "printed": "1341.75",
+      "calculated": "1341.75",
+      "delta": "0.00",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "4.3",
+      "field": "density_pcu_km",
+      "printed": "76.67",
+      "calculated": "76.67142857142857142857142857",
+      "delta": "-0.00142857142857142857142857",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "4.3",
+      "field": "density_pcu_km_lane",
+      "printed": "19.17",
+      "calculated": "19.16785714285714285714285714",
+      "delta": "0.00214285714285714285714286",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0.00125",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "4.4",
+      "field": "flow_pcu_h_lane",
+      "printed": "238.5",
+      "calculated": "238.5",
+      "delta": "0.0",
+      "printed_half_quantum": "0.05",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "4.4",
+      "field": "density_pcu_km",
+      "printed": "11.93",
+      "calculated": "11.925",
+      "delta": "0.005",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "4.4",
+      "field": "density_pcu_km_lane",
+      "printed": "5.97",
+      "calculated": "5.9625",
+      "delta": "0.0075",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0.0025",
+      "status": "intermediate_rounding_compatible"
+    },
+    {
+      "row_id": "5.1",
+      "field": "flow_pcu_h_lane",
+      "printed": "2133",
+      "calculated": "2133",
+      "delta": "0",
+      "printed_half_quantum": "0.5",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "5.1",
+      "field": "density_pcu_km",
+      "printed": "91.41",
+      "calculated": "91.41428571428571428571428571",
+      "delta": "-0.00428571428571428571428571",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "5.1",
+      "field": "density_pcu_km_lane",
+      "printed": "30.47",
+      "calculated": "30.47142857142857142857142857",
+      "delta": "-0.00142857142857142857142857",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0.001666666666666666666666666667",
+      "status": "rounding_compatible"
+    },
+    {
+      "row_id": "5.2",
+      "field": "flow_pcu_h_lane",
+      "printed": "1379",
+      "calculated": "1379",
+      "delta": "0",
+      "printed_half_quantum": "0.5",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "5.2",
+      "field": "density_pcu_km",
+      "printed": "59.1",
+      "calculated": "59.1",
+      "delta": "0.0",
+      "printed_half_quantum": "0.05",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "5.2",
+      "field": "density_pcu_km_lane",
+      "printed": "19.7",
+      "calculated": "19.7",
+      "delta": "0.0",
+      "printed_half_quantum": "0.05",
+      "intermediate_rounding_bound": "0.01666666666666666666666666667",
+      "status": "exact"
+    },
+    {
+      "row_id": "6.1",
+      "field": "flow_pcu_h_lane",
+      "printed": "838",
+      "calculated": "838",
+      "delta": "0",
+      "printed_half_quantum": "0.5",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "6.1",
+      "field": "density_pcu_km",
+      "printed": "50.28",
+      "calculated": "50.28",
+      "delta": "0.00",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "6.1",
+      "field": "density_pcu_km_lane",
+      "printed": "16.76",
+      "calculated": "16.76",
+      "delta": "0.00",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0.001666666666666666666666666667",
+      "status": "exact"
+    },
+    {
+      "row_id": "6.2",
+      "field": "flow_pcu_h_lane",
+      "printed": "526",
+      "calculated": "526",
+      "delta": "0",
+      "printed_half_quantum": "0.5",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "6.2",
+      "field": "density_pcu_km",
+      "printed": "31.56",
+      "calculated": "31.56",
+      "delta": "0.00",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "6.2",
+      "field": "density_pcu_km_lane",
+      "printed": "10.52",
+      "calculated": "10.52",
+      "delta": "0.00",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0.001666666666666666666666666667",
+      "status": "exact"
+    },
+    {
+      "row_id": "6.3",
+      "field": "flow_pcu_h_lane",
+      "printed": "340.5",
+      "calculated": "340.5",
+      "delta": "0.0",
+      "printed_half_quantum": "0.05",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "6.3",
+      "field": "density_pcu_km",
+      "printed": "13.62",
+      "calculated": "13.62",
+      "delta": "0.00",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0",
+      "status": "exact"
+    },
+    {
+      "row_id": "6.3",
+      "field": "density_pcu_km_lane",
+      "printed": "6.81",
+      "calculated": "6.81",
+      "delta": "0.00",
+      "printed_half_quantum": "0.005",
+      "intermediate_rounding_bound": "0.0025",
+      "status": "exact"
+    }
+  ],
+  "check_status_counts": {
+    "exact": 34,
+    "rounding_compatible": 17,
+    "intermediate_rounding_compatible": 3
+  },
+  "figure_differences": [
+    {
+      "row_id": "1.2",
+      "field": "flow_pcu_h",
+      "table": "2205",
+      "figure": "2204",
+      "status": "unresolved_source_disagreement"
+    },
+    {
+      "row_id": "6.3",
+      "field": "flow_pcu_h",
+      "table": "681",
+      "figure": "618",
+      "status": "unresolved_source_disagreement"
+    },
+    {
+      "row_id": "4.4",
+      "field": "road_label",
+      "table": "Road 1 (towards Kanjur)",
+      "figure": "Towards Vikhroli",
+      "status": "unresolved_source_disagreement"
+    }
+  ],
+  "below_los_c": {
+    "density_table": 6,
+    "flow_table": 2,
+    "poster_narrative": 5,
+    "status": "unresolved_source_disagreement"
+  },
+  "limitations": [
+    "The poster does not state the survey date, time window, PCU factors or speed measurement method.",
+    "The later journal paper has a different title and is a separate version. Its search-indexed dates are not silently assigned to this poster.",
+    "Speed is labelled only as speed; it is not established as observed free-flow speed.",
+    "Densities are calculated from flow and speed and are not independent field observations.",
+    "No map coordinates or exact count-line locations are provided in this transcription.",
+    "No flow is a network capacity or a raw vehicle count. No value is assigned to a simulation link."
+  ],
+  "calibration_eligible": false
+}

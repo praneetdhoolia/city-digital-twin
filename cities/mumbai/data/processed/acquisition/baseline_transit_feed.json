@@ -1,0 +1,510 @@
+{
+  "source": "modelled_provisional_service_supply",
+  "input_sha256": {
+    "schedules/baseline_bus.zip": "497b42cbffbc24f7f11bb535e68a1edfdcbfa35323d5630ff7353fd1b09ee68f",
+    "registry/A_baseline_services.json": "96641b11601c0419fafea8f06921274189cb49f658f1068127c8f6f2ffc1fddb",
+    "data/processed/observed/osm_transport_relations.csv": "727f0ff9567863417095b80fd016828d3e880734d3981b7f6b6262a517088a01",
+    "data/processed/observed/osm_transport_points.csv": "95b51e278e8fcc2710fc57ad040032525538a5819de4140535a85e6012b067a9",
+    "data/processed/geospatial/osm_research.gpkg": "e95023a6a853e11501d57864be9c89e20e3b8e072300eda753c880bb5690e25e"
+  },
+  "output_sha256": "64b9af9eab1f66926d5f6d395ca3fda0e5404e648f5887667ab7ecd038a23629",
+  "generated_routes": [
+    {
+      "route_id": "BASE_3808111_0",
+      "osm_relation_id": "3808111",
+      "mode": "subway",
+      "stops_count": 12,
+      "departures_count": 138,
+      "duration_s": 1697,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_7684032_0",
+      "osm_relation_id": "7684032",
+      "mode": "subway",
+      "stops_count": 12,
+      "departures_count": 138,
+      "duration_s": 1693,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_7898597_0",
+      "osm_relation_id": "7898597",
+      "mode": "subway",
+      "stops_count": 27,
+      "departures_count": 138,
+      "duration_s": 4605,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_8130328_0",
+      "osm_relation_id": "8130328",
+      "mode": "train",
+      "stops_count": 25,
+      "departures_count": 88,
+      "duration_s": 7012,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_8414240_0",
+      "osm_relation_id": "8414240",
+      "mode": "train",
+      "stops_count": 9,
+      "departures_count": 88,
+      "duration_s": 2352,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_8418422_0",
+      "osm_relation_id": "8418422",
+      "mode": "train",
+      "stops_count": 8,
+      "departures_count": 88,
+      "duration_s": 2999,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_9622461_0",
+      "osm_relation_id": "9622461",
+      "mode": "train",
+      "stops_count": 25,
+      "departures_count": 88,
+      "duration_s": 6709,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_9623798_0",
+      "osm_relation_id": "9623798",
+      "mode": "train",
+      "stops_count": 18,
+      "departures_count": 88,
+      "duration_s": 3885,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_9953729_0",
+      "osm_relation_id": "9953729",
+      "mode": "train",
+      "stops_count": 8,
+      "departures_count": 88,
+      "duration_s": 6545,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_9953730_0",
+      "osm_relation_id": "9953730",
+      "mode": "train",
+      "stops_count": 8,
+      "departures_count": 88,
+      "duration_s": 6547,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11093105_0",
+      "osm_relation_id": "11093105",
+      "mode": "train",
+      "stops_count": 18,
+      "departures_count": 88,
+      "duration_s": 3884,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11094508_0",
+      "osm_relation_id": "11094508",
+      "mode": "train",
+      "stops_count": 16,
+      "departures_count": 88,
+      "duration_s": 8075,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11094509_0",
+      "osm_relation_id": "11094509",
+      "mode": "train",
+      "stops_count": 16,
+      "departures_count": 88,
+      "duration_s": 8075,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11491096_0",
+      "osm_relation_id": "11491096",
+      "mode": "train",
+      "stops_count": 7,
+      "departures_count": 88,
+      "duration_s": 4993,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11491107_0",
+      "osm_relation_id": "11491107",
+      "mode": "train",
+      "stops_count": 2,
+      "departures_count": 88,
+      "duration_s": 250,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11491142_0",
+      "osm_relation_id": "11491142",
+      "mode": "train",
+      "stops_count": 2,
+      "departures_count": 88,
+      "duration_s": 251,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11491143_0",
+      "osm_relation_id": "11491143",
+      "mode": "train",
+      "stops_count": 7,
+      "departures_count": 88,
+      "duration_s": 4994,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11491270_0",
+      "osm_relation_id": "11491270",
+      "mode": "train",
+      "stops_count": 26,
+      "departures_count": 88,
+      "duration_s": 7295,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11491271_0",
+      "osm_relation_id": "11491271",
+      "mode": "train",
+      "stops_count": 26,
+      "departures_count": 88,
+      "duration_s": 7298,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11511059_0",
+      "osm_relation_id": "11511059",
+      "mode": "train",
+      "stops_count": 29,
+      "departures_count": 88,
+      "duration_s": 8499,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11511060_0",
+      "osm_relation_id": "11511060",
+      "mode": "train",
+      "stops_count": 29,
+      "departures_count": 88,
+      "duration_s": 8504,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11511942_0",
+      "osm_relation_id": "11511942",
+      "mode": "train",
+      "stops_count": 14,
+      "departures_count": 88,
+      "duration_s": 4060,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11511950_0",
+      "osm_relation_id": "11511950",
+      "mode": "train",
+      "stops_count": 9,
+      "departures_count": 88,
+      "duration_s": 2349,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11511951_0",
+      "osm_relation_id": "11511951",
+      "mode": "train",
+      "stops_count": 15,
+      "departures_count": 88,
+      "duration_s": 4521,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11512072_0",
+      "osm_relation_id": "11512072",
+      "mode": "train",
+      "stops_count": 7,
+      "departures_count": 88,
+      "duration_s": 2787,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11512075_0",
+      "osm_relation_id": "11512075",
+      "mode": "train",
+      "stops_count": 8,
+      "departures_count": 88,
+      "duration_s": 3002,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11512076_0",
+      "osm_relation_id": "11512076",
+      "mode": "train",
+      "stops_count": 7,
+      "departures_count": 88,
+      "duration_s": 2789,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11514142_0",
+      "osm_relation_id": "11514142",
+      "mode": "train",
+      "stops_count": 19,
+      "departures_count": 88,
+      "duration_s": 14735,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11514143_0",
+      "osm_relation_id": "11514143",
+      "mode": "train",
+      "stops_count": 22,
+      "departures_count": 88,
+      "duration_s": 14600,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11514202_0",
+      "osm_relation_id": "11514202",
+      "mode": "train",
+      "stops_count": 22,
+      "departures_count": 88,
+      "duration_s": 14594,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_11514203_0",
+      "osm_relation_id": "11514203",
+      "mode": "train",
+      "stops_count": 19,
+      "departures_count": 88,
+      "duration_s": 16084,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_13989912_0",
+      "osm_relation_id": "13989912",
+      "mode": "subway",
+      "stops_count": 17,
+      "departures_count": 138,
+      "duration_s": 2656,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_13989913_0",
+      "osm_relation_id": "13989913",
+      "mode": "subway",
+      "stops_count": 17,
+      "departures_count": 138,
+      "duration_s": 2654,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_13989914_0",
+      "osm_relation_id": "13989914",
+      "mode": "subway",
+      "stops_count": 14,
+      "departures_count": 138,
+      "duration_s": 2371,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_13989915_0",
+      "osm_relation_id": "13989915",
+      "mode": "subway",
+      "stops_count": 14,
+      "departures_count": 138,
+      "duration_s": 2372,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_16533435_0",
+      "osm_relation_id": "16533435",
+      "mode": "subway",
+      "stops_count": 11,
+      "departures_count": 138,
+      "duration_s": 1566,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_16533436_0",
+      "osm_relation_id": "16533436",
+      "mode": "subway",
+      "stops_count": 11,
+      "departures_count": 138,
+      "duration_s": 1567,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_16777766_0",
+      "osm_relation_id": "16777766",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 38,
+      "duration_s": 247,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_16777766_1",
+      "osm_relation_id": "16777766",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 38,
+      "duration_s": 247,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_17876723_0",
+      "osm_relation_id": "17876723",
+      "mode": "subway",
+      "stops_count": 27,
+      "departures_count": 138,
+      "duration_s": 4618,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_19738237_0",
+      "osm_relation_id": "19738237",
+      "mode": "train",
+      "stops_count": 7,
+      "departures_count": 88,
+      "duration_s": 3386,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_19745327_0",
+      "osm_relation_id": "19745327",
+      "mode": "train",
+      "stops_count": 7,
+      "departures_count": 88,
+      "duration_s": 3385,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_19764205_0",
+      "osm_relation_id": "19764205",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 38,
+      "duration_s": 3187,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_19764205_1",
+      "osm_relation_id": "19764205",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 38,
+      "duration_s": 3187,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_19872862_0",
+      "osm_relation_id": "19872862",
+      "mode": "train",
+      "stops_count": 17,
+      "departures_count": 88,
+      "duration_s": 12391,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_20403808_0",
+      "osm_relation_id": "20403808",
+      "mode": "subway",
+      "stops_count": 6,
+      "departures_count": 138,
+      "duration_s": 822,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_20403809_0",
+      "osm_relation_id": "20403809",
+      "mode": "subway",
+      "stops_count": 6,
+      "departures_count": 138,
+      "duration_s": 808,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_20403864_0",
+      "osm_relation_id": "20403864",
+      "mode": "subway",
+      "stops_count": 4,
+      "departures_count": 138,
+      "duration_s": 526,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_20403865_0",
+      "osm_relation_id": "20403865",
+      "mode": "subway",
+      "stops_count": 4,
+      "departures_count": 138,
+      "duration_s": 525,
+      "geometry_source": "mapped_native_stops_or_ferry_way",
+      "timetable_source": "modelled_from_provisional_registry"
+    }
+  ],
+  "skipped": [],
+  "generated_route_counts": {
+    "subway": 14,
+    "train": 31,
+    "ferry": 4
+  },
+  "limitation": "Operating frequencies/times are provisional; historical/current operation and corridor details require later refinement. No ridership targets were used."
+}

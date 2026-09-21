@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_ciad_92a8a23c11b582d2.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/CIAD/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/CIAD/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details CSMI Airport-T1",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:21.957469+00:00",
+      "sha256": "92a8a23c11b582d286ce1a1ceb5ee4fd494902c0d57d8139f2cd62c8a2b4de10",
+      "bytes": 21696,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

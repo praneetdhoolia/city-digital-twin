@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "url": "https://sciforum.net/api/paper/5102/download",
+      "final_url": "https://sciforum.net/api/paper/5102/download",
+      "content_type": "application/json",
+      "retrieved": "2026-09-18T17:48:02.665Z",
+      "bytes": 2516017,
+      "path": "data/raw/traffic/jvlr_conference_poster_2026_response_3cd8dd8cf3e6ac4f.json",
+      "sha256": "3cd8dd8cf3e6ac4f86b1ad7ca1d5fbe147788c49f13df677d53ffc52d4906d00",
+      "source": "JVLR IOCUS 2026 author poster download response",
+      "licence": "Publisher and authors; reuse terms unverified",
+      "coverage": "Public download endpoint observed from poster button on conference paper 31064; JSON contains base64 PDF. Conference poster is an earlier version than the journal article.",
+      "producing_script": "extract/import_browser_acquisition.py",
+      "transport": "Connected Chrome public fetch; default certificate verification",
+      "validation_status": "acquired_unvalidated"
+    }
+  ]
+}

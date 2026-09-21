@@ -1,0 +1,514 @@
+{
+  "layer": "B",
+  "title": "Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)",
+  "fields": {
+    "B.activity.detour_factor": {
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": null,
+      "sweep_basis": "the interquartile range of the per-pair ratios over 595 population-weighted zone pairs, re-measured on the current network 4 Sep 2026 (9.142); the 551-pair figure it replaces was routed over the network as it stood before the 16 August rebuild",
+      "status": "active",
+      "value": 1.3276,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Straight-line to network distance, routed over the observed A1 road graph, re-measured on the CURRENT network 4 Sep 2026 (9.142): 1.3376 over 551 routed pairs became 1.3276 over 595, the extra pairs being zone pairs the pre-16-August network could not route between. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "B.activity.short_trip_band_km": {
+      "units": "km_network",
+      "source": "literature",
+      "sweep": null,
+      "status": "active",
+      "held_fixed": {
+        "rule": "the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - the band share and its edge are one observation and move together.",
+        "decisions_ref": "9.69"
+      },
+      "value": 1.0,
+      "description": "The network-distance edge of the short-trip band whose observed share short_trip_band_share carries. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.census.thin_cell_min_journeys": {
+      "units": "journeys",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 100,
+      "description": "Reporting flag for the demographic mode-share measurement (issue #50): an observed census cell under this many journeys is marked too thin to constrain anything - ABS randomly perturbs small cells, so tiny aggregates carry perturbation noise on top of sampling noise. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/analyse/measure_demographic_modes.py",
+        "src/build/build_matsim_plans.py"
+      ]
+    },
+    "B.counts.station_match_radius_m": {
+      "units": "metres",
+      "source": "assumed",
+      "sweep": [
+        60.0,
+        120.0
+      ],
+      "sweep_basis": "measured on data/processed/validation/count_station_links.csv: the largest ACCEPTED match is 119.7 m, so 120 m is exactly binding. Tightening costs targets at a measured rate - at 100 m six of the 116 matched stations lose their link and at 60 m twenty-three do - which is the lower bound. The upper bound is the current value because loosening cannot gain anything already in the file; whether a larger radius would resolve the three stations that match nothing (issue 10) has NOT been tested, and testing it means re-running the mapper and regenerating a committed artefact.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 120.0,
+      "description": "Radius within which a permanent traffic count station may be attached to a network link it is taken to count. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/analyse/map_count_stations.py"
+      ]
+    },
+    "B.mode.bike_feasible_km": {
+      "value": 0.0,
+      "units": "km_straight_line",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.modeAvailability.bikeFeasibleKm on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "modeAvailability.bikeFeasibleKm"
+    },
+    "B.mode.walk_feasible_km": {
+      "value": 0.0,
+      "units": "km_straight_line",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.modeAvailability.walkFeasibleKm on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "modeAvailability.walkFeasibleKm"
+    },
+    "B.population.age_bands": {
+      "units": "years",
+      "source": "definition",
+      "status": "active",
+      "value": [
+        [
+          0,
+          4
+        ],
+        [
+          5,
+          9
+        ],
+        [
+          10,
+          14
+        ],
+        [
+          15,
+          19
+        ],
+        [
+          20,
+          24
+        ],
+        [
+          25,
+          29
+        ],
+        [
+          30,
+          34
+        ],
+        [
+          35,
+          39
+        ],
+        [
+          40,
+          44
+        ],
+        [
+          45,
+          49
+        ],
+        [
+          50,
+          54
+        ],
+        [
+          55,
+          59
+        ],
+        [
+          60,
+          64
+        ],
+        [
+          65,
+          69
+        ],
+        [
+          70,
+          74
+        ],
+        [
+          75,
+          79
+        ],
+        [
+          80,
+          120
+        ]
+      ],
+      "description": "Age banding for population synthesis: the five-year bands of the Census of India 2011 C-14 table the package holds (data/processed/observed/census_2011_age_sex.csv), 80+ open.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_population.py"
+      ]
+    },
+    "B.population.bike_min_age": {
+      "value": 6,
+      "units": "years",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.modeAvailability.bikeMinAge on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "modeAvailability.bikeMinAge"
+    },
+    "B.population.vehicle_roster": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "census",
+          "per_person"
+        ],
+        "basis": "adopted from the reference city: Whether a household's drivers share the cars the census says it owns. `per_person` is MATSim's own behaviour and every arm before 9.146: PrepareForSim gives each person a car of their own under qsim.vehiclesSource=modeVehicleTypesFromVehiclesData, so a household can put more cars on the road than it holds. `census` maps every licensed, car-available member of a household with n >= 1 vehicles (B1 `household_vehicles`, stamped on the population as `householdVehicles`) to one of n shared vehicles hh<id>_car<k>, assigned round-robin in person-id order, at the first iteration after PrepareForSim; the agent source parks each shared car once, where the first member starts; whoever wants it while it is out waits for it under RUN.qsim.vehicle_behavior. Measured at the F26 iteration-100 gate (aborted_20260906T100429_300it_25pct): 12,317 car legs, 3.28 % of resident car legs across 5,279 households, began while every vehicle the household owns was already out - 4,265 of them a one-car household with two members driving at once - and the census holds 81,384 households (33.0 %) with more licensed drivers than vehicles. A one-car household is EXACT under `census`; a multi-car household is assigned rather than pooled, because MATSim maps a person to one vehicle per mode, and that limit is stated rather than hidden. The sweep is over the MECHANISM: running both measures how much of car's excess and ride's deficit the second car supplied."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "householdVehicles.roster",
+      "value": "per_person",
+      "description": "Whether a household's drivers share the cars the census gives it: `census` - every driver is mapped to one of the household's `householdVehicles` shared cars and waits for it when it is out; `per_person` - each person drives a car of their own (MATSim's default, pre-9.146). Switched off for this baseline (\"per_person\"): the baseline population carries no households; car access is a person attribute.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/java/citysim/HouseholdVehiclesConfigGroup.java",
+        "src/java/citysim/HouseholdVehicleRoster.java",
+        "src/java/citysim/HouseholdCarDepartureHandler.java",
+        "src/java/citysim/TolerantAgentSource.java",
+        "src/build/build_matsim_plans.py"
+      ]
+    },
+    "B.ride.bound_pairing_window_min": {
+      "units": "minutes",
+      "source": "derived",
+      "status": "placeholder",
+      "derived_from": {
+        "fields": [
+          "RUN.replanning.time_mutation_range_s"
+        ],
+        "identity": "bound_pairing_window_min = 2 * time_mutation_range_s / 60"
+      },
+      "matsim_param": "ridePairing.boundWindowMinutes",
+      "value": 60.0,
+      "description": "SINCE 9.120 THIS IS NOT A PAIRING TOLERANCE. Adopted from the reference city and INERT here: B.ride.pairing_enabled = false switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/java/citysim/RidePairingConfigGroup.java"
+      ]
+    },
+    "B.ride.coherence_scope": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "declared",
+          "inferred"
+        ],
+        "basis": "adopted from the reference city: Whom EscortCoherenceListener may re-propose a pair for. `inferred` is the behaviour of every arm before 9.146 and is kept as the control: any household member whose trip matches a household car leg on endpoints and clock is offered `ride`, and a drifted household driver whose non-car trip matches a member's ride is offered `car`, whether or not the demand bound them. `declared` restricts both passes to the identity every other ride mechanism has used since 9.120 - a trip in the person's `boundRideTrips`, with a driver in their `boundDriver` - so the listener keeps DECLARED pairs coherent and invents none. Measured at the F26 iteration-100 gate (aborted_20260906T100429_300it_25pct): 12,461 of 66,909 selected ride legs sat on persons the demand never bound, the listener re-proposing ~5,000 inferred ride plans an iteration while GatedSubtourModeChoice refused 192,000 proposals of exactly that kind; the inferred legs were the ones that never paired (miss_window + miss_endpoints 13,168 against miss_declared_absent 719), executed as walk or drive, and held plan-memory slots against real alternatives. The sweep is over the MECHANISM: running both measures how much of the pairing loss and the walk/car residue the inferred proposals supplied."
+      },
+      "sweep_role": "uncertainty",
+      "status": "placeholder",
+      "matsim_param": "ridePairing.coherenceScope",
+      "value": "declared",
+      "description": "Whom the coherence listener may re-propose a ride pair for: `declared` - only a demand-bound trip with its named driver (boundRideTrips / boundDriver); `inferred` - any household member matching a household car leg on endpoints and clock (pre-9.146). Adopted from the reference city and INERT here: B.ride.pairing_enabled = false switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/java/citysim/RidePairingConfigGroup.java",
+        "src/java/citysim/EscortCoherenceListener.java"
+      ]
+    },
+    "B.ride.declared_pair_meeting": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "driver_detour",
+          "passenger_links"
+        ],
+        "basis": "adopted from the reference city: Where a DECLARED ride pair meets when the passenger's and the driver's links differ. `passenger_links` is the behaviour before 9.128: the named driver must still satisfy B.ride.pairing_rule on the passenger's own two links, so a shared ride bound on a suburb-to-suburb trip (9.124) is never realised - two households in one SA2 do not share a link, and the valid F18 arm's iteration 0 refused 2,053 of 6,966 ride legs on endpoints for exactly that reason. `driver_detour` routes the driver's car leg, at BeforeMobsim and with the run's own car router, through each carried passenger's origin link (in departure order) and then each destination link, and on to the driver's own destination; the passenger boards at their own link as the car passes it and alights at their own, and the pairing books the pass time. The detour is driven on the network and the driver's score pays for it, so a passenger too far out of the driver's way costs the driver what it costs and no threshold decides who is served. A walking meeting point was built first and measured on a 1% smoke at a mean 8-11 km walked to and from the driver's links - nobody walks that to a lift - and was replaced by this. The sweep is over the MECHANISM: running both measures how much of the realised ride share the detour itself supplies."
+      },
+      "sweep_role": "uncertainty",
+      "status": "placeholder",
+      "matsim_param": "ridePairing.declaredMeeting",
+      "value": "driver_detour",
+      "description": "Where a declared ride pair meets when the two members' links differ: `driver_detour` routes the driver's car leg through the passenger's origin and destination links and the passenger boards and alights at their own; `passenger_links` requires the driver to satisfy the pairing rule on the passenger's links (pre-9.128). Adopted from the reference city and INERT here: B.ride.pairing_enabled = false switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/java/citysim/RidePairingConfigGroup.java",
+        "src/java/citysim/RidePairingEngine.java"
+      ]
+    },
+    "B.ride.escort_coherence_rate": {
+      "units": "share_per_iteration",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          0.0,
+          0.5
+        ],
+        "basis": "adopted from the reference city: A SEARCH parameter, not a preference: how often a DECOHERED escort pair is offered the coherent plan back, never how attractive riding is. ZERO RECOVERS TODAY'S BEHAVIOUR EXACTLY, which is what makes the mechanism's effect measurable rather than assumed, and is the reason the interval starts there. The upper bound is where re-proposal would start to dominate the declared innovation weights (SubtourModeChoice 0.1, ReRoute 0.15) and the search would be re-proposing faster than it explores. The value is not fitted to any target and cannot be: the proposed plan is scored like any other and ChangeExpBeta keeps it only if it earns its place, so this field moves how QUICKLY a coherent pair can be rediscovered, not whether it survives."
+      },
+      "sweep_role": "uncertainty",
+      "status": "placeholder",
+      "matsim_param": "ridePairing.escortCoherenceRate",
+      "value": 0.4,
+      "description": "Rate at which an escort driver and the household member they were generated to carry are re-offered the coherent state after MATSim's per-agent replanning has split them. Adopted from the reference city and INERT here: B.ride.pairing_enabled = false switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/java/citysim/EscortCoherenceListener.java"
+      ]
+    },
+    "B.ride.joint_coherence_rate": {
+      "units": "share_per_iteration",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          0.0,
+          0.5
+        ],
+        "basis": "adopted from the reference city: The same SEARCH parameter as B.ride.escort_coherence_rate, pointed at joint (non-escort) household pairs: how often a decohered driver-companion pair is offered the coherent state back, never how attractive riding is. ZERO RECOVERS THE ESCORT-ONLY BEHAVIOUR EXACTLY, so the joint extension is measurable on its own. The upper bound mirrors the escort rate: above it, re-proposal would dominate the declared innovation weights and the search would re-propose faster than it explores. Not fitted to any target and cannot be - ChangeExpBeta keeps a proposed plan only if it earns its place."
+      },
+      "sweep_role": "uncertainty",
+      "status": "placeholder",
+      "matsim_param": "ridePairing.jointCoherenceRate",
+      "value": 0.4,
+      "description": "Rate at which a joint-tour driver and their bound household companion are re-offered the coherent car+ride state after per-agent replanning has split them. Adopted from the reference city and INERT here: B.ride.pairing_enabled = false switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/java/citysim/RidePairingConfigGroup.java"
+      ]
+    },
+    "B.ride.max_passengers_per_vehicle": {
+      "units": "persons",
+      "source": "assumed",
+      "sweep": [
+        1,
+        4
+      ],
+      "sweep_basis": "The upper bound is the physical one: a five-seat car minus the driver, which is what the overwhelming majority of the registered light fleet is. The lower bound is one passenger per driver, the most conservative reading of a household lift. No observation splits household lifts by party size - HTS reports Vehicle passenger as a share of trips, not an occupancy distribution - so the cap is assumed within physical bounds and swept. It is not binding at the measured pairing rates and the diagnostic reports how often it refuses, so a run in which it starts to bind is visible rather than silent.",
+      "sweep_role": "uncertainty",
+      "status": "placeholder",
+      "matsim_param": "ridePairing.maxPassengersPerVehicle",
+      "value": 4,
+      "description": "How many passengers one driver's leg may carry. Adopted from the reference city and INERT here: B.ride.pairing_enabled = false switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.ride.pairing_enabled": {
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "matsim_param": "ridePairing.enabled",
+      "value": false,
+      "description": "Whether a `ride` leg may NAME the household member who drives it, and take that driver's realised travel time instead of its own routed one. Switched off for this baseline (false): the baseline population carries no households, so no ride can name its driver.",
+      "decisions_ref": "9.202"
+    },
+    "B.ride.pairing_rule": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "both_links",
+          "route_contains",
+          "origin_link",
+          "dest_link",
+          "window_only"
+        ],
+        "basis": "adopted from the reference city: Which of the driver's links the passenger's must coincide with. `both_links` is the declared value: the driver's leg starts and ends on the passenger's own two links, so the two are the same trip and handing the driver's realised travel time to the passenger is correct rather than merely closer. `route_contains` (added 9.102) requires the passenger's two links to lie ON the driver's routed path in the order the driver drives them, and the engine apportions the driver's time by the carried segment's share of route length - unity when the segment is the whole route, so both_links is the special case and the two are directly comparable. It is the only rule that CAN represent a drop-off en route, which is the commonest car-passenger trip there is, and it was built because 64.4% of pairing failures are the `miss_endpoints` class. **It is not the declared value, because it was measured and it does not help**: a paired 1%/40-iteration diagnostic differing in this field alone (ride_rule_control_1pct vs ride_rule_contains_1pct) moved the pair rate 0.5069 -> 0.5113 (+0.44 pp) and miss_endpoints 1,257 -> 1,233, while ride mode share went 9.6748 -> 9.4513 and walk 37.6154 -> 39.2871 - the wrong way, and at a size indistinguishable from one seed's noise. The reason is upstream: a driver routed home-to-work has no escort stop, so the router has no reason to pass the passenger's destination either, and relaxing the test from identity to containment finds almost nothing more. That CONFIRMS 9.92's conclusion that both_links stays. The three loosest rules match trips that need not overlap at all and remain sensitivities, never results. Their spread is large and measured (9.44): on the relaxed 25% arm at +-30 min the pairable share is 0.001% under both_links, 1.5% under origin_link, 1.4% under dest_link and 5.6% under window_only."
+      },
+      "sweep_role": "answer",
+      "status": "placeholder",
+      "matsim_param": "ridePairing.rule",
+      "value": "both_links",
+      "description": "The spatial coincidence a pairing requires, expressed on LINK IDENTITY rather than on distance - no coordinate, no radius and no place enters the model, so the rule reads identically for a city the framework has never seen. Adopted from the reference city and INERT here: B.ride.pairing_enabled = false switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "B.ride.pairing_window_min": {
+      "units": "minutes",
+      "source": "assumed",
+      "sweep": [
+        5.0,
+        60.0
+      ],
+      "sweep_basis": "No local observation of how far apart a household lift's two departures may be exists, and HTS carries no household-linked trip records at all, so the tolerance is assumed and swept rather than fitted. The lower bound is a tight coincidence; the upper is an hour, beyond which calling two departures one trip stops being credible. MEASURED SENSITIVITY on the relaxed 25% pilot arm (9.44): the share of ride legs with ANY household car leg in the window runs 1.1% at +-5 min, 3.1% at +-15, 5.6% at +-30 and 15.1% at +-120, so this field moves the pairing rate by an order of magnitude and may not be pinned.",
+      "sweep_role": "uncertainty",
+      "status": "placeholder",
+      "matsim_param": "ridePairing.windowMinutes",
+      "value": 15.0,
+      "description": "How far apart a passenger's and a driver's PLANNED departures may be and still be treated as one trip. Adopted from the reference city and INERT here: B.ride.pairing_enabled = false switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.ride.physical_boarding": {
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "placeholder",
+      "matsim_param": "ridePairing.physicalBoarding",
+      "value": true,
+      "description": "Whether a PAIRED ride passenger physically BOARDS the driver's vehicle in the mobsim (a real PersonEntersVehicleEvent, every link ridden, alighting at the shared destination link) instead of inheriting the driver's clock by teleport. Adopted from the reference city and INERT here: B.ride.pairing_enabled = false switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "B.ride.pickup_dwell_s": {
+      "units": "seconds",
+      "source": "assumed",
+      "sweep": [
+        0.0,
+        120.0
+      ],
+      "sweep_basis": "No measurement of pickup dwell exists for this city, or for any comparable one in the package, so the value is swept and NEVER fitted. The default is deliberately NEUTRAL. The car-minus-ride residual this lane exists to remove was MEASURED from the pilot arms' own output_legs at about 5 s at 25% and 13 s at 10%, flat across every distance bin below 50 km; a one-minute friction would therefore be five to twelve times the entire quantity it was meant to explain. Sizing this to close that gap is calibration wearing a mechanism's clothes and was REFUSED. The upper bound is two minutes, which is already far beyond what the residual can bear, and exists so the sweep can show that.",
+      "sweep_role": "uncertainty",
+      "status": "placeholder",
+      "matsim_param": "ridePairing.pickupDwellSeconds",
+      "value": 0.0,
+      "description": "Seconds added to a PAIRED passenger's travel time for the act of being picked up. Adopted from the reference city and INERT here: B.ride.pairing_enabled = false switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "B.ride.remode_unpaired": {
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "placeholder",
+      "matsim_param": "ridePairing.remodeUnpaired",
+      "value": true,
+      "description": "Whether an UNPAIRED ride leg is re-moded to network-simulated walk at the BeforeMobsim boundary - the 9.51 standing directive's own ruling (every ride physically in a car, no exceptions, no teleportation) enacted without inventing a parameter: a ride trip no household driver can physically serve is not a ride trip, it walks, scores accordingly, and co-evolution reassigns the tour - so the surviving ride share is EMERGENT from the physical driver supply rather than declared. Adopted from the reference city and INERT here: B.ride.pairing_enabled = false switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "B.ride.unpaired_fallback": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "licensed_drive_else_walk",
+          "walk"
+        ],
+        "basis": "adopted from the reference city: What an unpairable ride leg is EXECUTED as for that mobsim. `walk` was the only behaviour before 9.105 and reproduces every earlier arm exactly, which is why it is kept. It was never argued for as a behaviour - 9.55 chose it so that a failed lift would SCORE badly and co-evolution would reassign the tour, and the walk was a means to that end. Measured, the means dominates: at iteration 100 of 20260829T172145_1000it_10pct, 16,153 unpaired ride legs and 1,602 refused taxi legs are forced to walk in a single iteration - 31% of all walk trips - and walk's mean trip length is 8.75 km against the 0.7 km this package already declares as observed (C.constraint.trip_length_km.walk), with 46% of walk trips over 5 km and the longest 91.4 km, a twenty-hour walk. Of walk trips over 5 km, 14,910 belong to agents holding BOTH a licence and a car, so this is not people without options. `licensed_drive_else_walk` executes the leg as CAR when the passenger holds a licence and has a car available, and leaves everyone else walking: a household whose lift falls through drives, and only someone who cannot drive is left on foot. It is a behavioural claim, not a fit device - it is chosen because a 10 km forced walk is not a behaviour any person exhibits, and it must be measured against the `walk` arm like any other declared value. The ride alternative is restored at AfterMobsim under BOTH members; 9.81's one-way ratchet must not return."
+      },
+      "sweep_role": "uncertainty",
+      "status": "placeholder",
+      "matsim_param": "ridePairing.unpairedFallback",
+      "value": "licensed_drive_else_walk",
+      "description": "How a ride leg that no household driver can serve is physically executed for the iteration in which it failed. Adopted from the reference city and INERT here: B.ride.pairing_enabled = false switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/java/citysim/RidePairingConfigGroup.java",
+        "src/java/citysim/RidePairingEngine.java"
+      ]
+    },
+    "B.ride.wait_for_driver": {
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "placeholder",
+      "matsim_param": "ridePairing.waitForDriver",
+      "value": true,
+      "description": "Whether a booked passenger whose car is not at the meeting point yet physically WAITS for it, bounded by the declared pairing window (B.ride.pairing_window_min - the same tolerance the booking was made under, so no second number is invented). Adopted from the reference city and INERT here: B.ride.pairing_enabled = false switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "B.seed.master": {
+      "units": "integer_seed",
+      "source": "definition",
+      "status": "active",
+      "value": 20260810,
+      "description": "The one seed everything synthetic derives from; city.json declares it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.taxi.daily_trips_band": {
+      "units": "trips_per_day",
+      "source": "literature",
+      "status": "active",
+      "held_fixed": {
+        "rule": "A CONSTRAINT, NEVER A TARGET (9.8/9.13): the pre-registered 67/143 target split cannot grow. The modelled taxi volume is REPORTED against this band; nothing is fitted to it.",
+        "decisions_ref": "9.42, 9.75, 9.76",
+        "departure_requires": "the levy trip counts, if ever requested"
+      },
+      "value": [
+        15000,
+        25000
+      ],
+      "description": "The inferred central band of daily point-to-point trips in the study area (IPART 2025 incidence x usage-rate assumptions; HTS Hunter \"Other\" ceiling 35,000/weekday). Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/analyse/extract_metrics.py"
+      ]
+    },
+    "B.taxi.deadhead_min": {
+      "units": "minutes",
+      "source": "assumed",
+      "sweep": [
+        0.0,
+        30.0
+      ],
+      "sweep_basis": "DECISIONS.md 9.99: the deadhead stands in for the average cost of reaching the next fare and is declared as unavailable time rather than routed. Zero (a fleet that teleports between fares) is the lower bound so the effect of empty running is itself a sweep member; 30 minutes is a generous suburban repositioning. No Newcastle operator data; no observed spread.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "taxiFleet.deadheadMinutes",
+      "value": 12.0,
+      "description": "Empty running between setting one passenger down and reaching the next - the part of a vehicle’s day that carries nobody, and the reason a fleet of N serves fewer trips than the arithmetic of fare durations alone suggests. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "B.taxi.fleet_size": {
+      "units": "vehicles",
+      "source": "assumed",
+      "status": "active",
+      "matsim_param": "taxiFleet.fleetSize",
+      "value": 800,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "adopted from the reference city, where it is derived from B.taxi.daily_trips_band, B.taxi.vehicle_trips_per_day; those fields are not declared for this city, so the value is held",
+        "decisions_ref": "9.202",
+        "departure_requires": "declaring B.taxi.daily_trips_band, B.taxi.vehicle_trips_per_day for this city"
+      },
+      "description": "Taxi and rideshare vehicles serving the study area, AT FULL SCALE - the engine scales it by qsim.flowCapacityFactor for the same reason the SCATS saturation flow is scaled (9.88): a sampled run is a city whose capacities were scaled, and a full-scale fleet serving a tenth of the demand would constrain nothing. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "B.taxi.max_wait_min": {
+      "units": "minutes",
+      "source": "assumed",
+      "sweep": [
+        10.0,
+        45.0
+      ],
+      "sweep_basis": "DECISIONS.md 9.99: no Newcastle abandonment figure is published, so the wait at which a passenger gives up is assumed and bracketed from a tolerant 10 minutes to a patient 45; half to a little over twice the value. No observed spread.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "taxiFleet.maxWaitMinutes",
+      "value": 20.0,
+      "description": "How long a passenger waits for a vehicle before abandoning the taxi trip. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "B.taxi.min_unaccompanied_age": {
+      "value": 18,
+      "units": "years",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.modeAvailability.taxiMinAge on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "modeAvailability.taxiMinAge"
+    }
+  }
+}

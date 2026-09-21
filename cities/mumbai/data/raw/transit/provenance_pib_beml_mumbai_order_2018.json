@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/pib_beml_mumbai_order_2018_15928e81e7878889.html",
+      "url": "https://www.pib.gov.in/newsite/PrintRelease.aspx?lang=2&reg=48&relid=185919",
+      "final_url": "https://www.pib.gov.in/newsite/PrintRelease.aspx?lang=2&reg=48&relid=185919",
+      "source": "PIB BEML Mumbai Metro Lines 2A, 2B and 7 rolling stock order, November 2018",
+      "licence": "Publisher primary publication; reuse terms unverified",
+      "retrieved": "2026-09-18T19:07:39.950665+00:00",
+      "sha256": "15928e81e787888967c2ecb756cc38829cdd972bb8b58bd86a693bdabd78aa42",
+      "bytes": 23527,
+      "content_type": "text/html; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Procurement announcement: 63 six-car trains and nominal 300 passengers per coach; no seating/standing-density split and no proof of current fleet assignment."
+    }
+  ]
+}

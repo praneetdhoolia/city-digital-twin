@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_bus_pass_2025_b59d8697af65dc34.pdf",
+      "url": "https://www.bestundertaking.com/assets/pdf/BusPass-2025.pdf",
+      "final_url": "https://www.bestundertaking.com/assets/pdf/BusPass-2025.pdf",
+      "source": "BEST official Bus Pass Scheme",
+      "licence": "BEST publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:44:30.451085+00:00",
+      "sha256": "b59d8697af65dc34ac5b3e5558c6c5cf6e8f43bc1e68d069ef5a9d4d3a8a534c",
+      "bytes": 1194913,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification."
+    }
+  ]
+}

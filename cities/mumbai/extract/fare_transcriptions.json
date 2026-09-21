@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "records": [
+    {
+      "source": "observed",
+      "source_id": "mmr_auto_tariff_20260901",
+      "source_sha256": "0d7213e39ea3e93b8474a84669a8d720131b3009867580ac8093046798326c9b",
+      "source_pages": [
+        1,
+        4
+      ],
+      "method": "Visual transcription of original scanned PDF pages 1 and 4; selected table rows independently read.",
+      "mode": "autorickshaw",
+      "issuer": "MMRTA Region",
+      "index_publication_date": "2026-09-01",
+      "effective_date_confirmation": "Index date; effective-date notification not yet acquired.",
+      "minimum_fare_inr": 27,
+      "minimum_distance_km": 1.5,
+      "distance_rate_inr_per_km": 18.22,
+      "night_surcharge_percent": 25,
+      "night_start_local": "00:00",
+      "night_end_local": "05:00",
+      "air_conditioning_surcharge_percent": null,
+      "waiting_charge_percent_of_distance_rate_per_minute": 10,
+      "luggage_charge_inr_per_qualifying_package": 6,
+      "luggage_size_threshold_cm": [
+        60,
+        40
+      ],
+      "rounding": "Nearest rupee, half rupee rounds upwards. Apply night multiplier before rounding; minimum fare is separately stated.",
+      "table_checks": [
+        {
+          "distance_km": 1.5,
+          "normal_fare_inr": 27,
+          "night_fare_inr": 34,
+          "page": 1
+        },
+        {
+          "distance_km": 2.4,
+          "normal_fare_inr": 44,
+          "night_fare_inr": 55,
+          "page": 1
+        },
+        {
+          "distance_km": 3.6,
+          "normal_fare_inr": 66,
+          "night_fare_inr": 82,
+          "page": 1
+        },
+        {
+          "distance_km": 30,
+          "normal_fare_inr": 547,
+          "night_fare_inr": 683,
+          "page": 4
+        }
+      ],
+      "limitations": [
+        "App aggregator and shared autorickshaw fares are separate products.",
+        "Waiting and luggage rules require applicable eligibility and timing; not an observed waiting-time distribution.",
+        "The full revised table remains in the immutable PDF; these selected entries do not replace it."
+      ]
+    },
+    {
+      "source": "observed",
+      "source_id": "mmr_metered_taxi_tariff_20260901",
+      "source_sha256": "5db8147504e7871eb442c429d1f620e4f3b78b56a7a185b970f3fc13add7badf",
+      "source_pages": [
+        1,
+        4
+      ],
+      "method": "Visual transcription of original scanned PDF pages 1 and 4; selected table rows independently read.",
+      "mode": "metered_black_yellow_taxi",
+      "issuer": "MMRTA Region",
+      "index_publication_date": "2026-09-01",
+      "effective_date_confirmation": "Index date; effective-date notification not yet acquired.",
+      "minimum_fare_inr": 33,
+      "minimum_distance_km": 1.5,
+      "distance_rate_inr_per_km": 21.9,
+      "night_surcharge_percent": 25,
+      "night_start_local": "00:00",
+      "night_end_local": "05:00",
+      "air_conditioning_surcharge_percent": 10,
+      "waiting_charge_percent_of_distance_rate_per_minute": 10,
+      "luggage_charge_inr_per_qualifying_package": 6,
+      "luggage_size_threshold_cm": [
+        60,
+        40
+      ],
+      "rounding": "Nearest rupee, half rupee rounds upwards. Apply night multiplier before rounding; minimum fare is separately stated.",
+      "table_checks": [
+        {
+          "distance_km": 1.5,
+          "normal_fare_inr": 33,
+          "night_fare_inr": 41,
+          "page": 1
+        },
+        {
+          "distance_km": 2.4,
+          "normal_fare_inr": 53,
+          "night_fare_inr": 66,
+          "page": 1
+        },
+        {
+          "distance_km": 3.6,
+          "normal_fare_inr": 79,
+          "night_fare_inr": 99,
+          "page": 1
+        },
+        {
+          "distance_km": 30,
+          "normal_fare_inr": 657,
+          "night_fare_inr": 821,
+          "page": 4
+        }
+      ],
+      "limitations": [
+        "App aggregator and shared autorickshaw fares are separate products.",
+        "Waiting and luggage rules require applicable eligibility and timing; not an observed waiting-time distribution.",
+        "The full revised table remains in the immutable PDF; these selected entries do not replace it."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/environment/mmr_environment_6e53be459775a631.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-09/Environmental%20Status%20Report_0.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-09/Environmental%20Status%20Report_0.pdf",
+      "content_type": "application/pdf",
+      "source": "MMR environmental status report",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:32:47.758209+00:00",
+      "sha256": "6e53be459775a631b179bb72ac2aa9c21556744113878c7c9bc8543df84f2514",
+      "bytes": 32840754,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical environmental conditions; inspect dates and resolution.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

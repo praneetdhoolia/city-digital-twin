@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/pib_suburban_capacity_20260313_f854f222d83bb368.html",
+      "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2239780&lang=1&reg=1",
+      "final_url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2239780&lang=1&reg=1",
+      "content_type": "text/html; charset=utf-8",
+      "source": "Parliament answer on Mumbai suburban capacity 13 March 2026",
+      "licence": "Public authority publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:14:21.564735+00:00",
+      "sha256": "f854f222d83bb368a8ea6f8442bf06c76cf34c41dd7ef3f4d0402610d5f7f401",
+      "bytes": 249575,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Source response retained; period and suitability require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

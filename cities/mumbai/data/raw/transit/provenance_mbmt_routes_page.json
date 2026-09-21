@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mbmt_routes_page_efa2a901fd6438f3.html",
+      "url": "https://mbmcwebportal.amnex.com/ListofRoutes/ViewRoutes",
+      "final_url": "https://mbmcwebportal.amnex.com/ListofRoutes/ViewRoutes",
+      "source": "MBMT public route map page",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:46:01.141410+00:00",
+      "sha256": "efa2a901fd6438f37c813fd42677e2fb3a2962ba1846f60292913acf927ee117",
+      "bytes": 45397,
+      "content_type": "text/html; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation."
+    }
+  ]
+}

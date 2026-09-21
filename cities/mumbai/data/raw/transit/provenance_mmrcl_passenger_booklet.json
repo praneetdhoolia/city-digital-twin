@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_passenger_booklet_37a85f372698d822.pdf",
+      "url": "https://mmrcl-development.s3.amazonaws.com/media/documents/BOOKLET.pdf",
+      "final_url": "https://mmrcl-development.s3.amazonaws.com/media/documents/BOOKLET.pdf",
+      "content_type": "application/pdf",
+      "source": "Mumbai Metro Line 3 official passenger booklet",
+      "licence": "Operator or government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:01:01.035384+00:00",
+      "sha256": "37a85f372698d82262782e87977daf046633c84f2b472c3bc01320aab110176c",
+      "bytes": 28272794,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Line 3 stations and passenger information; publication vintage must be read.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

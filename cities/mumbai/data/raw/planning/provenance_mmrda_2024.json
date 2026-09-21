@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/mmrda_2024_d04b2d375179921b.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2025-01/mmrda_in_2024.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2025-01/mmrda_in_2024.pdf",
+      "content_type": "application/pdf",
+      "source": "MMRDA in 2024",
+      "licence": "Reuse terms unverified",
+      "retrieved": "2026-09-18T08:27:00.349854+00:00",
+      "sha256": "d04b2d375179921bebb046039851df29ab91e13ec7b30a6eb79ef07238f20764",
+      "bytes": 716264,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Infrastructure status at publication; not a 2026 service declaration.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

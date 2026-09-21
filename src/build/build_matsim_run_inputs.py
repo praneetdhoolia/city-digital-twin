@@ -38,9 +38,12 @@ import gzip
 import json
 import argparse
 import collections
+import io
 import xml.etree.ElementTree as ET
 
 from det_io import gzip_writer
+from transit_fleet import load_assignment, prepare_fleet
+from mode_vehicles import explicit_vehicle_xml
 import hts_purpose as _hts_purpose
 
 # Model inputs come from cities/<city>/registry/, not from literals here. Every
@@ -254,8 +257,9 @@ def filter_transit_line(line, fl):
             fl.stops_served.add(stop.get('refId'))
         for dep in keep_here:
             v = dep.get('vehicleRefId')
-            if v:
-                fl.vehicles_used.add(v)
+            if not v:
+                raise ValueError('Scheduled departure has no vehicleRefId: ' + str(dep.get('id')))
+            fl.vehicles_used.add(v)
     if not line.findall('transitRoute'):
         fl.root.remove(line)
 
@@ -329,67 +333,36 @@ def split_schedule(src_dir, dst_dir, day, cfg, src_schedule=None):
                 dropped_rel += 1
         kept_rel = len(mtt.findall('relation'))
 
-    out_sched = os.path.join(dst_dir, 'transitSchedule.xml.gz')
-    with gzip_writer(out_sched, text=False) as f:
-        f.write(XML_DECL)
-        f.write(SCHEDULE_DOCTYPE)
-        tree.write(f, encoding='utf-8', xml_declaration=False)
-
-    with gzip.open(os.path.join(src_dir, 'transitVehicles.xml.gz'), 'rb') as f:
+    mapped_vehicles = os.path.join(src_dir, 'transitVehicles.xml.gz')
+    with gzip.open(mapped_vehicles, 'rb') as f:
         vtree = ET.parse(f)
     vroot = vtree.getroot()
-    tag = lambda e: e.tag.split('}')[-1]
-    kept_veh = 0
-    for veh in list(vroot):
-        if tag(veh) != 'vehicle':
-            continue
-        if veh.get('id') in vehicles_used:
-            kept_veh += 1
-        else:
-            vroot.remove(veh)
-    # The mapped fleet is pt2matsim's generic defaults, and every one of them
-    # overstates the real vehicle: tram 180 seats against a published 270 total,
-    # rail 400 against a 146 two-car set (roughly 2.7x), ferry 250 against 200,
-    # bus 70 seats against 44. None of them carried ANY standing room, which
-    # left the C1 crowding multipliers inert by construction - crowding cannot
-    # bind if nobody can stand (issue 18, DECISIONS.md 9.12, 9.18, 9.21).
-    #
-    # All four are now corrected from published figures (DECISIONS.md 9.30).
-    # Where a published split exists it is used (ferry, bus); where only a total
-    # is published the seated share is assumed and swept and the standing room
-    # is derived by identity (tram, rail). Nothing here is observed for
-    # Newcastle operations - these are manufacturer and operator figures.
-    # The type ids are pt2matsim's OWN route-type vocabulary (it names the
-    # generic vehicle type for each GTFS route type Bus/Tram/Rail/Ferry), not
-    # this feed's - so the keys are tool structure, not a city value. What
-    # MUST NOT be silent is a type outside the map (a metro, a cable car):
-    # its pt2matsim default capacity would sail through unpatched and leave
-    # crowding inert for that mode - the 9.12 defect class - so unpatched
-    # types are reported by name below.
+    # Mapper route-type identifiers are tool vocabulary. The existing mode
+    # representation resolves their capacities from the city registry. The
+    # explicit representation instead assigns each mapped vehicle a declared
+    # capacity profile, preserving distinct configurations within a mode.
+    # Unknown active types and incomplete assignments fail before XML output.
     FLEET_CAPACITY = {
         'Tram':  ('A.lightrail.capacity_seated', 'A.lightrail.capacity_standing'),
         'Bus':   ('A.transit.bus_capacity_seated', 'A.transit.bus_capacity_standing'),
         'Ferry': ('A.transit.ferry_capacity_seated', 'A.transit.ferry_capacity_standing'),
         'Rail':  ('A.transit.rail_capacity_seated', 'A.transit.rail_capacity_standing'),
     }
-    patched_types = []
-    unpatched_types = []
-    for vt in vroot:
-        if tag(vt) != 'vehicleType':
-            continue
-        keys = FLEET_CAPACITY.get(vt.get('id'))
-        if keys is None:
-            unpatched_types.append(vt.get('id'))
-            continue
-        seated, standing = cfg.get(keys[0]), cfg.get(keys[1])
-        for cap in vt:
-            if tag(cap) != 'capacity':
-                continue
-            patched_types.append((vt.get('id'), cap.get('seats'),
-                                  cap.get('standingRoomInPersons'),
-                                  str(seated), str(standing)))
-            cap.set('seats', str(seated))
-            cap.set('standingRoomInPersons', str(standing))
+    representation = cfg.get('A.transit.fleet_assignment_mode')
+    assignment = None
+    if representation == 'explicit_vehicle':
+        assignment = load_assignment(os.path.join(src_dir, 'fleet_assignments.json'),
+                                     mapped_vehicles, os.path.join(src_dir, 'transitSchedule.xml.gz'))
+    elif representation != 'mode_capacity':
+        raise ValueError('Unknown A.transit.fleet_assignment_mode: ' + str(representation))
+    vroot, fleet_audit = prepare_fleet(vroot, vehicles_used, cfg, FLEET_CAPACITY, assignment)
+    vtree._setroot(vroot)
+    # Validate the entire fleet before replacing either filtered XML file.
+    out_sched = os.path.join(dst_dir, 'transitSchedule.xml.gz')
+    with gzip_writer(out_sched, text=False) as f:
+        f.write(XML_DECL)
+        f.write(SCHEDULE_DOCTYPE)
+        tree.write(f, encoding='utf-8', xml_declaration=False)
     out_veh = os.path.join(dst_dir, 'transitVehicles.xml.gz')
     with gzip_writer(out_veh, text=False) as f:
         vtree.write(f, encoding='utf-8', xml_declaration=True)
@@ -398,9 +371,7 @@ def split_schedule(src_dir, dst_dir, day, cfg, src_schedule=None):
                 departures=kept_dep, departures_dropped=dropped_dep,
                 routes_kept_under_a_foreign_day_id=mixed_routes,
                 transport_modes=sorted(transport_modes),
-                vehicles=kept_veh,
-                vehicle_capacity_patched=patched_types,
-                vehicle_types_unpatched=unpatched_types,
+                **fleet_audit,
                 vehicle_refs=len(vehicles_used),
                 stop_facilities_kept=kept_fac, stop_facilities_dropped=dropped_fac,
                 transfer_relations_kept=kept_rel,
@@ -491,9 +462,18 @@ def write_mode_vehicles(dst_path, cfg):
     the assembly AND re-written per run by run_matsim.build_config against
     that run's own resolution, so a swept B.freight.pce reaches the mobsim.
 
-    Capacity is omitted: a private vehicle boards nobody in the qsim, and a
-    seat count here would be a literal doing nothing.
+    A nonempty city-declared profile mapping supplies every routed mode from
+    resolved scalar registry fields. The empty mapping keeps the existing
+    writer's output unchanged while cities migrate their definitions.
     """
+    profiles = cfg.get('RUN.qsim.mode_vehicle_fields')
+    if not isinstance(profiles, dict):
+        raise ValueError('RUN.qsim.mode_vehicle_fields must be a mapping')
+    if profiles:
+        text = explicit_vehicle_xml(cfg, profiles)
+        with open(dst_path, 'w', encoding='utf-8', newline='\n') as stream:
+            stream.write(text)
+        return dst_path
     car = cfg.get('RUN.qsim.car_vehicle')
     # A car's PASSENGER capacity is the declared ride cap (DECISIONS.md 9.53):
     # the qsim's boarding refusal and the pairing's own capacity rule must be
@@ -737,37 +717,78 @@ def add_nonmotor_reverse_links(body, reverse_speed_ms, applied):
 
 
 def patch_network(src_net, dst_net, patches, drop_turns, excluded_of_mode,
-                  reverse_speed_ms):
+                  reverse_speed_ms, *, mode_access_strategy=None, network_modes=None):
     """Re-apply an E1 road variant to a mapped schedule network by osm:way:id."""
     with gzip.open(src_net, 'rt', encoding='utf-8') as f:
         xml = f.read()
+    if mode_access_strategy is None or network_modes is None:
+        cfg = _registry.load()
+        if mode_access_strategy is None:
+            mode_access_strategy = cfg.get('A.network.mode_access_strategy')
+        if network_modes is None:
+            network_modes = cfg.get('RUN.routing.network_modes')
     body, applied = patch_network_body(xml, patches, drop_turns, excluded_of_mode,
-                                       reverse_speed_ms)
+                                       reverse_speed_ms, mode_access_strategy=mode_access_strategy,
+                                       network_modes=network_modes)
     os.makedirs(os.path.dirname(dst_net), exist_ok=True)
     with gzip_writer(dst_net) as f:
         f.write(body)
     return applied
 
 
-def patch_network_body(xml, patches, drop_turns, excluded_of_mode, reverse_speed_ms):
+def check_mapped_mode_coverage(xml, network_modes):
+    """Count existing permissions; never create permissions to fill a gap.
+
+    Presence is a necessary check, not evidence of lawful access or connectivity.
+    This parser accepts XML attribute order/quoting independently of the legacy
+    network patcher's formatting assumptions.
+    """
+    if (not isinstance(network_modes, (list, tuple)) or
+            any(not isinstance(mode, str) or not mode or mode.strip() != mode or ',' in mode
+                for mode in network_modes) or len(set(network_modes)) != len(network_modes)):
+        raise ValueError('Network modes must be distinct nonempty mode names')
+    counts = collections.Counter()
+    links = 0
+    for _, element in ET.iterparse(io.StringIO(xml), events=('end',)):
+        if element.tag.rsplit('}', 1)[-1] == 'link':
+            modes = [mode.strip() for mode in (element.get('modes') or '').split(',') if mode.strip()]
+            counts.update(set(modes))
+            links += 1
+        element.clear()
+    missing = sorted(set(network_modes) - set(counts))
+    if missing:
+        raise ValueError('Mapped network has no permitted links for routing modes: ' + ', '.join(missing))
+    return links, dict(sorted(counts.items()))
+
+
+def patch_network_body(xml, patches, drop_turns, excluded_of_mode, reverse_speed_ms,
+                       *, mode_access_strategy, network_modes):
     """patch_network on a decoded network: (patched body, applied counts).
 
     The six network passes of one scenario each decoded and re-encoded the
     368,230-link network (twelfth report); each now transforms the body the
     previous one returned, and main() writes the file once.
     """
+    if mode_access_strategy not in ('legacy_companions', 'preserve_mapped'):
+        raise ValueError('Unknown A.network.mode_access_strategy: ' + str(mode_access_strategy))
+    preserve_permissions = mode_access_strategy == 'preserve_mapped'
     applied = collections.Counter()
+
+    def extend_modes(link):
+        if preserve_permissions:
+            return link, False
+        return allow_car_companions(link, excluded_of_mode)
 
     def patch_link(m):
         s = m.group(0)
         wid = WAY_ID_RE.search(s)
         p = patches.get(wid.group(1)) if wid else None
         if not p:
-            # No E1 patch, but EVERY car link still carries the companion
-            # modes (the first form of this refactor put the extension after
+            # In the legacy strategy EVERY car link carries companions even
+            # without an E1 patch (the first refactor put the extension after
             # this early return, which silently produced a network with zero
             # walkable links - caught by the probe, not by reading).
-            merged, extended = allow_car_companions(s, excluded_of_mode)
+            merged, extended = extend_modes(s)
             if extended:
                 applied['companion_mode_links'] += 1
             return merged
@@ -798,7 +819,7 @@ def patch_network_body(xml, patches, drop_turns, excluded_of_mode, reverse_speed
                 # reader of the report cannot take it for a physical change
                 applied['kerbside_use_attribute_unread_by_any_run'] += 1
                 tail = new_tail
-        merged, extended = allow_car_companions(head + tail, excluded_of_mode)
+        merged, extended = extend_modes(head + tail)
         if extended:
             applied['companion_mode_links'] += 1
             head_end2 = merged.index('>')
@@ -816,9 +837,15 @@ def patch_network_body(xml, patches, drop_turns, excluded_of_mode, reverse_speed
         return head + tail
 
     body = LINK_BLOCK_RE.sub(patch_link, xml)
-    body = add_nonmotor_reverse_links(body, reverse_speed_ms, applied)
-    for mode in excluded_of_mode:
-        body = strip_unreachable_mode_links(body, mode, applied)
+    if preserve_permissions:
+        links, mode_counts = check_mapped_mode_coverage(body, network_modes)
+        applied['mapped_permission_links_preserved'] = links
+        for mode, count in mode_counts.items():
+            applied['mapped_mode_permission_links:' + mode] = count
+    else:
+        body = add_nonmotor_reverse_links(body, reverse_speed_ms, applied)
+        for mode in excluded_of_mode:
+            body = strip_unreachable_mode_links(body, mode, applied)
     return body, dict(applied)
 
 
@@ -1959,7 +1986,10 @@ def assemble_scenario(r, ac):
         net_body = f.read()
     net_body, touched = patch_network_body(
         net_body, pat, drop, ac.excluded_of_mode,
-        ac.base_cfg.get('A.transit.walk_speed_ms'))
+        ac.base_cfg.get('A.transit.walk_speed_ms')
+        if ac.mode_access_strategy == 'legacy_companions' else None,
+        mode_access_strategy=ac.mode_access_strategy,
+        network_modes=ac.base_cfg.get('RUN.routing.network_modes'))
     # Explicit signals (#73): the scenario's generated signal data model,
     # the saturation-flow re-capacitation and the transformed schedule
     # (dwell #74 + implicit-delay removal) all come from ONE derived set
@@ -2079,8 +2109,12 @@ def main(day_types=None, scenarios=None, set_overrides=None):
     # The road-rule exclusions are base declarations (which classes a
     # pedestrian or cyclist may use is law, not a scenario property), and the
     # network is patched once per scenario before any day resolution exists.
-    excluded_of_mode = {mode: frozenset(base_cfg.get(key))
-                        for mode, key in LAWFUL_COMPANIONS}
+    mode_access_strategy = base_cfg.get('A.network.mode_access_strategy')
+    if mode_access_strategy not in ('legacy_companions', 'preserve_mapped'):
+        raise ValueError('Unknown A.network.mode_access_strategy: ' + str(mode_access_strategy))
+    excluded_of_mode = ({mode: frozenset(base_cfg.get(key))
+                         for mode, key in LAWFUL_COMPANIONS}
+                        if mode_access_strategy == 'legacy_companions' else {})
 
     # The two representation gates (DECISIONS.md 9.77 activation boundary).
     # Under the inert values every branch below is skipped and the assembly
@@ -2103,7 +2137,7 @@ def main(day_types=None, scenarios=None, set_overrides=None):
     # penalty - the field deliverable 8 sweeps 3-15 min - would not move
     # utilityOfLineSwitch, which is the only parameter it acts through.
     report = dict(scenarios={}, purpose_share=purpose_share)
-    ac = _types.SimpleNamespace(base_cfg=base_cfg, by_variant=by_variant, c1=c1, change_events_xml=change_events_xml, crossings_on=crossings_on, day_types=day_types, excluded_of_mode=excluded_of_mode, explicit_signals=explicit_signals, purpose_share=purpose_share, report=report, road_variants=road_variants, shipped=shipped)
+    ac = _types.SimpleNamespace(base_cfg=base_cfg, by_variant=by_variant, c1=c1, change_events_xml=change_events_xml, crossings_on=crossings_on, day_types=day_types, excluded_of_mode=excluded_of_mode, mode_access_strategy=mode_access_strategy, explicit_signals=explicit_signals, purpose_share=purpose_share, report=report, road_variants=road_variants, shipped=shipped)
     for r in rows:
         assemble_scenario(r, ac)
 

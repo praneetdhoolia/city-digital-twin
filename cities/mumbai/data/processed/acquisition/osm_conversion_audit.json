@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "counts": {
+    "nodes": 34224766,
+    "ways": 3453202,
+    "relations": 22993
+  },
+  "source_sha256": "c335a72cadfebc3ffde5cfff20fc9711f3112bc11000d43fde4daea10c36b53e",
+  "output_sha256": "88f47570e3d22cbbf1b02a36ff24dca301a688ed2cfa5148982af7d877d36349",
+  "output_bytes": 524760215,
+  "geometry_scope": "Entire acquired source; no boundary clipping or simplification.",
+  "preserved": "Node coordinates, tags, way node references, ordered relation members and roles.",
+  "omitted": "Contributor edit metadata and PBF header bounds; original raw bytes remain available.",
+  "limits": "Not a runnable network. Legal region boundary, topology closure, modal permissions, restrictions, link capacities and road matching still need validation."
+}

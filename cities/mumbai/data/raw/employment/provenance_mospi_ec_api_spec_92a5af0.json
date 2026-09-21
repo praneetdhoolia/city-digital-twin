@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/mospi_ec_api_spec_92a5af0_c97258a9f30ee522.yaml",
+      "url": "https://raw.githubusercontent.com/nso-india/esankhyiki-mcp/92a5af0defa22785d073a26c71b2758c40d0564d/swagger/swagger_user_ec.yaml",
+      "final_url": "https://raw.githubusercontent.com/nso-india/esankhyiki-mcp/92a5af0defa22785d073a26c71b2758c40d0564d/swagger/swagger_user_ec.yaml",
+      "source": "NSO public aggregate API reference mospi_ec_api_spec_92a5af0",
+      "licence": "MIT (API specification only)",
+      "retrieved": "2026-09-18T10:21:35.614899+00:00",
+      "sha256": "c97258a9f30ee5224712e540510613f5a81a0742ddda603541624857b2e040cf",
+      "bytes": 24106,
+      "content_type": "text/plain; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public aggregate metadata, not unit records; indicator coverage requires inspection."
+    }
+  ]
+}

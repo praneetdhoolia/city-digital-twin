@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/mmr_cts_index_34309a32df94e3a2.html",
+      "url": "https://mmrda.maharashtra.gov.in/en/projects/transport/comprehensive-transport-study/overview",
+      "final_url": "https://mmrda.maharashtra.gov.in/en/projects/transport/comprehensive-transport-study/overview",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "MMRDA comprehensive transport study",
+      "licence": "Reuse terms unverified",
+      "retrieved": "2026-09-18T08:26:57.114199+00:00",
+      "sha256": "34309a32df94e3a223e671ab888961042bfa7f3f13b8f9cb6c969a9902b54ac1",
+      "bytes": 120565,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Study coverage and publication links; not current observed counts.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

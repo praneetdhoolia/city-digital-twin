@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/iips_district_projections_2012_2031_10ee5c104402d5f9.pdf",
+      "url": "https://www.iipsindia.ac.in/sites/default/files/FULL_REPORT_WITH_FINAL_TABLES.pdf",
+      "final_url": "https://www.iipsindia.ac.in/sites/default/files/FULL_REPORT_WITH_FINAL_TABLES.pdf",
+      "content_type": "application/pdf",
+      "source": "IIPS district-level population projections by quinquennial age group and sex 2012-2031",
+      "licence": "IIPS publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:39:22.261460+00:00",
+      "sha256": "10ee5c104402d5f9e3e5b5476b6959c7c4d69ab8f61e38e12b9ba2908d99110a",
+      "bytes": 16536595,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published district projections; inspect method, dates and historical district geography before use. Not observed current counts.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

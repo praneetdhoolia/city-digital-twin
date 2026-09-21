@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/traffic/mmrda_thane_borivali_tunnel_dpr_0eacba038c43131f.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2024-10/1_tbtt_detailed_project_report.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2024-10/1_tbtt_detailed_project_report.pdf",
+      "content_type": "application/pdf",
+      "source": "MMRDA Thane-Borivali twin tunnel detailed project report",
+      "licence": "MMRDA-hosted consultant report; reuse terms unverified",
+      "retrieved": "2026-09-18T19:29:25.440989+00:00",
+      "sha256": "0eacba038c43131f4926e2e218755e683f6d1e11df0ed2549c70cc08d8d1245b",
+      "bytes": 18613862,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Report hosted in 2024 with October 2022 chapter footers; traffic survey, OD, turning movements and willingness-to-pay evidence require actual observation dates and sampling scope. Forecast and tollable traffic are not observed total counts, and proposed tunnel links are not an operational network.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

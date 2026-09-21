@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_journey_bdrm_dhav_20260918_021c71a66b7c0e63.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/journey-route/BDRM/DHAV/station/station/least-distance/2026-09-18/one_way/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/journey-route/BDRM/DHAV/station/station/least-distance/2026-09-18/one_way/",
+      "content_type": "application/json",
+      "source": "Metro 3 public adjacent-station journey BDRM to DHAV, 18 September 2026",
+      "licence": "Public authority or operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:16:07.158873+00:00",
+      "sha256": "021c71a66b7c0e63fc874158f64b3190ab6fbb125c7ee7a9e6ed2794b7f0f794",
+      "bytes": 583,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

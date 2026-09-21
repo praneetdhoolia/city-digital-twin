@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/geospatial/ghsl_licence_357254ee75bba7e9.html",
+      "url": "https://human-settlement.emergency.copernicus.eu/GHSLhowToCite.php",
+      "final_url": "https://human-settlement.emergency.copernicus.eu/GHSLhowToCite.php",
+      "source": "GHSL use conditions and required citations",
+      "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
+      "retrieved": "2026-09-18T09:56:00.404201+00:00",
+      "sha256": "357254ee75bba7e9b64109b8bf8635247f1c21b161a7b1c740e7f701800d8e9c",
+      "bytes": 11832,
+      "content_type": "text/html; charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Spatial-support source. GHSL population is modelled; DSM includes buildings and vegetation and is not surveyed road elevation."
+    }
+  ]
+}

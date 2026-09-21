@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/demand/census_b28_index_59d29c9d4ea2d3df.html",
+      "url": "https://www.censusindia.gov.in/nada/index.php/catalog/13954",
+      "final_url": "https://www.censusindia.gov.in/nada/index.php/catalog/13954",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Census B-28 mode and distance to work",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:36:00.652210+00:00",
+      "sha256": "59d29c9d4ea2d3dfcdfbf58a455dfe46dc6884309f7b52190c3451df7cd9bbd0",
+      "bytes": 97498,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Other workers only, 2011; not all-purpose mode share.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

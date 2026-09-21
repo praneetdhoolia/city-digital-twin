@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_depots_20260919_1a83a5e342232dd5.html",
+      "url": "https://www.bestundertaking.com/list-of-depots.asp",
+      "final_url": "https://www.bestundertaking.com/list-of-depots.asp",
+      "source": "BEST official List of Depots",
+      "licence": "BEST publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:44:39.733058+00:00",
+      "sha256": "1a83a5e342232dd5d6e2863d0c8f793d89d808f2850a51ac0684fd0543fb9811",
+      "bytes": 65823,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification."
+    }
+  ]
+}

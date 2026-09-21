@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_service_documentation_1f73696642583115.html",
+      "url": "https://nmmtservice.infinium.management/TransistService.asmx",
+      "final_url": "https://nmmtservice.infinium.management/TransistService.asmx",
+      "source": "NMMT public transit service documentation",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:45:57.687879+00:00",
+      "sha256": "1f73696642583115f7277853803237a126d4ecf1dc6172899577b72bb99557b7",
+      "bytes": 17960,
+      "content_type": "text/html; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation."
+    }
+  ]
+}

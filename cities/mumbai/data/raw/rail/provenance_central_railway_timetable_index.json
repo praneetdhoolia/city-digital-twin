@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/central_railway_timetable_index_aceb57ab0e3a5ca8.html",
+      "url": "https://cr.indianrailways.gov.in/view_section.jsp?id=0%2C6%2C381&lang=0",
+      "final_url": "https://cr.indianrailways.gov.in/view_section.jsp?id=0%2C6%2C381&lang=0",
+      "content_type": "text/html;charset=UTF-8",
+      "source": "Central Railway timetable index",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:33:30.467420+00:00",
+      "sha256": "aceb57ab0e3a5ca8675b9e6ea066d6a6d11dcdc5187ec9f8a05c95b2633a12d9",
+      "bytes": 484455,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published timetable links; publication date requires inspection.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

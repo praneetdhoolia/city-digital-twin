@@ -1,0 +1,134 @@
+{
+  "layer": "B",
+  "title": "Provisional port freight background",
+  "fields": {
+    "B.freight.port_osm_node_id": {
+      "value": "1650416453",
+      "units": "OSM_node_id",
+      "source": "observed",
+      "status": "active",
+      "description": "Acquired OSM locality point named Jawaharlal Nehru Port Trust; nearest connected modal link is a provisional port access anchor.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_freight.py"
+      ]
+    },
+    "B.freight.gate_axes": {
+      "value": [
+        "north",
+        "east"
+      ],
+      "units": "projected_extent_directions",
+      "source": "definition",
+      "status": "active",
+      "description": "Research-network extremities proxy external gates; they are not observed freight destinations.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_freight.py"
+      ]
+    },
+    "B.freight.car_equivalent_movements_per_person_day": {
+      "value": 1.0,
+      "units": "vehicle_movements_per_person_day",
+      "source": "assumed",
+      "status": "active",
+      "description": "Smoke intensity proxy for applying the observed classified-site goods/car ratio to the explicit small resident population.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_freight.py"
+      ],
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional background freight sensitivity; not a calibrated regional freight forecast."
+    },
+    "B.freight.goods_count_classes": {
+      "value": [
+        "LCV",
+        "Trucks"
+      ],
+      "units": "published_class_labels",
+      "source": "definition",
+      "status": "active",
+      "description": "Use unambiguous goods groups; the mixed Others/MAV group is excluded.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_freight.py"
+      ]
+    },
+    "B.freight.reference_car_class": {
+      "value": "Cars",
+      "units": "published_class_label",
+      "source": "definition",
+      "status": "active",
+      "description": "Denominator of the historical goods/car ratio.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_freight.py"
+      ]
+    },
+    "B.freight.rake_movements_per_handled_rake": {
+      "value": 2.0,
+      "units": "movements_per_handled_rake",
+      "source": "assumed",
+      "status": "active",
+      "description": "Stationary port-operation proxy: one inbound and one outbound movement per handled rake; handled-day reports are not themselves movement counts.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_freight.py"
+      ],
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional background freight sensitivity; not a calibrated regional freight forecast."
+    },
+    "B.freight.movement_window_s": {
+      "value": [
+        0,
+        86400
+      ],
+      "units": "seconds_after_midnight",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional all-day release window; actual dispatch and road time restrictions still require integration.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_freight.py"
+      ],
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional background freight sensitivity; not a calibrated regional freight forecast."
+    },
+    "B.freight.port_snap_limit_m": {
+      "value": 10000,
+      "units": "metres",
+      "source": "assumed",
+      "status": "active",
+      "description": "Fail if the port locality is too far from a connected modal network; snapping is a provisional access representation.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_freight.py"
+      ],
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional background freight sensitivity; not a calibrated regional freight forecast."
+    },
+    "B.freight.seed": {
+      "value": 20260810,
+      "units": "integer_seed",
+      "source": "definition",
+      "status": "active",
+      "description": "Fixed background movement seed.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_freight.py"
+      ]
+    }
+  }
+}

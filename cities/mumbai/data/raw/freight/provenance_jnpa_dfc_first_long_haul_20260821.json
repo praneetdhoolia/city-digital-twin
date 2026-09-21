@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/freight/jnpa_dfc_first_long_haul_20260821_760c7087f75c1b64.pdf",
+      "url": "https://www.jnport.gov.in/uploads/media_center/1/1798/JNPA_PR_-_Long_Haul_DFC_Operations.pdf",
+      "final_url": "https://www.jnport.gov.in/uploads/media_center/1/1798/JNPA_PR_-_Long_Haul_DFC_Operations.pdf",
+      "content_type": "application/pdf",
+      "source": "JNPA first long-haul double-stack DFC departure on 21 August 2026",
+      "licence": "Government/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:59:31.074865+00:00",
+      "sha256": "760c7087f75c1b64196f84ba6bc4f92d73ecd99933c2b830e00d822314ea3dc5",
+      "bytes": 495796,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published operations evidence. Separate departure events, daily reports, forecasts and capacity; no all-day timetable or citywide freight demand implied.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

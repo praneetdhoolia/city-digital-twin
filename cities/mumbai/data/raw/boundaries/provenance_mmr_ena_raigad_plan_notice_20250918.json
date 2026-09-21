@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/mmr_ena_raigad_plan_notice_20250918_f4c0a11861f450ea.pdf",
+      "url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2025-09/mmrs_extended_notified_area_in_raigad_district_5.pdf",
+      "final_url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2025-09/mmrs_extended_notified_area_in_raigad_district_5.pdf",
+      "content_type": "application/pdf",
+      "source": "MMR extended area Raigad development plan intention notice",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:15:51.259505+00:00",
+      "sha256": "f4c0a11861f450ea48449d749d610cec903bdd4a3d72b88a306379b8ddd1ecba",
+      "bytes": 3166785,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Planning-area notification and listed villages; distinguish SPA from whole metropolitan boundary.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -133,8 +133,13 @@ def score_goal_modes(run_dir, iteration):
     with contextlib.redirect_stdout(io.StringIO()):
         rmr.report(run_dir, iteration)
     rows = list(rmr.LAST['rows'])
+    required_modes = set(rmr.load_targets())
+    missing_modes = sorted(required_modes - {r['mode'] for r in rows})
     if not rows:
         return dict(n=0, modes=[], max_abs_rel_pct=None,
+                    goal_met=False, coverage_complete=False,
+                    missing_modes=missing_modes, unscorable_modes=[],
+                    scored_modes_within_band=False,
                     reason='the board reader returned no rows for this run')
 
     scored, reported = [], []
@@ -143,18 +148,29 @@ def score_goal_modes(run_dir, iteration):
                    deviation_pct=r['deviation_pct'], basis=r['basis'],
                    flag=r['flag'], trips=r['count'])
         reported.append(row)
+        if row['deviation_pct'] is not None and not math.isfinite(float(row['deviation_pct'])):
+            row['invalid_deviation'] = str(row['deviation_pct'])
+            row['deviation_pct'] = None
+            row['unscorable_reason'] = 'reader returned a non-finite deviation'
         # a mode the reader itself refuses to score on the target's ground is
         # reported and never optimised against - the same refusal fit.py makes
         # for an unscorable calibration target
-        if r['deviation_pct'] is None or r['flag'] in ('decision', 'level only',
-                                                       'representation'):
+        if (row['deviation_pct'] is None or
+                r['flag'] in ('decision', 'level only',
+                             'representation')):
             row['optimised'] = False
             continue
         row['optimised'] = True
         scored.append(row)
 
+    unscorable_modes = sorted(r['mode'] for r in reported if not r['optimised'])
+    coverage_complete = bool(required_modes and not missing_modes and
+                             not unscorable_modes)
     if not scored:
         return dict(n=0, modes=reported, max_abs_rel_pct=None,
+                    goal_met=False, coverage_complete=False,
+                    missing_modes=missing_modes, unscorable_modes=unscorable_modes,
+                    scored_modes_within_band=False,
                     reason='no mode was scorable on the target basis')
 
     # the gate's two thresholds come from the READER, which declares them from
@@ -171,11 +187,15 @@ def score_goal_modes(run_dir, iteration):
         n_inside_pass_band=sum(1 for d in devs if d <= gate_pass),
         n_past_stop_bar=sum(1 for d in devs if d >= gate_stop),
         pass_band_pct=gate_pass, stop_bar_pct=gate_stop,
-        goal_met=bool(max(devs) <= gate_pass),
+        goal_met=bool(coverage_complete and max(devs) <= gate_pass),
+        coverage_complete=coverage_complete,
+        missing_modes=missing_modes, unscorable_modes=unscorable_modes,
+        scored_modes_within_band=bool(max(devs) <= gate_pass),
         iteration=iteration,
-        note='GOAL.md requirement 7 is met if and only if max_abs_rel_pct <= '
-             '%.4g. Truck and freight rail are reported and never optimised '
-             'against: the reader scores neither on the target\'s own ground.'
+        note='The mode-fit criterion requires every declared target mode to be '
+             'scorable and max_abs_rel_pct <= %.4g. An unscorable mode prevents '
+             'goal_met even when the scored modes are within the band. This '
+             'statistic does not certify run completion or other goal requirements.'
              % gate_pass)
 
 

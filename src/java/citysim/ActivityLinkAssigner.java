@@ -26,7 +26,14 @@ import org.matsim.core.network.NetworkUtils;
 import org.matsim.core.population.PopulationUtils;
 
 /**
- * Pins every activity to a link its person can actually use (DECISIONS.md 9.58).
+ * Assigns activity links under the city's declared connection policy.
+ *
+ * <p>{@code mode_specific_access} retains activity coordinates and links.
+ * Each mode's access/egress router chooses its own permitted start and end
+ * links. A common link would otherwise move activities towards the overlap
+ * of geographically restricted mode networks (DECISIONS.md 9.184).
+ *
+ * <p>{@code common_modes} retains the original rule below (9.58).
  *
  * <p>MATSim assigns an activity's link by nearest distance over the whole
  * network, and the router silently starts a leg's route at the nearest link of
@@ -64,6 +71,19 @@ final class ActivityLinkAssigner {
 
     static void run(final Scenario scenario) {
         final Config config = scenario.getConfig();
+        final ActivityLinksConfigGroup assignment = (ActivityLinksConfigGroup)
+                config.getModules().get(ActivityLinksConfigGroup.NAME);
+        if (assignment == null) {
+            throw new IllegalStateException("activityLinks.assignment must be declared before linking activities");
+        }
+        // Check before changing any plan, rather than waiting for the
+        // controller's later consistency check.
+        assignment.checkConsistency(config);
+        if (ActivityLinksConfigGroup.ACCESS.equals(assignment.assignment)) {
+            LOG.info("activityLinkAssigner: activity locations and links retained; "
+                    + "each mode connects through its configured access/egress router");
+            return;
+        }
         final Set<String> networkModes =
                 new HashSet<>(config.routing().getNetworkModes());
         final Set<String> choiceModes = new HashSet<>(

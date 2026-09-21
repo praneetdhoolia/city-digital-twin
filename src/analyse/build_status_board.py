@@ -53,7 +53,7 @@ import results_store as _store                                    # noqa: E402
 RESULTS = os.path.join(ROOT, 'results')
 MARK = re.compile(r'<!-- generated:(\w+) start -->\n(.*?)<!-- generated:\1 end -->',
                   re.S)
-RUN_DIR = re.compile(r'^(aborted_)?\d{8}T\d{6}_\d+it_\d+pct$')
+RUN_DIR = re.compile(r'^(aborted_)?\d{8}T\d{6}_\d+it_\d+pct(?:-[a-z0-9-]+)?$')
 
 
 # ------------------------------------------------------------------ helpers
@@ -120,9 +120,11 @@ def _horizon_floor():
 
 
 def _is_plumbing_test(run_dir, floor):
+    meta = _json(os.path.join(run_dir, '_meta.json')) or {}
+    if meta.get('run_kind') == 'behavioural_smoke':
+        return True
     if floor is None:
         return False
-    meta = _json(os.path.join(run_dir, '_meta.json')) or {}
     declared = meta.get('iterations')
     return isinstance(declared, (int, float)) and declared < floor
 
@@ -316,10 +318,11 @@ def block_state():
     lines.append('| Input registry | **%d fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |' % n_fields)
     # manifest
     man = _city.path('data', 'MANIFEST.csv')
+    from manifest_io import manifest_reader
     n_files = 0
     if os.path.exists(man):
         with open(man, newline='', encoding='utf-8') as fh:
-            n_files = sum(1 for _ in csv.DictReader(fh))
+            n_files = sum(1 for _ in manifest_reader(fh))
     lines.append('| Data package | **%d files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |' % n_files)
     # run-input sets - counted from the COMMITTED manifest (one config.xml per
     # scenario x day-type set), never from the gitignored directories, so the
@@ -327,7 +330,7 @@ def block_state():
     sets = 0
     if os.path.exists(man):
         with open(man, newline='', encoding='utf-8') as fh:
-            for row in csv.DictReader(fh):
+            for row in manifest_reader(fh):
                 parts = row['path'].split('/')
                 if (len(parts) == 5 and parts[0] == 'scenarios' and parts[1] == 'matsim'
                         and parts[4] == 'config.xml'):

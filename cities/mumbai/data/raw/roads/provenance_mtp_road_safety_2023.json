@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/roads/mtp_road_safety_2023_65a516673a6ed214.pdf",
+      "url": "https://cdnbbsr.s3waas.gov.in/s3d827f12e35eae370ba9c65b7f6026695/uploads/2025/02/202502212128182597.pdf",
+      "final_url": "https://cdnbbsr.s3waas.gov.in/s3d827f12e35eae370ba9c65b7f6026695/uploads/2025/02/202502212128182597.pdf",
+      "content_type": "application/pdf",
+      "source": "Mumbai Traffic Police road safety report 2023",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:50:51.985008+00:00",
+      "sha256": "65a516673a6ed21455b709955ba16c2e1b428bb1f71eb56f4bea9729ef9289b9",
+      "bytes": 10425509,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official source; dates, restriction extent and superseding orders require inspection.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

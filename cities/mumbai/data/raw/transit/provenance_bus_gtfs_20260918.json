@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/bus_gtfs_20260918_497b42cbffbc24f7.zip",
+      "url": "https://raw.githubusercontent.com/croyla/mumbai-gtfs/64f9f774ee1f30389b86a7c26bc0dcca497a32ef/gtfs.zip",
+      "final_url": "https://raw.githubusercontent.com/croyla/mumbai-gtfs/64f9f774ee1f30389b86a7c26bc0dcca497a32ef/gtfs.zip",
+      "source": "Community bus GTFS original format",
+      "licence": "MIT-0 (repository declaration)",
+      "retrieved": "2026-09-18T08:24:37.702953+00:00",
+      "sha256": "497b42cbffbc24f7f11bb535e68a1edfdcbfa35323d5630ff7353fd1b09ee68f",
+      "bytes": 13652213,
+      "content_type": "application/zip",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Community compilation; operator coverage and dates require inspection."
+    }
+  ]
+}

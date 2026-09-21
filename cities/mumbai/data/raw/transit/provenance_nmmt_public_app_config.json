@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_public_app_config_771f1728edcb6077.js",
+      "url": "https://nmmtitmswebportal.amnex.co.in/chunk-3M2JYCK7.js",
+      "final_url": "https://nmmtitmswebportal.amnex.co.in/chunk-3M2JYCK7.js",
+      "source": "NMMT public application endpoint configuration",
+      "licence": "Vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:32:39.965866+00:00",
+      "sha256": "771f1728edcb60772818edc65488d9fcca2435038aaa0dc6633cb5419793ddd4",
+      "bytes": 402,
+      "content_type": "application/javascript",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public frontend configuration for passenger-information queries only."
+    }
+  ]
+}

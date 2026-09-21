@@ -1,0 +1,65 @@
+{
+  "annual_route_count": 37,
+  "annual_observation_rows": 111,
+  "service_directory_rows": 37,
+  "years": [
+    "2022-23",
+    "2023-24",
+    "2024-25"
+  ],
+  "non_numeric_count_rows": 14,
+  "identical_reported_series": [
+    {
+      "routes": [
+        "Borivli to Esselworld",
+        "Marve to Esselworld"
+      ],
+      "series": [
+        [
+          "2022-23",
+          "10,49,326"
+        ],
+        [
+          "2023-24",
+          "11,62,262"
+        ],
+        [
+          "2024-25",
+          "8,91,489"
+        ]
+      ]
+    },
+    {
+      "routes": [
+        "CIDCO PWT (Nerul) to Elephanta",
+        "New Ferry Wharf to CIDCO PWT (Nerul)",
+        "CIDCO PWT (Nerul) to Mandwa",
+        "Narangi to kharvadeshvari"
+      ],
+      "series": [
+        [
+          "2022-23",
+          "NIL"
+        ],
+        [
+          "2023-24",
+          "NIL"
+        ],
+        [
+          "2024-25",
+          "NIL"
+        ]
+      ]
+    }
+  ],
+  "unresolved": [
+    "Statistics and directory row identifiers refer to different routes; never join by numeric id.",
+    "Identical series on separately named routes may be duplicated reporting; do not sum without resolution.",
+    "NIL, empty and numeric zero remain distinct.",
+    "The source covers Maharashtra, not only the study region.",
+    "First and last departure are not a timetable; service frequency remains unmeasured.",
+    "Capacity strings include seasonal ranges and potentially aggregate fleet capacity; no per-vessel conversion made.",
+    "English and Marathi fields can disagree; retain raw bilingual source for reconciliation.",
+    "Annual passenger totals do not establish weekday, peak-hour or linked journey counts."
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_hl14_raigad_search_f8135299e880250e.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/?sk=PC11_HL14-27-520",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/?sk=PC11_HL14-27-520",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "HL-14 Raigarh Maharashtra catalogue search",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:50:49.473878+00:00",
+      "sha256": "f8135299e880250e5ac57f69f31b75f2a091aa718e9a7969e91d217b7486df10",
+      "bytes": 108215,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "2011 non-institutional households; household asset possession is not vehicle count or current ownership.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,450 +1,502 @@
 {
- "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
- "updated": "2026-09-17",
- "family": "F35-the-engines-route-what-they-remode",
- "tasks": [
-  {
-   "id": "routers-pair-reading",
-   "title": "Read the routers pair: `20260915T000704_250it_25pct` against arm 0, all twelve modes with choice-set coverage on both sides",
-   "kind": "reading",
-   "status": "done",
-   "recommended": false,
-   "cost": "no run; done: `report_mode_ridership.py --run 20260915T000704_250it_25pct --it 250`, `report_choice_set_coverage.py` on both arms, `_fit.json` (§9.176)",
-   "blocked_on": "nothing - read at its horizon, `ran_to_last_iteration` at 250 (§9.176)",
-   "opens_family": false,
-   "answers_issues": [
-    98,
-    94,
-    49,
-    172,
-    174
-   ],
-   "evidence": "§9.174: launched, pace measured; §9.169: the pairs difference against arm 0's it.300 reading; §9.175: D4 - read inside F35, no family flag",
-   "done_ref": "9.176"
-  },
-  {
-   "id": "routers-pair",
-   "title": "The first pair arm: the routers control (`C.raptor.mode_cost_representation` = `mode_constant`) against arm 0",
-   "kind": "arm",
-   "status": "done",
-   "recommended": false,
-   "cost": "30.0 h at 250 iterations, 25 % plus 32 min of setup, priced on the committed controler (`20260914T195207_4it_25pct`, 422.0 s a recurring iteration; spread 18.2-39.2 h over the last five arms)",
-   "blocked_on": "a stated-cost approval set as RUN.gate.wall_ceiling_h; the overlay `f35_routers_mode_constant_25pct` (C.raptor.mode_cost_representation = mode_constant, 250 it, answers_issues #98 #94 #49 #172 #174) is written at launch",
-   "opens_family": false,
-   "answers_issues": [
-    98,
-    94,
-    49,
-    172,
-    174
-   ],
-   "evidence": "§9.169; report #11's (20260914T152907) factor ledger names router-scorer consistency the top mover: light rail -73.9 %, heavy rail +54.6 %, ferry -63.3 % are decided in the raptor and no control has run; §9.172: D1 taken, the pair priced",
-   "done_ref": "9.174"
-  },
-  {
-   "id": "scoring-pair",
-   "title": "The scoring pair: `RUN.replanning.score_msa_representation` = `at_innovation_cutoff` against arm 0 (D7)",
-   "kind": "arm",
-   "status": "done",
-   "recommended": false,
-   "cost": "25.77 h at 250 iterations, 25 % (`20260916T063903_250it_25pct`), against a 33.0 h ceiling and a 27.2 h probe quote; SPENT",
-   "blocked_on": "nothing - ran_to_last_iteration at 250 (9.177)",
-   "opens_family": false,
-   "answers_issues": [
-    172,
-    174
-   ],
-   "evidence": "9.177: car +0.007 pp, bike -0.292, light rail 772 -> 928 against arm 0; the cutoff snap car +1.76 pp under MSA - the scoring branch is exonerated",
-   "done_ref": "9.177"
-  },
-  {
-   "id": "java-fold",
-   "title": "The Java fold on the idle machine: the held-ride refusal in `GatedSubtourModeChoice` (D12's gate half, #86), the taxi fleet's own sample fraction (#215), the ride engine's thread pools (#216), the zero-second timed-out ride (#217), #187's restore counters and the telemetry twins - one recompile of `.tools/classes`, verified on a 1 % smoke",
-   "kind": "fix",
-   "status": "open",
-   "recommended": false,
-   "cost": "no arm; one recompile (`bootstrap_toolchain.py --verify`) and a 1 % smoke of a few minutes; no family until the roots rebuild ships it",
-   "blocked_on": "nothing - the machine is idle (the scoring pair landed 17 September 2026)",
-   "opens_family": false,
-   "answers_issues": [
-    86,
-    187,
-    215,
-    216,
-    217
-   ],
-   "evidence": "9.177: prepared and held under the arm because .tools/classes is never recompiled under one; report #12's ledger rows on the Java"
-  },
-  {
-   "id": "roots-rebuild",
-   "title": "The roots rebuild, re-scoped by report #12: hold escort members and joint companions to ride on their bound tours (#86, D12), consume the household-size top-band mean (#196), give bike a distance cost derived from its observed mean trip length (#107, D9), re-derive the ferry target from the disclosed TPA tap-on series (#94, D8) and report the short-trip band on placed coordinates (#30)",
-   "kind": "rebuild",
-   "status": "open",
-   "recommended": true,
-   "cost": "a demand rebuild (~2 h of builds) that opens a family and re-baselines every pair; then a new arm 0 at a probe-priced stated cost (25.1 h for 250 iterations on the scoring pair's stopwatch, spread 24.5-32.8 h; `python src/analyse/arm_cost.py --iterations 250 --fraction 0.25`)",
-   "blocked_on": "the Java fold landing first (one recompile of .tools/classes on the idle machine: the held-ride gate is half of D12), then a 25 % probe on the rebuilt inputs for the price and a stated-cost approval",
-   "opens_family": true,
-   "answers_issues": [
-    30,
-    86,
-    94,
-    107,
-    145,
-    196
-   ],
-   "evidence": "9.177: 20.62 % of core legs bound, 59.0-59.3 % of bound trips ride on both pairs, the seed at 14.9 %; the 17.70 % short-trip supply at the seed; the scoring pair moved nothing, so the new arm 0 ships with RUN.replanning.score_msa_representation = absent; D8-D12 taken 16 September 2026",
-   "detail": "a demand rebuild (~2 h of builds) that opens a family and re-baselines every pair, then a new arm 0 at a probe-priced stated cost; the short-trip shape leaves the rebuild (the seed carries 17.70 % of legs under 1 km, #30 re-aimed at allocation); the scoring pair's reading (9.177) settled MSA: absent"
-  },
-  {
-   "id": "asc-contraction",
-   "title": "The ASC contraction test for bike alone",
-   "kind": "arm",
-   "status": "held",
-   "recommended": false,
-   "cost": "~15 h, no family",
-   "blocked_on": "D7 - the first pair has run (§9.176); the user's hold (§9.159) is lifted by that event, not by this session",
-   "opens_family": false,
-   "answers_issues": [
-    107
-   ],
-   "evidence": "§9.163: 20.46 pp of headroom on bike"
-  },
-  {
-   "id": "eleventh-report",
-   "title": "Report #12, after the routers pair's reading (lodged 16 September 2026 as 20260916T062246)",
-   "kind": "report",
-   "status": "done",
-   "recommended": false,
-   "cost": "one /project-report pass",
-   "blocked_on": "nothing - the pair is the reading (§9.176); one /project-report pass, no run",
-   "opens_family": false,
-   "answers_issues": [],
-   "evidence": "docs/reports/README.md",
-   "done_ref": "9.177"
-  }
- ],
- "decisions": [
-  {
-   "id": "D1",
-   "question": "Which road is next: the first pair arm on arm 0, or the demand rebuild for the roots?",
-   "options": [
+  "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
+  "updated": "2026-09-21",
+  "family": "F35-the-engines-route-what-they-remode",
+  "tasks": [
     {
-     "label": "Routers pair first (recommended)",
-     "detail": "C.raptor.mode_cost_representation = mode_constant against arm 0, 250 it at 25 %, coverage on both sides; answers three of the six STOP modes"
+      "id": "routers-pair-reading",
+      "title": "Read the routers pair: `20260915T000704_250it_25pct` against arm 0, all twelve modes with choice-set coverage on both sides",
+      "kind": "reading",
+      "status": "done",
+      "recommended": false,
+      "cost": "no run; done: `report_mode_ridership.py --run 20260915T000704_250it_25pct --it 250`, `report_choice_set_coverage.py` on both arms, `_fit.json` (§9.176)",
+      "blocked_on": "nothing - read at its horizon, `ran_to_last_iteration` at 250 (§9.176)",
+      "opens_family": false,
+      "answers_issues": [
+        98,
+        94,
+        49,
+        172,
+        174
+      ],
+      "evidence": "§9.174: launched, pace measured; §9.169: the pairs difference against arm 0's it.300 reading; §9.175: D4 - read inside F35, no family flag",
+      "done_ref": "9.176"
     },
     {
-     "label": "Roots rebuild first",
-     "detail": "one demand rebuild (#86 #30 #107 #196), a new family, a new arm 0, then the pairs"
+      "id": "routers-pair",
+      "title": "The first pair arm: the routers control (`C.raptor.mode_cost_representation` = `mode_constant`) against arm 0",
+      "kind": "arm",
+      "status": "done",
+      "recommended": false,
+      "cost": "30.0 h at 250 iterations, 25 % plus 32 min of setup, priced on the committed controler (`20260914T195207_4it_25pct`, 422.0 s a recurring iteration; spread 18.2-39.2 h over the last five arms)",
+      "blocked_on": "a stated-cost approval set as RUN.gate.wall_ceiling_h; the overlay `f35_routers_mode_constant_25pct` (C.raptor.mode_cost_representation = mode_constant, 250 it, answers_issues #98 #94 #49 #172 #174) is written at launch",
+      "opens_family": false,
+      "answers_issues": [
+        98,
+        94,
+        49,
+        172,
+        174
+      ],
+      "evidence": "§9.169; report #11's (20260914T152907) factor ledger names router-scorer consistency the top mover: light rail -73.9 %, heavy rail +54.6 %, ferry -63.3 % are decided in the raptor and no control has run; §9.172: D1 taken, the pair priced",
+      "done_ref": "9.174"
     },
     {
-     "label": "Scoring pair first",
-     "detail": "the operator's decided sequence of 10 September (scoring -> choice set -> service quality -> routers -> submodes)"
+      "id": "scoring-pair",
+      "title": "The scoring pair: `RUN.replanning.score_msa_representation` = `at_innovation_cutoff` against arm 0 (D7)",
+      "kind": "arm",
+      "status": "done",
+      "recommended": false,
+      "cost": "25.77 h at 250 iterations, 25 % (`20260916T063903_250it_25pct`), against a 33.0 h ceiling and a 27.2 h probe quote; SPENT",
+      "blocked_on": "nothing - ran_to_last_iteration at 250 (9.177)",
+      "opens_family": false,
+      "answers_issues": [
+        172,
+        174
+      ],
+      "evidence": "9.177: car +0.007 pp, bike -0.292, light rail 772 -> 928 against arm 0; the cutoff snap car +1.76 pp under MSA - the scoring branch is exonerated",
+      "done_ref": "9.177"
+    },
+    {
+      "id": "java-fold",
+      "title": "The Java fold on the idle machine: the held-ride refusal in `GatedSubtourModeChoice` (D12's gate half, #86), the taxi fleet's own sample fraction (#215), the ride engine's thread pools (#216), the zero-second timed-out ride (#217), #187's restore counters and the telemetry twins - one recompile of `.tools/classes`, verified on a 1 % smoke",
+      "kind": "fix",
+      "status": "open",
+      "recommended": false,
+      "cost": "no arm; one recompile (`bootstrap_toolchain.py --verify`) and a 1 % smoke of a few minutes; no family until the roots rebuild ships it",
+      "blocked_on": "nothing - the machine is idle (the scoring pair landed 17 September 2026)",
+      "opens_family": false,
+      "answers_issues": [
+        86,
+        187,
+        215,
+        216,
+        217
+      ],
+      "evidence": "9.177: prepared and held under the arm because .tools/classes is never recompiled under one; report #12's ledger rows on the Java"
+    },
+    {
+      "id": "roots-rebuild",
+      "title": "The roots rebuild, re-scoped by report #12: hold escort members and joint companions to ride on their bound tours (#86, D12), consume the household-size top-band mean (#196), give bike a distance cost derived from its observed mean trip length (#107, D9), re-derive the ferry target from the disclosed TPA tap-on series (#94, D8) and report the short-trip band on placed coordinates (#30)",
+      "kind": "rebuild",
+      "status": "open",
+      "recommended": false,
+      "cost": "a demand rebuild (~2 h of builds) that opens a family and re-baselines every pair; then a new arm 0 at a probe-priced stated cost (25.1 h for 250 iterations on the scoring pair's stopwatch, spread 24.5-32.8 h; `python src/analyse/arm_cost.py --iterations 250 --fraction 0.25`)",
+      "blocked_on": "the Java fold landing first (one recompile of .tools/classes on the idle machine: the held-ride gate is half of D12), then a 25 % probe on the rebuilt inputs for the price and a stated-cost approval",
+      "opens_family": true,
+      "answers_issues": [
+        30,
+        86,
+        94,
+        107,
+        145,
+        196
+      ],
+      "evidence": "9.177: 20.62 % of core legs bound, 59.0-59.3 % of bound trips ride on both pairs, the seed at 14.9 %; the 17.70 % short-trip supply at the seed; the scoring pair moved nothing, so the new arm 0 ships with RUN.replanning.score_msa_representation = absent; D8-D12 taken 16 September 2026",
+      "detail": "a demand rebuild (~2 h of builds) that opens a family and re-baselines every pair, then a new arm 0 at a probe-priced stated cost; the short-trip shape leaves the rebuild (the seed carries 17.70 % of legs under 1 km, #30 re-aimed at allocation); the scoring pair's reading (9.177) settled MSA: absent"
+    },
+    {
+      "id": "asc-contraction",
+      "title": "The ASC contraction test for bike alone",
+      "kind": "arm",
+      "status": "held",
+      "recommended": false,
+      "cost": "~15 h, no family",
+      "blocked_on": "D7 - the first pair has run (§9.176); the user's hold (§9.159) is lifted by that event, not by this session",
+      "opens_family": false,
+      "answers_issues": [
+        107
+      ],
+      "evidence": "§9.163: 20.46 pp of headroom on bike"
+    },
+    {
+      "id": "eleventh-report",
+      "title": "Report #12, after the routers pair's reading (lodged 16 September 2026 as 20260916T062246)",
+      "kind": "report",
+      "status": "done",
+      "recommended": false,
+      "cost": "one /project-report pass",
+      "blocked_on": "nothing - the pair is the reading (§9.176); one /project-report pass, no run",
+      "opens_family": false,
+      "answers_issues": [],
+      "evidence": "docs/reports/README.md",
+      "done_ref": "9.177"
+    },
+    {
+      "id": "mumbai-broad-behavioural-baseline",
+      "title": "Add coherent Mumbai households and realistic hired-trip responses",
+      "kind": "build",
+      "status": "open",
+      "recommended": false,
+      "cost": "Hired-supply case completed in 910.5 s including preparation. No new run launched; multi-hour arms still require stated-cost approval.",
+      "blocked_on": "D13 (the study extent) - a coherent household population is synthesised from the census controls at the chosen extent, not added to the 1,000-person explicit list; and the launcher fold, so the case runs through the harness with its gates and records (9.202)",
+      "opens_family": true,
+      "answers_issues": [],
+      "evidence": "9.200: the bounded fleet case completed with native waits, balanced request accounting and finite retained scores. Timeouts still abort the day; no operating-fleet or ridership calibration is claimed."
+    },
+    {
+      "id": "mumbai-launcher-fold",
+      "title": "Fold the Mumbai launch path into the harness: `run.py BASE --day WEEKDAY` instead of `run.py --baseline-smoke` - a city-declared scoring source (`RUN.scoring.translation`: the C1 translation with the HTS purpose share, or the bound scoring fields), the prepare-network / repair-schedule / write-vehicles assembly moved to `cities/mumbai/build/build_baseline_run_inputs.py` producing `scenarios/matsim/BASE/WEEKDAY/`, the plans at `demand/plans/matsim/population_WEEKDAY.xml.gz`; then delete `src/run/baseline_smoke.py`",
+      "kind": "implementation",
+      "status": "open",
+      "recommended": true,
+      "cost": "no arm; a few hours of harness work, a Newcastle 1 % smoke of a few minutes to prove the harness unchanged, and the Mumbai `smoke_two_iterations` case (~10 min) on the folded path",
+      "blocked_on": "nothing - the registry namespace is unified (9.202); the harness couplings are named there: scoring_from_c1 + purpose_share, the SETS/PLANS layout, the parking price file, the residents map and the no-targets close-out",
+      "opens_family": false,
+      "answers_issues": [
+        238
+      ],
+      "evidence": "9.202: Mumbai passes the city contract on the framework's keys; the emitted config of the structural check declares what the previous cases left to defaults; the launcher is the one remaining parallel path"
     }
-   ],
-   "recommended": 0,
-   "issues": [
-    172,
-    86,
-    30
-   ],
-   "evidence": "§9.164, §9.169, report #11's factor ledger",
-   "asked": "2026-09-14",
-   "answer": "Routers pair first (recommended)",
-   "answered": "2026-09-14",
-   "note": "user, 14 Sep 2026 (49th session): the routers pair on arm 0, one 25 % probe on the recompiled controler first"
-  },
-  {
-   "id": "D2",
-   "question": "Send the drafted TfNSW bespoke-table request (mode x age, trip length by mode, occupancy by purpose, the unfolded Other)?",
-   "options": [
+  ],
+  "decisions": [
     {
-     "label": "Send it under the operator's name (recommended)",
-     "detail": "the draft is cities/newcastle/docs/requests/tfnsw_hts_bespoke_tables.md; it names a person and an affiliation, so the operator sends it"
+      "id": "D1",
+      "question": "Which road is next: the first pair arm on arm 0, or the demand rebuild for the roots?",
+      "options": [
+        {
+          "label": "Routers pair first (recommended)",
+          "detail": "C.raptor.mode_cost_representation = mode_constant against arm 0, 250 it at 25 %, coverage on both sides; answers three of the six STOP modes"
+        },
+        {
+          "label": "Roots rebuild first",
+          "detail": "one demand rebuild (#86 #30 #107 #196), a new family, a new arm 0, then the pairs"
+        },
+        {
+          "label": "Scoring pair first",
+          "detail": "the operator's decided sequence of 10 September (scoring -> choice set -> service quality -> routers -> submodes)"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        172,
+        86,
+        30
+      ],
+      "evidence": "§9.164, §9.169, report #11's factor ledger",
+      "asked": "2026-09-14",
+      "answer": "Routers pair first (recommended)",
+      "answered": "2026-09-14",
+      "note": "user, 14 Sep 2026 (49th session): the routers pair on arm 0, one 25 % probe on the recompiled controler first"
     },
     {
-     "label": "Hold it",
-     "detail": "the modelled mode x demographics table exists; the request has been re-recommended by six reports"
+      "id": "D2",
+      "question": "Send the drafted TfNSW bespoke-table request (mode x age, trip length by mode, occupancy by purpose, the unfolded Other)?",
+      "options": [
+        {
+          "label": "Send it under the operator's name (recommended)",
+          "detail": "the draft is cities/newcastle/docs/requests/tfnsw_hts_bespoke_tables.md; it names a person and an affiliation, so the operator sends it"
+        },
+        {
+          "label": "Hold it",
+          "detail": "the modelled mode x demographics table exists; the request has been re-recommended by six reports"
+        },
+        {
+          "label": "Search first, online and via the TfNSW API",
+          "detail": "the user's answer of 14 September 2026: search exhaustively online and through the TfNSW Open Data API (TFNSW_API_KEY in .env) for the four tables before any request is sent; report what was found and what was not"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        50
+      ],
+      "evidence": "§9.163, §9.167",
+      "asked": "2026-09-14",
+      "answer": "Search first, online and via the TfNSW API",
+      "answered": "2026-09-14",
+      "note": "user, 14 Sep 2026 (49th session): exhaustive search online and via the TfNSW API first; a request only if the search fails"
     },
     {
-     "label": "Search first, online and via the TfNSW API",
-     "detail": "the user's answer of 14 September 2026: search exhaustively online and through the TfNSW Open Data API (TFNSW_API_KEY in .env) for the four tables before any request is sent; report what was found and what was not"
+      "id": "D3",
+      "question": "Require the nine test-workflow jobs as status checks in the main ruleset (21121872)?",
+      "options": [
+        {
+          "label": "Require them (recommended)",
+          "detail": "a red CI run is mergeable today (#202); the prepared JSON is one `gh api -X PUT` away and the agent's call was refused, so the operator runs it"
+        },
+        {
+          "label": "Leave the ruleset as it is",
+          "detail": "the user's setting; CI stays advisory"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        202
+      ],
+      "evidence": "report #11 (20260914T152907), recommendation 5",
+      "asked": "2026-09-14",
+      "answer": "Require them (recommended)",
+      "answered": "2026-09-14",
+      "note": "user, 14 Sep 2026 (49th session)"
+    },
+    {
+      "id": "D4",
+      "question": "Does a one-field control arm (the routers pair, and the four pairs after it) open a comparability family, or is it read against arm 0 inside F35?",
+      "options": [
+        {
+          "label": "Inside F35, read against arm 0 (recommended)",
+          "detail": "§9.169 says the pairs difference against arm 0's it.300 reading; the ledger assigns the running arm to F35 by its launch stamp; a family opens on a mechanism, data or network change, not on the flip the experiment exists to measure"
+        },
+        {
+          "label": "Each control opens a family",
+          "detail": "§9.164's phrasing; then the pair and arm 0 sit across a boundary and the difference is a band read across it, recorded as such in run_families.json"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        172,
+        174
+      ],
+      "evidence": "§9.174: the lane's pair task carried opens_family: true while §9.169 reads the pairs within F35",
+      "asked": "2026-09-15",
+      "answer": "Inside F35, read against arm 0 (recommended)",
+      "answered": "2026-09-15"
+    },
+    {
+      "id": "D5",
+      "question": "The routers pair ran all 250 iterations and shut down cleanly, but its harness died at iteration 34, so no `_run.json` exists and the gate is red. How is it closed out?",
+      "options": [
+        {
+          "label": "Add run.py --close-out; it is a RESULT (recommended)",
+          "detail": "a launcher path for an orphaned run whose own log records a clean shutdown at its declared last iteration: `ran_to_last_iteration` at 250 through the framework's close_out(); refuses a live, short or unclean run"
+        },
+        {
+          "label": "Let reconcile mark it aborted; cite at it.250",
+          "detail": "the existing path: status aborted (or failed, on the survivable Guice throwable); a reading at reached_iteration 250, never a result"
+        },
+        {
+          "label": "Leave it; the gate stays red",
+          "detail": "no close-out; the handoff PR is blocked by the red gate and the lane cannot start"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        225
+      ],
+      "evidence": "§9.176: `_progress.json` last written 05:11:22 on 15 Sep at iteration 34; the JVM shut down cleanly at 03:30:18 on 16 Sep; `run_failure.py --check` red on the stale running record",
+      "asked": "2026-09-16",
+      "answer": "Add run.py --close-out; it is a RESULT (recommended)",
+      "answered": "2026-09-16"
+    },
+    {
+      "id": "D6",
+      "question": "The harness is a child of the shell that launches it, and the fifty-second session's end killed the routers pair's harness at iteration 34 while its JVM ran on. What should the launch default be?",
+      "options": [
+        {
+          "label": "Detach by default (recommended)",
+          "detail": "`run.py` registers the scheduled task unless `--foreground` is passed; the harness, its watchers and the record outlive any shell; `--detach` already runs every refusal first (§9.167)"
+        },
+        {
+          "label": "Refuse a foreground launch under a Claude session",
+          "detail": "`run.py` refuses when `CLAUDECODE` is in the environment and `--detach` is absent; a foreground launch from a terminal stays allowed"
+        },
+        {
+          "label": "Leave the default; the operator remembers --detach",
+          "detail": "the trap goes in the brief; a harness death recurs the next time it is forgotten"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        225
+      ],
+      "evidence": "§9.176: the one launch since §9.72 not made `--detach` is the one whose harness died with the shell; no ceiling, stall or gate watcher ran from iteration ~35 to 250",
+      "asked": "2026-09-16",
+      "answer": "Detach by default (recommended)",
+      "answered": "2026-09-16",
+      "note": "Taken 16 Sep 2026: run.py registers the scheduled task unless --foreground is passed."
+    },
+    {
+      "id": "D7",
+      "question": "The routers pair moved nothing past the band (car -0.35 pp, ride +0.17 pp, light rail 772 → 856 boardings, heavy rail 10,092 → 10,476 against arm 0; 2 of 12 inside and 6 past the bar on both; pt coverage 17.53 → 15.78 %). What runs next?",
+      "options": [
+        {
+          "label": "The roots rebuild (recommended)",
+          "detail": "one demand rebuild that seeds ride at the HTS share (#86), gives destination placement an observed short-trip shape (#30), gives bike a distance cost (#107) and consumes the household-size top-band mean (#196); opens a family; ~2 h of builds then a new arm 0 at ~28 h"
+        },
+        {
+          "label": "The scoring pair next",
+          "detail": "`RUN.replanning.score_msa_representation` = `at_innovation_cutoff`, the one candidate predicting both the cutoff snap (car +1.774 pp on the pair, +1.683 on arm 0) and the score peak-then-fall (§9.163); read against arm 0 inside F35; ~28 h"
+        },
+        {
+          "label": "The ASC contraction test for bike alone",
+          "detail": "~15 h, no family; 20.46 pp of headroom on bike (§9.163); held by the user until the first pair had run (§9.159) - it has"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        86,
+        30,
+        107,
+        196,
+        172,
+        174,
+        98,
+        49
+      ],
+      "evidence": "§9.176: the pair's reading against arm 0; §9.169: ride's 20.60 % target above its 19.11 % coverage, fixed at the seed, on both arms",
+      "asked": "2026-09-16",
+      "answer": "The scoring pair next",
+      "answered": "2026-09-16",
+      "note": "Taken 16 Sep 2026 with the machine idle: the scoring pair launches now against arm 0 inside F35, and the roots rebuild proceeds in parallel; the user's selection carries the stated-cost approval for one 25 % probe and one 25 % arm up to 35 h. The rebuilt family's arm 0 follows."
+    },
+    {
+      "id": "D8",
+      "question": "The ferry's 1 km cross-harbour market is 305 resident trips (0.19 %) on the pair and the ferry takes 15.7 % of it; scaled boardings 1,148/weekday sit inside the disclosed Newcastle-wharf tap-on bound (234-1,347); the derived target (0.143 % of resident trips, ~906 trips/day, a lockdown-month census cell) is three times the market. Close ferry from which side?",
+      "options": [
+        {
+          "label": "Re-derive the ferry target from the disclosed TPA tap-on series (recommended)",
+          "detail": "a supersession of the census-cell derivation (9.89) recorded in DECISIONS.md; the model already sits inside the newer observation; no run"
+        },
+        {
+          "label": "Model the reach beyond 1 km",
+          "detail": "intermodal access at the wharves (bike/car to the wharf, #167 access modes) or the sweep of RUN.transit_router.search_radius_m - a supply-side mechanism, opens a family"
+        },
+        {
+          "label": "Both: the tap-on target now, the reach later",
+          "detail": "re-derive now; keep #94 awaiting the access mechanism"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        94,
+        185
+      ],
+      "evidence": "measure_near_wharf.py on the pair and arm 0 (16 September 2026), #94's comment",
+      "asked": "2026-09-16",
+      "answer": "Re-derive the ferry target from the disclosed TPA tap-on series (recommended)",
+      "answered": "2026-09-16",
+      "note": "16 Sep 2026: a supersession of the census-cell derivation; the reach mechanism stays a later item on #94"
+    },
+    {
+      "id": "D9",
+      "question": "Bike's mechanism is length (2.9 % of the car-available at 10.6 km, 14.8 % of the car-less at 11.5 km; resident mean 8.13 km against 5.2). The roots rebuild gives bike a distance cost. From which source?",
+      "options": [
+        {
+          "label": "A literature marginal utility of distance for bike, with its sweep (recommended)",
+          "detail": "declared C.scoring.bike_distance_utility_per_km from a named estimate (the Melbourne AToM/VISTA model already cited for beta_bike_mode, 8.4/9.28), source literature, sweep; reaches scoring.modeParams[bike].marginalUtilityOfDistance; no new value invented"
+        },
+        {
+          "label": "A constrained solve on the observed 5.2 km mean",
+          "detail": "derived: the calibration loop solves the coefficient so bike's modelled mean trip length reproduces C.constraint.trip_length_km.bike, never its share - needs arms"
+        },
+        {
+          "label": "The feasibility bound only (B.mode.bike_feasible_km at its derived p99, 23.95 km)",
+          "detail": "no scoring change; the reach refusal measured worse for walk (9.106), untested for bike alone"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        107
+      ],
+      "evidence": "mode_by_demographics.py on the pair (16 September 2026), #107's comment",
+      "asked": "2026-09-16",
+      "answer": "A literature marginal utility of distance for bike, with its sweep (recommended)",
+      "answered": "2026-09-16",
+      "note": "16 Sep 2026: declared from a named estimate at the roots rebuild; reaches marginalUtilityOfDistance for bike REFINED 16 Sep 2026 (the user): no literature coefficient exists in the library; beta is DERIVED as -1/(the observed mean bike trip length, C.constraint.trip_length_km.bike) with the observed spread of the mean as its sweep."
+    },
+    {
+      "id": "D10",
+      "question": "Every 25 % arm since arm 0 runs with the mode gate off by overlay (six modes past the bar would stop it at 100), while GOAL.md's loop and the monitoring page describe a watcher that stops at 20 %. What is the rule?",
+      "options": [
+        {
+          "label": "Document the scoped departure: gate off while a control is differenced against its arm 0 (recommended)",
+          "detail": "the loop's step 2 gains the clause; the position page states it; the overlays keep RUN.gate.interval_iterations 0 with their justification; nothing else changes"
+        },
+        {
+          "label": "Restore the gate as a trend read",
+          "detail": "the watcher stops at 100 only when a mode past the bar is still moving away; the overlays drop the departure; a listener change, no family"
+        },
+        {
+          "label": "Leave both as they are",
+          "detail": "the departure stays undocumented"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        227
+      ],
+      "evidence": "the twelfth report, upcoming risk 2; f35_*_25pct.json interval_iterations 0 under allow_outside_sweep",
+      "asked": "2026-09-16",
+      "answer": "Document the scoped departure: gate off while a control is differenced against its arm 0 (recommended)",
+      "answered": "2026-09-16",
+      "note": "16 Sep 2026: GOAL.md loop step 2 and monitoring-and-gates.md state it"
+    },
+    {
+      "id": "D11",
+      "question": "The main ruleset requires the nine status checks (D3) but strict_required_status_checks_policy is false: a PR green against an older main merges without re-running on the merged tree. Require branches up to date before merging?",
+      "options": [
+        {
+          "label": "Yes - set the strict policy (recommended)",
+          "detail": "one gh api call on the ruleset; a PR behind main must update (one more CI run per raced PR)"
+        },
+        {
+          "label": "No - keep it as it is",
+          "detail": "same-day PRs keep merging without a re-run on the merged tree"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        230
+      ],
+      "evidence": "the twelfth report, upcoming risk 16; the ruleset read on 16 September 2026",
+      "asked": "2026-09-16",
+      "answer": "Yes - set the strict policy (recommended)",
+      "answered": "2026-09-16",
+      "note": "16 Sep 2026: strict_required_status_checks_policy true on the main ruleset"
+    },
+    {
+      "id": "D12",
+      "question": "Ride's root, measured on the pair: the binders bind 20.62 % of core legs (the observed passenger share) so ride's ceiling sits AT its target, and 41 % of bound trips do not ride - car-available escort members drive themselves 51 %, joint companions 37 %, lift passengers 65 %; a bound person with one plan keeps an alternative on their first base mode (9.164), so the seed carries 14.9 %. What does the roots rebuild do for ride?",
+      "options": [
+        {
+          "label": "Hold escort members and joint companions to ride on their bound tours; car-less lift and shared passengers keep walk/bike/pt (recommended)",
+          "detail": "a tour that exists BECAUSE a member is escorted, or AS a joint activity, has no solo-car alternative by definition: the plans builder keeps ride on those tours in every plan (no base-mode alternative for them) and GatedSubtourModeChoice refuses car on an escort- or joint-bound trip; a car-less passenger may still walk. Opens a family with the rebuild; the Java half compiles after the arm"
+        },
+        {
+          "label": "Hold every bound trip to ride",
+          "detail": "the binders bind exactly the observed share, so every bound trip must ride to reach it; removes the car-less passenger's walk alternative too - the wait is then never chosen against"
+        },
+        {
+          "label": "Leave the choice free; ride stays a scoring question",
+          "detail": "no rebuild change for ride; the deficit is read as ride's utility against its alternatives (the wait, the detour), to be measured on the pairing engine's wait times"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        86,
+        145
+      ],
+      "evidence": "measure_bound_trips.py on the routers pair at it.250 (9.177): 109,816 bound trips, 59.0 % ride; by binding x car availability",
+      "asked": "2026-09-16",
+      "answer": "Hold escort members and joint companions to ride on their bound tours; car-less lift and shared passengers keep walk/bike/pt (recommended)",
+      "answered": "2026-09-16",
+      "note": "16 Sep 2026: the plans builder keeps ride on escort- and joint-bound tours in every plan; the gate refuses car on those trips (Java, after the arm); opens a family with the roots rebuild"
+    },
+    {
+      "id": "D13",
+      "question": "Mumbai's study extent. city.json declares the four Census 2011 districts (Mumbai, Mumbai Suburban, Thane incl. today's Palghar, Raigad) - the acquisition's overcoverage, not a chosen area; the notified MMR takes only parts of three of them and 1,053 of 4,813 census leaves have no source polygon yet. Which extent does the population, the targets and every count basis follow?",
+      "options": [
+        {
+          "label": "The notified Mumbai Metropolitan Region as the core, the four-district envelope as the external tier (recommended)",
+          "detail": "the planning region the CMP, CTS and MMRDA series describe; keeps the suburban-rail commuting from Thane, Navi Mumbai and Vasai-Virar that defines the city's transport; needs the MMR villages reconciled to the census leaves (the Tansa-river partial areas and the Karjat villages are name candidates today)"
+        },
+        {
+          "label": "The four 2011 census districts as declared",
+          "detail": "what the package holds today; ~2x the MMR's population, most of it rural Thane/Palghar/Raigad with no transit data; the cheapest to keep, the most to simulate"
+        },
+        {
+          "label": "Greater Mumbai (BMC) alone",
+          "detail": "the best-documented area (CMP, BEST, MMRCL) and the smallest; cuts the suburban rail commute at the city limit, which misrepresents the mode that carries it"
+        }
+      ],
+      "recommended": "The notified Mumbai Metropolitan Region as the core, the four-district envelope as the external tier (recommended)",
+      "issues": [
+        239
+      ],
+      "evidence": "9.202: the declaration; census_geography_audit.json: 1,053 leaves without geometry, 8.4 M of Thane's 11.1 M persons without geometry; the previous agent's README: 'the user has not yet confirmed this geographical choice'",
+      "asked": "2026-09-21",
+      "answer": null,
+      "answered": null
     }
-   ],
-   "recommended": 0,
-   "issues": [
-    50
-   ],
-   "evidence": "§9.163, §9.167",
-   "asked": "2026-09-14",
-   "answer": "Search first, online and via the TfNSW API",
-   "answered": "2026-09-14",
-   "note": "user, 14 Sep 2026 (49th session): exhaustive search online and via the TfNSW API first; a request only if the search fails"
-  },
-  {
-   "id": "D3",
-   "question": "Require the nine test-workflow jobs as status checks in the main ruleset (21121872)?",
-   "options": [
-    {
-     "label": "Require them (recommended)",
-     "detail": "a red CI run is mergeable today (#202); the prepared JSON is one `gh api -X PUT` away and the agent's call was refused, so the operator runs it"
-    },
-    {
-     "label": "Leave the ruleset as it is",
-     "detail": "the user's setting; CI stays advisory"
-    }
-   ],
-   "recommended": 0,
-   "issues": [
-    202
-   ],
-   "evidence": "report #11 (20260914T152907), recommendation 5",
-   "asked": "2026-09-14",
-   "answer": "Require them (recommended)",
-   "answered": "2026-09-14",
-   "note": "user, 14 Sep 2026 (49th session)"
-  },
-  {
-   "id": "D4",
-   "question": "Does a one-field control arm (the routers pair, and the four pairs after it) open a comparability family, or is it read against arm 0 inside F35?",
-   "options": [
-    {
-     "label": "Inside F35, read against arm 0 (recommended)",
-     "detail": "§9.169 says the pairs difference against arm 0's it.300 reading; the ledger assigns the running arm to F35 by its launch stamp; a family opens on a mechanism, data or network change, not on the flip the experiment exists to measure"
-    },
-    {
-     "label": "Each control opens a family",
-     "detail": "§9.164's phrasing; then the pair and arm 0 sit across a boundary and the difference is a band read across it, recorded as such in run_families.json"
-    }
-   ],
-   "recommended": 0,
-   "issues": [
-    172,
-    174
-   ],
-   "evidence": "§9.174: the lane's pair task carried opens_family: true while §9.169 reads the pairs within F35",
-   "asked": "2026-09-15",
-   "answer": "Inside F35, read against arm 0 (recommended)",
-   "answered": "2026-09-15"
-  },
-  {
-   "id": "D5",
-   "question": "The routers pair ran all 250 iterations and shut down cleanly, but its harness died at iteration 34, so no `_run.json` exists and the gate is red. How is it closed out?",
-   "options": [
-    {
-     "label": "Add run.py --close-out; it is a RESULT (recommended)",
-     "detail": "a launcher path for an orphaned run whose own log records a clean shutdown at its declared last iteration: `ran_to_last_iteration` at 250 through the framework's close_out(); refuses a live, short or unclean run"
-    },
-    {
-     "label": "Let reconcile mark it aborted; cite at it.250",
-     "detail": "the existing path: status aborted (or failed, on the survivable Guice throwable); a reading at reached_iteration 250, never a result"
-    },
-    {
-     "label": "Leave it; the gate stays red",
-     "detail": "no close-out; the handoff PR is blocked by the red gate and the lane cannot start"
-    }
-   ],
-   "recommended": 0,
-   "issues": [
-    225
-   ],
-   "evidence": "§9.176: `_progress.json` last written 05:11:22 on 15 Sep at iteration 34; the JVM shut down cleanly at 03:30:18 on 16 Sep; `run_failure.py --check` red on the stale running record",
-   "asked": "2026-09-16",
-   "answer": "Add run.py --close-out; it is a RESULT (recommended)",
-   "answered": "2026-09-16"
-  },
-  {
-   "id": "D6",
-   "question": "The harness is a child of the shell that launches it, and the fifty-second session's end killed the routers pair's harness at iteration 34 while its JVM ran on. What should the launch default be?",
-   "options": [
-    {
-     "label": "Detach by default (recommended)",
-     "detail": "`run.py` registers the scheduled task unless `--foreground` is passed; the harness, its watchers and the record outlive any shell; `--detach` already runs every refusal first (§9.167)"
-    },
-    {
-     "label": "Refuse a foreground launch under a Claude session",
-     "detail": "`run.py` refuses when `CLAUDECODE` is in the environment and `--detach` is absent; a foreground launch from a terminal stays allowed"
-    },
-    {
-     "label": "Leave the default; the operator remembers --detach",
-     "detail": "the trap goes in the brief; a harness death recurs the next time it is forgotten"
-    }
-   ],
-   "recommended": 0,
-   "issues": [
-    225
-   ],
-   "evidence": "§9.176: the one launch since §9.72 not made `--detach` is the one whose harness died with the shell; no ceiling, stall or gate watcher ran from iteration ~35 to 250",
-   "asked": "2026-09-16",
-   "answer": "Detach by default (recommended)",
-   "answered": "2026-09-16",
-   "note": "Taken 16 Sep 2026: run.py registers the scheduled task unless --foreground is passed."
-  },
-  {
-   "id": "D7",
-   "question": "The routers pair moved nothing past the band (car -0.35 pp, ride +0.17 pp, light rail 772 → 856 boardings, heavy rail 10,092 → 10,476 against arm 0; 2 of 12 inside and 6 past the bar on both; pt coverage 17.53 → 15.78 %). What runs next?",
-   "options": [
-    {
-     "label": "The roots rebuild (recommended)",
-     "detail": "one demand rebuild that seeds ride at the HTS share (#86), gives destination placement an observed short-trip shape (#30), gives bike a distance cost (#107) and consumes the household-size top-band mean (#196); opens a family; ~2 h of builds then a new arm 0 at ~28 h"
-    },
-    {
-     "label": "The scoring pair next",
-     "detail": "`RUN.replanning.score_msa_representation` = `at_innovation_cutoff`, the one candidate predicting both the cutoff snap (car +1.774 pp on the pair, +1.683 on arm 0) and the score peak-then-fall (§9.163); read against arm 0 inside F35; ~28 h"
-    },
-    {
-     "label": "The ASC contraction test for bike alone",
-     "detail": "~15 h, no family; 20.46 pp of headroom on bike (§9.163); held by the user until the first pair had run (§9.159) - it has"
-    }
-   ],
-   "recommended": 0,
-   "issues": [
-    86,
-    30,
-    107,
-    196,
-    172,
-    174,
-    98,
-    49
-   ],
-   "evidence": "§9.176: the pair's reading against arm 0; §9.169: ride's 20.60 % target above its 19.11 % coverage, fixed at the seed, on both arms",
-   "asked": "2026-09-16",
-   "answer": "The scoring pair next",
-   "answered": "2026-09-16",
-   "note": "Taken 16 Sep 2026 with the machine idle: the scoring pair launches now against arm 0 inside F35, and the roots rebuild proceeds in parallel; the user's selection carries the stated-cost approval for one 25 % probe and one 25 % arm up to 35 h. The rebuilt family's arm 0 follows."
-  },
-  {
-   "id": "D8",
-   "question": "The ferry's 1 km cross-harbour market is 305 resident trips (0.19 %) on the pair and the ferry takes 15.7 % of it; scaled boardings 1,148/weekday sit inside the disclosed Newcastle-wharf tap-on bound (234-1,347); the derived target (0.143 % of resident trips, ~906 trips/day, a lockdown-month census cell) is three times the market. Close ferry from which side?",
-   "options": [
-    {
-     "label": "Re-derive the ferry target from the disclosed TPA tap-on series (recommended)",
-     "detail": "a supersession of the census-cell derivation (9.89) recorded in DECISIONS.md; the model already sits inside the newer observation; no run"
-    },
-    {
-     "label": "Model the reach beyond 1 km",
-     "detail": "intermodal access at the wharves (bike/car to the wharf, #167 access modes) or the sweep of RUN.transit_router.search_radius_m - a supply-side mechanism, opens a family"
-    },
-    {
-     "label": "Both: the tap-on target now, the reach later",
-     "detail": "re-derive now; keep #94 awaiting the access mechanism"
-    }
-   ],
-   "recommended": 0,
-   "issues": [
-    94,
-    185
-   ],
-   "evidence": "measure_near_wharf.py on the pair and arm 0 (16 September 2026), #94's comment",
-   "asked": "2026-09-16",
-   "answer": "Re-derive the ferry target from the disclosed TPA tap-on series (recommended)",
-   "answered": "2026-09-16",
-   "note": "16 Sep 2026: a supersession of the census-cell derivation; the reach mechanism stays a later item on #94"
-  },
-  {
-   "id": "D9",
-   "question": "Bike's mechanism is length (2.9 % of the car-available at 10.6 km, 14.8 % of the car-less at 11.5 km; resident mean 8.13 km against 5.2). The roots rebuild gives bike a distance cost. From which source?",
-   "options": [
-    {
-     "label": "A literature marginal utility of distance for bike, with its sweep (recommended)",
-     "detail": "declared C.scoring.bike_distance_utility_per_km from a named estimate (the Melbourne AToM/VISTA model already cited for beta_bike_mode, 8.4/9.28), source literature, sweep; reaches scoring.modeParams[bike].marginalUtilityOfDistance; no new value invented"
-    },
-    {
-     "label": "A constrained solve on the observed 5.2 km mean",
-     "detail": "derived: the calibration loop solves the coefficient so bike's modelled mean trip length reproduces C.constraint.trip_length_km.bike, never its share - needs arms"
-    },
-    {
-     "label": "The feasibility bound only (B.mode.bike_feasible_km at its derived p99, 23.95 km)",
-     "detail": "no scoring change; the reach refusal measured worse for walk (9.106), untested for bike alone"
-    }
-   ],
-   "recommended": 0,
-   "issues": [
-    107
-   ],
-   "evidence": "mode_by_demographics.py on the pair (16 September 2026), #107's comment",
-   "asked": "2026-09-16",
-   "answer": "A literature marginal utility of distance for bike, with its sweep (recommended)",
-   "answered": "2026-09-16",
-   "note": "16 Sep 2026: declared from a named estimate at the roots rebuild; reaches marginalUtilityOfDistance for bike REFINED 16 Sep 2026 (the user): no literature coefficient exists in the library; beta is DERIVED as -1/(the observed mean bike trip length, C.constraint.trip_length_km.bike) with the observed spread of the mean as its sweep."
-  },
-  {
-   "id": "D10",
-   "question": "Every 25 % arm since arm 0 runs with the mode gate off by overlay (six modes past the bar would stop it at 100), while GOAL.md's loop and the monitoring page describe a watcher that stops at 20 %. What is the rule?",
-   "options": [
-    {
-     "label": "Document the scoped departure: gate off while a control is differenced against its arm 0 (recommended)",
-     "detail": "the loop's step 2 gains the clause; the position page states it; the overlays keep RUN.gate.interval_iterations 0 with their justification; nothing else changes"
-    },
-    {
-     "label": "Restore the gate as a trend read",
-     "detail": "the watcher stops at 100 only when a mode past the bar is still moving away; the overlays drop the departure; a listener change, no family"
-    },
-    {
-     "label": "Leave both as they are",
-     "detail": "the departure stays undocumented"
-    }
-   ],
-   "recommended": 0,
-   "issues": [
-    227
-   ],
-   "evidence": "the twelfth report, upcoming risk 2; f35_*_25pct.json interval_iterations 0 under allow_outside_sweep",
-   "asked": "2026-09-16",
-   "answer": "Document the scoped departure: gate off while a control is differenced against its arm 0 (recommended)",
-   "answered": "2026-09-16",
-   "note": "16 Sep 2026: GOAL.md loop step 2 and monitoring-and-gates.md state it"
-  },
-  {
-   "id": "D11",
-   "question": "The main ruleset requires the nine status checks (D3) but strict_required_status_checks_policy is false: a PR green against an older main merges without re-running on the merged tree. Require branches up to date before merging?",
-   "options": [
-    {
-     "label": "Yes - set the strict policy (recommended)",
-     "detail": "one gh api call on the ruleset; a PR behind main must update (one more CI run per raced PR)"
-    },
-    {
-     "label": "No - keep it as it is",
-     "detail": "same-day PRs keep merging without a re-run on the merged tree"
-    }
-   ],
-   "recommended": 0,
-   "issues": [
-    230
-   ],
-   "evidence": "the twelfth report, upcoming risk 16; the ruleset read on 16 September 2026",
-   "asked": "2026-09-16",
-   "answer": "Yes - set the strict policy (recommended)",
-   "answered": "2026-09-16",
-   "note": "16 Sep 2026: strict_required_status_checks_policy true on the main ruleset"
-  },
-  {
-   "id": "D12",
-   "question": "Ride's root, measured on the pair: the binders bind 20.62 % of core legs (the observed passenger share) so ride's ceiling sits AT its target, and 41 % of bound trips do not ride - car-available escort members drive themselves 51 %, joint companions 37 %, lift passengers 65 %; a bound person with one plan keeps an alternative on their first base mode (9.164), so the seed carries 14.9 %. What does the roots rebuild do for ride?",
-   "options": [
-    {
-     "label": "Hold escort members and joint companions to ride on their bound tours; car-less lift and shared passengers keep walk/bike/pt (recommended)",
-     "detail": "a tour that exists BECAUSE a member is escorted, or AS a joint activity, has no solo-car alternative by definition: the plans builder keeps ride on those tours in every plan (no base-mode alternative for them) and GatedSubtourModeChoice refuses car on an escort- or joint-bound trip; a car-less passenger may still walk. Opens a family with the rebuild; the Java half compiles after the arm"
-    },
-    {
-     "label": "Hold every bound trip to ride",
-     "detail": "the binders bind exactly the observed share, so every bound trip must ride to reach it; removes the car-less passenger's walk alternative too - the wait is then never chosen against"
-    },
-    {
-     "label": "Leave the choice free; ride stays a scoring question",
-     "detail": "no rebuild change for ride; the deficit is read as ride's utility against its alternatives (the wait, the detour), to be measured on the pairing engine's wait times"
-    }
-   ],
-   "recommended": 0,
-   "issues": [
-    86,
-    145
-   ],
-   "evidence": "measure_bound_trips.py on the routers pair at it.250 (9.177): 109,816 bound trips, 59.0 % ride; by binding x car availability",
-   "asked": "2026-09-16",
-   "answer": "Hold escort members and joint companions to ride on their bound tours; car-less lift and shared passengers keep walk/bike/pt (recommended)",
-   "answered": "2026-09-16",
-   "note": "16 Sep 2026: the plans builder keeps ride on escort- and joint-bound tours in every plan; the gate refuses car on those trips (Java, after the arm); opens a family with the roots rebuild"
-  }
- ]
+  ]
 }

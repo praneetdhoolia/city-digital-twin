@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/cr_public_port_line_20251215_b58b2d3f56881fef.pdf",
+      "url": "https://cr.indianrailways.gov.in/cris//uploads/files/1781160975368-PORT%20LINE%20PTT%20WEF%2015.12.2025.pdf",
+      "final_url": "https://cr.indianrailways.gov.in/cris//uploads/files/1781160975368-PORT%20LINE%20PTT%20WEF%2015.12.2025.pdf",
+      "content_type": "application/pdf",
+      "source": "Central Railway published port line 20251215",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:37:12.889574+00:00",
+      "sha256": "b58b2d3f56881fef164b7bcba15e827af4d7ea16130fef52e88ce1beba8f31e8",
+      "bytes": 158218,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Linked from official Mumbai Suburban timetable index; effective dates, later amendments, station times and operating exceptions require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

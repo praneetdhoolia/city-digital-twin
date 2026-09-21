@@ -1,0 +1,10 @@
+[
+  ["maxspeed", "20 mph", 32.18688, "km/h"],
+  ["maxspeed:backward", "10 knots", 18.52, "km/h"],
+  ["maxspeed", "0", 0, "km/h"],
+  ["lanes:backward", "0", 0, "lanes"],
+  ["lanes", "3", 3, "lanes"],
+  ["width", "16'3\"", 4.953, "m"],
+  ["width", "5 m", 5, "m"],
+  ["width", "12 ft", 3.6576, "m"]
+]

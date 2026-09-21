@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_metro_dpr_4_metro_line_4_5cdf52cb0be8ccc7.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%204.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%204.pdf",
+      "content_type": "application/pdf",
+      "source": "4 Metro Line 4 (Wadala to Kasarvadavali) Download (47.99 MB)",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:17:36.156019+00:00",
+      "sha256": "5cdf52cb0be8ccc799276b966891a198e23a8e9b5fcea49314df436ed296af85",
+      "bytes": 50325771,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

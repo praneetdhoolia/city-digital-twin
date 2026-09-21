@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_raigarh_pca_7061f588a5eda42a.xlsx",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/6711/download/9788/DDW_PCA2724_2011_MDDS%20with%20UI.xlsx",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/6711/download/9788/DDW_PCA2724_2011_MDDS%20with%20UI.xlsx",
+      "content_type": "application/octet-stream",
+      "source": "Raigarh Maharashtra primary census abstract 2011",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:47:04.738920+00:00",
+      "sha256": "7061f588a5eda42aee5bb7395c29809770126e044892e9296e421147fc649d47",
+      "bytes": 1092951,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical 2011 observations; geographic crosswalk and current projection required.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

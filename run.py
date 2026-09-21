@@ -155,9 +155,18 @@ def listing():
 
 
 def main():
+    if '--baseline-smoke' in sys.argv[1:]:
+        smoke_parser = argparse.ArgumentParser(description='Bounded behavioural development case')
+        smoke_parser.add_argument('--baseline-smoke', action='store_true')
+        smoke_parser.add_argument('--run-config', help='Declared city run overlay for a bounded sensitivity case')
+        smoke_args = smoke_parser.parse_args()
+        import baseline_smoke
+        return baseline_smoke.main(run_config=smoke_args.run_config)
     ap = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument('--baseline-smoke', action='store_true',
+                    help='run the selected city\'s bounded provisional behavioural case; optional --run-config')
     # The scenario default and day-type vocabulary are the CITY's, not the
     # framework's: another city declares its own in city.json, and a CLI that
     # hardwired S2/WEEKDAY rejected that city's own declared inputs.
@@ -242,6 +251,8 @@ def main():
     ap.add_argument('--no-metrics', action='store_true',
                     help='skip metric extraction after a successful run')
     a = ap.parse_args()
+    if a.baseline_smoke:
+        ap.error('--baseline-smoke must be used alone; its configuration is declared by the city')
 
     if a.list:
         return listing()

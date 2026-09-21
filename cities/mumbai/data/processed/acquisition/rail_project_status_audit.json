@@ -1,0 +1,16 @@
+{
+  "source_id": "pib_mumbai_rail_capacity_projects_20260325",
+  "source_sha256": "01bf7104e08c403c1fd1813fcb35b5aac8b5a5e240020d12b86e81e94d483072",
+  "terminal_project_rows": 12,
+  "corridor_project_rows": 13,
+  "aggregate_claim_rows": 6,
+  "model_parameters_adopted": false,
+  "limitations": [
+    "The terminal heading mixes completed, taken-up and planned works; only explicit row wording establishes a reported status.",
+    "Project length, cost, platform counts and sanctioned rake quantities do not prove commissioning or current usable capacity.",
+    "The Goregaon-Borivali Harbour extension is a sanctioned project here; this source cannot resolve an individual Borivali timetable service.",
+    "Approximate network-wide service totals have a different date and precision from later operator counts; they must not be pooled or used as exact targets.",
+    "A repeated procurement statement is not an additional stock receipt. No project or vehicle is added to the operating simulation.",
+    "Pune tables and the duplicated accessibility copy are excluded from these Mumbai observations."
+  ]
+}

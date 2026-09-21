@@ -4232,5 +4232,17 @@
    "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)"
   }
  ],
- "last_updated": "2026-09-16"
+ "last_updated": "2026-09-16",
+ "review_attempt": {
+  "stamp": "20260918T182209",
+  "date": "2026-09-18",
+  "head": "e37035d",
+  "method": "Three delegated reviewers stopped on workspace credit errors. Coordinator preserved available evidence and continued locally. Unreviewed scopes remain explicit gaps.",
+  "reused": 55,
+  "refreshed": 0,
+  "added": 0,
+  "searches": 1,
+  "fetches": 1,
+  "gap": "Mumbai epidemic ABMs surfaced, but no newly verified all-mode transport validation project was added. Existing project facts retain their original verification dates."
+ }
 }

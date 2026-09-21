@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_c13_maharashtra_3a1e82a60ecb1363.xls",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/1457/download/4534/DDW-2700C-13.xls",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/1457/download/4534/DDW-2700C-13.xls",
+      "content_type": "application/octet-stream",
+      "source": "Census 2011 Maharashtra single-year age returns",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:07:03.887249+00:00",
+      "sha256": "3a1e82a60ecb1363817e86a5080703f9532f48744dcafeca7c7cb1a744a0b566",
+      "bytes": 579584,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical 2011 state and district controls; geographic and category reconciliation required.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

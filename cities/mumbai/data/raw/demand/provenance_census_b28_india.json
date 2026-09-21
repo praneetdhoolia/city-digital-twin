@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/demand/census_b28_india_fc5fdca4a14af9bb.xlsx",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/13954/download/17067/DDW-0000B-28.xlsx",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/13954/download/17067/DDW-0000B-28.xlsx",
+      "content_type": "application/octet-stream",
+      "source": "Census B-28 other-worker commuting table India",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:37:37.018593+00:00",
+      "sha256": "fc5fdca4a14af9bb0347450f3530ac33b18f74ba003c2ff6ad5b9f8f16d87cf6",
+      "bytes": 261489,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "2011 distance and mode; filter geographic universe and distinguish from all-purpose travel.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

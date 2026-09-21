@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_mmr_connect_20260919_bf12c6d4bdb84267.html",
+      "url": "https://www.bestundertaking.com/mrmconnecct.asp",
+      "final_url": "https://www.bestundertaking.com/mrmconnecct.asp",
+      "source": "BEST official MMR-Connect",
+      "licence": "BEST publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:44:40.853794+00:00",
+      "sha256": "bf12c6d4bdb84267f3b8342fd6c8a79e1b902548628c64eb5c46e41474c02f15",
+      "bytes": 56941,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification."
+    }
+  ]
+}

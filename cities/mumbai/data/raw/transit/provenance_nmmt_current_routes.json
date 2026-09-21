@@ -1,0 +1,22 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_current_routes_91aa1991e3b98049.json",
+      "url": "https://nmmtitmsmobileapi.amnex.co.in/api/TimeTable/GetAllRoutes",
+      "final_url": "https://nmmtitmsmobileapi.amnex.co.in/api/TimeTable/GetAllRoutes",
+      "source": "NMMT public timetable nmmt_current_routes",
+      "licence": "Operator/vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:33:03.847294+00:00",
+      "sha256": "91aa1991e3b980496dc1fa21f4d7d0c62df6eb2c1ec0f79791f2ea6cfd546206",
+      "bytes": 279669,
+      "content_type": "application/json; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Read-only passenger query and body observed in current public timetable component. No account, payment or booking operation.",
+      "method": "POST",
+      "request_json": {
+        "intTransportMode": 38
+      }
+    }
+  ]
+}

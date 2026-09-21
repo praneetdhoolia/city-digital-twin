@@ -23,10 +23,29 @@ that reached nothing.
 **What `required` means here, stated honestly.** It means the reference city
 declares the field and the framework will not run without it. It does NOT mean
 every city in the world must have it: a city with no light rail has no use for
-`A.lightrail.dwell_fixed_s`. Narrowing the set to what each layer of the model
-genuinely needs is real work and is not done - so the contract today is *match
-the reference city's field set, and justify any omission*. That is a weaker
-claim than it looks, and saying so is the point.
+`A.lightrail.dwell_fixed_s`. Two narrowings are DERIVED, never judged, because
+the evidence for each is in the source:
+
+    required_if_mode   a tool binding pins the field to one mode
+                       (`modeParams[bike].constant`): required only of a
+                       city that runs that mode.
+    required_by        who reads the field. `run` - a tool binding, or a
+                       string-literal read in the run harness, the Java, the
+                       resolver, the readers or the calibrator - is required
+                       of every city, because the framework reads it whenever
+                       a scenario runs or is read. A list of framework
+                       builders (`src/build/...`) is required of a city whose
+                       package those builders produced (its manifest's
+                       `produced_by`). `reference_city` - read only by the
+                       reference city's own adapters and builders - is that
+                       city's business and required of no other. The reads
+                       are found by `check_hardcoding.key_uses`, the same scan
+                       that keeps the wiring ledger at zero.
+
+What is NOT derived: a field a mechanism reads only when its representation
+gate is on (the SCATS parameters when `A.signals.representation` is off) is
+still `run`, because the emitter writes it into the config regardless. A city
+that switches such a mechanism off declares the fields the gate silences.
 
 `layers.json` is derived by a different and stronger route: it lists the
 artefacts the framework's own source ASKS FOR, found by reading every
@@ -105,10 +124,45 @@ def tokenise_units(units, desc):
     return units
 
 
+# The framework's run-and-read side: a key one of these reads is needed
+# whenever a scenario of ANY city runs or is read back. `tests/check_package.py`
+# is the PACKAGE contract, not a unit test (check_hardcoding counts it as a
+# consumer): a read there is a build-side requirement, listed with the builders.
+# The rest of tests/ is fixtures and is not a consumer.
+RUN_SIDE = ('run.py', 'src/city.py', 'src/run/', 'src/java/', 'src/registry/',
+            'src/analyse/', 'src/calibrate/', 'src/setup/')
+PACKAGE_CONTRACT = 'tests/check_package.py'
+
+
+def field_readers():
+    """{key: sorted files that read it as data} over the framework and the
+    reference city, from check_hardcoding's literal scan (never a comment)."""
+    import check_hardcoding as _hard
+    fields, _ = registry.load_registry()
+    corpus = {p: io.open(p, encoding='utf-8', errors='replace').read()
+              for p in _hard.sources()}
+    return {k: sorted(v) for k, v in _hard.key_uses(corpus, set(fields)).items()}
+
+
+def required_by(field, readers):
+    """`run`, a list of framework builders, or `reference_city` - see the
+    module docstring. Derived from the bindings and the reads, not judged."""
+    if any(field.get(b) for b in TOOL_BINDINGS):
+        return 'run'
+    reads = [f for f in readers if not f.startswith('tests/') or f == PACKAGE_CONTRACT]
+    if any(f.startswith(RUN_SIDE) for f in reads):
+        return 'run'
+    builders = sorted(f for f in reads if f.startswith('src/build/') or f == PACKAGE_CONTRACT)
+    if builders:
+        return builders
+    return 'reference_city'
+
+
 def build_fields():
     fields, origin = registry.load_registry()
     desc = _city.descriptor()
     modes = desc.get('modes', [])
+    readers = field_readers()
     out = {}
     for key in sorted(fields):
         f = fields[key]
@@ -122,12 +176,15 @@ def build_fields():
             'sweep_required': f.get('source') in SWEPT_SOURCES,
             'unobtained_in_reference_city': f.get('status') == 'unobtained',
             'declared_in': origin[key].split('/')[-1],
+            'required_by': required_by(f, readers.get(key, [])),
         }
         if mode:
             out[key]['required_if_mode'] = mode
-    by_layer = {}
+    by_layer, by_tier = {}, {}
     for key, spec in out.items():
         by_layer[spec['layer']] = by_layer.get(spec['layer'], 0) + 1
+        tier = spec['required_by'] if isinstance(spec['required_by'], str) else 'build'
+        by_tier[tier] = by_tier.get(tier, 0) + 1
     return {
         'generated_by': 'src/registry/render_schema.py',
         'generated_from': 'cities/%s/registry' % _city.CITY,
@@ -151,14 +208,18 @@ def build_fields():
                      "value type; WHY a particular city chose a particular value belongs "
                      "in cities/<city>/docs/reference/CONFIG_REFERENCE.md."),
         'caveat': ('`required` means the reference city declares it and the framework '
-                   'will not run without it. A field carrying `required_if_mode` is '
-                   'required ONLY of a city that runs that mode - the one narrowing '
-                   'that can be DERIVED, because the mode name is in the tool binding. '
-                   'The rest is not narrowed: an intervention-specific field is still '
-                   'listed for a city that has no such intervention, and omitting one '
-                   'must be justified rather than assumed.'),
+                   'will not run without it. Two narrowings are DERIVED: a field '
+                   'carrying `required_if_mode` is required ONLY of a city that runs '
+                   'that mode (the mode name is in the tool binding), and `required_by` '
+                   'says who reads the field - `run` (every city), a list of framework '
+                   'builders (a city whose manifest names one of them as a producer), '
+                   'or `reference_city` (read only by the reference city\'s own '
+                   'adapters and builders; required of no other city). A field a '
+                   'switched-off mechanism silences is still `run`: the emitter writes '
+                   'it, so the city declares it.'),
         'n_fields': len(out),
         'n_by_layer': dict(sorted(by_layer.items())),
+        'n_by_required_by': dict(sorted(by_tier.items())),
         'fields': out,
     }
 

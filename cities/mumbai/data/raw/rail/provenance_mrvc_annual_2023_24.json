@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/mrvc_annual_2023_24_67c7ff9e579f5b25.pdf",
+      "url": "https://mrvc.indianrailways.gov.in/uploads/MRVC%20AR%202023-24%20%5BBilingual%5D%281%29.pdf",
+      "final_url": "https://mrvc.indianrailways.gov.in/uploads/MRVC%20AR%202023-24%20%5BBilingual%5D%281%29.pdf",
+      "source": "MRVC annual report 2023-24",
+      "licence": "Reuse terms unverified",
+      "retrieved": "2026-09-18T08:28:14.465233+00:00",
+      "sha256": "67c7ff9e579f5b2575d494754ea71a3908888f401cbee6de7cc319d0367c0ae3",
+      "bytes": 12954540,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historic suburban railway context and operations; vintage must remain explicit."
+    }
+  ]
+}

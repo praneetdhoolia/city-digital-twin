@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/freight/jnpa_daily_status_20260917_3847923253fb2301.pdf",
+      "url": "https://www.jnport.gov.in/uploads/content_manager/Daily_Status_20260917120414.pdf",
+      "final_url": "https://www.jnport.gov.in/uploads/content_manager/Daily_Status_20260917120414.pdf",
+      "content_type": "application/pdf",
+      "source": "JNPA daily status report dated 17 September 2026",
+      "licence": "Government/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:59:28.180641+00:00",
+      "sha256": "3847923253fb230195747dc05a3aed78b1653a2219517aba26842c2df5cc29cd",
+      "bytes": 35713,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published operations evidence. Separate departure events, daily reports, forecasts and capacity; no all-day timetable or citywide freight demand implied.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

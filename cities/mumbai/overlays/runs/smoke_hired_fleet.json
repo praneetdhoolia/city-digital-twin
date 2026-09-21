@@ -1,0 +1,16 @@
+{
+  "overlay": "smoke_hired_fleet",
+  "description": "Bounded real-wait pooled taxi/auto supply experiment on the choice baseline. Registration-stock proxy, not calibrated dispatch. Decision 9.199.",
+  "set": {
+    "RUN.smoke.inputs": {
+      "network": "networks/matsim/schedules/baseline_regional/network.xml.gz",
+      "schedule": "networks/matsim/schedules/baseline_regional/transitSchedule.xml.gz",
+      "transit_vehicles": "networks/matsim/schedules/baseline_regional/transitVehicles.xml.gz",
+      "plans": "demand/baseline/plans_with_choices.xml.gz",
+      "boarding_fares": "params/baseline/boarding_fares.csv",
+      "hired_fleet": "params/baseline/hired_fleet.json"
+    },
+    "RUN.smoke.hiredFleet.representation": "pooled_queue",
+    "RUN.replanning.max_agent_plan_memory": 9
+  }
+}

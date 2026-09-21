@@ -1,0 +1,23 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_current_stops_8029b8b9b5a3d93c.json",
+      "url": "https://nmmtitmsmobileapi.amnex.co.in/api/Masters/GetStationList",
+      "final_url": "https://nmmtitmsmobileapi.amnex.co.in/api/Masters/GetStationList",
+      "source": "NMMT public timetable nmmt_current_stops",
+      "licence": "Operator/vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:33:04.825419+00:00",
+      "sha256": "8029b8b9b5a3d93c54d7396257bbecc00fc9c8c1c51d466336633a6b17b2215e",
+      "bytes": 1062318,
+      "content_type": "application/json; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Read-only passenger query and body observed in current public timetable component. No account, payment or booking operation.",
+      "method": "POST",
+      "request_json": {
+        "strStationName": "",
+        "intTransportModeID": 38
+      }
+    }
+  ]
+}

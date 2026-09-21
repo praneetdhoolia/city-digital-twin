@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mahametro_annual_index_20260918_4b0e128307c216b0.html",
+      "url": "https://www.metrorailnagpur.com/annual-report",
+      "final_url": "https://www.metrorailnagpur.com/annual-report",
+      "source": "Maha Metro Nagpur annual report page",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T12:05:21.302176+00:00",
+      "sha256": "4b0e128307c216b0fc4e9b0e76c8b3f47c189f3e31964d217f2f5ef695ea3a8a",
+      "bytes": 4618,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Corporate annual report discovery; distinguish Navi Mumbai from other city operations."
+    }
+  ]
+}

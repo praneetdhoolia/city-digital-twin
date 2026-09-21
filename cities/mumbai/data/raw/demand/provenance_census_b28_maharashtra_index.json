@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/demand/census_b28_maharashtra_index_ff90633b6b13d8be.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/13981",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/13981",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Maharashtra B28 commuting table index",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:45:22.883497+00:00",
+      "sha256": "ff90633b6b13d8beeebfd5fab4dbc5b37acf4cc7eb0faa08d2ece71cd51e4d96",
+      "bytes": 97570,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official catalogue; workbook link and definitions.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

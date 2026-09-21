@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_metro_dpr_12_metro_line_12_kalyan_to_taloja_download_5ce2bbae31dbb927.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%2012.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%2012.pdf",
+      "content_type": "application/pdf",
+      "source": "12 Metro Line 12 Kalyan to Taloja Download (14.07 MB)",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:18:21.320210+00:00",
+      "sha256": "5ce2bbae31dbb92790b031d925c927f6e8ad082357bd8a0735e684d8b039c5ce",
+      "bytes": 14750762,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

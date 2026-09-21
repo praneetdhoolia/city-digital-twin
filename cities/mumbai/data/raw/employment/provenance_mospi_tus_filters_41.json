@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/mospi_tus_filters_41_1c2d01ae048fb42e.json",
+      "url": "https://api.mospi.gov.in/api/tus/getTusFilterByIndicatorId?indicator_code=41",
+      "final_url": "https://api.mospi.gov.in/api/tus/getTusFilterByIndicatorId?indicator_code=41",
+      "content_type": "application/json; charset=utf-8",
+      "source": "NSO public TUS aggregate indicator 41 filters",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:28:06.046974+00:00",
+      "sha256": "1c2d01ae048fb42e96a6c5b097f52bb70379019fbef897b0eabbab7be244edf9",
+      "bytes": 1376,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public aggregate metadata; not household diaries.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

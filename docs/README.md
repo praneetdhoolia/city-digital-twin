@@ -50,9 +50,20 @@ The framework — `run.py`, `src/`, `config/schema/`, `tests/` — names no city
 | `field.schema.json` | the shape of one controllable value: units, source class, the sweep a non-observed value must carry | — |
 | `registry.schema.json` | the shape of one registry layer file | — |
 | `city.schema.json` | a city's identity: CRS, base year, seed, the derived boundary, zone system, modes, day types, adapters, sources | — |
+| `transit_fleet.schema.json` | per-vehicle capacity assignments bound to one mapped build; see [the fleet contract](transit_fleet.md) | — |
+| `mode_vehicles.schema.json` | explicit physical types for each network mode, resolved from city registry fields; see [vehicle definitions](mode_vehicles.md) | — |
 | `required_fields.json` | which field keys a city must declare, with units and value type | `python src/registry/render_schema.py` |
 | `layers.json` | which city-relative artefacts the framework reads, found from its own `city.path(...)` calls | `python src/registry/render_schema.py` |
 | `outputs/` | the schemas a run's own records must satisfy, checked at write time; a run that died must say why | — |
+
+[Network access](network_access.md) describes how assembly preserves a city's
+mapped mode permissions and checks that requested routing modes are present.
+[Boarding fares](boarding_fares.md) defines operator-specific distance tariffs,
+realised money scoring and the current routing limitations.
+[Person mode availability](person_modes.md) describes explicit choice sets and
+the checks on every stored initial plan.
+[Hired-vehicle pools](hired_fleet.md) describes supply queues, experienced waits
+and the limits of pooled dispatch.
 
 ```bash
 python src/registry/check_city.py --all       # every city, against all of the above

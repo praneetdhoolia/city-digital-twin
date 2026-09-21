@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_journey_aca_scmu_20260918_7efba8d90f13370d.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/journey-route/ACA/SCMU/station/station/least-distance/2026-09-18/one_way/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/journey-route/ACA/SCMU/station/station/least-distance/2026-09-18/one_way/",
+      "content_type": "application/json",
+      "source": "Metro 3 public adjacent-station journey ACA to SCMU, 18 September 2026",
+      "licence": "Public authority or operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:16:10.625094+00:00",
+      "sha256": "7efba8d90f13370d641a11961f6894e2d09adfd355c55a08c6d9c66dce489510",
+      "bytes": 597,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

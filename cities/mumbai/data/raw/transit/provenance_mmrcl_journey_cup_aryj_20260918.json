@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_journey_cup_aryj_20260918_7eae4e588866ffd1.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/journey-route/CUP/ARYJ/station/station/least-distance/2026-09-18/one_way/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/journey-route/CUP/ARYJ/station/station/least-distance/2026-09-18/one_way/",
+      "content_type": "application/json",
+      "source": "Metro 3 public journey information CUP to ARYJ, 18 September 2026",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:14:53.805551+00:00",
+      "sha256": "7eae4e588866ffd11a40fcd5082f66a29c1fbc08326ac0178e337ca4874c95a9",
+      "bytes": 1991,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public read-only journey planner using parameters observed in operator client; source date selected explicitly.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

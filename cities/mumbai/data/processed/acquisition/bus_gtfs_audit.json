@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "input_path": "data/raw/transit/bus_gtfs_20260918_497b42cbffbc24f7.zip",
+  "input_sha256": "497b42cbffbc24f7f11bb535e68a1edfdcbfa35323d5630ff7353fd1b09ee68f",
+  "source": "https://raw.githubusercontent.com/croyla/mumbai-gtfs/64f9f774ee1f30389b86a7c26bc0dcca497a32ef/gtfs.zip",
+  "source_kind": "community compilation",
+  "validation_scope": "structural audit only; operational accuracy unverified",
+  "tables": [
+    "agency.txt",
+    "calendar.txt",
+    "feed_info.txt",
+    "routes.txt",
+    "stop_times.txt",
+    "stops.txt",
+    "trips.txt"
+  ],
+  "row_counts": {
+    "agency.txt": 4,
+    "stops.txt": 10279,
+    "routes.txt": 1609,
+    "trips.txt": 99080,
+    "calendar.txt": 1,
+    "stop_times.txt": 2655026
+  },
+  "agencies": [
+    {
+      "agency_id": "KDMT",
+      "agency_name": "Kalyan Dombivali Municipal Transport",
+      "agency_url": "https://kdmc.gov.in",
+      "agency_timezone": "Asia/Kolkata",
+      "agency_phone": "+91 02512202132",
+      "agency_email": "kalyandombivlitransport@gmail.com"
+    },
+    {
+      "agency_id": "TMT",
+      "agency_name": "Thane Municipal Transport",
+      "agency_url": "https://www.thanecity.gov.in",
+      "agency_timezone": "Asia/Kolkata",
+      "agency_phone": "+91 02225394922",
+      "agency_email": ""
+    },
+    {
+      "agency_id": "BEST",
+      "agency_name": "Brihanmumbai Electric Supply and Transport",
+      "agency_url": "https://www.bestundertaking.com",
+      "agency_timezone": "Asia/Kolkata",
+      "agency_phone": "+91 1800227550",
+      "agency_email": "transport@bestundertaking.com"
+    },
+    {
+      "agency_id": "VVMT",
+      "agency_name": "Vasai-Virar Municipal Transport",
+      "agency_url": "https://vvcmc.in",
+      "agency_timezone": "Asia/Kolkata",
+      "agency_phone": "",
+      "agency_email": ""
+    }
+  ],
+  "routes_by_agency": {
+    "BEST": 937,
+    "KDMT": 181,
+    "TMT": 436,
+    "VVMT": 55
+  },
+  "trips_by_agency": {
+    "BEST": 91129,
+    "KDMT": 54,
+    "TMT": 6245,
+    "VVMT": 1652
+  },
+  "routes_without_trips_by_agency": {
+    "BEST": 50,
+    "KDMT": 163,
+    "TMT": 257,
+    "VVMT": 24
+  },
+  "route_types": [
+    "3"
+  ],
+  "calendar": [
+    {
+      "service_id": "1,2,3,4,5,6,7",
+      "monday": "1",
+      "tuesday": "1",
+      "wednesday": "1",
+      "thursday": "1",
+      "friday": "1",
+      "saturday": "1",
+      "sunday": "1",
+      "start_date": "20260819",
+      "end_date": "20270215"
+    }
+  ],
+  "feed_info": [
+    {
+      "feed_publisher_name": "BLRTransit",
+      "feed_publisher_url": "https://blrtransit.com",
+      "feed_lang": "en",
+      "feed_start_date": "20260819",
+      "feed_end_date": "20270215",
+      "feed_contact_url": "https://blrtransit.com"
+    }
+  ],
+  "unused_stops_count": 232,
+  "coordinate_extent_measured_from_feed": {
+    "south_deg": 18.900067,
+    "north_deg": 19.489027,
+    "west_deg": 72.759003,
+    "east_deg": 73.18408
+  },
+  "defects": {
+    "trips:without_stop_times": 0
+  },
+  "missing_optional_tables": [
+    "calendar_dates.txt",
+    "fare_attributes.txt",
+    "fare_rules.txt",
+    "frequencies.txt",
+    "shapes.txt",
+    "transfers.txt"
+  ],
+  "limitations": [
+    "Advertised feed validity is not evidence that services operate as represented.",
+    "Calendar and day-type variation must be checked against operator schedules.",
+    "No assumption that this feed covers every bus operator or any other transport mode.",
+    "Structural validity does not verify routes against roads, capacity, fares or observed ridership."
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/roads/atal_setu_faq_20240315_bbbb97d53bca6036.pdf",
+      "url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2024-04/faq_atal_setu_15-03-2024_final_1_1.pdf",
+      "final_url": "https://www.mmrda.maharashtra.gov.in/sites/default/files/2024-04/faq_atal_setu_15-03-2024_final_1_1.pdf",
+      "content_type": "application/pdf",
+      "source": "Atal Setu operating and toll FAQ March 2024",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:50:29.284959+00:00",
+      "sha256": "bbbb97d53bca6036500922909257fc2fa6f267969dc48644f2da8adaab502280",
+      "bytes": 816184,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical policy, restrictions or toll evidence; current applicability and later orders require reconciliation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

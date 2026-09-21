@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/konkan_statistics_index_4e664828290608ac.html",
+      "url": "https://divcomkonkan.gov.in/en/document-category/annual-reports/",
+      "final_url": "https://divcomkonkan.gov.in/en/document-category/annual-reports/",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Konkan Divisional Commissioner official district statistical review index",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:08:59.038624+00:00",
+      "sha256": "4e664828290608ace6d9c0a3df65bc2072d49aef855c380787a2660cf7d61b44",
+      "bytes": 113414,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Primary government copies of all five MMR district socioeconomic reviews, including 2025 editions.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

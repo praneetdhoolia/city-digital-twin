@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_thane_pca_30c08b5f56869628.xlsx",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/6708/download/9785/DDW_PCA2721_2011_MDDS%20with%20UI.xlsx",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/6708/download/9785/DDW_PCA2721_2011_MDDS%20with%20UI.xlsx",
+      "content_type": "application/octet-stream",
+      "source": "Thane primary census abstract 2011 including later Palghar",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:46:58.157412+00:00",
+      "sha256": "30c08b5f5686962847b9f52a11dff6be922fb4d4da8926c0b3ee4cc90c8a5fde",
+      "bytes": 1366076,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical 2011 observations; geographic crosswalk and current projection required.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

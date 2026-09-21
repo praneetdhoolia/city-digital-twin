@@ -140,12 +140,13 @@ def test_getOrCreateModeParams_is_never_used():
 
 
 def test_the_binding_is_installed_only_under_the_gate():
-    """`absent` must leave SwissRailRaptorModule's own calculator in place."""
+    """Both gates off must leave SwissRailRaptorModule's calculator in place."""
     code = _code(CONTROLER)
     m = re.search(
-        r'if\s*\(\s*raptorModeCost\.isModeConstant\(\)\s*\)\s*\{(.*?)\n        \}',
+        r'if\s*\(\s*raptorModeCost\.isModeConstant\(\)\s*\|\|\s*boardingFare\.routeChoice\s*\)\s*\{(.*?)\n        \}',
         code, re.S)
-    assert m, 'no `if (raptorModeCost.isModeConstant())` block in CitysimControler'
+    assert m, 'no gated mode-constant / boarding-fare binding in CitysimControler'
+    assert 'boardingFare.routeChoice ? RaptorFareCostCalculator.class : RaptorModeCostCalculator.class' in m.group(1)
     assert 'RaptorInVehicleCostCalculator.class' in m.group(1), (
         'the RaptorInVehicleCostCalculator binding is not inside the gate')
     outside = code.replace(m.group(0), '')

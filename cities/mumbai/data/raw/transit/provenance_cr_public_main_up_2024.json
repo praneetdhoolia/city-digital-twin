@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "url": "https://cr.indianrailways.gov.in/cris//uploads/files/1728294891897-SUB%20PTT%20UP%20ML'24.pdf",
+      "final_url": "https://cr.indianrailways.gov.in/cris//uploads/files/1728294891897-SUB%20PTT%20UP%20ML'24.pdf",
+      "content_type": "application/pdf",
+      "retrieved": "2026-09-18T10:39:42.590Z",
+      "bytes": 529623,
+      "path": "data/raw/transit/cr_public_main_up_2024_68f5236a46352675.pdf",
+      "sha256": "68f5236a46352675c5f5067ac8c05614f982fa1c86b224eedb3af5e1c64ede2f",
+      "source": "Central Railway published main up 2024",
+      "licence": "Operator publication; reuse terms unverified",
+      "coverage": "Linked from official Mumbai Suburban timetable index; effective dates, later amendments, station times and operating exceptions require validation.",
+      "producing_script": "extract/import_browser_acquisition.py",
+      "transport": "Connected Chrome public fetch; default certificate verification",
+      "validation_status": "acquired_unvalidated"
+    }
+  ]
+}

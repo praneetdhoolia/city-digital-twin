@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_sidv_91cb265722759688.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/SIDV/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/SIDV/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Siddhivinayak",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:29.881820+00:00",
+      "sha256": "91cb2657227596884eb9069e032b31a20f4d59688dd73df847bdb172a0176c03",
+      "bytes": 34637,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -77,12 +77,16 @@ jobs:
       #
       # pandas is not the tests' own dependency: importing src/run/run_matsim.py
       # pulls in the run-input builder, which reads a committed csv with it.
+      # lxml is the population sampler's and the OSM tools', jsonschema the
+      # explicit-fleet and mode-vehicle validators', pyproj the road-evidence
+      # builders' (21 September 2026, DECISIONS.md 9.201-9.203); the tests of
+      # those modules run here, the one geopandas test skips itself.
       # `-c requirements.txt` is the pin, applied as a CONSTRAINTS file: this job
-      # gets the two packages it needs at exactly the versions the package was
-      # built with, without installing the geospatial stack it does not use. A
-      # pin that has drifted out of the file fails here as well as in `syntax`.
-      - name: Install pytest and the run module's one dependency, at the pinned versions
-        run: pip install -c requirements.txt pytest pandas
+      # gets the packages it needs at exactly the versions the package was built
+      # with, without installing the geospatial stack it does not use. A pin
+      # that has drifted out of the file fails here as well as in `syntax`.
+      - name: Install pytest and the run module's dependencies, at the pinned versions
+        run: pip install -c requirements.txt pytest pandas lxml jsonschema pyproj
       - name: Every unit test passes
         run: python -m pytest -q tests/unit
 

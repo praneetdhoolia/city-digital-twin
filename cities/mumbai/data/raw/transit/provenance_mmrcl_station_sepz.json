@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_sepz_d99109944e753dd2.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/SEPZ/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/SEPZ/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details SEEPZ",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:16.213415+00:00",
+      "sha256": "d99109944e753dd20cb7a862bf6a0c8149d1246446214a35058231e56337dc9f",
+      "bytes": 22188,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "listed_rows": 446,
+  "district_counts": {
+    "Palghar": 223,
+    "Raigad": 223
+  },
+  "continuous_serials": true,
+  "later_notice_source_id": "mmr_ena_raigad_plan_notice_20250918",
+  "later_notice_sha256": "f4c0a11861f450ea48449d749d610cec903bdd4a3d72b88a306379b8ddd1ecba",
+  "later_notice_claims": {
+    "Palghar": {
+      "count": 224,
+      "source_pdf_page": 3
+    },
+    "Raigad": {
+      "count": 223,
+      "source_pdf_page": 3
+    }
+  },
+  "district_count_conflicts": {
+    "Palghar": {
+      "listed": 223,
+      "later_notice": 224
+    }
+  },
+  "status": "source_conflict",
+  "limitations": [
+    "This Special Planning Authority list is not the whole metropolitan region.",
+    "Later KSC New Town transfers change planning responsibility, not necessarily MMR inclusion.",
+    "Names lack census codes and require historical geography reconciliation.",
+    "No village has been inserted, dropped or assigned a model polygon to resolve count conflicts."
+  ]
+}

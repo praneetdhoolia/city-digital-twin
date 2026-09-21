@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/metro1_performance_chart_20260918_7469a6a11ba8a678.jpg",
+      "url": "https://www.reliancemumbaimetro.com/images/PerformanceChart.jpg",
+      "final_url": "https://www.reliancemumbaimetro.com/images/PerformanceChart.jpg",
+      "content_type": "image/jpeg",
+      "source": "Metro One performance chart linked from operator performance page",
+      "licence": "Operator or public authority publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:24:36.812553+00:00",
+      "sha256": "7469a6a11ba8a67863e8dcc1789508a6f10bbaf2347cf420da3d344cd64eeffd",
+      "bytes": 182948,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published evidence requiring units, effective dates and operational validation; throughput is not a truck or train movement count.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

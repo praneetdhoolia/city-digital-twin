@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/mospi_aishe_filters_9_d5a8ad74ba761cd2.json",
+      "url": "https://api.mospi.gov.in/api/aishe/getAisheFilterByIndicatorId?indicator_code=9",
+      "final_url": "https://api.mospi.gov.in/api/aishe/getAisheFilterByIndicatorId?indicator_code=9",
+      "content_type": "application/json; charset=utf-8",
+      "source": "NSO public AISHE aggregate indicator 9 filters",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:22:15.187958+00:00",
+      "sha256": "d5a8ad74ba761cd213bd2ec2b7c8f1ef10e9e96f53437532a0863627e31a51df",
+      "bytes": 1796,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public aggregate dimensions and allowed filter codes, not household unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

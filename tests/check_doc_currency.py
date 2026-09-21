@@ -96,7 +96,8 @@ def _manifest_rows(city_root: Path) -> list[dict]:
     if not path.exists():
         raise Skip(f"{path.relative_to(REPO)} absent")
     with path.open(newline="", encoding="utf-8") as fh:
-        return list(csv.DictReader(fh))
+        from manifest_io import manifest_reader
+        return list(manifest_reader(fh))
 
 
 def truth_manifest_files(city_root: Path, spec: dict) -> int:

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/freight/jnpa_aug_2026_terminal_teus_e9c2f6ab9ba91e5d.pdf",
+      "url": "https://www.jnport.gov.in/uploads/content_manager/FY_2026-27_JN_Port_TEUs.pdf",
+      "final_url": "https://www.jnport.gov.in/uploads/content_manager/FY_2026-27_JN_Port_TEUs.pdf",
+      "content_type": "application/pdf",
+      "source": "JNPA April-August 2026 terminal container throughput",
+      "licence": "Operator or public authority publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:24:42.910611+00:00",
+      "sha256": "e9c2f6ab9ba91e5dc46012d54f796b6c8e0a7127df9920c0d7f56afc0842e826",
+      "bytes": 321169,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published evidence requiring units, effective dates and operational validation; throughput is not a truck or train movement count.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

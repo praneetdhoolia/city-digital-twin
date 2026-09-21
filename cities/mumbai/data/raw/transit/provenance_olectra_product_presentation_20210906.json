@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/olectra_product_presentation_20210906_8939f9f92b22f60f.pdf",
+      "url": "https://olectra.com/wp-content/uploads/06.09.2021.pdf",
+      "final_url": "https://olectra.com/wp-content/uploads/06.09.2021.pdf",
+      "source": "Olectra product and investor presentation September 2021",
+      "licence": "Manufacturer publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:56:35.680495+00:00",
+      "sha256": "8939f9f92b22f60f3e565a8696ecef2ceeb1c134083fe21d213154fb6a693588",
+      "bytes": 5825505,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical manufacturer model specifications and BEST presence. Seating layouts have variants; no current operational allocation or licensed standing capacity established."
+    }
+  ]
+}

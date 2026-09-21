@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/cidco_press_releases_20260918_761024b541849bbe.html",
+      "url": "https://cidco.maharashtra.gov.in/Page?Token=1C64F4F8470",
+      "final_url": "https://cidco.maharashtra.gov.in/Page?Token=1C64F4F8470",
+      "content_type": "text/html; charset=utf-8",
+      "source": "CIDCO public press release index",
+      "licence": "Government/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:53:16.040130+00:00",
+      "sha256": "761024b541849bbe8d3bcbb1b07df01c3b1869076a630a375ff6b1a91f019577",
+      "bytes": 88232,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public announcement/index; publication dates and attachment content require review.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_stop_tracking_component_df7a18c904412a76.js",
+      "url": "https://nmmtitmswebportal.amnex.co.in/chunk-CHHADWLM.js",
+      "final_url": "https://nmmtitmswebportal.amnex.co.in/chunk-CHHADWLM.js",
+      "source": "NMMT public stop tracking component",
+      "licence": "Operator/vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:11:07.262008+00:00",
+      "sha256": "df7a18c904412a76cf8666fcb9cca2b8df1ab30a20773095ccb8f70883211d34",
+      "bytes": 40483,
+      "content_type": "application/javascript",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public client documentation for read-only service information. No account actions or embedded credentials are used."
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_reservation_20260919_ca82d4da97f9d27a.html",
+      "url": "https://www.bestundertaking.com/reservation-bus.asp",
+      "final_url": "https://www.bestundertaking.com/reservation-bus.asp",
+      "source": "BEST official Reservation of Buses",
+      "licence": "BEST publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:44:41.196504+00:00",
+      "sha256": "ca82d4da97f9d27a88992f70b79e8148f146136d8857ba81737090f294a56d40",
+      "bytes": 55550,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification."
+    }
+  ]
+}

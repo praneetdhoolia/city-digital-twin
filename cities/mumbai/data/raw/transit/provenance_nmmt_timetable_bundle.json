@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_timetable_bundle_85bf17a8032b1c03.js",
+      "url": "https://nmmtitmswebportal.amnex.co.in/chunk-Z6N24CNP.js",
+      "final_url": "https://nmmtitmswebportal.amnex.co.in/chunk-Z6N24CNP.js",
+      "source": "NMMT public timetable component",
+      "licence": "Vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:31:38.439430+00:00",
+      "sha256": "85bf17a8032b1c03b04ef572c40d875b4826347eeff186f372f83b2b3b7a36e6",
+      "bytes": 156,
+      "content_type": "application/javascript",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public passenger timetable application code, not an operational dataset itself."
+    }
+  ]
+}

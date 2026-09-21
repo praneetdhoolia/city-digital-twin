@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/maharashtra_scheduled_areas_order_1985_f9688f5830373c80.pdf",
+      "url": "https://tribal.gov.in/downloads/CLM/CLM_Declare/1.pdf",
+      "final_url": "https://tribal.gov.in/downloads/CLM/CLM_Declare/1.pdf",
+      "content_type": "application/pdf",
+      "source": "Scheduled Areas Maharashtra Order 1985 gazette",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:14:06.666122+00:00",
+      "sha256": "f9688f5830373c805bdb4b86f4e9f46abd8fcb5e862b48fa41d23105dab3dadd",
+      "bytes": 4553785,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Legal/planning boundary evidence; no automatic model inclusion or exclusion.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

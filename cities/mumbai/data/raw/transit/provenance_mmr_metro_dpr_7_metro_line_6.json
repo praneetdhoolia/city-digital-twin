@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_metro_dpr_7_metro_line_6_4e09b89bf7ee1af5.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%206.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%206.pdf",
+      "content_type": "application/pdf",
+      "source": "7 Metro Line 6 (Swami Samarth Nagar-JVLR-SEEPZ-Kanjurmarg-Vikhroli (EEH)) Download (14.49 MB)",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:17:56.958782+00:00",
+      "sha256": "4e09b89bf7ee1af5e02f0c38b1d35c3641d3d256d40a07e66245766e9801a422",
+      "bytes": 15193019,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

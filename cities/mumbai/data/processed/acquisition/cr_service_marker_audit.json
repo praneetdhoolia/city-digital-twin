@@ -1,0 +1,104 @@
+{
+  "rows": 162,
+  "rows_by_source": {
+    "cr_public_harbour_ac_20260501": 28,
+    "cr_public_main_15_car_20260815": 54,
+    "cr_public_main_ac_20250416": 80
+  },
+  "pages": [
+    {
+      "source_id": "cr_public_main_ac_20250416",
+      "page": 1,
+      "train_headers": 13,
+      "vehicle_markers": 13,
+      "cancellation_markers": 9
+    },
+    {
+      "source_id": "cr_public_main_ac_20250416",
+      "page": 2,
+      "train_headers": 13,
+      "vehicle_markers": 13,
+      "cancellation_markers": 11
+    },
+    {
+      "source_id": "cr_public_main_ac_20250416",
+      "page": 3,
+      "train_headers": 13,
+      "vehicle_markers": 13,
+      "cancellation_markers": 9
+    },
+    {
+      "source_id": "cr_public_main_ac_20250416",
+      "page": 4,
+      "train_headers": 13,
+      "vehicle_markers": 13,
+      "cancellation_markers": 9
+    },
+    {
+      "source_id": "cr_public_main_ac_20250416",
+      "page": 5,
+      "train_headers": 14,
+      "vehicle_markers": 14,
+      "cancellation_markers": 11
+    },
+    {
+      "source_id": "cr_public_main_ac_20250416",
+      "page": 6,
+      "train_headers": 14,
+      "vehicle_markers": 14,
+      "cancellation_markers": 11
+    },
+    {
+      "source_id": "cr_public_harbour_ac_20260501",
+      "page": 1,
+      "train_headers": 7,
+      "vehicle_markers": 7,
+      "cancellation_markers": 1
+    },
+    {
+      "source_id": "cr_public_harbour_ac_20260501",
+      "page": 2,
+      "train_headers": 7,
+      "vehicle_markers": 7,
+      "cancellation_markers": 0
+    },
+    {
+      "source_id": "cr_public_harbour_ac_20260501",
+      "page": 3,
+      "train_headers": 7,
+      "vehicle_markers": 7,
+      "cancellation_markers": 2
+    },
+    {
+      "source_id": "cr_public_harbour_ac_20260501",
+      "page": 4,
+      "train_headers": 7,
+      "vehicle_markers": 7,
+      "cancellation_markers": 0
+    },
+    {
+      "source_id": "cr_public_main_15_car_20260815",
+      "page": 1,
+      "train_headers": 27,
+      "vehicle_markers": 27,
+      "cancellation_markers": 11
+    },
+    {
+      "source_id": "cr_public_main_15_car_20260815",
+      "page": 2,
+      "train_headers": 27,
+      "vehicle_markers": 27,
+      "cancellation_markers": 11
+    }
+  ],
+  "cross_supplement_train_overlaps": {},
+  "limitations": [
+    "These records overlay timetables; they must not be appended as new departures.",
+    "No cancellation marker means only that these footnotes do not exclude that day, not proof of daily operation.",
+    "AC# substitution applies only when the service operates; X/XX cancellation takes precedence.",
+    "An AC label does not specify coach count, seating, standing density or rake serial number.",
+    "A 15C label establishes the published formation only; it does not establish an AC/non-AC design or compartment capacity.",
+    "Main-line AC effective date is in its download filename; the printed pages do not establish it independently.",
+    "Nominated holiday dates, later amendments, base-timetable reconciliation and service-day time conversion remain unresolved."
+  ]
+}

@@ -3161,6 +3161,34 @@
       "status": "active",
       "decisions_ref": "9.135",
       "description": "Age from which a resident not employed full-time is priced on Gold Senior/Pensioner Opal fares. Eligibility also requires not working full-time, read from the held employment attribute."
+    },
+    "A.transit.fleet_assignment_mode": {
+      "value": "mode_capacity",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "mode_capacity",
+          "explicit_vehicle"
+        ],
+        "basis": "The existing city build uses one declared capacity per mapped transit mode. Explicit assignment requires an evidenced vehicle/configuration crosswalk tied to the mapped build; it must not be enabled by inventing assignments."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.179",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "Transit fleet capacity representation. mode_capacity retains the existing registry capacities by mapper type. explicit_vehicle requires networks/matsim/schedules/<scenario>/fleet_assignments.json and resolves distinct registry capacity fields for every active vehicle; no missing-type fallback."
+    },
+    "A.network.mode_access_strategy": {
+      "value": "legacy_companions",
+      "units": "policy",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.183",
+      "description": "Whether run-network assembly applies the existing road companion, nonmotor reverse-link and largest-component rules (legacy_companions), or preserves every mapped link permission and direction (preserve_mapped). The latter requires an upstream network with evidenced per-mode permissions and refuses a requested routing mode with no permitted links. It does not infer lawful access, add connectivity, delete disconnected islands or implement conditional restrictions. Scenario lane/capacity patches still apply. This city retains its existing assembly until a reviewed access model replaces it."
     }
   }
 }

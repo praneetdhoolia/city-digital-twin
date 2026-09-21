@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_bdrm_31829dc0c048eb45.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/BDRM/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/BDRM/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Bandra-Kurla Complex",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:25.492639+00:00",
+      "sha256": "31829dc0c048eb452bb84409c3fca8f95d4b1ba195b09784788c5f7b98a14658",
+      "bytes": 33900,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

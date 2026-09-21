@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/mmr_population_employment_a2f6f33cb998b152.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-09/Population%20and%20Employment%20Profile_0.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-09/Population%20and%20Employment%20Profile_0.pdf",
+      "content_type": "application/pdf",
+      "source": "MMR population and employment profile",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:32:07.818324+00:00",
+      "sha256": "a2f6f33cb998b1523d243c8b0c479c92b3403100ff2820c5bd54254ed2190327",
+      "bytes": 523634,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical population, employment and administrative geography.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

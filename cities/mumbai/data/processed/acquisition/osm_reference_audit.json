@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "source_sha256": "88f47570e3d22cbbf1b02a36ff24dca301a688ed2cfa5148982af7d877d36349",
+  "counts": {
+    "node": 34224766,
+    "way": 3453202,
+    "relation": 22993
+  },
+  "duplicate_occurrences": {
+    "node": 0,
+    "way": 0,
+    "relation": 0
+  },
+  "checked_references": {
+    "relation->node": 12002,
+    "relation->relation": 708,
+    "relation->way": 345125,
+    "way->node": 38625076
+  },
+  "missing_references": {
+    "relation->node": 516,
+    "relation->relation": 187,
+    "relation->way": 85127
+  },
+  "identity_and_reference_checks_pass": false,
+  "limits": "Whole supplied source extent. Identity and reference checks only; no connectivity, geometry, legal access, current operation, capacity or calibration validation."
+}

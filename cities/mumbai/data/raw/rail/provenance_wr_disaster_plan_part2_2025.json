@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/wr_disaster_plan_part2_2025_2dff4567b9c33ca1.pdf",
+      "url": "https://wr.indianrailways.gov.in/cris/uploads/files/1747654690625-ZDMP_Part-II%202025.pdf",
+      "final_url": "https://wr.indianrailways.gov.in/cris/uploads/files/1747654690625-ZDMP_Part-II%202025.pdf",
+      "content_type": "application/pdf",
+      "source": "Western Railway zonal disaster management plan part II 2025",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "retrieved": "2026-09-18T20:17:16.787028+00:00",
+      "sha256": "2dff4567b9c33ca127d1a4b4c2e382224f216c76ec340ca3672b199d99be1004",
+      "bytes": 7608740,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Railway operating geography, station codes and operational reference information. Contact listings do not establish staffing, capacity or passenger services; section dates require verification.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

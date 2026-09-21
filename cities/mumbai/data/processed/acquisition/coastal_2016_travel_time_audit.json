@@ -1,0 +1,49 @@
+{
+  "source_id": "bmc_coastal_traffic_peer_review_2016",
+  "source_sha256": "a40925dbeea1a5de2f41980cdc39299bb0f9ea887f202a4f9fcf66a62fa894ac",
+  "tables": [
+    {
+      "table": "4-10",
+      "zone_ids": [
+        1,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "supplied_cells": 45,
+      "blank_cells_not_imputed": 36
+    },
+    {
+      "table": "4-11",
+      "zone_ids": [
+        1,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "supplied_cells": 45,
+      "blank_cells_not_imputed": 36
+    }
+  ],
+  "rows": 90,
+  "observed_off_diagonal_rows": 72,
+  "zero_diagonal_rows": 18,
+  "extraction_review": "Source page 59 visually checked; upper and lower triangles remain separate.",
+  "limitations": [
+    "Travel times include delays; they do not identify free-flow speeds or road capacities.",
+    "Morning southbound and evening northbound are different periods, not symmetric paired trips.",
+    "Blank reverse-direction cells remain absent; diagonal zeroes are structural, not zero-duration journeys.",
+    "The traffic-count section dates its own survey to January 2016; that does not establish an exact date for these speed-delay measurements.",
+    "Study-zone polygons, exact route, vehicle class, clock windows and sample counts remain unresolved."
+  ]
+}

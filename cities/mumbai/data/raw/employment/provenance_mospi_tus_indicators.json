@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/mospi_tus_indicators_ef78f02cbf2ceb1e.json",
+      "url": "https://api.mospi.gov.in/api/tus/getTusIndicatorList",
+      "final_url": "https://api.mospi.gov.in/api/tus/getTusIndicatorList",
+      "content_type": "application/json; charset=utf-8",
+      "source": "NSO public aggregate API reference mospi_tus_indicators",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:21:35.122871+00:00",
+      "sha256": "ef78f02cbf2ceb1e0c0f861b6406491226a7969e2a563db6d2439a829bfed72d",
+      "bytes": 8907,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public aggregate metadata, not unit records; indicator coverage requires inspection.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

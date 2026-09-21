@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/mmr_plan_sanction_20210420_b4b84572eb7b746a.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Final%20notification%20for%20MMR%20RP%202016-36%20Sanction%20dtd%2020042021.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Final%20notification%20for%20MMR%20RP%202016-36%20Sanction%20dtd%2020042021.pdf",
+      "content_type": "application/pdf",
+      "source": "Notification Dated 20.04.2021",
+      "licence": "MMRDA publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:07:48.548682+00:00",
+      "sha256": "b4b84572eb7b746ad78f580d6fe465cf7a041bba39ad65cd1917e2fc3139c89f",
+      "bytes": 59683595,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official spatial planning evidence. Proposed land use and future infrastructure are not observed current activity or operating transport.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

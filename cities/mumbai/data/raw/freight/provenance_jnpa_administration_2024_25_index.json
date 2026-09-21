@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/freight/jnpa_administration_2024_25_index_8bb258c86bc37033.html",
+      "url": "https://www.jnport.gov.in/page/administration-report-2024-2025/MTkrVXBOOVkwR291WmU3TFBobkxsZz09",
+      "final_url": "https://www.jnport.gov.in/page/administration-report-2024-2025/MTkrVXBOOVkwR291WmU3TFBobkxsZz09",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "JNPA administration report download index",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:33:08.140118+00:00",
+      "sha256": "8bb258c86bc37033e19d129102f41f845504615d9967e9c156d964e58b466279",
+      "bytes": 73764,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Find report and modal movement tables.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

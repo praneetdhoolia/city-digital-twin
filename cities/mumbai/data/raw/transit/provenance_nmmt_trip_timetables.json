@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_trip_timetables.zip",
+      "url": "https://nmmtitmsmobileapi.amnex.co.in/api/TimeTable/GetScheduelDetail",
+      "source": "NMMT public trip stop timetables, one query per published trip",
+      "licence": "Operator/vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:07:00.961557+00:00",
+      "retrieved_first": "2026-09-18T09:40:52.489253+00:00",
+      "sha256": "1ca9b11130c3520fc38956f4bf639d47eee5b922c3082835b80c98fcf9f7b888",
+      "bytes": 9498574,
+      "content_type": "application/zip",
+      "producing_script": "extract/acquire_nmmt_schedules.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public timetable detail requested with route and trip fields from the current route schedule.",
+      "method": "POST",
+      "harvest": true,
+      "member_count": 9522,
+      "members_listing": "_members.csv",
+      "formats": [
+        "json"
+      ],
+      "packed": "2026-09-21T06:13:24.239289+00:00"
+    }
+  ]
+}

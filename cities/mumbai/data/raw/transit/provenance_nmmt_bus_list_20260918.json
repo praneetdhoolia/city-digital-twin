@@ -1,0 +1,20 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_bus_list_20260918_f32049c4d7584fcb.json",
+      "url": "https://nmmtitmsmobileapi.amnex.co.in/api/BusTracking/GetBusList",
+      "final_url": "https://nmmtitmsmobileapi.amnex.co.in/api/BusTracking/GetBusList",
+      "source": "NMMT public bus tracking vehicle directory snapshot",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:14:23.408399+00:00",
+      "sha256": "f32049c4d7584fcb29c31177f5428c67935001ce62e4b65627e1cea1e877a4a9",
+      "bytes": 36302,
+      "content_type": "application/json; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public anonymous bus directory snapshot; not active fleet, service calendar or vehicle capacity evidence.",
+      "method": "POST",
+      "request_json": {}
+    }
+  ]
+}

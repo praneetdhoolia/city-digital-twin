@@ -27,6 +27,7 @@ rebuilt network hashes identically to the one in data/MANIFEST.csv.
 
 Usage:
     python src/build/build_matsim_network.py                # everything
+    python src/build/build_matsim_network.py --stage osm    # native source only
     python src/build/build_matsim_network.py --stage network
     python src/build/build_matsim_network.py --stage schedules --only S2,base2026
     python src/build/build_matsim_network.py --workers 3
@@ -46,6 +47,7 @@ import argparse
 import subprocess
 import collections
 import glob
+from pathlib import Path
 import concurrent.futures as futures
 
 import bootstrap_toolchain as tc
@@ -77,21 +79,18 @@ OUT = _city.path('networks/matsim')
 # cut from, and the contradiction was the blanket glob's, not the assembler's.
 OUTPUT_INPUTS = {
     'networks/matsim/*': [
-        'networks/osm/roads.osm',
-        'networks/osm/railways.osm',
-        'networks/osm/signals.osm',
-        'networks/osm/footways.osm',
+        'city.json#osm_network_inputs',
         'data/processed/network/A1_road_variant_patches.csv',
         'scenarios/E1_road_variants.csv',
         'schedules'],
-    'networks/matsim/schedules/*/transitVehicles.xml.gz': ['schedules'],
+    'networks/matsim/schedules/*/transitVehicles.xml.gz': [
+        'schedules/{match}.zip', 'schedules/scenarios/{match}.zip'],
 }
 
 WORK = os.path.join(OUT, '_work')
 CRS = _city.crs()
 PATCHES = _city.path('data/processed/network/A1_road_variant_patches.csv')
 E1_ROAD_VARIANTS = _city.path('scenarios/E1_road_variants.csv')
-JAVA_XMX = '-Xmx%s' % _registry.load().get('RUN.machine.build_xmx')   # throughput only
 
 # The signals extract is merged for its `type=restriction` relations - the road
 # extract carries none, so without it pt2matsim writes no `disallowedNextLinks`
@@ -102,10 +101,7 @@ JAVA_XMX = '-Xmx%s' % _registry.load().get('RUN.machine.build_xmx')   # throughp
 # Footways meet the roads at their shared OSM nodes (26,615 of them, measured
 # 12 September 2026): a crossing way ends on the road node it crosses, which
 # is what makes the walk graph one graph rather than a road graph plus islands.
-OSM_INPUTS = [_city.path('networks/osm/roads.osm'),
-              _city.path('networks/osm/railways.osm'),
-              _city.path('networks/osm/signals.osm'),
-              _city.path('networks/osm/footways.osm')]
+OSM_INPUTS = _city.network_osm_inputs()
 
 # EVERY GTFS BUNDLE THE CITY HOLDS IS A FEED TO MAP - the era feeds under
 # schedules/ and the scenario variants under schedules/scenarios/. The list
@@ -131,7 +127,10 @@ def log(msg):
 
 def java(args, tag):
     j, jar = tc.require()   # (java, pt2matsim jar) since the SUMO retirement (47f63c7)
-    cmd = [j, JAVA_XMX, '-cp', jar] + args
+    # Geometry preprocessing does not need a calibrated city's registry.
+    # Resolve the throughput setting only when Java is actually invoked.
+    java_xmx = '-Xmx%s' % _registry.load().get('RUN.machine.build_xmx')
+    cmd = [j, java_xmx, '-cp', jar] + args
     t0 = time.time()
     p = subprocess.run(cmd, capture_output=True, text=True)
     dt = time.time() - t0
@@ -180,19 +179,21 @@ def merge_osm(dest):
         out.write(b'<osm version="0.6" generator="build_matsim_network.py">\n')
         for kind in ('node', 'way', 'relation'):
             for src in OSM_INPUTS:
-                ctx = etree.iterparse(src, events=('end',), tag=(kind,))
-                for _, el in ctx:
-                    i = el.get('id')
-                    if i in seen[kind]:
+                opener = gzip.open if src.endswith('.gz') else open
+                with opener(src, 'rb') as stream:
+                    ctx = etree.iterparse(stream, events=('end',), tag=(kind,))
+                    for _, el in ctx:
+                        i = el.get('id')
+                        if i in seen[kind]:
+                            el.clear()
+                            continue
+                        seen[kind].add(i)
+                        counts[kind] += 1
+                        out.write(etree.tostring(el, encoding='utf-8'))
                         el.clear()
-                        continue
-                    seen[kind].add(i)
-                    counts[kind] += 1
-                    out.write(etree.tostring(el, encoding='utf-8'))
-                    el.clear()
-                    while el.getprevious() is not None:
-                        del el.getparent()[0]
-                del ctx
+                        while el.getprevious() is not None:
+                            del el.getparent()[0]
+                    del ctx
                 log('   %-8s after %s: %d' % (kind, os.path.basename(src), counts[kind]))
         out.write(b'</osm>\n')
     os.replace(tmp, dest)
@@ -343,14 +344,16 @@ def osm_access_tags(keys):
     from lxml import etree
     out = {}
     for src in OSM_INPUTS:
-        for _, el in etree.iterparse(src, events=('end',), tag='way'):
-            tags = {t.get('k'): (t.get('v') or '').strip()
-                    for t in el.iter('tag') if t.get('k') in keys}
-            if tags:
-                out.setdefault(el.get('id'), tags)      # first extract wins, as in the merge
-            el.clear()
-            while el.getprevious() is not None:
-                del el.getparent()[0]
+        opener = gzip.open if str(src).endswith('.gz') else open
+        with opener(src, 'rb') as stream:
+            for _, el in etree.iterparse(stream, events=('end',), tag='way'):
+                tags = {t.get('k'): (t.get('v') or '').strip()
+                        for t in el.iter('tag') if t.get('k') in keys}
+                if tags:
+                    out.setdefault(el.get('id'), tags)      # first extract wins, as in the merge
+                el.clear()
+                while el.getprevious() is not None:
+                    del el.getparent()[0]
     return out
 
 
@@ -577,18 +580,36 @@ def write_mapper_config(path, network, schedule, out_net, out_sched, out_street,
 
 def unpack_feed(name, zip_path):
     """pt2matsim reads a GTFS folder, not a zip."""
-    d = os.path.join(WORK, 'gtfs', name)
-    if os.path.isdir(d) and os.path.exists(os.path.join(d, 'stop_times.txt')):
-        return d
-    shutil.rmtree(d, ignore_errors=True)
-    os.makedirs(d, exist_ok=True)
+    parent = (Path(WORK) / 'gtfs').resolve()
+    target = (parent / name).resolve()
+    if target.parent != parent or not name or Path(name).name != name:
+        raise ValueError('Feed cache must be a direct child of the GTFS workspace')
+    digest = _sha256(zip_path)
+    marker = target / '_source_sha256'
+    if marker.exists() and marker.read_text(encoding='utf-8').strip() == digest \
+            and (target / 'stop_times.txt').is_file():
+        return str(target)
+    # The resolved target is checked above before any recursive removal.
+    if target.exists():
+        shutil.rmtree(target)
+    target.mkdir(parents=True)
+    d = str(target)
     with zipfile.ZipFile(zip_path) as z:
         for n in sorted(z.namelist()):
             if n.endswith('/'):
                 continue
             with z.open(n) as src, open(os.path.join(d, os.path.basename(n)), 'wb') as dst:
                 shutil.copyfileobj(src, dst)
+    marker.write_text(digest + '\n', encoding='utf-8')
     return d
+
+
+def gtfs_conversion_key(zip_path):
+    """Cache conversion only when feed, projection, day selection and tool agree."""
+    _, converter = tc.require()
+    inputs = dict(feed_sha256=_sha256(zip_path), crs=CRS, day=GTFS_DAY_PARAM,
+                  converter_sha256=_sha256(converter))
+    return hashlib.sha256(json.dumps(inputs, sort_keys=True).encode('utf-8')).hexdigest()
 
 
 def build_schedule(name, zip_path, base_net, threads):
@@ -600,9 +621,14 @@ def build_schedule(name, zip_path, base_net, threads):
 
     folder = unpack_feed(name, zip_path)
     t0 = time.time()
-    if not os.path.exists(unmapped):
+    source_marker = Path(unmapped + '.conversion_sha256')
+    source_digest = gtfs_conversion_key(zip_path)
+    if not (os.path.exists(unmapped) and os.path.exists(vehicles)
+            and source_marker.exists()
+            and source_marker.read_text(encoding='utf-8').strip() == source_digest):
         java(['org.matsim.pt2matsim.run.Gtfs2TransitSchedule',
               folder, GTFS_DAY_PARAM, CRS, unmapped, vehicles], 'gtfs_%s' % name)
+        source_marker.write_text(source_digest + '\n', encoding='utf-8')
     t_gtfs = time.time() - t0
 
     mapped_sched = os.path.join(out_dir, 'transitSchedule.xml.gz')
@@ -717,7 +743,7 @@ def compare_builds(name, base_net, threads):
 # ---------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--stage', choices=['all', 'network', 'variants', 'schedules'],
+    ap.add_argument('--stage', choices=['all', 'osm', 'network', 'variants', 'schedules'],
                     default='all')
     ap.add_argument('--only', default='', help='comma-separated feed names')
     ap.add_argument('--workers', type=int, default=2,
@@ -727,6 +753,9 @@ def main():
                     help='comma-separated feeds to re-map and compare (DECISIONS 3.5)')
     a = ap.parse_args()
 
+    if a.stage == 'osm':
+        merge_osm(os.path.join(WORK, 'multimodal.osm'))
+        return
     tc.require()
     os.makedirs(OUT, exist_ok=True)
     report_path = os.path.join(OUT, '_matsim_build_report.json')

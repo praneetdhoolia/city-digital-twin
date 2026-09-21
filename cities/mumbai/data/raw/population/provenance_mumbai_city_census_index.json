@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/mumbai_city_census_index_7d96c65e9f5e3b04.html",
+      "url": "https://mumbaicity.gov.in/en/document/census/",
+      "final_url": "https://mumbaicity.gov.in/en/document/census/",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Mumbai City district census downloads",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:33:47.356457+00:00",
+      "sha256": "7d96c65e9f5e3b04364ee749881f04566b03b9f0ef29b60212107324999e0924",
+      "bytes": 121908,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "2011 census data; no claim of current population.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

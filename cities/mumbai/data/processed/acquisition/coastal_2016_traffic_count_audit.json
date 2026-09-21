@@ -1,0 +1,294 @@
+{
+  "source_id": "bmc_coastal_traffic_peer_review_2016",
+  "source_sha256": "a40925dbeea1a5de2f41980cdc39299bb0f9ea887f202a4f9fcf66a62fa894ac",
+  "sites": 17,
+  "daily_rows": 51,
+  "peak_rows": 34,
+  "share_rows": 103,
+  "daily_total_checks": [
+    {
+      "site_id": 1,
+      "printed_total_vehicles_per_day": 67313,
+      "directional_sum_vehicles_per_day": 67313,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 2,
+      "printed_total_vehicles_per_day": 95564,
+      "directional_sum_vehicles_per_day": 95564,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 3,
+      "printed_total_vehicles_per_day": 73873,
+      "directional_sum_vehicles_per_day": 73873,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 4,
+      "printed_total_vehicles_per_day": 42089,
+      "directional_sum_vehicles_per_day": 42089,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 5,
+      "printed_total_vehicles_per_day": 82647,
+      "directional_sum_vehicles_per_day": 82647,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 6,
+      "printed_total_vehicles_per_day": 71620,
+      "directional_sum_vehicles_per_day": 71620,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 7,
+      "printed_total_vehicles_per_day": 84777,
+      "directional_sum_vehicles_per_day": 84777,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 8,
+      "printed_total_vehicles_per_day": 30109,
+      "directional_sum_vehicles_per_day": 30109,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 9,
+      "printed_total_vehicles_per_day": 208788,
+      "directional_sum_vehicles_per_day": 208788,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 10,
+      "printed_total_vehicles_per_day": 308981,
+      "directional_sum_vehicles_per_day": 308981,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 11,
+      "printed_total_vehicles_per_day": 84744,
+      "directional_sum_vehicles_per_day": 84744,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 12,
+      "printed_total_vehicles_per_day": 237004,
+      "directional_sum_vehicles_per_day": 237004,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 13,
+      "printed_total_vehicles_per_day": 79685,
+      "directional_sum_vehicles_per_day": 79685,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 14,
+      "printed_total_vehicles_per_day": 247355,
+      "directional_sum_vehicles_per_day": 247355,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 15,
+      "printed_total_vehicles_per_day": 223874,
+      "directional_sum_vehicles_per_day": 223874,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 16,
+      "printed_total_vehicles_per_day": 71058,
+      "directional_sum_vehicles_per_day": 71058,
+      "residual_vehicles_per_day": 0,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "exact"
+    },
+    {
+      "site_id": 17,
+      "printed_total_vehicles_per_day": 70904,
+      "directional_sum_vehicles_per_day": 71333,
+      "residual_vehicles_per_day": -429,
+      "integer_rounding_envelope_vehicles_per_day": "1.5",
+      "status": "source_disagreement"
+    }
+  ],
+  "share_sum_checks": [
+    {
+      "table": "4-5",
+      "site_id": 1,
+      "published_sum_percent": 100,
+      "residual_percentage_points": 0,
+      "whole_percent_rounding_envelope": "2.5",
+      "status": "exact"
+    },
+    {
+      "table": "4-5",
+      "site_id": 2,
+      "published_sum_percent": 100,
+      "residual_percentage_points": 0,
+      "whole_percent_rounding_envelope": "2.5",
+      "status": "exact"
+    },
+    {
+      "table": "4-5",
+      "site_id": 3,
+      "published_sum_percent": 99,
+      "residual_percentage_points": -1,
+      "whole_percent_rounding_envelope": "2.5",
+      "status": "rounding_compatible"
+    },
+    {
+      "table": "4-5",
+      "site_id": 4,
+      "published_sum_percent": 99,
+      "residual_percentage_points": -1,
+      "whole_percent_rounding_envelope": "2.5",
+      "status": "rounding_compatible"
+    },
+    {
+      "table": "4-5",
+      "site_id": 5,
+      "published_sum_percent": 100,
+      "residual_percentage_points": 0,
+      "whole_percent_rounding_envelope": "2.5",
+      "status": "exact"
+    },
+    {
+      "table": "4-5",
+      "site_id": 6,
+      "published_sum_percent": 99,
+      "residual_percentage_points": -1,
+      "whole_percent_rounding_envelope": "2.5",
+      "status": "rounding_compatible"
+    },
+    {
+      "table": "4-5",
+      "site_id": 7,
+      "published_sum_percent": 99,
+      "residual_percentage_points": -1,
+      "whole_percent_rounding_envelope": "2.5",
+      "status": "rounding_compatible"
+    },
+    {
+      "table": "4-5",
+      "site_id": 8,
+      "published_sum_percent": 101,
+      "residual_percentage_points": 1,
+      "whole_percent_rounding_envelope": "2.5",
+      "status": "rounding_compatible"
+    },
+    {
+      "table": "4-6",
+      "site_id": 9,
+      "published_sum_percent": 100,
+      "residual_percentage_points": 0,
+      "whole_percent_rounding_envelope": "3.5",
+      "status": "exact"
+    },
+    {
+      "table": "4-6",
+      "site_id": 10,
+      "published_sum_percent": 100,
+      "residual_percentage_points": 0,
+      "whole_percent_rounding_envelope": "3.5",
+      "status": "exact"
+    },
+    {
+      "table": "4-6",
+      "site_id": 11,
+      "published_sum_percent": 100,
+      "residual_percentage_points": 0,
+      "whole_percent_rounding_envelope": "3.5",
+      "status": "exact"
+    },
+    {
+      "table": "4-6",
+      "site_id": 12,
+      "published_sum_percent": 100,
+      "residual_percentage_points": 0,
+      "whole_percent_rounding_envelope": "3.5",
+      "status": "exact"
+    },
+    {
+      "table": "4-6",
+      "site_id": 13,
+      "published_sum_percent": 98,
+      "residual_percentage_points": -2,
+      "whole_percent_rounding_envelope": "3.5",
+      "status": "rounding_compatible"
+    },
+    {
+      "table": "4-6",
+      "site_id": 14,
+      "published_sum_percent": 100,
+      "residual_percentage_points": 0,
+      "whole_percent_rounding_envelope": "3.5",
+      "status": "exact"
+    },
+    {
+      "table": "4-6",
+      "site_id": 15,
+      "published_sum_percent": 99,
+      "residual_percentage_points": -1,
+      "whole_percent_rounding_envelope": "3.5",
+      "status": "rounding_compatible"
+    },
+    {
+      "table": "4-6",
+      "site_id": 16,
+      "published_sum_percent": 100,
+      "residual_percentage_points": 0,
+      "whole_percent_rounding_envelope": "3.5",
+      "status": "exact"
+    },
+    {
+      "table": "4-6",
+      "site_id": 17,
+      "published_sum_percent": 100,
+      "residual_percentage_points": 0,
+      "whole_percent_rounding_envelope": "3.5",
+      "status": "exact"
+    }
+  ],
+  "source_categories_not_imputed": true,
+  "limitations": [
+    "Counts are vehicle passages at selected influence-area sites, not unique vehicles, people or a citywide mode split.",
+    "Directional rows and printed totals overlap; they must not be summed as independent counts.",
+    "Whole-percent zeroes do not establish zero traffic; absent categories in a table remain absent.",
+    "Goods Temp and Goods Vehicles are distinct source labels; no heavy/light freight split is inferred.",
+    "Peak shares are not assigned to morning/evening or directions, and are not used to manufacture modal daily counts.",
+    "Source disagreements are retained without choosing or correcting a value.",
+    "No historical count has been adopted as a 2026 target or extrapolated using an assumed growth rate."
+  ]
+}

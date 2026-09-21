@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_hh1_cities_maharashtra_index_2780dfe686f66753.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/7231",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/7231",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Normal households by size cities Maharashtra 2011",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:52:38.621372+00:00",
+      "sha256": "2780dfe686f667537984bb173856fb9a443c37c800e01f39a61e7369ee1ddca8",
+      "bytes": 90433,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical census control; definition, geographical universe and contemporary adjustment require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

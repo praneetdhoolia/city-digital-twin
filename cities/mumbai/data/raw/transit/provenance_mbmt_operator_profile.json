@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mbmt_operator_profile_296701daaa7ac699.html",
+      "url": "https://mbmc.gov.in/en/mbmc/transport",
+      "final_url": "https://mbmc.gov.in/en/mbmc/transport",
+      "source": "MBMT municipal transport profile",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:46:06.185517+00:00",
+      "sha256": "296701daaa7ac699030e7049ff9163077fc2783529e654d4fef8f94ab81fc4af",
+      "bytes": 106017,
+      "content_type": "text/html; charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation."
+    }
+  ]
+}

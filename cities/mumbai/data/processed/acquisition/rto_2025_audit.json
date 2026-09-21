@@ -1,0 +1,241 @@
+{
+  "schema_version": 1,
+  "category_cells": 3120,
+  "summary_rows": 65,
+  "checks": 1048,
+  "matching_name_summary_comparisons": 116,
+  "conflicts": [
+    {
+      "page": 4,
+      "office_label": "Kolhapur Region",
+      "check": "region_office_sum_registered_stock_20250331_4",
+      "calculated": 451773,
+      "printed": 450982
+    },
+    {
+      "page": 9,
+      "office_label": "Maharashtra State",
+      "check": "office_sum_registered_stock_20250331_4",
+      "calculated": 6581144,
+      "printed": 6580353
+    },
+    {
+      "page": 4,
+      "office_label": "Kolhapur Region",
+      "check": "region_office_sum_registered_stock_20250331_5",
+      "calculated": 78296,
+      "printed": 77953
+    },
+    {
+      "page": 9,
+      "office_label": "Maharashtra State",
+      "check": "office_sum_registered_stock_20250331_5",
+      "calculated": 690674,
+      "printed": 690331
+    },
+    {
+      "page": 4,
+      "office_label": "Kolhapur Region",
+      "check": "region_office_sum_registered_stock_20250331_8",
+      "calculated": 42535,
+      "printed": 42536
+    },
+    {
+      "page": 9,
+      "office_label": "Maharashtra State",
+      "check": "office_sum_registered_stock_20250331_8",
+      "calculated": 1241223,
+      "printed": 1241224
+    },
+    {
+      "page": 4,
+      "office_label": "Kolhapur Region",
+      "check": "region_office_sum_registered_stock_20250331_9",
+      "calculated": 2976,
+      "printed": 2997
+    },
+    {
+      "page": 9,
+      "office_label": "Maharashtra State",
+      "check": "office_sum_registered_stock_20250331_9",
+      "calculated": 47667,
+      "printed": 47688
+    },
+    {
+      "page": 4,
+      "office_label": "Kolhapur Region",
+      "check": "region_office_sum_registered_stock_20250331_10",
+      "calculated": 3465,
+      "printed": 3445
+    },
+    {
+      "page": 9,
+      "office_label": "Maharashtra State",
+      "check": "office_sum_registered_stock_20250331_10",
+      "calculated": 87106,
+      "printed": 87086
+    },
+    {
+      "page": 4,
+      "office_label": "Kolhapur Region",
+      "check": "region_office_sum_registered_stock_20250331_11",
+      "calculated": 2407,
+      "printed": 2405
+    },
+    {
+      "page": 9,
+      "office_label": "Maharashtra State",
+      "check": "office_sum_registered_stock_20250331_11",
+      "calculated": 38677,
+      "printed": 38675
+    },
+    {
+      "page": 4,
+      "office_label": "Kolhapur Region",
+      "check": "region_office_sum_registered_stock_20250331_15",
+      "calculated": 58299,
+      "printed": 58316
+    },
+    {
+      "page": 9,
+      "office_label": "Maharashtra State",
+      "check": "office_sum_registered_stock_20250331_15",
+      "calculated": 705765,
+      "printed": 705782
+    },
+    {
+      "page": 4,
+      "office_label": "Kolhapur Region",
+      "check": "region_office_sum_registered_stock_20250331_16",
+      "calculated": 3329,
+      "printed": 3312
+    },
+    {
+      "page": 9,
+      "office_label": "Maharashtra State",
+      "check": "office_sum_registered_stock_20250331_16",
+      "calculated": 59182,
+      "printed": 59165
+    },
+    {
+      "page": 4,
+      "office_label": "Kolhapur Region",
+      "check": "region_office_sum_registered_stock_20250331_17",
+      "calculated": 96382,
+      "printed": 96480
+    },
+    {
+      "page": 9,
+      "office_label": "Maharashtra State",
+      "check": "office_sum_registered_stock_20250331_17",
+      "calculated": 1062444,
+      "printed": 1062542
+    },
+    {
+      "page": 4,
+      "office_label": "Kolhapur Region",
+      "check": "region_office_sum_registered_stock_20250331_18",
+      "calculated": 31494,
+      "printed": 31398
+    },
+    {
+      "page": 9,
+      "office_label": "Maharashtra State",
+      "check": "office_sum_registered_stock_20250331_18",
+      "calculated": 541116,
+      "printed": 541020
+    },
+    {
+      "page": 4,
+      "office_label": "Kolhapur Region",
+      "check": "region_office_sum_registered_stock_20250331_19",
+      "calculated": 158243,
+      "printed": 158265
+    },
+    {
+      "page": 9,
+      "office_label": "Maharashtra State",
+      "check": "office_sum_registered_stock_20250331_19",
+      "calculated": 1273149,
+      "printed": 1273171
+    },
+    {
+      "page": 4,
+      "office_label": "Kolhapur Region",
+      "check": "region_office_sum_registered_stock_20250331_20",
+      "calculated": 88751,
+      "printed": 88730
+    },
+    {
+      "page": 9,
+      "office_label": "Maharashtra State",
+      "check": "office_sum_registered_stock_20250331_20",
+      "calculated": 502938,
+      "printed": 502917
+    },
+    {
+      "page": 4,
+      "office_label": "Kolhapur Region",
+      "check": "region_office_sum_registered_stock_20250331_21",
+      "calculated": 12497,
+      "printed": 12505
+    },
+    {
+      "page": 9,
+      "office_label": "Maharashtra State",
+      "check": "office_sum_registered_stock_20250331_21",
+      "calculated": 144988,
+      "printed": 144996
+    },
+    {
+      "page": 4,
+      "office_label": "Kolhapur Region",
+      "check": "region_office_sum_registered_stock_20250331_total_all_vehicles",
+      "calculated": 4421790,
+      "printed": 4420667
+    },
+    {
+      "page": 9,
+      "office_label": "Maharashtra State",
+      "check": "office_sum_registered_stock_20250331_total_all_vehicles",
+      "calculated": 49538425,
+      "printed": 49537302
+    },
+    {
+      "page": 3,
+      "office_label": "Mumbai (E)",
+      "check": "summary_agreement_registered_stock_20250331",
+      "calculated": 1255555,
+      "printed": 1054545
+    },
+    {
+      "page": 3,
+      "office_label": "Borivali",
+      "check": "summary_agreement_registered_stock_20250331",
+      "calculated": 1054545,
+      "printed": 1255555
+    },
+    {
+      "page": 10,
+      "office_label": "Mumbai (E)",
+      "check": "summary_agreement_new_registrations_2024_25",
+      "calculated": 78201,
+      "printed": 72249
+    },
+    {
+      "page": 10,
+      "office_label": "Borivali",
+      "check": "summary_agreement_new_registrations_2024_25",
+      "calculated": 72249,
+      "printed": 78201
+    }
+  ],
+  "source_sha256": "66426e585d9e275def066a350067f2649b7526416f94e8dda8ff831ef5819e5c",
+  "transcription_notes": [
+    "Printed Mumbai (E) and Borivali category totals conflict with the summary labels in both stock and registrations.",
+    "Stock table uses Chh.Sambhaji Nagar while summary and new-registration table use Aurangabad/A'bad; expanded canonical label retained with page references.",
+    "Abbreviated district/office names expanded for readability; these are not a spatial RTO jurisdiction crosswalk.",
+    "Page 15 repeats the State Total in an additional unlabelled numeric column; extractor must verify exact equality before excluding the duplicate."
+  ],
+  "limits": "Registered stock and new registrations are different measures. Region/subtotal rows overlap their children and must not be summed together. RTO labels are not jurisdiction polygons, resident household ownership, active fleet or traffic. Name-exact summary comparisons only; no inferred office alias joins or East/Borivali correction. No 2026 projection applied."
+}

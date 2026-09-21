@@ -1,0 +1,1311 @@
+{
+  "layer": "RUN",
+  "title": "Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)",
+  "fields": {
+    "RUN.controler.compression_type": {
+      "units": "enum",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "matsim_param": "controler.compressionType",
+      "value": "gzip",
+      "description": "Output compression. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.controler.create_graphs": {
+      "value": false,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.controler.createGraphs on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "controler.createGraphs"
+    },
+    "RUN.controler.first_iteration": {
+      "value": 0,
+      "units": "iterations",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.controler.firstIteration on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "controler.firstIteration"
+    },
+    "RUN.controler.last_iteration": {
+      "value": 8,
+      "units": "iterations",
+      "source": "definition",
+      "status": "active",
+      "description": "Bounded nine-iteration learning check of the explicit small population; no convergence or citywide scaling claim. The existing automatic JVM ceiling remains in force. Moved from RUN.smoke.controler.lastIteration on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "controler.lastIteration"
+    },
+    "RUN.controler.overwrite_files": {
+      "value": "failIfDirectoryExists",
+      "units": "policy",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.controler.overwriteFiles on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "controler.overwriteFiles"
+    },
+    "RUN.controler.write_events_interval": {
+      "value": 1,
+      "units": "iterations",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.controler.writeEventsInterval on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "controler.writeEventsInterval"
+    },
+    "RUN.controler.write_plans_interval": {
+      "value": 1,
+      "units": "iterations",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.controler.writePlansInterval on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "controler.writePlansInterval"
+    },
+    "RUN.controler.write_trips_interval": {
+      "value": 1,
+      "units": "iterations",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.controler.writeTripsInterval on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "controler.writeTripsInterval"
+    },
+    "RUN.gate.ceiling_poll_s": {
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 60,
+      "description": "How often the ceiling watcher looks at the clock. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.gate.interval_iterations": {
+      "units": "iterations",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 100,
+      "description": "How often the runner's own gate watcher reads all twelve modes against their targets and stops the run if any is at or past CAL.gate.stop_deviation_pct - the GOAL.md loop's 'every 100 iterations', executed by the harness instead of by a person watching. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.gate.reader_timeout_s": {
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 1800,
+      "description": "How long the gate watcher gives one milestone reading (report_mode_ridership.py --gate-json) before it gives up and retries at RUN.gate.retry_interval_s. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.gate.retry_interval_s": {
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 300,
+      "description": "How long the runner's gate watcher waits before trying a milestone again whose per-iteration tables are not written yet (#131). Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.gate.stall_kill_s": {
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 1800,
+      "description": "How long the run's own log may go silent before the runner stops the JVM, writing `stopped_at_stall` with the silence and the last ended iteration. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.gate.wall_ceiling_h": {
+      "units": "hours",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 0,
+      "description": "The wall-clock ceiling the runner enforces on its own run, in hours. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.machine.event_handler_threads": {
+      "units": "threads",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "matsim_param": "eventsManager.numberOfThreads",
+      "value": 4,
+      "description": "Threads for MATSim's parallel events manager. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.machine.events_one_thread_per_handler": {
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "matsim_param": "eventsManager.oneThreadPerHandler",
+      "value": false,
+      "description": "Give each registered event handler its own thread instead of sharing RUN.machine.event_handler_threads workers. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.machine.events_synchronize_on_simsteps": {
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "matsim_param": "eventsManager.synchronizeOnSimSteps",
+      "value": true,
+      "description": "Whether the qsim waits for the events pipeline at every sim-step. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.machine.gc_collector": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "ParallelGC",
+          "G1GC"
+        ],
+        "basis": "adopted from the reference city: The two collectors the pinned JDK offers for a 48 GB heap. WALL TIME ONLY: the collector changes no model state (the twelfth report's performance pass: one full collection per iteration under ParallelGC, 2.5-4.0 % of an arm's wall). A change is a toolchain change priced by a 25 % probe before any arm carries it (DECISIONS.md 9.153)."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": "ParallelGC",
+      "description": "The JVM garbage collector the launcher passes (-XX:+Use<collector>). Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.machine.gc_log": {
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": true,
+      "description": "Whether the JVM writes a GC log to <run>/gc.log. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.machine.heap_floor_gib": {
+      "units": "GiB",
+      "source": "assumed",
+      "status": "active",
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "value": 15.6,
+      "sweep": null,
+      "description": "The sample-independent part of the heap rule RUN.machine.xmx used to carry as prose. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.machine.heap_per_fraction_gib": {
+      "units": "GiB_per_unit_fraction",
+      "source": "assumed",
+      "status": "active",
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "value": 87,
+      "sweep": null,
+      "description": "The sample-dependent part of the heap rule. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.machine.jfr_profile": {
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": false,
+      "description": "Whether the JVM records a Java Flight Recorder profile of the run into <run>/profile.jfr. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py",
+        "src/analyse/profile_run.py"
+      ]
+    },
+    "RUN.machine.replanning_threads": {
+      "value": 2,
+      "units": "threads",
+      "source": "definition",
+      "status": "active",
+      "description": "Replanning threads for the baseline case. Moved from RUN.smoke.global.numberOfThreads on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "global.numberOfThreads"
+    },
+    "RUN.machine.seed": {
+      "value": 20260810,
+      "units": "integer_seed",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.global.randomSeed on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "global.randomSeed"
+    },
+    "RUN.machine.telemetry_requires_simstep_barrier": {
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": true,
+      "description": "Whether RunTelemetry depends on the sim-step barrier for memory visibility. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py",
+        "src/java/citysim/RunTelemetry.java"
+      ]
+    },
+    "RUN.machine.threads": {
+      "value": 2,
+      "units": "threads",
+      "source": "definition",
+      "status": "active",
+      "description": "qsim threads for the baseline case; the explicit population is small enough that two threads keep the machine free. Moved from RUN.smoke.qsim.numberOfThreads on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "qsim.numberOfThreads"
+    },
+    "RUN.machine.xmx": {
+      "units": "jvm_heap",
+      "source": "definition",
+      "status": "active",
+      "value": "16g",
+      "description": "JVM heap for the baseline case (-Xms = -Xmx). 16g served the 1,000-person population; the heap rule fields carry the reference city's measurement until a Mumbai peak is measured.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.mode_choice.chain_based_modes": {
+      "value": [
+        "car",
+        "bike",
+        "motorbike"
+      ],
+      "units": "enum",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.subtourModeChoice.chainBasedModes on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "subtourModeChoice.chainBasedModes"
+    },
+    "RUN.mode_choice.consider_car_availability": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.subtourModeChoice.considerCarAvailability on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "subtourModeChoice.considerCarAvailability"
+    },
+    "RUN.mode_choice.coord_distance_m": {
+      "units": "metres",
+      "source": "literature",
+      "sweep": [
+        0.0,
+        100.0
+      ],
+      "sweep_basis": "0 is the MATSim default and was live here unset; 100 is Open Berlin's value.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "subtourModeChoice.coordDistance",
+      "value": 100.0,
+      "description": "Distance within which two activity coordinates count as the same subtour location. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.mode_choice.modes": {
+      "value": [
+        "car",
+        "ride",
+        "walk",
+        "bike",
+        "motorbike",
+        "taxi",
+        "auto_rickshaw",
+        "pt"
+      ],
+      "units": "enum",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.subtourModeChoice.modes on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "subtourModeChoice.modes"
+    },
+    "RUN.mode_choice.proba_random_single_trip_mode": {
+      "value": 0.5,
+      "units": "probability",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.subtourModeChoice.probaForRandomSingleTripMode on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "subtourModeChoice.probaForRandomSingleTripMode"
+    },
+    "RUN.mode_choice.pt_submode_alternatives": {
+      "units": "categorical",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "aggregate",
+          "alternatives"
+        ],
+        "basis": "adopted from the reference city: Whether the four scheduled PT submodes are ALTERNATIVES A PLAN CAN HOLD, or one `pt` alternative whose submode a router picks. `aggregate` is the pre-change state and every arm this project has run: RUN.mode_choice.modes offers `pt`, SwissRailRaptor decides bus against rail against tram against ferry downstream, and a whole-file pass over the F31 arm's plan memory found 974 of 154,347 persons - 0.63 % - holding plans that differ in which submode they use (9.160). So a declared submode constant reallocates between submodes for under one per cent of the population, and C.asc.bus and C.asc.light_rail are plan-choice levers (pt against car) rather than submode levers. `alternatives` installs one SwissRailRaptor per submode over that submode's own routes and binds each as the routing module for a plan-level mode of the same name, so SubtourModeChoice proposes `bus` against `rail` the way it proposes `car` against `bike`. WHAT THE SWEEP ANSWERS: how much of light rail's -57.3 % against heavy rail's +225.0 % - two halves of one split - is a preference and how much is a choice set that never held the alternative. IT COSTS SOMETHING REAL AND THE ARM MUST READ IT: under `alternatives` no single plan-level trip can combine two submodes, because the umbrella that represented a bus-then-train journey is out of the choice set. Multi-leg pt trips must be read on BOTH arms of the pair, and the gate ships at `aggregate` for that reason."
+      },
+      "sweep_role": "answer",
+      "status": "active",
+      "matsim_param": "ptSubmodeChoice.representation",
+      "value": "aggregate",
+      "description": "The representation gate for plan-level PT submode choice (#49; the 20 August 2026 individualise-every-mode directive, Tier C). Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.mode_choice.pt_submode_seed": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "bus",
+          "rail",
+          "tram",
+          "ferry"
+        ],
+        "basis": "adopted from the reference city: The declared submode vocabulary. `bus` is the value because it is the only submode with network-wide coverage - 1,448 of the 2,139 mapped transit vehicles - so a seeded pt leg rewritten to it is a plan the router can answer almost anywhere, while a rewrite to `ferry` (107 vehicles, one crossing) would be refused for nearly every seeded trip and the person would start the search with no pt plan at all. WHAT THE SWEEP ANSWERS: whether the submode split the search settles at depends on where it starts. It is inert unless RUN.mode_choice.pt_submode_alternatives is `alternatives`, and the seed biases where the search starts, never what selection keeps."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "ptSubmodeChoice.seedSubmode",
+      "value": "bus",
+      "description": "The submode a seeded `pt` leg is rewritten to when RUN.mode_choice.pt_submode_alternatives is `alternatives`. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.mode_choice.subtour_behavior": {
+      "units": "enum",
+      "source": "literature",
+      "sweep": {
+        "categorical": [
+          "betweenAllAndFewerConstraints",
+          "fromSpecifiedModesToSpecifiedModes"
+        ],
+        "basis": "the two values MATSim offers. Open Berlin, Leipzig and Kelheim all set the former; the latter is the MATSim default and was live here unset."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "subtourModeChoice.behavior",
+      "value": "betweenAllAndFewerConstraints",
+      "description": "How subtour mode choice treats tours it cannot close. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.monitor.enabled": {
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": true,
+      "description": "Serve the live run view while a run is in flight. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.monitor.live_poll_s": {
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 0.5,
+      "description": "How often the live view re-reads status WHILE THE MOBSIM IS SWEEPING. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/analyse/run_view.py"
+      ]
+    },
+    "RUN.monitor.pace_band_s": {
+      "units": "seconds_per_iteration",
+      "source": "assumed",
+      "status": "active",
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "value": [
+        217,
+        253
+      ],
+      "sweep": null,
+      "description": "The measured s/iteration band a healthy 25% x 1000 WEEKDAY arm paces inside on this machine (median 234 s through iteration 135 on the arm itself; 217-253 s across the closed family's solo iterations 2-5, DECISIONS.md 9.72). Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/analyse/progress_digest.py"
+      ]
+    },
+    "RUN.monitor.poll_s": {
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 3,
+      "description": "How often the page re-reads status. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py",
+        "src/analyse/run_view.py"
+      ]
+    },
+    "RUN.monitor.port": {
+      "units": "tcp_port",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 8731,
+      "description": "Loopback port for the live run view. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py",
+        "src/analyse/run_view.py"
+      ]
+    },
+    "RUN.monitor.progress_interval_s": {
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 30,
+      "description": "How often the machine-readable _progress.json digest is refreshed (issue #76). Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/run_matsim.py",
+        "src/analyse/progress_digest.py"
+      ]
+    },
+    "RUN.monitor.solo_check_iterations": {
+      "units": "iteration_range",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": [
+        2,
+        5
+      ],
+      "description": "Which solo iterations the conditional-replication rule reads (DECISIONS.md 9.72: arm B launches only if arm A's SOLO ITERATIONS 2-5 pace inside RUN.monitor.pace_band_s). Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/analyse/progress_digest.py"
+      ]
+    },
+    "RUN.monitor.stall_s": {
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 300,
+      "description": "How long the log may go untouched before the live view calls a run stalled rather than running. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/analyse/run_view.py"
+      ]
+    },
+    "RUN.qsim.end_time_h": {
+      "value": 36,
+      "units": "hours",
+      "source": "definition",
+      "status": "active",
+      "description": "Observe overnight completion after the all-day departure window. The freight prototype measured nearly ten-hour road movements, which a 30-hour horizon censored for late departures. This is an observation horizon, not a speed or demand adjustment. Moved from RUN.smoke.qsim.endTime on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "qsim.endTime",
+      "matsim_format": "hh:mm:ss"
+    },
+    "RUN.qsim.link_dynamics": {
+      "value": "PassingQ",
+      "units": "enum",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.qsim.linkDynamics on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "qsim.linkDynamics"
+    },
+    "RUN.qsim.main_mode": {
+      "value": [
+        "car",
+        "ride",
+        "walk",
+        "bike",
+        "motorbike",
+        "taxi",
+        "auto_rickshaw",
+        "truck",
+        "freight_rail"
+      ],
+      "units": "enum",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.qsim.mainMode on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "qsim.mainMode"
+    },
+    "RUN.qsim.remove_stuck_vehicles": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.qsim.removeStuckVehicles on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "qsim.removeStuckVehicles"
+    },
+    "RUN.qsim.snapshot_period": {
+      "units": "hh:mm:ss",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "matsim_param": "qsim.snapshotperiod",
+      "value": "00:00:00",
+      "description": "Interval between mobsim vehicle-position snapshots. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.qsim.start_time_h": {
+      "value": 0,
+      "units": "hours",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.qsim.startTime on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "qsim.startTime",
+      "matsim_format": "hh:mm:ss"
+    },
+    "RUN.qsim.stuck_time_s": {
+      "value": 3600.0,
+      "units": "s",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.qsim.stuckTime on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "qsim.stuckTime"
+    },
+    "RUN.qsim.traffic_dynamics": {
+      "value": "queue",
+      "units": "enum",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.qsim.trafficDynamics on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "qsim.trafficDynamics"
+    },
+    "RUN.qsim.vehicle_behavior": {
+      "value": "teleport",
+      "units": "enum",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.qsim.vehicleBehavior on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "qsim.vehicleBehavior"
+    },
+    "RUN.qsim.vehicles_source": {
+      "value": "modeVehicleTypesFromVehiclesData",
+      "units": "policy",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.qsim.vehiclesSource on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "qsim.vehiclesSource"
+    },
+    "RUN.relaxation.drift_tolerance_pp": {
+      "units": "percentage_points",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          0.1,
+          1.0
+        ],
+        "basis": "adopted from the reference city: There is no standard for how flat a MATSim mode-share trace must be before a run may be called settled, so the tolerance is swept rather than asserted. The lower bound is about the resolution a 10% sample can support; the upper bound is loose enough that a run failing it is unarguably still moving. The verdict is always reported WITH the tolerance beside it and with the two iteration numbers it was measured between, so a reader can apply their own."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 0.5,
+      "description": "Largest absolute mode-share movement, in percentage points, that a run may still show after innovation is disabled and still be reported as settled. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/analyse/summarise_run.py",
+        "src/analyse/run_view.py"
+      ]
+    },
+    "RUN.relaxation.settle_margin_iterations": {
+      "units": "iterations",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          1,
+          100
+        ],
+        "basis": "adopted from the reference city: the lower bound is the MEASURED duration of the snap itself - one iteration, at both fractions - so it is the smallest margin that can exclude it. The upper bound is where the excluded window starts to be a meaningful share of a 200-iteration post-cutoff tail: beyond it the metric passes by measuring less rather than by the run being flatter, which is the failure mode this field must not have"
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 10,
+      "description": "Iterations to skip AFTER the innovation cutoff before drift is measured, so the relaxation verdict scores relaxation and not the selection snap. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/analyse/summarise_run.py"
+      ]
+    },
+    "RUN.replanning.fraction_to_disable_innovation": {
+      "value": 0.8,
+      "units": "share_of_iterations",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.replanning.fractionOfIterationsToDisableInnovation on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "replanning.fractionOfIterationsToDisableInnovation"
+    },
+    "RUN.replanning.max_agent_plan_memory": {
+      "value": 5,
+      "units": "plans",
+      "source": "definition",
+      "status": "active",
+      "description": "Native plan-memory limit; must retain supplied alternatives while exploration adds new plans. Moved from RUN.smoke.replanning.maxAgentPlanMemorySize on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "replanning.maxAgentPlanMemorySize"
+    },
+    "RUN.replanning.plan_selector_for_removal": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "WorstPlanSelector",
+          "SelectRandom",
+          "SelectExpBetaForRemoval",
+          "ChangeExpBetaForRemoval",
+          "PathSizeLogitSelectorForRemoval"
+        ],
+        "basis": "adopted from the reference city: MATSim's own five shipped selectors, and its own comment on the parameter: \"The current default, WorstPlanSelector is not a good choice from a discrete choice theoretical perspective. Alternatives, however, have not been systematically tested.\" WHAT THE SWEEP ANSWERS: whether a mode's choice-set coverage is a preference or an artefact of deletion (#174). Coverage at iteration 300 of 20260909T015217_300it_25pct ranks the modes in the SAME ORDER as their attractiveness under the current scoring - car 77.55 %, walk 63.95 %, taxi 54.62 %, bike 29.03 %, pt 25.78 %, ride 20.05 % - which is exactly the pattern WorstPlanSelector would produce, since a mode whose plans score badly is evicted before it can be chosen, and its low share is then read at the gate as taste. `SelectRandom` breaks that feedback and is the control arm. The correlation has an innocent explanation too (an unattractive mode is proposed less often), and separating them is what the paired arm is for."
+      },
+      "sweep_role": "answer",
+      "status": "active",
+      "matsim_param": "replanning.planSelectorForRemoval",
+      "value": "WorstPlanSelector",
+      "description": "Which of an agent's plans is deleted when a new one arrives and plan memory (RUN.replanning.max_agent_plan_memory = 8) is full. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.replanning.score_msa_fraction": {
+      "units": "share_of_iterations",
+      "source": "derived",
+      "status": "computed",
+      "matsim_param": "scoring.fractionOfIterationsToStartScoreMSA",
+      "value": null,
+      "description": "The iteration fraction at which a plan score becomes a moving average. Derived at launch from the representation gate, as in the reference city.",
+      "decisions_ref": "9.202",
+      "derived_from": {
+        "fields": [
+          "RUN.replanning.score_msa_representation"
+        ],
+        "identity": "the literal MATSim writes for its own default when the representation is absent; the launcher supplies it under the derived runtime role"
+      }
+    },
+    "RUN.replanning.score_msa_representation": {
+      "units": "categorical",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "absent",
+          "at_innovation_cutoff"
+        ],
+        "basis": "adopted from the reference city: Whether a plan's score is a MOVING AVERAGE over its executions once innovation stops, or the single most recent execution. absent: the pre-change state and MATSim's own default - scoring.fractionOfIterationsToStartScoreMSA is `null`, every plan carries the score of its last execution, and at the innovation cutoff every agent selects the maximum of noisy single-execution scores simultaneously. at_innovation_cutoff: the fraction is set to RUN.replanning.fraction_to_disable_innovation, so score averaging begins exactly where new-plan creation ends, which is the pairing the MATSim reference text describes. It introduces NO NEW NUMBER - the fraction is the innovation cutoff already declared - so this gate is not a value to calibrate but a consistency between what the search stops doing and what the score starts meaning. `absent` is shipped because switching it on is a real change to how every plan is scored and belongs to an arm that declares it. Named as the one-field candidate cause of the convergence penalty by the 10 September 2026 assessment: it predicts BOTH measured symptoms of `20260909T015217_300it_25pct` - the +2.211 pp car snap at the cutoff and the average plan score peaking at 19.2049 and then falling to 14.5679 - and no other single field predicts either. One-gate discipline mirroring C.crowding.representation and C.raptor.mode_cost_representation: `absent` recovers the previous model exactly, and it is emitted as the literal MATSim writes for its own default, so the recovery is byte-identical rather than asserted. WHAT THE SWEEP ANSWERS: Which of the three candidate causes of the convergence penalty - the scoring function, the choice set, or the routers - is responsible is the open question (#163, #172). This gate tests the scoring-function branch at the cost of one arm and is the only one of the three that is a single field."
+      },
+      "sweep_role": "answer",
+      "status": "active",
+      "value": "absent",
+      "description": "The representation gate for score averaging after the innovation cutoff. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
+    "RUN.replanning.time_mutation_range_s": {
+      "units": "seconds",
+      "source": "literature",
+      "sweep": [
+        600.0,
+        1800.0
+      ],
+      "sweep_basis": "MATSim ships 1800 s and this model inherited it SILENTLY - the value reached the mobsim through no declaration at all until 9.85, which is exactly the undeclared modelling choice this registry exists to prevent. It is swept rather than pinned because it is MEASURED to be load-bearing on a quantity that is not its own: it sets how far the two members of a DECLARED joint pair drift apart, and at 1800 s the measured median gap between a companion and their declared driver is 10.3 min with p90 at 45.1 min, against a pairing tolerance of 15 min. The lower bound is the coarsest bin the travel-time calculator resolves (RUN.travel_time.bin_size_s = 300) doubled; the upper is MATSim's own default. Narrowing it is NOT a way to buy pairings - B.ride.bound_pairing_window_min is derived from it, so the tolerance follows the drift rather than chasing it.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "timeAllocationMutator.mutationRange",
+      "value": 1800.0,
+      "description": "The half-width of the uniform departure-time mutation TimeAllocationMutator applies. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.replanning.weights": {
+      "value": {
+        "ChangeExpBeta": 0.7,
+        "SubtourModeChoice": 0.3
+      },
+      "units": "strategy_weight",
+      "source": "definition",
+      "status": "active",
+      "description": "Score-based selection and mode exploration. Moved from RUN.smoke.strategy_weights on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "replanning.strategysettings[*].weight"
+    },
+    "RUN.routing.access_egress_consistency_check": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "reroute",
+          "disable",
+          "abortOnInconsistency"
+        ],
+        "basis": "adopted from the reference city: MATSim's own three settings for what happens when an input plan's trips do not carry the access and egress legs the routing configuration says they should. It was one of the 21 undeclared MATSim defaults (#155) and it was ACCEPTED there, on the reasoning that RUN.routing.access_egress_type was `none` so no leg was expected to carry an access stub and the check had nothing to find - with the entry stating in terms that it becomes a decision the moment that field stops being `none`. It has. WHAT THE SWEEP ANSWERS: whether MATSim's own repair of an input plan is the mechanism that produces the trips PersonPrepareForSim then rejects. `reroute` repairs rather than aborts and is the conservative setting when nothing is expected to be wrong; `abortOnInconsistency` refuses instead of repairing, which is the diagnostic setting - it names the trips rather than rewriting them; `disable` leaves input plans alone and lets the ordinary router build the access legs on its own first pass."
+      },
+      "sweep_role": "answer",
+      "status": "active",
+      "matsim_param": "routing.accessEgressConsistencyCheck",
+      "value": "reroute",
+      "description": "What MATSim does with an input plan whose trips carry no access or egress legs. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.routing.access_egress_type": {
+      "value": "accessEgressModeToLink",
+      "units": "policy",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.routing.accessEgressType on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "routing.accessEgressType"
+    },
+    "RUN.routing.access_walk_beeline_factor": {
+      "value": 1.3,
+      "units": "ratio",
+      "source": "assumed",
+      "status": "active",
+      "description": "Explicit routing helper configuration for the provisional network-mode smoke; main walk and bike use network routing. Moved from RUN.smoke.stub_walk_distance_factor on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "routing.teleportedModeParameters[non_network_walk].beelineDistanceFactor",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional access stub sensitivity."
+    },
+    "RUN.routing.access_walk_speed_ms": {
+      "value": 1.2,
+      "units": "m/s",
+      "source": "assumed",
+      "status": "active",
+      "description": "Explicit routing helper configuration for the provisional network-mode smoke; main walk and bike use network routing. Moved from RUN.smoke.stub_walk_speed_ms on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "routing.teleportedModeParameters[non_network_walk].teleportedModeSpeed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional access stub sensitivity."
+    },
+    "RUN.routing.activity_link_assignment": {
+      "value": "mode_specific_access",
+      "units": "policy",
+      "source": "definition",
+      "status": "active",
+      "description": "Each mode uses its own permitted network and retains MATSim access/egress connectors, including boarding links off the walk network. Moved from RUN.smoke.activityLinks.assignment on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "activityLinks.assignment"
+    },
+    "RUN.routing.clear_default_teleported_params": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit routing helper configuration for the provisional network-mode smoke; main walk and bike use network routing. Moved from RUN.smoke.clear_default_teleported_params on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "routing.clearDefaultTeleportedModeParams"
+    },
+    "RUN.routing.network_modes": {
+      "value": [
+        "car",
+        "ride",
+        "walk",
+        "bike",
+        "motorbike",
+        "taxi",
+        "auto_rickshaw",
+        "truck",
+        "freight_rail"
+      ],
+      "units": "enum",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.routing.networkModes on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "routing.networkModes"
+    },
+    "RUN.routing.routing_randomness": {
+      "units": "dimensionless",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          0.0,
+          5.0
+        ],
+        "basis": "0.0 is a deterministic least-cost router - every agent between one pair of links takes the identical path - and 3.0 is the value MATSim's own comment recommends (\"3.0 seems to be a good value\"), the width parameter of the log-normal distribution the money-versus-time trade-off is drawn from. WHAT THE SWEEP ANSWERS: how much of the route spread on this network is heterogeneous taste and how much is the network's own geometry. It bears on the count rung directly, because a deterministic router concentrates flow onto single links and a random one spreads it across parallel ones."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "routing.routingRandomness",
+      "value": 3.0,
+      "description": "The width of the random utility the least-cost-path router draws per agent, so that two agents with the same origin, destination and departure time need not take the same road. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.sample.flow_capacity_factor": {
+      "units": "share_of_capacity",
+      "source": "derived",
+      "status": "computed",
+      "derived_from": {
+        "fields": [
+          "RUN.sample.fraction"
+        ],
+        "identity": "flowCapacityFactor = RUN.sample.fraction, the standard MATSim scaling rule"
+      },
+      "matsim_param": "qsim.flowCapacityFactor",
+      "value": null,
+      "description": "Road flow capacity scaled to the sample. Derived at launch, as in the reference city. Moved from RUN.smoke.qsim.flowCapacityFactor on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.sample.fraction": {
+      "units": "share_of_population",
+      "source": "assumed",
+      "status": "active",
+      "value": 1.0,
+      "description": "Share of the explicit baseline population simulated. 1.0: the 1,000-person development population runs whole; no city expansion weight exists.",
+      "decisions_ref": "9.202",
+      "sweep": {
+        "interval": [
+          0.01,
+          1.0
+        ],
+        "basis": "the explicit baseline population is 1,000 persons and is simulated whole; a sample fraction below one has no measured fidelity for this city (docs/scaling.md)"
+      },
+      "sweep_role": "uncertainty"
+    },
+    "RUN.sample.storage_capacity_exponent": {
+      "units": "exponent",
+      "source": "derived",
+      "status": "active",
+      "derived_from": {
+        "fields": [
+          "RUN.sample.fraction"
+        ],
+        "identity": "storageCapacityFactor = fraction ** 1.0 = flowCapacityFactor. MATSim enforces the equality: GlobalConfigGroup.checkConsistency throws when the two differ by more than global.relativeTolerance, which defaults to 0.0"
+      },
+      "value": 1.0,
+      "description": "The exponent relating storage capacity to the sample fraction. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.sample.storage_capacity_factor": {
+      "units": "share_of_capacity",
+      "source": "derived",
+      "status": "computed",
+      "derived_from": {
+        "fields": [
+          "RUN.sample.fraction",
+          "RUN.sample.storage_capacity_exponent"
+        ],
+        "identity": "storageCapacityFactor = RUN.sample.fraction ** RUN.sample.storage_capacity_exponent, which at the declared exponent of 1.0 equals flowCapacityFactor exactly. MATSim's GlobalConfigGroup.checkConsistency throws when the two differ by more than global.relativeTolerance, which defaults to 0.0"
+      },
+      "matsim_param": "qsim.storageCapacityFactor",
+      "value": null,
+      "description": "Link storage capacity scaled to the sample. Derived at launch, as in the reference city. Moved from RUN.smoke.qsim.storageCapacityFactor on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.sample.transit_capacity_floor": {
+      "units": "seats",
+      "source": "assumed",
+      "sweep": [
+        1,
+        4
+      ],
+      "sweep_basis": "chosen interval: 1 seat is the smallest usable vehicle, and the floor binds below about a 1.5% sample, where it makes capacity systematically too generous; the top of 4 tests whether a larger floor changes anything while crowding scoring is off (issue 12). No observed spread.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 1,
+      "description": "Minimum seats after scaling, so a vehicle never becomes unusable. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.sample.transit_capacity_scaling": {
+      "units": "boolean",
+      "source": "derived",
+      "status": "active",
+      "derived_from": {
+        "fields": [
+          "RUN.sample.fraction"
+        ],
+        "identity": "seats = max(floor, round(seats x RUN.sample.fraction)); not scaling it would give every vehicle 1/fraction times its real capacity"
+      },
+      "value": true,
+      "description": "Scale transit vehicle seats by the sample fraction. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.sample.unit": {
+      "units": "enum",
+      "source": "derived",
+      "status": "active",
+      "value": "person",
+      "description": "Whether the population subsample keeps whole households or independent persons. `person`: the baseline population has no households.",
+      "decisions_ref": "9.202",
+      "derived_from": {
+        "fields": [
+          "B.seed.master"
+        ],
+        "identity": "the baseline population carries no householdId, so the only inclusion unit the sampler can hash is the person"
+      }
+    },
+    "RUN.scoring.brain_exp_beta": {
+      "units": "logit_scale",
+      "source": "literature",
+      "sweep": [
+        0.5,
+        2.0
+      ],
+      "sweep_basis": "MATSim's own default is 1.0 and the manual treats it as the conventional starting point rather than a measured quantity. The interval spans the range in common use: below 1 agents respond more softly to a utility difference and mode shares flatten, above 1 they respond more sharply and the model can lock in. Nothing about Newcastle bears on it.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "scoring.BrainExpBeta",
+      "value": 1.0,
+      "description": "The logit scale in the ChangeExpBeta plan-selection rule: how sharply an agent's probability of switching plans responds to the score difference between them. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.scoring.early_departure_utils_per_h": {
+      "units": "utils_per_hour",
+      "source": "assumed",
+      "sweep": [
+        -18.0,
+        0.0
+      ],
+      "sweep_basis": "Zero is an assumption that leaving an activity early costs nothing beyond the activity utility already forgone, which is the usual MATSim treatment and avoids charging the same shortfall twice. The interval allows an explicit penalty up to the late-arrival rate for a sensitivity arm.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "scoring.earlyDeparture",
+      "value": 0.0,
+      "description": "Penalty for leaving an activity before its earliest end time. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.scoring.late_arrival_utils_per_h": {
+      "units": "utils_per_hour",
+      "source": "literature",
+      "sweep": [
+        -36.0,
+        -6.0
+      ],
+      "sweep_basis": "MATSim's conventional value is -18 utils/h, three times a typical performing rate, and the manual presents it as a convention rather than an estimate. The interval spans one third to twice that. No Newcastle observation bears on it: the HTS held is aggregate and carries no schedule-adherence measure.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "scoring.lateArrival",
+      "value": -18.0,
+      "description": "Penalty for arriving at an activity after its latest start time. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.scoring.learning_rate": {
+      "value": 1.0,
+      "units": "share",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.scoring.learningRate on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "scoring.learningRate"
+    },
+    "RUN.scoring.path_size_logit_beta": {
+      "units": "dimensionless",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          0.5,
+          2.0
+        ],
+        "basis": "The path-size correction's exponent in the path-size logit of Ben-Akiva and Bierlaire (1999); 1.0 is the standard formulation and the framework default. WHAT THE SWEEP ANSWERS: how strongly two plans that overlap are treated as one alternative rather than two. It reads only under a path-size-logit selector, which is why it is declared in the same change as RUN.replanning.plan_selector_for_removal: `PathSizeLogitSelectorForRemoval` is one of that field's sweep members, and an arm that spent it would otherwise be spending this undeclared value with it."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "scoring.pathSizeLogitBeta",
+      "value": 1.0,
+      "description": "The path-size logit's beta. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.scoring.waiting_utils_per_h": {
+      "units": "utils_per_hour",
+      "source": "assumed",
+      "sweep": [
+        -6.0,
+        0.0
+      ],
+      "sweep_basis": "Zero avoids double-counting: general waiting is already priced through the forgone performing utility of the time. The interval allows an additional explicit disutility for a sensitivity arm. Distinct from scoring.waitingPt, which is DERIVED from the C1 beta_wait and is not this field.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "scoring.waiting",
+      "value": 0.0,
+      "description": "Disutility of general waiting, over and above the opportunity cost of the time. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.storage.extract_grace_s": {
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 3600,
+      "description": "How long after a run's record was last written the store still treats it as inside its extraction window, and so refuses to trim it. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/results_store.py"
+      ]
+    },
+    "RUN.storage.raw_cap_gb": {
+      "units": "gibibytes",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 500,
+      "description": "GIBIBYTES, not gigabytes, despite the `_gb` in the key: src/run/results_store.py multiplies this by 2^30, so 500 here is 500 GiB = 536.9 GB. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/results_store.py",
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.storage.reader_timeout_s": {
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 3600,
+      "description": "How long the results store gives each close-out reader (the --trend extraction, the final --json reading) before it records the extraction as failed. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/run/results_store.py"
+      ]
+    },
+    "RUN.telemetry.live_interval_s": {
+      "value": 3600.0,
+      "units": "seconds",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.telemetry.liveIntervalS on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "telemetry.liveIntervalS"
+    },
+    "RUN.transit.transit_modes": {
+      "value": [
+        "pt"
+      ],
+      "units": "mode_names",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.transit.transitModes on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "transit.transitModes"
+    },
+    "RUN.transit.use_transit": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.transit.useTransit on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "transit.useTransit"
+    },
+    "RUN.transit_router.additional_transfer_time_s": {
+      "units": "s",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          0.0,
+          120.0
+        ],
+        "basis": "adopted from the reference city: 0.0 is the framework default this model has been running - a transferring passenger is assumed to need no time at all beyond the walk between stops. The upper bound is two minutes, the order of a safety margin a real passenger allows at an interchange. WHAT THE SWEEP ANSWERS: whether the raptor's willingness to build multi-leg itineraries is an artefact of costless transferring. It is NOT the same quantity as C.time_weights.beta_transfer_penalty_min, which prices the DISUTILITY of a transfer in the scoring function; this one changes which itineraries the router will return at all. #175 names it as the parameter anything charged in the raptor layer would interact with."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "transitRouter.additionalTransferTime",
+      "value": 0.0,
+      "description": "Extra seconds the transit router allocates at a line switch, MATSim's own \"safety time that agents need to safely transfer from one line to another\". Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.transit_router.direct_walk_basis": {
+      "value": "network",
+      "units": "enum",
+      "source": "definition",
+      "status": "active",
+      "description": "Compare transit with network walking, not a direct geographical chord. Moved from RUN.smoke.ptDirectWalk.basis on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "ptDirectWalk.basis"
+    },
+    "RUN.transit_router.direct_walk_factor": {
+      "units": "ratio",
+      "source": "literature",
+      "sweep": [
+        1.0,
+        2.0
+      ],
+      "sweep_basis": "MATSim ships 1.0 and it was live here UNSET until 9.121: the PT router returns a direct walk whenever walk time x this factor x the walk disutility undercuts the best transit route. Declared so the comparison the ferry lost (#94) is visible; the value is unchanged. The upper bound is the largest value MATSim scenarios use to discourage long direct walks; the repair for the ferry is RUN.transit_router.direct_walk_basis, not this factor.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "transitRouter.directWalkFactor",
+      "value": 1.0,
+      "description": "Multiplier on the direct-walk cost the PT router compares every transit route against. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.transit_router.extension_radius_m": {
+      "units": "metres",
+      "source": "literature",
+      "sweep": [
+        100.0,
+        500.0
+      ],
+      "sweep_basis": "MATSim ships 200 m and it was live here UNSET until 9.120. Leipzig and Kelheim set 500 m, the upper bound.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "transitRouter.extensionRadius",
+      "value": 200.0,
+      "description": "When no stop lies within RUN.transit_router.search_radius_m of a trip end, the router searches out to the nearest stop's distance plus this margin. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.transit_router.max_beeline_walk_connection_m": {
+      "units": "metres",
+      "source": "literature",
+      "sweep": [
+        100.0,
+        500.0
+      ],
+      "sweep_basis": "100 m is the MATSim default that was live here unset; 300 m is the value Open Berlin, Leipzig and Kelheim all set. The upper bound spans Leipzig and Kelheim's 500 m extensionRadius.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "transitRouter.maxBeelineWalkConnectionDistance",
+      "value": 300.0,
+      "description": "Maximum stop-to-stop distance at which the PT router will create a transfer. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.transit_router.search_radius_m": {
+      "units": "metres",
+      "source": "literature",
+      "sweep": [
+        500.0,
+        2000.0
+      ],
+      "sweep_basis": "MATSim ships 1000 m and it was live here UNSET until 9.120 - the emitted config carried it as a jar default no reader could see. The sweep spans half to twice the default: the ferry's two wharves have 8,243 residents within 1 km and the value decides which of them the router lets walk to a wharf at all.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "transitRouter.searchRadius",
+      "value": 1000.0,
+      "description": "Radius around a trip end within which the PT router considers stop facilities as access or egress points. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.travel_time.aggregator": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "optimistic",
+          "experimental_LastMile"
+        ],
+        "basis": "adopted from the reference city: MATSim's own two alternatives, with its own comment naming the flaw in each: \"`optimistic' assumes free speed (too optimistic); 'experimental_LastMile' is experimental and probably too pessimistic.\" WHAT THE SWEEP ANSWERS: what the router believes a link costs in a five-minute bin no vehicle entered. Under `optimistic` a link that is jammed solid - so jammed that nothing entered it in the bin - is priced at FREE SPEED, which is the worst possible estimate at exactly the moment the estimate matters. #154 names this and travelTimeGetter as the two unstated defaults that would otherwise sit inside the filter_modes paired difference."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "travelTimeCalculator.travelTimeAggregator",
+      "value": "optimistic",
+      "description": "How a congested time bin with no link entry event is priced for the router. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.travel_time.analysed_modes": {
+      "units": "mode_names",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "matsim_param": "travelTimeCalculator.analyzedModes",
+      "value": [
+        "car"
+      ],
+      "description": "Which modes contribute observed link travel times. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.travel_time.bin_size_s": {
+      "units": "seconds",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          60,
+          900
+        ],
+        "basis": "MATSim's own default is 900 s. The level-crossing closures (#68) last 60-600 s (A.crossings.closure_duration_s), and the router only sees a closure that spans a travel-time bin - so the crossings activation needs <=300 s. Lowered to 300 at the batched family boundary (9.77), exactly as the 9.76 checklist recorded."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "travelTimeCalculator.travelTimeBinSize",
+      "value": 300,
+      "description": "The travel-time calculator's aggregation bin. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.travel_time.filter_modes": {
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "matsim_param": "travelTimeCalculator.filterModes",
+      "value": true,
+      "description": "Whether the travel-time calculator RESTRICTS itself to RUN.travel_time.analysed_modes. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.travel_time.getter": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "average",
+          "linearinterpolation"
+        ],
+        "basis": "adopted from the reference city: MATSim's own two alternatives. `average` returns one number for the whole RUN.travel_time.bin_size_s bin, so a departure at the start of a bin and one at its end are told the same travel time; `linearinterpolation` interpolates between adjacent bins. WHAT THE SWEEP ANSWERS: how much of the peak-shoulder behaviour in this model is a 300-second step function. It matters most where the gradient is steepest - the shoulders of the morning peak, which is where the departure-time mutator is doing its work."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "travelTimeCalculator.travelTimeGetter",
+      "value": "average",
+      "description": "How a link entry time inside a travel-time bin is turned into a travel time for the router. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.travel_time.separate_modes": {
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "matsim_param": "travelTimeCalculator.separateModes",
+      "value": false,
+      "description": "Whether travel times are accumulated per mode rather than once for the network. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    }
+  }
+}

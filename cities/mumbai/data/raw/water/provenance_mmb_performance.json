@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/water/mmb_performance_1182f554877f9af0.json",
+      "url": "https://maharashtramaritimeboard.com/api/v1/passenger-water-transport/performance-statistics",
+      "final_url": "https://maharashtramaritimeboard.com/api/v1/passenger-water-transport/performance-statistics",
+      "source": "MMB public passenger statistics",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:37:06.634272+00:00",
+      "sha256": "1182f554877f9af09f70e2bc43cdbfd01dab483cf26823856a6be7c403fdc948",
+      "bytes": 11447,
+      "content_type": "application/json; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official website public read API; inspect definitions and periods."
+    }
+  ]
+}

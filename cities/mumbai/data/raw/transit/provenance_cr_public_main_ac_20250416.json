@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "url": "https://cr.indianrailways.gov.in/cris//uploads/files/1770378640224-Suburban%20AC%20Services%20wef%2016.04.2025.pdf",
+      "final_url": "https://cr.indianrailways.gov.in/cris//uploads/files/1770378640224-Suburban%20AC%20Services%20wef%2016.04.2025.pdf",
+      "content_type": "application/pdf",
+      "retrieved": "2026-09-18T10:40:34.338Z",
+      "bytes": 230378,
+      "path": "data/raw/transit/cr_public_main_ac_20250416_405440ab710ba8ce.pdf",
+      "sha256": "405440ab710ba8ceffe4f0ff6fc0dc2142c51da2921dbfc9c0058efe4e8f0074",
+      "source": "Central Railway published main ac 20250416",
+      "licence": "Operator publication; reuse terms unverified",
+      "coverage": "Linked from official Mumbai Suburban timetable index; effective dates, later amendments, station times and operating exceptions require validation.",
+      "producing_script": "extract/import_browser_acquisition.py",
+      "transport": "Connected Chrome public fetch; default certificate verification",
+      "validation_status": "acquired_unvalidated"
+    }
+  ]
+}

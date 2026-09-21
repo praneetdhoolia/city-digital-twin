@@ -1,0 +1,95 @@
+{
+  "input_sha256": {
+    "data/processed/transit/cr_harbour_identity_proposals.csv": "72294c198ffa4a528cd635489ec514eb21e5d1dd365121d736c426467da224d9",
+    "data/processed/transit/cr_harbour_stop_candidates.csv": "a475d5bdee80f52759d70685fcf9a9cf7eb864ef04f20b05ceb1fe7c041b0d28",
+    "data/processed/observed/osm_transport_points.csv": "95b51e278e8fcc2710fc57ad040032525538a5819de4140535a85e6012b067a9",
+    "data/processed/geospatial/osm_transport_areas.geojson": "bf31cbce46cba1fc4eeea83b32747f27dc537667e60598fb31150c6538aa0a79"
+  },
+  "station_keys": 46,
+  "candidate_rows": 254,
+  "keys_with_candidates": 46,
+  "unmatched_keys": [],
+  "scoped_identity_proposal_keys": [
+    "CR_HB_LABEL:jogeshwari",
+    "CR_HB_LABEL:mahim jn",
+    "CR_HB_LABEL:ramnagar",
+    "CR_THB_CODE:SNPD"
+  ],
+  "mode_evidence_counts": {
+    "excluded_explicit_metro": 14,
+    "excluded_explicit_monorail": 5,
+    "mode_not_established_by_these_tags": 1,
+    "source_tags_support_railway_network": 234
+  },
+  "features_shared_by_source_station_keys": {
+    "node/1990668445": [
+      "CR_HB_LABEL:sanpada",
+      "CR_THB_CODE:SNPD"
+    ],
+    "node/1990672673": [
+      "CR_HB_LABEL:sanpada",
+      "CR_THB_CODE:SNPD"
+    ],
+    "node/241160689": [
+      "CR_HB_LABEL:vashi",
+      "CR_THB_CODE:VSH"
+    ],
+    "node/4819972201": [
+      "CR_HB_LABEL:vashi",
+      "CR_THB_CODE:VSH"
+    ],
+    "node/4822210969": [
+      "CR_HB_LABEL:sanpada",
+      "CR_THB_CODE:SNPD"
+    ],
+    "node/4822210993": [
+      "CR_HB_LABEL:vashi",
+      "CR_THB_CODE:VSH"
+    ],
+    "node/4822211016": [
+      "CR_HB_LABEL:vashi",
+      "CR_THB_CODE:VSH"
+    ],
+    "node/7817978920": [
+      "CR_HB_LABEL:juinagar",
+      "CR_THB_CODE:JNJ"
+    ],
+    "node/7817978921": [
+      "CR_HB_LABEL:juinagar",
+      "CR_THB_CODE:JNJ"
+    ],
+    "node/7817978922": [
+      "CR_HB_LABEL:juinagar",
+      "CR_THB_CODE:JNJ"
+    ],
+    "node/7817978923": [
+      "CR_HB_LABEL:juinagar",
+      "CR_THB_CODE:JNJ"
+    ],
+    "node/7818022403": [
+      "CR_HB_LABEL:sanpada",
+      "CR_THB_CODE:SNPD"
+    ],
+    "way/151768155": [
+      "CR_HB_LABEL:vashi",
+      "CR_THB_CODE:VSH"
+    ],
+    "way/151769149": [
+      "CR_HB_LABEL:sanpada",
+      "CR_THB_CODE:SNPD"
+    ],
+    "way/642845770": [
+      "CR_HB_LABEL:juinagar",
+      "CR_THB_CODE:JNJ"
+    ]
+  },
+  "limitations": [
+    "No fuzzy matching is performed; declared scoped identity proposals retain their evidence and are not observed aliases.",
+    "Suburban, metro and monorail features with the same name remain separate; explicit metro/monorail candidates are excluded.",
+    "A retained feature with unspecified mode still needs independent network or relation evidence.",
+    "A station point and its polygon may describe the same facility; neither is a capacity or passenger-count unit.",
+    "Polygon coordinates are not replaced by a centroid or invented boarding point.",
+    "Stop-position/platform refs may be platform numbers; they are not used as station alpha codes.",
+    "Platform allocation, direction, native track membership, accessibility and current operation remain unresolved."
+  ]
+}

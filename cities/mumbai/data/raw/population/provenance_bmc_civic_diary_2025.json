@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/bmc_civic_diary_2025_5984b3bbde3390c2.pdf",
+      "url": "https://crmapp.mcgm.gov.in/irj/go/km/docs/documents/HomePage%20Data/BMC%20Diary/BMC_English%20Diary_2025_Website.pdf",
+      "final_url": "https://crmapp.mcgm.gov.in/irj/go/km/docs/documents/HomePage%20Data/BMC%20Diary/BMC_English%20Diary_2025_Website.pdf",
+      "source": "BMC Civic Diary 2025 English",
+      "licence": "BMC publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:37:22.505360+00:00",
+      "sha256": "5984b3bbde3390c2d10fe48b1cad17b8ffec5e936903cb500411ff76489e4e8d",
+      "bytes": 28247035,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Municipal wards, estimated population and registered vital events; publication year is not observation year."
+    }
+  ]
+}

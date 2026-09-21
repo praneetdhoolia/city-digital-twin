@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_cstm_96fd2a89d894250f.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/CSTM/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/CSTM/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Chhatrapati Shivaji Maharaj Terminus Metro",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:40.334921+00:00",
+      "sha256": "96fd2a89d894250f6d0612c6dc315e61734f44ee76eb773bb8159cb2d51dce34",
+      "bytes": 50182,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

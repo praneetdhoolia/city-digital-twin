@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_faq_rules_354fdcc69181cc65.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/passenger/faqs-about-rules/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/passenger/faqs-about-rules/",
+      "content_type": "application/json",
+      "source": "Line 3 official FAQ rules",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:46.600100+00:00",
+      "sha256": "354fdcc69181cc65667cd43eb1caad824212a9cb935745f04c8e840ce632e7b9",
+      "bytes": 4251,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

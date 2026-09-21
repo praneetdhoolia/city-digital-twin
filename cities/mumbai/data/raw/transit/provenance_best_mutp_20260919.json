@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/best_mutp_20260919_c27f98fc78377dad.html",
+      "url": "https://www.bestundertaking.com/MUTP.asp",
+      "final_url": "https://www.bestundertaking.com/MUTP.asp",
+      "source": "BEST official MUTP",
+      "licence": "BEST publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:44:40.115554+00:00",
+      "sha256": "c27f98fc78377dadb1d8cad84a03a07170100faa7abbc7753b06dcd5c9511264",
+      "bytes": 57884,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification."
+    }
+  ]
+}

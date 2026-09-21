@@ -2,10 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
+**Updated:** 21 September 2026 (fifty-sixth session) · **Record read through:** §9.203 · **Written against family:** `F35`
 
 ## What is built
 
+- **Standing room is scaled with the seats** (§9.203, §9.185, #237): the old regex scaled only `seats`; the F35 result ran Bus 11 + 18, Tram 15 + 210, Rail 24 + 48, Ferry 37 + 51 at 25 % — standing room at full size, crowding unable to bind on tram, rail or ferry. `scale_transit_capacity` now parses the XML and scales both components (Tram 15 + 52), floor `RUN.sample.transit_capacity_floor`. **Every arm after it opens a family; nothing after compares with F35.** The rewrite keeps the identical 155,233 persons at 25 % (old beside new).
 - **The sampling unit is the household.** `RUN.sample.unit` = `household` (`derived`): a household is kept when blake2b(`household|<id>|RUN.machine.seed`) / 2^64 falls below the fraction, so the sample nests (1 % is a strict subset of 10 %) and every household-coupled mechanism is fraction-independent (§9.45). External and through tiers hash on their own id. `RUN.machine.seed` = 20260810 = `B.seed.master`.
 - **Lift couplings extend the unit**: the sampler union-finds (`householdId`, `liftHousehold`) pairs; shared-ride driver households are named in `sharedDriverHousehold` and excluded from those unions (§9.60, §9.127).
 - **A shared pair shares a hash bucket the width of the campaign fraction.** `B.ride.shared_lift_hash_bucket` **0.25** (`assumed`, sweep [0.05, 0.25]; 0.05 is the control, §9.129, §9.149): the fourth binder pass (`B.ride.shared_lift_scope` = `same_sa2_od`) binds a passenger only to drivers in the same bucket, so a nested sample at a multiple of the width keeps both members. A 1 % smoke breaks pairs and never reads pairing (§9.128); the binder records the seed it hashed under (§9.127).
@@ -60,15 +61,16 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## What is measured
 
-- **"One build per comparison" was broken at the READER, not the mapper** (§9.169): `extract_metrics` resolved pt submodes through the absolute schedule path under `scenarios/matsim/`, overwritten by the F34 rebuild, so every pt submode reading of a pre-rebuild run taken after 12 Sep 06:24 was wrong (the board's F32 heavy-rail 0 / −100.0 % cell). The reader now reads each run through its own `output/output_transitSchedule.xml.gz`; the F32 result reads heavy rail 20,932 / +220.6 % again.
+- **"One build per comparison" was broken at the READER, not the mapper** (§9.169): `extract_metrics` read pt submodes through the city's schedule path, overwritten by the F34 rebuild; every reader now opens the run's own `output/output_transitSchedule.xml.gz`.
 - pt2matsim: stop-to-link assignment agrees 100.000 % between builds, route link sequences 81.9–82.3 % (§3.5); one build per comparison.
-- Bucket width costs candidate supply, not bound trips (WEEKDAY servable / bound): at-or-below 98,549 / 59,718; bucket 0.10 86,848 / 59,806; bucket 0.05 73,509 / 59,701; unconstrained 105,515 / 59,648 (§9.129).
+- Bucket width costs candidate supply, not bound trips (§9.129: 98,549 → 73,509 servable at 0.05, bound 59,7xx throughout).
 - The last asserted sample was 62,134 of 620,553 persons, 10.01 % (§9.127); the population has since been rebuilt (§9.131) and arm 0 kept 155,233 of 622,318 at 25 % (`20260912T202242_300it_25pct`, §9.169).
 
 ## What is open
 
+- **The first 25 % arm with standing room scaled** measures what F35 could not: peak standing occupancy per vehicle type and whether `C.crowding.standing_multiplier` moves a score (#237, `AWAITING-RUN`). It opens F36.
 - **F35 is open and has its reading** (§9.168, §9.169): opened at the controler fix `20260912T184108` before any F34 arm; its probes `20260912T184134_4it_1pct` and `20260912T185005_4it_25pct` (460.0 s recurring) are citable for a yes/no and a clock. Arm 0 `20260912T202242_300it_25pct` is a RESULT and the CONTROL HALF of the five pairs (#172): each pair opens a family on ONE field, runs 250 (cutoff 200) and differences against arm 0's it.300 reading, the 0.128 pp post-cutoff drift inside the tolerance. No arm was chosen, no approval stands; the routers pair is recommended first (§9.169).
-- **F32's result stays a RESULT and is no longer the newest reading** (§9.162, §9.169): `20260909T015217_300it_25pct`, `reached_iteration` 300, wall 21.5 h, `median_iteration_s` 244.05, the first `_fit.json` with `is_a_result: true`; it compares with nothing before `20260909T011135` and nothing in F35. The probe `20260909T011135_4it_25pct` is citable only for its clock, 263.0 s recurring against F31's 260.0 (§9.160).
+- **F32's result stays a RESULT and is no longer the newest reading** (§9.162, §9.169): `20260909T015217_300it_25pct`, `reached_iteration` 300, 21.5 h, the first `_fit.json` with `is_a_result: true`; it compares with nothing in F35.
 - Whether a separate 25 % confirmation arm is still needed now that the loop runs at 25 % (§9.129) is the user's call at convergence.
 - The design-effect penalty of household cluster sampling is unestimated and no seed-variance measurement exists; `n_replications` stays 30 (§9.45). The threshold between 10 % and 25 % is unmeasured (§9.12).
 - One arm at a time; the machine-level stall that hit two concurrent arms is #66.
@@ -87,6 +89,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## History
 
+- §9.203 — standing room scaled at last
 - §9.176 — intro fixed: which runs are results is the board's
 - §9.170 — no family opened; a 1 % smoke on the recompiled controler
 - §9.169 — F35's arm 0 is a result
@@ -101,4 +104,3 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 - §9.156 — F31 opened at the arm; the car router reads only cars
 - §9.153 — F30's first arm stopped at 23 on its own cost
 - §9.151 — F30 opens at a rebuild, on the escort listener's draw order alone
-- §9.149 — F29 opens at a rebuild: the bucket is the campaign fraction

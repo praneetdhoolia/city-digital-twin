@@ -1,0 +1,31 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/mospi_ec6_maharashtra_detail_page_1_659a6eed2f69a2b2.json",
+      "url": "https://esankhyiki.mospi.gov.in/dashboard/EC/submitForm6",
+      "final_url": "https://esankhyiki.mospi.gov.in/dashboard/EC/submitForm6",
+      "content_type": "application/json",
+      "source": "Official EC6 public dashboard Maharashtra first table page",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:28:13.275827+00:00",
+      "sha256": "659a6eed2f69a2b27ee1f46a73a78f309cc88a45743712af622d1c8e2dca92d1",
+      "bytes": 14787,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public dashboard response; inspect aggregation, pagination and reference universe before use.",
+      "transport": "Windows system TLS; certificate verification enabled",
+      "method": "POST",
+      "request_form": {
+        "ec": "6",
+        "state": "27",
+        "nop": "",
+        "sof": "",
+        "activity": "",
+        "randomnum": "0",
+        "pageNum": "1",
+        "ownership": "",
+        "sector": ""
+      }
+    }
+  ]
+}

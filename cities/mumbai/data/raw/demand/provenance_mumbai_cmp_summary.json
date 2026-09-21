@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/demand/mumbai_cmp_summary_e8ffa49d3d0e7b56.pdf",
+      "url": "https://portal.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Roads%20and%20Traffic/Docs/CMP%20for%20Greater%20Mumbai/Executive%20Summary/Executive%20Summary.pdf",
+      "final_url": "https://portal.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Roads%20and%20Traffic/Docs/CMP%20for%20Greater%20Mumbai/Executive%20Summary/Executive%20Summary.pdf",
+      "content_type": "application/pdf",
+      "source": "Greater Mumbai comprehensive mobility plan executive summary",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:33:00.813064+00:00",
+      "sha256": "e8ffa49d3d0e7b56b036063c4b6a2fc128776a25f870cb2b1d788d5d6f9b3ee2",
+      "bytes": 6794353,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Survey observations and forecasts; Greater Mumbai is a subset of MMR.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

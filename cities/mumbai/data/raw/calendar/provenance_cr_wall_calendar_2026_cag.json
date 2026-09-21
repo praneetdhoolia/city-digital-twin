@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/calendar/cr_wall_calendar_2026_cag_016435842a091f38.pdf",
+      "url": "https://saiindia.gov.in/uploads/media/CR-Wall-Calendar-2026-1-0699ee2aca61af2-81437787.pdf",
+      "final_url": "https://saiindia.gov.in/uploads/media/CR-Wall-Calendar-2026-1-0699ee2aca61af2-81437787.pdf",
+      "content_type": "application/pdf",
+      "source": "Central Railway 2026 wall calendar hosted by the Comptroller and Auditor General",
+      "licence": "Indian Railways publication hosted by CAG; reuse terms unverified",
+      "retrieved": "2026-09-18T19:57:59.137100+00:00",
+      "sha256": "016435842a091f38a2edd97a9ecb06e77ae6e78d5b64001959898779bcdc61e0",
+      "bytes": 16343933,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Railway wall calendar with festivals and listed holidays; not proof of suburban operating exceptions. Must distinguish closed, restricted and train-operation holidays.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

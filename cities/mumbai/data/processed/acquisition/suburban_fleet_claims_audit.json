@@ -1,0 +1,38 @@
+{
+  "capacity_rows": 4,
+  "capacity_checks": [
+    {
+      "scope": "Driving Motor Coach",
+      "residual_passengers": 0
+    },
+    {
+      "scope": "Trailer Coach",
+      "residual_passengers": 0
+    },
+    {
+      "scope": "Non-Driving Motor Coach",
+      "residual_passengers": 0
+    },
+    {
+      "scope": "Complete rake",
+      "residual_passengers": 0
+    }
+  ],
+  "service_rows": 6,
+  "service_totals": {
+    "all_services": 3234,
+    "ac_subset": 227,
+    "operator_sum_status": "exact"
+  },
+  "stock_claim_rows": 4,
+  "model_parameters_adopted": false,
+  "limitations": [
+    "The 2017 capacity statement describes the first BHEL AC rake, not every later rake or an observed passenger load.",
+    "The standing-density basis is unspecified here. A different technical specification cannot silently supply it.",
+    "Coach types and complete-rake capacity have different units and must not be added together.",
+    "The release distinguishes general and ladies coaches and reserved seats; aggregate capacity alone does not model eligibility or compartment crowding.",
+    "The original 2018 Monday-Friday service and maintenance calendar is historical, not a calendar for current AC services.",
+    "The 2026 publication says present service counts but does not date an individual operating day or supply exceptions.",
+    "Rake receipts, total services and sanctioned procurements are different quantities; no trip-specific formation is inferred."
+  ]
+}

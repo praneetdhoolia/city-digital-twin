@@ -1,0 +1,71 @@
+{
+  "source_id": "metro3_fare_chart_20260918",
+  "source_sha256": "31df5bd9bc8cbb188f78c7c0174177417ee00a548e19272ea0036fc0676f702a",
+  "image_size_px": [
+    2410,
+    2260
+  ],
+  "table_origin_px": [
+    524,
+    374
+  ],
+  "crop_half_size_px": [
+    28,
+    25
+  ],
+  "normalised_glyph_size_px": [
+    24,
+    24
+  ],
+  "foreground_green_threshold": 180,
+  "diagonal_white_threshold": 220,
+  "template_first_row_columns_zero_based": [
+    1,
+    2,
+    6,
+    8,
+    12,
+    16,
+    20
+  ],
+  "template_fares_inr": [
+    10,
+    20,
+    30,
+    40,
+    50,
+    60,
+    70
+  ],
+  "station_codes": [
+    "CUP",
+    "VIDB",
+    "CHGM",
+    "HUC",
+    "CSTM",
+    "KLBD",
+    "GIRG",
+    "GTRM",
+    "MCLM",
+    "MLXM",
+    "SCMU",
+    "ACA",
+    "WOR",
+    "SIDV",
+    "DDRM",
+    "SDIT",
+    "DHAV",
+    "BDRM",
+    "VIDN",
+    "STZM",
+    "CIAD",
+    "SHRR",
+    "CSIA",
+    "MNK",
+    "MIDC",
+    "SEPZ",
+    "ARYJ"
+  ],
+  "purpose": "Image transcription settings, not simulation parameters. Template fares and station ordering visually checked against the operator image. Classification scores are not probabilities.",
+  "visual_review": "Chart shows Science Centre to Marol Naka 60 INR and reverse 50 INR. Both public calculator responses show 60 INR. Preserve this source disagreement."
+}

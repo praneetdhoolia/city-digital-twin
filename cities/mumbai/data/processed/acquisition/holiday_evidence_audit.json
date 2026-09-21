@@ -1,0 +1,18 @@
+{
+  "state_rows": 26,
+  "public_holiday_names": 24,
+  "distinct_public_dates": 22,
+  "cr_rules": 13,
+  "matched_rules": 12,
+  "unresolved_rules": 1,
+  "all_printed_weekdays_match": true,
+  "model_calendar_adopted": false,
+  "limitations": [
+    "The CR holiday sheet is undated; its acquisition identifier does not establish annual validity.",
+    "State public holidays are not automatically railway holidays, school closures or zero-demand days.",
+    "Two state Diwali holidays are not consecutive; CR first/second-day wording still needs an operating notice.",
+    "Festival amendments and actual railway notices, including lunar-date changes, remain to be reconciled.",
+    "The bank-only and additional government-body holiday have distinct applicability.",
+    "Saka dates are transcribed from the English table, not cross-validated against the Marathi table."
+  ]
+}

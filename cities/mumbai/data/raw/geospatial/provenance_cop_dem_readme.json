@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/geospatial/cop_dem_readme_922461d55070e3c7.html",
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/readme.html",
+      "final_url": "https://copernicus-dem-30m.s3.amazonaws.com/readme.html",
+      "source": "Copernicus public DSM COG release documentation",
+      "licence": "Copernicus DEM free licence; prescribed attribution and product terms apply",
+      "retrieved": "2026-09-18T09:56:50.547219+00:00",
+      "sha256": "922461d55070e3c7e0cf2903ec54190d69e3773da2dc9e776a3f03566cfd56d2",
+      "bytes": 8536,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Spatial-support source. GHSL population is modelled; DSM includes buildings and vegetation and is not surveyed road elevation."
+    }
+  ]
+}

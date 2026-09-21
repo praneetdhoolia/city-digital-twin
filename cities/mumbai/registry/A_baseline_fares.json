@@ -1,0 +1,77 @@
+{
+  "layer": "A",
+  "title": "Broad baseline boarding fares",
+  "fields": {
+    "A.baseline_fares.published_agency_id": {
+      "value": "BEST",
+      "units": "GTFS_agency_id",
+      "source": "definition",
+      "status": "active",
+      "description": "Acquired operator tariff scope; do not assign this tariff to another agency.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_fares.py"
+      ]
+    },
+    "A.baseline_fares.ac_route_pattern": {
+      "value": "(^A[- ]|\\bAS\\b|\\bAC\\b)",
+      "units": "regular_expression",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional class inference from acquired route labels. This does not prove the assigned departure is air-conditioned.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_fares.py"
+      ],
+      "sweep": {
+        "categorical": [
+          "(^A[- ]|\\bAS\\b|\\bAC\\b)",
+          "(?!)",
+          ".*"
+        ]
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Explicit class-assignment sensitivity pending verified route vehicle assignments and passenger eligibility."
+    },
+    "A.baseline_fares.rider_class": {
+      "value": "adult",
+      "units": "published_fare_column_suffix",
+      "source": "assumed",
+      "status": "active",
+      "description": "Adult-priced development population pending verified concessions and pass ownership; not an observed eligibility assignment.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_fares.py"
+      ],
+      "sweep": {
+        "categorical": [
+          "adult",
+          "concessional"
+        ]
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Explicit class-assignment sensitivity pending verified route vehicle assignments and passenger eligibility."
+    },
+    "A.baseline_fares.fallback_rate_money_per_m": {
+      "value": {
+        "bus": 0.001,
+        "rail": 0.001,
+        "subway": 0.001,
+        "ferry": 0.001
+      },
+      "units": "INR_per_metre",
+      "source": "assumed",
+      "status": "active",
+      "description": "Retain the previous baseline PT rate on unpriced operators/submodes; these are explicit proxies, not observed tariffs.",
+      "decisions_ref": "9.187",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_fares.py"
+      ],
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional uncovered-tariff uncertainty; replace with acquired and validated operator tables."
+    }
+  }
+}

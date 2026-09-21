@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "rows": 16,
+  "repeated_ridership_figures_agree": true,
+  "growth_check": {
+    "published_percent": 63,
+    "calculated_percent": 57.909549689441,
+    "derived_from": "(March 2025 reported daily average / April 2024 reported daily average - 1) * 100",
+    "agrees_to_published_integer": false
+  },
+  "limits": "Historical reports. No current departures, peak clock bands, fares, rolling-stock capacity, station-level demand or representative-date target is established. Event service remains separate from regular service. Other cities in the corporate reports are excluded."
+}

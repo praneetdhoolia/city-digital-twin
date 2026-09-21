@@ -40,6 +40,8 @@ RECORD_FILES = ('_meta.json', '_run.json', '_config.json', '_progress.json',
                 '_gate_stop.json', '_gate_verdict.json', '_readings.jsonl',
                 '_residents.csv.gz',   # the run's own residents map (#213)
                 '_mode_by_demographics.json', '_near_wharf.json', '_bound_trips.json',  # measurements
+                '_baseline_inputs.json', '_baseline_network.json', '_baseline_schedule.json', '_baseline_demand.json',
+                '_hired_fleet_input.json',
                 'SUMMARY.md', 'config.xml')
 # Reading snapshots extracted from the bulk before it can be trimmed: the
 # twelve-mode trend across every readable iteration, and the newest readable

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mbmt_electric_bus_agreement_687ae4cce93548ea.pdf",
+      "url": "https://www.mbmc.gov.in/assets/uploads/file-8287.pdf",
+      "final_url": "https://www.mbmc.gov.in/assets/uploads/file-8287.pdf",
+      "source": "MBMT Bus Operator Agreement for supply, operation, and maintenance of electric buses at Mira Bhayandar on Gross Cost Contract basis",
+      "licence": "Municipal/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:02:56.209030+00:00",
+      "sha256": "687ae4cce93548ea8d309f763c3fc6d40bd61757bf355504ac7a1a6dbfe1bb48",
+      "bytes": 16363122,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published contract, budget or notice. Procurement and planned service are not current operating observations."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_pilot_schedule_5577_e0ec314b456b2e76.xml",
+      "url": "https://nmmtservice.infinium.management/TransistService.asmx/GetBusScheduleForRoute?RouteId=5577&StationID=3173",
+      "final_url": "https://nmmtservice.infinium.management/TransistService.asmx/GetBusScheduleForRoute?RouteId=5577&StationID=3173",
+      "content_type": "text/xml; charset=utf-8",
+      "source": "NMMT route 5577 public timetable query at Thane",
+      "licence": "Public authority publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:14:23.147798+00:00",
+      "sha256": "e0ec314b456b2e7672ac20095c1b7d6de7b0969567aeb2727ed600103fddad35",
+      "bytes": 98,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Source response retained; period and suitability require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

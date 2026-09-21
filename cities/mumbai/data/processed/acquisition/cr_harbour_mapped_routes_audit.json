@@ -1,0 +1,53 @@
+{
+  "source": "derived_mapped_route_and_timetable_evidence",
+  "input_sha256": {
+    "data/processed/acquisition/osm_network_source_audit.json": "5d6b3fd34c0115cc707c3461e7c80b53b2826ca72e6957f8757ee04176f93327",
+    "data/processed/acquisition/osm_transport_relations_audit.json": "9af7716479de79a7ec4549940fd8a05495f9b489ec5a86537046a36387eb395f",
+    "data/processed/network/cr_harbour_boarding_nodes.csv": "6a24f95dc367691e9f22e146b5f45203255d26e3abdbb2cbcc87742f683f3fd1",
+    "data/processed/network/rail_geometry/audit.json": "b97bcfc91b93ba19fceb774711020979ce3500d84bbe854e2d1febe54ec71a68",
+    "data/processed/network/rail_geometry/segments.csv": "81e3d8f61fe2b3321831e4c1c633623dbb070321674d3fa3703a1408e42c6968",
+    "data/processed/network/rail_geometry/ways.csv": "669ddeb14aff0fff7d7bf0635093ae1a0e9c07364e28f0b73c7ddc76b955ed68",
+    "data/processed/observed/osm_transport_relations.csv": "727f0ff9567863417095b80fd016828d3e880734d3981b7f6b6262a517088a01",
+    "data/processed/transit/cr_harbour_path_patterns.csv": "13211061e3a9186dbfeec718483a9e309d2385c976a577b063a3e9fc2b9b2cdb",
+    "data/processed/transit/cr_harbour_service_path_candidates.csv": "859ac2876317ebd0aaf45fe3b4d85b09c2683adda4b0d6488bbbc4aa7d9ba0ed"
+  },
+  "selected_relations": 24,
+  "selection": "PTv2 train routes with at least two identified timetable boarding stops",
+  "route_geometry_status_counts": {
+    "missing_or_nonrail_way_members": 2,
+    "unique_ordered_way_chain": 22
+  },
+  "coherent_complete_route_stop_geometry": 20,
+  "route_stop_rows": 401,
+  "route_segment_rows": 11701,
+  "pattern_route_rows": 26,
+  "pattern_route_status_counts": {
+    "contiguous_mapped_route_geometry_evidence": 20,
+    "station_order_conflict": 6
+  },
+  "timetable_patterns": 31,
+  "patterns_with_contiguous_mapped_geometry": 19,
+  "services_with_contiguous_mapped_geometry": 613,
+  "patterns_without_contiguous_mapped_geometry": [
+    "05e91588bca4edf87f007c0968df634fafd0206a6897c48707df144b78cb063f",
+    "1e882f814a854be1e1d8a82277a05c0403326965c891314153f605a1e0cae85b",
+    "2f7d94adc2a8901d0ea7f7789c7f85c1f890fa4ae9653876b7486c54f16a9d75",
+    "331fcd0f31f9108455185f1162e6e84ab6a08cf6ba771935beb41a99129ca44a",
+    "3b3f515d3b07360bd1f0e545a23fd08594d8505a8cb14c8291ba66844f307b96",
+    "3f9f069f061e81ec9a9eefbce77d0de3283c79bbf368223ecfe71efea6f224c6",
+    "518d2f4e6e938b4680d469903e652c951b6e892fb47cece8baf5c5430fc72920",
+    "60cc93038aa56f068d7bc5fa9ff953b4a5c2677bac6f738c4d5bb7fc5e3eb32e",
+    "6a03f1a8ea6c9e88b5a4566aebc9983dcbd4c6ed20e35d3ed201b497de4cf473",
+    "8e49110049efbd4f034fb543ff501ecf1771d11846660392f4e1fab0fcd01bfc",
+    "e7a933b3e2d0359793b66cbdbc998559de2a5e6adce89b187516803902954778",
+    "f8a958dc857000c77b7105a8f390bbf34d813aae8f25a19dbf4c32b020409511"
+  ],
+  "limitations": [
+    "OSM route members are mapped evidence, not independently verified current service or train-specific platform assignments.",
+    "Member order, repeated ways and native node identity remain intact; no stop substitutions or gap repairs are made.",
+    "Only contiguous equal-length stop windows are compared; skipped-stop, composite, reversal and external branches require separate evidence.",
+    "Route and static direction tags can conflict; unknown permissions, gauge, switches, signals, calendars and fleet assignment remain unresolved.",
+    "Several route relations and repeated services share the same sources; they are not independent observations.",
+    "No service is eligible for schedule export from these evidence tables."
+  ]
+}

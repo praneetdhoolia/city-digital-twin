@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_journey_cstm_huc_20260918_c8c2998bd6e8d3b6.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/journey-route/CSTM/HUC/station/station/least-distance/2026-09-18/one_way/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/journey-route/CSTM/HUC/station/station/least-distance/2026-09-18/one_way/",
+      "content_type": "application/json",
+      "source": "Metro 3 public adjacent-station journey CSTM to HUC, 18 September 2026",
+      "licence": "Public authority or operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:16:14.722949+00:00",
+      "sha256": "c8c2998bd6e8d3b6daf8baa3f3c2bed0337461f4818856bc3e4b59d59c88240d",
+      "bytes": 665,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

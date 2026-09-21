@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_journey_aryj_sepz_20260918_512ec84b60ed9cc6.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/journey-route/ARYJ/SEPZ/station/station/least-distance/2026-09-18/one_way/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/journey-route/ARYJ/SEPZ/station/station/least-distance/2026-09-18/one_way/",
+      "content_type": "application/json",
+      "source": "Metro 3 public journey information ARYJ to SEPZ, 18 September 2026",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:14:54.384270+00:00",
+      "sha256": "512ec84b60ed9cc67ffaf1d0f1491f7efd8343f1f8d1f6bb9dbb600bf1e6fc9e",
+      "bytes": 547,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public read-only journey planner using parameters observed in operator client; source date selected explicitly.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

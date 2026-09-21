@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/metro1_ticket_fares_20260918_fb5c8a19a1ca2a0e.html",
+      "url": "https://www.reliancemumbaimetro.com/ticket-fares",
+      "final_url": "https://www.reliancemumbaimetro.com/ticket-fares",
+      "content_type": "text/html; charset=utf-8",
+      "source": "Metro One ticket-fares",
+      "licence": "Public authority or operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:15:41.098275+00:00",
+      "sha256": "fb5c8a19a1ca2a0e542487db08cf60f78e4bc98f631639e7b55abe377b4d6140",
+      "bytes": 59024,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

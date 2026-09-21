@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/cidco_metro_qr_ticketing_20250617_8402eaa2630db838.pdf",
+      "url": "https://cidco.maharashtra.gov.in/Upload/20250723151413126.50.04%20PM.pdf",
+      "final_url": "https://cidco.maharashtra.gov.in/Upload/20250723151413126.50.04%20PM.pdf",
+      "content_type": "application/pdf",
+      "source": "CIDCO Navi Mumbai Metro QR ticketing announcement",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T12:10:00.363534+00:00",
+      "sha256": "8402eaa2630db838f448c0b1ed0fecbaeace6d1a99abc653ea4b668bd8c4811a",
+      "bytes": 417189,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Ticketing introduction and planned channels; verify dates and distinguish future commitments.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

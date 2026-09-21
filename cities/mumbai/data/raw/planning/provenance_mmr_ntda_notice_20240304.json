@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/mmr_ntda_notice_20240304_5b6a4d50486069a3.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2024-03/notice_gazzette_rp_modification_for_ntda_040324_with_map_0.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2024-03/notice_gazzette_rp_modification_for_ntda_040324_with_map_0.pdf",
+      "content_type": "application/pdf",
+      "source": "Notice of the proposed New Town",
+      "licence": "MMRDA publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:08:32.437146+00:00",
+      "sha256": "5b6a4d50486069a38a5fa4f18b95e61ed0e18bd13e64ac71ef02ffe736aa2ec8",
+      "bytes": 11023184,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official spatial planning evidence. Proposed land use and future infrastructure are not observed current activity or operating transport.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

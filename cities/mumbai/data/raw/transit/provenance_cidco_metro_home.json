@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/cidco_metro_home_e79244853eac3a7a.html",
+      "url": "https://cidco.maharashtra.gov.in/",
+      "final_url": "https://cidco.maharashtra.gov.in/",
+      "content_type": "text/html; charset=utf-8",
+      "source": "CIDCO official public website",
+      "licence": "Operator or government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:01:24.994170+00:00",
+      "sha256": "e79244853eac3a7a66db451742f8458d1e2a7a827a2d48f004a1657fc7609cc6",
+      "bytes": 88775,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Locate dated operating schedule for Navi Mumbai Metro.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

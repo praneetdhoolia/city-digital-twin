@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_thane_pca_search_fc05dd60c6b93b5a.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/?sk=PC11_PCA-TV-2721&ps=15",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/?sk=PC11_PCA-TV-2721&ps=15",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Census Thane PCA catalogue search",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:41:29.171468+00:00",
+      "sha256": "fc05dd60c6b93b5ad24c33033f1a1cc8e1442135a03230c3542f292e56048230",
+      "bytes": 108190,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical district includes later Palghar; locate official workbook.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

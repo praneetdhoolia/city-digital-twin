@@ -210,6 +210,31 @@ about its layout will otherwise cost you an hour:
 | **The routers pair is a result that moves nothing; an orphaned run gets its close-out** | **§9.176** — `20260915T000704_250it_25pct` `ran_to_last_iteration` at 250, 27.39 h; against arm 0 car −0.35 pp, ride +0.17, light rail 772 → 856, heavy rail 10,092 → 10,476, 2 of 12 inside and 6 past the bar on both; pt coverage 17.53 → 15.78 %, ride 19.11 on both; drift 0.14 pp, snap car +1.774; its harness died at it.34 and the JVM ran alone to the horizon; `run.py --close-out` (D5) closes out an orphaned run that reached its horizon and shut down cleanly; #225 filed; D6, D7 open; the handoff's by-hand steps codified — an orphaned-JVM gate check, a memoised `--trend`, `watch_run.py`, `compare_runs.py --modes`, `positions.py`, `record.py`, `lane.py --add-*`, one intro on every position page, *Open work* rows without deviations, a process audit in `/project-report` |
 | **Report #12 lodged; the scoring pair launched on its own probe and running at handoff; the bound trips read** | **§9.177** — report #12 (91 findings, 59 ledger rows, 20 recommendations) on the routers pair; the scoring pair `20260916T063903_250it_25pct` (`RUN.replanning.score_msa_representation` = `at_innovation_cutoff`, D7) launched on a 25 % probe (383 s/it, 27.2 h quoted), a RESULT at 250 in 25.77 h that moves nothing against arm 0 (car +0.007 pp, bike −0.292, light rail 772 → 928) and leaves the cutoff snap at car +1.76 pp — score averaging is exonerated; `run.py` detaches by default (D6); a run carries its own `_residents.csv.gz` (#213); the pricer reads an orphan's setup from the JVM stopwatch; the issue gate reports MEASUREMENT DUE; coverage is a share of TRIPS, ride's 19.11 % is the bound trips' share at the target, and `measure_bound_trips.py` reads where bound trips go (59.0 % ride at it.250; car-available escort members drive 50.7 %, joint companions 36.3 %, lift passengers 65.5 %; #86); `measure_near_wharf.py` (ferry market 305 trips, 15.7 % ferry, 1,148 boardings; #94); `mode_by_demographics.py` on the run's own persons (#107); D8 TPA ferry target, D9 bike distance cost derived from the observed mean, D10 gate departure documented, D11 strict status checks, D12 escort members and joint companions held to ride; 9 registry fields (567); the build layer staged byte-identically. No target value changed; the 67/143 split is untouched; nothing here is a finding |
 | **Native Codex skills and workflow** | **§9.178** — native project skills, global integration verification and handoff |
+| **Transit capacity configurations** | **§9.179** — portable vehicle assignments, registry capacities and unchanged Newcastle regression |
+| **Native network inputs** | **§9.180** — city-declared compressed OSM, complete selected references and unchanged Newcastle merge |
+| **Derived native source provenance** | **§9.181** — built OSM classification and precise city-selected network ancestry |
+| **Explicit network-mode vehicle definitions** | **§9.182** — city registry references, strict physical units and coverage, native vehicle-object check; existing outputs unchanged |
+| **Preserve mapped mode permissions** | **§9.183** — retain city access and topology through assembly; missing modes refused; S2 regression unchanged |
+| **Activity connections for distinct mode networks** | **§9.184** - declared common-link or mode-specific access policy; native routing check; existing assignment retained |
+| **Population sampling reads XML structure** | **§9.185** - formatting-independent household coupling, atomic output, unchanged legacy inclusion decisions in synthetic regression |
+| **Person-specific mode availability** | **§9.186** - arbitrary person choice sets, initial-plan validation and retained legacy restrictions |
+| **Broad behavioural baseline** | **§9.187** - Mumbai mode coverage and endogenous choices before corridor precision |
+| **Mumbai executable behavioural baseline** | **§9.188** ? completed small multi-mode case; choice mechanisms, capacity units and remaining gaps |
+| **Mumbai broad freight baseline** | **§9.189** ? fixed-mode trucks and freight rail complete alongside resident choices |
+| **Mumbai regional bus execution** | **§9.190** - NMMT and MBMT integration, reconciled source sequences and completed native case |
+| **Mumbai boarding fares** | **§9.191** - published distance bands reach income-sensitive plan scoring, with native charge audit |
+| **Mumbai fare-aware routing** | **§9.192** - shared tariffs in candidate path costs and native scoring; bounded run completes |
+| **Mumbai daily activities** | **§9.193** - mapped destinations, benchmarked discretionary tours and completed short case; longer learning launched |
+| **§9.194** | Mumbai learning completes; activity areas and native delays | Completed development evidence and broader destinations; no calibration |
+| **§9.195** | Mumbai area destinations execute; supply capacity audit | Completed broad behavioural case and reproducible delay evidence |
+| **§9.196** | Mumbai declared road-capacity sensitivity | Controlled bounded test on the same mapped geometry and schedules |
+| **§9.197** | Capacity sensitivity and initial mode-choice coverage | Completed sensitivity and selected-demand-preserving alternative plans |
+| **Initial Mumbai choice evaluation** | **§9.198** - completed alternatives test, finite scores and daily outcomes |
+| **Mumbai hired supply queue** | **§9.199** - native waiting, registration-stock proxy and bounded experiment |
+| **Mumbai hired-supply completion** | **§9.200** - corrected preparation, completed queues and remaining behavioural limits |
+| **Harvests: one archive per family of public queries** | **§9.201** - 13,500 per-response files and 14,230 catalogue entries fold into eleven archives; every derived table byte-identical |
+| **The contract narrowed by who reads a field; Mumbai on the framework's keys** | **§9.202** - required_by derived from the reads; Mumbai declares 313 fields, passes the city contract, runs the structural check |
+| **The Mumbai sessions verified for Newcastle** | **§9.203** - standing room never scaled at 25 % (fixed, #237), two manifest regressions fixed, the fleet report kept small |
 | **Every open issue worked to done or to one measurement, and the fix that was half a fix** | **§9.164** - the twenty-one MATSim defaults that decided the model unreviewed go to **0** (nine declared at the framework's own values, twelve accepted with a reason). The demand STATES that a declared passenger rides: `B.mode.bound_passenger_placement` = `every_plan` puts a bound tour on `ride` in every seeded plan as the driver is already put on `car` - **194,131** fully bound weekday tours over **199,329** persons - and the demand, plans and 30 run-input sets are rebuilt on it, opening family **`F33`**. A tour that will not fit no longer discards the rest of the day (**547** weekday tours recovered; week trip rate **3.398** against the HTS 3.473). `C.time_weights.beta_headway` and `beta_reliability` REACH MATSIM after two reports asked, behind a gate shipped `absent`; the pt submodes get a plan-level control; the calibration objective gets the replication-band denominator it never had, at zero until one is measured. **The ceiling watcher stops a run for the first time** (`stopped_at_ceiling` at iteration 3) and the gate watcher is caught arming over a disabled monitor and judging nothing. **§9.161's #167 diagnosis was HALF right**: `routingMode` takes the failure 40 agents → 20 and the residual is not in our input at all - 0 mixed trips over 6,347 persons - so `accessEgressModeToLink` still cannot start and ships `none` |
 | **A deviation no constant can reach, and the tail of cheap fixes the reports kept re-issuing** | **§9.163** - MATSim writes `modeChoiceCoverage1x.txt` on every arm and nothing read it, so every gate ever taken blamed a constant without asking whether a constant could reach the target. On the landed arm **ride's target of 20.60 % sits ABOVE the 20.05 % of agents who have ever held a ride plan** - the only mode of twelve, and no value of any constant closes it. Every choice set is within 1 pp of its final coverage by iteration 5-10 and shut by 16-27, **except pt**, still opening at 233 and reaching 25.78 %. The count-station map had been orphaned by a network rebuild 47 minutes after it was written: **0 of 195 rows still named the road they claimed**, and on the repaired map counts read **+16.30 % mean, -1.1 % median, 0 zeros** against -89.35 % / -98.7 % / 7. Half of all declared escort pairs put the passenger in their own car (**10,224 of 20,902**) with 99.6 % of tours realised, so ride's loss is mode assignment, not pairing. `RUN.replanning.score_msa_representation` and `RUN.replanning.score_msa_fraction` declare score averaging at MATSim's own default literal (registry **497 -> 499**, byte-neutral); undeclared MATSim defaults **31 -> 21**; three fields shipped at their consumer's off value now say so via `inert_at`. Fourteen of sixteen `awaiting-run` issues were measured from a run that had already finished |
 | **A stated ceiling is enforced by the runner, and the teleported access leg is diagnosed to a missing attribute in our own plans** | **§9.161** - `RUN.gate.wall_ceiling_h` (0 = no ceiling) and `start_ceiling_watch` give an approved cost the enforcement it never had: a SECOND watcher beside the gate's, stopping through 9.143's marker path with a new completion `stopped_at_ceiling`, so `RUN.gate.interval_iterations = 0` keeps meaning "do not judge my modes" rather than "do not enforce my budget". #167 is DIAGNOSED and the cause is ours: the input plans carry **zero** `routingMode` attributes and every trip is a single leg, so under `accessEgressModeToLink` the router inserts walk access and egress legs and MATSim INFERS each leg's routing mode from its own mode - `walk` beside a `car` main leg - and rejects the trip it just built. The fix is to emit `routingMode` per leg in `build_matsim_plans.py`, a no-op at `access_egress_type = none`, and it needs the demand rebuilt in the same change |
@@ -16133,10 +16158,1204 @@ its own global integrations. The Java work followed by the roots rebuild
 remains the model lane, with a new probe and stated-cost approval before an
 arm. The brief is rewritten from its template and the board regenerated.
 
+## 9.179 Preserve declared transit capacity configurations (19 September 2026)
+
+**What was wrong.** The run-input assembler replaced every mapped bus type
+with one mode-wide capacity. Mumbai's acquired operator and manufacturer
+documents describe different configurations; some documents conflict and
+standing capacities remain unobtained. A correct sampling operation cannot
+repair an incorrect full-fleet capacity or vehicle assignment.
+
+**What changed.** `A.transit.fleet_assignment_mode` declares `mode_capacity`
+(the existing Newcastle representation) or `explicit_vehicle`. Its categorical
+uncertainty sweep compares those representations only when evidenced vehicle
+assignments exist; it does not license synthetic operating observations.
+`config/schema/transit_fleet.schema.json` binds a vehicle/profile crosswalk to
+the SHA-256 hashes of its original mapped schedule and vehicle files. Each
+profile resolves seated and standing capacities from registry fields with
+`persons_per_vehicle` units. The assembler validates active-vehicle coverage,
+identifiers, base-type compatibility and integer capacities before writing
+either filtered transit XML file. It clones physical base-type properties,
+changes the capacities and retains the existing schedule-filtering semantics.
+Unknown active types now fail in the mode-wide path too. The registry gains
+one selector: 567 to 568 fields. Its current value preserves Newcastle inputs.
+
+**Measured.** All 30 Newcastle scenario/day combinations were rebuilt in
+scratch with the HEAD assembler and the revised assembler. Decompressed
+schedule and vehicle XML were byte-identical, and every pre-existing report
+field matched. The unit suite passed: 607 tests, one skipped. Tests exercise
+heterogeneous capacity profiles through the real schedule splitter and 25 %
+capacity sampler, preserved zero standing capacity, unchanged route links and
+departure clocks, rejected invalid capacities, incomplete assignments,
+duplicate identifiers and mismatched mapped-build hashes. The schema and
+registry-reference render checks passed. These are software checks, not a
+Mumbai result or a sampling-equivalence experiment.
+
+**Remaining evidence.** Mumbai has no validated mapped-vehicle crosswalk,
+physical base-type configuration or current complete fleet-capacity table.
+Contract minima and historical brochure specifications remain evidence with
+their stated scope, not substituted operating capacities. A city adapter must
+produce the assignment reproducibly and make any new registry references
+auditable by the hardcoding gate; arbitrary references in bulk assignment JSON
+alone do not establish static consumer wiring. Integer rounding, capacity,
+flow and storage scaling still require the experiments in
+`cities/mumbai/docs/scaling.md`. No production scenario package was rebuilt,
+no simulation was launched, and no calibrated result changed.
+
+**Consequences.** The portable input contract can retain capacity differences
+within a broad transit mode, and fails closed where active assignments are
+missing. Physical dimensions, PCU, door and dwell properties remain those of
+the mapped base type and must be supplied correctly upstream. This change
+does not establish fleet feasibility or current service calendars.
+
+## 9.180 Native network sources for a second city (19 September 2026)
+
+**What was wrong.** The physical network builder required four named themed
+OSM files. Mumbai holds one immutable regional PBF and a lossless native XML
+conversion. Its earlier spatial display layer did not preserve way-node
+references or turn-restriction membership. Copying or inventing four extracts
+would not establish a complete geometric network input.
+
+**What changed.** The optional city descriptor field `osm_network_inputs`
+names ordered native XML files under `networks/osm/`. The shared builder reads
+plain and gzip-compressed files, and its `osm` stage prepares the native source
+without loading model parameters or starting Java. Existing cities retain the
+same four-file default order. The city readiness inventory and output lineage
+include these declared inputs.
+
+Mumbai's source selection derives from the acquired administrative research
+envelope, not a typed rectangle or a settled simulation boundary. Both line
+ways and closed area ways are selected. The extractor preserves whole ways,
+all required nodes and touching turn restrictions, with recursive relation
+closure. Missing selected entities, invalid member types and duplicate IDs
+prevent replacement of the output. All source tags and ordered references
+survive. The source and derived file retain ODbL provenance.
+
+**Measured.** Two builds produce native XML SHA-256
+`a7865ea1b59589c9202dd59711f57658ea02bfa6ca75bab373e4687ed3d91cf5`:
+5,441,839 nodes, 687,975 ways and 333 restriction relations. An independent
+identity/reference audit finds zero duplicates and zero missing references.
+The shared `--stage osm` command successfully prepares the Mumbai XML.
+The existing Newcastle merge remains byte-identical at SHA-256
+`769b5b587984b8e7050d942e643af61a20c7abda5b18422b5cf74f4fa8ca988a`.
+
+**Deliberately not done.** No speed, lane capacity, permission or service
+calendar is inferred by this extraction. Other relation types remain in the
+full immutable source for separate service and boundary construction. Four
+invalid selected area geometries and source-wide OGR ring warnings are
+recorded; native way sequences are not repaired through the display geometry.
+No network conversion, scenario execution or sample-accuracy claim follows.
+
+**Consequences.** Mumbai now enters the shared native network preparation
+path. The legal extent, local physical parameters, conditional restrictions,
+all-mode connectivity, timetable mapping and calibrated simulation remain
+unfinished. No toolchain version, Newcastle input value or run family changes.
+
+## 9.181 Preserve ancestry for derived native network inputs (19 September 2026)
+
+**What was wrong.** The manifest classified every file below `networks/osm/`
+as a raw download. The new Mumbai extract is derived from a PBF and a
+source-derived selection. The first rebuilt manifest therefore left its
+source, URL, licence and retrieval cells blank, despite its declared producer.
+A whole-directory input glob would also credit unselected neighbouring OSM
+files to the physical network builder.
+
+**What changed.** An explicit `OUTPUT_INPUTS` build declaration takes
+precedence over the conventional raw directory classification. The file now
+resolves recursively to its immutable ancestors and receives the declared
+derived licence. Input globs resolve each matching file independently, so a
+mixture of raw and derived inputs cannot be labelled uniformly raw. Declared
+exact output paths remain traceable in a checkout without bulk data.
+
+The reserved selector `city.json#osm_network_inputs` resolves the network
+builder's actual ordered input list through `src/city.py`. It includes the
+legacy defaults when a city has no explicit list. It excludes unrelated OSM
+files present in the same directory.
+
+**Measured.** The Mumbai native extract resolves as `processed`, with
+`output` lineage and its ODbL licence. Its immutable PBF is a proven ancestor.
+Tests cover present and absent bulk files, the unchanged raw classification
+of legacy downloads, derived retrieval/source metadata and exclusion of an
+unselected neighbouring extract. No native XML bytes change in this repair.
+
+**Deliberately not done.** The existing Newcastle manifest is not rebuilt,
+because unrelated raw speed-zone work is present in the shared checkout.
+No simulation, capacity setting, behavioural input or toolchain version changes.
+
+**Consequences.** Native network preparation can carry derived city inputs
+without presenting them as new external observations. Hash verification and
+licence checks remain necessary after every manifest rebuild.
+
+## 9.182 Explicit network-mode vehicle definitions (19 September 2026)
+
+**What was wrong.** `write_mode_vehicles` emitted a fixed vocabulary and reused
+the car's width for both motorbikes and trucks. A city could add a routed mode
+to its descriptor yet could not supply that mode's own physical vehicle type
+without editing the framework. A type definition alone is not a fleet service
+or a physically validated mode.
+
+**What changed.** `RUN.qsim.mode_vehicle_fields` declares references to scalar
+registry fields, keyed by the exact network mode. A nonempty mapping must
+cover the routing vocabulary exactly. Each profile supplies length, width,
+PCE and explicit seated/standing passenger capacities; a speed cap can use
+metres per second or kilometres per hour. The writer rejects missing fields,
+incompatible units, non-finite values, nonpositive dimensions/speeds, negative
+PCE/capacity and fractional passenger capacities. It validates in memory before
+replacing a file. Scenario assembly and per-run generation both use this path,
+so the same resolved run overlays reach the physical input.
+
+**Measured.** All 30 existing scenario/day vehicle files remain byte-identical
+to their captured baseline under the empty mapping. The synthetic two-mode
+fixture retains different widths, PCEs and speed caps, including a run override
+and an explicit zero passenger capacity. The pinned MATSim vehicle reader
+loads its emitted XML, and constructed `QVehicleImpl` objects retain the PCE,
+maximum velocity and passenger capacity. Reproduce with
+`python -m pytest -q tests/unit/test_mode_vehicles.py` and
+`python tests/check_mode_vehicle_loading.py`. This is a reader/vehicle-object
+check, not an executed city scenario.
+
+**Deliberately not done.** No new production vehicle dimensions, PCEs, demand,
+network access rules or fleet assignments are adopted. The new field's empty
+mapping preserves Newcastle's present writer during migration. Mumbai still
+needs evidence-backed values and its legal route permissions, mode-specific
+routing/scoring, passenger-service mechanism and demand. The fixed companion
+and router/fleet mode lists remain work to do. Private-vehicle sample scaling
+is not changed by this declaration path.
+
+**Consequences.** A new city can supply a different routed-mode vocabulary and
+its physical bodies without changing this writer. This removes one barrier to
+multi-city support; it does not establish a complete or accurate Mumbai twin.
+No simulation arm or toolchain version change occurs in this step.
+
+## 9.183 Preserve mapped mode permissions during assembly (19 September 2026)
+
+**What was wrong.** Run-network assembly always added the same companion modes
+to car links, generated walk/bike reverse links and removed permissions outside
+the largest walk/bike components. These were rules of the existing model, not
+evidence for every city. An upstream restriction or a legitimate disconnected
+walking area could not survive that assembly path unchanged.
+
+**What changed.** `A.network.mode_access_strategy` chooses `legacy_companions`
+or `preserve_mapped`. The latter preserves each mapped link's mode permissions,
+direction and presence, skipping the three automatic rewrites. It counts the
+permitted links by mode and refuses a requested routing mode with no permitted
+links. It does not grant car-road access to make a missing mode runnable.
+Declared scenario lane/capacity, kerbside and turn changes still apply. The
+assembler no longer resolves the legacy road-class exclusions or reverse-link
+speed when the preservation strategy is selected.
+
+**Measured.** The full S2 mapped-network assembly under the existing strategy
+has the same bytes and counters as the pre-change result: SHA-256
+`e7179bc62c527f4bb6f52de3f36bfd392649587aa0fcb653ffe91c488e29e166`.
+Its source network hash is
+`a9f8c90865fd9fb95032a182e6498306f4b016027552308b0a91fb3944f04d73`.
+The preservation tests retain every original permission and directed link,
+including a disconnected walking area, while the declared lane patch still
+changes capacity. A requested absent mode fails before replacing an existing
+network file. Tests: `tests/unit/test_mapped_mode_permissions.py`.
+
+**Deliberately not done.** No Mumbai access rule is invented or assigned.
+Preservation needs a correctly attributed upstream network; a nonzero link
+count does not establish lawful access, connectivity or routability. Conditional
+restrictions, mapped police orders, activity/stop access and runtime handling
+of legitimate disconnected components remain required work. No Mumbai model
+is made runnable by selecting this policy alone.
+
+**Consequences.** Newcastle retains `legacy_companions`; no existing network
+file is rebuilt and no simulation arm runs. A city with a richer permission
+model can carry it through scenario assembly. Changing a built city's policy
+requires a network rebuild and the existing comparison-family discipline.
+
+## 9.184 Activity connections for distinct mode networks (19 September 2026)
+
+**Problem.** `ActivityLinkAssigner` moved each activity's road connection onto
+the intersection of all network modes its person could use. That rule still
+ran with routed access/egress enabled. Where vehicle permissions differ by
+area, this can connect an activity to a distant road purely because it admits
+every potential mode. Preserving the upstream mode permissions alone (§9.183)
+does not prevent this displacement.
+
+**Change.** `RUN.routing.activity_link_assignment` binds directly to the
+`activityLinks.assignment` module. `common_modes` retains the existing
+algorithm. `mode_specific_access` retains activity coordinates and link IDs
+and lets the native mode-specific access/egress router connect each journey
+to its legal network. The latter requires `accessEgressModeToLink` or
+`accessEgressModeToLinkPlusTimeConstant`. Invalid, missing or incompatible
+policies fail before the assigner mutates a plan. The new controller requires
+the explicit module, so old configs must be regenerated.
+
+**Evidence.** `tests/check_activity_links.py` uses the pinned MATSim stack and
+the actual registry binding. On synthetic geometry the legacy treatment moves
+both activity links to the common-mode road; the new treatment retains their
+original links and coordinates. The native access router produces two network
+walking legs around one separate-class vehicle leg, and every route link
+admits its leg's mode. Incompatible access settings and unset/misspelt policies
+are refused without changing the activity links. No city observation or model
+parameter is inferred from these test dimensions. The Java sources compile
+together in temporary classes; the shared runtime classes are not replaced.
+
+**Scope.** Newcastle declares `common_modes`, preserving its assignment
+algorithm. No scenario input package is rebuilt and no simulation arm runs.
+This proves a routing path for distinct mode permissions, not an operational
+passenger fleet, real-world access geometry, universal connectivity or mobsim
+execution. Mumbai still needs those mechanisms and their validation. A change
+of assignment in a calibrated city requires the comparison-family discipline.
+
+## 9.185 Population sampling reads XML structure (19 September 2026)
+
+**Failure reproduced.** A valid compact XML population with two people and one
+household, sampled at 100%, returned one input person, zero retained people and
+an empty output file. The line reader required a particular indentation and
+person-tag layout. Household coupling also depended on attribute order: lift
+and shared-driver attributes before `householdId` were ignored.
+
+**Repair.** `src/run/sample_population.py` streams complete top-level population
+elements. It reads the person's sampling attributes after the whole person is
+available, retaining the existing hash, household unions and shared-driver
+exclusions. It preserves root attributes, the external doctype, population
+metadata elements and retained person data. No external entity or DTD is
+fetched; internal entity declarations are explicitly unsupported. Missing or
+duplicate person IDs, duplicate sampling attributes, empty household IDs,
+invalid units/fractions and malformed XML are refused. An absent household ID
+still means a household-less boundary person, not an empty shared household.
+
+The writer stages deterministic compressed output and replaces the destination
+only after successful parsing. It publishes retained IDs at the same point and
+refuses an output path that would replace the input population. XML formatting
+can change; selected person data, not compressed-byte equality with the old
+line writer, is the regression criterion.
+
+**Measured.** The compact two-person reproduction now retains both people.
+`tests/unit/test_population_sampling.py` covers formatting, attribute order,
+namespaces, escaped IDs, household/lift coupling, shared-driver exclusions,
+nested fractions, metadata and atomic failures. Eight old/new comparisons over
+6,000 synthetic people, at 1%, 10%, 25% and 100% under both sampling units,
+retained identical IDs, counts and person subtrees after excluding inter-person
+indentation. No full-city population was rebuilt or simulated.
+
+**Limits.** The sampler still has household-cluster variance and can lose rare
+modes at small fractions. It does not assert statistical equivalence, choose a
+Mumbai sample fraction, repair demand or change physical capacities. Mumbai's
+all-mode scaling experiments and independent validation remain required.
+
+## 9.186 Person-specific mode availability (19 September 2026)
+
+**What was wrong.** The calculator had dedicated person flags for car, household
+rides and bicycles, plus two age gates. Additional configured modes lacked a
+general person-level restriction. The population and plan builders also retain
+car-based motorcycle allocation and employment/vehicle categories incompatible
+with annual work duration or overlapping asset possession. An adapter cannot
+repair those semantic differences by renaming the observations.
+
+**What changed.** Populations may supply a complete `permittedModes` String
+attribute in the run's configured vocabulary. It intersects existing resident
+choices and legacy restrictions. Separate driving modes do not inherit the
+car licence flag. Empty, duplicate, unknown and non-String entries are refused.
+Locked external modes must agree with an explicit set. Before constructing the
+controller, every stored initial plan is checked for people carrying this
+attribute, including unselected alternatives. Trip routing modes govern access
+legs; the existing transit main-mode identifier handles trips without these
+labels. Conflicting routing labels and unavailable initial trips stop loading.
+The existing gated replanning strategy uses the same calculator. An absent
+attribute preserves the previous treatment.
+
+**Measured.** `python tests/check_person_modes.py` passed against the pinned
+native stack: arbitrary mode access without car access, retained age/ownership
+gates, freight locks, invalid inputs, contradictory locks, unselected illegal
+plans, physical access, transit transfers and a population XML round trip.
+All 61 Java sources compiled together in an isolated temporary directory.
+The Python suite passed 718 tests with one skip. Hardcoding remained at zero;
+the city-agnostic check passed all 13 assertions. These synthetic implementation
+checks do not measure Mumbai mode shares or reduced-sample equivalence.
+
+**Remaining work.** Mumbai person-level ownership and licence allocation,
+household vehicle availability over time, pillion/rider coupling and service
+dispatch still require evidence and implementation. The current demographic
+builder needs a compatible replacement or evidenced derivations. No coefficient,
+source observation, canonical population, calibrated run or run-family comparison
+changed. No Mumbai scenario has executed.
+
+**Consequences.** The attribute is person data, like a licence or household ID.
+Its producing city must supply evidence and uncertainty for modelled allocation;
+it is not a registry coefficient or a target-fitting control. The contract and
+native check are described in `docs/person_modes.md`.
+
+## 9.187 Broad behavioural baseline before corridor precision (19 September 2026)
+
+The user explicitly prioritises broad mode coverage and a running Mumbai
+simulator, with ridership emerging from people's decisions. Corridor precision
+comes later. Acquisition and geometry audits had not produced a runnable city.
+The immediate implementation is a broad network, representative population and
+activities, services, and iterative mode choice responding to time, cost,
+access, availability, transfers, crowding and personal circumstances.
+Ridership targets are validation, not imposed mode allocations.
+
+The Mumbai registry now declares provisional supply assumptions: road class
+free speeds 10-80 km/h, one or two lanes per direction, capacities 600-1800
+vehicles/h/lane; rail free speeds 25-60 km/h and throughput 120 vehicles/h;
+active-path capacity 10000 travellers/h; walk speed 1.2 m/s, bike speed 4 m/s;
+and maximum reduced link length 500 m. All these values have explicit sweeps.
+They are engineering assumptions for the initial baseline, not observations
+or transferred Newcastle calibration. The converter uses explicit OSM tags
+where supported. Geometry reduction is enabled; detailed node controls and
+track signalling are deferred limitations. Full source geometry is retained.
+The preprocessing heap is 16 GiB, a machine limit rather than a model value.
+
+Behaviour parameters must likewise expose their provisional status and be
+checked by responses to changed costs and service quality. Broad coverage does
+not establish calibration, physical fidelity or sample-fraction equivalence.
+No multi-hour run approval is inferred. The registry remains incomplete and
+there is no Mumbai run result yet. The original all-mode goal remains active.
+
+## 9.188 First executable Mumbai behavioural baseline (19 September 2026)
+
+**What was wrong.** The acquired package could not execute. The user moved
+priority to broad endogenous mode choice before corridor precision (9.187).
+Native startup exposed population/vehicle XML and config incompatibilities,
+mode-network connectivity, one mapped stop-order reversal and incomplete
+walking connections to boarding links. Dedicated train flow was expressed in
+PCU/hour without accounting for a train's large passenger-car equivalent.
+
+**What changed.** City-owned builders combine community buses with provisional
+OSM-derived suburban rail, metro and ferry services and synthesise people and
+activities from historical census marginals. Registries declare the provisional
+income, destination, service, fleet proxy and utility settings with sweeps.
+No observed ridership share seeds the choice distribution. Time, money, income,
+availability, waiting, transfers, crowding, headway and measured prior-iteration
+reliability reach the executed scoring. The bounded development entry point is
+`CITYSIM_CITY=mumbai python run.py --baseline-smoke`.
+
+Shared preparation retains the mapped build, adds coarse road permissions,
+cleans disconnected mode components and retains mode-specific access stubs.
+One reversed bus stop receives a connected path detour, without reordering or
+dropping stops. Timetable offsets respect mapped running time and declared
+dwell. Dedicated capacity derives from mapped vehicle PCU and provisional
+headway; it is not observed sectional signalling capacity. Per-run audits
+record the changes. Run completion reads native ended-iteration markers and
+records development cases independently of calibration readers or families.
+
+**Measured.** `20260919T125115_2it_100pct-mumbai-smoke` completed iterations
+0, 1 and 2: `_run.json` says `ran_to_last_iteration`, wall 329.7 s, median
+iteration 66.48 s. The explicit population has 1,000 persons, with no citywide
+expansion. There are 1,120 bus, 31 suburban rail, 14 metro and 4 ferry route
+patterns. At iteration 2 the recorded tables contain 1,806 trips; 253 matched
+trip IDs changed mode relative to iteration 0. Transit ride legs are 529 bus,
+40 rail, 22 metro and zero ferry. These are development readings, not forecasts.
+The permanent `_baseline_behaviour.json` is regenerated with
+`python src/analyse/baseline_behaviour.py --run <name>`.
+
+Iteration 2 records 29 stuck events: 4 car-labelled transit-driver/vehicle
+cases, 1 access, 5 PT and 19 walking. Raw telemetry labels transit drivers as
+car, so it must not be read as resident car patronage. Initial startup failures
+retain their causes. The earlier completed case at 12:42:47 required a corrected
+completion reader; its native log proves the horizon and its metadata records
+that repair. Five feed/population outputs rebuilt byte-identically. The full
+unit suite passed 805 tests with one skip, followed by passing capacity and
+smoke-record regressions. Manifest hashes and licence lineage passed all rows.
+
+**Consequences and remaining work.** This establishes executable multi-city
+behaviour, not a full accurate twin. Truck/freight agents, complete operator
+coverage, current joint demographics, household sharing, finite hire fleets,
+real vehicle formations and standing capacities, detailed fares and validated
+scaling remain incomplete. The 100pct filename refers only to the small input
+population. No convergence, corridor accuracy or citywide ridership claim is
+made; ferry's zero is reported rather than forced upwards. No multi-hour run,
+commit, pull request or handoff is authorised by this development checkpoint.
+
+## 9.189 Broad freight joins the completed Mumbai behavioural baseline (19 September 2026)
+
+**What was wrong.** The first native behavioural cases contained resident road and
+public-transport choices but no goods movements. Missing freight also omitted
+its competition for physical road and rail capacity.
+
+**What changed.** The city-owned freight builder adds fixed-mode truck and rail
+agents to the existing resident population. Port links come from the acquired
+OSM port locality and each mode's largest strongly connected network component.
+North/east external gates are provisional network-extremity proxies, not observed
+cargo destinations. Each gate receives arrivals and departures. Truck volumes
+use the acquired 2018 classified-site LCV-plus-truck/car ratio (0.2425546868),
+multiplied by the explicit resident count and an assumed one car-equivalent
+movement/person/day proxy. The two acquired JNPA handled-rake counts (20 and 19)
+are averaged, then multiplied by an assumed two movements/handled rake. These
+are declared development inputs with sweeps, not current regional freight totals.
+Departures are seeded uniformly across one day. Freight cannot choose passenger
+modes and is excluded from resident income scoring and mode-choice statistics.
+The shared launcher inherits truck access from roads and freight-rail access
+from rail, then removes unreachable modal links. All controllable values live
+in the city registry. Derived outputs carry source hashes and manifest lineage.
+
+**Measured.** `20260919T130709_2it_100pct-mumbai-smoke` completed iterations 0-2,
+but 19 late trucks were still travelling at the 30-hour horizon. The longest
+completed truck journey was about 362 km and 9 h 56 min, reflecting the broad
+research extent and provisional gates. Extending the observation window to
+36 hours, without changing freight speeds or demand, produced
+`20260919T131342_2it_100pct-mumbai-smoke`: `_run.json` records
+`ran_to_last_iteration` at 2, 329.7 s wall time and 67.2 s median iteration.
+All 243 trucks and 39 freight trains arrived in each iteration. At iteration 2,
+1,000 residents generated 1,817 recorded trips; the 282 freight trips are
+reported separately. Transit ride legs were bus 526, suburban rail 39, metro 22,
+ferry 0. There were 18 stuck events (12 walk, 5 PT, 1 non-network walk).
+257 matched trip IDs changed mode from iteration 0. These are short-horizon
+execution diagnostics, not converged or calibrated ridership forecasts.
+
+**Deliberately not done.** No city expansion, validated capacity scaling,
+current freight OD, truck restrictions, port operations or route-level fleet
+assignments are claimed. Missing operator coverage, visitor/activity demand,
+finite hired fleets and household sharing remain broad-model priorities.
+
+**Consequences.** Continue integrating broad behavioural inputs and supply before
+corridor detail, as directed by the user. The 36-hour horizon prevents late
+freight trips being censored in this development case; it does not alter the
+one-day departure window. No multi-hour run or handoff was authorised or made.
+
+## 9.190 Regional buses join the executed Mumbai baseline (19 September 2026)
+
+**What was wrong.** Acquired NMMT and MBMT records were still evidence only,
+leaving those operators absent from the broad resident choice set. Direct use
+of NMMT trip lists exposed inserted foreign stops and implausible clock series:
+one local pattern implied over 19 hours of running time. The shared builder
+also reused extracted and converted GTFS files merely because they existed.
+
+**What changed.** A city-owned adapter extends the existing multimodal feed.
+NMMT operator route-stop snapshots define stop order, and acquired departure
+clocks are retained where their published endpoints identify one such sequence.
+The feed includes 8,806 departures on 566 patterns; 716 unmatched departures
+remain explicit quarantines. It reconciles 1,623 trip sequences to operator
+route lists. Pattern segment times use medians of usable published adjacent-stop
+clock differences. A declared geographic running-time floor replaces impossible
+intervals, and medians above four times that floor are treated as outliers.
+This flags 173 pattern segments; negative clock differences remain missing,
+not automatic 24-hour wraps. These are labelled modelled pattern times, not
+observed journey durations. Raw downloads remain unchanged.
+
+MBMT contributes 116 directed patterns and 1,972 modelled departures. Its
+published weekday route allocation cells sum to 71 buses, disagreeing with the
+printed subtotal of 70. The cell sum is the explicit pooled-fleet proxy.
+Equal frequency is derived from summed one-way input cycle times, including a
+declared 300-second terminal allowance, divided by that pool: 4,091 seconds.
+Directions are counted once. This constrains approximate input fleet-hours;
+it does not establish mapped-runtime fleet sufficiency, actual route allocation,
+vehicle circulation, calendar or current operation. The source and assumptions
+are in `A_regional_buses.json` and the output audit.
+
+GTFS extraction now fingerprints the archive before reusing a cache and verifies
+its resolved directory before removal. Conversion caching includes feed bytes,
+projection, day selection and converter bytes. A changed city feed or projection
+cannot silently inherit an earlier converted schedule. The analyser also reports
+ride legs by transit line, without embedding operator names in the framework.
+
+**Measured.** The final mapped build has 1,802 bus patterns, 31 suburban-rail,
+14 metro and 4 ferry patterns; all 18,105 facilities have links. Artificial link
+references remain 0.54 percent, so link assignment is not physical validation.
+The reconciled feed and audit rebuild byte-identically. Manifest verification
+checks 28,576 present files with hashes, no undetermined lineage or licences.
+The full unit suite passes: 821 passed, 1 skipped.
+
+`20260919T133154_2it_100pct-mumbai-smoke` records `ran_to_last_iteration` at 2:
+372.8 seconds wall time, median iteration 77.35 seconds. The final iteration has
+1,818 resident trips plus 243 trucks and 39 freight trains; every freight movement
+arrives in every iteration. Transit ride legs are bus 565, suburban rail 33,
+metro 22 and ferry 0. NMMT accounts for 33 final ride legs. MBMT has 2 at iteration
+0 and none at iteration 2; no quota was added to keep it nonzero. The final
+iteration has 17 stuck events (12 walk, 4 PT, 1 non-network walk). 257 matched trip
+IDs changed mode from iteration 0. These are execution and exploration readings,
+not converged ridership or a controlled difference against a separately mapped
+previous build.
+
+**Deliberately not done.** No full-city expansion, calibrated mode shares,
+validated fleet capacities, service calendars or current operating assignments
+are claimed. Missing visitor/activity demand, fare detail, household sharing,
+finite hired fleets and scaling remain substantial behavioural work.
+
+**Consequences.** Broad operator coverage is now exercised by real traveller
+choices. Continue with representative demand and behavioural costs/capacities
+before corridor precision. Mumbai now supplies its own live-document claims;
+the framework's calibrated scoreboard still describes Newcastle. No handoff,
+commit, PR or multi-hour run was made.
+
+## 9.191 Boarding fares enter Mumbai plan scoring (19 September 2026)
+
+**What was wrong.** The broad baseline used one provisional PT distance price
+for every operator. Acquired BEST tariff bands were not consumed. The existing
+linked-journey fare handler encodes another fare system's caps and transfer
+rules, so reusing it unchanged would import unsupported policy assumptions.
+
+**What changed.** `BoardingFareHandler` consumes a city-owned CSV with exact
+line overrides and mode fallbacks. It sums network links entered between each
+passenger's boarding and alighting, applies inclusive distance bands and emits
+one deferred money event per completed boarding. Native income-sensitive
+scoring prices those events. Transfers are separate tickets. Drivers are
+excluded. Unfinished boardings and out-of-table extensions are audited.
+The handler refuses simultaneous linked-journey charging and nonzero native
+PT distance money rates. No city or tariff amount is embedded in the framework.
+The format and limits are documented in `docs/boarding_fares.md`.
+
+The Mumbai adapter reads the acquired BEST publication into 937 line rules:
+576 provisional AC and 361 provisional non-AC profiles. Class assignment uses
+a declared route-label regular expression and has all-AC/all-non-AC uncertainty
+alternatives; it is not an observed vehicle assignment. The baseline prices
+all travellers as adults, with an explicit alternative column for uncertainty,
+not a claim about concession eligibility. Beyond the final published band,
+the last marginal rate is extrapolated and counted. Other bus operators and
+rail/metro/ferry retain the previous declared INR 0.001/m proxy. PT's native
+monetary distance rate is now zero to avoid duplicate charging. Current tariff
+validity, exact fare stages, concessions and passes remain unverified.
+
+**Measured.** The pinned native probe verifies inclusive bounds, line override,
+extrapolation, separate transfers, concurrent passengers' boarding distances,
+driver exclusion, unfinished-ride accounting and duplicate-price rejection.
+The full unit suite passes (821 passed, 1 skipped); native and signals stacks
+compile. Fare CSV and evidence audit rebuild byte-identically. All 28,578
+manifest files pass full hash and lineage checks.
+
+`20260919T134746_2it_100pct-mumbai-smoke` records `ran_to_last_iteration` at 2:
+381.3 seconds wall time, median iteration 81.13 seconds. Its final iteration
+records 1,818 resident trips and 282 freight trips; all 243 trucks and 39 freight
+trains arrive. Recorded transit ride legs are bus 565, rail 33, metro 22, ferry 0.
+The physical boarding-fare audit records 623 completed boardings, including
+524 BEST boardings (310 AC-priced, 214 non-AC-priced). BEST charges total
+INR 7,698 and all charged profiles total INR 8,855.17 in this explicit small
+input population. None exceeds the published distance table. Fare event counts
+and trip-table ride-leg counts have different recording bases; they are not
+interchangeable ridership measures. There are 17 stuck events (12 walk, 4 PT,
+1 non-network walk). The permanent behavioural report retains the fare audit.
+
+**Deliberately not done.** Exact operator ticket prices do not yet enter the
+transit path router. Three iterations do not establish a ridership response,
+convergence or fare elasticity. Current operating classes, concessions, passes,
+other operator tariffs, full-city expansion and capacity scaling remain open.
+The native charge audit demonstrates execution, not calibrated behaviour.
+
+**Consequences.** Complete fare-aware path choice and representative activity
+and visitor demand, then profile a longer learning horizon with scaling checks.
+Keep source publication, modelled assignments and observed operation distinct.
+No handoff, commit, PR or multi-hour run was made.
+
+## 9.192 Mumbai fares affect transit path choice before pruning (19 September 2026)
+
+**What was wrong.** The tariffs in 9.191 reached realised scores but not the
+transit path search. Cheap slower services could be discarded before pricing.
+
+**What changed.** Immutable `BoardingFareTable` supplies execution and routing.
+`boardingFare.routeChoice` adds the whole-ride fare times the person's scoring
+money utility before candidate pruning, retaining the optional submode constant.
+Mumbai enables the gate; existing cities default to false. The pinned public
+iterator omits line/stop identities. A read-only reflection adapter uses its
+route-stop bounds and cumulative network distance, without advancing it or
+changing the jar. Unsupported iterators, invalid distances and incompatible ABI
+are refused. The native probe guards this private-API dependency on upgrades.
+
+**Measured.** `20260919T140521_2it_100pct-mumbai-smoke` records
+`ran_to_last_iteration` at 2: 379.8 s including preparation, median iteration
+79.14 s. Its permanent `_baseline_behaviour.json` confirms the routing gate
+from its own config. Final recorded resident trips: walk 692, taxi 335,
+auto-rickshaw 347, PT 303, bicycle 46, motorbike 48, ride 27, car 21. Recorded
+transit ride legs: bus 471, rail 43, metro 36, ferry 0. All 243 truck and 39
+freight-train journeys arrived each iteration. Final stuck events: walk 12,
+PT 3, access walk 1. Of matched trip IDs, 254 changed mode from iteration 0.
+This is short-horizon exploration, not convergence or elasticity.
+
+Final physical fare audit: 552 completed boardings, INR 7,273.970154530056;
+its recording basis differs from the 550 transit legs in trip tables. BEST:
+420 boardings, INR 6,050. No fare-band extensions or unfinished priced rides.
+Attempt `20260919T140303_2it_100pct-mumbai-smoke` failed before iteration 0:
+missing explicit Guice binding for the shared table. Its `_meta.json` and log
+retain the cause; an explicit singleton binding fixed it.
+
+**Validation.** Native fare probes pass event charging, inclusive bands,
+transfers, duplicate-charge refusal and real RAPTOR competition: higher money
+sensitivity chooses the slower cheaper service; lower sensitivity reverses it.
+The optional submode constant is retained once. Python: 821 passed, one skipped.
+City portability: 13 checks passed. Default-city hardcoding: zero items.
+The mapped build was not repeated; prices and distance basis are unchanged.
+
+**Still open.** Remaining operator tariffs, classes, eligibility, passes and
+transfer products are provisional. Broader activities, destinations, visitors,
+household constraints and fleets need integration. Ferry zero in this small
+resident case is a coverage limitation, not a zero-demand finding. Scaling,
+long-run learning and independent calibration remain unverified. The full
+Mumbai goal is not met. No handoff or PR.
+
+## 9.193 Mumbai mapped destinations and daily activity tours (19 September 2026)
+
+**What was wrong.** Every mobile resident had one primary home-based tour.
+Non-workers were forced to travel daily, and resident worker locations stood
+in for jobs. The user prioritises broad endogenous travel choices (9.187).
+
+**What changed.** `build/build_baseline_activities.py` reads the unchanged
+resident cohort and creates purpose-specific mapped destinations and optional
+shopping, social and leisure tours. It retains person IDs, age, income, licence
+and mode availability. Work and education remain primary activities. Every
+tour returns home; later departures follow actual return travel and a home
+interval. Activity durations run after arrival, replacing fixed end times.
+The freight builder consumes these plans. The mapped transport build is reused.
+
+OSM point tags supply candidate locations, not measured jobs or capacities.
+The inventory contains 15,883 unique points, including 7,303 without a matching
+available census polygon; they are retained without invented zone IDs. There
+are 28 extra overlapping polygon matches, resolved by sorted geography ID.
+The final synthetic tours select 857 mapped destinations, 94 population-weighted
+zone proxies and 101 unchanged primary zone destinations. Polygon facilities
+and unequal attraction capacities remain unrepresented.
+
+**Provisional choices.** The acquired 2024 state time-use table supplies
+activity participation and participant minutes by sex and rural/urban residence.
+Its population is all persons aged six and above; its activities include time
+at home. It is NOT an adult local trip survey. The following translation is
+explicitly assumed, with the registry uncertainty ranges retained:
+
+| Choice | Declared value and reason |
+|---|---|
+| Mapped-point mixture | work 0.75, education/shopping/leisure 0.9, social 0.6; retain geographic fallback where point coverage is incomplete |
+| Distance decay | work 12 km, education 2.5 km, shopping 3 km, social 4 km, leisure 6 km; provisional opportunity access |
+| Out-of-home participant fraction | shopping 0.5, social 0.35, leisure 0.2; benchmark activities are broader than outings |
+| Out-of-home time fraction | shopping 0.25, social/leisure 0.5 of benchmark participant minutes |
+| Tour structure | at most two discretionary tours, adults only pending escort schedules; 30-minute home interval |
+| First discretionary departure | 11:00 plus/minus one hour for people without a primary work/education tour |
+| Typical scoring duration | shopping/social one hour, leisure two hours; provisional utility reference durations |
+
+The existing seed 20260810 drives a separate activities build. No mode target
+or ridership quota controls any draw. Of the unchanged 1,000 residents, 232
+have no tour, 532 one, 188 two and 48 three. There are 187 education, 394 work,
+175 shopping, 172 social and 124 leisure tours: 2,104 input resident legs.
+
+**Executed evidence.** `20260919T141947_2it_100pct-mumbai-smoke` records
+`ran_to_last_iteration` at 2, wall 391.9 s, median iteration 80.95 s. Final
+recorded resident trips: walk 700, taxi 380, auto-rickshaw 365, PT 361, bicycle
+36, ride 31, motorbike 52, car 22. Transit ride legs: bus 498, rail 69, metro
+31, ferry 0. All 243 trucks and 39 freight trains arrived each iteration.
+There were 213 changed main modes among matched trip IDs from iteration 0.
+
+This broader demand exposes a timing problem, not a calibrated improvement:
+1,947 resident trips were recorded against 2,104 planned legs, 114 departed
+after 24:00, and final stuck events were walk 44 and PT 20. Trip tables can
+include execution problems and are not a completed-trip count. Longer learning
+and daily scheduling need evaluation before the model can support forecasts.
+
+**Next bounded measurement.** `20260919T142650_8it_100pct-mumbai-smoke` was
+launched for iterations 0 through 8 on the same population and mapped inputs,
+with the existing 900-second automatic JVM ceiling. The stated estimate was
+about 14 minutes including preparation. It was still running when this record
+was written: no final result is asserted here. The default development horizon
+is now eight as its last iteration. This is not a multi-hour calibrated arm.
+
+The launcher now freezes input demand counts and their source hash in
+`_baseline_demand.json`, mirrored by the results store. The analyser retains
+that basis and reports modes by destination activity and departures after 24:00.
+Validation: four activity outputs rebuilt byte-identically before their source
+labelling refinement; unchanged person attributes and coherent tours checked;
+826 Python tests passed, one skipped. New tests refuse inactive attractions,
+ambiguous survey cells and selected plans, and preserve distant gravity support.
+
+**Still open.** Daily time budgets, attendance, opening hours, household escort,
+visitor demand, joint destination/mode choice, capacities and scaling need work.
+The state-to-outing fractions and point opportunity weights require local
+validation. Ferry zero remains a sample/demand coverage warning. The full
+Mumbai goal remains unmet. No handoff, commit or PR.
+
+## 9.194 Mumbai learning completes; mapped activity areas and native delay diagnostics (19 September 2026)
+
+**What was wrong.** The daily activity case was still running in 9.193. Point-only destinations omitted mapped school grounds, parks and other polygon facilities. A completed iteration exposed an implausibly slow bus journey and overnight activity spillover.
+
+**What changed.** `src/analyse/diagnose_day_schedule.py` reads native abort events, late departures and individual vehicle traces at an iteration whose ENDS marker exists. The shared event reader supports plain, gzip and zstandard with optional decoded type/attribute filtering. Blank abort modes and absent native reasons remain explicit. `cities/mumbai/extract/extract_activity_areas.py` derives an area inventory from the already acquired immutable OSM PBF and the existing research boundary. The activity builder now combines those areas with points. Representative interior points are provisional destination anchors, not observed entrances. Exact nonempty named nodes inside same-purpose areas lose only duplicated purposes; unresolved duplicate identities are not silently merged. Registry classification metadata and generated reference are updated; attraction weights and all activity probabilities remain the declared provisional values from 9.193.
+
+**Measured.** `20260919T142650_8it_100pct-mumbai-smoke` ran to last iteration 8 in 856.6 s, median iteration 79.07 s. At iteration 8, 620 matched trip modes differ from iteration 0, with 37 mode-labelled stuck records and 98 resident departures after 24:00. These do not establish convergence. The full native abort diagnostic at iteration 2 counts 75 events, including ten with blank mode; 73 occur at the 36-hour simulation boundary. No native reason is supplied. One observed bus trace (`veh_8955_bus`, iteration 2) spends 25,517 s between entering link 605137 and arriving at its stop; the vehicle trace is retained under the processed run. A separate event reading finds prolonged delays across many buses at that link; stop dwell there is at most 80 s. Downstream queue causes are unresolved; this is not evidence for arbitrarily inflating capacity.
+
+The new area inventory retains 8,303 valid features (two invalid/empty geometries explicitly excluded). The rebuilt activity layer offers work 16,369, education 1,403, shopping 6,219, social 2,423 and leisure 8,033 purpose-location alternatives. It removes 95 duplicated node-purpose entries across 73 nodes. It retains 11,332 locations outside the available census polygons without invented geography IDs. The cohort stays at 1,000 residents, with 1,052 tours; freight remains 243 truck and 39 freight-rail movements. These updated inputs have not yet been executed. The unit suite passed 830 tests with one skip before the registry metadata update; the point-and-area build executed successfully.
+
+**Deliberately not done.** No capacity tuning to hide the bus delay, no citywide expansion, no calibration claim, no handoff or PR. Facility capacities, age-specific school eligibility, destination coverage bias, visitors, household scheduling and detailed operating controls remain incomplete.
+
+**Consequences.** Continue broad behavioural execution with traceable activity opportunities while resolving systemic service delays and impossible daily schedules. Keep observed trip-table evidence distinct from planned demand, native abort totals and calibrated ridership.
+
+## 9.195 Mumbai area destinations execute; scheduled flow and delay evidence (19 September 2026)
+
+**What was wrong.** The area-enhanced demand in 9.194 had not executed. One delayed bus did not establish how widespread the failure was, and the relationship between scheduled transit flows and provisional road capacities was not quantified.
+
+**What changed.** The unchanged bounded launcher executed the area-enhanced demand with the same resident cohort, declared probabilities, transit network and schedules. `src/analyse/transit_link_delays.py` ranks actual completed transit link traversals from native events. `src/analyse/transit_supply_capacity.py` independently computes the capacity time required by scheduled interior route traversals, using native vehicle PCU values, network capacity period and link capacities. Both write permanent diagnostics through the managed results location. Event selectors avoid unnecessary regular-expression parsing while retaining escaped-value matching.
+
+**Measured.** `20260919T145000_8it_100pct-mumbai-smoke` completed iteration 8 (`ran_to_last_iteration`) in 857.4 s, median iteration 78.35 s. Its final trip table records 1,979 resident trips and 282 freight movements. Resident modes are walk 633, auto-rickshaw 434, public transport 344, taxi 406, bike 53, vehicle passenger 23, motorbike 60 and car 26. Transit ride legs are bus 491, suburban rail 56, metro 46 and ferry zero. These are different counting units; none are expanded to city totals. There are 634 matched trip modes changed from iteration 0, 43 mode-labelled stuck records, and 90 resident departures after midnight. Blank-mode native aborts are not included in the mode-labelled count. No convergence or calibration is established.
+
+For the completed previous case `20260919T142650_8it_100pct-mumbai-smoke`, iteration 2, the network-wide diagnostic matches 19,067,554 transit traversals without unmatched or unfinished traversal records. The largest accumulated delay is link 605137: 1,667 bus traversals, mean link time 11,821.37 s. Times include stops and queues; the link-speed reference is only diagnostic. A native snapshot and vehicle traces show downstream queues; no road capacity is changed on this evidence alone.
+
+The independent schedule audit covers 18,838,830 interior traversals across 57,211 links. Link 90446 carries 4,731 scheduled bus traversals at 2.8 PCU each against 600 PCU/h, requiring 22.078 capacity-hours. Link 452458 requires 24.197 capacity-hours. The calculation excludes first/last route links and other traffic and does not assume a common operating window. It identifies unreconciled supply and capacity assumptions, not observed congestion or a justified replacement capacity.
+
+**Deliberately not done.** No fitted mode shares, forced ferry riders, city expansion, capacity inflation, new multi-hour run, handoff or PR. The area layer broadens opportunities but does not validate destination choice, school eligibility or daily timing.
+
+**Consequences.** Resolve the broad supply/road-throughput inconsistency and daily scheduling before interpreting ridership. The point-and-area inputs have now executed; preserve this case as development evidence, with full-city scaling still unverified. The manifest verifies all 28,584 files and their hashes with no undetermined share-alike ancestry. This is not blanket redistribution permission.
+
+## 9.196 Bounded Mumbai road-capacity sensitivity on the existing mapped network (19 September 2026)
+
+**What was wrong.** The 9.195 audit shows scheduled transit flow competing for very restrictive provisional road capacities. The existing capacity literature concerns friction-free arterial midblocks outside Mumbai and contains documented arithmetic inconsistencies. It does not establish replacement capacities for these links. Rebuilding and remapping transit merely to test capacity would introduce unrelated variation.
+
+**What changed.** The bounded launcher accepts an optional city run overlay through `run.py --baseline-smoke --run-config TAG`. It stores that overlay name and its resolved snapshot. `RUN.smoke.road_capacity_factors` is a city-declared class multiplier applied only to flow capacity on the already mapped network. Identity values leave capacities unchanged. Lanes, geometry, free speeds, service departures, resident demand and behavioural coefficients are preserved. Positive finite factors are required. The separate dedicated-track capacity treatment is unchanged.
+
+The overlay `cities/mumbai/overlays/runs/smoke_low_capacity_double.json` doubles only classes whose provisional base was 600 PCU/h/lane: connector roads, tertiary roads, residential/service roads and unclassified roads. Other class factors remain one. The declared uncertainty envelope is 0.5 to 3.0. This is a sensitivity experiment within the prior, not a measured correction, ridership calibration or population-capacity scaling. No observed capacity is fabricated. The base factors remain one.
+
+**Measured.** Three focused network tests pass: train PCU throughput, identity and doubled road factors, preservation of unrelated road attributes, immutable source bytes and separate freight mode connectivity. The overlay resolves with the existing nine-iteration horizon. The latest comparable area-demand control is `20260919T145000_8it_100pct-mumbai-smoke`, 857.4 s total and median iteration 78.35 s. A further bounded case is authorised within the user's broad development work, with the existing 900 s JVM ceiling; it is not a multi-hour arm. No sensitivity output exists at this record's writing.
+
+**Deliberately not done.** No timetable thinning, mode deletion, ridership quotas, adoption of doubled capacities as truth, new network mapping, handoff or PR.
+
+**Consequences.** Execute the overlay, verify that only declared link capacities differ in physical inputs, and read daily completion, mode changes and native transit delay alongside the control. A better-looking result alone cannot validate the capacities. Resolve supply, geometry and operational evidence before a calibrated or scaling claim.
+
+## 9.197 Capacity sensitivity completes; initial choice alternatives prepared (19 September 2026)
+
+**What was wrong.** The 9.196 capacity sensitivity lacked execution evidence. Short runs also left much of the initial choice set unexplored: the point-and-area control records only one first-trip mode for 325 of the 765 residents with a recorded first trip across nine iterations. Five-plan memory could discard a richer initial set before evaluation. Its registry unit was incorrectly labelled years.
+
+**What changed.** `src/analyse/compare_capacity_inputs.py` verifies source hashes, prepared schedule and vehicle bytes, the single declared factor difference, network metadata, all node/link attributes and exact capacity multipliers, including inherited reverse active-mode links. A new generic `src/build/enumerate_mode_plans.py`, called by `cities/mumbai/build/build_baseline_choices.py`, preserves every selected plan and person attribute while adding unscored, unrouted whole-day alternatives for each eligible mode. The original mixed-mode plan is retained. Explicitly locked freight plans and stay-home plans are preserved. Unsupported eligibility and experienced/routed mobile inputs are refused. No observation, score or mode share is fabricated.
+
+The bounded launcher now records initial plan counts and refuses insufficient plan memory before execution. The mode-coverage overlay selects the separate choice-plan file and memory nine: the generated maximum of eight initial plans plus one innovation slot. The base input and base road factors stay unchanged. The memory unit is corrected to plans per person. Inspection of the pinned MATSim GenericPlanStrategyImpl bytecode confirms that it tries RandomUnscoredPlanSelector before the configured scored selector; actual coverage still needs execution. The behavioural analyser now records first-trip choice coverage by eligibility and subpopulation and offers compact console output while retaining its full report.
+
+**Measured.** `20260919T150938_8it_100pct-mumbai-smoke` ran to iteration 8 in 848.9 s, median iteration 78.44 s. Against the named 9.195 control, input isolation passes across 377,626 nodes and 919,175 links. Only declared capacities differ. The final recorded resident trips are walk 612, auto-rickshaw 443, PT 388, taxi 389, bike 49, passenger 23, motorbike 62 and car 28. Freight remains 243 truck and 39 rail movements. Transit ride legs are bus 563, rail 58, metro 45 and ferry zero. Mode-labelled aborts are 34 (PT 6, walk 28); 84 resident departures occur after midnight. The control had 43 mode-labelled aborts, PT 344 recorded trips and 90 late departures. These single realisations demonstrate sensitivity, not statistical significance, calibrated capacity or scaling equivalence. First-trip mode-coverage counts remain 325/321/103/16 people trying one/two/three/four modes.
+
+The choice-plan build adds 2,423 alternatives for 768 mobile residents. The 1,282 people, 2,104 selected resident travel legs and 282 fixed freight movements are unchanged. Before/after selected-demand hashes both equal `3a313ec63528a6e31893c367708276e6eb1bcd4662f93a5d5e7af2b07e3e0dc6`. Five choice-generation tests and four capacity-comparison rejection tests pass; the full suite passed 844 with one skip, and all 13 city-portability checks passed. The manifest verifies 28,586 files with hashes and no undetermined share-alike ancestry. No native choice-plan result exists at this record's writing.
+
+**Deliberately not done.** Doubled capacities are not adopted as observed truth. No forced ridership, timetable thinning, additional expansion weight, new multi-hour arm, handoff or PR. Whole-day alternatives do not exhaust every mixed-subtour combination, and household/escort constraints remain provisional.
+
+**Consequences.** Run `smoke_mode_coverage` under the existing nine-iteration horizon and 900 s JVM ceiling, on base capacities. Measure actually tried alternatives, native scores, aborted/late journeys and mode choices. The preparation itself cannot establish successful learning or accurate ridership.
+
+## 9.198 Initial alternatives improve the bounded choice test (19 September 2026)
+
+**What was wrong.** In the base-capacity area-demand control, 325 of 765
+residents with a recorded first trip tried only one first-trip mode across
+iterations 0 to 8. Supplying alternatives alone did not prove evaluation.
+
+**What changed.** The prepared `smoke_mode_coverage` case executed on base
+capacities with the same people and original selected demand, adding eligible
+unscored alternatives and increasing plan memory. The behavioural reader now
+counts finite and missing/non-finite native retained-plan scores by population,
+and rejects inconsistent people or ambiguous selections. Stored scores may
+come from different iterations and are not a welfare comparison.
+
+**Measured.** `20260919T152454_8it_100pct-mumbai-smoke` records
+`ran_to_last_iteration` at 8, wall 904.6 s including preparation, median
+iteration 80.08 s. The automatic JVM budget remained 900 s and was not changed.
+All 768 mobile residents have a recorded first trip across the run; 232
+stay-home residents do not. First-trip distinct-mode counts are 1:49, 2:114,
+3:122, 4:327, 5:111, 6:38, 7:7. Final retained resident plans number 5,178,
+with no missing/non-finite score; all 282 freight plans also have finite scores.
+First-trip mode coverage is not the same as plan evaluation: a transit plan
+can resolve to direct walking. Neither measure proves convergence.
+
+At iteration 8, resident trip records are walk 421, bicycle 107, car 34,
+passenger 70, motorbike 84, taxi 432, auto-rickshaw 590 and PT 297.
+Transit ride legs are bus 395, suburban rail 69, metro 40 and ferry zero.
+There are 243 truck and 39 freight-rail trip records. Tables include journeys
+with execution problems. Mode-labelled abort events are 23 (car 3, PT 7,
+walk 13), against 43 in the base-capacity control
+`20260919T145000_8it_100pct-mumbai-smoke`. Raw car telemetry also contains
+transit drivers; this is not a count of failed resident car journeys.
+Resident departures after 24:00 are 71 against 90 in that control.
+Matched trip modes changed from iteration zero number 1,282. These are one
+realisation of a short, provisional model, not statistical accuracy claims.
+
+Validation: 849 unit tests passed, one skipped; all 13 city-portability checks
+passed; strict hardcoding remained zero. Native completed-run reports retain
+the detailed evidence. No data acquisition or raw file was changed here.
+
+**Deliberately not done.** No new calibrated arm, full-city expansion,
+ridership quota, higher road-capacity adoption, handoff or publication.
+Household coupling, finite hired fleets, local coefficients, rare-mode demand
+and scaling remain unresolved.
+
+**Consequences.** Keep the explicit choice overlay as the recommended bounded
+behavioural development command, with the single-plan base available as its
+control. Prioritise broad household/fleet constraints and rare-mode coverage
+before corridor detail; the original full-twin goal remains open.
+
+## 9.199 Hired-vehicle supply queues in the native simulation (19 September 2026)
+
+**What was wrong.** The broad model supplied a vehicle proxy for every hired
+trip. The older taxi limiter allocated trips before simulation and logged
+waits without making served travellers experience them. Its supply also used
+the road flow-capacity factor. Neither mechanism establishes timed fleet use.
+
+**What changed.** An optional portable `hiredFleet` module queues requests by
+mode during QSim. Dispatch passes the traveller to the native road handler.
+A supply unit stays occupied until actual arrival plus a declared turnaround.
+Elapsed waiting is part of the experienced leg. Separate modes have separate
+pools. Counts describe vehicles in the explicit simulated population and do
+not depend on road-capacity factors. Zero supply remains zero. A timeout aborts
+the day through native stuck handling. No fallback trip is invented.
+
+The model remains a pooled supply approximation. Per-person road vehicles
+carry served trips. The pool has no vehicle locations, spatial dispatch,
+service shifts or empty road movements. An unfinished trip holds its unit.
+This mechanism is not a complete physical hired fleet. The previous taxi
+limiter and this pool cannot both constrain taxi in one config.
+
+`build/build_hired_fleet.py` derives a labelled input from acquired provisional
+registration statistics at 31 March 2025. Ten declared regional offices hold
+595,327 registered autos and 286,448 metered plus luxury/tourist cabs. These
+catchments are not reconciled to the research geography. Tourist stock is not
+necessarily available for local hires. The development proxy applies an
+assumed active fraction of 0.5 (sweep 0.25 to 0.75), then the explicit 1,000
+residents divided by the historical research-population total of 17,158,597.
+Nearest-integer rounding gives 17 auto and 8 taxi units. Unrounded values and
+rounding errors remain in the audit. This is not measured operating supply or
+validated scaling. A 900-second patience limit (300 to 1,800) and 300-second
+turnaround (0 to 900) are declared provisional assumptions. Deriving local
+availability, pickup and patience distributions remains work to do.
+
+**Measured.** `python tests/check_hired_fleet.py` compiled an isolated native
+probe and exited zero. Actual arrivals release supply. Queued passengers
+traverse road links. Independent pools, a supply increase, zero supply,
+timeouts and simulation-end cleanup passed. The 849 existing unit tests
+passed, with one skipped. All 13 portability checks passed. Strict hardcoding
+remained zero. The pinned dependencies did not change. The base Java build now
+has 59 sources, including the optional module and queue.
+
+The bounded `smoke_hired_fleet` experiment launched as
+`20260919T154848_8it_100pct-mumbai-smoke`, with iterations 0 to 8 and the existing
+900-second automatic JVM ceiling. It uses the eligible initial alternatives
+and base road capacities. No result is claimed at this record's writing.
+Its native completion record and fleet audit must establish execution first.
+The behaviour report now retains per-mode request, dispatch, timeout,
+unfinished and cumulative waiting totals for each completed iteration.
+
+**Deliberately not done.** No fleet-share quota, spatial dispatch, empty road
+traffic, household coupling, multi-hour arm, calibrated ridership claim or
+handoff. The default smoke remains the control. The explicit fleet overlay is
+an experiment until its native run is read.
+
+**Consequences.** Hired availability can now affect experienced waiting without
+using a mode-share target. Supply realism and all-mode scaling remain open.
+
+## 9.200 Hired-supply case completed with experienced waiting (19 September 2026)
+
+**What was wrong.** The first launch in 9.199 failed during configuration
+emission, before any simulated day. Its runtime fleet value used a role the
+configuration schema did not accept. The failed card retains the cause and
+75.96 seconds of preparation cost. No completion record or result is inferred.
+
+**What changed.** The runtime uses the existing `derived` role. Configuration
+emission passed before retry. The native probe also checks MATSim's
+`EventsToLegs`: the experienced leg duration includes the supply queue wait.
+The permanent results store retains the fleet input audit. The behaviour reader
+checks each mode's iteration count, fleet size and request accounting. Completed
+network legs are dispatches minus units still occupied at the horizon.
+The portable contract is `docs/hired_fleet.md`.
+
+**Measured.** Retry `20260919T155059_8it_100pct-mumbai-smoke` records
+`ran_to_last_iteration` at 8. Its wall time is 910.5 seconds including
+preparation, and its median iteration is 80.73 seconds. The JVM finished within
+the unchanged 900-second automatic ceiling. This is a bounded development
+case, not a calibrated arm or a full-city expansion.
+
+At iteration 8, the 17-unit auto pool receives 321 requests, dispatches and
+completes 263 network legs, and times out 58. Total served waiting is 55,619
+seconds, mean 211.48 seconds. The 8-unit taxi pool receives 186 requests,
+completes 132 network legs and times out 54. Served waiting totals 32,943
+seconds, mean 249.57 seconds. Both final queues are empty and neither pool
+holds an unfinished leg at the horizon. All nine iterations pass request
+accounting. These are modelled outcomes under the provisional stock conversion,
+not observations of operating fleets or pickup performance.
+
+Final resident trip records are PT 378, walk 581, bicycle 121, taxi 132,
+motorbike 86, auto 263, car 34 and passenger 70. Transit ride legs are bus 517,
+suburban rail 84, metro 42 and ferry zero. Freight remains 243 truck and 39
+rail trip records. Mode-labelled aborts total 136: auto 58, taxi 54, PT 9 and
+walk 15. There are 90 resident departures after 24:00. The hire timeouts abort
+the rest of those travellers' days. They are not completed hired journeys.
+All retained resident and freight plans have finite scores. None of these
+facts establish utility convergence, a calibrated mode split or scale fidelity.
+
+Native mechanism tests and the 849-test unit suite passed, with one unit test
+skipped. All 13 portability checks passed. Strict hardcoding remained zero.
+The regenerated manifest verifies 28,587 files and their lineage/licence labels,
+with no undetermined share-alike ancestry. That check does not grant source
+reuse rights. The doc and compilation checks also passed.
+
+**Deliberately not done.** No calibrated fleet size, same-day refusal fallback,
+spatial dispatch, empty movement, household coupling, rare-mode validation,
+new multi-hour arm or handoff. The first failed preparation remains in history.
+No Java process remains from this experiment.
+
+**Consequences.** The explicit fleet overlay is the broad development example.
+The choice-only overlay and single-plan base remain controls. Next broad work
+is coherent households, shared vehicles and realistic refusal responses.
+Published hired-fare rules are already transcribed but are not yet implemented
+as complete meter tariffs. Corridor detail remains later work.
+
+## 9.201 Harvests: one archive per family of public queries (21 September 2026)
+
+**What was wrong.** An operator API answers one route or one trip at a time,
+and the Mumbai acquisition kept every answer as its own raw file with its own
+provenance record and its own catalogue entry. The transit folder held 11,956
+responses beside 11,956 `provenance_*.json`; the roads folder 1,840 traffic
+police attachments the same way; the catalogue (`extract/sources.json`), the
+descriptor (`city.json`) and the inventory each repeated all 14,230 entries
+(10 MB, 5.6 MB and 10 MB). Git would have added 14,535 files under
+`cities/mumbai/` and a 22 MB manifest of 28,587 rows; every reader opened
+thousands of files; nothing about the acquisition was wrong, only its
+granularity. Two further things were found on the way: one probe acquisition
+(`nmmt_trip_15683`) duplicated a harvest member byte for byte, and one
+vehicle-detail response (`nmmt_vehicle_795_20260918`) belonged to no vehicle
+the route-stop census indicated.
+
+**What changed.** `cities/mumbai/extract/harvest.py`: a family of requests
+generated from one acquired parent is a *harvest* - ONE zip under
+`data/raw/<category>/<harvest>.zip`, its member listing (`_members.csv`: id,
+name, sha256, bytes, url, request body, retrieval time, content type) inside
+the archive, and ONE `provenance_<harvest>.json` pinning the archive's sha256,
+the member count, the formats and the retrieval window. Members are written in
+id order with a fixed timestamp, so the archive's hash depends only on its
+bytes (the rule that removed the build's wall time, #211). A member already
+archived is not fetched again; a member still held loose from before the rule
+is adopted and its loose pair retired once the archive is written; a member
+whose url or request changed under its id is refused, as `acquire_sources`
+refuses it; a member the publisher does not serve stays out of the archive and
+is reported, the rest of the harvest still lands. The catalogue carries one
+entry per harvest (`kind: harvest`, naming its harvester), so the descriptor
+and the inventory do too; `acquire_sources.py` skips a harvest entry and names
+the script that owns it. `acquire_sources.acquire` was split into
+`check_request` / `fetch` / `store` so a harvest and a loose acquisition share
+one network path and one set of format checks. Readers open one archive handle
+per process (`harvest.read`, `harvest.source`, `harvest.as_file` for tools
+that take a path). Eleven harvests: NMMT route schedules (619), trip timetables
+(9,522), route alignments (619), the 20260918 route-stop census (619) and its
+vehicle details (36); MBMT details, stops and alignments (118 each); the
+traffic-police notices of the 1 January - 18 September 2026 index (1,840 of
+1,855 listed; 15 return 404 at the publisher); Mumbai Port rail statistics
+(47). The two strays were retired. `normalise_eol.py` now walks
+`data/raw/**/provenance*.json`: all 514 Mumbai provenance records were CRLF and
+would have failed their own hashes on a Linux checkout.
+
+**Measured.** Every processed table re-derived from the archives is
+byte-identical to the one derived from the loose files - `nmmt_departures`,
+`nmmt_stop_times`, the vehicle indications, locations and stop details, the
+three MBMT tables and their audit, `traffic_notice_index`, the notice audit,
+the coastal-access audit, the port monthly rakes and its audit - with one
+exception: route 9841's alignment, `unobtained` in the previous path audit,
+was acquired on 21 September 2026 when the harvester packed the family, so
+`nmmt_route_vertices.csv` gains its 1,172 vertices and the 37 stop rows of
+`nmmt_route_live_9841_20260918` gain a geometry offset. The schedule audit
+took 3 min 58 s opening the archive per member and 3.8 s with one handle. The
+manifest fell from 28,587 rows (22 MB) to 1,293 (870 KB); `city.json` from
+5.6 MB to 283 KB; the catalogue from 10 MB to 300 KB; the files git tracks
+under `cities/mumbai/` from 14,535 to 889. `tests/check_manifest.py` passes
+for both cities.
+
+**Deliberately not done.** The 13 OSM relation-history queries and the nine
+WRI layers (27 files) stay loose: per-download provenance, not a family. The
+567 catalogue entries are not grouped into publishers; the manifest's
+per-row licence column is what the `sources` list serves and each document's
+reuse terms differ. No harvest was re-fetched from its publisher; the bytes are
+the 18 September acquisitions.
+
+**Consequences.** A per-response harvest is written as a harvest from the
+first member; `acquire_sources.py` is for single documents. A reader of a
+harvest imports `harvest` and the harvester's `Harvest` constant, never a
+file glob. `extract_port_rail_controls.py` depends on poppler's `pdftotext`
+24 or later: the 4.00 build on Git Bash's PATH mangles the table layout and
+the extractor refuses the blanks - the same bytes parse identically under the
+MiKTeX build PowerShell resolves.
+
+## 9.202 The contract narrowed by who reads a field; Mumbai declares the framework's run-side keys (21 September 2026)
+
+**What was wrong.** `required_fields.json` said "match the reference city's
+571 fields" and its own docstring conceded that narrowing it to what each
+layer needs "is real work and is not done". Mumbai was missing 533 of them -
+Opal fare bands, SCATS corridor fields, the S0-S6 scenario fields, HTS
+activity-chain fields - and `check_city.py --all` failed 38 times, which
+would have turned CI red on every pull request the moment the city was
+committed. The city's own run settings sat in a private namespace: 67
+`RUN.smoke.*` and 14 `C.smoke.*` fields, 59 of them bound to the same MATSim
+parameter as a framework field the reference city declares (`RUN.smoke.qsim.endTime`
+beside `RUN.qsim.end_time_h`), one of them bound to a parameter MATSim does not
+have (`scoring.brainExpBeta` for `BrainExpBeta`). The descriptor lacked a
+boundary, a zone system, a mode list, an observed mode series and an
+intervention name; eight of the city's fields spelt their units differently
+from the contract; there were no scenario or day overlays.
+
+**What changed.** *The contract.* `render_schema.py` derives a second
+narrowing beside `required_if_mode`, again from evidence and never judgment:
+`required_by`, from `check_hardcoding.key_uses` (the scan that keeps the
+wiring ledger at zero) and the tool bindings. `run` - a binding, or a
+string-literal read in `run.py`, `src/run`, `src/java`, `src/registry`,
+`src/analyse`, `src/calibrate` or `src/setup` - is required of every city,
+because the framework reads it whenever a scenario runs or is read back
+(220 fields). A list of framework builders (`src/build/...`, or the package
+contract `tests/check_package.py`) is required of a city whose manifest names
+one of them as a producer (239). `reference_city` - read only by the
+reference city's own adapters and builders - is required of no other city
+(112). `check_city.py` applies it per city from the city's own manifest
+(`produced_by`, tool suffix stripped). What is not derived is stated in the
+schema: a field a switched-off mechanism silences is still `run`, because the
+emitter writes it. Newcastle's 571 remain required of Newcastle; its check
+passes as before.
+
+*Mumbai's registry.* `cities/mumbai/build/adopt_framework_fields.py` writes
+`registry/*_framework.json` (five files, 196 fields) and is idempotent from
+the pristine registry: the 59 bound twins are MOVED under the framework key
+with Mumbai's value, source, sweep and description and the contract's units
+and `matsim_format` (the two clock strings become hours); 133 run-side keys
+Mumbai never declared are ADOPTED from the reference city's declaration, the
+description saying so, the source downgraded to `assumed` with the reference
+sweep or a `held_fixed` rule where Newcastle's was a measurement of Newcastle,
+and the status `placeholder` where the mechanism is switched off for this
+baseline; the gates are declared off with the reason - `A.signals.representation
+= implicit_delay`, `A.gradient`, `A.crossings`, `A.bike_stress` and
+`C.raptor.mode_cost_representation = absent`, `B.ride.pairing_enabled = false`
+(no households, so no ride can name its driver), `B.population.vehicle_roster
+= per_person` (the Java default the previous cases ran under). Mumbai's own
+facts are written, not adopted: `B.seed.master`, `RUN.sample.fraction` 1.0,
+`RUN.sample.unit` person, `B.population.age_bands` (the census C-14 five-year
+bands), an empty crossings table, an empty ASC map, `RUN.machine.xmx` 16g,
+two threads. Three launch-derived identities keep `computed` (the capacity
+factors, the score-MSA fraction) and `baseline_smoke.py` supplies them under
+the `derived` runtime role with the same rules `build_matsim_run_inputs`
+uses; `C.scoring.activity_minimal_applied_s` is declared unbound at zero
+because the baseline applies no minimal duration. The private
+`RUN.smoke.xmx` and `RUN.smoke.scoring.brainExpBeta` are retired; 17
+`RUN.smoke.*` and 4 `C.smoke.*` fields remain as the city's own assembly and
+scoring parameters. The launcher, the choices builder and the run overlays
+read the framework keys. Registry: 178 to 313 fields.
+
+*The descriptor.* `boundary`: the four Census 2011 districts Mumbai, Mumbai
+Suburban, Thane and Raigad from the IIT Bombay MahaCensus shapefiles, an
+empty external tier with the reason, and the statement that this is the
+acquisition's overcoverage, not the notified MMR (decision D13, the user's).
+`zone_system`: census 2011 leaves (1,183 wards, 3,630 villages;
+`geography_id`). `modes`: the eight of `RUN.mode_choice.modes`.
+`mode_share_target`: Census 2011 B-28 commuting - the only observed mode
+series held, named so the framework has a declared series, with the note
+that it is not a target. `intervention.name`: "None - base year only".
+Overlays `scenarios/BASE.json` and `day/WEEKDAY.json`, a `scenarios/`
+directory, the eight unit strings aligned.
+
+**Measured.** `check_city.py`: Mumbai PASS 25 FAIL 0 (from PASS 12 FAIL 35),
+231 applicable fields, 340 not applicable to this package; Newcastle PASS 41
+FAIL 0. The structural check `smoke_two_iterations` (the hired-fleet case at
+two iterations) ran to `ran_to_last_iteration` on the unified registry:
+`20260921T165718_2it_100pct-mumbai-smoke`, 579.7 s. Its emitted config
+against the last pre-fold case's (`20260919T155059`) differs exactly where the
+fold declares what MATSim and the Java had been supplying silently: the
+parking, ridePairing (enabled false), gradient (absent), bikeStress (absent),
+tramPriority, scats, taxiFleet (representation absent), householdVehicles
+(per_person), ptSubmodeChoice, raptorModeCost and eventsManager groups now
+appear with their declared values; `BrainExpBeta` is spelt as MATSim spells
+it; the travel-time calculator bins at 300 s with `filterModes` on (the
+reference city's declaration, adopted); typical durations are written as
+clocks. Nothing about the case's ridership is read.
+
+**Deliberately not done.** The launch path is still the city's own:
+`run.py --baseline-smoke` prepares the network, schedule and vehicles at
+launch and calls the harness's close-out, where `run.py <scenario>` reads an
+assembled `scenarios/matsim/<S>/<day>/` set and the C1 scoring translation
+with the HTS purpose share. Folding it in - a city-declared scoring source
+(`RUN.scoring.translation`: the C1 translation or the bound fields), the
+assembly moved to a Mumbai build step producing the set, the plans at
+`demand/plans/matsim/population_WEEKDAY.xml.gz` - is the lane's next task; it
+touches the harness Newcastle's arms run on and is verified on a Newcastle
+1 % smoke. No mode target, no population synthesis, no extent decision.
+
+**Consequences.** A field is required of a city because something reads it
+for that city, and the schema says who. A second city declares the
+framework's keys, never a parallel namespace: one key per MATSim parameter.
+An adopted value is labelled adopted and a switched-off mechanism's
+parameters are placeholders - the reference is regenerated by
+`adopt_framework_fields.py` after a contract change, never edited by hand.
+
+## 9.203 The Mumbai sessions verified for Newcastle: standing room never scaled, two manifest regressions, a report that would have grown a hundredfold (21 September 2026)
+
+**What was wrong.** Twenty-two record sections (9.179-9.200) and 131
+uncommitted paths arrived from the 19 September sessions with no handoff: the
+brief still described the fifty-fifth session, nothing was pushed, and the
+gate was red on two checks (`check_city --all` on the incomplete second city,
+a stale `layers.json`). The user asked whether the changes those sessions
+made to Newcastle were correct. Three were not, and one was a correct fix
+that changes Newcastle's next arm and had not been said so.
+
+**What changed, and what was found.** *Behaviour-preserving, verified.* The
+four registry fields added for Newcastle sit at their legacy values
+(`A.transit.fleet_assignment_mode = mode_capacity`, `A.network.mode_access_strategy
+= legacy_companions`, `RUN.qsim.mode_vehicle_fields = {}`,
+`RUN.routing.activity_link_assignment = common_modes`); the three new Java
+config groups default off; `activityLinks.assignment` is mandatory in the
+controler but emitted from the registry at every launch, so `run.py --dry-run`
+resolves; the network builder defaults to the four Overpass extracts; 9.179's
+own measurement stands that the thirty run-input sets rebuild byte-identical
+under the new fleet path. The population sampler rewrite was run against the
+real WEEKDAY population at 25 % under the household unit, old code beside
+new: the same 155,233 of 622,318 persons kept, every person block identical
+apart from self-closing-tag spacing; 39 s against 106 s.
+
+*A correct fix that changes Newcastle's next arm.* The old sampler's regex
+scaled only `seats`. In the F35 result `20260916T063903_250it_25pct` the fleet
+ran **Bus 11 seats + 18 standing, Tram 15 + 210, Rail 24 + 48, Ferry 37 +
+51**: standing room at full size at a quarter sample, so a tram carried 225
+sampled agents - 900 real - against a real 270, and crowding could never bind
+on tram, rail or ferry (the 9.12 defect class, on every 25 % arm to date). The
+rewrite scales both components (`Bus 11 + 5, Tram 15 + 52, Rail 24 + 12,
+Ferry 37 + 13` at 25 %, floor 1). Every arm after it opens a family; #238
+carries the measurement the first such arm makes.
+
+*Two regressions in `build_manifest.py`, fixed.* A glob declared as an input
+of the thirty `transitVehicles.xml.gz` rows
+(`networks/matsim/schedules/*/fleet_assignments.json`) resolved through the
+network builder's lineage to OSM and the DEM, and labelled all thirty as
+ODbL share-alike with the wrong sources and dates; the glob is removed (an
+explicit assignment file carries its own lineage). The provenance-record rule
+- a `provenance_*.json` is the package's own metadata and inherits no
+neighbouring download's source, licence or date - is right and is kept: under
+the old ancestor rule Newcastle's fares record carried the operator's
+copyright line and Mumbai's thirteen OSM relation histories were labelled as a
+toll notification. Newcastle's manifest regenerates identical but for five
+provenance rows, and its split is **724 CC-BY / 220 ODbL / 15 bespoke** (from
+721 / 220 / 18); the board and the position page say so.
+
+*A report that would have grown a hundredfold.* `transit_fleet.prepare_fleet`
+returned a per-vehicle map (`active_vehicle_profiles`, 2,139 ids a set on
+Newcastle) into the committed `_run_inputs_report.json` for no reader; it
+returns a count per profile.
+
+*Housekeeping.* Two report-library JSONs re-serialised with the committed
+indent (13,000 lines of churn to 28); five documents' CRLF undone; browser
+logs removed; `layers.json` regenerated.
+
+**Measured.** Gate: every check passes for both cities after this session's
+changes (`session_gate.py`; `check_city --all` PASS 66 FAIL 0). Unit suite
+849 passed, 1 skipped. Newcastle's manifest: 959 files, verified.
+
+**Deliberately not done.** No Newcastle arm, no rebuild of its run inputs, no
+recompile beyond the gate's own. The two regressions and the fleet report
+never reached a run.
+
+**Consequences.** The next 25 % arm is the first with standing room scaled;
+it opens a family and is not compared with F35. A change to a framework
+builder is verified by regenerating the reference city's artefact and
+diffing it against the committed one before it lands - the manifest took 14
+seconds and found both regressions.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-21 | **Verification of the 19 September changes for Newcastle (§9.203).** Standing room was never scaled at 25 % on any F35 arm; the fix opens a family (#237). Two build_manifest regressions and a per-vehicle report map fixed before landing. Newcastle's licence split 724 / 220 / 15. |
+| 2026-09-21 | **Contract tiers and the Mumbai registry fold (§9.202).** required_by (run / builders / reference_city) derived from the reads; Mumbai's private RUN.smoke namespace moved under the framework's keys, its descriptor completed; check_city passes for both cities. |
+| 2026-09-21 | **Harvests (§9.201).** The Mumbai per-response acquisitions become eleven archives with one provenance each; the manifest falls from 28,587 rows to 1,293; the raw provenance records pinned to LF. |
+| 2026-09-19 | **Hired-supply completion (§9.200).** Native waits enter experienced legs, bounded case completed, actual carried legs distinguished from refusals. |
+| 2026-09-19 | **Hired supply queues (§9.199).** Optional QSim pools, native tests and explicit provisional fleet derivation. |
+| 2026-09-19 | **Mumbai initial choices (§9.198).** Completed bounded exploration, retained-score diagnostics and broad next priorities. |
+| 2026-09-19 | **Mumbai capacity sensitivity completed (§9.197).** Mode alternatives prepared; initial choice coverage is now audited. |
+| 2026-09-19 | **Mumbai capacity sensitivity (§9.196).** Overlay support and declared flow multipliers added; base remains unchanged. |
+| 2026-09-19 | **Mumbai area destinations executed (§9.195).** Nine iterations complete; scheduled PCU demand and native link delays audited. |
+| 2026-09-19 | **Mumbai learning and activity-area coverage (§9.194).** Nine iterations completed; native delay diagnostic and mapped area destinations added. |
+| 2026-09-19 | **Mumbai daily activities (§9.193).** Fixed demographic cohort, mapped destinations and labelled time-use translation; timing failures measured and longer learning launched. |
+| 2026-09-19 | **Mumbai fare-aware routing (§9.192).** Shared tariff table, income-sensitive path costs, native probe and completed development case. |
+| 2026-09-19 | **Boarding fares (§9.191).** Generic per-boarding tariff handler, city-owned BEST adapter, native verification and completed development case. |
+| 2026-09-19 | **Mumbai regional buses (§9.190).** Added operator supply, repaired GTFS cache invalidation and verified native passenger/freight execution. |
+| 2026-09-19 | **Mumbai freight baseline (§9.189).** Physical truck and freight-rail movements, separate diagnostics and a completed 36-hour development case. |
+| 2026-09-19 | **First Mumbai behavioural execution (§9.188).** Completed bounded native simulation; provisional supply, representative people and endogenous choices. |
+| 2026-09-19 | **Broad behavioural baseline (§9.187).** User prioritises a running all-mode decision model; explicit provisional supply registry starts network construction. |
+| 2026-09-19 | **Person-specific mode availability (§9.186).** Explicit person sets restrict configured modes and validate all stored initial plans; native checks pass. Mumbai allocation and simulation remain incomplete. |
+| 2026-09-19 | **Population sampling reads XML structure (§9.185).** Compact XML no longer loses people; household coupling ignores layout; invalid input cannot replace a valid sample. |
+| 2026-09-19 | **Activity connections for distinct mode networks (§9.184).** Optional mode-specific access preserves activity locations; existing city keeps the common-mode assignment. |
+| 2026-09-19 | **Preserve mapped mode permissions (§9.183).** Optional assembly policy skips companion grants, synthetic reverse links and component pruning; existing city retains its previous policy. |
+| 2026-09-19 | **Explicit network-mode vehicle definitions (§9.182).** City-supplied physical types resolve at assembly and per run; existing scenario vehicle files are unchanged. |
+| 2026-09-19 | **Derived native source provenance (§9.181).** Resolve built OSM files to immutable ancestors, preserve their derived licences and exclude unselected neighbouring extracts from network ancestry. |
+| 2026-09-19 | **Native network inputs (§9.180).** Build the Mumbai native source with complete selected references and accept it through the shared builder; preserve the Newcastle merge. Local physical parameters and simulation remain unfinished. |
+| 2026-09-19 | **Transit capacity configurations (§9.179).** Add explicit mapped-vehicle capacity profiles; preserve existing Newcastle XML across 30 scenario/day combinations. Mumbai operating assignments and scaling validation remain incomplete. |
 | 2026-09-18 | **Native Codex skills and workflow (§9.178; fifty-fifth session; #210).** Project support under .agents; native global skill and MCP checks; refreshed handover. No model or target value changed, the 67/143 split is untouched, nothing here is a model finding. |
 | 2026-09-16 | **Report #12 lodged; the scoring pair launched on its own probe and running at handoff; the bound trips read (§9.177; #30, #49, #66, #86, #94, #107, #145, #162, #187, #196, #213, #225, #227–#232; fifty-fourth session).** `docs/reports/20260916T062246_project_report.html` lodged on the routers pair. The scoring pair `20260916T063903_250it_25pct` (`RUN.replanning.score_msa_representation` = `at_innovation_cutoff`, D7, stated cost 33.0 h ceiling, SPENT) launched after the 25 % probe `20260916T053153_4it_25pct` (383 s/it, 27.2 h quoted) and ran to 250 in 25.77 h: a RESULT that moves nothing against arm 0 (car +0.007 pp, ride +0.293, bike −0.292, light rail 772 → 928, heavy rail 10,092 on both; 2 of 12 inside, 6 past the bar on both) and leaves the 200→201 snap at car +1.76 pp under MSA — the scoring branch is exonerated, and the roots rebuild's arm 0 ships with `RUN.replanning.score_msa_representation` = `absent`. D6: `run.py` detaches by default on Windows (`--foreground` opts out). #213: the launcher writes `_residents.csv.gz`, every reader prefers it, the two F35 results backfilled. `arm_cost.setup_seconds` reads an orphan's setup from the JVM stopwatch (48.8 h → 26.6 h quote). `iteration_times` walks the log when the memo is short; `reconcile_stale` closes out a finished orphan. `issue_gate.py` reports MEASUREMENT DUE. `measure_bound_trips.py`, `measure_near_wharf.py`, `mode_by_demographics.py` (run's own persons, car-availability split) — one command each; `trip_geometry` reports the short-trip share on both distance bases. The coverage readers say a share of TRIPS: §9.163 and §9.169 read `modeChoiceCoverage1x.txt` as agents; ride's 19.11 % IS the bound trips' share (20.62 % of core legs) at the target, and on the pair 59.0 % of 109,816 bound trips rode at it.250. D8 the ferry target from the disclosed TPA tap-on series; D9 bike's marginal utility of distance derived from the observed mean, swept on its spread; D10 the gate's scoped departure documented; D11 strict status checks; D12 escort members and joint companions held to ride, car-less lift/shared passengers keep walk/bike/pt. Registry 558 → 567 (`B.mode.seed_table`, `A.lightrail.dwell_sd_s`, `D.landuse.levels_by_building_type`, `CAL.targets.prepandemic_window`, `CAL.targets.current_window_start`, `RUN.machine.build_xmx`, `RUN.machine.gc_collector`, `RUN.gate.reader_timeout_s`, `RUN.storage.reader_timeout_s`). `build_matsim_plans`, `build_activity_chains`, `build_matsim_run_inputs` and four city builders staged through `src/setup/split_stages.py` and `src/setup/extract_loop_body.py`, every output byte-identical; `iteration_reading.events` the one events parser; `src/build/geo.py`. 31 archived banner links re-aimed; the report ordinal re-keyed (#12); the lane's roots task re-scoped. The Java fold and the roots rebuild wait for the arm. No target value changed, the 67/143 split is untouched, no family opened, nothing here is a finding. |
 | 2026-09-16 | **The routers pair is a result that moves nothing; an orphaned run gets its close-out (§9.176; #98, #94, #49, #172, #174 read; #225 filed; fifty-third session).** `20260915T000704_250it_25pct` ran all 250 iterations (98,590.8 s) with its harness dead from iteration 34; closed out through the new `run.py --close-out` (`close_out_orphan`: dead pids, clean shutdown, last ENDED iteration read from the log = the horizon; refuses a live, short or unclean run; `tests/unit/test_close_out_orphan.py`), `lane.py --ask` writes UTF-8. Measured against arm 0 inside F35: car 63.56 vs 63.91 %, ride 12.19 vs 12.02, light rail 856 vs 772 boardings, heavy rail 10,476 vs 10,092; 2 of 12 inside, 6 past the bar on both; pt coverage 15.78 vs 17.53 %, ride 19.11 on both; relaxed at 0.14 pp drift, snap car +1.774 pp. D5 taken by the user: the run is a RESULT via `--close-out`. D6 (launch default) and D7 (what runs next) open. The session's process codified in the same change: `run_failure.orphaned_running` (a JVM under a dead harness goes red at the gate and `ORPHANED` on the digest), `report_mode_ridership.py --trend` memoised per iteration under `_trend/`, `src/run/watch_run.py`, `compare_runs.py --modes`, `positions.py`, `record.py`, `lane.py --add-task/--add-decision`, one intro on every position page with `intro_no_run_names` in the shape check, the board's *Open work* rows without re-keyed deviations, the three skills and `HANDOVER_CONTRACT.md` updated, `/project-report` given a session-process audit with `process`-tagged recommendations. Unit suite 508. No target value changed, the 67/143 split is untouched, no family opened, no approval given, no arm launched. |

@@ -1,0 +1,30 @@
+{
+  "source_native_sha256": "a7865ea1b59589c9202dd59711f57658ea02bfa6ca75bab373e4687ed3d91cf5",
+  "stop_area_relations_used": 45,
+  "excluded_mixed_or_other_mode_relations": [],
+  "excluded_explicit_nonrail_member_features": [
+    "node/8789746256"
+  ],
+  "member_association_rows": 432,
+  "direct_boarding_nodes": 168,
+  "relation_added_boarding_nodes": 15,
+  "total_boarding_nodes": 183,
+  "missing_native_node_ids": [],
+  "nodes_without_rail_parent": [],
+  "native_track_membership_rows": 222,
+  "railway_rail_ways": 4124,
+  "station_keys_with_native_boarding_nodes": 46,
+  "adjacent_station_pairs": 90,
+  "pair_status_counts": {
+    "potentially_connected_undirected": 90
+  },
+  "largest_point_inventory_coordinate_difference_deg": 1.4210854715202004e-14,
+  "limitations": [
+    "Native reference membership preserves rail levels and shared junction identity without coordinate snapping.",
+    "Stop-area groups are not expanded; an interchange group must not merge metro, monorail and suburban boarding nodes.",
+    "A stop-area may contain long-distance and suburban platforms; train-specific allocation remains unknown.",
+    "Native railway=rail connectedness is undirected and includes sidings; it proves neither an operable route nor a realistic path length.",
+    "Oneway, gauge and other source tags are preserved but not converted into a train-control or capacity model.",
+    "Switch states, signal/block conflicts, service direction, dwell, accessibility and current operational status still need validation."
+  ]
+}

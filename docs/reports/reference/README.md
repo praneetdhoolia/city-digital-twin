@@ -226,3 +226,10 @@ search-budget cost**.
 `arxiv.org/pdf/2112.12071` (over the 10 MB fetch limit) · `web.archive.org`
 (blocked by this repository's own network sandbox, so it can never work from
 here) · ScienceDirect and ResearchGate (403) · CMAP's PDF (an image-only scan).
+
+## Review attempt 20260918T182209
+
+The field library retains 55 project rows: 55 reused, 0 refreshed, 0 added. Existing gaps remain open.
+The factor library retains 101 literature rows: 101 reused, 0 refreshed, 0 added. Existing gaps remain open.
+Three delegated reviewers stopped on workspace credit errors. The coordinator continued locally.
+The report explicitly marks unfinished semantic and factor reviews. Source verification dates were not advanced.

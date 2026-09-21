@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "url": "https://www.mdpi.com/3042-5743/45/1/10/pdf",
+      "final_url": "https://www.mdpi.com/3042-5743/45/1/10/pdf",
+      "content_type": null,
+      "retrieved": "2026-09-18T17:50:31.676Z",
+      "bytes": 4285949,
+      "path": "data/raw/traffic/jvlr_traffic_study_2026_pdf_0a14ac9a0c70e4b0.pdf",
+      "sha256": "0a14ac9a0c70e4b08a760644c82cdc01493fefb9663421ddd43ac29a23f65162",
+      "source": "JVLR peak-hour congestion study: final proceedings paper 27 August 2026",
+      "licence": "CC BY 4.0; 2026 the authors, MDPI",
+      "coverage": "Primary selected-corridor survey; examine June 2025 measurement dates, speed assumptions and derived PCU quantities separately from current conditions.",
+      "producing_script": "extract/import_browser_acquisition.py",
+      "transport": "Connected Chrome public fetch; default certificate verification",
+      "validation_status": "acquired_unvalidated"
+    }
+  ]
+}

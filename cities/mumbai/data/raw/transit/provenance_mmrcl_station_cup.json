@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_cup_94351c2914a2e1bd.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/CUP/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/CUP/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Cuffe Parade",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:44.895925+00:00",
+      "sha256": "94351c2914a2e1bdd0b3cd71fffda6b824373c4112a844c0b6d5822be7d8351e",
+      "bytes": 15040,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

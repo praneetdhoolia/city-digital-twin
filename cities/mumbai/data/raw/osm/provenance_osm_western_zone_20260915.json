@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/osm/osm_western_zone_20260915_c335a72cadfebc3f.osm.pbf",
+      "url": "https://download.geofabrik.de/asia/india/western-zone-260915.osm.pbf",
+      "final_url": "https://download.geofabrik.de/asia/india/western-zone-260915.osm.pbf",
+      "source": "OpenStreetMap Western Zone extract 15 September 2026",
+      "licence": "ODbL 1.0",
+      "retrieved": "2026-09-18T08:39:52.932218+00:00",
+      "sha256": "c335a72cadfebc3ffde5cfff20fc9711f3112bc11000d43fde4daea10c36b53e",
+      "bytes": 220074029,
+      "content_type": "application/octet-stream",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Regional unfiltered OSM including roads, rail, paths, POIs and boundaries; MMR clipping must be derived from verified boundary."
+    }
+  ]
+}

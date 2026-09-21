@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_mumbai_pca_56e378aeda1353b2.xlsx",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/6710/download/9787/DDW_PCA2723_2011_MDDS%20with%20UI.xlsx",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/6710/download/9787/DDW_PCA2723_2011_MDDS%20with%20UI.xlsx",
+      "content_type": "application/octet-stream",
+      "source": "Mumbai City primary census abstract 2011",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:46:48.339481+00:00",
+      "sha256": "56e378aeda1353b23482945b38e4707e21741ab9ae990f30be7bc4fdf19e7ba1",
+      "bytes": 39531,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical 2011 observations; geographic crosswalk and current projection required.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

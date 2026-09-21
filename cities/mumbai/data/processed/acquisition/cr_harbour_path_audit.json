@@ -1,0 +1,1025 @@
+{
+  "source": "derived_geometry_and_timetable_evidence",
+  "input_sha256": {
+    "data/processed/acquisition/cr_harbour_track_evidence_audit.json": "c0b05df7ef7cd23b21cee53ea44f01ca4c3f5cb0ac5acf946a70e898ea684b02",
+    "data/processed/network/cr_harbour_boarding_nodes.csv": "6a24f95dc367691e9f22e146b5f45203255d26e3abdbb2cbcc87742f683f3fd1",
+    "data/processed/network/rail_geometry/audit.json": "b97bcfc91b93ba19fceb774711020979ce3500d84bbe854e2d1febe54ec71a68",
+    "data/processed/network/rail_geometry/segments.csv": "81e3d8f61fe2b3321831e4c1c633623dbb070321674d3fa3703a1408e42c6968",
+    "data/processed/network/rail_geometry/ways.csv": "669ddeb14aff0fff7d7bf0635093ae1a0e9c07364e28f0b73c7ddc76b955ed68",
+    "data/processed/transit/cr_harbour_service_candidates.csv": "b9df411491e8351d333ef19c3220a7bc5fcdc5fdd47258ec0995bcb53e7fc141",
+    "data/processed/transit/cr_harbour_stop_candidates.csv": "a475d5bdee80f52759d70685fcf9a9cf7eb864ef04f20b05ceb1fe7c041b0d28"
+  },
+  "source_native_sha256": "a7865ea1b59589c9202dd59711f57658ea02bfa6ca75bab373e4687ed3d91cf5",
+  "station_patterns": 31,
+  "timetable_services": 876,
+  "rail_ways": 4124,
+  "rail_segments": 31479,
+  "variants": {
+    "geometry_only": {
+      "pattern_status_counts": {
+        "continuous_geometry_candidate_only": 31
+      },
+      "service_status_counts": {
+        "continuous_geometry_candidate_only": 876
+      },
+      "patterns_with_unresolved_direction": 31,
+      "patterns_against_explicit_oneway": 26,
+      "patterns_against_preferred_direction": 12,
+      "nonpositive_printed_intervals": 0,
+      "cached_boarding_pairs": 1488
+    },
+    "static_oneway_screen": {
+      "pattern_status_counts": {
+        "continuous_geometry_candidate_only": 31
+      },
+      "service_status_counts": {
+        "continuous_geometry_candidate_only": 876
+      },
+      "patterns_with_unresolved_direction": 31,
+      "patterns_against_explicit_oneway": 0,
+      "patterns_against_preferred_direction": 7,
+      "nonpositive_printed_intervals": 0,
+      "cached_boarding_pairs": 1488
+    }
+  },
+  "immediate_segment_reversals": [
+    {
+      "pattern_id": "331fcd0f31f9108455185f1162e6e84ab6a08cf6ba771935beb41a99129ca44a",
+      "variant": "geometry_only",
+      "osm_node_id": 7510862066,
+      "osm_way_id": 122269604,
+      "native_segment_index_zero_based": 4,
+      "previous_leg_sequence": 17,
+      "next_leg_sequence": 18,
+      "station_key": "CR_HB_LABEL:vadala road",
+      "reversal_at_scheduled_stop": true,
+      "native_way_tags": {
+        "electrified": "contact_line",
+        "gauge": "1676",
+        "name": "Central Railway (Harbour Line)",
+        "oneway": "reversible",
+        "passenger_lines": "2",
+        "railway": "rail"
+      },
+      "timed_boundary_service_evidence": [
+        {
+          "train_number": "98901",
+          "boundary_arrival_hhmm": "06:58",
+          "boundary_departure_hhmm": "07:02",
+          "boundary_dwell_seconds": 240,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "07:02",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "2",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98901"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "06:58",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "3",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98901"
+            }
+          ]
+        },
+        {
+          "train_number": "98903",
+          "boundary_arrival_hhmm": "07:54",
+          "boundary_departure_hhmm": "08:02",
+          "boundary_dwell_seconds": 480,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "08:02",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "3",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98903"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "07:54",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "4",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98903"
+            }
+          ]
+        },
+        {
+          "train_number": "98905",
+          "boundary_arrival_hhmm": "08:40",
+          "boundary_departure_hhmm": "08:45",
+          "boundary_dwell_seconds": 300,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "08:45",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "4",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98905"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "08:40",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "4",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98905"
+            }
+          ]
+        },
+        {
+          "train_number": "98907",
+          "boundary_arrival_hhmm": "11:39",
+          "boundary_departure_hhmm": "11:42",
+          "boundary_dwell_seconds": 180,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "11:42",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "7",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98907"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "11:39",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "7",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98907"
+            }
+          ]
+        },
+        {
+          "train_number": "98909",
+          "boundary_arrival_hhmm": "17:36",
+          "boundary_departure_hhmm": "17:41",
+          "boundary_dwell_seconds": 300,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "17:41",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "12",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98909"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "17:36",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "13",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98909"
+            }
+          ]
+        },
+        {
+          "train_number": "98911",
+          "boundary_arrival_hhmm": "18:02",
+          "boundary_departure_hhmm": "18:06",
+          "boundary_dwell_seconds": 240,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "18:06",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "13",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98911"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "18:02",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "13",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98911"
+            }
+          ]
+        },
+        {
+          "train_number": "98913",
+          "boundary_arrival_hhmm": "18:32",
+          "boundary_departure_hhmm": "18:37",
+          "boundary_dwell_seconds": 300,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "18:37",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "13",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98913"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "18:32",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "14",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98913"
+            }
+          ]
+        },
+        {
+          "train_number": "98915",
+          "boundary_arrival_hhmm": "19:35",
+          "boundary_departure_hhmm": "19:39",
+          "boundary_dwell_seconds": 240,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "19:39",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "14",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98915"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "19:35",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "15",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98915"
+            }
+          ]
+        },
+        {
+          "train_number": "98917",
+          "boundary_arrival_hhmm": "20:36",
+          "boundary_departure_hhmm": "20:42",
+          "boundary_dwell_seconds": 360,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "20:42",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "15",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98917"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "20:36",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "16",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98917"
+            }
+          ]
+        }
+      ],
+      "status": "geometry_reversal_only_dwell_does_not_establish_operating_permission_or_train_clearance"
+    },
+    {
+      "pattern_id": "3b3f515d3b07360bd1f0e545a23fd08594d8505a8cb14c8291ba66844f307b96",
+      "variant": "geometry_only",
+      "osm_node_id": 7510862066,
+      "osm_way_id": 122269604,
+      "native_segment_index_zero_based": 4,
+      "previous_leg_sequence": 10,
+      "next_leg_sequence": 11,
+      "station_key": "CR_HB_LABEL:vadala road",
+      "reversal_at_scheduled_stop": true,
+      "native_way_tags": {
+        "electrified": "contact_line",
+        "gauge": "1676",
+        "name": "Central Railway (Harbour Line)",
+        "oneway": "reversible",
+        "passenger_lines": "2",
+        "railway": "rail"
+      },
+      "timed_boundary_service_evidence": [
+        {
+          "train_number": "98902",
+          "boundary_arrival_hhmm": "08:06",
+          "boundary_departure_hhmm": "08:10",
+          "boundary_dwell_seconds": 240,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "08:10",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "3",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98902"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "08:06",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "4",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98902"
+            }
+          ]
+        },
+        {
+          "train_number": "98904",
+          "boundary_arrival_hhmm": "09:17",
+          "boundary_departure_hhmm": "09:20",
+          "boundary_dwell_seconds": 180,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "09:20",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "5",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98904"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "09:17",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "5",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98904"
+            }
+          ]
+        },
+        {
+          "train_number": "98906",
+          "boundary_arrival_hhmm": "10:10",
+          "boundary_departure_hhmm": "10:14",
+          "boundary_dwell_seconds": 240,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "10:14",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "6",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98906"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "10:10",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "6",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98906"
+            }
+          ]
+        },
+        {
+          "train_number": "98908",
+          "boundary_arrival_hhmm": "12:55",
+          "boundary_departure_hhmm": "13:01",
+          "boundary_dwell_seconds": 360,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "13:01",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "8",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98908"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "12:55",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "9",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98908"
+            }
+          ]
+        },
+        {
+          "train_number": "98910",
+          "boundary_arrival_hhmm": "19:06",
+          "boundary_departure_hhmm": "19:11",
+          "boundary_dwell_seconds": 300,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "19:11",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "14",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98910"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "19:06",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "14",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98910"
+            }
+          ]
+        },
+        {
+          "train_number": "98912",
+          "boundary_arrival_hhmm": "19:38",
+          "boundary_departure_hhmm": "19:43",
+          "boundary_dwell_seconds": 300,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "19:43",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "14",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98912"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "19:38",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "15",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98912"
+            }
+          ]
+        },
+        {
+          "train_number": "98914",
+          "boundary_arrival_hhmm": "20:18",
+          "boundary_departure_hhmm": "20:26",
+          "boundary_dwell_seconds": 480,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "20:26",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "15",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98914"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "20:18",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "16",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98914"
+            }
+          ]
+        },
+        {
+          "train_number": "98916",
+          "boundary_arrival_hhmm": "20:56",
+          "boundary_departure_hhmm": "21:03",
+          "boundary_dwell_seconds": 420,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "21:03",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "16",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98916"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "20:56",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "16",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98916"
+            }
+          ]
+        },
+        {
+          "train_number": "98918",
+          "boundary_arrival_hhmm": "22:11",
+          "boundary_departure_hhmm": "22:20",
+          "boundary_dwell_seconds": 540,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "22:20",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "17",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98918"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "22:11",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "18",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98918"
+            }
+          ]
+        }
+      ],
+      "status": "geometry_reversal_only_dwell_does_not_establish_operating_permission_or_train_clearance"
+    },
+    {
+      "pattern_id": "331fcd0f31f9108455185f1162e6e84ab6a08cf6ba771935beb41a99129ca44a",
+      "variant": "static_oneway_screen",
+      "osm_node_id": 7510862066,
+      "osm_way_id": 122269604,
+      "native_segment_index_zero_based": 4,
+      "previous_leg_sequence": 17,
+      "next_leg_sequence": 18,
+      "station_key": "CR_HB_LABEL:vadala road",
+      "reversal_at_scheduled_stop": true,
+      "native_way_tags": {
+        "electrified": "contact_line",
+        "gauge": "1676",
+        "name": "Central Railway (Harbour Line)",
+        "oneway": "reversible",
+        "passenger_lines": "2",
+        "railway": "rail"
+      },
+      "timed_boundary_service_evidence": [
+        {
+          "train_number": "98901",
+          "boundary_arrival_hhmm": "06:58",
+          "boundary_departure_hhmm": "07:02",
+          "boundary_dwell_seconds": 240,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "07:02",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "2",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98901"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "06:58",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "3",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98901"
+            }
+          ]
+        },
+        {
+          "train_number": "98903",
+          "boundary_arrival_hhmm": "07:54",
+          "boundary_departure_hhmm": "08:02",
+          "boundary_dwell_seconds": 480,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "08:02",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "3",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98903"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "07:54",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "4",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98903"
+            }
+          ]
+        },
+        {
+          "train_number": "98905",
+          "boundary_arrival_hhmm": "08:40",
+          "boundary_departure_hhmm": "08:45",
+          "boundary_dwell_seconds": 300,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "08:45",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "4",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98905"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "08:40",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "4",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98905"
+            }
+          ]
+        },
+        {
+          "train_number": "98907",
+          "boundary_arrival_hhmm": "11:39",
+          "boundary_departure_hhmm": "11:42",
+          "boundary_dwell_seconds": 180,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "11:42",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "7",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98907"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "11:39",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "7",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98907"
+            }
+          ]
+        },
+        {
+          "train_number": "98909",
+          "boundary_arrival_hhmm": "17:36",
+          "boundary_departure_hhmm": "17:41",
+          "boundary_dwell_seconds": 300,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "17:41",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "12",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98909"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "17:36",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "13",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98909"
+            }
+          ]
+        },
+        {
+          "train_number": "98911",
+          "boundary_arrival_hhmm": "18:02",
+          "boundary_departure_hhmm": "18:06",
+          "boundary_dwell_seconds": 240,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "18:06",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "13",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98911"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "18:02",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "13",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98911"
+            }
+          ]
+        },
+        {
+          "train_number": "98913",
+          "boundary_arrival_hhmm": "18:32",
+          "boundary_departure_hhmm": "18:37",
+          "boundary_dwell_seconds": 300,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "18:37",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "13",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98913"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "18:32",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "14",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98913"
+            }
+          ]
+        },
+        {
+          "train_number": "98915",
+          "boundary_arrival_hhmm": "19:35",
+          "boundary_departure_hhmm": "19:39",
+          "boundary_dwell_seconds": 240,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "19:39",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "14",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98915"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "19:35",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "15",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98915"
+            }
+          ]
+        },
+        {
+          "train_number": "98917",
+          "boundary_arrival_hhmm": "20:36",
+          "boundary_departure_hhmm": "20:42",
+          "boundary_dwell_seconds": 360,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "20:42",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "15",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98917"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "20:36",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "16",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98917"
+            }
+          ]
+        }
+      ],
+      "status": "geometry_reversal_only_dwell_does_not_establish_operating_permission_or_train_clearance"
+    },
+    {
+      "pattern_id": "3b3f515d3b07360bd1f0e545a23fd08594d8505a8cb14c8291ba66844f307b96",
+      "variant": "static_oneway_screen",
+      "osm_node_id": 7510862067,
+      "osm_way_id": 1317052386,
+      "native_segment_index_zero_based": 4,
+      "previous_leg_sequence": 10,
+      "next_leg_sequence": 11,
+      "station_key": "CR_HB_LABEL:vadala road",
+      "reversal_at_scheduled_stop": true,
+      "native_way_tags": {
+        "IR:zone": "CR:CSMT",
+        "electrified": "contact_line",
+        "frequency": "50",
+        "gauge": "1676",
+        "name": "Central Railway (Harbour Line)",
+        "network": "CR",
+        "note": "if railway dont use \"oneway\" tag, correct tag is \"railway:preferred_direction\" (see https://wiki.openstreetmap.org/wiki/OpenRailwayMap/Tagging)",
+        "operator": "IR",
+        "passenger_lines": "2",
+        "railway": "rail",
+        "railway:preferred_direction": "forward",
+        "railway:traffic_mode": "passenger",
+        "usage": "main",
+        "voltage": "25000"
+      },
+      "timed_boundary_service_evidence": [
+        {
+          "train_number": "98902",
+          "boundary_arrival_hhmm": "08:06",
+          "boundary_departure_hhmm": "08:10",
+          "boundary_dwell_seconds": 240,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "08:10",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "3",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98902"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "08:06",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "4",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98902"
+            }
+          ]
+        },
+        {
+          "train_number": "98904",
+          "boundary_arrival_hhmm": "09:17",
+          "boundary_departure_hhmm": "09:20",
+          "boundary_dwell_seconds": 180,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "09:20",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "5",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98904"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "09:17",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "5",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98904"
+            }
+          ]
+        },
+        {
+          "train_number": "98906",
+          "boundary_arrival_hhmm": "10:10",
+          "boundary_departure_hhmm": "10:14",
+          "boundary_dwell_seconds": 240,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "10:14",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "6",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98906"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "10:10",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "6",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98906"
+            }
+          ]
+        },
+        {
+          "train_number": "98908",
+          "boundary_arrival_hhmm": "12:55",
+          "boundary_departure_hhmm": "13:01",
+          "boundary_dwell_seconds": 360,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "13:01",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "8",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98908"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "12:55",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "9",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98908"
+            }
+          ]
+        },
+        {
+          "train_number": "98910",
+          "boundary_arrival_hhmm": "19:06",
+          "boundary_departure_hhmm": "19:11",
+          "boundary_dwell_seconds": 300,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "19:11",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "14",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98910"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "19:06",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "14",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98910"
+            }
+          ]
+        },
+        {
+          "train_number": "98912",
+          "boundary_arrival_hhmm": "19:38",
+          "boundary_departure_hhmm": "19:43",
+          "boundary_dwell_seconds": 300,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "19:43",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "14",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98912"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "19:38",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "15",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98912"
+            }
+          ]
+        },
+        {
+          "train_number": "98914",
+          "boundary_arrival_hhmm": "20:18",
+          "boundary_departure_hhmm": "20:26",
+          "boundary_dwell_seconds": 480,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "20:26",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "15",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98914"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "20:18",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "16",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98914"
+            }
+          ]
+        },
+        {
+          "train_number": "98916",
+          "boundary_arrival_hhmm": "20:56",
+          "boundary_departure_hhmm": "21:03",
+          "boundary_dwell_seconds": 420,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "21:03",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "16",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98916"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "20:56",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "16",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98916"
+            }
+          ]
+        },
+        {
+          "train_number": "98918",
+          "boundary_arrival_hhmm": "22:11",
+          "boundary_departure_hhmm": "22:20",
+          "boundary_dwell_seconds": 540,
+          "source_references": [
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "22:20",
+              "source_id": "cr_public_harbour_down_20260501",
+              "source_page": "17",
+              "source_sha256": "7774ae4aacc1d0ccf5d07ce10f557c37fdcac0550385f7e856d6c934d97a8a78",
+              "train_number": "98918"
+            },
+            {
+              "aligned_station_row_label": "Vadala Road",
+              "printed_local_hhmm": "22:11",
+              "source_id": "cr_public_harbour_up_20260501",
+              "source_page": "18",
+              "source_sha256": "a06d17e7c3173e1bebe51f9601a82abef427b8ba34b171ad9e86b577269e3664",
+              "train_number": "98918"
+            }
+          ]
+        }
+      ],
+      "status": "geometry_reversal_only_dwell_does_not_establish_operating_permission_or_train_clearance"
+    }
+  ],
+  "pattern_rows": 62,
+  "segment_traversal_rows": 22348,
+  "service_rows": 1752,
+  "interval_rows": 27710,
+  "limitations": [
+    "Paths minimise horizontal geometric distance through all candidate stops jointly; consecutive legs share their intermediate boarding node.",
+    "Geometry-only paths ignore directions. The second variant screens static explicit oneway tags but permits unresolved directions as candidates only.",
+    "Preferred direction is retained as evidence, not treated as an absolute prohibition. Conditional directions remain unresolved.",
+    "Track switches, reversal feasibility, signals, gauge compatibility, current operating status and service-specific platform allocation are not established.",
+    "Immediate reversal diagnostics retain source boundary clocks; dwell does not prove permission or train clearance, and repeated variants are not additional services.",
+    "Sidings and yard tracks remain in the geometry graph; shortest paths are not proof of passenger operating routes.",
+    "Timetable distances/time ratios are diagnostics, not observed speed, free-flow speed or capacity. Clock roles, minute precision and calendars remain unresolved.",
+    "Incomplete external branches and mixed timetable vintages retain their source status. No service is eligible for schedule export."
+  ],
+  "tagging_references": [
+    "https://wiki.openstreetmap.org/wiki/Key:oneway",
+    "https://wiki.openstreetmap.org/wiki/Key:railway:preferred_direction"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/switch_eiv22_brochure_dc21e343fa8006d7.pdf",
+      "url": "https://www.switchmobilityev.com/themes/custom/switchmobility/resources/pdf/Eiv-22-Brochure_v4-low.pdf",
+      "final_url": "https://www.switchmobilityev.com/themes/custom/switchmobility/resources/pdf/Eiv-22-Brochure_v4-low.pdf",
+      "source": "Switch EiV22 manufacturer brochure",
+      "licence": "Manufacturer publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:56:33.710259+00:00",
+      "sha256": "dc21e343fa8006d72008126bc6d9cd8f80dde509149a988bc95d941c977c61b8",
+      "bytes": 2374269,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Manufacturer product specifications, not a dated BEST registration certificate, current fleet or route allocation. Inspect passenger and driver distinctions and standing limits."
+    }
+  ]
+}

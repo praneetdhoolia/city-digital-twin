@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/demand/mrvc_gender_tiss_study_f3b77e0729ee49dc.pdf",
+      "url": "https://mrvc.indianrailways.gov.in/works/uploads/File/Gender%20Study%20Report%20by%20TISS%281%29.pdf",
+      "final_url": "https://mrvc.indianrailways.gov.in/works/uploads/File/Gender%20Study%20Report%20by%20TISS%281%29.pdf",
+      "source": "MRVC/TISS study: Engendering Mumbai suburban railway system",
+      "licence": "MRVC/TISS publication; reuse terms unverified",
+      "retrieved": "2026-09-18T21:20:30.687232+00:00",
+      "sha256": "f3b77e0729ee49dcccdf0edf93834a05e846f788403987c7c8319254104b37f9",
+      "bytes": 4787839,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Gender, access, interchange and passenger experience survey evidence. Survey date, sample frame, weighting and reported-versus-observed measures require extraction before use in demand or accessibility calibration."
+    }
+  ]
+}

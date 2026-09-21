@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "source": "derived",
+  "status": "evidence_only",
+  "station_chain": [
+    "ARYJ",
+    "SEPZ",
+    "MIDC",
+    "MNK",
+    "CSIA",
+    "SHRR",
+    "CIAD",
+    "STZM",
+    "VIDN",
+    "BDRM",
+    "DHAV",
+    "SDIT",
+    "DDRM",
+    "SIDV",
+    "WOR",
+    "ACA",
+    "SCMU",
+    "MLXM",
+    "MCLM",
+    "GTRM",
+    "GIRG",
+    "KLBD",
+    "CSTM",
+    "HUC",
+    "CHGM",
+    "VIDB",
+    "CUP"
+  ],
+  "directed_segments": 26,
+  "reverse_chain_consistent": true,
+  "published_segment_distance_sum_m": "33613.000",
+  "published_end_to_end_distance_m": "33614.000",
+  "published_reverse_distance_m": "33614.000",
+  "distance_difference_m": "-1.000",
+  "missing_in_station_detail_but_present_in_journey": [
+    [
+      "DHAV",
+      "SDIT"
+    ],
+    [
+      "ACA",
+      "SCMU"
+    ]
+  ],
+  "zero_time_segments": 26,
+  "forward_source_sha256": "cd20230764c1fc6735e6247554ad5b5ccab6f19dab0746acdd8597739ea42af0",
+  "reverse_source_sha256": "7eae4e588866ffd11a40fcd5082f66a29c1fbc08326ac0178e337ca4874c95a9",
+  "limitations": [
+    "Published segment distance is not surveyed alignment geometry.",
+    "The opposite-direction journey validates topology, not equal segment running times.",
+    "Zero duration at positive distance is unusable. No running time has been inferred.",
+    "Adjacent single fares cannot be added to calculate through fares.",
+    "The operator internal line_no is not the public metro line number.",
+    "Responses requested for 18 September 2026 do not establish other dates or timetables."
+  ]
+}

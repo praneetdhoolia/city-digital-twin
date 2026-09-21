@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/research/osm_wiki_psv_20260919_8ce0d2fd2c480d9b.html",
+      "url": "https://wiki.openstreetmap.org/wiki/Key:psv",
+      "final_url": "https://wiki.openstreetmap.org/wiki/Key:psv",
+      "source": "OpenStreetMap psv tag semantics",
+      "licence": "CC-BY-SA 2.0 (OpenStreetMap Wiki content; individual media may differ)",
+      "retrieved": "2026-09-18T21:48:49.276577+00:00",
+      "sha256": "8ce0d2fd2c480d9b396be8452320e9b42165753d9ec1e875ba0e98aa729a1afd",
+      "bytes": 71256,
+      "content_type": "text/html; charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Tag documentation snapshot; describes mapper conventions, not a traffic regulation or an observation of current access."
+    }
+  ]
+}

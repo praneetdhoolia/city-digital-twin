@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_metro_dpr_10_metro_line_10_gaimukh_to_shivaji_chowk_6e91ceb239f6b406.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%2010.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%2010.pdf",
+      "content_type": "application/pdf",
+      "source": "10 Metro Line 10 - GAIMUKH TO SHIVAJI CHOWK (MIRA ROAD) Download (11.34 MB)",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:18:11.588987+00:00",
+      "sha256": "6e91ceb239f6b406e50add30f3aa7972f5c4715e444e87d7adb5f62cae78d1c8",
+      "bytes": 11889661,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

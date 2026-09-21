@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/research/worldbank_mumbai_poverty_transport_2005_b36745e6413a8ca0.pdf",
+      "url": "https://documents1.worldbank.org/curated/en/891271468258270484/pdf/wps3693.pdf",
+      "final_url": "https://documents1.worldbank.org/curated/en/891271468258270484/pdf/wps3693.pdf",
+      "content_type": "application/pdf;charset=utf-8",
+      "source": "World Bank Mumbai household travel survey 2004 findings",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T09:33:43.247309+00:00",
+      "sha256": "b36745e6413a8ca06292b59e536cb44311613e2c58defd5097a94e555031d0ff",
+      "bytes": 936846,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Research or historical survey evidence. Published estimates are not current local observations; microdata and source-specific restrictions require separate verification.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

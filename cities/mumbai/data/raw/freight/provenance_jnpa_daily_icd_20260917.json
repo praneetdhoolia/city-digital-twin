@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/freight/jnpa_daily_icd_20260917_b9d7ea7a4ae15730.pdf",
+      "url": "https://www.jnport.gov.in/uploads/content_manager/ICD_DAILY_REPORT_17-SEP-2026.pdf",
+      "final_url": "https://www.jnport.gov.in/uploads/content_manager/ICD_DAILY_REPORT_17-SEP-2026.pdf",
+      "content_type": "application/pdf",
+      "source": "JNPA daily ICD report dated 17 September 2026",
+      "licence": "Government/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:59:26.434157+00:00",
+      "sha256": "b9d7ea7a4ae15730166b586511b6eea9ca41d2dd9aa6fb91559ec7ff7bb25ac7",
+      "bytes": 412645,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published operations evidence. Separate departure events, daily reports, forecasts and capacity; no all-day timetable or citywide freight demand implied.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

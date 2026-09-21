@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/roads/mumbai_road_safety_2022_787fbe2e2d844a75.pdf",
+      "url": "https://cdnbbsr.s3waas.gov.in/s3d827f12e35eae370ba9c65b7f6026695/uploads/2025/02/20250221790585547.pdf",
+      "final_url": "https://cdnbbsr.s3waas.gov.in/s3d827f12e35eae370ba9c65b7f6026695/uploads/2025/02/20250221790585547.pdf",
+      "content_type": "application/pdf",
+      "source": "Mumbai Road Safety Annual Report 2022",
+      "licence": "Operator or government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:25:58.441011+00:00",
+      "sha256": "787fbe2e2d844a758c80e7d35e0fe27f8741597cd4a16531691cebd8c508aadc",
+      "bytes": 6176028,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published document with source period retained; validate observed definitions, current operational relevance and spatial coverage.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

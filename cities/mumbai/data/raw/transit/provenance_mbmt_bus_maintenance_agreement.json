@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mbmt_bus_maintenance_agreement_c3b62613154125c6.pdf",
+      "url": "https://www.mbmc.gov.in/assets/uploads/file-8286.pdf",
+      "final_url": "https://www.mbmc.gov.in/assets/uploads/file-8286.pdf",
+      "source": "MBMT Agreement regarding maintenance and repair responsibility of buses in Mira-Bhayandar area on Gross Cost Contract (GCC) basis",
+      "licence": "Municipal/operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T16:02:51.335023+00:00",
+      "sha256": "c3b62613154125c66eabc48ffd7aa45e76d443a282791dd701c20469f92b755d",
+      "bytes": 9562432,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published contract, budget or notice. Procurement and planned service are not current operating observations."
+    }
+  ]
+}

@@ -102,6 +102,21 @@ def test_a_gate_stop_is_closed_out_with_a_record(run_dir):
     assert written(run_dir)['completion'] == 'stopped_at_gate'
 
 
+def test_development_case_records_completion_without_calibration_readers(run_dir, monkeypatch):
+    mirrored = []
+    def refuse(*args, **kwargs):
+        pytest.fail('A development record must not invoke calibrated-city readers')
+    monkeypatch.setattr(run_matsim.results_store, 'mirror', mirrored.append)
+    monkeypatch.setattr(run_matsim.results_store, 'process', refuse)
+    monkeypatch.setattr(run_matsim.summarise_run, 'summarise', refuse)
+    doc = run_matsim.close_out(str(run_dir), run_matsim.RAN_TO_LAST,
+        rc=0, wall_s=1.0, reached_iteration=1,
+        extra={'run_kind': 'behavioural_smoke', 'calibrated': False})
+    assert doc['completion'] == run_matsim.RAN_TO_LAST
+    assert doc['calibrated'] is False
+    assert mirrored == [str(run_dir)]
+
+
 def test_the_record_states_the_LAST_ENDED_iteration_never_the_one_in_flight(run_dir):
     # The progress digest says 100; the log's ENDS markers stop at 1. Recording
     # the digest's figure would claim the run reached a milestone whose tables

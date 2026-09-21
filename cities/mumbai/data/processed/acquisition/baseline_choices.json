@@ -1,0 +1,39 @@
+{
+  "persons_count": 1282,
+  "persons_with_mobile_choices_count": 768,
+  "plans_added_by_mode": {
+    "pt": 597,
+    "taxi": 486,
+    "walk": 592,
+    "bike": 84,
+    "auto_rickshaw": 496,
+    "motorbike": 63,
+    "ride": 61,
+    "car": 44
+  },
+  "persons_by_plan_count": {
+    "1": 514,
+    "2": 147,
+    "3": 38,
+    "4": 268,
+    "5": 208,
+    "6": 80,
+    "7": 25,
+    "8": 2
+  },
+  "maximum_plans_per_person_count": 8,
+  "before_selected_demand_sha256": "3a313ec63528a6e31893c367708276e6eb1bcd4662f93a5d5e7af2b07e3e0dc6",
+  "after_selected_demand_sha256": "3a313ec63528a6e31893c367708276e6eb1bcd4662f93a5d5e7af2b07e3e0dc6",
+  "source": "derived_initial_choice_set_not_observed_mode_shares",
+  "input_sha256": {
+    "demand/baseline/plans_with_freight.xml.gz": "26df4512fc0e66b7d8766906e5b2d17d414334ab272b2d07bf5c43fef77cd573",
+    "registry/RUN_baseline_smoke.json": "316e69dbb2ec04c5acc397afd13d97198bf272c442c5a96f11f44bd76132ce9d"
+  },
+  "limitations": [
+    "Alternatives are unscored; only native execution can evaluate them.",
+    "Each added alternative uses one eligible mode for the whole day; the original mixed-mode plan is retained.",
+    "Subtour innovation can discover further mixed-mode combinations.",
+    "Eligibility, household coherence and behaviour retain the provisional baseline limitations.",
+    "No mode share or ridership observation determines these alternatives."
+  ]
+}

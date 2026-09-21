@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "purpose": "Candidate validation evidence, not a calibrated target set or fitted result.",
+  "observations": [
+    {
+      "id": "metro1_ridership_july_2026",
+      "source_id": "metro1_performance_chart_20260918",
+      "source_anchor": "Lower-right ridership tile; bottom-left as-of date",
+      "mode": "metro",
+      "operator": "Mumbai Metro One",
+      "metric": "operator_reported_ridership",
+      "value": 14032745,
+      "unit": "operator_reported_ridership_count",
+      "period_start": "2026-07-01",
+      "period_end": "2026-07-31",
+      "aggregation": "calendar_month",
+      "geography": "Versova-Andheri-Ghatkopar Line 1",
+      "source": "observed",
+      "status": "transcribed_not_yet_validation_target",
+      "limitations": [
+        "Counting convention must be reconciled with simulated boardings or linked journeys.",
+        "A calendar-month total is not a weekday mean or station-hour distribution.",
+        "Other tiles on the image are cumulative or promotional and are not monthly patronage."
+      ],
+      "source_sha256": "7469a6a11ba8a67863e8dcc1789508a6f10bbaf2347cf420da3d344cd64eeffd",
+      "source_url": "https://www.reliancemumbaimetro.com/images/PerformanceChart.jpg",
+      "transcription_method": "Visual operator image or published PDF text checked against the labelled table; no extrapolation"
+    },
+    {
+      "id": "jnpa_container_teu_august_2026",
+      "source_id": "jnpa_aug_2026_commodities",
+      "source_anchor": "PDF page 1, CONTAINER TOTAL (TEUs), Aug-2026 monthly column",
+      "mode": "freight",
+      "operator": "Jawaharlal Nehru Port Authority",
+      "metric": "container_throughput",
+      "value": 831956,
+      "unit": "TEU",
+      "period_start": "2026-08-01",
+      "period_end": "2026-08-31",
+      "aggregation": "calendar_month",
+      "geography": "JNPA all listed container terminals",
+      "source": "observed",
+      "status": "transcribed_provisional_not_movement_target",
+      "limitations": [
+        "Publication is provisional as of 1 September 2026.",
+        "TEUs are neither containers, trucks, rakes nor wagon counts.",
+        "Road, rail, transshipment and coastal shares need separate observations."
+      ],
+      "source_sha256": "5670c440697e1dfb02f991eaf04aa4106cb04118a5e3d4f5a00f1b80771f97ee",
+      "source_url": "https://www.jnport.gov.in/uploads/content_manager/ANNEXURE-1-_2026-27-Aug-2026.pdf",
+      "transcription_method": "Visual operator image or published PDF text checked against the labelled table; no extrapolation"
+    },
+    {
+      "id": "jnpa_rakes_fy_2025_26",
+      "source_id": "jnpa_operating_profile_20260918",
+      "source_sha256": "d07bb85f4ed1110602012250ed2a8720beab93b8df9af8d2c8fc079e37970b1f",
+      "source_url": "https://www.jnport.gov.in/page/operating-performance-profile/VlBENDQ1TFJ3anBGd3ZHNGFYWm12UT09",
+      "source_anchor": "Container movement by Rail; ICD traffic table, NO. OF Rakes, 2025-26 column",
+      "mode": "rail_freight",
+      "operator": "Jawaharlal Nehru Port Authority",
+      "metric": "operator_reported_rakes",
+      "value": 6531,
+      "unit": "rakes",
+      "period_start": "2025-04-01",
+      "period_end": "2026-03-31",
+      "aggregation": "financial_year",
+      "geography": "JN Port ICD traffic",
+      "source": "observed",
+      "status": "transcribed_not_yet_validation_target",
+      "limitations": [
+        "The unit is the operator-reported rake; loaded/empty and arrival/departure counting definitions remain to be reconciled.",
+        "An annual total does not supply daily departure times, terminal paths, train lengths or section occupancy."
+      ]
+    }
+  ]
+}

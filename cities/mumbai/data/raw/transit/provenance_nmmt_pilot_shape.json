@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_pilot_shape_4e743a8f13ba420a.xml",
+      "url": "https://nmmtservice.infinium.management/TransistService.asmx/GetRoutePoints?RouteId=5577",
+      "final_url": "https://nmmtservice.infinium.management/TransistService.asmx/GetRoutePoints?RouteId=5577",
+      "source": "NMMT public route 5577 GetRoutePoints",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:47:38.825835+00:00",
+      "sha256": "4e743a8f13ba420a7b16ca66d7a5efd2bee9b0b339ddf6ca08f4e800c9123d4b",
+      "bytes": 104432,
+      "content_type": "text/xml; charset=utf-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Pilot of route-specific public service data; selected from acquired route list."
+    }
+  ]
+}

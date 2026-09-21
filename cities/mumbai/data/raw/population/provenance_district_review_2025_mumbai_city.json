@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/district_review_2025_mumbai_city_55ed1b28efbde68b.pdf",
+      "url": "https://cdnbbsr.s3waas.gov.in/s31c87860778df9675a35aa14d3bee8776/uploads/2025/12/2025121642449457.pdf",
+      "final_url": "https://cdnbbsr.s3waas.gov.in/s31c87860778df9675a35aa14d3bee8776/uploads/2025/12/2025121642449457.pdf",
+      "content_type": "application/pdf",
+      "source": "District Social and Economic Review 2025 Dist. Mumbai City",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:10:11.362211+00:00",
+      "sha256": "55ed1b28efbde68b858abbb4902eaf75a5916f412878351567b94bb898c289c1",
+      "bytes": 4689435,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Government district socioeconomic review 2025. Each table has its own reference period; published projections remain projections.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

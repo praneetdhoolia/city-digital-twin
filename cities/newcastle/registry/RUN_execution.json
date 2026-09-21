@@ -1566,6 +1566,25 @@
       "decisions_ref": "9.164",
       "matsim_param": "routing.routingRandomness",
       "description": "The width of the random utility the least-cost-path router draws per agent, so that two agents with the same origin, destination and departure time need not take the same road. One of the 21 undeclared defaults (#155); declared at the framework's 3.0 so the shipped model is unchanged."
+    },
+    "RUN.qsim.mode_vehicle_fields": {
+      "value": {},
+      "units": "registry_field_mapping",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.182",
+      "description": "Explicit network-mode vehicle definitions. A nonempty mapping must cover exactly RUN.routing.network_modes and references scalar registry fields for length, width, PCE and explicit seated/standing passenger capacities, with an optional speed cap. All references resolve for each run, including overlays. Empty preserves the existing writer during migration; this city retains its present vehicle physics. No link permission, routing-time model, fleet dispatch or demand follows from declaring a type."
+    },
+    "RUN.routing.activity_link_assignment": {
+      "value": "common_modes",
+      "units": "policy",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.184",
+      "matsim_param": "activityLinks.assignment",
+      "description": "Activity-to-road assignment policy. common_modes retains the existing intersection of all usable mode networks. mode_specific_access retains each activity location and link and delegates mode-specific boarding/alighting connections to routed access/egress. The latter requires accessEgressModeToLink or accessEgressModeToLinkPlusTimeConstant and independently validated access routing; it does not confer legal road access or supply a passenger fleet."
     }
   }
 }

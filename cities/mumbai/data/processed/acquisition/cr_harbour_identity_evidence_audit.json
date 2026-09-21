@@ -1,0 +1,23 @@
+{
+  "reference_rows": 5,
+  "abbreviation_rows": 3,
+  "proposals": 4,
+  "harbour_neighbour_triplets": 112,
+  "wr_named_grid_triplets": 56,
+  "scoped_corridor_identity": {
+    "station_key": "CR_THB_CODE:SNPD",
+    "proposed_code": "SNCR",
+    "timetable_occurrences": 120,
+    "mapped_route_triplets": 2
+  },
+  "unresolved_source_keys": [],
+  "limitations": [
+    "Ramnagar remains the observed Harbour label; Ram Mandir is a derived correction proposal, not rewritten source text.",
+    "Mahim Jn and Mahim are linked by the junction qualifier; this is a scoped derivation, not an exact-name observation.",
+    "Jogeshwari AT and Jogeshwari share JOS in the reference; the code cannot distinguish Harbour and Western platforms.",
+    "Reference documents have different dates; no schedule time or calendar is copied across vintages.",
+    "Repeated grid pages and duplicated glossary pages are not independent sources or extra observations.",
+    "The timetable SNPD key is linked to the mapped passenger station only in its anchored corridor context; no global car-shed alias is created.",
+    "Opposite mapped route relations share one OSM source and do not independently verify current operation or timetable applicability."
+  ]
+}

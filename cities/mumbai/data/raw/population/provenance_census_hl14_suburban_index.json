@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_hl14_suburban_index_aa86335aa389554a.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/9816",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/9816",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "HL-14 household amenities and assets Mumbai Suburban 2011",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:50:34.962558+00:00",
+      "sha256": "aa86335aa389554a51d35a9d347cf02c617e870da817a5c975815003a7854b20",
+      "bytes": 179416,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "2011 non-institutional households; household asset possession is not vehicle count or current ownership.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

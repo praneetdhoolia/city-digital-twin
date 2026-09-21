@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "source": "derived",
+  "purpose": "Acquisition overcoverage, not a simulation boundary",
+  "source_administrative_extents": [
+    {
+      "source_id": "iitb_boundary_mumbai_city",
+      "sha256": "c2a74e27c913c5eba8ff35bdedb32b9148aa8296fedf081d591a21b8266de465"
+    },
+    {
+      "source_id": "iitb_boundary_mumbai_suburban",
+      "sha256": "29023227dc794aefa535a18bfc28ffafed5cd5b4b9037588d3d28c7e62064e4e"
+    },
+    {
+      "source_id": "iitb_boundary_palghar",
+      "sha256": "7996d29bd1ea41de6cf97ed8920871080211aa602942b24f2b3b5884819438ae"
+    },
+    {
+      "source_id": "iitb_boundary_thane",
+      "sha256": "82ba2c2c3165e5062ddfa441aa7dac7bf142bcc8286a5da608a6ab57a239358c"
+    },
+    {
+      "source_id": "iitb_boundary_raigad",
+      "sha256": "24f9cb3d7e86badce003b1c6df644abe999769a406df2b41dd3b45e291b664d2"
+    }
+  ],
+  "boundary_audit_sha256": "8e7aa70e9afdc54f88360833ead68b91118a67fb4756d942e8f206646fa81d31",
+  "extent_wgs84": [
+    72.6466890177437,
+    17.85028531100463,
+    73.795467531648,
+    20.22830255910601
+  ],
+  "ghsl_grid_sha256": "e71f66bcb47b5eaa1881871cb41c12fc2db2affb2f6a0b8fe21c939926a6a3e6",
+  "ghsl_tiles": [
+    "R7_C26"
+  ],
+  "dem_tile_list_sha256": "10604e3052c98a09e9216f1a8f0a555a04148419757575f783d4937fd44316dc",
+  "dem_tiles": [
+    "Copernicus_DSM_COG_10_N17_00_E073_00_DEM",
+    "Copernicus_DSM_COG_10_N18_00_E072_00_DEM",
+    "Copernicus_DSM_COG_10_N18_00_E073_00_DEM",
+    "Copernicus_DSM_COG_10_N19_00_E072_00_DEM",
+    "Copernicus_DSM_COG_10_N19_00_E073_00_DEM",
+    "Copernicus_DSM_COG_10_N20_00_E072_00_DEM",
+    "Copernicus_DSM_COG_10_N20_00_E073_00_DEM"
+  ],
+  "selected_source_ids": [
+    "ghs_pop_e2020_globe_r2023a_54009_100_v1_0_r7_c26",
+    "ghs_pop_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
+    "ghs_built_s_e2020_globe_r2023a_54009_100_v1_0_r7_c26",
+    "ghs_built_s_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
+    "ghs_built_s_nres_e2020_globe_r2023a_54009_100_v1_0_r7_c26",
+    "ghs_built_s_nres_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
+    "ghs_built_v_e2020_globe_r2023a_54009_100_v1_0_r7_c26",
+    "ghs_built_v_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
+    "ghs_built_v_nres_e2020_globe_r2023a_54009_100_v1_0_r7_c26",
+    "ghs_built_v_nres_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
+    "ghs_built_h_agbh_e2018_globe_r2023a_54009_100_v1_0_r7_c26",
+    "ghs_built_h_anbh_e2018_globe_r2023a_54009_100_v1_0_r7_c26",
+    "copernicus_dsm_cog_10_n17_00_e073_00_dem",
+    "copernicus_dsm_cog_10_n18_00_e072_00_dem",
+    "copernicus_dsm_cog_10_n18_00_e073_00_dem",
+    "copernicus_dsm_cog_10_n19_00_e072_00_dem",
+    "copernicus_dsm_cog_10_n19_00_e073_00_dem",
+    "copernicus_dsm_cog_10_n20_00_e072_00_dem",
+    "copernicus_dsm_cog_10_n20_00_e073_00_dem"
+  ],
+  "limitations": [
+    "Whole historical administrative extents overcover MMR.",
+    "Projected-envelope tile intersection is conservative and does not repair source boundary polygons.",
+    "No population or elevation value has been assigned to a simulation."
+  ]
+}

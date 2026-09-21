@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/cidco_metro_project_ec76add2b4078e47.html",
+      "url": "https://cidco.maharashtra.gov.in/Page?Token=92BA1874285",
+      "final_url": "https://cidco.maharashtra.gov.in/Page?Token=92BA1874285",
+      "content_type": "text/html; charset=utf-8",
+      "source": "Navi Mumbai Metro official project information",
+      "licence": "Public authority publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:47:18.284581+00:00",
+      "sha256": "ec76add2b4078e478ad7e02808053739f57b9497cb03af21547d4ac19e0ff7c8",
+      "bytes": 70916,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Dated service evidence; operating changes and attachment completeness require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

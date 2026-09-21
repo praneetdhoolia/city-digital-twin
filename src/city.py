@@ -103,6 +103,31 @@ def rel(absolute):
     return os.path.relpath(absolute, CITY_DIR).replace(os.sep, '/')
 
 
+def network_osm_inputs():
+    """Ordered native XML inputs declared by the city, with legacy defaults."""
+    declared = descriptor().get('osm_network_inputs', [
+        'networks/osm/roads.osm', 'networks/osm/railways.osm',
+        'networks/osm/signals.osm', 'networks/osm/footways.osm'])
+    if not isinstance(declared, list) or not declared:
+        raise CityError('osm_network_inputs must be a nonempty list of city-relative XML paths')
+    resolved = []
+    root = os.path.realpath(CITY_DIR)
+    for entry in declared:
+        if not isinstance(entry, str) or not entry.endswith(('.osm', '.osm.gz')):
+            raise CityError('OSM network input must end in .osm or .osm.gz')
+        if os.path.isabs(entry) or os.path.splitdrive(entry)[0]:
+            raise CityError('OSM network input must be city-relative')
+        absolute = os.path.realpath(path(entry))
+        if os.path.commonpath([root, absolute]) != root:
+            raise CityError('OSM network input escapes the city directory')
+        if os.path.dirname(os.path.relpath(absolute, root)).replace(os.sep, '/') != 'networks/osm':
+            raise CityError('OSM network inputs must be files under networks/osm/')
+        if absolute in resolved:
+            raise CityError('Duplicate OSM network input: ' + entry)
+        resolved.append(absolute)
+    return resolved
+
+
 def available():
     """Every city this repository carries, whether or not it is complete."""
     if not os.path.isdir(CITIES_DIR):

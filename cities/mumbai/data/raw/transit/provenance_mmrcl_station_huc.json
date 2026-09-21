@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_huc_e353cac2882eec2c.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/HUC/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/HUC/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Hutatma Chowk",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:41.963887+00:00",
+      "sha256": "e353cac2882eec2ce3ba30b639143cd0bdc3e69fb25d22368d8d4bc7942b7bbc",
+      "bytes": 50783,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

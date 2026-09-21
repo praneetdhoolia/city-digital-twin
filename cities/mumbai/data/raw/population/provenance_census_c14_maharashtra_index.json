@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_c14_maharashtra_index_1e379525a85fde18.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/1562",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/1562",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Population by five-year age group and sex Maharashtra 2011 catalogue search",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:53:48.434036+00:00",
+      "sha256": "1e379525a85fde1820f09bfaaa39673914f582a12d4e5890984a82765dd781a4",
+      "bytes": 83928,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical census control; definition, geographical universe and contemporary adjustment require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

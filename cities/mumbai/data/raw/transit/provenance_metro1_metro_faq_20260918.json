@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/metro1_metro_faq_20260918_30fd50e943e25ab8.html",
+      "url": "https://www.reliancemumbaimetro.com/metro-faq",
+      "final_url": "https://www.reliancemumbaimetro.com/metro-faq",
+      "content_type": "text/html; charset=utf-8",
+      "source": "Metro One metro-faq",
+      "licence": "Public authority or operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:15:40.581117+00:00",
+      "sha256": "30fd50e943e25ab850a20e1a8ba8b90f6f6209fac80249261abadb5a7b6875ee",
+      "bytes": 105631,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/employment/ec_2013_materials_df2778ebb1b7a5f9.html",
+      "url": "https://microdata.gov.in/NADA/index.php/catalog/47/related-materials",
+      "final_url": "https://microdata.gov.in/NADA/index.php/catalog/47/related-materials",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "ec 2013 materials",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:19:32.660647+00:00",
+      "sha256": "df2778ebb1b7a5f92e4b381b7f1d219b7c2919f485677cd2955a69f8b58163ff",
+      "bytes": 84182,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public economic census documentation or aggregate data catalogue; not acquired restricted unit records.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

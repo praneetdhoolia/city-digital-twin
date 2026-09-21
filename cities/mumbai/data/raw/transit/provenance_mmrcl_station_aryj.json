@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_aryj_bc7688a58be683b5.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/ARYJ/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/ARYJ/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Aarey JVLR",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:15.089801+00:00",
+      "sha256": "bc7688a58be683b5ca824e328a9edac238802dbbb60550eddce39fb58bda5f73",
+      "bytes": 21470,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

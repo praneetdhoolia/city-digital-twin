@@ -2330,5 +2330,17 @@
    "lane": "J8 mobile-phone OD (new row, residual)",
    "query": "Whether an LBS/mobile OD product covering the five LGAs is obtainable and at what aggregation (TfNSW has used DataSpark/Telstra-derived OD for Greater Sydney); the 2021 ABS journey-to-work OD via TableBuilder is the disclosed fallback the package does not yet hold (2011 vintage in use)."
   }
- ]
+ ],
+ "review_attempt": {
+  "stamp": "20260918T182209",
+  "date": "2026-09-18",
+  "head": "e37035d",
+  "method": "Three delegated reviewers stopped on workspace credit errors. Coordinator preserved available evidence and continued locally. Unreviewed scopes remain explicit gaps.",
+  "reused": 101,
+  "refreshed": 0,
+  "added": 0,
+  "searches": 1,
+  "fetches": 4,
+  "gap": "Full fresh implementation classification of all factors is unfinished. No old IN/PARTIAL/OUT status is claimed as current."
+ }
 }

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/education/mospi_udise_2024-25_maharashtra_indicator_28_page_1_3bd71e338ea1af81.json",
+      "url": "https://api.mospi.gov.in/api/udise/getUdiseRecords?indicator_code=28&year=2024-25&state_code=16&limit=200&page=1&Format=JSON",
+      "final_url": "https://api.mospi.gov.in/api/udise/getUdiseRecords?indicator_code=28&year=2024-25&state_code=16&limit=200&page=1&Format=JSON",
+      "content_type": "application/json; charset=utf-8",
+      "source": "NSO UDISE Maharashtra 2024-25 indicator 28",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:23:56.590230+00:00",
+      "sha256": "3bd71e338ea1af819bceeda677b51fd7cb35462666ca6cf1b7647ce15eb973ce",
+      "bytes": 23503,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "State-level aggregate; not a Mumbai local control or facility location. Pagination and indicator dimensions require validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,369 @@
+{
+  "source": "derived",
+  "inputs": [
+    {
+      "path": "networks/osm/network_source.osm.gz",
+      "sha256": "a7865ea1b59589c9202dd59711f57658ea02bfa6ca75bab373e4687ed3d91cf5"
+    }
+  ],
+  "counts": {
+    "attribute_rows": 232856,
+    "highway_ways": 232917,
+    "nonlinear_highway_ways_excluded": 61
+  },
+  "by_highway_class": {
+    "bridleway": {
+      "lanes_status:missing": 6,
+      "oneway_basis:not_tagged": 6,
+      "speed_limit_backward_status:missing": 6,
+      "speed_limit_forward_status:missing": 6,
+      "ways": 6
+    },
+    "bus_stop": {
+      "lanes_status:missing": 3,
+      "oneway_basis:not_tagged": 3,
+      "speed_limit_backward_status:missing": 3,
+      "speed_limit_forward_status:missing": 3,
+      "ways": 3
+    },
+    "busway": {
+      "lanes_status:missing": 27,
+      "lanes_status:oneway_total_identity": 16,
+      "lanes_status:unsplit_total": 36,
+      "oneway_basis:explicit": 74,
+      "oneway_basis:not_tagged": 5,
+      "speed_limit_backward_status:missing": 66,
+      "speed_limit_backward_status:normalised": 13,
+      "speed_limit_forward_status:missing": 66,
+      "speed_limit_forward_status:normalised": 13,
+      "ways": 79
+    },
+    "construction": {
+      "lanes_status:missing": 1128,
+      "lanes_status:oneway_total_identity": 81,
+      "lanes_status:unsplit_total": 7,
+      "oneway_basis:explicit": 498,
+      "oneway_basis:implied_by_osm_definition": 1,
+      "oneway_basis:not_tagged": 717,
+      "speed_limit_backward_status:missing": 1212,
+      "speed_limit_backward_status:normalised": 4,
+      "speed_limit_forward_status:missing": 1212,
+      "speed_limit_forward_status:normalised": 4,
+      "unresolved_speed_qualifier_keys:present": 1,
+      "ways": 1216
+    },
+    "corridor": {
+      "lanes_status:missing": 12,
+      "oneway_basis:not_tagged": 12,
+      "speed_limit_backward_status:missing": 12,
+      "speed_limit_forward_status:missing": 12,
+      "ways": 12
+    },
+    "cycleway": {
+      "lanes_status:missing": 438,
+      "oneway_basis:explicit": 17,
+      "oneway_basis:not_tagged": 421,
+      "speed_limit_backward_status:missing": 438,
+      "speed_limit_forward_status:missing": 438,
+      "ways": 438
+    },
+    "elevator": {
+      "lanes_status:missing": 4,
+      "oneway_basis:not_tagged": 4,
+      "speed_limit_backward_status:missing": 4,
+      "speed_limit_forward_status:missing": 4,
+      "ways": 4
+    },
+    "footway": {
+      "lane_or_direction_qualifier_keys:present": 40,
+      "lanes_status:conflict_or_invalid": 1,
+      "lanes_status:missing": 5615,
+      "lanes_status:unsplit_total": 3,
+      "oneway_basis:explicit": 12,
+      "oneway_basis:implied_by_osm_definition": 1,
+      "oneway_basis:not_tagged": 5606,
+      "speed_limit_backward_status:missing": 5619,
+      "speed_limit_forward_status:missing": 5619,
+      "ways": 5619
+    },
+    "living_street": {
+      "lanes_status:missing": 2979,
+      "lanes_status:unsplit_total": 42,
+      "oneway_basis:explicit": 13,
+      "oneway_basis:not_tagged": 3008,
+      "speed_limit_backward_status:missing": 3016,
+      "speed_limit_backward_status:normalised": 5,
+      "speed_limit_forward_status:missing": 3016,
+      "speed_limit_forward_status:normalised": 5,
+      "ways": 3021
+    },
+    "motorway": {
+      "lane_or_direction_qualifier_keys:present": 20,
+      "lanes_status:missing": 249,
+      "lanes_status:oneway_total_identity": 619,
+      "lanes_status:unsplit_total": 20,
+      "oneway_basis:explicit": 866,
+      "oneway_basis:implied_by_osm_definition": 22,
+      "speed_limit_backward_status:missing": 359,
+      "speed_limit_backward_status:normalised": 529,
+      "speed_limit_forward_status:missing": 359,
+      "speed_limit_forward_status:normalised": 529,
+      "unresolved_speed_qualifier_keys:present": 334,
+      "ways": 888
+    },
+    "motorway_link": {
+      "lanes_status:missing": 256,
+      "lanes_status:oneway_total_identity": 182,
+      "lanes_status:unsplit_total": 2,
+      "oneway_basis:explicit": 416,
+      "oneway_basis:not_tagged": 24,
+      "speed_limit_backward_status:missing": 393,
+      "speed_limit_backward_status:normalised": 47,
+      "speed_limit_forward_status:missing": 393,
+      "speed_limit_forward_status:normalised": 47,
+      "ways": 440
+    },
+    "path": {
+      "lanes_status:missing": 4789,
+      "lanes_status:unsplit_total": 2,
+      "oneway_basis:explicit": 11,
+      "oneway_basis:not_tagged": 4780,
+      "speed_limit_backward_status:missing": 4791,
+      "speed_limit_forward_status:missing": 4791,
+      "ways": 4791
+    },
+    "pedestrian": {
+      "lanes_status:missing": 343,
+      "lanes_status:unsplit_total": 2,
+      "oneway_basis:explicit": 8,
+      "oneway_basis:not_tagged": 337,
+      "speed_limit_backward_status:missing": 345,
+      "speed_limit_forward_status:missing": 345,
+      "ways": 345
+    },
+    "primary": {
+      "lanes_status:explicit_directional": 1,
+      "lanes_status:missing": 3448,
+      "lanes_status:oneway_total_identity": 1283,
+      "lanes_status:unsplit_total": 74,
+      "oneway_basis:explicit": 3876,
+      "oneway_basis:implied_by_osm_definition": 19,
+      "oneway_basis:not_tagged": 911,
+      "speed_limit_backward_status:missing": 4508,
+      "speed_limit_backward_status:normalised": 298,
+      "speed_limit_forward_status:missing": 4508,
+      "speed_limit_forward_status:normalised": 298,
+      "unresolved_speed_qualifier_keys:present": 174,
+      "ways": 4806
+    },
+    "primary_link": {
+      "lanes_status:missing": 626,
+      "lanes_status:oneway_total_identity": 88,
+      "lanes_status:unsplit_total": 2,
+      "oneway_basis:explicit": 328,
+      "oneway_basis:not_tagged": 388,
+      "speed_limit_backward_status:missing": 711,
+      "speed_limit_backward_status:normalised": 5,
+      "speed_limit_forward_status:missing": 711,
+      "speed_limit_forward_status:normalised": 5,
+      "unresolved_speed_qualifier_keys:present": 5,
+      "ways": 716
+    },
+    "proposed": {
+      "lanes_status:missing": 17,
+      "lanes_status:unsplit_total": 2,
+      "oneway_basis:explicit": 5,
+      "oneway_basis:not_tagged": 14,
+      "speed_limit_backward_status:missing": 17,
+      "speed_limit_backward_status:normalised": 2,
+      "speed_limit_forward_status:missing": 17,
+      "speed_limit_forward_status:normalised": 2,
+      "ways": 19
+    },
+    "residential": {
+      "lane_or_direction_qualifier_keys:present": 2,
+      "lanes_status:conflict_or_invalid": 3,
+      "lanes_status:explicit_directional": 1,
+      "lanes_status:missing": 121525,
+      "lanes_status:oneway_total_identity": 150,
+      "lanes_status:unsplit_total": 675,
+      "oneway_basis:explicit": 4993,
+      "oneway_basis:implied_by_osm_definition": 57,
+      "oneway_basis:not_tagged": 117304,
+      "speed_limit_backward_status:missing": 122055,
+      "speed_limit_backward_status:normalised": 299,
+      "speed_limit_forward_status:missing": 122055,
+      "speed_limit_forward_status:normalised": 299,
+      "unresolved_speed_qualifier_keys:present": 72,
+      "ways": 122354
+    },
+    "road": {
+      "lanes_status:missing": 33,
+      "oneway_basis:not_tagged": 33,
+      "speed_limit_backward_status:missing": 33,
+      "speed_limit_forward_status:missing": 33,
+      "ways": 33
+    },
+    "secondary": {
+      "lane_or_direction_qualifier_keys:present": 13,
+      "lanes_status:explicit_directional": 1,
+      "lanes_status:missing": 4616,
+      "lanes_status:oneway_total_identity": 877,
+      "lanes_status:unsplit_total": 131,
+      "oneway_basis:explicit": 4468,
+      "oneway_basis:implied_by_osm_definition": 23,
+      "oneway_basis:not_tagged": 1134,
+      "speed_limit_backward_status:missing": 5493,
+      "speed_limit_backward_status:normalised": 132,
+      "speed_limit_forward_status:missing": 5493,
+      "speed_limit_forward_status:normalised": 132,
+      "unresolved_speed_qualifier_keys:present": 69,
+      "ways": 5625
+    },
+    "secondary_link": {
+      "lanes_status:missing": 735,
+      "lanes_status:oneway_total_identity": 25,
+      "lanes_status:unsplit_total": 2,
+      "oneway_basis:explicit": 183,
+      "oneway_basis:not_tagged": 579,
+      "speed_limit_backward_status:missing": 761,
+      "speed_limit_backward_status:normalised": 1,
+      "speed_limit_forward_status:missing": 761,
+      "speed_limit_forward_status:normalised": 1,
+      "unresolved_speed_qualifier_keys:present": 1,
+      "ways": 762
+    },
+    "service": {
+      "lanes_status:missing": 42622,
+      "lanes_status:oneway_total_identity": 39,
+      "lanes_status:unsplit_total": 67,
+      "oneway_basis:explicit": 2829,
+      "oneway_basis:implied_by_osm_definition": 39,
+      "oneway_basis:non_static_or_unrecognised_oneway": 4,
+      "oneway_basis:not_tagged": 39856,
+      "speed_limit_backward_status:missing": 42609,
+      "speed_limit_backward_status:normalised": 119,
+      "speed_limit_forward_status:missing": 42609,
+      "speed_limit_forward_status:normalised": 119,
+      "unresolved_speed_qualifier_keys:present": 7,
+      "ways": 42728
+    },
+    "services": {
+      "lanes_status:missing": 5,
+      "oneway_basis:not_tagged": 5,
+      "speed_limit_backward_status:missing": 5,
+      "speed_limit_forward_status:missing": 5,
+      "ways": 5
+    },
+    "steps": {
+      "lane_or_direction_qualifier_keys:present": 12,
+      "lanes_status:missing": 2235,
+      "lanes_status:unsplit_total": 2,
+      "oneway_basis:explicit": 26,
+      "oneway_basis:not_tagged": 2211,
+      "speed_limit_backward_status:missing": 2237,
+      "speed_limit_forward_status:missing": 2237,
+      "ways": 2237
+    },
+    "stop": {
+      "lanes_status:missing": 1,
+      "oneway_basis:not_tagged": 1,
+      "speed_limit_backward_status:missing": 1,
+      "speed_limit_forward_status:missing": 1,
+      "ways": 1
+    },
+    "tertiary": {
+      "lane_or_direction_qualifier_keys:present": 5,
+      "lanes_status:conflict_or_invalid": 1,
+      "lanes_status:explicit_directional": 2,
+      "lanes_status:missing": 10891,
+      "lanes_status:oneway_total_identity": 731,
+      "lanes_status:unsplit_total": 345,
+      "oneway_basis:explicit": 5911,
+      "oneway_basis:implied_by_osm_definition": 62,
+      "oneway_basis:not_tagged": 5997,
+      "speed_limit_backward_status:missing": 11720,
+      "speed_limit_backward_status:normalised": 250,
+      "speed_limit_forward_status:missing": 11720,
+      "speed_limit_forward_status:normalised": 250,
+      "unresolved_speed_qualifier_keys:present": 79,
+      "ways": 11970
+    },
+    "tertiary_link": {
+      "lanes_status:missing": 979,
+      "lanes_status:oneway_total_identity": 10,
+      "lanes_status:unsplit_total": 5,
+      "oneway_basis:explicit": 99,
+      "oneway_basis:not_tagged": 895,
+      "speed_limit_backward_status:missing": 988,
+      "speed_limit_backward_status:normalised": 6,
+      "speed_limit_forward_status:missing": 988,
+      "speed_limit_forward_status:normalised": 6,
+      "unresolved_speed_qualifier_keys:present": 2,
+      "ways": 994
+    },
+    "track": {
+      "lanes_status:missing": 9347,
+      "lanes_status:unsplit_total": 6,
+      "oneway_basis:explicit": 64,
+      "oneway_basis:not_tagged": 9289,
+      "speed_limit_backward_status:missing": 9352,
+      "speed_limit_backward_status:normalised": 1,
+      "speed_limit_forward_status:missing": 9352,
+      "speed_limit_forward_status:normalised": 1,
+      "ways": 9353
+    },
+    "trunk": {
+      "lane_or_direction_qualifier_keys:present": 7,
+      "lanes_status:missing": 1517,
+      "lanes_status:oneway_total_identity": 1530,
+      "lanes_status:unsplit_total": 55,
+      "oneway_basis:explicit": 2824,
+      "oneway_basis:implied_by_osm_definition": 17,
+      "oneway_basis:not_tagged": 261,
+      "speed_limit_backward_status:missing": 2576,
+      "speed_limit_backward_status:normalised": 526,
+      "speed_limit_forward_status:missing": 2576,
+      "speed_limit_forward_status:normalised": 526,
+      "unresolved_speed_qualifier_keys:present": 13,
+      "ways": 3102
+    },
+    "trunk_link": {
+      "lanes_status:conflict_or_invalid": 1,
+      "lanes_status:missing": 681,
+      "lanes_status:oneway_total_identity": 263,
+      "lanes_status:unsplit_total": 18,
+      "oneway_basis:explicit": 623,
+      "oneway_basis:not_tagged": 340,
+      "speed_limit_backward_status:missing": 943,
+      "speed_limit_backward_status:normalised": 20,
+      "speed_limit_forward_status:missing": 943,
+      "speed_limit_forward_status:normalised": 20,
+      "unresolved_speed_qualifier_keys:present": 1,
+      "ways": 963
+    },
+    "unclassified": {
+      "lanes_status:missing": 10272,
+      "lanes_status:oneway_total_identity": 14,
+      "lanes_status:unsplit_total": 40,
+      "oneway_basis:explicit": 588,
+      "oneway_basis:implied_by_osm_definition": 8,
+      "oneway_basis:not_tagged": 9730,
+      "speed_limit_backward_status:missing": 10305,
+      "speed_limit_backward_status:normalised": 21,
+      "speed_limit_forward_status:missing": 10305,
+      "speed_limit_forward_status:normalised": 21,
+      "unresolved_speed_qualifier_keys:present": 1,
+      "ways": 10326
+    }
+  },
+  "interpretation": [
+    "All linear highway-tagged ways retained, including paths and construction; this is not a routability decision.",
+    "Directions follow OSM node order. No geographic left/right inference.",
+    "Missing oneway remains unresolved except the documented motorway and roundabout implication.",
+    "No equal split of two-way lane totals, class defaults, free-flow speeds or capacities are imputed.",
+    "One-way totals are resolved only without conflicting counts or lane/direction qualifiers.",
+    "Posted speed candidates preserve directional precedence and explicit units; they are not observed travel speeds.",
+    "Access, time conditions, reserved lanes, source currency and official notices must be resolved before model use."
+  ]
+}

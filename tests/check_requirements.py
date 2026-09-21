@@ -41,7 +41,11 @@ REPO = os.path.dirname(HERE)
 REQUIREMENTS = os.path.join(REPO, 'requirements.txt')
 ROOTS = ('src', 'tests', 'cities', 'run.py')
 SKIP_DIRS = {'.git', '__pycache__', '.tools', 'results', 'node_modules',
-             '.venv', 'archived'}
+             '.venv', 'archived',
+             # a city's raw downloads may include a third party's own client
+             # script (Mumbai landed the NSO API client); its imports are the
+             # publisher's, not this package's
+             'raw'}
 
 # Import name -> distribution name, for the few where they differ. Everything
 # else is assumed to be the same word, which is the common case; a wrong guess
@@ -50,6 +54,8 @@ DISTRIBUTION = {
     'dateutil': 'python-dateutil',
     'yaml': 'PyYAML',
     'PIL': 'Pillow',
+    'bs4': 'beautifulsoup4',
+    'pdfminer': 'pdfminer.six',
     'sklearn': 'scikit-learn',
     'osgeo': 'GDAL',
 }

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/morth_srtu_review_2019_2022_9a9d5693d3637218.pdf",
+      "url": "https://morth.gov.in/backend/documents/uploaded/Review%20of%20the%20performance%20of%20State%20Road%20Transport%20Undertakings%20for%202019-20%20to%202021-22.pdf",
+      "final_url": "https://morth.gov.in/backend/documents/uploaded/Review%20of%20the%20performance%20of%20State%20Road%20Transport%20Undertakings%20for%202019-20%20to%202021-22.pdf",
+      "source": "MoRTH review of state road transport undertakings 2019-20 to 2021-22",
+      "licence": "Government of India publication; reuse terms unverified",
+      "retrieved": "2026-09-18T15:50:16.561103+00:00",
+      "sha256": "9a9d5693d36372181d5db95c9f776e2f1d2debc942d6446bc166c5bd8562fd09",
+      "bytes": 7707357,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical operator-level physical and financial measures, including pandemic years; not current 2026 service demand."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmr_metro_dpr_6_metro_line_5_01c63ceb6b3cb219.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%205.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Metro%20Line%205.pdf",
+      "content_type": "application/pdf",
+      "source": "6 Metro Line 5 (Thane - Bhiwandi - Kalyan). Download (15.36 MB)",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:17:45.604420+00:00",
+      "sha256": "01c63ceb6b3cb219b0fd630de87d620219d831863be22347557057014e1b59f7",
+      "bytes": 16106378,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

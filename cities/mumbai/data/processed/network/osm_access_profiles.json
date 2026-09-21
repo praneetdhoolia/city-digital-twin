@@ -1,0 +1,2112 @@
+[
+  {
+    "access_profile_sha256": "00b1bab3857fec8dffb19cfa981a39b9d1620e43cbcf8bd142862ac6a465aee4",
+    "source_tags": {
+      "access": "permissive",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "01c2f56ba5ebb3e1f656720e1694cb97baf4e1e933b7e02dcca0add4285b4def",
+    "source_tags": {
+      "bicycle": "permissive",
+      "foot": "permissive",
+      "vehicle": "permit"
+    },
+    "referenced_ways_count": 5
+  },
+  {
+    "access_profile_sha256": "03f141f99493dfa478b87a9fcde7624a812bc28ea2f4cf12d0e8fc0f31d79db8",
+    "source_tags": {
+      "foot": "yes",
+      "motor_vehicle": "permissive"
+    },
+    "referenced_ways_count": 4
+  },
+  {
+    "access_profile_sha256": "045c686abee1b3b0d4fe424c4cde08730c0c894b925d6a91d8a0856a1af685ad",
+    "source_tags": {
+      "access": "designated",
+      "bus": "designated",
+      "psv": "designated"
+    },
+    "referenced_ways_count": 9
+  },
+  {
+    "access_profile_sha256": "04dbcfbe076724d0c8316f03f6a4f733efd142d3a2162de5504618e11b553f36",
+    "source_tags": {
+      "bicycle": "no",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 64
+  },
+  {
+    "access_profile_sha256": "04f0639f963a68e81967309347f10f920b9a70902c2e849d687fedbdd1a0fc90",
+    "source_tags": {
+      "access": "yes",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 36
+  },
+  {
+    "access_profile_sha256": "0543092cd38c4e00d20c445d9e0aa4ec337463097a3e2c00b52862e6574842ed",
+    "source_tags": {
+      "access": "private19.01324700, 73.01707500"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "059e03e4d812be030c0e388d5c09a55c55433d3e9493a0aecb43f0bcc7f67b9a",
+    "source_tags": {
+      "access": "no",
+      "bicycle": "no"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "0667ceddaed542519465af52e1148a288809d1d2a90f03cb49751e05b91fdfda",
+    "source_tags": {
+      "access": "private",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "0700d154f880fd75d52be67d6b9deee7320db6ef0f99f2972b76ba281357a473",
+    "source_tags": {
+      "access": "destination",
+      "foot": "destination"
+    },
+    "referenced_ways_count": 4
+  },
+  {
+    "access_profile_sha256": "079fec77687efdf0de84e8cd2b7bdbbaff914d9315f421e04a1dbf684f0883f3",
+    "source_tags": {
+      "access": "private",
+      "psv": "yes"
+    },
+    "referenced_ways_count": 10
+  },
+  {
+    "access_profile_sha256": "07d0d22bdec9338d3bbfde4ad192acee39f46bf037ef852f9c8aaf53c19e8923",
+    "source_tags": {
+      "access": "unknown",
+      "bicycle": "unknown",
+      "foot": "yes",
+      "motor_vehicle": "unknown"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "07e516bbc75b778ab5705a445d4923d1809227fc6127091052ef4efd6337f116",
+    "source_tags": {
+      "foot": "private",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "0982b4f73c1225ae94b4df7901a21b646d4eb2172c64aa1ffc12bfeff9e85f3a",
+    "source_tags": {
+      "foot": "yes",
+      "motor_vehicle": "private"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "09fe06334e54d93a25d1d0848dc82b10609548d68199a410126be42564c2dce8",
+    "source_tags": {
+      "access": "private",
+      "bus": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "0b463cc3bf77c512246891a1ea9faf6a6c1b3e069fe46cc39622ae282b6493e0",
+    "source_tags": {
+      "access": "no",
+      "motorcar": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "0b98a183831bfc277454a89931fb0ccd83ebc023cd2e1c39259a120909edf707",
+    "source_tags": {
+      "access": "permissive",
+      "foot": "designated",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "0c5bf397c314cb5095f8eeb985af901ea7e8ddd3c2c8457b0e0e753cc053684d",
+    "source_tags": {
+      "motor_vehicle": "designated"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "0c630d0b8b62ca8690173e31c62fbbc32731651edbe69136cb0f2c281fa0f4df",
+    "source_tags": {
+      "bicycle": "yes",
+      "foot": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "0c8e8a253d7f12d539a42ccaac2f11f01e1a7d8994ab9e3ab7d27d87dc2b345a",
+    "source_tags": {
+      "bicycle": "no",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 65
+  },
+  {
+    "access_profile_sha256": "0d2afd7072478067282c1aa963e60ff3f91ebb685f7be6f81090e9aa349c3076",
+    "source_tags": {
+      "foot": "yes",
+      "vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "0d548b49382ce1301d4bff381d310376fd6fc9fb75aff3cbabab7e0de9dd078a",
+    "source_tags": {
+      "access": "private",
+      "foot": "destination"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "0e6281d7be894fbd3faebe65f99fc083a5caff571dad5e33f9940b7211f7694c",
+    "source_tags": {
+      "access": "no",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 8
+  },
+  {
+    "access_profile_sha256": "0edfc54bd8d3c5736a5ff71d3746ad7525a52d6a7e2a1a54fcf59396f802789b",
+    "source_tags": {
+      "access": "permissive",
+      "bicycle": "no",
+      "bus": "yes",
+      "foot": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "0f37bacd050eebc19dd6a06a0773ddfc34311a586ce7912ab602f7c239c763ff",
+    "source_tags": {
+      "access": "yes",
+      "bicycle": "no",
+      "foot": "no"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "0f78266b86c010e677172a2472cba4569fab24258ddbe8e942261684b25b4050",
+    "source_tags": {
+      "access": "yes",
+      "bicycle": "yes",
+      "foot": "designated",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "0fce044919cf9275041cbc7c4ac1fb9f58511afe021832820c21ef3649e5ffa0",
+    "source_tags": {
+      "access": "permissive",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "permissive"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "0fe2a1d9ec03b2bbe3625ef84fddfb456109a639b97f3a620b0abc80455a6834",
+    "source_tags": {
+      "access": "permissive",
+      "bicycle": "no",
+      "foot": "no",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "1030f019ae69c91269ac168c777b3c23918127109123676946df8d7890bfa14d",
+    "source_tags": {
+      "foot": "customers",
+      "motor_vehicle": "designated"
+    },
+    "referenced_ways_count": 4
+  },
+  {
+    "access_profile_sha256": "11f1588eba7254e4f8df3e560332b6d288de8fb7eb96202872a77d057c67c4df",
+    "source_tags": {
+      "access": "permissive",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "12636f0f75835281a0229612aeef90af30e5fba041f9d632a815f2a0800fb6b0",
+    "source_tags": {
+      "motorcar": "no",
+      "motorcycle": "yes"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "12902283d1e652d7cbd8c7a8a8521102742e186a808418f0ca8a48abf3cf078d",
+    "source_tags": {
+      "bus": "designated",
+      "psv": "yes"
+    },
+    "referenced_ways_count": 6
+  },
+  {
+    "access_profile_sha256": "14c4675a9ac1c51ac91a4a89d3888287226a26b0734b2c09aa2a942fd6bf25f2",
+    "source_tags": {
+      "bicycle": "yes",
+      "motorcar": "no"
+    },
+    "referenced_ways_count": 9
+  },
+  {
+    "access_profile_sha256": "16338706d78a4d16e0b078342c51fecd70ec83b65e42606d45c92ab75490b0df",
+    "source_tags": {
+      "access": "no",
+      "bicycle": "yes",
+      "foot": "yes"
+    },
+    "referenced_ways_count": 15
+  },
+  {
+    "access_profile_sha256": "18c2fe3aa8299d500a6cf394f86c2f24e3e6dd58732ee9591776e70c24cdaf30",
+    "source_tags": {
+      "foot": "designated",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "18f5274ec94973aaa60e4dc6683f77148a37911f6617e656bb99568da3ab343b",
+    "source_tags": {
+      "access": "private",
+      "motor_vehicle": "no",
+      "motorcar": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "1add6f9f2c22a8856ad1b86c533cc282b3ab5a27facaf4e0554c02f312457c63",
+    "source_tags": {
+      "bicycle": "no",
+      "foot": "designated",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "2038551dd9588ea9622bc500200351e794ca35163c35cce249101361219727ac",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "no",
+      "motor_vehicle": "private"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "20623109059e73be24255190ed384767cf86bea0d29cf4a94ad6bb1ecce77f6d",
+    "source_tags": {
+      "vehicle": "yes"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "206ecab37360c503b98bc14f5d12c3ec5066a3b66ed3fd0636c547a13934f963",
+    "source_tags": {
+      "bicycle": "no",
+      "foot": "no"
+    },
+    "referenced_ways_count": 63
+  },
+  {
+    "access_profile_sha256": "2077180787830147e14d0c8c69e8eb7cc32ffef9bc89d3eee0989ae7a554e95d",
+    "source_tags": {
+      "bicycle": "no",
+      "foot": "no",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "208ea06431dd340151594fdfee5e340a37f2b644ddba642da4e5bb54527702df",
+    "source_tags": {
+      "foot": "no",
+      "hgv": "no",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "20a0c9338f1c92b08032899b270ca85b144925b4d87bfa638b89486317acee03",
+    "source_tags": {
+      "access": "no",
+      "bicycle": "no",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 8
+  },
+  {
+    "access_profile_sha256": "20be27440651380bb4969c30395e40e2dfbfbbf1fa91249ce0058ced10f26c5d",
+    "source_tags": {
+      "motor_vehicle": "bus"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "20e8a0a156b22d47b3efa900e9a42f404556cd171e628811a3972eaff5882c54",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "22a811b9be60469d6dca7658ec0bfd69a7329824862e5d7f3f6cad6e55bc446c",
+    "source_tags": {
+      "motorcar": "no"
+    },
+    "referenced_ways_count": 258
+  },
+  {
+    "access_profile_sha256": "23085b70e3a4dea742b4c8f43b22b918154958c69e24e7ae85d0b0ec582d4259",
+    "source_tags": {
+      "access": "private",
+      "foot": "private"
+    },
+    "referenced_ways_count": 25
+  },
+  {
+    "access_profile_sha256": "2326f1726576528490d35213b55840e1346d30d89b9c8e32e3a1f52f4b18304e",
+    "source_tags": {
+      "access": "private",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "237e27cf95261bb18eb11cb8ec5df4841e1a4cd83c9bbd02c3170a50882c0cd5",
+    "source_tags": {
+      "access": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 6
+  },
+  {
+    "access_profile_sha256": "23fc46f83348d83a6d6f20d55f87e1900bc6150310442dd16620be6ed1da8ee9",
+    "source_tags": {
+      "foot": "permissive",
+      "vehicle": "private"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "276b714044258011ae6b1560585936f5ec38a8b85452283efc047cbf43f49c28",
+    "source_tags": {
+      "access": "permissive",
+      "motor_vehicle": "permissive"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "27b477bd2f604b3e369f014a67c319c9851635ce5323ae15d36839a9d28c6d5e",
+    "source_tags": {
+      "access": "private19.00230970, 73.11776903"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "27be268b2eeb2a44516f497ca1b10af879e31c2ac8fdbd5d5158945a2c251749",
+    "source_tags": {
+      "bicycle": "private",
+      "foot": "private",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "2897cbee40facf8e6db08cf9f01a9fb3ca413492b85da433ecfced0700f7bfef",
+    "source_tags": {
+      "bicycle": "designated",
+      "vehicle": "no"
+    },
+    "referenced_ways_count": 4
+  },
+  {
+    "access_profile_sha256": "29bd18e0529a4acb75b33e7d60127e5184a7e90c49ec5da9ec1f6d71fc8d30ef",
+    "source_tags": {
+      "bicycle": "yes",
+      "foot": "yes",
+      "motorcycle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "29c4fd23444a4097c0a86b4b8480774a6f2ba92771cd2d032f9fe07bed20a733",
+    "source_tags": {
+      "bicycle": "yes",
+      "foot": "yes",
+      "vehicle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "2d924d3b56e35624e8f5736ca0f58a2a2f94aed6f43054317fef986fd23cf6c0",
+    "source_tags": {
+      "access": "private",
+      "foot": "private",
+      "motor_vehicle": "private",
+      "motorcar": "yes"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "2dcf3fb1e763bbd687355c94647d1a474c1a56ef70348f7b34f6e28c31444260",
+    "source_tags": {
+      "access": "yes",
+      "bicycle": "no",
+      "foot": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "2e481cc2db4f924d3505f3c80a9fa8f38e19666d7cd2984aa9b5c60fdbc14692",
+    "source_tags": {
+      "access": "permissive",
+      "foot": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "2f395a8f9935f68fde02c908f7183411b69b7dfa7713847026a3bc04035530f5",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "destination",
+      "motor_vehicle": "destination"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "2ff6d3925838cd4de113f0d0a3791b7df059b38383a646679777c7bb8184eeee",
+    "source_tags": {
+      "bicycle": "destination",
+      "motor_vehicle": "destination"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "308d6ee5d0bfaf34ac153c4c874a0123d16b4a70b4d267d35288547d2efe93ca",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "private"
+    },
+    "referenced_ways_count": 10
+  },
+  {
+    "access_profile_sha256": "30a271f686ca74892c197d47bc6a8eb354e7c6908f71c8c5799ab819d08424da",
+    "source_tags": {
+      "bicycle": "yes",
+      "motor_vehicle": "private"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "315af59b80972496872c189b32127d1aaeb5b57eb9ec53efebe42db97093ddde",
+    "source_tags": {
+      "access": "permissive",
+      "bicycle": "no",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "324b7c59d000f38c43403275a1220b670ee833c56eef95df1221679392a0b6b2",
+    "source_tags": {
+      "foot": "yes",
+      "goods": "no",
+      "hgv": "no"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "3263ca976265023f7c252d6952c92729c60c229aa1d15c4b2ddc93a51e91f04a",
+    "source_tags": {
+      "bicycle": "destination",
+      "motor_vehicle": "destination",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "336362dd502287037db9e4a8e34e64f2d38516c23d7261dc2a728f87a9fa25be",
+    "source_tags": {
+      "bus:lanes": "designated|yes|yes",
+      "foot": "no",
+      "hgv": "no",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "363ed702968e4eb7d7ef45f527d0b3d18881a4a7de68cbed58422e73407f4c1a",
+    "source_tags": {
+      "motorcar": "no",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "36a8d1eb1dc69040c388713fa8b97eb0ac2346ae38bf08ffd21bf7f12c9cfee6",
+    "source_tags": {
+      "psv": "yes"
+    },
+    "referenced_ways_count": 11
+  },
+  {
+    "access_profile_sha256": "370cc41924869aa0da4bf5d36c0d54a0b6a095b4c76aee59cce3f9879a734fdc",
+    "source_tags": {
+      "access": "private",
+      "foot": "yes",
+      "motorcar": "no",
+      "motorcycle": "yes"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "3772523a54b48d08b9699c4d6fc1d4cd38219222eb4e00e2a7df8ac32dd4eef4",
+    "source_tags": {
+      "access": "permit",
+      "bicycle": "no",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "38187a8891a2b0a44b7d506169db9262393e87dc80f7021198858e51cce1a178",
+    "source_tags": {
+      "access": "private",
+      "foot": "yes"
+    },
+    "referenced_ways_count": 4
+  },
+  {
+    "access_profile_sha256": "384d05677da701c1737a32ed00bdd24e3f9cf126fe26f69ceba8829a0a27d393",
+    "source_tags": {
+      "access": "unknown"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "3868da476bd38777a570575dff1668803853e4556ccae88e37dab4205ed111c8",
+    "source_tags": {
+      "bicycle": "no",
+      "motor_vehicle": "yes",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 6
+  },
+  {
+    "access_profile_sha256": "38aaff44465f9ab527ac029ebfebd18e69c3fa7fcc94b81647c88d0f2f85717f",
+    "source_tags": {
+      "access": "customers"
+    },
+    "referenced_ways_count": 78
+  },
+  {
+    "access_profile_sha256": "38ec406036cf693ec568e46dd1883e03c215d28d1f6e91f1e6aff1b20fa82c3e",
+    "source_tags": {
+      "access": "yes"
+    },
+    "referenced_ways_count": 99
+  },
+  {
+    "access_profile_sha256": "3913ab2fac3380a05012783f0b24c00832d807e5b8c0c87639e9f1738dc0c96e",
+    "source_tags": {
+      "bicycle": "designated",
+      "foot": "designated"
+    },
+    "referenced_ways_count": 411
+  },
+  {
+    "access_profile_sha256": "3950c2dcbed408a0ad018b731a18fa427617cee65e236639d7dd78d28ff289e7",
+    "source_tags": {
+      "bus:lanes": "yes|designated|yes|yes|yes",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "395bd6518725a2174c42fccddffdfae0f331b591980bf52535aad4bab4ea6fea",
+    "source_tags": {
+      "access": "private",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "3b935e1f2d391e2922eeb3e2706b784d33b4d47b459b6b410b3bb37771776ddd",
+    "source_tags": {
+      "access": "no",
+      "foot": "yes"
+    },
+    "referenced_ways_count": 55
+  },
+  {
+    "access_profile_sha256": "3cf88457aa9d6a0c067e170c08bbee6911801277ea769d5e681f8eec7b344418",
+    "source_tags": {
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "no",
+      "motorcar": "no",
+      "motorcycle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "3e46d8f2be97d3913bf3831f8b93a4f6c693b5f904f07c30d1c5f1e0cfa005f9",
+    "source_tags": {
+      "access": "no",
+      "bicycle": "no",
+      "foot": "no",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "413d5a7ed7ea381feba8490f87da5c725c26f7a73a5ccbf40fd2d9c1fa22357a",
+    "source_tags": {
+      "access": "no",
+      "bicycle": "no",
+      "foot": "yes"
+    },
+    "referenced_ways_count": 6
+  },
+  {
+    "access_profile_sha256": "4301b2e9d5f8254fea5d10bf20792e501081e772314c489c4977243c3f5caa1a",
+    "source_tags": {
+      "access": "permissive",
+      "foot": "yes"
+    },
+    "referenced_ways_count": 5
+  },
+  {
+    "access_profile_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "source_tags": {},
+    "referenced_ways_count": 172644
+  },
+  {
+    "access_profile_sha256": "44cfdd349e3f40abd04b484255674ad3ecb8e6af9ebdd86bdfa9e2ed600ca49c",
+    "source_tags": {
+      "access": "military",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "4565f5dbaf971b37c3e437c675c98e1f4d9f4efc7ad053b3f56051f9bb443ec2",
+    "source_tags": {
+      "access": "no",
+      "bicycle": "no",
+      "foot": "no",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "46730c7b92ebc1dbaf6a8d73300ec9f0dca4abe48429a40ed48d78559fce8619",
+    "source_tags": {
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "permissive"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "46d3ff24d0a99c29645dac479bb9304d5ee374a965c5953816d77a5a94d1308b",
+    "source_tags": {
+      "access": "no",
+      "bicycle": "yes"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "4701eb0f68746075aa004245d8cc82edaeaccad5c1e41a9228de02a4080a28e8",
+    "source_tags": {
+      "access": "yes",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "47dd8e0df623bf4990c56e2af0b255d98e190bd45b97a87c5902d793195bd580",
+    "source_tags": {
+      "bicycle": "no",
+      "foot": "yes"
+    },
+    "referenced_ways_count": 41
+  },
+  {
+    "access_profile_sha256": "48d0b5f2f2b2ab925feca15290d331b2b65073d05938b8515abb195835d169df",
+    "source_tags": {
+      "access": "unknown",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "49eef5a816997f159af7db64f66e5f70e65afe93b32f1e2118c166c1b90f05ac",
+    "source_tags": {
+      "bicycle": "no",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 23
+  },
+  {
+    "access_profile_sha256": "4a161d7ff79c54f3214af52b2588f22fddf6bd17988929e78e75235be13c1325",
+    "source_tags": {
+      "access": "permissive",
+      "motorcar": "no"
+    },
+    "referenced_ways_count": 5
+  },
+  {
+    "access_profile_sha256": "4a66c2fd3b40d888011c6e4a3478f0cd500ebd2b8f1ee1a1ac99fb14d8a0b89d",
+    "source_tags": {
+      "access": "no",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "4de5603718c075170095395d3d706e4ee26beb16fa1f0025201bbb9d7b3cc76d",
+    "source_tags": {
+      "bus": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "526a753dcc892eda36daba028cd83311984b7998ca318f179c2daea5b4a4c83d",
+    "source_tags": {
+      "access": "no",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 63
+  },
+  {
+    "access_profile_sha256": "54c54b494c1ba45a7fabaaa03323f6c153a92f161826bce69a8e32357a37ee21",
+    "source_tags": {
+      "access": "private"
+    },
+    "referenced_ways_count": 52536
+  },
+  {
+    "access_profile_sha256": "569b893539671b979045d4dc553fffc3958e6141153fbef17e34222a27ac8989",
+    "source_tags": {
+      "access": "military",
+      "bicycle": "private",
+      "foot": "private",
+      "motor_vehicle": "private"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "56a95f4741844927c3f62b2ccdcfcc09ec1f5ff6cfc1a3df1de95158248dd203",
+    "source_tags": {
+      "motor_vehicle": "permit"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "56d21e8f570a542275b24812acfb3fe0ba3a65d2704a55a4e1508657f61acea9",
+    "source_tags": {
+      "access": "yes",
+      "bicycle": "no",
+      "foot": "yes"
+    },
+    "referenced_ways_count": 12
+  },
+  {
+    "access_profile_sha256": "5832682654613d1ca96b7afc121224b153386eab88680a9a8b4f3816912c6e97",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "private",
+      "foot": "private",
+      "motor_vehicle": "private"
+    },
+    "referenced_ways_count": 65
+  },
+  {
+    "access_profile_sha256": "58b2c5d414a21ae1843676d4f7d9aabaf4d4a2874cf70ee00f88c551e8421f68",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "private",
+      "motor_vehicle": "private"
+    },
+    "referenced_ways_count": 5
+  },
+  {
+    "access_profile_sha256": "5b06ba9b99d54307c1c01b19d335f4c2a68bb46e3edc3a2ffbab69dddad5b385",
+    "source_tags": {
+      "bus": "yes"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "5c0a1af1d758689d8b7dc27517cda15e2fbcc919cf1c1d6ff8c4bd30a307cef4",
+    "source_tags": {
+      "foot": "designated"
+    },
+    "referenced_ways_count": 15
+  },
+  {
+    "access_profile_sha256": "5e078ffd731c14ac6336cc562fa2aac05ccc23872c3bde7a6368d7f046df36e5",
+    "source_tags": {
+      "access": "permissive",
+      "foot": "permissive"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "5f44031966e28136ee79cf7ebf6e8ed90745d92732d120f1769ca7af3ac05df5",
+    "source_tags": {
+      "bicycle": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 5
+  },
+  {
+    "access_profile_sha256": "602035dd051f610e77bffbda132a299c60da749e6088dbe122425535cea88525",
+    "source_tags": {
+      "access": "private",
+      "foot": "yes",
+      "motorcar": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "61d1bba4aeb0c8aea901136e470ab1982efce01b3e410f1d39cf0fefd4a7c86f",
+    "source_tags": {
+      "access": "military"
+    },
+    "referenced_ways_count": 1213
+  },
+  {
+    "access_profile_sha256": "63cf40213800783b0ce751754cbcdd856ae76892b5e89b370be4ddb6b2ed0d32",
+    "source_tags": {
+      "bicycle": "no",
+      "foot": "no",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 98
+  },
+  {
+    "access_profile_sha256": "658213df7d9d1d4aa2034d99025471b3a5b77bfdb68b9e471b991925f3b264e9",
+    "source_tags": {
+      "access": "no"
+    },
+    "referenced_ways_count": 187
+  },
+  {
+    "access_profile_sha256": "6635389d552bb1f0606aca9efeafd34c2e698b75acb05ecc67a3b964242a374f",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "yes"
+    },
+    "referenced_ways_count": 11
+  },
+  {
+    "access_profile_sha256": "66d529b0e14bf41319e9de52fab194a49183daec8ac22a60b859064929bc4a4c",
+    "source_tags": {
+      "access": "permissive",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "67792bcc72da31dbc90c14864070130c23c3f46e2995b668d71bb6ed98cdf63c",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "designated",
+      "motor_vehicle": "destination"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "67af1154e68d582955006de9a2efa9c8fc367053b54105c6d755100065abddf2",
+    "source_tags": {
+      "bicycle": "no",
+      "foot": "designated"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "68a98240796541ab4d1391605c92a8273a049e6ffc637bf6d32191abef8efe7f",
+    "source_tags": {
+      "access": "no",
+      "bicycle": "private",
+      "foot": "no",
+      "motor_vehicle": "private"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "69c8c4fea655b63e2d7667f19dd3320cb7730cc2c8ce60e3c015536557f7339a",
+    "source_tags": {
+      "access": "yes",
+      "bicycle": "no",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 43
+  },
+  {
+    "access_profile_sha256": "6a25a3e1293f7e626a72aceff2319101fb8c30a2d42ffac6c2829052b602b48e",
+    "source_tags": {
+      "foot": "yes"
+    },
+    "referenced_ways_count": 767
+  },
+  {
+    "access_profile_sha256": "6b012db9de2ce18f46bf90e7025219f2133d9e3b17a8f34ab39eb1009a020c98",
+    "source_tags": {
+      "bicycle": "no"
+    },
+    "referenced_ways_count": 127
+  },
+  {
+    "access_profile_sha256": "6b4369bbc842b0913823e4314d649053893cacb31a4f1e591c7c17eb6998e999",
+    "source_tags": {
+      "bicycle": "private",
+      "motor_vehicle": "private"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "6bb9c48a3dccb9871e54377f442ebc2b3f8f9602b175c956865d9b1f0b762726",
+    "source_tags": {
+      "access": "no",
+      "bus": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "6ce8c937cff5bca87a3bc8bc61c62759730f125ad3f66ddd666b98a321243d0c",
+    "source_tags": {
+      "vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "6d809edd75449ea69f4e7fc28278036940ae6115591fe2e73ce89520006f0992",
+    "source_tags": {
+      "access": "yes",
+      "bicycle": "no",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "705b39061fcf9903abd370bf4df0251539ebeecef4af0a0707ebce8e0e10eb8d",
+    "source_tags": {
+      "access:hgv": "no @ 09:00-21:00"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "70fcd71da9910207ae330054c430b8ff3d808f1af35c03f6874b9cac55c72a68",
+    "source_tags": {
+      "bicycle": "permissive",
+      "foot": "yes"
+    },
+    "referenced_ways_count": 7
+  },
+  {
+    "access_profile_sha256": "73fa319bcaffe7599ad4d9f2668fda2d2520613e303f7dcbfce457ab4b289ef6",
+    "source_tags": {
+      "access": "yes",
+      "foot": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "74ca2e4d3b731b98eb1c8427697999f78013eb5e3e753a2e43dc74ee60f72227",
+    "source_tags": {
+      "access": "no",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "permit"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "790967783cfe5aae8d2ecae582f51ec580d3be88882a9e2c36cdd00be187939a",
+    "source_tags": {
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 198
+  },
+  {
+    "access_profile_sha256": "79167aca51ab54b1af26024a67b945348174fc81ea69e36ff0872a8de35515ce",
+    "source_tags": {
+      "vehicle": "permit"
+    },
+    "referenced_ways_count": 4
+  },
+  {
+    "access_profile_sha256": "7917b4e9a3459324c25dffa5f02a6633ce41e14e3d8ef93469bff9c9fa783053",
+    "source_tags": {
+      "access": "private",
+      "motorcar": "yes",
+      "motorcycle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "79f483f29b1b9afb63dd455c017e3a628bdaf3d42bb4eb755dde84c5b7e53549",
+    "source_tags": {
+      "foot": "no",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "7a14451c0539e8ed9ac2801ab52623811b1a0369100fe428cc89af84d5fc45e1",
+    "source_tags": {
+      "motor_vehicle": "yes",
+      "motorcar": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "7ad4403097e6d1fb50ff7bd9cffd1e7703e92dafb705d266668eb99ca360c0e3",
+    "source_tags": {
+      "access": "no",
+      "foot": "permit"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "81f8b218de0e4317d499d505b105b13ce8ccc30e21b62c3e00821b347b45d4b6",
+    "source_tags": {
+      "motor_vehicle": "no",
+      "motorcar": "no"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "8294afa2535a05d489db243863ec360a3cc886c540ef7bf8f45cf80637547249",
+    "source_tags": {
+      "access": "yes",
+      "foot": "yes"
+    },
+    "referenced_ways_count": 8
+  },
+  {
+    "access_profile_sha256": "836da35e1643cb42e473ec04e66a11660290a8ff6ef8ed8b3d74e75a17e3e197",
+    "source_tags": {
+      "motorcycle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "8453056ab3af0a0db7b2f9d1ae6a15a23491a61be96aca133c19b660adc689fa",
+    "source_tags": {
+      "access": "no",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motorcycle": "yes"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "860b1181c61f7cfa8932dc0a0ac5f44ffcbcee5b1d39d519b2aa9eef25df389a",
+    "source_tags": {
+      "bus:lanes": "designated|yes|yes|yes",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 14
+  },
+  {
+    "access_profile_sha256": "86306292b234ed7f657b5e2ecbc291bc6e199dc1fa623bcab56622751a59b2da",
+    "source_tags": {
+      "bicycle": "no",
+      "foot": "no",
+      "hgv": "no",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "882fc9dbc1b10e2bdd422f31ac6ea1e49741474267bbf0be88860c72283f8d17",
+    "source_tags": {
+      "access": "yes",
+      "bicycle": "no",
+      "foot": "no",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "8d2308a3f190c29452d860c5ab5733f512ace1f9a3ee043235ad8e43ea024b42",
+    "source_tags": {
+      "access": "private",
+      "foot": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "8e26eff5820d0989d8a351fd63c64c10f8bf6e5eaf4800bf6d9572a0273fba82",
+    "source_tags": {
+      "bicycle": "no",
+      "foot": "no",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "8f7f96472045b01f4b3469d3f6ae5000a51352b4019ae95f50345888390f8510",
+    "source_tags": {
+      "access": "permissive",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "designated"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "8facd756b6f358b512e9840e7b6bfca884b6f90244e27ab8191818044b0682b6",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "no",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 17
+  },
+  {
+    "access_profile_sha256": "8ff0f877daddc02b6632f1c82ca1841188adbffc4392aa64935be00cba3347f6",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "no",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 8
+  },
+  {
+    "access_profile_sha256": "9090bca012331f362fd5878a5c3cc7c6fa23fe05537074e915fa9e188a45c0b5",
+    "source_tags": {
+      "access": "yes",
+      "bicycle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "94dc5658dbd5418ab9d297d103991ce795e4b35cb47adf3effaf78d47863b65f",
+    "source_tags": {
+      "access": "permissive"
+    },
+    "referenced_ways_count": 1145
+  },
+  {
+    "access_profile_sha256": "962ea2198ff0ccd8afb703ec18fed85c177b626fa7332c06de6fa22e18d3a607",
+    "source_tags": {
+      "motor_vehicle": "conditional"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "9640655d94a064c55dda78493baf8611c50579d42151747b89279590bbcd4b9b",
+    "source_tags": {
+      "access": "private",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 27
+  },
+  {
+    "access_profile_sha256": "96497a935611da385f5fef6b632e97ac8770eab534bc3463c0585d4301c98d81",
+    "source_tags": {
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 18
+  },
+  {
+    "access_profile_sha256": "9679cd76a4b0008845bee35607557bb672bb06534be5b80fd7f75f94277c532d",
+    "source_tags": {
+      "access": "permissive",
+      "bicycle": "yes"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "97e9fa9e8dd8ed2b2ac9c38cdbd7b9ac287eaa23a541ec84677b560a1390d647",
+    "source_tags": {
+      "foot": "yes",
+      "motor_vehicle": "no",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "999101963477027f11f4520741fac350b91d463a95bd29c5f34161e18ce4e786",
+    "source_tags": {
+      "motor_vehicle": "yes",
+      "motorcar": "no",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "99c69022289b78d52793c44b9581ee4a04f9f88e58158f54bb22636b3a2501d5",
+    "source_tags": {
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "designated"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "9a5a29b38ce565b45d5f8e4fb6f79a4349c3162dc10970c8ea5d95169cfad2ca",
+    "source_tags": {
+      "foot": "private"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "9aa4d0076e24395758917272e9a580c4a4125a8c8a32bdaa3028b2023c063979",
+    "source_tags": {
+      "bicycle": "yes",
+      "foot": "yes"
+    },
+    "referenced_ways_count": 226
+  },
+  {
+    "access_profile_sha256": "9b868916347e71b22c5d0e77418781df7c323fa703caefbc63677ef8d4bdc723",
+    "source_tags": {
+      "access": "destination",
+      "bicycle": "no",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 6
+  },
+  {
+    "access_profile_sha256": "9c197409e6e250b12fce5fc1e1d1a6aad657a1f2c1fe2592b97d8a5779f4359b",
+    "source_tags": {
+      "access": "yes",
+      "bicycle": "no",
+      "foot": "no",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 95
+  },
+  {
+    "access_profile_sha256": "9c421b2d257c737c6e16d5585d5b42e947df29ae10f76cc2d3f3831bd722dd5a",
+    "source_tags": {
+      "bicycle": "yes",
+      "foot": "yes",
+      "motorcar": "no"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "9e1f219970691f5142c911b7cdc300e1511aaeb16ba5f19382f070bf5b0aa4e3",
+    "source_tags": {
+      "bicycle": "no",
+      "foot": "no",
+      "motor_vehicle": "yes",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 246
+  },
+  {
+    "access_profile_sha256": "9edfe068c9fb09a8fd4b8650ddf6a008f2a617a6544827de4e6567f31f318758",
+    "source_tags": {
+      "bicycle": "yes",
+      "foot": "yes",
+      "hgv": "no",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "a1eef4e205517aedce9959d5634e2e0a2e1a390f22d3514590fcdc74c566e0b6",
+    "source_tags": {
+      "access": "residents"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "a28712055c54eee926e06a2b92b73255c8a2678046497c33479ad9f84c42da1a",
+    "source_tags": {
+      "bicycle": "permissive"
+    },
+    "referenced_ways_count": 4
+  },
+  {
+    "access_profile_sha256": "a621bd4acc2fcb1370d07b6ab29943ec678536ef6ceff1b12c4e860ed19f57e1",
+    "source_tags": {
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 21
+  },
+  {
+    "access_profile_sha256": "a674bbf612854c3f2328613e603c17db008aa2f3ed678f513fe043fed80bf2bb",
+    "source_tags": {
+      "access": "permit"
+    },
+    "referenced_ways_count": 5
+  },
+  {
+    "access_profile_sha256": "a69e31c53c3afc24b0f005950edaabfe6e9691c766e78bcd89cf74179275363f",
+    "source_tags": {
+      "access": "private",
+      "motor_vehicle": "private"
+    },
+    "referenced_ways_count": 38
+  },
+  {
+    "access_profile_sha256": "a77382ab0726f21cff982013a904862d73ae7411a6beaec44ab7045c3756cb60",
+    "source_tags": {
+      "access": "destination"
+    },
+    "referenced_ways_count": 54
+  },
+  {
+    "access_profile_sha256": "a86ce0781bc084e0a9e46617d7f2cc0a7896d19a84d36b7bf4d7032abda8eae6",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "no",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "a90894ff5dbbd6a6d5b51b0518f521d102bded7b7a282003683f9495d5ecf0de",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "designated",
+      "foot": "designated"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "aa3511ca4d2fed8930f1931232d06a5501e27ebda092858fe7e472d1addc9f25",
+    "source_tags": {
+      "bicycle": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "aa6191305dd4f8ed7a80dfc27d2e6a26a7286218956a902c2cded5c09988b224",
+    "source_tags": {
+      "access": "private",
+      "psv": "designated"
+    },
+    "referenced_ways_count": 4
+  },
+  {
+    "access_profile_sha256": "aac8c0d458a9a75d262529f3723c565653a2384fc8d52cf1e6c0f5db4a9bf859",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "yes",
+      "foot": "private",
+      "motor_vehicle": "yes",
+      "motorcar": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "ada8525092bd43563239e10b56b495f5e1bf59bc66e50ab14405d3719a700ce6",
+    "source_tags": {
+      "access": "permissive",
+      "bicycle": "permissive",
+      "foot": "yes",
+      "motor_vehicle": "permissive"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "adf02271ad546c836a439720d0a98dccec2d1d5953d2065f66e98472aeed9007",
+    "source_tags": {
+      "access": "military",
+      "foot": "military"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "adf478d4c20394529846beeb32dd6e5039edefbe87a4a73294ba0f2badfdefdc",
+    "source_tags": {
+      "access": "bus",
+      "foot": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "ae61be19dce51e8ddcdced2a596e91def0857a55d1cfe37e2423c0194e11bb7f",
+    "source_tags": {
+      "access": "no",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "b230cbee108b186e9e2c5a2409f6a2de7bbb540d06b2897b05d3a4f7428e6f1b",
+    "source_tags": {
+      "access": "yes",
+      "bicycle": "no",
+      "foot": "no",
+      "motor_vehicle": "yes",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "b253e88ff4f5dc460285619492fb1e57d14d12b2b9ce48684bce2d504dfb5e03",
+    "source_tags": {
+      "bicycle": "yes",
+      "foot": "private",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "b3c291edb6d565f437ff9ceab0719d420dc273ce87386597f356175f2c8423dd",
+    "source_tags": {
+      "access": "private",
+      "motorcar": "no"
+    },
+    "referenced_ways_count": 219
+  },
+  {
+    "access_profile_sha256": "b3e0491d4b66ac5b78b662d8325875cda253a6ca6b1f6bd152de8e8aa2e5698e",
+    "source_tags": {
+      "motor_vehicle": "permissive"
+    },
+    "referenced_ways_count": 6
+  },
+  {
+    "access_profile_sha256": "b6171ae414c486a7be05e30d7c7a8c43ef88ffa49c035f3d5f28e0e06c24a3ec",
+    "source_tags": {
+      "access": "customers",
+      "foot": "customers"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "b61fd9dee79d67e819cbb7634d784d64ce45ea31e74754103fd6958f64e560c6",
+    "source_tags": {
+      "access": "permit",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "b67243cd49a169a3d7e6228ce22f9cc86038f06797750b1b8df9e3e34291d302",
+    "source_tags": {
+      "bicycle": "no",
+      "foot": "destination",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "b6ebf0a1410bcf77fdadf20514416e59f1af39f1353cfc898836e734bd0c39ad",
+    "source_tags": {
+      "access": "private19.19936392, 72.87646445"
+    },
+    "referenced_ways_count": 4
+  },
+  {
+    "access_profile_sha256": "b744d68b800dede565fb240daa8a8c1374d559ec9681b181b7f1639a998a5395",
+    "source_tags": {
+      "access": "no",
+      "bus": "designated",
+      "psv": "yes"
+    },
+    "referenced_ways_count": 5
+  },
+  {
+    "access_profile_sha256": "b7c049c37cc17d19d00888d2abeb251a4b1ae33fcb7a8af744be0f4d0d93f21f",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "private",
+      "foot": "designated",
+      "motor_vehicle": "private"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "b7f8f2bd6d777156868933a2899b4b0678d3658f44aff81f12471b3a773a56c3",
+    "source_tags": {
+      "access": "private19.17071500, 72.85019000"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "b88b394098a77b5ec2093207c0bf79b2124f092a057cd8d18d2035591ac93a4e",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "no"
+    },
+    "referenced_ways_count": 5
+  },
+  {
+    "access_profile_sha256": "b9bab7e1f283e230a7b05407ef8fc2c3504493a48e5b54e79a5c2a3e29e25f21",
+    "source_tags": {
+      "access": "no",
+      "bicycle": "no",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "ba70790de98383df36b665946d9a8019214d5eef1beae18abcfe112998fd5be2",
+    "source_tags": {
+      "bus": "yes",
+      "psv": "yes"
+    },
+    "referenced_ways_count": 11
+  },
+  {
+    "access_profile_sha256": "bb085c1196f39017983e72139ed9cb3deb8db99f850658dda2829cf3cbe8785f",
+    "source_tags": {
+      "access": "no",
+      "bicycle": "unknown",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "bc4465e2e626c66f3122c3b3ca07e488a90d6d049abfdc38a85bf5cdc191dd2d",
+    "source_tags": {
+      "access": "private",
+      "foot": "private",
+      "motor_vehicle": "private"
+    },
+    "referenced_ways_count": 14
+  },
+  {
+    "access_profile_sha256": "bcd5fbf1eff10254834edde801a9391466c0a28c40727103a18300c1a0c8fa31",
+    "source_tags": {
+      "access": "yes",
+      "bicycle": "yes",
+      "foot": "yes"
+    },
+    "referenced_ways_count": 72
+  },
+  {
+    "access_profile_sha256": "bd4d9b04ff36e7832ec36baac3de6edc97731b1b5fc7982293f8257ac4348dc6",
+    "source_tags": {
+      "foot": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "bde9b9e945b108e53d075498aeceac3da97d100df98d588795ed81bf4275da4d",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "yes",
+      "motorcar": "no"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "be0d746024ca5e5613245617d100b58b68a3e4debab4eb2e09a11a72dda94531",
+    "source_tags": {
+      "bicycle": "no",
+      "motorcar": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "be90c9b149debf80b66417bec4efbcf4f7bed258b31140f0deafa1f3d9f7031d",
+    "source_tags": {
+      "access": "private",
+      "motor_vehicle": "permissive"
+    },
+    "referenced_ways_count": 5
+  },
+  {
+    "access_profile_sha256": "c1fe36f1dbdee20cd0564c57b239725b0bb3df1c6f5c96bb55a11fea8c11bc20",
+    "source_tags": {
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 72
+  },
+  {
+    "access_profile_sha256": "c35b23581a0ca9e3fc62c5441ac1fbf9df35f249588801a35f13a59cd37a7f25",
+    "source_tags": {
+      "access": "private",
+      "motor_vehicle": "designated"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "c77fa1be6ef807535543c22d013dbd466dcecb1eb6738d07117d9fa35afbf406",
+    "source_tags": {
+      "motor_vehicle": "private"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "c8a7f60b6df1f670ca875f9616f90c9dbed89a88e83de687f3ac376767ab9a9e",
+    "source_tags": {
+      "access": "private",
+      "foot": "permissive"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "c8eeecaddddc7682e4f126849d2e231e35f2c8d434b8bff7f3baab9612111859",
+    "source_tags": {
+      "motor_vehicle": "destination"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "c928c28f55324758d350cef0c8e36897fbcfa8b1e8437d803dd7f4a105558883",
+    "source_tags": {
+      "access": "private",
+      "foot": "yes",
+      "vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "cbbb6a7aef6827a56f4510d4b10149ec0db22b482d2ed812d5106da81aa81afd",
+    "source_tags": {
+      "access": "permit",
+      "bicycle": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "cc5e75f2a91b5ff126e36dcf94c6ca90c6b10080a7e393a0f5de6efb780f93fe",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "yes",
+      "foot": "yes"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "cd2f4b32c6d0efa66a9df5ac27fde44d797258d0d5506cc390a5b8372ffd5dde",
+    "source_tags": {
+      "hgv": "no"
+    },
+    "referenced_ways_count": 4
+  },
+  {
+    "access_profile_sha256": "ce2c6a7811c4a6cacfda4e1234cca37ff0cbe8df28d07758e498c509bc3df047",
+    "source_tags": {
+      "bus:lanes": "yes|designated|yes|yes",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "ce4cbf1596cccf1a58eae6d69a4dce317760ed74cad1a03272022e9ea62c8634",
+    "source_tags": {
+      "access": "customers",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "ced419514779b0c04bbc95838f2a991f4abe310d450d1fa2263846cc41620773",
+    "source_tags": {
+      "access": "yes",
+      "bicycle": "dismount",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "d0e2df1869d9d8876654de32444247341814c8b3d13ff98398bb4edf478686c3",
+    "source_tags": {
+      "access": "destination",
+      "bicycle": "yes",
+      "foot": "yes"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "d2cf52717d8ea019b7cd7dde749e8d3eb35105ece09fe21beabcaa7f11eb293a",
+    "source_tags": {
+      "foot": "permissive"
+    },
+    "referenced_ways_count": 8
+  },
+  {
+    "access_profile_sha256": "d3502c391b2af73b7f24df994a84638ebb846e926fd2178aa867970e96bccaf8",
+    "source_tags": {
+      "bicycle": "yes",
+      "motor_vehicle": "permissive"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "d49b13a76beeb19d46bfbeee4a88de51520bb12146ed72766b4d2e9c66c49cee",
+    "source_tags": {
+      "access": "destination",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 5
+  },
+  {
+    "access_profile_sha256": "d8f558beb8dc4cd662710bd7994948a5f3a4f00fe029ddde28d43d16c09b1d2a",
+    "source_tags": {
+      "access": "private",
+      "motor_vehicle": "destination"
+    },
+    "referenced_ways_count": 18
+  },
+  {
+    "access_profile_sha256": "da11cffd538c58b1f4e073faa2ff0c40209ae7d9f549b8d62ee2cffe3110af71",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "dacc98b30077796bd4911eff94531e9a2958798e92b8fc9ec3a20c5e00808b6c",
+    "source_tags": {
+      "motor_vehicle": "yes",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "db2e1ab03618b1dc252f1da23e7b4e2138429099109b963881fa3435513cf31f",
+    "source_tags": {
+      "bicycle": "permissive",
+      "foot": "permissive",
+      "motor_vehicle": "private"
+    },
+    "referenced_ways_count": 4
+  },
+  {
+    "access_profile_sha256": "dbeae3fcda52a1869c3352aceead9c5cb8a2d8bef601d67805e85c84190d366c",
+    "source_tags": {
+      "access": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 5
+  },
+  {
+    "access_profile_sha256": "dd7d6bdc021b6fab6e82bcbf9e9421aa5adf54c2efbcbf8c21f89239a82bdfe8",
+    "source_tags": {
+      "access": "permissive",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "dee2fb8bab4d802ac8cf0b6118ed0e5555bf3eaf7884e6f58f285265bd9d24b9",
+    "source_tags": {
+      "bicycle": "designated",
+      "foot": "designated",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "e25dc49e23fa9885a36be0bf83aa18d71713b8394be39c1756a825e9c19360b6",
+    "source_tags": {
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 70
+  },
+  {
+    "access_profile_sha256": "e37048f76c101bc9a49b099e263fc03b141c9d7ef7f5c813880b8750f4e807c8",
+    "source_tags": {
+      "access": "no",
+      "psv": "yes"
+    },
+    "referenced_ways_count": 3
+  },
+  {
+    "access_profile_sha256": "e471ebab5560f5a7f618808a6e99f57dabc9823578e8de7b5851f0bb2b5299bd",
+    "source_tags": {
+      "access": "permissive",
+      "bicycle": "designated",
+      "foot": "designated"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "e6cc1b54b386c9f709e755e8b812341de02d195fc1f9b1d12a9e500a92a7a57b",
+    "source_tags": {
+      "bicycle": "yes",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "e709842090e25b59b45d78c916de995b3f8e8bd70a242cec97365b127be0dbc4",
+    "source_tags": {
+      "access": "no",
+      "foot": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "e7ae0e966dd2f0a7b3ce7af474caef20478d6e53cdce0fb26be51abebd6cd27c",
+    "source_tags": {
+      "bicycle": "dismount"
+    },
+    "referenced_ways_count": 4
+  },
+  {
+    "access_profile_sha256": "ea4fcf260a8bec82ee777c645fadbb2bd81df48fbabde696b40c4e5bbb27e916",
+    "source_tags": {
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 108
+  },
+  {
+    "access_profile_sha256": "ec9d39550fa6955c2f10fb5aa9709d3a49436c04b5f67c0190e8de3aaedea6be",
+    "source_tags": {
+      "bicycle": "no",
+      "foot": "yes",
+      "vehicle": "no"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "ee7a22f8b6ee1b7dff386d5839dd5409335ed515bfd9432e13972bf9e7085864",
+    "source_tags": {
+      "bicycle": "permissive",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "ee883776315abf50fbabc561777b08d609d442b0338eb39251f715de139a2e1e",
+    "source_tags": {
+      "motor_vehicle": "yes",
+      "motorcycle": "yes"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "eea7c59b2f9e9f53d377773861f6ea044aa6e6f8061c0ca6f3db7215a272956a",
+    "source_tags": {
+      "access": "private",
+      "foot": "designated"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "eef7381c2c9692415b88e475c77d05a90b9f14dcb92fd84fdaf5bb48f088274e",
+    "source_tags": {
+      "access": "emergency"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "ef75a9ca0c99af6a0e03bd62d087831f42b814b92a13fa0a29a4d1237536e547",
+    "source_tags": {
+      "bicycle": "no",
+      "motor_vehicle": "no",
+      "motorcar": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "efd2d516bb4faadb65f3a502498f5320114e117eef30ecd6ea7c65766f3566d1",
+    "source_tags": {
+      "access": "private19.01395243, 73.09157601"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "efffe90cdc6d2716f64a372856d849f2c096c2d5b2883f990854d5939b8c4d0b",
+    "source_tags": {
+      "access": "no",
+      "foot": "designated"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "f438f62a53d14bc4927b88930c03dce63bca3aca86f8ab9a3adffd90f89e63bb",
+    "source_tags": {
+      "bicycle": "yes"
+    },
+    "referenced_ways_count": 608
+  },
+  {
+    "access_profile_sha256": "f470d8fa685aa6a4f5d94427595dd7b74e7b28b5117d9ba8cb3892bc90fc7400",
+    "source_tags": {
+      "access": "no",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 9
+  },
+  {
+    "access_profile_sha256": "f48b521e62c3fd70a30c88e9e072160f0045840f0d285e8cc7bb1bf329179470",
+    "source_tags": {
+      "access": "no",
+      "bus": "yes",
+      "psv": "yes"
+    },
+    "referenced_ways_count": 6
+  },
+  {
+    "access_profile_sha256": "f4d603c2d56d5ae7dac6c8dcc7ef450b51d9f72fea75117924e11419e69fe00d",
+    "source_tags": {
+      "bicycle": "no",
+      "motor_vehicle": "no",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "f4df945f5a4e0a25b3a1c7b632fa9da5686f82687d64e2c9650d50f7147717d5",
+    "source_tags": {
+      "access": "permissive",
+      "bicycle": "no",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "f51ec45bd68d0cd9528d40dc747c112629ae83a2183adf8c55e94a517d4fbb10",
+    "source_tags": {
+      "motor_vehicle": "yes",
+      "motorcar": "no",
+      "motorcycle": "yes"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "f57b7724314dff0729eab8fa2d9feee21e090d6c61eca442eab11be64b5bc53e",
+    "source_tags": {
+      "foot": "no"
+    },
+    "referenced_ways_count": 42
+  },
+  {
+    "access_profile_sha256": "f6c74fa6e1211611d6800d9280460647c11e335584c6b193f32660e467a06427",
+    "source_tags": {
+      "foot": "no",
+      "motorcycle": "no"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "f77a096f79414e970ab56e513154c3762730a9661d69480407e32400cf1be850",
+    "source_tags": {
+      "access": "customers",
+      "foot": "customers",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "f7826efb407d04efbc830bf4da864934940f217a50f8ce6e844cd8dd132d68aa",
+    "source_tags": {
+      "bicycle": "no",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 2
+  },
+  {
+    "access_profile_sha256": "f9c5f9423d691949791da59f67bedef4f2c13fe040af49800cfb4df6db8b984f",
+    "source_tags": {
+      "access": "private",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "yes"
+    },
+    "referenced_ways_count": 9
+  },
+  {
+    "access_profile_sha256": "fb3363710303af86afe130abc7b0a2a7f6641b83a19764bb23181d84326fa29a",
+    "source_tags": {
+      "bicycle": "yes",
+      "motorcar": "no",
+      "motorcycle": "no",
+      "vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "fd7dec0adbe9e6fc1fe5e5f84d5998607929eb8b857e0961e9ee70a1ad66bac4",
+    "source_tags": {
+      "access": "permissive",
+      "bicycle": "no",
+      "foot": "permissive",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 1
+  },
+  {
+    "access_profile_sha256": "ff7a04c5e80852896a68276a15d399cd34fb215d71a28b843055899493d726f0",
+    "source_tags": {
+      "access": "yes",
+      "bicycle": "yes",
+      "foot": "yes",
+      "motor_vehicle": "no"
+    },
+    "referenced_ways_count": 7
+  }
+]

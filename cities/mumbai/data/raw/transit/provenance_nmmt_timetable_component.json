@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/nmmt_timetable_component_e5b4fc1df111c98a.js",
+      "url": "https://nmmtitmswebportal.amnex.co.in/chunk-K522ZYAH.js",
+      "final_url": "https://nmmtitmswebportal.amnex.co.in/chunk-K522ZYAH.js",
+      "source": "NMMT public timetable screen component",
+      "licence": "Vendor publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:32:28.915259+00:00",
+      "sha256": "e5b4fc1df111c98a0a2b9df4b0b13112cc91fe6f64b0981935e1296269f6d082",
+      "bytes": 38653,
+      "content_type": "application/javascript",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public passenger timetable application code; inspect public read endpoints only."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/rinfra_annual_2024_25_d72cee77d25997e4.pdf",
+      "url": "https://www.rinfra.com/documents/1142822/15552929/Annual_Report_2024_25.pdf",
+      "final_url": "https://www.rinfra.com/documents/1142822/15552929/Annual_Report_2024_25.pdf",
+      "content_type": "application/pdf",
+      "source": "Reliance Infrastructure annual report 2024-25 including Metro One",
+      "licence": "Public authority or operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:16:01.879781+00:00",
+      "sha256": "d72cee77d25997e4cf1f343a4fa89abdb18400602f438074c6dc8c0b27c3e75b",
+      "bytes": 4671462,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

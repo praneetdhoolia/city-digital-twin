@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_journey_huc_chgm_20260918_3a1d8782d75ad2a4.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/journey-route/HUC/CHGM/station/station/least-distance/2026-09-18/one_way/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/journey-route/HUC/CHGM/station/station/least-distance/2026-09-18/one_way/",
+      "content_type": "application/json",
+      "source": "Metro 3 public adjacent-station journey HUC to CHGM, 18 September 2026",
+      "licence": "Public authority or operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:16:15.310757+00:00",
+      "sha256": "3a1d8782d75ad2a4f69027056ba3f7cc30f0bb3d0401565bbca3a3f712b8b87f",
+      "bytes": 587,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

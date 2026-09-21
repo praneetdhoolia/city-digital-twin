@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/alstom_metro3_opening_2024_5631f09325dc7e62.pdf",
+      "url": "https://www.alstom.com/sites/alstom.com/files/2024/10/04/20241005_PR_Mumbai_Metro_Line_3_EN.pdf",
+      "final_url": "https://www.alstom.com/sites/alstom.com/files/2024/10/04/20241005_PR_Mumbai_Metro_Line_3_EN.pdf",
+      "content_type": "application/pdf",
+      "source": "Alstom Mumbai Metro Line 3 opening release, October 2024",
+      "licence": "Publisher primary publication; reuse terms unverified",
+      "retrieved": "2026-09-18T19:06:18.356228+00:00",
+      "sha256": "5631f09325dc7e62b53609a414c3138836fddaab28196bb7c3ddf97b040ecc9d",
+      "bytes": 93062,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Manufacturer opening-stage train specification; distinguish design capacity, standing density and in-service assignments.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

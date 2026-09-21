@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "source_id": "vehicle_stock_2025",
+  "source_sha256": "66426e585d9e275def066a350067f2649b7526416f94e8dda8ff831ef5819e5c",
+  "method": "Expanded abbreviations from printed headers; columns retain printed order. No East/Borivali relabelling.",
+  "tables": [
+    {
+      "page_1_based": 3,
+      "measure": "registered_stock_20250331",
+      "columns": [
+        "Mumbai (C)",
+        "Mumbai (W)",
+        "Mumbai (E)",
+        "Borivali",
+        "Gr. Mumbai",
+        "Thane",
+        "Kalyan",
+        "Vashi N.mumbai",
+        "Vasai",
+        "Thane Region"
+      ]
+    },
+    {
+      "page_1_based": 4,
+      "measure": "registered_stock_20250331",
+      "columns": [
+        "Panvel",
+        "Pen-Raigad",
+        "Sindhudurg",
+        "Ratnagiri",
+        "Panvel Region",
+        "Kolhapur",
+        "Sangli",
+        "Satara",
+        "Karad",
+        "Ichalkaranji",
+        "Kolhapur Region"
+      ]
+    },
+    {
+      "page_1_based": 5,
+      "measure": "registered_stock_20250331",
+      "columns": [
+        "Pune",
+        "Solapur",
+        "Pimpri-Chinchwad",
+        "Baramati",
+        "Akluj",
+        "Pune Region",
+        "Nashik",
+        "Ahmednagar",
+        "Shrirampur",
+        "Malegaon",
+        "Nashik Region"
+      ]
+    },
+    {
+      "page_1_based": 6,
+      "measure": "registered_stock_20250331",
+      "columns": [
+        "Dhule",
+        "Jalgaon",
+        "Nandurbar",
+        "Dhule Region",
+        "Chh.Sambhaji Nagar",
+        "Jalna",
+        "Beed",
+        "Chh.Sambhaji Nagar Region"
+      ]
+    },
+    {
+      "page_1_based": 7,
+      "measure": "registered_stock_20250331",
+      "columns": [
+        "Latur",
+        "Osmanabad",
+        "Ambajogai",
+        "Latur Region",
+        "Nanded",
+        "Parbhani",
+        "Hingoli",
+        "Nanded Region"
+      ]
+    },
+    {
+      "page_1_based": 8,
+      "measure": "registered_stock_20250331",
+      "columns": [
+        "Amravati",
+        "Buldhana",
+        "Yavatmal",
+        "Akola",
+        "Washim",
+        "Amravati Region",
+        "Nagpur (City)",
+        "Wardha",
+        "Nagpur (East)",
+        "Nagpur (U) Region"
+      ]
+    },
+    {
+      "page_1_based": 9,
+      "measure": "registered_stock_20250331",
+      "columns": [
+        "Nagpur (Rural)",
+        "Gadchiroli",
+        "Chandrapur",
+        "Gondia",
+        "Bhandara",
+        "Nagpur (R) Region",
+        "Maharashtra State"
+      ]
+    },
+    {
+      "page_1_based": 10,
+      "measure": "new_registrations_2024_25",
+      "columns": [
+        "Mumbai (C)",
+        "Mumbai (W)",
+        "Mumbai (E)",
+        "Borivali",
+        "Gr. Mumbai",
+        "Thane",
+        "Kalyan",
+        "Vashi N.mumbai",
+        "Vasai",
+        "Thane Region"
+      ],
+      "repeated_unlabelled_final_column": false
+    },
+    {
+      "page_1_based": 11,
+      "measure": "new_registrations_2024_25",
+      "columns": [
+        "Panvel",
+        "Pen-Raigad",
+        "Sindhudurg",
+        "Ratnagiri",
+        "Panvel Region",
+        "Kolhapur",
+        "Sangli",
+        "Satara",
+        "Karad",
+        "Ichalkaranji",
+        "Kolhapur Region"
+      ],
+      "repeated_unlabelled_final_column": false
+    },
+    {
+      "page_1_based": 12,
+      "measure": "new_registrations_2024_25",
+      "columns": [
+        "Pune",
+        "Solapur",
+        "Pimpri-Chinchwad",
+        "Baramati",
+        "Akluj",
+        "Pune Region",
+        "Nashik",
+        "Ahmednagar",
+        "Shrirampur",
+        "Malegaon",
+        "Nashik Region"
+      ],
+      "repeated_unlabelled_final_column": false
+    },
+    {
+      "page_1_based": 13,
+      "measure": "new_registrations_2024_25",
+      "columns": [
+        "Dhule",
+        "Jalgaon",
+        "Nandurbar",
+        "Dhule Region",
+        "Chh.Sambhaji Nagar",
+        "Jalna",
+        "Beed",
+        "Chh.Sambhaji Nagar Region",
+        "Latur",
+        "Osmanabad",
+        "Ambajogai",
+        "Latur Region"
+      ],
+      "repeated_unlabelled_final_column": false
+    },
+    {
+      "page_1_based": 14,
+      "measure": "new_registrations_2024_25",
+      "columns": [
+        "Nanded",
+        "Parbhani",
+        "Hingoli",
+        "Nanded Region",
+        "Amravati",
+        "Buldhana",
+        "Yavatmal",
+        "Akola",
+        "Washim",
+        "Amravati Region"
+      ],
+      "repeated_unlabelled_final_column": false
+    },
+    {
+      "page_1_based": 15,
+      "measure": "new_registrations_2024_25",
+      "columns": [
+        "Nagpur (City)",
+        "Wardha",
+        "Nagpur (East)",
+        "Nagpur (U) Region",
+        "Nagpur (Rural)",
+        "Gadchiroli",
+        "Chandrapur",
+        "Gondia",
+        "Bhandara",
+        "Nagpur (R) Region",
+        "Maharashtra State"
+      ],
+      "repeated_unlabelled_final_column": true
+    }
+  ],
+  "notes": [
+    "Printed Mumbai (E) and Borivali category totals conflict with the summary labels in both stock and registrations.",
+    "Stock table uses Chh.Sambhaji Nagar while summary and new-registration table use Aurangabad/A'bad; expanded canonical label retained with page references.",
+    "Abbreviated district/office names expanded for readability; these are not a spatial RTO jurisdiction crosswalk.",
+    "Page 15 repeats the State Total in an additional unlabelled numeric column; extractor must verify exact equality before excluding the duplicate."
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/research/osm_wiki_motorcar_20260919_d6a13de1a735a577.html",
+      "url": "https://wiki.openstreetmap.org/wiki/Key:motorcar",
+      "final_url": "https://wiki.openstreetmap.org/wiki/Key:motorcar",
+      "source": "OpenStreetMap motorcar tag semantics",
+      "licence": "CC-BY-SA 2.0 (OpenStreetMap Wiki content; individual media may differ)",
+      "retrieved": "2026-09-18T21:48:48.545013+00:00",
+      "sha256": "d6a13de1a735a5772fda5c2b9d31d5ede2592a64c24dd381f8ef89e3ff573fa1",
+      "bytes": 77679,
+      "content_type": "text/html; charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Tag documentation snapshot; describes mapper conventions, not a traffic regulation or an observation of current access."
+    }
+  ]
+}

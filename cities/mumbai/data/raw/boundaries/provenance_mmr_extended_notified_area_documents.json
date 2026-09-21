@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/mmr_extended_notified_area_documents_a60010516adcf292.html",
+      "url": "https://www.mmrda.maharashtra.gov.in/en/quicktabs/nojs/mumbai_metropolitan_region_s_ext/1",
+      "final_url": "https://www.mmrda.maharashtra.gov.in/en/quicktabs/nojs/mumbai_metropolitan_region_s_ext/1",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "MMRDA extended notified area project document links",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T10:14:24.713823+00:00",
+      "sha256": "a60010516adcf292c9144e287bf458475ea3a95da769c06310d322878f5203a0",
+      "bytes": 97925,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Legal/planning boundary evidence; no automatic model inclusion or exclusion.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

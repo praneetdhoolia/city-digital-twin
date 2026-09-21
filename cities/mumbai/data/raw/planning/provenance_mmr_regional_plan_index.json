@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/mmr_regional_plan_index_baa1d4a335ceb64d.html",
+      "url": "https://mmrda.maharashtra.gov.in/en/planning/regional-plan/final-rp-for-mmr",
+      "final_url": "https://mmrda.maharashtra.gov.in/en/planning/regional-plan/final-rp-for-mmr",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "MMRDA regional plan download index",
+      "licence": "Reuse terms unverified",
+      "retrieved": "2026-09-18T08:26:54.249271+00:00",
+      "sha256": "baa1d4a335ceb64d9b5a730df953261da0258b8461dc89143a6577c1ff5d75d5",
+      "bytes": 191022,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Boundary notifications, land-use and population documents; links require extraction.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

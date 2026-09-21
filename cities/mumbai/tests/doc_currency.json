@@ -1,0 +1,49 @@
+{
+  "description": "Live Mumbai documentation claims, checked against the city-owned derived artefacts. Dated run records are historical and excluded.",
+  "claims": [
+    {
+      "id": "regional.route_counts.NMMT",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "\\| NMMT directed patterns \\| ([\\d,]+) \\|",
+      "truth": {
+        "kind": "json_number",
+        "file": "data/processed/acquisition/baseline_regional_buses.json",
+        "key": "route_counts.NMMT"
+      }
+    },
+    {
+      "id": "regional.departure_counts.NMMT",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "\\| NMMT published departures included \\| ([\\d,]+) \\|",
+      "truth": {
+        "kind": "json_number",
+        "file": "data/processed/acquisition/baseline_regional_buses.json",
+        "key": "departure_counts.NMMT"
+      }
+    },
+    {
+      "id": "regional.route_counts.MBMT",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "\\| MBMT directed patterns \\| ([\\d,]+) \\|",
+      "truth": {
+        "kind": "json_number",
+        "file": "data/processed/acquisition/baseline_regional_buses.json",
+        "key": "route_counts.MBMT"
+      }
+    },
+    {
+      "id": "regional.departure_counts.MBMT",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "\\| MBMT derived departures \\| ([\\d,]+) \\|",
+      "truth": {
+        "kind": "json_number",
+        "file": "data/processed/acquisition/baseline_regional_buses.json",
+        "key": "departure_counts.MBMT"
+      }
+    }
+  ]
+}

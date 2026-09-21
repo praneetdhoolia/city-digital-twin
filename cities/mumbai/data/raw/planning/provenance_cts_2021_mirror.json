@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/cts_2021_mirror_025fa4604a024210.pdf",
+      "url": "https://infralive.com/web/wp-content/uploads/2022/05/Comprehensive-Transport-Study-for-Mumbai-Metropolitan-Region.pdf",
+      "final_url": "https://infralive.com/web/wp-content/uploads/2022/05/Comprehensive-Transport-Study-for-Mumbai-Metropolitan-Region.pdf",
+      "content_type": "application/pdf",
+      "source": "MMR CTS final report third-party copy",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:37:42.788307+00:00",
+      "sha256": "025fa4604a024210f3e523665c8ab843c1e741738be5c15f06b7bd4a20f03b21",
+      "bytes": 20736575,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Candidate primary document hosted by third party; authenticity and completeness unverified.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

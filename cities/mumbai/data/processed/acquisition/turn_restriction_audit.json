@@ -1,0 +1,1236 @@
+{
+  "source": "derived",
+  "input_sha256": {
+    "networks/osm/network_source.osm.gz": "a7865ea1b59589c9202dd59711f57658ea02bfa6ca75bab373e4687ed3d91cf5",
+    "data/processed/network/road_geometry/ways.csv": "091901fd4ab7b2c1e9490ca6c2f88f0d347d88fcf8381bf573eeb170e74a4309"
+  },
+  "relations_count": 333,
+  "via_way_geometry_status_counts": {
+    "unique_ordered_way_chain": 180
+  },
+  "restriction_values": {
+    "no_left_turn": 8,
+    "no_right_turn": 181,
+    "no_straight_on": 5,
+    "no_u_turn": 139
+  },
+  "structural_issue_counts": {
+    "missing_from": 13,
+    "missing_to": 13,
+    "missing_via": 1,
+    "unrecognised_member_role": 1
+  },
+  "scope_review_counts": {},
+  "relations_with_structural_issues": [
+    11179935,
+    11179941,
+    11179942,
+    13445818,
+    15518938,
+    15518975,
+    15519081,
+    16357332,
+    17889178,
+    17915360,
+    17934702,
+    19344103,
+    20594805
+  ],
+  "relations_with_scope_review": [],
+  "defective_relation_histories": [
+    {
+      "osm_relation_id": 11179935,
+      "source": {
+        "path": "data/raw/roads/osm_relation_11179935_history_20260919_a1d1fc2edde0a229.xml",
+        "url": "https://api.openstreetmap.org/api/0.6/relation/11179935/history",
+        "sha256": "a1d1fc2edde0a229d6966faa707404688cf9cb1f3001033a21309e10eeed7a2e"
+      },
+      "versions": [
+        {
+          "osm_relation_id": 11179935,
+          "version": "1",
+          "timestamp": "2020-06-07T11:04:44Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": 812629502,
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": 572130778,
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": 812629502,
+              "role": "to"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "way_member_outside_road_geometry"
+            ],
+            "restriction_tags": {
+              "restriction": "no_u_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [
+              812629502
+            ],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        },
+        {
+          "osm_relation_id": 11179935,
+          "version": "2",
+          "timestamp": "2022-07-05T10:27:34Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": 572130778,
+              "role": "via"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "missing_from",
+              "missing_to"
+            ],
+            "restriction_tags": {
+              "restriction": "no_u_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        }
+      ],
+      "latest_history_matches_native_members_and_tags": true
+    },
+    {
+      "osm_relation_id": 11179941,
+      "source": {
+        "path": "data/raw/roads/osm_relation_11179941_history_20260919_8f23f73db869b365.xml",
+        "url": "https://api.openstreetmap.org/api/0.6/relation/11179941/history",
+        "sha256": "8f23f73db869b365108ec657761beb172837a1d3774491c721b60f153a7b5e8f"
+      },
+      "versions": [
+        {
+          "osm_relation_id": 11179941,
+          "version": "1",
+          "timestamp": "2020-06-07T11:04:44Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": 812629500,
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": 2222379207,
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": 812629500,
+              "role": "to"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "way_member_outside_road_geometry"
+            ],
+            "restriction_tags": {
+              "restriction": "no_u_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [
+              812629500
+            ],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        },
+        {
+          "osm_relation_id": 11179941,
+          "version": "2",
+          "timestamp": "2022-07-05T10:27:34Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": 2222379207,
+              "role": "via"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "missing_from",
+              "missing_to"
+            ],
+            "restriction_tags": {
+              "restriction": "no_u_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        }
+      ],
+      "latest_history_matches_native_members_and_tags": true
+    },
+    {
+      "osm_relation_id": 11179942,
+      "source": {
+        "path": "data/raw/roads/osm_relation_11179942_history_20260919_26526f10dd368ea5.xml",
+        "url": "https://api.openstreetmap.org/api/0.6/relation/11179942/history",
+        "sha256": "26526f10dd368ea57438ced8fbede69f73fa2d881de1c4be78caab133a6fd037"
+      },
+      "versions": [
+        {
+          "osm_relation_id": 11179942,
+          "version": "1",
+          "timestamp": "2020-06-07T11:04:44Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": 812629500,
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": 572130778,
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": 812629500,
+              "role": "to"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "way_member_outside_road_geometry"
+            ],
+            "restriction_tags": {
+              "restriction": "no_u_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [
+              812629500
+            ],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        },
+        {
+          "osm_relation_id": 11179942,
+          "version": "2",
+          "timestamp": "2022-07-05T10:27:34Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": 572130778,
+              "role": "via"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "missing_from",
+              "missing_to"
+            ],
+            "restriction_tags": {
+              "restriction": "no_u_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        }
+      ],
+      "latest_history_matches_native_members_and_tags": true
+    },
+    {
+      "osm_relation_id": 13445818,
+      "source": {
+        "path": "data/raw/roads/osm_relation_13445818_history_20260919_b4f72e98bca598b9.xml",
+        "url": "https://api.openstreetmap.org/api/0.6/relation/13445818/history",
+        "sha256": "b4f72e98bca598b9ebd2a56e47c944404e3893ea0665673c6edcf7b1c6b43b5a"
+      },
+      "versions": [
+        {
+          "osm_relation_id": 13445818,
+          "version": "1",
+          "timestamp": "2021-11-16T13:00:40Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_u_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": 572130716,
+              "role": "via"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "missing_from",
+              "missing_to"
+            ],
+            "restriction_tags": {
+              "restriction": "no_u_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        }
+      ],
+      "latest_history_matches_native_members_and_tags": true
+    },
+    {
+      "osm_relation_id": 15518938,
+      "source": {
+        "path": "data/raw/roads/osm_relation_15518938_history_20260919_0d5bb99de7a91ae7.xml",
+        "url": "https://api.openstreetmap.org/api/0.6/relation/15518938/history",
+        "sha256": "0d5bb99de7a91ae726326d44081204a0431b3d76d8c144594fc1a80d294418a9"
+      },
+      "versions": [
+        {
+          "osm_relation_id": 15518938,
+          "version": "1",
+          "timestamp": "2023-02-22T03:30:58Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": 1148384033,
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": 5470840234,
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": 1148384030,
+              "role": "to"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "way_member_outside_road_geometry"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [
+              {
+                "role": "from",
+                "osm_way_id": 1148384033,
+                "via_node_indices": [
+                  1
+                ],
+                "via_at_way_endpoint": true
+              }
+            ],
+            "via_way_chain": null,
+            "missing_road_way_ids": [
+              1148384030
+            ],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        },
+        {
+          "osm_relation_id": 15518938,
+          "version": "2",
+          "timestamp": "2023-09-07T06:45:16Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": 5470840234,
+              "role": "via"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "missing_from",
+              "missing_to"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        }
+      ],
+      "latest_history_matches_native_members_and_tags": true
+    },
+    {
+      "osm_relation_id": 15518975,
+      "source": {
+        "path": "data/raw/roads/osm_relation_15518975_history_20260919_0e78d7b572dc01e0.xml",
+        "url": "https://api.openstreetmap.org/api/0.6/relation/15518975/history",
+        "sha256": "0e78d7b572dc01e0e4aade53be1aca3b4e7488e9fe4b9d14004f9e8f286567ee"
+      },
+      "versions": [
+        {
+          "osm_relation_id": 15518975,
+          "version": "1",
+          "timestamp": "2023-02-22T04:05:31Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": 231590347,
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": 3110861696,
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": 1148388193,
+              "role": "to"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "way_member_outside_road_geometry"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [
+              {
+                "role": "to",
+                "osm_way_id": 1148388193,
+                "via_node_indices": [
+                  0
+                ],
+                "via_at_way_endpoint": true
+              }
+            ],
+            "via_way_chain": null,
+            "missing_road_way_ids": [
+              231590347
+            ],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        },
+        {
+          "osm_relation_id": 15518975,
+          "version": "2",
+          "timestamp": "2023-09-07T05:28:14Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": 3110861696,
+              "role": "via"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "missing_from",
+              "missing_to"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        }
+      ],
+      "latest_history_matches_native_members_and_tags": true
+    },
+    {
+      "osm_relation_id": 15519081,
+      "source": {
+        "path": "data/raw/roads/osm_relation_15519081_history_20260919_b833ec228d03f143.xml",
+        "url": "https://api.openstreetmap.org/api/0.6/relation/15519081/history",
+        "sha256": "b833ec228d03f143ca8771368756dc4d3c228df43030ea1973555bf594815824"
+      },
+      "versions": [
+        {
+          "osm_relation_id": 15519081,
+          "version": "1",
+          "timestamp": "2023-02-22T04:33:35Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": 1148394708,
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": 415303820,
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": 35402450,
+              "role": "to"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "way_member_outside_road_geometry"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [
+              {
+                "role": "to",
+                "osm_way_id": 35402450,
+                "via_node_indices": [
+                  1
+                ],
+                "via_at_way_endpoint": true
+              }
+            ],
+            "via_way_chain": null,
+            "missing_road_way_ids": [
+              1148394708
+            ],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        },
+        {
+          "osm_relation_id": 15519081,
+          "version": "2",
+          "timestamp": "2023-09-07T11:51:01Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": 415303820,
+              "role": "via"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "missing_from",
+              "missing_to"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        }
+      ],
+      "latest_history_matches_native_members_and_tags": true
+    },
+    {
+      "osm_relation_id": 16357332,
+      "source": {
+        "path": "data/raw/roads/osm_relation_16357332_history_20260919_943153f261b93431.xml",
+        "url": "https://api.openstreetmap.org/api/0.6/relation/16357332/history",
+        "sha256": "943153f261b93431c9d4721f2826fa415a2ed539abd5ea7bc3b3b4cb0df9e51b"
+      },
+      "versions": [
+        {
+          "osm_relation_id": 16357332,
+          "version": "1",
+          "timestamp": "2023-09-21T03:27:08Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": 1209635352,
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": 10281845108,
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": 1124369304,
+              "role": "to"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "way_member_outside_road_geometry"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [
+              1124369304,
+              1209635352
+            ],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        },
+        {
+          "osm_relation_id": 16357332,
+          "version": "2",
+          "timestamp": "2024-08-19T08:42:29Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": 10281845108,
+              "role": "via"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "missing_from",
+              "missing_to"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        }
+      ],
+      "latest_history_matches_native_members_and_tags": true
+    },
+    {
+      "osm_relation_id": 17889178,
+      "source": {
+        "path": "data/raw/roads/osm_relation_17889178_history_20260919_9d828f37b69627bb.xml",
+        "url": "https://api.openstreetmap.org/api/0.6/relation/17889178/history",
+        "sha256": "9d828f37b69627bb89a1295322f2e984f506ab2da41c98f3247c336b6bfb1ab9"
+      },
+      "versions": [
+        {
+          "osm_relation_id": 17889178,
+          "version": "1",
+          "timestamp": "2024-07-30T10:35:58Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_straight_on",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": 1125315047,
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": 12067821134,
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": 1303046154,
+              "role": "to"
+            }
+          ],
+          "structure": {
+            "structural_issues": [],
+            "restriction_tags": {
+              "restriction": "no_straight_on"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [
+              {
+                "role": "from",
+                "osm_way_id": 1125315047,
+                "via_node_indices": [
+                  17
+                ],
+                "via_at_way_endpoint": true
+              },
+              {
+                "role": "to",
+                "osm_way_id": 1303046154,
+                "via_node_indices": [
+                  0
+                ],
+                "via_at_way_endpoint": true
+              }
+            ],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        },
+        {
+          "osm_relation_id": 17889178,
+          "version": "2",
+          "timestamp": "2026-07-15T11:03:14Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_straight_on",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": 12067821134,
+              "role": "via"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "missing_from",
+              "missing_to"
+            ],
+            "restriction_tags": {
+              "restriction": "no_straight_on"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        }
+      ],
+      "latest_history_matches_native_members_and_tags": true
+    },
+    {
+      "osm_relation_id": 17915360,
+      "source": {
+        "path": "data/raw/roads/osm_relation_17915360_history_20260919_00b28c9d224de962.xml",
+        "url": "https://api.openstreetmap.org/api/0.6/relation/17915360/history",
+        "sha256": "00b28c9d224de962ddf9333a1e160cfe7ff826615c71930ae266d58b4cfc5dff"
+      },
+      "versions": [
+        {
+          "osm_relation_id": 17915360,
+          "version": "1",
+          "timestamp": "2024-08-07T05:27:30Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_left_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": 7113510406,
+              "role": ""
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "missing_from",
+              "missing_to",
+              "missing_via",
+              "unrecognised_member_role"
+            ],
+            "restriction_tags": {
+              "restriction": "no_left_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        }
+      ],
+      "latest_history_matches_native_members_and_tags": true
+    },
+    {
+      "osm_relation_id": 17934702,
+      "source": {
+        "path": "data/raw/roads/osm_relation_17934702_history_20260919_cc94b20cbd580bdd.xml",
+        "url": "https://api.openstreetmap.org/api/0.6/relation/17934702/history",
+        "sha256": "cc94b20cbd580bddf7e09b17a234f9d545ac44cbb9f4323b2c039362357dcdbe"
+      },
+      "versions": [
+        {
+          "osm_relation_id": 17934702,
+          "version": "1",
+          "timestamp": "2024-08-14T11:26:25Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": 1307709955,
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": 12067529190,
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": 1307709957,
+              "role": "to"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "way_member_outside_road_geometry"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [
+              1307709955,
+              1307709957
+            ],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        },
+        {
+          "osm_relation_id": 17934702,
+          "version": "2",
+          "timestamp": "2025-12-17T10:03:51Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": 12067529190,
+              "role": "via"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "missing_from",
+              "missing_to"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        }
+      ],
+      "latest_history_matches_native_members_and_tags": true
+    },
+    {
+      "osm_relation_id": 19344103,
+      "source": {
+        "path": "data/raw/roads/osm_relation_19344103_history_20260919_e6e4a541220736aa.xml",
+        "url": "https://api.openstreetmap.org/api/0.6/relation/19344103/history",
+        "sha256": "e6e4a541220736aa559b201932778660eedde91e6c13c017602358b18b55a39f"
+      },
+      "versions": [
+        {
+          "osm_relation_id": 19344103,
+          "version": "1",
+          "timestamp": "2025-07-11T12:56:10Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": 1414075598,
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": 12966038373,
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": 22843362,
+              "role": "to"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "via_node_absent_from_from_way",
+              "via_node_absent_from_to_way"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [
+              {
+                "role": "from",
+                "osm_way_id": 1414075598,
+                "via_node_indices": [],
+                "via_at_way_endpoint": false
+              },
+              {
+                "role": "to",
+                "osm_way_id": 22843362,
+                "via_node_indices": [],
+                "via_at_way_endpoint": false
+              }
+            ],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        },
+        {
+          "osm_relation_id": 19344103,
+          "version": "2",
+          "timestamp": "2025-11-25T04:44:22Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": 1414075598,
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": 12966038373,
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": 1453492587,
+              "role": "to"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "via_node_absent_from_from_way"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [
+              {
+                "role": "from",
+                "osm_way_id": 1414075598,
+                "via_node_indices": [],
+                "via_at_way_endpoint": false
+              },
+              {
+                "role": "to",
+                "osm_way_id": 1453492587,
+                "via_node_indices": [
+                  1
+                ],
+                "via_at_way_endpoint": false
+              }
+            ],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        },
+        {
+          "osm_relation_id": 19344103,
+          "version": "3",
+          "timestamp": "2026-05-19T06:03:10Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": 12966038373,
+              "role": "via"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "missing_from",
+              "missing_to"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        }
+      ],
+      "latest_history_matches_native_members_and_tags": true
+    },
+    {
+      "osm_relation_id": 20594805,
+      "source": {
+        "path": "data/raw/roads/osm_relation_20594805_history_20260919_96c8c66c35606228.xml",
+        "url": "https://api.openstreetmap.org/api/0.6/relation/20594805/history",
+        "sha256": "96c8c66c35606228228044dbf43b2392607eeae547d8e30fd995958b308190a2"
+      },
+      "versions": [
+        {
+          "osm_relation_id": 20594805,
+          "version": "1",
+          "timestamp": "2026-04-27T11:15:26Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "way",
+              "ref": 1504412840,
+              "role": "from"
+            },
+            {
+              "type": "node",
+              "ref": 12966038373,
+              "role": "via"
+            },
+            {
+              "type": "way",
+              "ref": 1414075598,
+              "role": "to"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "via_node_absent_from_from_way",
+              "via_node_absent_from_to_way"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [
+              {
+                "role": "from",
+                "osm_way_id": 1504412840,
+                "via_node_indices": [],
+                "via_at_way_endpoint": false
+              },
+              {
+                "role": "to",
+                "osm_way_id": 1414075598,
+                "via_node_indices": [],
+                "via_at_way_endpoint": false
+              }
+            ],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        },
+        {
+          "osm_relation_id": 20594805,
+          "version": "2",
+          "timestamp": "2026-05-19T06:03:10Z",
+          "visible": "true",
+          "source_tags": {
+            "restriction": "no_right_turn",
+            "type": "restriction"
+          },
+          "members": [
+            {
+              "type": "node",
+              "ref": 12966038373,
+              "role": "via"
+            }
+          ],
+          "structure": {
+            "structural_issues": [
+              "missing_from",
+              "missing_to"
+            ],
+            "restriction_tags": {
+              "restriction": "no_right_turn"
+            },
+            "exception_tokens": [],
+            "scope_review": [],
+            "junction_checks": [],
+            "via_way_chain": null,
+            "missing_road_way_ids": [],
+            "model_turns_exported": 0,
+            "simulation_permission_established": false
+          }
+        }
+      ],
+      "latest_history_matches_native_members_and_tags": true
+    }
+  ],
+  "documentation_reference": {
+    "path": "data/raw/research/osm_wiki_restriction_20260919_8963ef51ab013f87.html",
+    "url": "https://wiki.openstreetmap.org/wiki/Relation:restriction",
+    "sha256": "8963ef51ab013f876e1c6a2998158b9df2502786ce4bee148276011713baa114"
+  },
+  "historical_members_restored": false,
+  "model_turns_exported": 0,
+  "limitations": [
+    "Geometry membership is not directed turn feasibility.",
+    "Vehicle classes, exceptions, conditional scope and current legal validity remain unresolved.",
+    "Historical from/to ways do not repair the latest incomplete source relation.",
+    "Counts describe the extracted research network, not a complete legal turn inventory."
+  ]
+}

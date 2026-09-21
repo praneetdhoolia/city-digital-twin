@@ -1,0 +1,32 @@
+{
+  "status": "manufacturer_claims_not_operating_capacity",
+  "rows": 8,
+  "conflicts": [
+    {
+      "model": "SWITCH EiV22",
+      "claims": [
+        {
+          "source_page_1_based": 1,
+          "capacity_text_as_printed": "63 + D",
+          "seated_passengers_count": 63,
+          "claim_context": "Technical table; certification in progress and customer choices noted"
+        },
+        {
+          "source_page_1_based": 2,
+          "capacity_text_as_printed": "65 passengers",
+          "seated_passengers_count": 65,
+          "claim_context": "Descriptive maximum seating claim; conflicts with technical table"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "All standing capacities remain missing; blank must not become zero or a default.",
+    "Driver places are separate from passenger seats where the table explicitly says +D or +Driver.",
+    "Orders, deliveries, registered stock, available fleet and actual route assignments are different quantities.",
+    "No manufacturer model is assigned to a scheduled departure here.",
+    "The Switch technical table and descriptive claim are retained without choosing one.",
+    "Brochure range and charging times depend on duty and configuration; they are not operational charging-dwell observations.",
+    "A smaller simulation must preserve separate configurations before applying its capacity scaling rule."
+  ]
+}

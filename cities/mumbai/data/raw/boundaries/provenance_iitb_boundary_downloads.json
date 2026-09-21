@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/iitb_boundary_downloads_a755e2d84b7c4e26.html",
+      "url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary.html",
+      "final_url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary.html",
+      "source": "IIT Bombay district and taluka GIS download page",
+      "licence": "IIT Bombay source reuse terms unverified",
+      "retrieved": "2026-09-18T08:44:00.467905+00:00",
+      "sha256": "a755e2d84b7c4e2674dcc9566b93c9f37f4070e4ef495170b978cdfa188d48a8",
+      "bytes": 15891,
+      "content_type": "text/html",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Research GIS linked to historical census; boundary completeness, coordinate reference system and permissions require audit."
+    }
+  ]
+}

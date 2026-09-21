@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "url": "https://cr.indianrailways.gov.in/cris//uploads/files/1736760185562-Trains%20handled%20by%20CR%2013.01.2025.png",
+      "final_url": "https://cr.indianrailways.gov.in/cris//uploads/files/1736760185562-Trains%20handled%20by%20CR%2013.01.2025.png",
+      "content_type": "image/png",
+      "retrieved": "2026-09-18T10:41:13.553Z",
+      "bytes": 71714,
+      "path": "data/raw/transit/cr_public_services_20250113_eb1bdd18ebaf279d.png",
+      "sha256": "eb1bdd18ebaf279db2644fa448b80ebdff843ba1586874d5223271f575eb7a1f",
+      "source": "Central Railway published services 20250113",
+      "licence": "Operator publication; reuse terms unverified",
+      "coverage": "Linked from official Mumbai Suburban timetable index; effective dates, later amendments, station times and operating exceptions require validation.",
+      "producing_script": "extract/import_browser_acquisition.py",
+      "transport": "Connected Chrome public fetch; default certificate verification",
+      "validation_status": "acquired_unvalidated"
+    }
+  ]
+}

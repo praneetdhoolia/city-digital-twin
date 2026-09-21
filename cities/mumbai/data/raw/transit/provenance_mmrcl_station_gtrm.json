@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_station_gtrm_fb9d5a29762b259a.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/station-detail/GTRM/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/station-detail/GTRM/",
+      "content_type": "application/json",
+      "source": "Line 3 public station details Grant Road Metro",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:04:36.509627+00:00",
+      "sha256": "fb9d5a29762b259a7edbff8199558cf35a0f9e90894dfcfcf5fcf1188cfe3c9e",
+      "bytes": 24709,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

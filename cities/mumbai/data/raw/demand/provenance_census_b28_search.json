@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/demand/census_b28_search_947d8bdc51fee8ca.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/?sk=PC11_B28-27&ps=15",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/?sk=PC11_B28-27&ps=15",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Census Maharashtra B28 catalogue search",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:41:20.969434+00:00",
+      "sha256": "947d8bdc51fee8ca555dfba061c963e607bcf5b5510d451badc999186fcfff4d",
+      "bytes": 108220,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Locate state workbook with district observations.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

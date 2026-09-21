@@ -22,6 +22,7 @@ import subprocess
 import sys
 
 import city
+from manifest_io import manifest_reader
 
 # Manifest rows are CITY-RELATIVE (`data/processed/...`), so they are resolved
 # against the city directory rather than the working directory. The same row in
@@ -123,7 +124,7 @@ def main():
     rows = []
 
     with open(MANIFEST, encoding='utf-8') as f:
-        for row in csv.DictReader(f):
+        for row in manifest_reader(f):
             rows.append(row)
             path = norm(row['path'])
             manifested.add(path)
@@ -162,12 +163,12 @@ def main():
     print('verified %d present file(s) (%d size-only, no digest recorded); '
           '%d manifest entr(ies) not in this checkout (gitignored bulk data)'
           % (checked, unhashed, absent))
-    for line in failures:
-        print('FAIL  ' + line)
     if unlicensed:
         failures.append('%d manifest row(s) carry no licence: %s%s'
                         % (len(unlicensed), ', '.join(unlicensed[:6]),
                            ' ...' if len(unlicensed) > 6 else ''))
+    for line in failures:
+        print('FAIL  ' + line)
     if failures:
         print('\n%d failure(s)' % len(failures))
         return 1

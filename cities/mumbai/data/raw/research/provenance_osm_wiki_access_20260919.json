@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/research/osm_wiki_access_20260919_61cb647c64a2c688.html",
+      "url": "https://wiki.openstreetmap.org/wiki/Key:access",
+      "final_url": "https://wiki.openstreetmap.org/wiki/Key:access",
+      "source": "OpenStreetMap access tag semantics",
+      "licence": "CC-BY-SA 2.0 (OpenStreetMap Wiki content; individual media may differ)",
+      "retrieved": "2026-09-18T21:48:47.733574+00:00",
+      "sha256": "61cb647c64a2c68845d733f4c552a322743a9b525480daf4f2cc67a15f9f1e05",
+      "bytes": 212955,
+      "content_type": "text/html; charset=UTF-8",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Tag documentation snapshot; describes mapper conventions, not a traffic regulation or an observation of current access."
+    }
+  ]
+}

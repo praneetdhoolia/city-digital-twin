@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/geospatial/cop_dem_tile_list_10604e3052c98a09.txt",
+      "url": "https://copernicus-dem-30m.s3.amazonaws.com/tileList.txt",
+      "final_url": "https://copernicus-dem-30m.s3.amazonaws.com/tileList.txt",
+      "source": "Copernicus public GLO30 tile list",
+      "licence": "Copernicus DEM free licence; prescribed attribution and product terms apply",
+      "retrieved": "2026-09-18T09:56:52.533643+00:00",
+      "sha256": "10604e3052c98a09e9216f1a8f0a555a04148419757575f783d4937fd44316dc",
+      "bytes": 1110900,
+      "content_type": "text/plain",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Spatial-support source. GHSL population is modelled; DSM includes buildings and vegetation and is not surveyed road elevation."
+    }
+  ]
+}

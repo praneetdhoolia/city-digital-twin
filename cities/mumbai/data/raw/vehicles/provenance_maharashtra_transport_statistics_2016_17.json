@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/vehicles/maharashtra_transport_statistics_2016_17_a75c07e8a5da3fbe.pdf",
+      "url": "https://transport.maharashtra.gov.in/site/upload/gr/lad.pdf",
+      "final_url": "https://transport.maharashtra.gov.in/site/upload/gr/lad.pdf",
+      "content_type": "application/pdf",
+      "source": "Maharashtra transport statistics 2016-17",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-18T11:27:35.761256+00:00",
+      "sha256": "a75c07e8a5da3fbef9b368d4c2458ad88265c7037cad803f331a1fc2483e98ad",
+      "bytes": 2075856,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical vehicle, driving licence and permit tables; jurisdiction and registration stock differ from active city traffic.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

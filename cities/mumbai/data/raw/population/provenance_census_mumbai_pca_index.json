@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_mumbai_pca_index_fc7dff9e00c0ca1c.html",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/6710",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/6710",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Mumbai City 2011 PCA index",
+      "licence": "ORGI publication; reuse terms unverified",
+      "retrieved": "2026-09-18T08:45:24.985139+00:00",
+      "sha256": "fc7dff9e00c0ca1ca07af709fc7ffbbc1174011ae19949b30041fa2100f912dc",
+      "bytes": 132554,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official catalogue; workbook link and definitions.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

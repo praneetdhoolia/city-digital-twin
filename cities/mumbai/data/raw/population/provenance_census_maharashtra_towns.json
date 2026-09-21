@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_maharashtra_towns_472859caf5591289.xlsx",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/807/download/2881/DH_2011_DCHB_Town_Release_2700.xlsx",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/807/download/2881/DH_2011_DCHB_Town_Release_2700.xlsx",
+      "content_type": "application/octet-stream",
+      "source": "Maharashtra census town directory",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-18T08:32:58.404251+00:00",
+      "sha256": "472859caf5591289966f71395e86f43c35970dc0fc6d4a76ebed18292533e718",
+      "bytes": 1788573,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "2011 town facilities and amenities; not current establishments.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

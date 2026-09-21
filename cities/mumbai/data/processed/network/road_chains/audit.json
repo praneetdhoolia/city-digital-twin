@@ -1,0 +1,71 @@
+{
+  "source": "derived_native_geometry_partition",
+  "input_sha256": {
+    "data/processed/network/road_geometry/nodes.csv": "93b90b1cb9e791b71e5451780698f1d2217cb375453dcd5b965d874b7d1b6078",
+    "data/processed/network/road_geometry/ways.csv": "091901fd4ab7b2c1e9490ca6c2f88f0d347d88fcf8381bf573eeb170e74a4309",
+    "data/processed/network/road_geometry/segments.csv": "b8f179f209783f7620c4603381236deffd053b8f350c8c777a4c96452e44e4de",
+    "data/processed/network/road_geometry/audit.json": "190d2b42f3784b5a2a2478ae4e8ac375ef84b87b87a1225767dacbc6ec0713ab",
+    "data/processed/network/road_rail_shared_nodes.csv": "54345d454d3d76fbcf1de838741df07d0331bf1ae4737e9c38a6731a4cd4b32e",
+    "data/processed/network/osm_way_access_profiles.csv": "49cbbfee60e2f5c7368f7bddf74ae6843fcc3cec3e2b51bea355f77978ef7e1c",
+    "networks/osm/network_source.osm.gz": "a7865ea1b59589c9202dd59711f57658ea02bfa6ca75bab373e4687ed3d91cf5"
+  },
+  "source_nodes": 2043886,
+  "source_ways": 232958,
+  "source_segments": 2139676,
+  "retained_nodes": 417126,
+  "tagged_source_nodes": 49677,
+  "native_chains": 512916,
+  "internal_shape_nodes": 1626760,
+  "retention_reason_counts": {
+    "closed_chain_anchor": 2178,
+    "repeated_within_way": 5165,
+    "restriction_node_member": 146,
+    "restriction_way_member": 1051,
+    "road_rail_shared_identity": 1512,
+    "shared_between_ways": 282893,
+    "source_node_has_tags": 49677,
+    "way_endpoint": 362262
+  },
+  "restriction_relations": 333,
+  "restriction_member_ways_outside_road_geometry": [],
+  "supplied_anchors_outside_road_geometry": {
+    "restriction_node_member": [
+      10281845108
+    ],
+    "restriction_way_member": [],
+    "road_rail_shared_identity": []
+  },
+  "self_loop_chains": 0,
+  "zero_length_chains": 0,
+  "restriction_relations_with_node_members_outside_road_geometry": [
+    {
+      "osm_relation_id": 16357332,
+      "source_tags": {
+        "restriction": "no_right_turn",
+        "type": "restriction"
+      },
+      "members": [
+        {
+          "type": "node",
+          "ref": 10281845108,
+          "role": "via"
+        }
+      ]
+    }
+  ],
+  "exact_sums_of_input_decimal_lengths_m": {
+    "projected": "61006580.416883454596455523",
+    "geodesic": "61004651.02636746028275944"
+  },
+  "segment_coverage": "every_native_adjacent_segment_once_in_source_order",
+  "model_links_exported": 0,
+  "limitations": [
+    "All source tags survive on retained nodes; parent-way tags remain in the native way table.",
+    "Lengths are exact sums of the decimal representations in the input segment table, not an assertion of survey precision.",
+    "Shape nodes remain in each ordered chain geometry and are not deleted from the source tables.",
+    "Area and lifecycle-only geometry retains its source role; the candidate chains do not confer operating status.",
+    "Unmapped transit stops and activity connectors may require more anchors before a final network is assembled.",
+    "Control-node retention does not implement gate, signal, crossing, permission or turn behaviour.",
+    "Queue storage, flow, discrete time steps and junction interactions require simulation equivalence tests before adopting a reduction."
+  ]
+}

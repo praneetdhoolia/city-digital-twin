@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/mmr_plan_map_index_c4876d01d2bd3232.pdf",
+      "url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Index%20sheet.pdf",
+      "final_url": "https://mmrda.maharashtra.gov.in/sites/default/files/2021-10/Index%20sheet.pdf",
+      "content_type": "application/pdf",
+      "source": "Index sheet showing village-wise sheet nos.",
+      "licence": "MMRDA publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:08:01.885825+00:00",
+      "sha256": "c4876d01d2bd32324613481fb967602a27367654761a5d165970d92cb9772fc5",
+      "bytes": 82949957,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Official spatial planning evidence. Proposed land use and future infrastructure are not observed current activity or operating transport.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

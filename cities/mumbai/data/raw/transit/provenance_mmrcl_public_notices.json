@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmrcl_public_notices_aa3bb6cf6b72a40c.json",
+      "url": "https://portal.mmrcl.com/en/api/v2/notification/passenger/",
+      "final_url": "https://portal.mmrcl.com/en/api/v2/notification/passenger/",
+      "content_type": "application/json",
+      "source": "Line 3 public passenger notices",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-18T09:03:38.467463+00:00",
+      "sha256": "aa3bb6cf6b72a40cb2d32ed088680d43f2bc576b167ce91d9a182eb7668b3a89",
+      "bytes": 3196,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Public passenger website response; inspect source period and completeness before model use.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}
