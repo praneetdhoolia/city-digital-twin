@@ -1,0 +1,10 @@
+{
+  "overlay": "WEEKDAY",
+  "description": "The only day type built: the combined feed carries published weekday departures; no Saturday or Sunday timetable has been derived.",
+  "applies_to": {
+    "day_type": [
+      "WEEKDAY"
+    ]
+  },
+  "set": {}
+}

@@ -1,6 +1,5 @@
 """Construct continuous Harbour geometry witnesses, not operational train routes."""
 from collections import Counter, defaultdict
-import csv
 import hashlib
 import json
 import math
@@ -8,7 +7,7 @@ from pathlib import Path
 
 import city
 from build.rail_path_candidates import CandidateRouter, graph_from_segments
-from manifest_io import manifest_reader
+from evidence_io import dump_rows, read_rows, serial
 
 OUTPUT_INPUTS = {
     'data/processed/transit/cr_harbour_path_patterns.csv': [
@@ -39,26 +38,6 @@ OUTPUT_INPUTS = {
 }
 
 
-def read(path):
-    with Path(city.path(path)).open(encoding='utf-8') as stream:
-        return list(manifest_reader(stream))
-
-
-def serial(value):
-    return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
-
-
-def dump(path, rows):
-    target = Path(city.path(path))
-    target.parent.mkdir(parents=True, exist_ok=True)
-    if not rows:
-        raise ValueError('Expected nonempty path evidence: ' + path)
-    with target.open('w', encoding='utf-8', newline='') as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator='\n')
-        writer.writeheader()
-        writer.writerows(rows)
-
-
 def main():
     inputs = sorted(set(p for paths in OUTPUT_INPUTS.values() for p in paths))
     hashes = {p: hashlib.sha256(Path(city.path(p)).read_bytes()).hexdigest() for p in inputs}
@@ -66,12 +45,12 @@ def main():
     boarding_audit = json.loads(Path(city.path('data/processed/acquisition/cr_harbour_track_evidence_audit.json')).read_text(encoding='utf-8'))
     if geometry_audit['input_sha256'] != [boarding_audit['source_native_sha256']]:
         raise ValueError('Boarding and railway geometry must use the same native build')
-    ways = {int(r['osm_way_id']): r for r in read('data/processed/network/rail_geometry/ways.csv')
+    ways = {int(r['osm_way_id']): r for r in read_rows('data/processed/network/rail_geometry/ways.csv')
             if r['railway_tag'] == 'rail' and r['geometry_role'] != 'area_boundary'}
     way_tags = {k: json.loads(v['source_tags_json']) for k,v in ways.items()}
-    segments = [r for r in read('data/processed/network/rail_geometry/segments.csv') if int(r['osm_way_id']) in ways]
+    segments = [r for r in read_rows('data/processed/network/rail_geometry/segments.csv') if int(r['osm_way_id']) in ways]
     station_nodes = defaultdict(set)
-    for row in read('data/processed/network/cr_harbour_boarding_nodes.csv'):
+    for row in read_rows('data/processed/network/cr_harbour_boarding_nodes.csv'):
         if row['native_presence'] != 'present' or not json.loads(row['rail_parent_ways']):
             continue
         if row['source_native_sha256'] != boarding_audit['source_native_sha256']:
@@ -79,9 +58,9 @@ def main():
         for key in json.loads(row['station_keys']):
             station_nodes[key].add(int(row['osm_node_id']))
     trains = defaultdict(list)
-    for row in read('data/processed/transit/cr_harbour_stop_candidates.csv'):
+    for row in read_rows('data/processed/transit/cr_harbour_stop_candidates.csv'):
         trains[row['train_number']].append(row)
-    services = {r['train_number']:r for r in read('data/processed/transit/cr_harbour_service_candidates.csv')}
+    services = {r['train_number']:r for r in read_rows('data/processed/transit/cr_harbour_service_candidates.csv')}
     if services.keys() != trains.keys():
         raise ValueError('Timetable service/stop sets disagree')
     patterns, train_pattern = {}, {}
@@ -192,7 +171,7 @@ def main():
         ('data/processed/network/cr_harbour_path_segments.csv',segment_rows),
         ('data/processed/transit/cr_harbour_service_path_candidates.csv',service_rows),
         ('data/processed/transit/cr_harbour_path_time_diagnostics.csv',time_rows)):
-        dump(path, rows)
+        dump_rows(path, rows)
     audit = dict(source='derived_geometry_and_timetable_evidence', input_sha256=hashes,
         source_native_sha256=boarding_audit['source_native_sha256'], station_patterns=len(patterns), timetable_services=len(trains),
         rail_ways=len(ways), rail_segments=len(segments), variants=variant_counts,

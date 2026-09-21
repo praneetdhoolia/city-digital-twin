@@ -1,0 +1,10 @@
+{
+  "overlay": "BASE",
+  "description": "The base year as acquired: no intervention, the mapped network and combined feed as built. Nothing is overridden.",
+  "applies_to": {
+    "scenario": [
+      "BASE"
+    ]
+  },
+  "set": {}
+}

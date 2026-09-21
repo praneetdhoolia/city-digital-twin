@@ -469,9 +469,9 @@
    "repeat_of": null,
    "opens_family": true,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "§9.185 scaled both components; §9.203 verified on the real WEEKDAY population at 25 % (Tram 15 + 52 against 15 + 210 on every F35 arm) and filed #237 for the first arm's measurement",
+   "updated": "2026-09-21"
   },
   {
    "id": "20260918T182209:2",
@@ -481,9 +481,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "§9.185: fit.py's goal_met requires every declared target mode scored and finite; the F35 result's _fit.json now reads goal_met None with 31 unscorable listed (§9.203)",
+   "updated": "2026-09-21"
   },
   {
    "id": "20260918T182209:3",

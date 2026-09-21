@@ -22,6 +22,7 @@ import registry
 from registry import param_config
 from build.extract_osm_network import fingerprint
 from build.repair_transit_order import repair_schedule
+import build_matsim_run_inputs as build_inputs
 from build_matsim_run_inputs import add_nonmotor_reverse_links, strip_unreachable_mode_links
 import bootstrap_toolchain as tc
 import run_matsim as harness
@@ -150,19 +151,19 @@ def main(run_config=None):
         if not path.is_file():
             raise SystemExit('Missing prepared input: ' + key + ': ' + str(path))
     demand_audit = population_audit(paths['plans'])
-    if demand_audit['maximum_initial_plans_per_person_count'] > cfg.get('RUN.smoke.replanning.maxAgentPlanMemorySize'):
+    if demand_audit['maximum_initial_plans_per_person_count'] > cfg.get('RUN.replanning.max_agent_plan_memory'):
         raise SystemExit('Plan memory would discard supplied initial choices; declare sufficient memory before launch')
     java, jar = tc.require()
     tc.compile_java()
-    iterations = cfg.get('RUN.smoke.controler.lastIteration')
+    iterations = cfg.get('RUN.controler.last_iteration')
     name = time.strftime('%Y%m%dT%H%M%S') + f'_{iterations}it_100pct-{city.descriptor()["id"]}-smoke'
     run_dir = Path(results_store.raw_dir(name))
     run_dir.mkdir(parents=True, exist_ok=False)
     meta = dict(status='running', scenario=city.descriptor()['intervention']['base_scenario'],
         city=city.descriptor()['id'], run_kind='behavioural_smoke',
         day=city.descriptor()['day_types'][0], fraction=1.0, sample_pct=100.0,
-        iterations=iterations, seed=cfg.get('RUN.smoke.global.randomSeed'),
-        threads=cfg.get('RUN.smoke.global.numberOfThreads'), xmx=cfg.get('RUN.smoke.xmx'),
+        iterations=iterations, seed=cfg.get('RUN.machine.seed'),
+        threads=cfg.get('RUN.machine.replanning_threads'), xmx=cfg.get('RUN.machine.xmx'),
         started=harness._now(), pid=os.getpid(),
         notes='Provisional behavioural smoke of the explicit small input population. No full-city expansion, calibration or physical-fidelity claim. Ride is a vehicle proxy; household pairing and detailed controls remain incomplete.')
     input_hashes = {key: fingerprint(path) for key, path in paths.items()}
@@ -196,6 +197,15 @@ def main(run_config=None):
                        'vehicles.vehiclesFile': run_dir / 'vehicles.xml',
                        'controler.outputDirectory': run_dir / 'output'}.items()}
         runtime['global.coordinateSystem'] = (city.crs(), 'identity', 'city descriptor CRS')
+        # The three identities the registry declares `computed` and the emitter
+        # refuses to write from a declared value - the same entries, from the
+        # same rules, as build_matsim_run_inputs.config_runtime supplies.
+        fraction = cfg.get('RUN.sample.fraction')
+        runtime['qsim.flowCapacityFactor'] = (fraction, 'derived', 'flowCapacityFactor = RUN.sample.fraction')
+        runtime['qsim.storageCapacityFactor'] = (
+            fraction ** cfg.get('RUN.sample.storage_capacity_exponent'), 'derived',
+            'storageCapacityFactor = fraction ** RUN.sample.storage_capacity_exponent')
+        runtime['scoring.fractionOfIterationsToStartScoreMSA'] = build_inputs._score_msa(cfg)
         if 'boarding_fares' in paths:
             runtime['boardingFare.tableFile'] = (
                 str(paths['boarding_fares']).replace(os.sep, '/'), 'path', 'city boarding fare table')
@@ -211,7 +221,7 @@ def main(run_config=None):
             (run_dir / '_hired_fleet_input.json').write_text(json.dumps(fleet, indent=2) + '\n', encoding='utf-8')
         config = param_config.write(str(run_dir / 'config.xml'), 'matsim', cfg, runtime)
         print('Road links receiving baseline modes:', changed, flush=True)
-        command = [java, '-Xmx' + cfg.get('RUN.smoke.xmx'), '-cp', os.pathsep.join((jar, tc.CLASSES)),
+        command = [java, '-Xmx' + cfg.get('RUN.machine.xmx'), '-cp', os.pathsep.join((jar, tc.CLASSES)),
                    'citysim.CitysimControler', config]
         with (run_dir / 'matsim.log').open('w', encoding='utf-8') as log:
             with subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT) as proc:

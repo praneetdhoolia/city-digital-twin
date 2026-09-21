@@ -4,7 +4,6 @@ No relation member is reordered or replaced. A matched OSM route window is
 evidence of a mapped path, not proof of current operation or train assignment.
 """
 from collections import Counter
-import csv
 import hashlib
 import json
 from pathlib import Path
@@ -12,7 +11,7 @@ from pathlib import Path
 import city
 from build.ordered_route_geometry import locate_ordered_stops, orient_ordered_ways
 from build.rail_path_candidates import orientations
-from manifest_io import manifest_reader
+from evidence_io import dump_rows, read_rows, serial
 
 OUTPUT_INPUTS = {
     'data/processed/transit/cr_harbour_mapped_routes.csv': [
@@ -48,24 +47,6 @@ OUTPUT_INPUTS = {
 }
 
 
-def read(path):
-    with Path(city.path(path)).open(encoding='utf-8') as stream:
-        return list(manifest_reader(stream))
-
-
-def serial(value):
-    return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
-
-
-def dump(path, rows):
-    if not rows:
-        raise ValueError('No mapped-route evidence: ' + path)
-    with Path(city.path(path)).open('w', encoding='utf-8', newline='') as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator='\n')
-        writer.writeheader()
-        writer.writerows(rows)
-
-
 def main():
     inputs = sorted(set(p for paths in OUTPUT_INPUTS.values() for p in paths))
     hashes = {p: hashlib.sha256(Path(city.path(p)).read_bytes()).hexdigest() for p in inputs}
@@ -76,16 +57,16 @@ def main():
     if (relation_audit['source_native_sha256'] != network_audit['source_sha256'] or
             geometry_audit['input_sha256'] != [network_audit['output_sha256']]):
         raise ValueError('Relation and reduced railway geometry builds do not share native ancestry')
-    boarding = {int(r['osm_node_id']): r for r in read('data/processed/network/cr_harbour_boarding_nodes.csv')}
+    boarding = {int(r['osm_node_id']): r for r in read_rows('data/processed/network/cr_harbour_boarding_nodes.csv')}
     if any(r['source_native_sha256'] != network_audit['output_sha256'] for r in boarding.values()):
         raise ValueError('Boarding evidence belongs to a different native build')
     keys = {node: set(json.loads(r['station_keys'])) for node, r in boarding.items()}
-    ways = {int(r['osm_way_id']): r for r in read('data/processed/network/rail_geometry/ways.csv')
+    ways = {int(r['osm_way_id']): r for r in read_rows('data/processed/network/rail_geometry/ways.csv')
             if r['railway_tag'] == 'rail' and r['geometry_role'] != 'area_boundary'}
     segments = {(int(r['osm_way_id']), int(r['segment_index_zero_based'])): r
-                for r in read('data/processed/network/rail_geometry/segments.csv')}
+                for r in read_rows('data/processed/network/rail_geometry/segments.csv')}
     route_rows, segment_rows, stop_rows, routes = [], [], [], {}
-    for relation in read('data/processed/observed/osm_transport_relations.csv'):
+    for relation in read_rows('data/processed/observed/osm_transport_relations.csv'):
         tags = json.loads(relation['all_tags_json'])
         if tags.get('route') != 'train' or tags.get('public_transport:version') != '2':
             continue
@@ -152,8 +133,8 @@ def main():
             coherent_stop_geometry=bool(traced) and set(stop_counts) == {'present_in_order'}, schedule_export_eligible=False))
         routes[route_id] = dict(stops=stops, locations=locations, segments=traced)
         segment_rows.extend(traced)
-    patterns = [r for r in read('data/processed/transit/cr_harbour_path_patterns.csv') if r['variant'] == 'static_oneway_screen']
-    services = Counter(r['pattern_id'] for r in read('data/processed/transit/cr_harbour_service_path_candidates.csv')
+    patterns = [r for r in read_rows('data/processed/transit/cr_harbour_path_patterns.csv') if r['variant'] == 'static_oneway_screen']
+    services = Counter(r['pattern_id'] for r in read_rows('data/processed/transit/cr_harbour_service_path_candidates.csv')
                        if r['variant'] == 'static_oneway_screen')
     pattern_rows = []
     for pattern in patterns:
@@ -206,10 +187,10 @@ def main():
             'Several route relations and repeated services share the same sources; they are not independent observations.',
             'No service is eligible for schedule export from these evidence tables.',
         ])
-    dump('data/processed/transit/cr_harbour_mapped_routes.csv', route_rows)
-    dump('data/processed/network/cr_harbour_mapped_route_segments.csv', segment_rows)
-    dump('data/processed/transit/cr_harbour_mapped_route_stops.csv', stop_rows)
-    dump('data/processed/transit/cr_harbour_pattern_route_evidence.csv', pattern_rows)
+    dump_rows('data/processed/transit/cr_harbour_mapped_routes.csv', route_rows)
+    dump_rows('data/processed/network/cr_harbour_mapped_route_segments.csv', segment_rows)
+    dump_rows('data/processed/transit/cr_harbour_mapped_route_stops.csv', stop_rows)
+    dump_rows('data/processed/transit/cr_harbour_pattern_route_evidence.csv', pattern_rows)
     Path(city.path('data/processed/acquisition/cr_harbour_mapped_routes_audit.json')).write_text(
         json.dumps(report, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({k: v for k, v in report.items() if k != 'input_sha256'}))

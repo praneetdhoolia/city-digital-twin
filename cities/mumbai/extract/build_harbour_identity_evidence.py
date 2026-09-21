@@ -4,7 +4,6 @@ An inferred label correction is not an observation or a global station-code
 alias. The original timetable key survives every join.
 """
 from collections import defaultdict
-import csv
 import hashlib
 import json
 from pathlib import Path
@@ -16,7 +15,7 @@ import city
 from extract_census_controls import source
 from extract_wr_timetable import lines
 from match_harbour_station_geometry import compact, mode_status
-from manifest_io import manifest_reader
+from evidence_io import dump_rows, read_rows, serial
 
 OUTPUT_INPUTS = {
     'data/processed/observed/wr_station_abbreviations.csv': [
@@ -52,24 +51,6 @@ OUTPUT_INPUTS = {
 }
 
 
-def read(path):
-    with Path(city.path(path)).open(encoding='utf-8') as stream:
-        return list(manifest_reader(stream))
-
-
-def serial(value):
-    return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
-
-
-def dump(path, rows):
-    target = Path(city.path(path))
-    target.parent.mkdir(parents=True, exist_ok=True)
-    with target.open('w', encoding='utf-8', newline='') as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator='\n')
-        writer.writeheader()
-        writer.writerows(rows)
-
-
 def mapped_corridor_identity(by_train, station_key):
     """Resolve a source key only between independently code-anchored route stops."""
     def audit(path):
@@ -84,7 +65,7 @@ def mapped_corridor_identity(by_train, station_key):
         if hashlib.file_digest(stream,'sha256').hexdigest() != point_audit['input_sha256']:
             raise ValueError('Station point evidence references another spatial build')
     points = {r['osm_node_id']: json.loads(r['all_driver_tags_json'])
-              for r in read('data/processed/observed/osm_transport_points.csv')}
+              for r in read_rows('data/processed/observed/osm_transport_points.csv')}
     features = {'node/'+key: tags for key,tags in points.items()}
     for f in json.loads(Path(city.path('data/processed/geospatial/osm_transport_areas.geojson')).read_text(encoding='utf-8'))['features']:
         features[f['id']] = f['properties']['all_driver_tags']
@@ -95,7 +76,7 @@ def mapped_corridor_identity(by_train, station_key):
         codes = {value.strip() for field in ('ref','railway:ref') for value in tags.get(field,'').split(';') if value.strip()}
         if codes:
             feature_codes[feature] = codes
-    relations = read('data/processed/observed/osm_transport_relations.csv')
+    relations = read_rows('data/processed/observed/osm_transport_relations.csv')
     node_codes = defaultdict(lambda: defaultdict(list))
     for relation in relations:
         if relation['public_transport_tag'] != 'stop_area':
@@ -220,8 +201,8 @@ def main():
     if {r['printed_station_name'] for r in codes} != selected_names or len(codes) != len(selected_names):
         raise ValueError('Selected station-reference rows are incomplete or duplicated')
     by_name = {compact(r['printed_station_name']): r for r in codes}
-    stops = read('data/processed/transit/cr_harbour_stop_candidates.csv')
-    wr = read('data/processed/observed/wr_printed_timetable_cells.csv')
+    stops = read_rows('data/processed/transit/cr_harbour_stop_candidates.csv')
+    wr = read_rows('data/processed/observed/wr_printed_timetable_cells.csv')
     by_train = defaultdict(list)
     for row in stops:
         by_train[row['train_number']].append(row)
@@ -285,9 +266,9 @@ def main():
                                status='identity_proposal_requires_geometry_branch_and_route_validation'))
     corridor_proposal = mapped_corridor_identity(by_train, 'CR_THB_CODE:SNPD')
     proposals.append(corridor_proposal)
-    dump('data/processed/observed/wr_station_code_reference.csv', codes)
-    dump('data/processed/observed/wr_station_abbreviations.csv', glossary)
-    dump('data/processed/transit/cr_harbour_identity_proposals.csv', proposals)
+    dump_rows('data/processed/observed/wr_station_code_reference.csv', codes)
+    dump_rows('data/processed/observed/wr_station_abbreviations.csv', glossary)
+    dump_rows('data/processed/transit/cr_harbour_identity_proposals.csv', proposals)
     audit = dict(reference_rows=len(codes), abbreviation_rows=len(glossary), proposals=len(proposals),
                  harbour_neighbour_triplets=len(triplets['CR_HB_LABEL:ramnagar']),
                  wr_named_grid_triplets=len(wr_triplets),

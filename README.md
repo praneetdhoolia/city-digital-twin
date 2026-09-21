@@ -215,6 +215,15 @@ targets and their bases on [`targets.md`](cities/newcastle/docs/targets.md).
 The licence boundary stays visible: OSM-derived layers are ODbL 1.0
 (share-alike), the rest of the package CC-BY 4.0, per file in `data/MANIFEST.csv`.
 
+## The second city: Mumbai
+
+A broad acquisition and an executable development case, not a twin: the
+framework loads the city, maps its network and combined feed, and runs an
+explicit 1,000-person population for a few iterations on one day type
+(`CITYSIM_CITY=mumbai python run.py --baseline-smoke`). No target has been
+derived and nothing about its ridership is a result. Its state, extent,
+harvests and limits are on [`cities/mumbai/docs/README.md`](cities/mumbai/docs/README.md).
+
 ---
 
 ## Documentation
@@ -250,7 +259,8 @@ src/java_signals/citysim/    the signals entry point and its tram/bus priority c
 tests/                       the CI checks and tests/unit/; check_package.py (local)
 results/                     run outputs (gitignored): raw/ the budgeted cache, processed/ the findings
 
-cities/newcastle/            ONE CITY - every Newcastle/NSW/Australia-specific input
+cities/mumbai/               THE SECOND CITY - its acquisitions, harvests, provisional registry and development case
+cities/newcastle/            THE FIRST CITY - every Newcastle/NSW/Australia-specific input
   registry/                  the 571 declared values, with units, provenance, sweeps
   overlays/scenarios|day|runs  per-scenario, per-day-type and per-run value overlays
   extract/                   acquisition adapters: ABS, TfNSW Open Data, Overpass

@@ -4,7 +4,6 @@ Source stop-list discrepancies remain visible. This stage neither repairs OSM
 relations nor infers permission, current operation or a train's platform.
 """
 from collections import Counter, defaultdict
-import csv
 import hashlib
 import json
 import math
@@ -12,7 +11,7 @@ from pathlib import Path
 
 import city
 from build.ordered_route_geometry import locate_ordered_stops, match_ordered_candidates
-from manifest_io import manifest_reader
+from evidence_io import digest, dump_rows, read_rows, serial
 
 OUTPUT_INPUTS = {
     'data/processed/transit/cr_harbour_chain_coverage.csv': [
@@ -38,28 +37,6 @@ OUTPUT_INPUTS = {
 }
 
 
-def read(path):
-    with Path(city.path(path)).open(encoding='utf-8') as stream:
-        return list(manifest_reader(stream))
-
-
-def serial(value):
-    return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
-
-
-def digest(path):
-    return hashlib.sha256(Path(city.path(path)).read_bytes()).hexdigest()
-
-
-def dump(path, rows):
-    if not rows:
-        raise ValueError('Expected nonempty constrained-route evidence: ' + path)
-    with Path(city.path(path)).open('w', encoding='utf-8', newline='') as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator='\n')
-        writer.writeheader()
-        writer.writerows(rows)
-
-
 def main():
     inputs = sorted(set(p for paths in OUTPUT_INPUTS.values() for p in paths))
     hashes = {p: digest(p) for p in inputs}
@@ -68,15 +45,15 @@ def main():
         if digest(p) != recorded:
             raise ValueError('Mapped route evidence has stale input: ' + p)
     boarding = defaultdict(set)
-    for row in read('data/processed/network/cr_harbour_boarding_nodes.csv'):
+    for row in read_rows('data/processed/network/cr_harbour_boarding_nodes.csv'):
         if row['native_presence'] != 'present' or not json.loads(row['rail_parent_ways']):
             continue
         for key in json.loads(row['station_keys']):
             boarding[key].add(int(row['osm_node_id']))
     traces, route_stops = defaultdict(list), defaultdict(list)
-    for row in read('data/processed/network/cr_harbour_mapped_route_segments.csv'):
+    for row in read_rows('data/processed/network/cr_harbour_mapped_route_segments.csv'):
         traces[row['osm_route_relation_id']].append(row)
-    for row in read('data/processed/transit/cr_harbour_mapped_route_stops.csv'):
+    for row in read_rows('data/processed/transit/cr_harbour_mapped_route_stops.csv'):
         route_stops[row['osm_route_relation_id']].append(row)
     route_nodes = {}
     for route_id, trace in traces.items():
@@ -87,8 +64,8 @@ def main():
             raise ValueError('Mapped route segment chain is disconnected')
         route_nodes[route_id] = [int(trace[0]['from_osm_node_id'])] + [int(r['to_osm_node_id']) for r in trace]
         route_stops[route_id].sort(key=lambda r: int(r['route_stop_sequence']))
-    patterns = [r for r in read('data/processed/transit/cr_harbour_path_patterns.csv') if r['variant'] == 'static_oneway_screen']
-    services = [r for r in read('data/processed/transit/cr_harbour_service_path_candidates.csv') if r['variant'] == 'static_oneway_screen']
+    patterns = [r for r in read_rows('data/processed/transit/cr_harbour_path_patterns.csv') if r['variant'] == 'static_oneway_screen']
+    services = [r for r in read_rows('data/processed/transit/cr_harbour_service_path_candidates.csv') if r['variant'] == 'static_oneway_screen']
     service_counts = Counter(r['pattern_id'] for r in services)
     coverage_rows, candidate_rows, segment_rows, candidates_by_pattern = [], [], [], defaultdict(list)
     for pattern in patterns:
@@ -169,7 +146,7 @@ def main():
         ('data/processed/transit/cr_harbour_constrained_path_candidates.csv', candidate_rows),
         ('data/processed/network/cr_harbour_constrained_path_segments.csv', segment_rows),
         ('data/processed/transit/cr_harbour_constrained_service_candidates.csv', service_rows)):
-        dump(path, rows)
+        dump_rows(path, rows)
     Path(city.path('data/processed/acquisition/cr_harbour_constrained_paths_audit.json')).write_text(
         json.dumps(report, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({k: v for k, v in report.items() if k != 'input_sha256'}))

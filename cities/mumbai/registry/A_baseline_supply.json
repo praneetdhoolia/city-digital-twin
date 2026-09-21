@@ -22,7 +22,7 @@
         "road": 25,
         "busway": 40
       },
-      "units": "km/h",
+      "units": "km_per_hour",
       "source": "assumed",
       "status": "active",
       "description": "Provisional class free speeds where OSM has no usable speed. Broad supply baseline authorised on 19 September 2026; not observed speeds. Tagged OSM speed takes precedence.",
@@ -84,7 +84,7 @@
         "road": 600,
         "busway": 1200
       },
-      "units": "vehicles/h/lane",
+      "units": "vehicles_per_hour_per_lane",
       "source": "assumed",
       "status": "active",
       "description": "Provisional class queue capacities. Used to enable congestion feedback to traveller decisions; not calibrated saturation flows.",
@@ -104,7 +104,7 @@
         "tram": 25,
         "monorail": 40
       },
-      "units": "km/h",
+      "units": "km_per_hour",
       "source": "assumed",
       "status": "active",
       "description": "Provisional track free speeds; scheduled travel times will provide service timing. Not observed train operating speeds.",
@@ -118,7 +118,7 @@
     },
     "A.network.railway_lane_capacity_veh_h": {
       "value": 120,
-      "units": "vehicles/h",
+      "units": "vehicles_per_hour",
       "source": "assumed",
       "status": "active",
       "description": "Coarse track queue throughput for baseline; block signalling and corridor capacity deferred.",
@@ -233,7 +233,7 @@
     },
     "A.network.path_lane_capacity_veh_h": {
       "value": 10000,
-      "units": "travellers/h",
+      "units": "vehicles_per_hour",
       "source": "assumed",
       "status": "active",
       "description": "Provisional nonbinding active-path capacity for the first baseline.",
@@ -247,7 +247,7 @@
     },
     "A.transit.walk_speed_ms": {
       "value": 1.2,
-      "units": "m/s",
+      "units": "metres_per_second",
       "source": "assumed",
       "status": "active",
       "description": "Provisional walking speed; individual mobility differences will enter the decision model.",
@@ -353,7 +353,7 @@
     },
     "RUN.machine.build_xmx": {
       "value": "16g",
-      "units": "JVM_heap",
+      "units": "jvm_heap",
       "source": "definition",
       "status": "active",
       "description": "Memory ceiling for network preprocessing on the current workstation; throughput setting, not model supply.",

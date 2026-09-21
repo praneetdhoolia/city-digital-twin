@@ -9,6 +9,6 @@
       "plans": "demand/baseline/plans_with_choices.xml.gz",
       "boarding_fares": "params/baseline/boarding_fares.csv"
     },
-    "RUN.smoke.replanning.maxAgentPlanMemorySize": 9
+    "RUN.replanning.max_agent_plan_memory": 9
   }
 }

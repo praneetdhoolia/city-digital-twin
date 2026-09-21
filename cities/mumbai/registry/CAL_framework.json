@@ -1,0 +1,222 @@
+{
+  "layer": "CAL",
+  "title": "Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)",
+  "fields": {
+    "CAL.asc.damping": {
+      "units": "share_of_the_log_ratio_step",
+      "source": "literature",
+      "sweep": [
+        0.3,
+        1.0
+      ],
+      "sweep_basis": "The two published implementations of this update rule bracket the interval. matsim-vsp/matsim-python-tools applies the log-ratio step under `linear_scheduler(start=0.6, end=1, interval=3)` - damped to 0.6 of the raw step at first and relaxed toward the full step as the rounds proceed - and the ActivitySim agency practice uses a flat 0.5 dampener on the same ln(observed/modelled) adjustment. The interval runs from below the more cautious of the two to the undamped step, which is what a fixed point converges to when it converges at all. Undamped (1.0) is included deliberately: it is the boundary case, and whether the step needs damping AT ALL in this model is one of the things the two-round test measures.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 0.6,
+      "description": "How much of the raw log-ratio step an ASC round applies. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/calibrate/asc_fixed_point.py"
+      ]
+    },
+    "CAL.asc.max_step_utils": {
+      "units": "utility",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "held_fixed": {
+        "rule": "A REFUSAL THRESHOLD, not a model input, and so not swept - the A.signals.scats_match_radius_m precedent for a build guard's tolerance. It is the point past which a proposed step stops being a calibration and becomes an admission that the residual is not a taste parameter at all: a shift of 1.5 utils against a marginal utility of travel time of order 1 util/hour is worth more than an hour of travel time, which no alternative-specific constant should have to carry. A proposal above it is REFUSED and the mode is reported as needing a mechanism, never silently clipped - clipping would hide exactly the signal this experiment exists to read.",
+        "decisions_ref": "8.5"
+      },
+      "value": 1.5,
+      "description": "The largest single-round |delta ASC| this loop will propose before it refuses outright and says the mode needs a mechanism rather than a constant. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/calibrate/asc_fixed_point.py"
+      ]
+    },
+    "CAL.asc.mode_to_constant": {
+      "units": "board_mode_to_registry_key",
+      "source": "definition",
+      "status": "active",
+      "value": {},
+      "description": "Which declared alternative-specific constant carries which board mode. Empty: the baseline scores one constant for every mode (C.scoring.mode_constant) and no ASC loop runs for this city.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/calibrate/asc_fixed_point.py"
+      ]
+    },
+    "CAL.gate.pass_deviation_pct": {
+      "units": "per cent",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 10.0,
+      "description": "The per-mode deviation the model must be INSIDE for every mode before the standing directive is satisfied. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "CAL.gate.reading_window_iterations": {
+      "units": "iterations",
+      "source": "assumed",
+      "sweep": [
+        20,
+        80
+      ],
+      "sweep_basis": "The window is an INSTRUMENT setting, not a model value, so its bracket is what the evidence can bound rather than what a literature reports. The floor of 20 is two readings at the 10-iteration write interval - the narrowest thing that is an average rather than a point. The ceiling of 80 is where the window reaches back to iteration 20 and begins averaging in the run's early transient: past it the reading would look steadier because it is measuring a different regime, which is the one way this field could pass by measuring less. Nothing in the store reaches past iteration 104, so no window ending deeper than 100 can be tested at all today; a first arm past its gate would let the bracket be re-derived at depth.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 40,
+      "description": "How deep behind the reading point the gate reading is AVERAGED, in iterations. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/analyse/measure_reading_stability.py"
+      ]
+    },
+    "CAL.gate.stop_deviation_pct": {
+      "units": "per cent",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 20.0,
+      "description": "The per-mode deviation from its real-life target at which the standing gate-loop directive says to STOP the run rather than let it converge on a wrong answer. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "CAL.objective.components": {
+      "units": "weight_per_fit_component",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": {
+        "goal_modes.max_abs_rel_pct": 1.0
+      },
+      "description": "Dotted paths into _fit.json that form the scalar objective, with their weights. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/calibrate/calibrate.py"
+      ]
+    },
+    "CAL.objective.include_counts": {
+      "units": "boolean",
+      "source": "assumed",
+      "sweep": null,
+      "status": "active",
+      "value": false,
+      "held_fixed": {
+        "rule": "adopted from the reference city, where it is derived from B.external.interaction_rate; those fields are not declared for this city, so the value is held",
+        "decisions_ref": "9.202",
+        "departure_requires": "declaring B.external.interaction_rate for this city"
+      },
+      "description": "Whether traffic counts may enter the calibration objective. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/calibrate/calibrate.py"
+      ]
+    },
+    "CAL.objective.independent_targets": {
+      "units": "count",
+      "source": "derived",
+      "sweep": null,
+      "status": "active",
+      "derived_from": {
+        "fields": [
+          "CAL.objective.components"
+        ],
+        "identity": "The objective is now the twelve-mode board, so the count is the number of INDEPENDENT numbers that board contains. Twelve rows, less truck (scored 'level only' - a network-wide vehicle share against a freight-route observation, not the target's own basis, 9.101) and less freight_train (representation: the crossing closures ARE the timetable, so its 0.0% is a tautology), leaves TEN scored modes. All ten are independent: EIGHT are shares of resident linked trips (car, ride, walk, taxi, bike, motorbike, bus, ferry) and TWO are weekday boardings (heavy_rail, light_rail) on a different basis entirely. The adding-up identity that removed one degree of freedom from the old five folded shares DOES NOT BIND here: the eight share targets sum to 98.42%, and the residual is taken up by the two rail modes, whose SHARE is not itself a declared target - they are targeted on boardings. So no linear constraint ties the ten together and the count is ten, not nine. It was 4, which was correct for the OLD objective (five HTS mode shares summing to one, hence four independent) and is the reason the loop refused to move five parameters: it was refusing to fit the twelve-mode goal with the four-number folded objective's budget."
+      },
+      "value": 10,
+      "description": "How many independent numbers the objective actually contains. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/calibrate/calibrate.py"
+      ]
+    },
+    "CAL.objective.replication_band_pp": {
+      "units": "relative_percent",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          0.0,
+          2.0
+        ],
+        "basis": "adopted from the reference city: 0.0 is NO BAND - the objective is the raw maximum over the twelve modes, exactly as every reading so far has been scored - and it is the shipped value because THE BAND HAS NOT BEEN MEASURED. The upper bound is 2.0 relative per cent, twice the largest within-run movement anyone has observed: inside 20260909T015217_300it_25pct, with nothing changed, the folded objective moves 0.272-0.418 pp between iterations 80 and 100 (9.162). WHAT THE SWEEP ANSWERS: how much of what the calibration loop is chasing is seed scatter rather than misfit. A MATSim run is not bit-reproducible and no deviation on the board carries an error bar - asked for by three consecutive assessments (#163) - so a mode 3 % out and a mode 30 % out are today treated as the same KIND of evidence. THIS VALUE MUST NOT BE PINNED FROM THE SWEEP. It is measured: three arms at a short horizon differing only in RUN.machine.seed, and the band is the spread of the objective across them. Choosing a denominator from the interval instead would be inventing the observation the denominator exists to represent, which is the one failure this project cannot absorb - so the sweep is the honesty bracket for an unmeasured quantity and never a value to select."
+      },
+      "sweep_role": "measurement",
+      "status": "active",
+      "value": 0.0,
+      "description": "The replication band the calibration objective is divided by (#163) - the spread the objective takes across runs of the SAME configuration differing only in seed. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/calibrate/calibrate.py"
+      ]
+    },
+    "CAL.search.convergence_delta": {
+      "units": "per cent",
+      "source": "derived",
+      "sweep": null,
+      "status": "active",
+      "derived_from": {
+        "fields": [
+          "CAL.search.reading_drift_pct"
+        ],
+        "identity": "convergence_delta = reading_drift_pct. A coordinate pass that 'improves' the objective by less than the reading's own noise has not been shown to improve anything: the same run read twenty iterations later moves further than that by itself, on all six arms measured. So the stopping rule is the noise floor, and it is derived from it rather than chosen beside it. IT WAS 0.25 pp, in the units of the OLD folded objective, and it was SMALLER THAN THE MEASURED DRIFT ON EVERY ARM (by 1.09x to 1.67x) - a search under it would have stopped, or failed to stop, on noise. Its stated floor of 0.1 pp cited the seed spread 9.7 measured; that was the right instinct pointed at the wrong quantity, because seed spread is the spread BETWEEN runs and this is the drift WITHIN one."
+      },
+      "value": 24.88,
+      "description": "A coordinate pass that improves the objective by less than this ends the search, in the units of the objective - which is now the maximum relative deviation across the twelve modes, in per cent. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/calibrate/calibrate.py"
+      ]
+    },
+    "CAL.search.max_rounds": {
+      "units": "count",
+      "source": "assumed",
+      "sweep": [
+        1,
+        6
+      ],
+      "sweep_basis": "DECISIONS.md 9.16 names this a control of the search loop itself, and calibrating the search against itself is the failure it guards; the interval runs from a single pass to twice the declared three. No observed spread.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 3,
+      "description": "Maximum coordinate-descent passes over the free parameters. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/calibrate/calibrate.py"
+      ]
+    },
+    "CAL.search.points_per_parameter": {
+      "units": "count",
+      "source": "assumed",
+      "sweep": [
+        3,
+        7
+      ],
+      "sweep_basis": "DECISIONS.md 9.16: three is the smallest number of points that can show curvature along a sweep interval and each point is a full run, so the interval runs from that floor to seven. A control of the calibration search, never of the model. No observed spread.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 3,
+      "description": "Points evaluated along each parameter's declared sweep interval in one coordinate pass, endpoints included. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/calibrate/calibrate.py"
+      ]
+    },
+    "CAL.search.reading_drift_pct": {
+      "units": "per cent",
+      "source": "assumed",
+      "sweep": null,
+      "status": "active",
+      "value": 24.88,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "How much the objective moves between iteration 80 and iteration 100 OF THE SAME RUN, in the objective's own units - the noise floor of a gate-point reading. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/calibrate/calibrate.py"
+      ]
+    }
+  }
+}

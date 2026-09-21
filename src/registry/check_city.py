@@ -122,6 +122,25 @@ def _expand_units(units, doc):
     return units
 
 
+def manifest_producers(city_dir):
+    """The framework builders the city's manifest names as producers - the
+    evidence that this city's package went through them. A producer may carry
+    a tool suffix (`src/build/build_matsim_network.py (pt2matsim 26.6)`)."""
+    path = os.path.join(city_dir, 'data', 'MANIFEST.csv')
+    if not os.path.exists(path):
+        return set()
+    import csv
+    from manifest_io import manifest_reader
+    out = set()
+    with io.open(path, newline='', encoding='utf-8') as fh:
+        for row in manifest_reader(fh):
+            for script in (row.get('produced_by') or '').split('+'):
+                script = script.strip().split(' (')[0]
+                if script:
+                    out.add(script)
+    return out
+
+
 def check_fields(city_dir, name, doc):
     """Every required key is declared, with the right units and value type."""
     required = read_json(os.path.join(SCHEMA_DIR, 'required_fields.json'))['fields']
@@ -139,20 +158,38 @@ def check_fields(city_dir, name, doc):
     not_applicable = {k for k, spec in required.items()
                       if spec.get('required_if_mode')
                       and spec['required_if_mode'] not in modes}
-    applicable = set(required) - not_applicable
+    # The second derived narrowing (render_schema.required_by): a field only
+    # the framework's BUILDERS read is required of a city whose package one of
+    # those builders produced - read from the city's own manifest, never
+    # judged - and a field only the reference city's own scripts read is
+    # required of no other city.
+    producers = manifest_producers(city_dir)
+    not_this_city = set()
+    for k, spec in required.items():
+        who = spec.get('required_by', 'run')
+        if who == 'run':
+            continue
+        if who == 'reference_city' or not any(b in producers for b in who):
+            not_this_city.add(k)
+    applicable = set(required) - not_applicable - not_this_city
 
     missing = sorted(applicable - set(fields))
     extra = sorted(set(fields) - set(required))
     for k in missing[:15]:
         check(False, '%s: required field not declared: %s (%s)'
               % (name, k, required[k]['units']))
+    narrowing = []
+    if not_applicable:
+        narrowing.append('%d not applicable: this city does not run %s'
+                         % (len(not_applicable),
+                            ', '.join(sorted({required[k]['required_if_mode']
+                                              for k in not_applicable}))))
+    if not_this_city:
+        narrowing.append('%d read only by builders this package did not run or by the '
+                         'reference city\'s own scripts' % len(not_this_city))
     check(not missing, '%s: all %d required fields declared%s'
           % (name, len(applicable),
-             '' if not not_applicable else
-             ' (%d not applicable: this city does not run %s)'
-             % (len(not_applicable),
-                ', '.join(sorted({required[k]['required_if_mode']
-                                  for k in not_applicable})))))
+             '' if not narrowing else ' (%s)' % '; '.join(narrowing)))
     declared_foreign = sorted(not_applicable & set(fields))
     check(not declared_foreign,
           '%s: no field is declared for a mode this city does not run%s'

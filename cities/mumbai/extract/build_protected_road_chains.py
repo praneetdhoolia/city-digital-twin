@@ -11,6 +11,7 @@ import tempfile
 import city
 from build.extract_osm_network import entities, fingerprint
 from build.protected_way_segments import partition, protected_nodes
+from evidence_io import serial
 
 OUTPUT_INPUTS = {
     'data/processed/network/road_chains/nodes.csv': [
@@ -28,10 +29,6 @@ OUTPUT_INPUTS = {
 def rows(path):
     with Path(path).open(encoding='utf-8', newline='') as stream:
         yield from csv.DictReader(stream)
-
-
-def serial(value):
-    return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
 
 
 def build_chains():

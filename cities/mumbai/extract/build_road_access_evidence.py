@@ -11,6 +11,7 @@ import city
 from build.extract_osm_network import fingerprint
 from build.osm_access_evidence import ACCESS_CHAINS, access_tags, resolve
 from extract_census_controls import source
+from evidence_io import serial
 
 OUTPUT_INPUTS = {
     'data/processed/network/osm_way_access_profiles.csv': ['data/processed/network/osm_way_attributes.csv'],
@@ -22,10 +23,6 @@ OUTPUT_INPUTS = {
         'data/processed/acquisition/road_attribute_evidence_audit.json',
         'data/raw/research/osm_wiki_*_20260919_*.html'],
 }
-
-
-def serial(value):
-    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
 
 
 def main():

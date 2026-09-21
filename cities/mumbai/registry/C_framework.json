@@ -1,0 +1,296 @@
+{
+  "layer": "C",
+  "title": "Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)",
+  "fields": {
+    "C.asc.car_passenger": {
+      "units": "utils",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 0.0,
+      "description": "Car-passenger constant. Placeholder at zero: the baseline scores one constant for every mode and no ASC round has run for this city.",
+      "decisions_ref": "9.202",
+      "sweep": {
+        "interval": [
+          -2.0,
+          2.0
+        ],
+        "basis": "the baseline has one constant for every mode; a passenger-specific constant is not solved for this city"
+      },
+      "sweep_role": "uncertainty"
+    },
+    "C.crowding.representation": {
+      "value": "in_vehicle_time",
+      "units": "enum",
+      "source": "definition",
+      "status": "active",
+      "description": "Enable the existing behavioural mechanism in the broad provisional baseline. Moved from RUN.smoke.crowding on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "ptCrowding.representation"
+    },
+    "C.crowding.seated_multiplier": {
+      "value": 1.1,
+      "units": "ratio",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional full-load seated time multiplier. Moved from C.smoke.crowding_seated on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad behavioural baseline; validate with observed choices before calibration.",
+      "matsim_param": "ptCrowding.seatedMultiplier"
+    },
+    "C.crowding.standing_multiplier": {
+      "value": 1.8,
+      "units": "ratio",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional standing time multiplier. Moved from C.smoke.crowding_standing on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad behavioural baseline; validate with observed choices before calibration.",
+      "matsim_param": "ptCrowding.standingMultiplier"
+    },
+    "C.income.exponent": {
+      "value": 1.0,
+      "units": "exponent",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.incomeScoring.incomeExponent on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "incomeScoring.incomeExponent"
+    },
+    "C.income.representation": {
+      "value": "person_marginal_utility_of_money",
+      "units": "enum",
+      "source": "definition",
+      "status": "active",
+      "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.incomeScoring.representation on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "incomeScoring.representation"
+    },
+    "C.raptor.mode_cost_representation": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "absent",
+          "mode_constant"
+        ],
+        "basis": "adopted from the reference city: Whether a PT SUBMODE'S OWN CONSTANT reaches the router that picks the submode. absent: the pre-change state - SwissRailRaptor prices a boarded leg as DefaultRaptorInVehicleCostCalculator does, in-vehicle seconds times one coefficient and nothing else, so the constants C.asc.bus/-.rail/-.light_rail/-.ferry reach SCORING and not the ROUTER, and the one per-submode value RaptorUtils.createParameters does copy across (marginalUtilityOfTraveling) is emitted identically for all four submodes; over the F31 arm's whole plan memory only 974 of 154,347 persons (0.63%) held plans differing in PT submode at all (9.160). mode_constant: citysim.RaptorModeCostCalculator adds the boarded submode's own scoring.modeParams constant to the raptor's in-vehicle cost, once per boarded leg. It introduces NO NEW VALUE - the constants are already declared as C.asc.* - so this gate is not a taste to calibrate but a consistency between the router's objective and the scoring function the plan is judged by. It also makes PT dearer against the raptor's direct walk, which is a real behavioural change and is why `absent` is shipped. One-gate discipline mirroring C.crowding.representation and A.bike_stress.representation - `absent` recovers the previous model exactly."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "raptorModeCost.representation",
+      "value": "absent",
+      "description": "The representation gate for the PT mode constant in the TRANSIT ROUTER's cost. Switched off for this baseline (\"absent\"): the transit router carries no per-mode constant in the baseline.",
+      "decisions_ref": "9.202"
+    },
+    "C.scoring.activity_minimal_applied_s": {
+      "units": "seconds",
+      "source": "definition",
+      "status": "placeholder",
+      "value": 0,
+      "description": "The minimal activity duration written per activity type. Not bound for this city: the baseline applies none, which is the MATSim default (undefined), so no minimalDuration parameter is emitted.",
+      "decisions_ref": "9.202"
+    },
+    "C.scoring.activity_typical_duration_s": {
+      "value": {
+        "home": 43200,
+        "work": 28800,
+        "education": 21600,
+        "other": 3600,
+        "freight_start": 86400,
+        "freight_end": 86400,
+        "shopping": 3600,
+        "social": 3600,
+        "leisure": 7200
+      },
+      "units": "seconds",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional typical activity duration. Moved from C.smoke.activity_duration on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "scoring.activityParams[*].typicalDuration",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural smoke coefficient; not calibrated to ridership.",
+      "matsim_format": "hh:mm:ss"
+    },
+    "C.scoring.marginal_utility_of_money": {
+      "value": 0.05,
+      "units": "utils_per_INR",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional mean money sensitivity, varied by personal budget. Moved from C.smoke.money on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "scoring.marginalUtilityOfMoney",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural smoke coefficient; not calibrated to ridership."
+    },
+    "C.scoring.marginal_utility_of_traveling": {
+      "value": {
+        "car": -6.0,
+        "ride": -6.0,
+        "walk": -6.0,
+        "bike": -6.0,
+        "motorbike": -6.0,
+        "taxi": -6.0,
+        "auto_rickshaw": -6.0,
+        "pt": -6.0,
+        "truck": 0.0,
+        "freight_rail": 0.0
+      },
+      "units": "utils_per_hour",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional travel time disutility. Moved from C.smoke.travel on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "scoring.modeParams[*].marginalUtilityOfTraveling_util_hr",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural smoke coefficient; not calibrated to ridership."
+    },
+    "C.scoring.mode_constant": {
+      "value": {
+        "car": 0.0,
+        "ride": 0.0,
+        "walk": 0.0,
+        "bike": 0.0,
+        "motorbike": 0.0,
+        "taxi": 0.0,
+        "auto_rickshaw": 0.0,
+        "pt": 0.0,
+        "truck": 0.0,
+        "freight_rail": 0.0
+      },
+      "units": "utils",
+      "source": "definition",
+      "status": "active",
+      "description": "Zero mode constants: no target shares encoded. Moved from C.smoke.mode_constant on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "scoring.modeParams[*].constant"
+    },
+    "C.scoring.monetary_distance_rate": {
+      "value": {
+        "car": -0.007,
+        "ride": -0.003,
+        "walk": 0.0,
+        "bike": 0.0,
+        "motorbike": -0.0025,
+        "taxi": -0.018,
+        "auto_rickshaw": -0.012,
+        "pt": 0.0,
+        "truck": 0.0,
+        "freight_rail": 0.0
+      },
+      "units": "INR_per_metre",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional distance-based user costs, not observed fare schedules. PT distance money is zero because the boarding fare handler charges each completed ride; double pricing is refused at startup. Moved from C.smoke.distance_money on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "scoring.modeParams[*].monetaryDistanceRate",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural smoke coefficient; not calibrated to ridership."
+    },
+    "C.scoring.performing_utils_per_h": {
+      "value": 6.0,
+      "units": "utils_per_hour",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional activity utility. Moved from C.smoke.performing on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "scoring.performing",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural smoke coefficient; not calibrated to ridership."
+    },
+    "C.scoring.utility_of_line_switch": {
+      "value": -0.5,
+      "units": "utils",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional inconvenience per PT transfer, separate from experienced wait and walk. Moved from C.smoke.transfer on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad behavioural baseline; validate with observed choices before calibration.",
+      "matsim_param": "scoring.utilityOfLineSwitch"
+    },
+    "C.scoring.waiting_pt": {
+      "value": -12.0,
+      "units": "utils_per_hour",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional waiting penalty greater than the in-vehicle travel penalty. Moved from C.smoke.waiting_pt on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad behavioural baseline; validate with observed choices before calibration.",
+      "matsim_param": "scoring.waitingPt"
+    },
+    "C.time_weights.beta_headway": {
+      "units": "ratio_to_ivt",
+      "source": "literature",
+      "sweep": [
+        0.35,
+        0.65
+      ],
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 0.5,
+      "description": "Weight on service headway, as a ratio to in-vehicle time. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_params.py",
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
+    "C.time_weights.beta_reliability": {
+      "units": "ratio_to_ivt",
+      "source": "literature",
+      "sweep": [
+        0.8,
+        1.8
+      ],
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 1.3,
+      "description": "Weight on travel time variability, as a ratio to in-vehicle time - the RELIABILITY RATIO in its standard form, the standard deviation of journey time valued as a multiple of its mean. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_params.py",
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
+    "C.time_weights.service_quality_representation": {
+      "value": "headway_and_reliability",
+      "units": "categorical",
+      "source": "definition",
+      "status": "active",
+      "description": "Enable the existing behavioural mechanism in the broad provisional baseline. Moved from RUN.smoke.service_quality on 21 September 2026: one key per MATSim parameter.",
+      "decisions_ref": "9.202",
+      "matsim_param": "serviceQuality.representation"
+    }
+  }
+}

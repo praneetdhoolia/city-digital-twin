@@ -22,7 +22,7 @@ def main():
     source = Path(city.path('demand/baseline/plans_with_freight.xml.gz'))
     with gzip.open(source, 'rb') as stream:
         population = ET.parse(stream).getroot()
-    audit = add_mode_alternatives(population, cfg.get('RUN.smoke.subtourModeChoice.modes'))
+    audit = add_mode_alternatives(population, cfg.get('RUN.mode_choice.modes'))
     audit.update(source='derived_initial_choice_set_not_observed_mode_shares',
         input_sha256={path: fingerprint(Path(city.path(path)))
                       for path in OUTPUT_INPUTS['demand/baseline/plans_with_choices.xml.gz']},

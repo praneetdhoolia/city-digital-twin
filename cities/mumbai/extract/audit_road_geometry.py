@@ -10,6 +10,7 @@ import tempfile
 
 import city
 from build.extract_osm_network import fingerprint
+from evidence_io import serial
 
 OUTPUT_INPUTS = {
     'data/processed/network/road_rail_shared_nodes.csv': [
@@ -27,10 +28,6 @@ OUTPUT_INPUTS = {
 def rows(path):
     with Path(path).open(encoding='utf-8', newline='') as stream:
         yield from csv.DictReader(stream)
-
-
-def serial(value):
-    return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
 
 
 def main():

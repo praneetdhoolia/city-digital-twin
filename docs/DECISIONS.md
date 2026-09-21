@@ -232,6 +232,9 @@ about its layout will otherwise cost you an hour:
 | **Initial Mumbai choice evaluation** | **§9.198** - completed alternatives test, finite scores and daily outcomes |
 | **Mumbai hired supply queue** | **§9.199** - native waiting, registration-stock proxy and bounded experiment |
 | **Mumbai hired-supply completion** | **§9.200** - corrected preparation, completed queues and remaining behavioural limits |
+| **Harvests: one archive per family of public queries** | **§9.201** - 13,500 per-response files and 14,230 catalogue entries fold into eleven archives; every derived table byte-identical |
+| **The contract narrowed by who reads a field; Mumbai on the framework's keys** | **§9.202** - required_by derived from the reads; Mumbai declares 313 fields, passes the city contract, runs the structural check |
+| **The Mumbai sessions verified for Newcastle** | **§9.203** - standing room never scaled at 25 % (fixed, #237), two manifest regressions fixed, the fleet report kept small |
 | **Every open issue worked to done or to one measurement, and the fix that was half a fix** | **§9.164** - the twenty-one MATSim defaults that decided the model unreviewed go to **0** (nine declared at the framework's own values, twelve accepted with a reason). The demand STATES that a declared passenger rides: `B.mode.bound_passenger_placement` = `every_plan` puts a bound tour on `ride` in every seeded plan as the driver is already put on `car` - **194,131** fully bound weekday tours over **199,329** persons - and the demand, plans and 30 run-input sets are rebuilt on it, opening family **`F33`**. A tour that will not fit no longer discards the rest of the day (**547** weekday tours recovered; week trip rate **3.398** against the HTS 3.473). `C.time_weights.beta_headway` and `beta_reliability` REACH MATSIM after two reports asked, behind a gate shipped `absent`; the pt submodes get a plan-level control; the calibration objective gets the replication-band denominator it never had, at zero until one is measured. **The ceiling watcher stops a run for the first time** (`stopped_at_ceiling` at iteration 3) and the gate watcher is caught arming over a disabled monitor and judging nothing. **§9.161's #167 diagnosis was HALF right**: `routingMode` takes the failure 40 agents → 20 and the residual is not in our input at all - 0 mixed trips over 6,347 persons - so `accessEgressModeToLink` still cannot start and ships `none` |
 | **A deviation no constant can reach, and the tail of cheap fixes the reports kept re-issuing** | **§9.163** - MATSim writes `modeChoiceCoverage1x.txt` on every arm and nothing read it, so every gate ever taken blamed a constant without asking whether a constant could reach the target. On the landed arm **ride's target of 20.60 % sits ABOVE the 20.05 % of agents who have ever held a ride plan** - the only mode of twelve, and no value of any constant closes it. Every choice set is within 1 pp of its final coverage by iteration 5-10 and shut by 16-27, **except pt**, still opening at 233 and reaching 25.78 %. The count-station map had been orphaned by a network rebuild 47 minutes after it was written: **0 of 195 rows still named the road they claimed**, and on the repaired map counts read **+16.30 % mean, -1.1 % median, 0 zeros** against -89.35 % / -98.7 % / 7. Half of all declared escort pairs put the passenger in their own car (**10,224 of 20,902**) with 99.6 % of tours realised, so ride's loss is mode assignment, not pairing. `RUN.replanning.score_msa_representation` and `RUN.replanning.score_msa_fraction` declare score averaging at MATSim's own default literal (registry **497 -> 499**, byte-neutral); undeclared MATSim defaults **31 -> 21**; three fields shipped at their consumer's off value now say so via `inert_at`. Fourteen of sixteen `awaiting-run` issues were measured from a run that had already finished |
 | **A stated ceiling is enforced by the runner, and the teleported access leg is diagnosed to a missing attribute in our own plans** | **§9.161** - `RUN.gate.wall_ceiling_h` (0 = no ceiling) and `start_ceiling_watch` give an approved cost the enforcement it never had: a SECOND watcher beside the gate's, stopping through 9.143's marker path with a new completion `stopped_at_ceiling`, so `RUN.gate.interval_iterations = 0` keeps meaning "do not judge my modes" rather than "do not enforce my budget". #167 is DIAGNOSED and the cause is ours: the input plans carry **zero** `routingMode` attributes and every trip is a single leg, so under `accessEgressModeToLink` the router inserts walk access and egress legs and MATSim INFERS each leg's routing mode from its own mode - `walk` beside a `car` main leg - and rejects the trip it just built. The fix is to emit `routingMode` per leg in `build_matsim_plans.py`, a no-op at `access_egress_type = none`, and it needs the demand rebuilt in the same change |
@@ -17073,10 +17076,264 @@ is coherent households, shared vehicles and realistic refusal responses.
 Published hired-fare rules are already transcribed but are not yet implemented
 as complete meter tariffs. Corridor detail remains later work.
 
+## 9.201 Harvests: one archive per family of public queries (21 September 2026)
+
+**What was wrong.** An operator API answers one route or one trip at a time,
+and the Mumbai acquisition kept every answer as its own raw file with its own
+provenance record and its own catalogue entry. The transit folder held 11,956
+responses beside 11,956 `provenance_*.json`; the roads folder 1,840 traffic
+police attachments the same way; the catalogue (`extract/sources.json`), the
+descriptor (`city.json`) and the inventory each repeated all 14,230 entries
+(10 MB, 5.6 MB and 10 MB). Git would have added 14,535 files under
+`cities/mumbai/` and a 22 MB manifest of 28,587 rows; every reader opened
+thousands of files; nothing about the acquisition was wrong, only its
+granularity. Two further things were found on the way: one probe acquisition
+(`nmmt_trip_15683`) duplicated a harvest member byte for byte, and one
+vehicle-detail response (`nmmt_vehicle_795_20260918`) belonged to no vehicle
+the route-stop census indicated.
+
+**What changed.** `cities/mumbai/extract/harvest.py`: a family of requests
+generated from one acquired parent is a *harvest* - ONE zip under
+`data/raw/<category>/<harvest>.zip`, its member listing (`_members.csv`: id,
+name, sha256, bytes, url, request body, retrieval time, content type) inside
+the archive, and ONE `provenance_<harvest>.json` pinning the archive's sha256,
+the member count, the formats and the retrieval window. Members are written in
+id order with a fixed timestamp, so the archive's hash depends only on its
+bytes (the rule that removed the build's wall time, #211). A member already
+archived is not fetched again; a member still held loose from before the rule
+is adopted and its loose pair retired once the archive is written; a member
+whose url or request changed under its id is refused, as `acquire_sources`
+refuses it; a member the publisher does not serve stays out of the archive and
+is reported, the rest of the harvest still lands. The catalogue carries one
+entry per harvest (`kind: harvest`, naming its harvester), so the descriptor
+and the inventory do too; `acquire_sources.py` skips a harvest entry and names
+the script that owns it. `acquire_sources.acquire` was split into
+`check_request` / `fetch` / `store` so a harvest and a loose acquisition share
+one network path and one set of format checks. Readers open one archive handle
+per process (`harvest.read`, `harvest.source`, `harvest.as_file` for tools
+that take a path). Eleven harvests: NMMT route schedules (619), trip timetables
+(9,522), route alignments (619), the 20260918 route-stop census (619) and its
+vehicle details (36); MBMT details, stops and alignments (118 each); the
+traffic-police notices of the 1 January - 18 September 2026 index (1,840 of
+1,855 listed; 15 return 404 at the publisher); Mumbai Port rail statistics
+(47). The two strays were retired. `normalise_eol.py` now walks
+`data/raw/**/provenance*.json`: all 514 Mumbai provenance records were CRLF and
+would have failed their own hashes on a Linux checkout.
+
+**Measured.** Every processed table re-derived from the archives is
+byte-identical to the one derived from the loose files - `nmmt_departures`,
+`nmmt_stop_times`, the vehicle indications, locations and stop details, the
+three MBMT tables and their audit, `traffic_notice_index`, the notice audit,
+the coastal-access audit, the port monthly rakes and its audit - with one
+exception: route 9841's alignment, `unobtained` in the previous path audit,
+was acquired on 21 September 2026 when the harvester packed the family, so
+`nmmt_route_vertices.csv` gains its 1,172 vertices and the 37 stop rows of
+`nmmt_route_live_9841_20260918` gain a geometry offset. The schedule audit
+took 3 min 58 s opening the archive per member and 3.8 s with one handle. The
+manifest fell from 28,587 rows (22 MB) to 1,293 (870 KB); `city.json` from
+5.6 MB to 283 KB; the catalogue from 10 MB to 300 KB; the files git tracks
+under `cities/mumbai/` from 14,535 to 889. `tests/check_manifest.py` passes
+for both cities.
+
+**Deliberately not done.** The 13 OSM relation-history queries and the nine
+WRI layers (27 files) stay loose: per-download provenance, not a family. The
+567 catalogue entries are not grouped into publishers; the manifest's
+per-row licence column is what the `sources` list serves and each document's
+reuse terms differ. No harvest was re-fetched from its publisher; the bytes are
+the 18 September acquisitions.
+
+**Consequences.** A per-response harvest is written as a harvest from the
+first member; `acquire_sources.py` is for single documents. A reader of a
+harvest imports `harvest` and the harvester's `Harvest` constant, never a
+file glob. `extract_port_rail_controls.py` depends on poppler's `pdftotext`
+24 or later: the 4.00 build on Git Bash's PATH mangles the table layout and
+the extractor refuses the blanks - the same bytes parse identically under the
+MiKTeX build PowerShell resolves.
+
+## 9.202 The contract narrowed by who reads a field; Mumbai declares the framework's run-side keys (21 September 2026)
+
+**What was wrong.** `required_fields.json` said "match the reference city's
+571 fields" and its own docstring conceded that narrowing it to what each
+layer needs "is real work and is not done". Mumbai was missing 533 of them -
+Opal fare bands, SCATS corridor fields, the S0-S6 scenario fields, HTS
+activity-chain fields - and `check_city.py --all` failed 38 times, which
+would have turned CI red on every pull request the moment the city was
+committed. The city's own run settings sat in a private namespace: 67
+`RUN.smoke.*` and 14 `C.smoke.*` fields, 59 of them bound to the same MATSim
+parameter as a framework field the reference city declares (`RUN.smoke.qsim.endTime`
+beside `RUN.qsim.end_time_h`), one of them bound to a parameter MATSim does not
+have (`scoring.brainExpBeta` for `BrainExpBeta`). The descriptor lacked a
+boundary, a zone system, a mode list, an observed mode series and an
+intervention name; eight of the city's fields spelt their units differently
+from the contract; there were no scenario or day overlays.
+
+**What changed.** *The contract.* `render_schema.py` derives a second
+narrowing beside `required_if_mode`, again from evidence and never judgment:
+`required_by`, from `check_hardcoding.key_uses` (the scan that keeps the
+wiring ledger at zero) and the tool bindings. `run` - a binding, or a
+string-literal read in `run.py`, `src/run`, `src/java`, `src/registry`,
+`src/analyse`, `src/calibrate` or `src/setup` - is required of every city,
+because the framework reads it whenever a scenario runs or is read back
+(220 fields). A list of framework builders (`src/build/...`, or the package
+contract `tests/check_package.py`) is required of a city whose manifest names
+one of them as a producer (239). `reference_city` - read only by the
+reference city's own adapters and builders - is required of no other city
+(112). `check_city.py` applies it per city from the city's own manifest
+(`produced_by`, tool suffix stripped). What is not derived is stated in the
+schema: a field a switched-off mechanism silences is still `run`, because the
+emitter writes it. Newcastle's 571 remain required of Newcastle; its check
+passes as before.
+
+*Mumbai's registry.* `cities/mumbai/build/adopt_framework_fields.py` writes
+`registry/*_framework.json` (five files, 196 fields) and is idempotent from
+the pristine registry: the 59 bound twins are MOVED under the framework key
+with Mumbai's value, source, sweep and description and the contract's units
+and `matsim_format` (the two clock strings become hours); 133 run-side keys
+Mumbai never declared are ADOPTED from the reference city's declaration, the
+description saying so, the source downgraded to `assumed` with the reference
+sweep or a `held_fixed` rule where Newcastle's was a measurement of Newcastle,
+and the status `placeholder` where the mechanism is switched off for this
+baseline; the gates are declared off with the reason - `A.signals.representation
+= implicit_delay`, `A.gradient`, `A.crossings`, `A.bike_stress` and
+`C.raptor.mode_cost_representation = absent`, `B.ride.pairing_enabled = false`
+(no households, so no ride can name its driver), `B.population.vehicle_roster
+= per_person` (the Java default the previous cases ran under). Mumbai's own
+facts are written, not adopted: `B.seed.master`, `RUN.sample.fraction` 1.0,
+`RUN.sample.unit` person, `B.population.age_bands` (the census C-14 five-year
+bands), an empty crossings table, an empty ASC map, `RUN.machine.xmx` 16g,
+two threads. Three launch-derived identities keep `computed` (the capacity
+factors, the score-MSA fraction) and `baseline_smoke.py` supplies them under
+the `derived` runtime role with the same rules `build_matsim_run_inputs`
+uses; `C.scoring.activity_minimal_applied_s` is declared unbound at zero
+because the baseline applies no minimal duration. The private
+`RUN.smoke.xmx` and `RUN.smoke.scoring.brainExpBeta` are retired; 17
+`RUN.smoke.*` and 4 `C.smoke.*` fields remain as the city's own assembly and
+scoring parameters. The launcher, the choices builder and the run overlays
+read the framework keys. Registry: 178 to 313 fields.
+
+*The descriptor.* `boundary`: the four Census 2011 districts Mumbai, Mumbai
+Suburban, Thane and Raigad from the IIT Bombay MahaCensus shapefiles, an
+empty external tier with the reason, and the statement that this is the
+acquisition's overcoverage, not the notified MMR (decision D13, the user's).
+`zone_system`: census 2011 leaves (1,183 wards, 3,630 villages;
+`geography_id`). `modes`: the eight of `RUN.mode_choice.modes`.
+`mode_share_target`: Census 2011 B-28 commuting - the only observed mode
+series held, named so the framework has a declared series, with the note
+that it is not a target. `intervention.name`: "None - base year only".
+Overlays `scenarios/BASE.json` and `day/WEEKDAY.json`, a `scenarios/`
+directory, the eight unit strings aligned.
+
+**Measured.** `check_city.py`: Mumbai PASS 25 FAIL 0 (from PASS 12 FAIL 35),
+231 applicable fields, 340 not applicable to this package; Newcastle PASS 41
+FAIL 0. The structural check `smoke_two_iterations` (the hired-fleet case at
+two iterations) ran to `ran_to_last_iteration` on the unified registry:
+`20260921T165718_2it_100pct-mumbai-smoke`, 579.7 s. Its emitted config
+against the last pre-fold case's (`20260919T155059`) differs exactly where the
+fold declares what MATSim and the Java had been supplying silently: the
+parking, ridePairing (enabled false), gradient (absent), bikeStress (absent),
+tramPriority, scats, taxiFleet (representation absent), householdVehicles
+(per_person), ptSubmodeChoice, raptorModeCost and eventsManager groups now
+appear with their declared values; `BrainExpBeta` is spelt as MATSim spells
+it; the travel-time calculator bins at 300 s with `filterModes` on (the
+reference city's declaration, adopted); typical durations are written as
+clocks. Nothing about the case's ridership is read.
+
+**Deliberately not done.** The launch path is still the city's own:
+`run.py --baseline-smoke` prepares the network, schedule and vehicles at
+launch and calls the harness's close-out, where `run.py <scenario>` reads an
+assembled `scenarios/matsim/<S>/<day>/` set and the C1 scoring translation
+with the HTS purpose share. Folding it in - a city-declared scoring source
+(`RUN.scoring.translation`: the C1 translation or the bound fields), the
+assembly moved to a Mumbai build step producing the set, the plans at
+`demand/plans/matsim/population_WEEKDAY.xml.gz` - is the lane's next task; it
+touches the harness Newcastle's arms run on and is verified on a Newcastle
+1 % smoke. No mode target, no population synthesis, no extent decision.
+
+**Consequences.** A field is required of a city because something reads it
+for that city, and the schema says who. A second city declares the
+framework's keys, never a parallel namespace: one key per MATSim parameter.
+An adopted value is labelled adopted and a switched-off mechanism's
+parameters are placeholders - the reference is regenerated by
+`adopt_framework_fields.py` after a contract change, never edited by hand.
+
+## 9.203 The Mumbai sessions verified for Newcastle: standing room never scaled, two manifest regressions, a report that would have grown a hundredfold (21 September 2026)
+
+**What was wrong.** Twenty-two record sections (9.179-9.200) and 131
+uncommitted paths arrived from the 19 September sessions with no handoff: the
+brief still described the fifty-fifth session, nothing was pushed, and the
+gate was red on two checks (`check_city --all` on the incomplete second city,
+a stale `layers.json`). The user asked whether the changes those sessions
+made to Newcastle were correct. Three were not, and one was a correct fix
+that changes Newcastle's next arm and had not been said so.
+
+**What changed, and what was found.** *Behaviour-preserving, verified.* The
+four registry fields added for Newcastle sit at their legacy values
+(`A.transit.fleet_assignment_mode = mode_capacity`, `A.network.mode_access_strategy
+= legacy_companions`, `RUN.qsim.mode_vehicle_fields = {}`,
+`RUN.routing.activity_link_assignment = common_modes`); the three new Java
+config groups default off; `activityLinks.assignment` is mandatory in the
+controler but emitted from the registry at every launch, so `run.py --dry-run`
+resolves; the network builder defaults to the four Overpass extracts; 9.179's
+own measurement stands that the thirty run-input sets rebuild byte-identical
+under the new fleet path. The population sampler rewrite was run against the
+real WEEKDAY population at 25 % under the household unit, old code beside
+new: the same 155,233 of 622,318 persons kept, every person block identical
+apart from self-closing-tag spacing; 39 s against 106 s.
+
+*A correct fix that changes Newcastle's next arm.* The old sampler's regex
+scaled only `seats`. In the F35 result `20260916T063903_250it_25pct` the fleet
+ran **Bus 11 seats + 18 standing, Tram 15 + 210, Rail 24 + 48, Ferry 37 +
+51**: standing room at full size at a quarter sample, so a tram carried 225
+sampled agents - 900 real - against a real 270, and crowding could never bind
+on tram, rail or ferry (the 9.12 defect class, on every 25 % arm to date). The
+rewrite scales both components (`Bus 11 + 5, Tram 15 + 52, Rail 24 + 12,
+Ferry 37 + 13` at 25 %, floor 1). Every arm after it opens a family; #238
+carries the measurement the first such arm makes.
+
+*Two regressions in `build_manifest.py`, fixed.* A glob declared as an input
+of the thirty `transitVehicles.xml.gz` rows
+(`networks/matsim/schedules/*/fleet_assignments.json`) resolved through the
+network builder's lineage to OSM and the DEM, and labelled all thirty as
+ODbL share-alike with the wrong sources and dates; the glob is removed (an
+explicit assignment file carries its own lineage). The provenance-record rule
+- a `provenance_*.json` is the package's own metadata and inherits no
+neighbouring download's source, licence or date - is right and is kept: under
+the old ancestor rule Newcastle's fares record carried the operator's
+copyright line and Mumbai's thirteen OSM relation histories were labelled as a
+toll notification. Newcastle's manifest regenerates identical but for five
+provenance rows, and its split is **724 CC-BY / 220 ODbL / 15 bespoke** (from
+721 / 220 / 18); the board and the position page say so.
+
+*A report that would have grown a hundredfold.* `transit_fleet.prepare_fleet`
+returned a per-vehicle map (`active_vehicle_profiles`, 2,139 ids a set on
+Newcastle) into the committed `_run_inputs_report.json` for no reader; it
+returns a count per profile.
+
+*Housekeeping.* Two report-library JSONs re-serialised with the committed
+indent (13,000 lines of churn to 28); five documents' CRLF undone; browser
+logs removed; `layers.json` regenerated.
+
+**Measured.** Gate: every check passes for both cities after this session's
+changes (`session_gate.py`; `check_city --all` PASS 66 FAIL 0). Unit suite
+849 passed, 1 skipped. Newcastle's manifest: 959 files, verified.
+
+**Deliberately not done.** No Newcastle arm, no rebuild of its run inputs, no
+recompile beyond the gate's own. The two regressions and the fleet report
+never reached a run.
+
+**Consequences.** The next 25 % arm is the first with standing room scaled;
+it opens a family and is not compared with F35. A change to a framework
+builder is verified by regenerating the reference city's artefact and
+diffing it against the committed one before it lands - the manifest took 14
+seconds and found both regressions.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-21 | **Verification of the 19 September changes for Newcastle (§9.203).** Standing room was never scaled at 25 % on any F35 arm; the fix opens a family (#237). Two build_manifest regressions and a per-vehicle report map fixed before landing. Newcastle's licence split 724 / 220 / 15. |
+| 2026-09-21 | **Contract tiers and the Mumbai registry fold (§9.202).** required_by (run / builders / reference_city) derived from the reads; Mumbai's private RUN.smoke namespace moved under the framework's keys, its descriptor completed; check_city passes for both cities. |
+| 2026-09-21 | **Harvests (§9.201).** The Mumbai per-response acquisitions become eleven archives with one provenance each; the manifest falls from 28,587 rows to 1,293; the raw provenance records pinned to LF. |
 | 2026-09-19 | **Hired-supply completion (§9.200).** Native waits enter experienced legs, bounded case completed, actual carried legs distinguished from refusals. |
 | 2026-09-19 | **Hired supply queues (§9.199).** Optional QSim pools, native tests and explicit provisional fleet derivation. |
 | 2026-09-19 | **Mumbai initial choices (§9.198).** Completed bounded exploration, retained-score diagnostics and broad next priorities. |

@@ -1,6 +1,6 @@
 {
-  "overlay": "smoke_hired_fleet",
-  "description": "Bounded real-wait pooled taxi/auto supply experiment on the choice baseline. Registration-stock proxy, not calibrated dispatch. Decision 9.199.",
+  "overlay": "smoke_two_iterations",
+  "description": "Structural check of the launch path after a registry or launcher change: the hired-fleet case at two iterations. Nothing about the model is read from it. Decision 9.202.",
   "set": {
     "RUN.smoke.inputs": {
       "network": "networks/matsim/schedules/baseline_regional/network.xml.gz",
@@ -10,7 +10,8 @@
       "boarding_fares": "params/baseline/boarding_fares.csv",
       "hired_fleet": "params/baseline/hired_fleet.json"
     },
+    "RUN.replanning.max_agent_plan_memory": 9,
     "RUN.smoke.hiredFleet.representation": "pooled_queue",
-    "RUN.replanning.max_agent_plan_memory": 9
+    "RUN.controler.last_iteration": 2
   }
 }

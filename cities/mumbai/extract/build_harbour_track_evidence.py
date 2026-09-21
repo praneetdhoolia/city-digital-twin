@@ -5,14 +5,13 @@ capacity is introduced. Undirected connectedness is a necessary check and does
 not certify an operable train path through switches, signals and platforms.
 """
 from collections import Counter, defaultdict
-import csv
 import json
 from pathlib import Path
 
 import city
 from build.extract_osm_network import entities, fingerprint
-from manifest_io import manifest_reader
 from match_harbour_station_geometry import mode_status
+from evidence_io import dump_rows, read_rows, serial
 
 OUTPUT_INPUTS = {
     'data/processed/transit/cr_harbour_stop_area_members.csv': [
@@ -42,28 +41,8 @@ OUTPUT_INPUTS = {
 }
 
 
-def read(path):
-    with Path(city.path(path)).open(encoding='utf-8') as stream:
-        return list(manifest_reader(stream))
-
-
-def dump(path, rows):
-    if not rows:
-        raise ValueError('Expected nonempty evidence output: ' + path)
-    target = Path(city.path(path))
-    target.parent.mkdir(parents=True, exist_ok=True)
-    with target.open('w', encoding='utf-8', newline='') as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator='\n')
-        writer.writeheader()
-        writer.writerows(rows)
-
-
-def serial(value):
-    return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
-
-
 def main():
-    geometry = read('data/processed/transit/cr_harbour_geometry_candidates.csv')
+    geometry = read_rows('data/processed/transit/cr_harbour_geometry_candidates.csv')
     anchors, boarding = defaultdict(set), defaultdict(lambda: defaultdict(list))
     for row in geometry:
         if row['retain_for_identity_review'] != 'True':
@@ -74,13 +53,13 @@ def main():
             boarding[feature.split('/')[1]][key].append(dict(basis='direct_geometry_candidate', feature=feature,
                                                             identity_match_evidence=json.loads(row['match_evidence'])))
     direct_nodes = set(boarding)
-    point_rows = {r['osm_node_id']: r for r in read('data/processed/observed/osm_transport_points.csv')}
+    point_rows = {r['osm_node_id']: r for r in read_rows('data/processed/observed/osm_transport_points.csv')}
     tags_by_feature = {'node/'+key: json.loads(row['all_driver_tags_json']) for key, row in point_rows.items()}
     for f in json.loads(Path(city.path('data/processed/geospatial/osm_transport_areas.geojson')).read_text(encoding='utf-8'))['features']:
         tags_by_feature[f['id']] = f['properties']['all_driver_tags']
     members_out, relations_used, excluded_relations = [], set(), set()
     excluded_nonrail_members = set()
-    for relation in read('data/processed/observed/osm_transport_relations.csv'):
+    for relation in read_rows('data/processed/observed/osm_transport_relations.csv'):
         if relation['public_transport_tag'] != 'stop_area':
             continue
         members = json.loads(relation['ordered_members_json'])
@@ -197,7 +176,7 @@ def main():
             station_nodes[key].add(node)
             station_components[key].add(component(node))
     trains = defaultdict(list)
-    for stop in read('data/processed/transit/cr_harbour_stop_candidates.csv'):
+    for stop in read_rows('data/processed/transit/cr_harbour_stop_candidates.csv'):
         trains[stop['train_number']].append(stop)
     pair_trains = defaultdict(set)
     for train, stops in trains.items():
@@ -216,10 +195,10 @@ def main():
                           validation_scope='necessary_topology_check_only_no_direction_length_signalling_or_route_validation'))
     if fingerprint(native) != native_hash:
         raise ValueError('Native source changed during track audit')
-    dump('data/processed/transit/cr_harbour_stop_area_members.csv', members_out)
-    dump('data/processed/network/cr_harbour_boarding_nodes.csv', nodes_out)
-    dump('data/processed/network/cr_harbour_track_memberships.csv', memberships)
-    dump('data/processed/network/cr_harbour_adjacent_station_topology.csv', pairs)
+    dump_rows('data/processed/transit/cr_harbour_stop_area_members.csv', members_out)
+    dump_rows('data/processed/network/cr_harbour_boarding_nodes.csv', nodes_out)
+    dump_rows('data/processed/network/cr_harbour_track_memberships.csv', memberships)
+    dump_rows('data/processed/network/cr_harbour_adjacent_station_topology.csv', pairs)
     audit = dict(source_native_sha256=native_hash, stop_area_relations_used=len(relations_used),
                  excluded_mixed_or_other_mode_relations=sorted(excluded_relations, key=int),
                  excluded_explicit_nonrail_member_features=sorted(excluded_nonrail_members),
