@@ -1,20 +1,21 @@
 # Brief for the next agent
 
-**Written:** 21 September 2026 (fifty-sixth session) · **Open family:** `F35-the-engines-route-what-they-remode` · **Commit:** `7286de1` plus this handoff's commits
+**Written:** 21 September 2026 (fifty-seventh session) · **Open family:** `F35-the-engines-route-what-they-remode` · **Commit:** `f35c5f0` plus this handoff's commits
 *A pointer, not a source: [GOAL.md](GOAL.md), the [board](STATUS.md) and the [position pages](positions/) win.*
 
 ## §0 Verify first — facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| Machine idle. The newest run on disk is the Mumbai structural check `20260921T165718_2it_100pct-mumbai-smoke` (`ran_to_last_iteration` at 2, 579.7 s); Newcastle's newest result is `20260916T063903_250it_25pct`. | `python src/run/session_gate.py --digest` |
-| The gate passes for both cities (`check_city --all` PASS 66 FAIL 0); Newcastle's manifest regenerates identical; the separate package audit (#234, #235) is unchanged and unverified. | `python src/run/session_gate.py` · `python src/registry/check_city.py --all` · `python tests/check_package.py` |
-| This session's PR is the branch `praneetdhoolia/mumbai-digital-twin`: open, or merged and the branch deleted. | `gh pr list --state all --head praneetdhoolia/mumbai-digital-twin` · `git status --short --branch` |
-| 34 open issues. New: #237 (standing room never scaled at 25 %, `awaiting-run`, blocks the launcher until the first arm after the fix measures it), #238 (the Mumbai launcher fold), #239 (D13, the study extent). | `gh issue list --state open --limit 100` · `python src/run/issue_gate.py` |
-| One lane decision unanswered: D13, Mumbai's study extent. D6–D12 recorded. | `python src/analyse/lane.py --ask` |
-| 25 report recommendations open (20260918T182209:1 and :2 taken this session). | `python src/analyse/report_recs.py` |
-| Registry **571** fields, manifest **959** files (**724 CC-BY / 220 ODbL** + 15 bespoke) for Newcastle; Mumbai 313 fields. The contract carries `required_by` (run 220 / builders 239 / reference_city 112). | `python src/registry/render_schema.py --check` · `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` |
-| Mumbai's manifest: 1,293 files, eleven harvest archives; 889 files tracked under `cities/mumbai/`. | `CITYSIM_CITY=mumbai python tests/check_manifest.py` · `git ls-files cities/mumbai \| wc -l` |
+| Machine idle. The newest run on disk is the Mumbai case `20260921T182708_2it_100pct` through the framework harness (`ran_to_last_iteration` at 2, 410.1 s); Newcastle's newest smoke is `20260921T180105_2it_1pct`, its newest result `20260916T063903_250it_25pct`. | `python src/run/session_gate.py --digest` |
+| The gate passes for both cities (`check_city --all` PASS 66 FAIL 0); both manifests verify (Mumbai 1,314 rows); the separate package audit (#234, #235) is unchanged and unverified. | `python src/run/session_gate.py` · `CITYSIM_CITY=mumbai python tests/check_manifest.py` · `python tests/check_package.py` |
+| This session's PR is the branch `praneetdhoolia/mumbai-twin-extent-and-launcher`: open, or merged and the branch deleted. | `gh pr list --state all --head praneetdhoolia/mumbai-twin-extent-and-launcher` · `git status --short --branch` |
+| 35 open issues after this handoff: #238 (the launcher fold) closed on `20260921T182708_2it_100pct`; #239 re-aimed at the plans and targets now D13 is taken; new #241 (the contract misses run-path keys read through the assembler) and #242 (the residents map reads one city's columns). | `gh issue list --state open --limit 100` · `python src/run/issue_gate.py` |
+| No lane decision unanswered: D13 recorded 21 September 2026 (the notified MMR core, the four-district external tier). D6–D12 recorded. | `python src/analyse/lane.py --ask` |
+| 25 report recommendations open. | `python src/analyse/report_recs.py` |
+| Registry **574** fields, manifest **959** files (**724 CC-BY / 220 ODbL** + 15 bespoke) for Newcastle; Mumbai **374** fields, 1,314 manifest rows, 515 of 567 catalogue sources acquired (51 unobtained, 1 unusable). | `python src/registry/render_schema.py --check` · `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` |
+| The Mumbai synthesised population (27,057,132 persons, 6,068,786 households, `demand/population/B1_*.csv`, 3.3 GB, gitignored) regenerates in two minutes; its report is committed. | `CITYSIM_CITY=mumbai PYTHONPATH=src python cities/mumbai/build/build_population.py` · `demand/population/_population_report.json` |
+| The Newcastle emitter reproduces the reference smoke's config but for the new gate's own default (`hiredFleet.representation = absent`); the Mumbai case re-emits identically. | `python src/run/reemit_config.py --run 20260921T180105_2it_1pct` · `CITYSIM_CITY=mumbai python src/run/reemit_config.py --run 20260921T182708_2it_100pct` |
 
 Then: `python src/run/session_gate.py`.
 
@@ -29,54 +30,59 @@ Then: `python src/run/session_gate.py`.
 Decided: D9 = A literature marginal utility of distance for bike, with its sweep (recommended) (2026-09-16) · D10 = Document the scoped departure: gate off while a control is differenced against its arm 0 (recommended) (2026-09-16) · D11 = Yes - set the strict policy (recommended) (2026-09-16) · D12 = Hold escort members and joint companions to ride on their bound tours; car-less lift and shared passengers keep walk/bike/pt (recommended) (2026-09-16) · D13 = The notified Mumbai Metropolitan Region as the core, the four-district envelope as the external tier (recommended) (2026-09-21)
 <!-- generated:lane end -->
 
-The launcher fold is verified on a Newcastle 1 % smoke before the Mumbai case; it touches the harness the arms
-run on. Put D13 to the user at `/onboard`; the population synthesis, the mode targets and every count basis
-follow the extent. **The next Newcastle 25 % arm opens a family** (standing room scaled, §9.203) and needs a
-stated-cost approval; nothing after it compares with F35.
+The Mumbai plans builder is the next task: the 1,000-person chain (`build_baseline_activities.py`, eight whole-day
+alternatives a person) does not scale to 27 M persons - write the harness's household sample directly, at a declared
+fraction, and say what the first citywide case measures (`cities/mumbai/docs/scaling.md`: no fraction has been shown to
+preserve behaviour). The targets derive from `data/processed/observed/published_mode_splits.csv` with the record settling the
+rickshaw/taxi, metro and active-mode mappings. **The next Newcastle 25 % arm opens a family** (standing room scaled,
+§9.203) and needs a stated-cost approval; nothing after it compares with F35.
 
 ## §2 Traps — newest first, at most ten, each with what it cost
 
-1. **A framework builder change is verified by regenerating the reference artefact and diffing it** (§9.203):
-   two `build_manifest.py` regressions (thirty rows mislabelled ODbL, five provenance rows stripped) sat in the
-   tree for two days; the manifest takes 14 s to regenerate and found both.
-2. **A regex over MATSim XML scales what it matches first** (§9.203, #237): standing room ran at full size on every
+1. **A one-byte EOL drift is a manifest failure on every Linux checkout** (§9.204): `osm_activity_areas.geojson` carried
+   one CRLF at its tail, hashed as written, committed as LF - a byte short of its row. `normalise_eol.py` now walks
+   `.geojson` and `.tsv`; run it before AND after `build_manifest.py`, for the city whose artefact changed.
+2. **The contract's `required_by` misses keys read on the run path through `config_runtime`** (§9.204): it classes
+   them as the assembler's, so a second city passes the contract and fails at launch on a `RegistryError`. Six such keys
+   are declared for Mumbai by hand; derive the run-path closure function by function before the next city.
+3. **A registry key that no longer exists in a builder's lineage stops the whole chain** (§9.204): renaming
+   `RUN_baseline_smoke.json` broke `build_baseline_choices.py`'s `OUTPUT_INPUTS` two steps downstream. Grep the city's
+   `build/` and `extract/` for a registry file name before moving it.
+4. **A framework change is proven by re-emitting a finished run's config** (§9.204, `reemit_config.py`): the fold was
+   proven on the Newcastle 1 % smoke in seconds; IDENTICAL or the diff names the parameter.
+5. **`Path.write_text` writes CRLF on Windows** (§9.201, §9.204): the adopter wrote every `*_framework.json` CRLF; every
+   writer passes `newline='\n'`.
+6. **A regex over MATSim XML scales what it matches first** (§9.203, #237): standing room ran at full size on every
    25 % arm since the fleet gained standing places. Parse the XML; verify old against new on the real population.
-3. **A second city declares the framework's keys, never a parallel namespace** (§9.202): 59 `RUN.smoke.*` twins
-   bound the same MATSim parameters as framework fields, one to a parameter MATSim does not have
-   (`brainExpBeta`). The contract's `required_by` says which keys a city must declare.
-4. **A per-response API harvest is one archive** (§9.201): 13,500 loose files and 14,230 catalogue entries cost
-   a 22 MB manifest and four-minute readers. `harvest.py`; readers import the harvester's `Harvest` constant.
-5. **A per-vehicle audit map in a committed report** (§9.203): 2,139 ids a set times thirty sets, for no reader.
-   Report a count per profile.
-6. **`pdftotext` on Git Bash's PATH is poppler 4.00** (§9.201): it mangles the port-rail table and the extractor
-   refuses the blanks; PowerShell resolves MiKTeX's 24.04, which parses it. Run the PDF extractors from PowerShell.
-7. **Python `write_text` writes CRLF on Windows** (§9.201): all 514 Mumbai provenance records would have failed
-   their own hashes on a Linux checkout. `normalise_eol.py` now walks `data/raw/**/provenance*.json` and `city.json`;
-   run it before and after `build_manifest.py`.
-8. **A session without a handoff leaves the brief describing the session before it** (§9.203): 22 record
-   sections and 131 uncommitted paths arrived with §0 stale. `/onboard` re-derives §0 by command for this reason.
-9. **Builds and tests compete with an arm** (§9.177): verification stretched iterations 383 → 400–510 s.
-   Batch work; never price an arm from a busy-machine reading.
-10. **Mode-choice coverage counts trips** (§9.177): older records called these agents and misread ride's ceiling.
+7. **A second city declares the framework's keys, never a parallel namespace** (§9.202): one key per MATSim parameter;
+   the contract's `required_by` says which keys a city must declare; a Mumbai fact goes in the adopter's OVERRIDES.
+8. **A per-response API harvest is one archive** (§9.201): `harvest.py`; readers import the harvester's `Harvest` constant.
+9. **`pdftotext` on Git Bash's PATH is poppler 4.00** (§9.201): run the PDF extractors from PowerShell (MiKTeX 24.04).
+10. **Builds and tests compete with an arm** (§9.177): verification stretched iterations 383 → 400–510 s. Batch work; never
+    price an arm from a busy-machine reading.
 
-Retired by checks: the contract's Newcastle shape for another city (`required_by`, `check_city --all` green),
-CRLF under `data/raw/` (`normalise_eol.py`), dead-harness detection (`run_failure.py`), concurrent arms and
-missing automatic stops (the launcher), stale family stamps and oversized pages (the document gates), repeated
-lane questions (`lane.json`). See [monitoring-and-gates](positions/monitoring-and-gates.md).
+Retired by checks: the second city's parallel launcher (`test_scoring_translation.py` asserts it is gone), a stale
+framework file on a contract change (the adopter merges), CRLF under `data/raw/` and in GeoJSON (`normalise_eol.py`),
+the contract's Newcastle shape for another city (`required_by`, `check_city --all` green), dead-harness detection
+(`run_failure.py`), concurrent arms and missing automatic stops (the launcher), stale family stamps and oversized pages
+(the document gates), repeated lane questions (`lane.json`). See [monitoring-and-gates](positions/monitoring-and-gates.md).
 
 ## §3 Standing directives and approvals
 
 - **No run approval stands.** Every previous approval is SPENT (§9.169, §9.176, §9.177). The next arm is
-  quoted from its own build's probe (`arm_cost.py`) and needs a stated-cost approval; it opens a family.
-- **25 % arms only.** A structural smoke may use 1 % (Newcastle) or the explicit population (Mumbai,
+  quoted from its own build's probe (`arm_cost.py`, per city since §9.204) and needs a stated-cost approval; it opens a family.
+- **25 % arms only** for Newcastle. A structural smoke may use 1 % (Newcastle) or the explicit population (Mumbai,
   `smoke_two_iterations`). One arm at a time; no recompilation under an arm.
+- **The user's standing goal (21 September 2026):** a full Mumbai twin, every mode's data acquired; the twelve-mode
+  requirements are the validation standard, the broad executable baseline comes first (§9.187).
 - Compare only within a family, sample fraction and network build. A result requires `_run.json` to say
   `ran_to_last_iteration`; a stopped reading is citable at its `reached_iteration` only.
-- The 67/143 holdout stays shut. No invented data; an adopted value is labelled adopted and a switched-off
-  mechanism's parameters are placeholders (§9.202).
-- D6–D12 settled in [lane.json](lane.json); D13 open. The TfNSW request is the user's to send (D2).
+- The 67/143 holdout stays shut. No invented data; an adopted value is labelled adopted, an unobtained one takes a
+  sweep member explicitly (`B.population.tertiary_attendance_rate_20_24`).
+- D6–D13 settled in [lane.json](lane.json). The TfNSW request is the user's to send (D2).
 - Mumbai's `registry/*_framework.json` are regenerated by `cities/mumbai/build/adopt_framework_fields.py`
-  after a contract change, never edited by hand; Mumbai runs through `run.py --baseline-smoke` until #238 lands.
+  (OVERRIDES hold its facts); Mumbai runs through `run.py --scenario BASE --day WEEKDAY --run-config <overlay>` after
+  `build_baseline_run_inputs.py`.
 - No run while an issue in its lane lacks its required declaration; #237 blocks the Newcastle launcher until
   the first arm after the fix reads it. Declare `answers_issues`.
 - Never commit to `main`. Land the session through one PR targeting `main` and delete its branch after merge.
