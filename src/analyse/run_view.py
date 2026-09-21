@@ -691,6 +691,14 @@ def modes(run_dir, iteration=None, compute=True):
     the runner has not written it. `computing` says a reading is on its way."""
     rmr = _reporter()
     targets = mode_targets()
+    # the reporter and the targets are the server's city's: a run of another
+    # city (the picker offers every city's) is not read against them
+    if run_city(run_dir) != _city.CITY:
+        return {'targets': {}, 'stop_pct': rmr.GATE_STOP_PCT, 'pass_pct': rmr.GATE_PASS_PCT,
+                'readable': [], 'stored': [], 'requested': None, 'computing': False, 'trend': {},
+                'current': {'error': 'a %s run: its modes are read by a viewer serving that city '
+                                     '(CITYSIM_CITY=%s python src/analyse/run_view.py --run %s)'
+                                     % (run_city(run_dir), run_city(run_dir), os.path.basename(run_dir))}}
     stored = stored_readings(run_dir)
     readable = readable_iterations(run_dir)
     run_dir = os.path.abspath(run_dir)
@@ -731,16 +739,32 @@ _NET_CACHE = collections.OrderedDict()   # run_dir -> network doc; a few runs at
 _NET_LOCK = threading.Lock()
 NET_CACHE_ENTRIES = 2        # ~130 MB of Python objects per 368,000-link network
 _BASEMAP_CACHE = {}
-_TRANSFORMER = None
+_TRANSFORMERS = {}
 
 
-def _to_wgs84():
-    """The city's projected CRS -> WGS84 lon/lat, built once."""
-    global _TRANSFORMER
-    if _TRANSFORMER is None:
+def run_city(run_dir):
+    """The city a run belongs to: its own record's `city` (9.204), else the
+    server's city for a record written before the field existed."""
+    meta = _load_json(os.path.join(run_dir, '_meta.json')) or {}
+    return meta.get('city') or _city.CITY
+
+
+def _to_wgs84(run_dir=None):
+    """A city's projected CRS -> WGS84 lon/lat, built once per city.
+
+    THE RUN'S city, never the server's: the results store holds every city's
+    runs and the picker offers them all, and a Mumbai run read through the
+    reference city's MGA zone 56 landed in the Southern Ocean off Antarctica
+    (the user's report, 22 September 2026, 9.206) - UTM zone 43N metres are
+    valid MGA 56 metres, so nothing failed, the map just drew it 100 degrees
+    of longitude away. The CRS is the run's city's `city.json`.
+    """
+    name = run_city(run_dir) if run_dir else _city.CITY
+    if name not in _TRANSFORMERS:
         from pyproj import Transformer
-        _TRANSFORMER = Transformer.from_crs(_city.crs(), 'EPSG:4326', always_xy=True)
-    return _TRANSFORMER
+        crs = 'EPSG:%d' % _city.descriptor(name)['crs']['epsg']
+        _TRANSFORMERS[name] = Transformer.from_crs(crs, 'EPSG:4326', always_xy=True)
+    return _TRANSFORMERS[name]
 
 
 def _input_network(run_dir):
@@ -815,7 +839,7 @@ def load_network(run_dir):
             ids.append(lid)
             xs += [pa[0], pb[0]]
             ys += [pa[1], pb[1]]
-    lons, lats = _to_wgs84().transform(xs, ys)
+    lons, lats = _to_wgs84(run_dir).transform(xs, ys)
     geom = {}
     index = {}
     for i, lid in enumerate(ids):
@@ -1124,11 +1148,11 @@ def _hotspot(run_dir, path):
     }
 
 
-def basemap_bytes():
+def basemap_bytes(run_dir=None):
     """`basemap_payload` as one binary body: a little-endian uint32 header length, the
     header JSON ({layer: {polylines, coords, area}} in order), then per layer its
     uint32 vertex counts and Float32 lon/lat pairs. Built once per basemap file."""
-    doc = basemap_payload()
+    doc = basemap_payload(run_dir)
     if not doc.get('available'):
         return None
     if '_bytes' not in doc:
@@ -1151,14 +1175,21 @@ def basemap_bytes():
     return doc['_bytes']
 
 
-def basemap_payload():
+def basemap_payload(run_dir=None):
     """The standing picture - coast, water, parkland, roads, rail, tram - from
-    the city's basemap.json, decoded from its projected packing and re-packed
-    as WGS84 Float32 polylines: one array of vertex counts and one of lon/lat
-    pairs per layer. Optional: the page draws the run without it."""
+    the RUN'S city's basemap.json, decoded from its projected packing and
+    re-packed as WGS84 Float32 polylines: one array of vertex counts and one of
+    lon/lat pairs per layer. Optional: the page draws the run without it. The
+    run's city, never the server's: the reference city's rails were drawn under
+    a Mumbai run (the user's report, 22 September 2026, 9.206)."""
     import base64
     import struct
+    name = run_city(run_dir) if run_dir else _city.CITY
+    # the server's city through city.path (the artefact ledger reads that call);
+    # another city's by the same city-relative path under its own directory
     path = _city.path('data', 'processed', 'basemap.json')
+    if name != _city.CITY:
+        path = os.path.join(_city.CITIES_DIR, name, 'data', 'processed', 'basemap.json')
     try:
         stamp = os.path.getmtime(path)
     except OSError:
@@ -1171,7 +1202,7 @@ def basemap_payload():
     if not doc:
         return {'available': False, 'reason': 'basemap.json unreadable'}
     ox, oy = doc['origin']
-    tf = _to_wgs84()
+    tf = _to_wgs84(run_dir)
     layers = {}
     for name, b64 in doc['layers'].items():
         raw = base64.b64decode(b64)
@@ -1279,27 +1310,29 @@ def make_handler(default_run_dir, reload_page=False):
                 self._send(json.dumps({'default': os.path.basename(default_run_dir),
                                        'runs': list_runs()}))
                 return
+            run_dir = self._run_dir(q)
+            if run_dir is None:
+                self._send('{"error":"no such run"}', code=404)
+                return
             if path in ('/thumb/default.light.png', '/thumb/default.dark.png', '/thumb/satellite.png'):
-                # the map-type pictures: the city's own snapshots of its two views, taken
-                # once and kept with its figures; a city without them shows the page's
-                # drawn illustration instead (the <img> falls back on a 404)
-                self._send_file(_city.city_docs('reference', 'figures', 'viewer_' + path[7:]),
-                                'image/png')
+                # the map-type pictures: the run's city's own snapshots of its two views,
+                # taken once and kept with its figures; a city without them shows the
+                # page's drawn illustration instead (the <img> falls back on a 404)
+                self._send_file(os.path.join(_city.CITIES_DIR, run_city(run_dir), 'docs', 'reference',
+                                             'figures', 'viewer_' + path[7:]), 'image/png')
                 return
             if path == '/basemap.bin':
-                body = basemap_bytes()
+                body = basemap_bytes(run_dir)
                 if body is None:
                     self._send('{"error":"no basemap"}', code=404)
                 else:
                     self._send(body, 'application/octet-stream')
                 return
-            run_dir = self._run_dir(q)
-            if run_dir is None:
-                self._send('{"error":"no such run"}', code=404)
-                return
             if path == '/status.json':
                 doc = scan(run_dir)
                 doc['family'] = family_of_run(doc['name'])
+                doc['city'] = run_city(run_dir)
+                doc['server_city'] = _city.CITY
                 # the per-iteration series stay in scan() for the digest; the page reads
                 # neither, and they were 50 KB of every half-second poll
                 doc.pop('modes', None)

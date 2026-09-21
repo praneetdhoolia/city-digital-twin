@@ -692,6 +692,9 @@ function switchRun(name){
   clockSamples = []; $('empty').classList.remove('hidden'); $('empty').textContent = 'loading ' + name + '…';
   loadNetwork().then(() => { tick(); refreshModes(); });
   loadRoutes();
+  BM = null; if (MAP) MAP.clearBasemap();
+  loadBasemap();
+  for (const img of document.querySelectorAll('#lyrpanel img.thm, #lyrbtn img.thm')){ const src = img.getAttribute('data-src') || img.getAttribute('src'); if (src){ img.setAttribute('data-src', src); img.src = url(src); } }
 }
 
 /* ---- the simulator's light: the sun's height and bearing over the study area's centre at the
@@ -826,7 +829,7 @@ function renderModes(d){
   } else if (d.readable && d.readable.length){
     head = 'no reading yet' + (cur && cur.error ? ' · ' + cur.error : '');
   } else {
-    head = 'no readable iteration yet';
+    head = (cur && cur.error) ? cur.error : 'no readable iteration yet';   // another city's run says so
   }
   if (head !== lastHead){        // an unchanged picker is left alone, so a poll never closes an open menu
     lastHead = head;
@@ -961,10 +964,11 @@ async function loadBasemap(){
   try {
     // one binary body: a uint32 header length, the header JSON, then each layer's uint32
     // vertex counts and Float32 lon/lat pairs - typed arrays over the buffer, nothing decoded
-    const r = await fetch('basemap.bin');
+    const r = await fetch(url('basemap.bin'));
     // a city without a drawn basemap (the second city draws on the tiles alone) has no
     // basemap rail or tram to switch: its lines come from the run's schedule instead
-    if (!r.ok){ for (const k of ['tram', 'rail']){ const el = document.querySelector('#lyrpanel .lb[data-layer="' + k + '"]'); if (el) el.hidden = true; } return; }
+    if (!r.ok){ BM = null; for (const k of ['tram', 'rail']){ const el = document.querySelector('#lyrpanel .lb[data-layer="' + k + '"]'); if (el) el.hidden = true; } if (MAP) MAP.clearBasemap(); return; }
+    for (const k of ['tram', 'rail']){ const el = document.querySelector('#lyrpanel .lb[data-layer="' + k + '"]'); if (el) el.hidden = false; }
     let buf = await r.arrayBuffer();
     const hlen = new DataView(buf).getUint32(0, true);
     const d = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 4, hlen)));
@@ -1183,7 +1187,7 @@ function glHost(){
     window.addEventListener('mousemove', e => {
       if (held){ held.x = e.clientX; held.y = e.clientY; }
       if (!drag) return;
-      map.jumpTo({bearing: drag.b + (e.clientX - drag.x) * 0.4, pitch: Math.max(0, Math.min(map.getMaxPitch(), drag.p - (e.clientY - drag.y) * 0.4))});
+      map.jumpTo({bearing: drag.b + (e.clientX - drag.x) * 0.4, pitch: Math.max(0, Math.min(maxPitchAt(map.getZoom()), drag.p - (e.clientY - drag.y) * 0.4))});
     });
     window.addEventListener('mouseup', () => { held = null; if (drag){ drag = null; el.style.cursor = ''; } });
     /* a modifier pressed while panning takes the drag over into turning from where the pointer
@@ -1474,10 +1478,10 @@ function glHost(){
     const retire = () => { clearTimeout(holdTimer); for (const id of old) vis(id, false); };
     if (old.length && !first){ holdTimer = setTimeout(retire, 4000); map.once('idle', retire); } else retire();
     retheme(); applyVisibility();
-    // the core base is the package drawn flat: 3D stands down there and returns with a tile base
-    $('tilt').disabled = name === 'core';
-    if (name === 'core' && THREE_D) set3D(false);   // and forgotten: the tile base comes back overhead, not tilted
-    else if (name !== 'core' && !THREE_D && recall('rv.3d') === 'on') set3D(true);
+    // 3D on every base (it was refused on the drawn base until 9.206): the terrain and the
+    // buildings are the run's ground, whichever base is under them
+    $('tilt').disabled = false;
+    if (!THREE_D && recall('rv.3d') === 'on') set3D(true);
   }
   /* 3D: the terrain under every draped layer, the buildings extruded, the view tilted */
   let skyNow = null, skyRaf = null;
@@ -1549,11 +1553,21 @@ function glHost(){
   // 0 at zoom 5, 75 from zoom 12 - and no flatter: the last ten degrees put the far horizon in
   // frame, where a terrain tile still loading stands beside its neighbour as a wall of tall
   // triangles until it lands; a map app stops about here, and it loads fewer tiles, not more
-  const maxPitchAt = z => Math.max(0, Math.min(75, (z - 5) * 75 / 7));
-  map.on('zoom', () => { map.transform.setMaxPitch(maxPitchAt(map.getZoom())); compass(); });
+  // 0 at zoom 3, the full 75 from zoom 8 - a city fills the view from about zoom 9, and the
+  // ramp used to reach 75 only at zoom 12, so a tilt over a city stopped at 50-60 degrees
+  // (the user's report, 22 September 2026). The globe hands over to the flat map near zoom
+  // 12 with a NEW transform, so the clamp is re-applied on that transition too; the drag
+  // handler clamps against the ramp itself, never a transform the library may have swapped.
+  const maxPitchAt = z => Math.max(0, Math.min(75, (z - 3) * 75 / 5));
+  const clampPitch = () => { try { map.transform.setMaxPitch(maxPitchAt(map.getZoom())); } catch(e){} };
+  map.on('zoom', () => { clampPitch(); compass(); });
+  map.on('projectiontransition', clampPitch);
+  map.on('moveend', clampPitch);
   const host = {
     map,
     refresh(){ when(() => { if (BM) setBasemap(BM); if (HS && HS.available && HS._url) setTraffic(HS); applyVisibility(); }); },
+    // another city's run: the drawn layers of the last one go, before its own arrive or not
+    clearBasemap(){ when(() => { bmStamp = null; for (const k of ['coast', 'green', 'sand', 'water', 'roads', 'rail', 'tram']){ const s = map.getSource('bm-' + k); if (s) s.setData(EMPTY); } }); },
     // a new run's schedule: a source that exists is pointed at the new run's routes, a new mode gets its layer
     routes(){ when(() => { routeLayers(); for (const id of routeIds){ const src = map.getSource(id); if (src) src.setData(url('routes.geojson', 'mode=' + encodeURIComponent(id.slice(3)))); } applyVisibility(); }); },
     // the framed view is overhead: the study area from above, north up, whatever the tilt was,

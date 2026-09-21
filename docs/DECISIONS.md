@@ -17624,8 +17624,7 @@ drove (`/routes.json`, `/routes.geojson?mode=`: the `<transportMode>` groups as 
 each route the chain of its mapped links over the run's own network, so a ferry is drawn on its water
 link) as one layer and one chip a mode - Mumbai 1,650 bus routes, 31 rail, 14 metro, 4 ferry; Newcastle
 444, 62 rail, 2 tram, 2 ferry - under the traffic; the mode table labels any mode (auto-rickshaw,
-metro); a city whose horizon carries no sweep has no probe floor (`run_view`, `build_run_index`); the
-basemap chips hide where no basemap is drawn. Verified in a scratch Edge on both cities' newest runs.
+metro); a city whose horizon carries no sweep has no probe floor (`run_view`, `build_run_index`); the basemap chips hide where no basemap is drawn. Two defects the user found on the first look: a Mumbai run opened through a viewer serving the reference city was drawn in the Southern Ocean off Antarctica, with Newcastle's rails under it - the server reprojected every run through ITS city's CRS (UTM 43N metres are valid MGA 56 metres) and served ITS city's basemap; both are now the RUN's city's, read from its own record (`run_city`), and another city's run says so in the modes card. And a tilt over a city stopped short: the pitch ramp reached 75 degrees only at zoom 12 and the clamp sat on a transform the globe hands over at that zoom; the ramp reaches 75 from zoom 8, is re-applied on the projection transition, and 3D is allowed on every base. Verified in a scratch Edge on both cities' newest runs, each served under the other city.
 
 **Measured.** *The first 1 % case* `20260921T231313_4it_1pct` (`lean_agent_one_percent`: 0.01 of the
 core by the nested household hash, 269,690 persons, plan memory 5, the pooled fleet, xmx 34g against the
