@@ -144,7 +144,24 @@ scaled by the fraction. All three are structural measurements, not readings.
   congested network is about 10 %.
 
 So on this host Mumbai executes at 1 % and reads at none: a defensible
-reading needs either a host of the order of 384-512 GB for a 10 % core (2.7 M
-agents, 247 GiB live) or evidence that a merged network changes the picture -
-decision D15, the user's, with the merge as its diagnostic. No fraction has
-been shown to preserve behaviour.
+reading needs a host of the order of 384-512 GB for a 10 % core (2.7 M
+agents, 247 GiB live) - decision D15, taken by the user on 22 September 2026
+(§9.207). No fraction has been shown to preserve behaviour.
+
+## The pass-through merge, measured and not applied (22 September 2026, §9.207)
+
+The merge D15 named as its diagnostic was measured before any run
+(`python src/build/merge_pass_through_nodes.py <base network> <out> --max-length 500`,
+20 s on the 846,699-link base network): a node merges only when it passes
+traffic straight through (one link in and one out, or the two directions of
+one two-way street), the two links agree on speed, capacity, lanes, modes and
+OSM class, neither carries or is named by a turn restriction, and the merged
+link stays under the converter's own `A.network.max_link_length_m` (500 m),
+so every road, route, mode and metre stays (101,306 km before and after).
+Under those rules **37,122 of 377,443 nodes merge (9.8 %) and 67,202 of
+846,699 links fold away; 33,923 more nodes are held by the 500 m cap and 349
+by turn restrictions; the median link moves 62.7 m to 69.0 m.** The lever is
+weak: the storage a 1 % link offers is not changed by a tenth-of-a-node merge,
+and the user chose to keep the network exactly as converted so the map draws
+every vertex as OSM holds it. The script stays as the measurement's
+reproduction; nothing wires it into a build.

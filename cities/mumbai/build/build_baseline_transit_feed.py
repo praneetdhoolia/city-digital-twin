@@ -28,8 +28,32 @@ OUTPUT_INPUTS = {
         'schedules/baseline_bus.zip', 'registry/A_baseline_services.json',
         'data/processed/observed/osm_transport_relations.csv',
         'data/processed/observed/osm_transport_points.csv',
+        'data/processed/observed/water_service_directory.csv',
         'data/processed/geospatial/osm_research.gpkg'],
 }
+for _k in OUTPUT_INPUTS:
+    if 'data/processed/observed/water_service_directory.csv' not in OUTPUT_INPUTS[_k]:
+        OUTPUT_INPUTS[_k].append('data/processed/observed/water_service_directory.csv')
+
+
+def directory_clock(raw, default):
+    """A directory departure string as seconds after midnight, or the default.
+
+    The Maritime Board prints '05.30 AM', '12.00 AM' (the last sailing, so
+    midnight is the END of the day), '06:30 HRS', '09:00 PM (BHAYANDER)' and
+    'In-between 07:00 HRS to 09:00 HRS' (the first of a pair of windows); the
+    first clock in the string is read, in the 12-hour or the 24-hour form.
+    """
+    import re as _re
+    m = _re.search(r'(\d{1,2})[.:](\d{2})\s*(AM|PM|HRS)?', raw or '', _re.I)
+    if not m:
+        return default
+    h, mi, suffix = int(m.group(1)), int(m.group(2)), (m.group(3) or '').upper()
+    if suffix == 'PM' and h != 12:
+        h += 12
+    if suffix == 'AM' and h == 12:
+        h = 24
+    return h * 3600 + mi * 60
 
 
 def rows(name):
@@ -148,6 +172,52 @@ def main():
                 stops_count=len(stop_ids), departures_count=departures, duration_s=round(elapsed),
                 geometry_source='mapped_native_stops_or_ferry_way',
                 timetable_source='modelled_from_provisional_registry'))
+    # The Maritime Board's crossings (9.207): a directory route between the two OSM
+    # terminals the registry names, on the straight water line between them (the
+    # extract holds no route=ferry way for these), its window the directory's first
+    # and last departure, the headway the provisional ferry headway, its vessel the
+    # fleet profile the crossing table names.
+    directory = {r['directory_route_id']: r for r in rows('data/processed/observed/water_service_directory.csv')}
+    for route_id, spec in sorted(cfg.get('A.baseline_transit.directory_crossings').items(), key=lambda kv: int(kv[0])):
+        entry = directory[route_id]
+        sequence = []
+        for node in (spec['from'], spec['to']):
+            if node not in points:
+                raise ValueError('directory crossing %s names OSM terminal %s, which the transport points do not hold' % (route_id, node))
+            point = points[node]
+            sid = 'BASE_OSM_' + node
+            new_stops[sid] = dict(stop_id=sid, stop_name=point['name'] or sid,
+                                  stop_lon=float(point['longitude_deg']), stop_lat=float(point['latitude_deg']))
+            sequence.append(sid)
+        a, b = new_stops[sequence[0]], new_stops[sequence[1]]
+        length = geod.inv(a['stop_lon'], a['stop_lat'], b['stop_lon'], b['stop_lat'])[2] * factor['ferry']
+        if length <= 0:
+            raise ValueError('directory crossing %s has coincident terminals' % route_id)
+        first = directory_clock(entry['first_departure_raw'], start)
+        last = directory_clock(entry['last_departure_raw'], end)
+        if last <= first:
+            last = end
+        for direction, stop_ids in enumerate([sequence, sequence[::-1]]):
+            rid = f'BASE_MMB_{route_id}_{direction}'
+            new_routes.append(dict(route_id=rid, agency_id='BASELINE', route_short_name='MMB ' + route_id,
+                                   route_long_name=entry['route_name'], route_type=types['ferry']))
+            arrival = length / (speed['ferry'] / 3.6)
+            offsets = [(0, 0), (round(arrival), round(arrival + dwell['ferry']))]
+            departure, departures = first, 0
+            while departure < last:
+                tid = f'{rid}_{departure}'
+                new_trips.append(dict(route_id=rid, service_id=service_id, trip_id=tid, direction_id=direction))
+                for index, (sid, (arr, dep)) in enumerate(zip(stop_ids, offsets)):
+                    new_times.append(dict(trip_id=tid, arrival_time=clock(departure + arr),
+                                          departure_time=clock(departure + dep), stop_id=sid, stop_sequence=index))
+                headway = peak_headway['ferry'] if any(p <= departure < q for p, q in peaks) else offpeak['ferry']
+                departure += headway
+                departures += 1
+            report.append(dict(route_id=rid, directory_route_id=route_id, mode='ferry', stops_count=2,
+                               departures_count=departures, duration_s=round(arrival + dwell['ferry']),
+                               window_s=[first, last], length_m=round(length),
+                               geometry_source='straight_water_line_between_osm_terminals',
+                               timetable_source='directory_window_provisional_headway'))
     additions = {'agency.txt': [dict(agency_id='BASELINE', agency_name='Provisional model services',
                     agency_url='https://www.openstreetmap.org', agency_timezone='Asia/Kolkata')],
                  'stops.txt': list(new_stops.values()), 'routes.txt': new_routes,

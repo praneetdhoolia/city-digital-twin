@@ -2,12 +2,13 @@
   "source": "modelled_provisional_service_supply",
   "input_sha256": {
     "schedules/baseline_bus.zip": "497b42cbffbc24f7f11bb535e68a1edfdcbfa35323d5630ff7353fd1b09ee68f",
-    "registry/A_baseline_services.json": "96641b11601c0419fafea8f06921274189cb49f658f1068127c8f6f2ffc1fddb",
+    "registry/A_baseline_services.json": "d42505b6a72bfce449684d99194689ba18017fcf7b5ec3f641963a468c448800",
     "data/processed/observed/osm_transport_relations.csv": "727f0ff9567863417095b80fd016828d3e880734d3981b7f6b6262a517088a01",
     "data/processed/observed/osm_transport_points.csv": "95b51e278e8fcc2710fc57ad040032525538a5819de4140535a85e6012b067a9",
-    "data/processed/geospatial/osm_research.gpkg": "e95023a6a853e11501d57864be9c89e20e3b8e072300eda753c880bb5690e25e"
+    "data/processed/geospatial/osm_research.gpkg": "e95023a6a853e11501d57864be9c89e20e3b8e072300eda753c880bb5690e25e",
+    "data/processed/observed/water_service_directory.csv": "9a96aeb23ead63099c58c8bf0665584955d491f86908f6af020986788ce067d1"
   },
-  "output_sha256": "64b9af9eab1f66926d5f6d395ca3fda0e5404e648f5887667ab7ecd038a23629",
+  "output_sha256": "59466a7ebe2b53c25c11361cb5cf62397a86fb56b7b0693229fe7423aa176866",
   "generated_routes": [
     {
       "route_id": "BASE_3808111_0",
@@ -498,13 +499,223 @@
       "duration_s": 525,
       "geometry_source": "mapped_native_stops_or_ferry_way",
       "timetable_source": "modelled_from_provisional_registry"
+    },
+    {
+      "route_id": "BASE_MMB_1_0",
+      "directory_route_id": "1",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 37,
+      "duration_s": 160,
+      "window_s": [
+        19800,
+        86400
+      ],
+      "length_m": 168,
+      "geometry_source": "straight_water_line_between_osm_terminals",
+      "timetable_source": "directory_window_provisional_headway"
+    },
+    {
+      "route_id": "BASE_MMB_1_1",
+      "directory_route_id": "1",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 37,
+      "duration_s": 160,
+      "window_s": [
+        19800,
+        86400
+      ],
+      "length_m": 168,
+      "geometry_source": "straight_water_line_between_osm_terminals",
+      "timetable_source": "directory_window_provisional_headway"
+    },
+    {
+      "route_id": "BASE_MMB_3_0",
+      "directory_route_id": "3",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 38,
+      "duration_s": 261,
+      "window_s": [
+        18600,
+        87000
+      ],
+      "length_m": 586,
+      "geometry_source": "straight_water_line_between_osm_terminals",
+      "timetable_source": "directory_window_provisional_headway"
+    },
+    {
+      "route_id": "BASE_MMB_3_1",
+      "directory_route_id": "3",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 38,
+      "duration_s": 261,
+      "window_s": [
+        18600,
+        87000
+      ],
+      "length_m": 586,
+      "geometry_source": "straight_water_line_between_osm_terminals",
+      "timetable_source": "directory_window_provisional_headway"
+    },
+    {
+      "route_id": "BASE_MMB_4_0",
+      "directory_route_id": "4",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 38,
+      "duration_s": 258,
+      "window_s": [
+        18000,
+        86400
+      ],
+      "length_m": 577,
+      "geometry_source": "straight_water_line_between_osm_terminals",
+      "timetable_source": "directory_window_provisional_headway"
+    },
+    {
+      "route_id": "BASE_MMB_4_1",
+      "directory_route_id": "4",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 38,
+      "duration_s": 258,
+      "window_s": [
+        18000,
+        86400
+      ],
+      "length_m": 577,
+      "geometry_source": "straight_water_line_between_osm_terminals",
+      "timetable_source": "directory_window_provisional_headway"
+    },
+    {
+      "route_id": "BASE_MMB_5_0",
+      "directory_route_id": "5",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 26,
+      "duration_s": 564,
+      "window_s": [
+        27600,
+        73800
+      ],
+      "length_m": 1851,
+      "geometry_source": "straight_water_line_between_osm_terminals",
+      "timetable_source": "directory_window_provisional_headway"
+    },
+    {
+      "route_id": "BASE_MMB_5_1",
+      "directory_route_id": "5",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 26,
+      "duration_s": 564,
+      "window_s": [
+        27600,
+        73800
+      ],
+      "length_m": 1851,
+      "geometry_source": "straight_water_line_between_osm_terminals",
+      "timetable_source": "directory_window_provisional_headway"
+    },
+    {
+      "route_id": "BASE_MMB_8_0",
+      "directory_route_id": "8",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 26,
+      "duration_s": 2394,
+      "window_s": [
+        23400,
+        69300
+      ],
+      "length_m": 9476,
+      "geometry_source": "straight_water_line_between_osm_terminals",
+      "timetable_source": "directory_window_provisional_headway"
+    },
+    {
+      "route_id": "BASE_MMB_8_1",
+      "directory_route_id": "8",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 26,
+      "duration_s": 2394,
+      "window_s": [
+        23400,
+        69300
+      ],
+      "length_m": 9476,
+      "geometry_source": "straight_water_line_between_osm_terminals",
+      "timetable_source": "directory_window_provisional_headway"
+    },
+    {
+      "route_id": "BASE_MMB_11_0",
+      "directory_route_id": "11",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 27,
+      "duration_s": 3462,
+      "window_s": [
+        22500,
+        70200
+      ],
+      "length_m": 13925,
+      "geometry_source": "straight_water_line_between_osm_terminals",
+      "timetable_source": "directory_window_provisional_headway"
+    },
+    {
+      "route_id": "BASE_MMB_11_1",
+      "directory_route_id": "11",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 27,
+      "duration_s": 3462,
+      "window_s": [
+        22500,
+        70200
+      ],
+      "length_m": 13925,
+      "geometry_source": "straight_water_line_between_osm_terminals",
+      "timetable_source": "directory_window_provisional_headway"
+    },
+    {
+      "route_id": "BASE_MMB_14_0",
+      "directory_route_id": "14",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 23,
+      "duration_s": 4249,
+      "window_s": [
+        25200,
+        66600
+      ],
+      "length_m": 17206,
+      "geometry_source": "straight_water_line_between_osm_terminals",
+      "timetable_source": "directory_window_provisional_headway"
+    },
+    {
+      "route_id": "BASE_MMB_14_1",
+      "directory_route_id": "14",
+      "mode": "ferry",
+      "stops_count": 2,
+      "departures_count": 23,
+      "duration_s": 4249,
+      "window_s": [
+        25200,
+        66600
+      ],
+      "length_m": 17206,
+      "geometry_source": "straight_water_line_between_osm_terminals",
+      "timetable_source": "directory_window_provisional_headway"
     }
   ],
   "skipped": [],
   "generated_route_counts": {
     "subway": 14,
     "train": 31,
-    "ferry": 4
+    "ferry": 18
   },
   "limitation": "Operating frequencies/times are provisional; historical/current operation and corridor details require later refinement. No ridership targets were used."
 }

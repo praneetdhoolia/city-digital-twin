@@ -809,7 +809,9 @@
       "url": "https://wr.indianrailways.gov.in/view_section.jsp?fontColor=black&backgroundColor=LIGHTSTEELBLUE&lang=0&id=0,6,458",
       "licence": "Government publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/western_railway_timetable_index_582e40ea35ee5587.html"
+      ]
     },
     {
       "name": "Mumbai Suburban district census downloads",
@@ -5688,6 +5690,29 @@
       "share_alike": false,
       "provides": [
         "data/raw/population/nhm_population_projections_2011_2036_9a9031c9c75d609e.pdf"
+      ]
+    },
+    {
+      "name": "OGD: MMRDA daily ridership of Metro Lines 2A and 7, 1 January 2024 to 19 September 2025",
+      "url": "https://api.data.gov.in/resource/a1b36307-9207-4672-86e2-ae1421ffac24?format=csv&limit=2000",
+      "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
+      "share_alike": false,
+      "provides": []
+    },
+    {
+      "name": "OGD: MMRDA daily ridership of the Mumbai Monorail, 1 October 2024 to 21 September 2025",
+      "url": "https://api.data.gov.in/resource/c1712e3f-1a3a-4cd1-b146-bf6d89be3031?format=csv&limit=2000",
+      "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
+      "share_alike": false,
+      "provides": []
+    },
+    {
+      "name": "OGD: the resource listing of the MMRDA ridership catalog (Metro Line 2A, 7, Monorail)",
+      "url": "https://www.data.gov.in/backend/dmspublic/v1/resources?filters[catalog_reference]=604084764&offset=0&limit=20",
+      "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
+      "share_alike": false,
+      "provides": [
+        "data/raw/transit/ogd_mmrda_ridership_catalog_20260922_132e188eed033ecd.json"
       ]
     }
   ]

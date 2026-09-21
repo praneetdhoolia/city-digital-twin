@@ -110,7 +110,8 @@ def fetch(entry, session, allowed, sink):
     url, method, form = check_request(entry, allowed)
     if entry.get('transport') == 'windows_system_tls':
         return fetch_system_tls(entry, allowed, sink)
-    response = session.request(method, url, json=entry.get('request_json'), data=form,
+    params = api_key_params(entry)
+    response = session.request(method, url, json=entry.get('request_json'), data=form, params=params,
                                headers={'X-Requested-With': 'XMLHttpRequest'} if form is not None else None,
                                stream=True, timeout=(20, 60))
     response.raise_for_status()
@@ -129,13 +130,47 @@ def fetch(entry, session, allowed, sink):
     sink.seek(0)
     check_magic(entry, sink.read(16))
     check_parses(entry, sink)
-    record = dict(url=url, final_url=response.url,
+    record = dict(url=url, final_url=without_api_key(response.url, params),
                   source=entry['title'], licence=entry['licence'],
                   retrieved=datetime.now(timezone.utc).isoformat(),
                   sha256=digest.hexdigest(), bytes=size, content_type=response.headers.get('Content-Type'),
                   producing_script='extract/acquire_sources.py',
                   validation_status='acquired_unvalidated', coverage=entry['coverage'])
     return request_record(entry, method, form, record)
+
+
+def api_key_params(entry):
+    """The registered API key a catalogue entry names, as a query parameter.
+
+    An entry with `api_key_env` (the OGD platform's `api-key`) is a public
+    read behind a free registration: the key is read from the environment or
+    the repository's gitignored `.env`, sent as the parameter `api_key_param`
+    (default `api-key`) and never written into the catalogue, the URL or the
+    provenance. Without the key the source stays unobtained and says why.
+    """
+    name = entry.get('api_key_env')
+    if not name:
+        return None
+    key = os.environ.get(name, '').strip()
+    if not key:
+        env_file = Path(city.REPO, '.env')
+        if env_file.exists():
+            for line in env_file.read_text(encoding='utf-8').splitlines():
+                if line.startswith(name + '='):
+                    key = line.split('=', 1)[1].strip().strip('"\'')
+    if not key:
+        raise ValueError('needs %s: a registered key in the environment or .env (%s)'
+                         % (name, entry.get('api_key_registration', 'free registration at the publisher')))
+    return {entry.get('api_key_param', 'api-key'): key}
+
+
+def without_api_key(url, params):
+    """The final URL with the key parameter removed, for the provenance record."""
+    if not params:
+        return url
+    parsed = urlparse(url)
+    kept = [pair for pair in parsed.query.split('&') if pair and pair.split('=', 1)[0] not in params]
+    return parsed._replace(query='&'.join(kept)).geturl()
 
 
 def store(entry, directory, provenance, stream, record):

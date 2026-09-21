@@ -265,7 +265,11 @@
       "category": "rail",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Published suburban timetable links; date requires inspection.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/western_railway_timetable_index_582e40ea35ee5587.html",
+      "sha256": "582e40ea35ee558755697ec57b2b47bbec62c23cad38325c7591f41c32d4706d",
+      "bytes": 101200,
+      "retrieved": "2026-09-21T16:55:35.040906+00:00"
     },
     {
       "id": "mumbai_suburban_census_index",
@@ -7270,6 +7274,37 @@
       "sha256": "9a9031c9c75d609e03ab94ce0ac6115cb9d8a9ab82d1b18a47b78e90ae01331b",
       "bytes": 11543351,
       "retrieved": "2026-09-21T13:47:21.403407+00:00"
+    },
+    {
+      "id": "ogd_metro_2a_7_ridership_daily_2024_2025",
+      "title": "OGD: MMRDA daily ridership of Metro Lines 2A and 7, 1 January 2024 to 19 September 2025",
+      "url": "https://api.data.gov.in/resource/a1b36307-9207-4672-86e2-ae1421ffac24?format=csv&limit=2000",
+      "category": "transit",
+      "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
+      "coverage": "Daily ridership by payment method, published by MMRDA on data.gov.in 23 September 2025 (catalog nid 604084764, resource nid 604084801); an operator series by line, not station-level.",
+      "status": "unobtained"
+    },
+    {
+      "id": "ogd_monorail_ridership_daily_2024_2025",
+      "title": "OGD: MMRDA daily ridership of the Mumbai Monorail, 1 October 2024 to 21 September 2025",
+      "url": "https://api.data.gov.in/resource/c1712e3f-1a3a-4cd1-b146-bf6d89be3031?format=csv&limit=2000",
+      "category": "transit",
+      "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
+      "coverage": "Daily ridership by payment method, published by MMRDA on data.gov.in 23 September 2025 (catalog nid 604084764, resource nid 604084815); the monorail has no line in the feed yet.",
+      "status": "unobtained"
+    },
+    {
+      "id": "ogd_mmrda_ridership_catalog_20260922",
+      "title": "OGD: the resource listing of the MMRDA ridership catalog (Metro Line 2A, 7, Monorail)",
+      "url": "https://www.data.gov.in/backend/dmspublic/v1/resources?filters[catalog_reference]=604084764&offset=0&limit=20",
+      "category": "transit",
+      "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
+      "coverage": "The catalog metadata: two daily CSV resources, their periods, sizes and publication dates; discovery evidence for the two series.",
+      "status": "acquired_unvalidated",
+      "path": "data/raw/transit/ogd_mmrda_ridership_catalog_20260922_132e188eed033ecd.json",
+      "sha256": "132e188eed033ecd7ff6df42000ec816055c9d341df6c953300a10fa8751ddef",
+      "bytes": 5586,
+      "retrieved": "2026-09-21T17:23:22.985023+00:00"
     }
   ],
   "identical_bytes_groups": [
@@ -7313,6 +7348,10 @@
     [
       "vehicle_stock_2025",
       "vehicle_registrations_2024_25"
+    ],
+    [
+      "western_railway_timetable_index",
+      "wr_timetable_20260901_index"
     ]
   ]
 }

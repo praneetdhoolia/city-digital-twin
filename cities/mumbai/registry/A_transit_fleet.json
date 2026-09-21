@@ -358,6 +358,62 @@
           "seats_field": "A.transit.rail_capacity_seated",
           "standing_field": "A.transit.rail_capacity_standing",
           "transport_mode": "rail"
+        },
+        "ferry_versova_madh": {
+          "base_type": "Ferry",
+          "seats_field": "A.transit.ferry_versova_madh_capacity_seated",
+          "standing_field": "A.transit.ferry_capacity_standing",
+          "directory_routes": [
+            "1"
+          ]
+        },
+        "ferry_marve_manori": {
+          "base_type": "Ferry",
+          "seats_field": "A.transit.ferry_marve_manori_capacity_seated",
+          "standing_field": "A.transit.ferry_capacity_standing",
+          "directory_routes": [
+            "3"
+          ]
+        },
+        "ferry_gorai_borivali": {
+          "base_type": "Ferry",
+          "seats_field": "A.transit.ferry_gorai_borivali_capacity_seated",
+          "standing_field": "A.transit.ferry_capacity_standing",
+          "directory_routes": [
+            "4"
+          ]
+        },
+        "ferry_borivali_esselworld": {
+          "base_type": "Ferry",
+          "seats_field": "A.transit.ferry_borivali_esselworld_capacity_seated",
+          "standing_field": "A.transit.ferry_capacity_standing",
+          "directory_routes": [
+            "5"
+          ]
+        },
+        "ferry_wharf_mora": {
+          "base_type": "Ferry",
+          "seats_field": "A.transit.ferry_wharf_mora_capacity_seated",
+          "standing_field": "A.transit.ferry_capacity_standing",
+          "directory_routes": [
+            "8"
+          ]
+        },
+        "ferry_gateway_mandwa": {
+          "base_type": "Ferry",
+          "seats_field": "A.transit.ferry_gateway_mandwa_capacity_seated",
+          "standing_field": "A.transit.ferry_capacity_standing",
+          "directory_routes": [
+            "11"
+          ]
+        },
+        "ferry_m2m_mandwa": {
+          "base_type": "Ferry",
+          "seats_field": "A.transit.ferry_m2m_mandwa_capacity_seated",
+          "standing_field": "A.transit.ferry_capacity_standing",
+          "directory_routes": [
+            "14"
+          ]
         }
       },
       "units": "profile_table",
@@ -367,7 +423,105 @@
       "consumers": [
         "cities/mumbai/build/build_transit_fleet.py"
       ],
-      "description": "The capacity profiles build_transit_fleet.py assigns to the mapped vehicles (docs/transit_fleet.md): each names the mapper's base type it clones, the two registry fields that carry its seats and standing places, and EITHER the transport mode every line of that mode falls to (rail, bus) OR the OSM route relations it serves, read from the transit line id the feed builder writes as BASE_<relation>_<direction> (build_baseline_transit_feed.py). The relation ids are the identifiers of the mapped lines - Line 1 (3808111, 7684032), Lines 2A/2B/7/9 on BEML 6-car stock, Line 3 (7898597, 17876723), Navi Mumbai Line 1 (16533435, 16533436), the Gateway-Elephanta launch (19764205) and the Vasai-Bhayander creek ferry (16777766) - not values; a line with no profile refuses the build. The mapper typed the Central main-line and the Nerul-Uran patterns as their own base types (C, U) beside Rail; the three rail profiles carry one capacity and differ only in the base type each clones, because an assignment cannot change a vehicle's mapped type."
+      "description": "The capacity profiles build_transit_fleet.py assigns to the mapped vehicles (docs/transit_fleet.md): each names the mapper's base type it clones, the two registry fields that carry its seats and standing places, and EITHER the transport mode every line of that mode falls to (rail, bus) OR the OSM route relations it serves, read from the transit line id the feed builder writes as BASE_<relation>_<direction> (build_baseline_transit_feed.py). The relation ids are the identifiers of the mapped lines - Line 1 (3808111, 7684032), Lines 2A/2B/7/9 on BEML 6-car stock, Line 3 (7898597, 17876723), Navi Mumbai Line 1 (16533435, 16533436), the Gateway-Elephanta launch (19764205) and the Vasai-Bhayander creek ferry (16777766) - not values; a line with no profile refuses the build. The mapper typed the Central main-line and the Nerul-Uran patterns as their own base types (C, U) beside Rail; the three rail profiles carry one capacity and differ only in the base type each clones, because an assignment cannot change a vehicle's mapped type. A profile may instead name the Maritime Board directory routes it serves (`directory_routes`): the feed builder writes those lines as BASE_MMB_<directory route>_<direction> (9.207)."
+    },
+    "A.transit.ferry_versova_madh_capacity_seated": {
+      "value": 60,
+      "units": "persons_per_vehicle",
+      "source": "measured",
+      "sweep": [
+        37,
+        70
+      ],
+      "sweep_role": "measurement",
+      "sweep_basis": "directory routes 1 and 2 (Versova-Madh, Madh-Versova): '37 (fair season)' and '60-70 (fair season)' - the two directions' printed capacities; the larger vessel's lower figure, swept over both (water_service_directory.csv, the Maharashtra Maritime Board's route service directory, mmb_routes).",
+      "status": "active",
+      "decisions_ref": "9.207",
+      "description": "Passengers one vessel on the versova-madh crossing carries, from the Maritime Board's directory; launches carry seated passengers."
+    },
+    "A.transit.ferry_marve_manori_capacity_seated": {
+      "value": 313,
+      "units": "persons_per_vehicle",
+      "source": "measured",
+      "sweep": [
+        201,
+        313
+      ],
+      "sweep_role": "measurement",
+      "sweep_basis": "directory route 3: 'Fair 313 / Foul 201' - the fair-season vessel for the base weekday, the foul-season one the sweep floor (water_service_directory.csv, the Maharashtra Maritime Board's route service directory, mmb_routes).",
+      "status": "active",
+      "decisions_ref": "9.207",
+      "description": "Passengers one vessel on the marve-manori crossing carries, from the Maritime Board's directory; launches carry seated passengers."
+    },
+    "A.transit.ferry_gorai_borivali_capacity_seated": {
+      "value": 290,
+      "units": "persons_per_vehicle",
+      "source": "measured",
+      "sweep": [
+        186,
+        290
+      ],
+      "sweep_role": "measurement",
+      "sweep_basis": "directory route 4: 'Fair 290 / Foul 186' (water_service_directory.csv, the Maharashtra Maritime Board's route service directory, mmb_routes).",
+      "status": "active",
+      "decisions_ref": "9.207",
+      "description": "Passengers one vessel on the gorai-borivali crossing carries, from the Maritime Board's directory; launches carry seated passengers."
+    },
+    "A.transit.ferry_borivali_esselworld_capacity_seated": {
+      "value": 423,
+      "units": "persons_per_vehicle",
+      "source": "measured",
+      "sweep": [
+        186,
+        423
+      ],
+      "sweep_role": "measurement",
+      "sweep_basis": "directory route 5: 'Fair 423'; the foul-season capacity is not printed, so the sweep floor is the neighbouring Gorai crossing's foul figure (water_service_directory.csv, the Maharashtra Maritime Board's route service directory, mmb_routes).",
+      "status": "active",
+      "decisions_ref": "9.207",
+      "description": "Passengers one vessel on the borivali-esselworld crossing carries, from the Maritime Board's directory; launches carry seated passengers."
+    },
+    "A.transit.ferry_wharf_mora_capacity_seated": {
+      "value": 1635,
+      "units": "persons_per_vehicle",
+      "source": "measured",
+      "sweep": [
+        300,
+        1635
+      ],
+      "sweep_role": "measurement",
+      "sweep_basis": "directory route 8: '1635' as printed - larger than any launch on the Mora run, so read as the licensed capacity of the route's vessels together; the sweep floor is a single large launch (water_service_directory.csv, the Maharashtra Maritime Board's route service directory, mmb_routes).",
+      "status": "active",
+      "decisions_ref": "9.207",
+      "description": "Passengers one vessel on the wharf-mora crossing carries, from the Maritime Board's directory; launches carry seated passengers."
+    },
+    "A.transit.ferry_gateway_mandwa_capacity_seated": {
+      "value": 390,
+      "units": "persons_per_vehicle",
+      "source": "measured",
+      "sweep": [
+        80,
+        390
+      ],
+      "sweep_role": "measurement",
+      "sweep_basis": "directory route 11: 'Min. 80 Max. 390' - the largest vessel, swept to the smallest (water_service_directory.csv, the Maharashtra Maritime Board's route service directory, mmb_routes).",
+      "status": "active",
+      "decisions_ref": "9.207",
+      "description": "Passengers one vessel on the gateway-mandwa crossing carries, from the Maritime Board's directory; launches carry seated passengers."
+    },
+    "A.transit.ferry_m2m_mandwa_capacity_seated": {
+      "value": 780,
+      "units": "persons_per_vehicle",
+      "source": "measured",
+      "sweep": [
+        520,
+        780
+      ],
+      "sweep_role": "measurement",
+      "sweep_basis": "directory route 14 (the Ro-Ro): '780/520' passengers (water_service_directory.csv, the Maharashtra Maritime Board's route service directory, mmb_routes).",
+      "status": "active",
+      "decisions_ref": "9.207",
+      "description": "Passengers one vessel on the m2m-mandwa crossing carries, from the Maritime Board's directory; launches carry seated passengers."
     }
   }
 }

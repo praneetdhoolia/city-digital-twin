@@ -5740,6 +5740,39 @@
       "licence": "Government of India publication; reuse terms unverified",
       "coverage": "Official demographic projections; state-level total, age, sex and urban/rural estimates. Not observed Mumbai small-area counts. The MoHFW URL returns 404 (21 September 2026); this is the same report hosted by the National Health Mission.",
       "discovered_from": "mohfw_population_projections_2011_2036"
+    },
+    {
+      "id": "ogd_metro_2a_7_ridership_daily_2024_2025",
+      "category": "transit",
+      "format": "csv",
+      "url": "https://api.data.gov.in/resource/a1b36307-9207-4672-86e2-ae1421ffac24?format=csv&limit=2000",
+      "title": "OGD: MMRDA daily ridership of Metro Lines 2A and 7, 1 January 2024 to 19 September 2025",
+      "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
+      "coverage": "Daily ridership by payment method, published by MMRDA on data.gov.in 23 September 2025 (catalog nid 604084764, resource nid 604084801); an operator series by line, not station-level.",
+      "api_key_env": "OGD_API_KEY",
+      "api_key_param": "api-key",
+      "api_key_registration": "a free OGD platform account at data.gov.in issues a personal API key; the platform sample key is rate-limited for everyone"
+    },
+    {
+      "id": "ogd_monorail_ridership_daily_2024_2025",
+      "category": "transit",
+      "format": "csv",
+      "url": "https://api.data.gov.in/resource/c1712e3f-1a3a-4cd1-b146-bf6d89be3031?format=csv&limit=2000",
+      "title": "OGD: MMRDA daily ridership of the Mumbai Monorail, 1 October 2024 to 21 September 2025",
+      "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
+      "coverage": "Daily ridership by payment method, published by MMRDA on data.gov.in 23 September 2025 (catalog nid 604084764, resource nid 604084815); the monorail has no line in the feed yet.",
+      "api_key_env": "OGD_API_KEY",
+      "api_key_param": "api-key",
+      "api_key_registration": "a free OGD platform account at data.gov.in issues a personal API key; the platform sample key is rate-limited for everyone"
+    },
+    {
+      "id": "ogd_mmrda_ridership_catalog_20260922",
+      "category": "transit",
+      "format": "json",
+      "url": "https://www.data.gov.in/backend/dmspublic/v1/resources?filters[catalog_reference]=604084764&offset=0&limit=20",
+      "title": "OGD: the resource listing of the MMRDA ridership catalog (Metro Line 2A, 7, Monorail)",
+      "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
+      "coverage": "The catalog metadata: two daily CSV resources, their periods, sizes and publication dates; discovery evidence for the two series."
     }
   ]
 }
