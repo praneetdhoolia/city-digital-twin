@@ -869,18 +869,6 @@
       "matsim_param": "global.randomSeed",
       "description": "MATSim random seed. Held at the master seed unless replications are being drawn."
     },
-    "RUN.monitor.enabled": {
-      "value": true,
-      "units": "boolean",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.19",
-      "description": "Serve the live run view while a run is in flight. An OBSERVER only: it reads the run directory, holds no lock and writes nothing, so a run observed is byte-for-byte a run unobserved. It is not part of the run identity and cannot alter a result.",
-      "consumers": [
-        "src/run/run_matsim.py"
-      ]
-    },
     "RUN.monitor.port": {
       "value": 8731,
       "units": "tcp_port",
@@ -1598,6 +1586,20 @@
         "src/run/run_matsim.py"
       ],
       "description": "Where this city's MATSim scoring parameters come from. `c1_translation`: the nested-logit specification in params/C1_parameters.json is translated into the Charypar-Nagel utility at every emission - the mode constants (from C.asc.*), the per-mode time rates, waitingPt and utilityOfLineSwitch are computed from the trip-weighted value of time and the HTS purpose share, and every derived scoring price (crowding, headway, reliability, parking search, bike stress, the taxi fare blend) rides that VOT; the fields those parameters bind to are declared `computed`. `bound_fields`: a city with no C1 table declares every scoring parameter as a bound registry field and nothing is translated - the emitter supplies only what no registry can hold (paths, the capacity identities, the parking window, the score-MSA literal). A definition of this city's method, not a value to vary: the two members are two ways of declaring the same parameters, and a city is one or the other."
+    },
+    "RUN.sample.transit_pce_scaling": {
+      "value": true,
+      "units": "boolean",
+      "source": "derived",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Scale every transit vehicle type's passenger-car equivalent by the sample fraction, as the road flow capacities are. A transit vehicle runs at its full frequency on a link whose flow capacity is fraction x the real one: unscaled, a bus at PCE 2.8 takes 2.8/(1800 x fraction) hours of a lane that in life gives it 2.8/1800 - four times its real share at 25 %, a hundred times at 1 %. The second city's 1 % case gridlocked on its 110,000 daily bus departures at the mapper's full PCEs (9.206). MOVES RESULTS on the reference city: every arm before 9.206 ran buses at four times their road share; lands with the family the standing-room fix (#237, 9.203) already opens.",
+      "derived_from": {
+        "fields": [
+          "RUN.sample.fraction"
+        ],
+        "identity": "pce = pce x RUN.sample.fraction for every transit vehicle type, no floor: the vehicle's share of a scaled link's flow is then the share it has of the real link's"
+      }
     }
   }
 }

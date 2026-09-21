@@ -33,7 +33,7 @@ and well-formed, not that they are right.
 | CRS | EPSG:32643, WGS 84 / UTM zone 43N, metres (`city.json`) |
 | Years · days · seed · currency | Base year 2026 on 2011 Census controls; one day type, WEEKDAY; seed 20260810; INR (`city.json`) |
 | Modes | Mode choice over car, ride, walk, bike, motorbike, taxi, auto_rickshaw, pt (`city.json`, `RUN.mode_choice.modes`); the transit router combines bus, suburban rail, metro and ferry |
-| Observed mode series | Census 2011 table B-28 (other workers by mode of travel to work, residence end) — a commute series, not an all-trip share; and, since 21 September 2026, the **published daily mode splits** transcribed from the CTS Updation (MMR 2017: 18.78 M motorised main-mode trips a day, train 43.2 %, bus 20.0 %, two-wheeler 12.5 %, taxi 8.7 %, car 8.5 %, rickshaw 5.1 %, metro and mono 2.2 %; active modes about 47 % of all trips) and the CMP for Greater Mumbai (2005 and 2014) into [`published_mode_splits.csv`](../data/processed/observed/published_mode_splits.csv). No target is derived from them yet |
+| Observed mode series | Census 2011 table B-28 (other workers by mode of travel to work, residence end) — a commute series, not an all-trip share; and, since 21 September 2026, the **published daily mode splits** transcribed from the CTS Updation (MMR 2017: 18.78 M motorised main-mode trips a day, train 43.2 %, bus 20.0 %, two-wheeler 12.5 %, taxi 8.7 %, car 8.5 %, rickshaw 5.1 %, metro and mono 2.2 %; active modes about 47 % of all trips) and the CMP for Greater Mumbai (2005 and 2014) into [`published_mode_splits.csv`](../data/processed/observed/published_mode_splits.csv); the thirteen per-mode targets below are derived from them (§9.205) |
 
 ## Scenarios
 
@@ -54,14 +54,14 @@ factor no run overlay can reach.
 
 | | |
 |---|---|
-| Files in the manifest | **1,293** ([`data/MANIFEST.csv`](../data/MANIFEST.csv)) — 28,587 before the harvest rule of 21 September 2026 folded 13,500 per-response files into eleven archives (§9.201) |
-| Catalogue | **567** sources in [`extract/sources.json`](../extract/sources.json), 514 acquired, 53 unobtained, one acquired-unusable; eleven of them harvests (one archive of many public queries each) |
+| Files in the manifest | **1,319** ([`data/MANIFEST.csv`](../data/MANIFEST.csv)) — 28,587 before the harvest rule of 21 September 2026 folded 13,500 per-response files into eleven archives (§9.201) |
+| Catalogue | **572** sources in [`extract/sources.json`](../extract/sources.json), 529 acquired, 42 unobtained, one acquired-unusable; eleven of them harvests (one archive of many public queries each) |
 | Package on disk | 9.2 GB under `data/raw/`, mostly gitignored: 3.6 GB of traffic-police road orders, 633 MB of transit responses, 582 MB of raster and geospatial layers |
 | Network | 846,699 links, 101,306 km, from one native OSM extract (`networks/osm/network_source.osm.gz`, Geofabrik western zone 15 September 2026) |
-| PT | Three feeds mapped once: community bus GTFS (1,120 bus routes, 99,080 departures); the multimodal feed adding 31 suburban rail, 14 metro and 4 ferry patterns; the regional feed adding NMMT and MBMT (1,802 bus routes, 114,670 departures, 18,105 stop facilities, 0 unmapped) |
+| PT | Three feeds mapped once: community bus GTFS (1,120 bus routes, 99,080 departures); the multimodal feed adding 31 suburban rail, 14 metro and 4 ferry patterns; the regional feed adding NMMT and MBMT (1,802 bus routes, 114,670 departures, 18,105 stop facilities, 0 unmapped). Every mapped vehicle carries an evidenced capacity profile since 21 September 2026 (§9.206, [`build_transit_fleet.py`](../build/build_transit_fleet.py)): a 12-car EMU 1,168 + 3,816, Line 1 200 + 1,300, the BEML 6-car 239 + 1,561, Line 3 399 + 2,601, Navi Mumbai 150 + 950, the two launches 80 and 100, every bus 36 + 30 (the standing room assumed, swept) |
 | Plans | **1,352,144 persons in 303,384 households**, the core households the harness's nested hash keeps at `B.population.plans_build_fraction` 0.05, written by [`build_plans.py`](../build/build_plans.py): work tours at the Census B-28 distance bands, education and optional tours by the declared mechanisms, homes inside the leaf, municipality or taluka polygon; no freight ([`_plans_core_sample_report.json`](../demand/baseline/_plans_core_sample_report.json)). A run at `RUN.sample.fraction` at or below 0.05 keeps what a file of everyone would |
 | Population | **27,057,132 persons in 6,068,786 households at the core extent for the 2026 base year**, synthesised by [`build_population.py`](../build/build_population.py) from the Census 2011 leaf controls (households, persons and workers by sex, ages 0-6), the ward/village HL-14 household sizes and vehicle possession, the district single-year ages, work status and school attendance, and the IIPS district projections to 2026 ([`_population_report.json`](../demand/population/_population_report.json)); licence holding and income are declared assumptions, tertiary attendance 20-24 unobtained |
-| Input registry | **313** fields — the city's own supply, demand, fare and fleet declarations plus the framework's run-side keys, moved from a private namespace or adopted from the reference city and labelled so (§9.202) |
+| Input registry | **403** fields — the city's own supply, demand, fare and fleet declarations plus the framework's run-side keys, moved from a private namespace or adopted from the reference city and labelled so (§9.202) |
 | Validation | **Thirteen per-mode targets** in [`mode_targets_by_mode.csv`](../data/processed/validation/mode_targets_by_mode.csv) ([`build_mode_targets.py`](../build/build_mode_targets.py), §9.205): every share derived from the CTS Updation 2017 MMR motorised split and its 47 % active share, the B-28 walk/bicycle split, the synthesised car-driver share, the MMB ferry passengers and the CMP goods share, each with its sweep; no projection to 2026, no holdout |
 
 The regional extension's counts come from
@@ -84,9 +84,9 @@ published operation and calendars remain unverified:
 | walk, bike | OSM footways and access evidence; the walking network reaches most boarding links | the short-trip band, gradient, stress classes (all gates `absent`) |
 | taxi, auto_rickshaw | published meter tariffs (transcribed), RTO stock, a pooled-queue fleet with provisional counts | spatial dispatch, empty running, calibrated fleet sizes, an observed trip volume |
 | bus | community GTFS, BEST depots, fares and passes, NMMT timetables (619 routes, 9,522 trips), MBMT routes (118), bus capacity evidence | BEST's own timetable and ridership (requested: [`requests/best_operations.md`](requests/best_operations.md)), a validated per-vehicle capacity file |
-| heavy_rail (suburban) | WR and CR printed timetables extracted, harbour-line geometry evidence, MRVC and Economic Survey controls | a validated harbour-line path, station entries or ridership by line |
-| light_rail (metro, monorail) | MMRCL stations, journeys and fares; metro fleet claims; Navi Mumbai metro controls | ridership by line; monorail service |
-| ferry | MMB water-transport directory and annual passengers | a schedule with departures; a target |
+| heavy_rail (suburban) | WR and CR printed timetables extracted, harbour-line geometry evidence, MRVC and Economic Survey controls, rake capacities from Indian Railways' EMU primer (§9.206) | a validated harbour-line path, station entries or ridership by line, the AC/15-car/MEMU stock per departure |
+| light_rail (metro, monorail) | MMRCL stations, journeys and fares; metro fleet claims and per-line train capacities (§9.206); Navi Mumbai metro controls | ridership by line; monorail service; the seated/standing split of the BEML and Alstom trains |
+| ferry | MMB water-transport directory and annual passengers; the two mapped launches at the directory's vessel capacities (§9.206) | the commuter crossings the directory lists and the target counts (#245); a schedule with departures |
 | truck | port and JNPA daily rake and cargo statistics; provisional port trucks in the baseline | a count basis on the network; an OD proxy that is validated |
 | freight_train | Mumbai Port monthly rakes (loaded and empty by commodity), JNPA ICD rakes | the paths and times of the movements |
 
@@ -138,7 +138,12 @@ the boarding-fare table, the hired-fleet derivation and a header-only parking
 table: no parking price is observed) and `demand/plans/matsim/population_WEEKDAY.xml.gz`.
 `python src/analyse/baseline_behaviour.py --run <name>` reads a case's execution
 and choice diagnostics; `report_mode_ridership.py` reads every mode against
-its target.
+its target. The live view serves at `http://127.0.0.1:8731` on every run
+(§9.206: the user's direction that the viewer always runs with a run), and
+`python src/analyse/run_view.py --run <name>` opens any finished one: every
+mode against its target, the loaded links, and every transit route of the
+schedule the run drove by transport mode (bus, suburban rail, metro, ferry),
+all read from the run directory.
 
 To rebuild the development demand and combined feed after changing their
 registries:

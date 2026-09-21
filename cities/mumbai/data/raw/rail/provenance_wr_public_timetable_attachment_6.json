@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/wr_public_timetable_attachment_6_659d6127b8c73199.pdf",
+      "url": "https://wr.indianrailways.gov.in/cris//uploads/files/1680671789509-HARBOUR%20SERVICES%20W.E.F%20%20%2001.10.2022.pdf",
+      "final_url": "https://wr.indianrailways.gov.in/cris//uploads/files/1680671789509-HARBOUR%20SERVICES%20W.E.F%20%20%2001.10.2022.pdf",
+      "content_type": "application/pdf",
+      "source": "Western Railway HARBOUR SERVICES W.E.F 01.10.2022",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-21T13:15:40.467198+00:00",
+      "sha256": "659d6127b8c73199038613364cf36af39ba786100116724160dcd8d61b5bbf91",
+      "bytes": 96067,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Linked from official index of September 2026. Document effective date and calendar must be parsed individually; AC subsets must not be double counted.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

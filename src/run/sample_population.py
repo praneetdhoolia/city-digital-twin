@@ -272,12 +272,19 @@ def subsample_plans(src, dst, fraction, seed=None, unit=None, kept_ids=None):
     return n_in, n_out, n_no_household
 
 
-def scale_transit_capacity(src, dst, fraction, floor=None):
+def scale_transit_capacity(src, dst, fraction, floor=None, scale_pce=False):
     """Scale seated and standing places in MATSim v1 and v2 vehicle XML.
 
     Parse the XML structure: a regex consuming the start of a capacity tag
     matched only its first attribute and left standing places at full size.
     Return each component's old and new value for the launch audit.
+
+    With `scale_pce` (RUN.sample.transit_pce_scaling, 9.206) every vehicle
+    type's passenger-car equivalent is multiplied by the fraction too: the
+    vehicles run at full frequency on links whose flow capacity is scaled,
+    and at their full PCE a bus took a hundred times its real share of a
+    1 % lane. No floor - the PCE is a real number, and a bus at 0.028 on a
+    lane of 18 an hour is the bus at 2.8 on a lane of 1,800.
     """
     if not math.isfinite(fraction) or not 0 < fraction <= 1:
         raise ValueError('transit sample fraction must be finite and in (0, 1]')
@@ -316,6 +323,16 @@ def scale_transit_capacity(src, dst, fraction, floor=None):
             found.add(name)
         if not found:
             raise ValueError('transit capacity has no recognised passenger components')
+    if scale_pce:
+        for element in tree.getroot().iter():
+            if element.tag.rsplit('}', 1)[-1] != 'passengerCarEquivalents':
+                continue
+            before = float(element.attrib['pce'])
+            if not math.isfinite(before) or before < 0:
+                raise ValueError('transit vehicle PCE must be a finite non-negative number')
+            after = before * fraction
+            scaled.append(('pce', before, after))
+            element.set('pce', '%g' % after)
     with gzip_writer(dst, text=False) as w:
         tree.write(w, encoding='utf-8', xml_declaration=True)
     return scaled

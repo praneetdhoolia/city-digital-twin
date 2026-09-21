@@ -80,7 +80,17 @@ FAST_POLL_S = _CFG.get('RUN.monitor.live_poll_s')
 PORT = _CFG.get('RUN.monitor.port')
 # the smallest iteration count the registry admits for a modelling run: below
 # it a completed run is a probe, not a result (the sweep's lower bound)
-HORIZON_FLOOR = int(_CFG.sweep('RUN.controler.last_iteration')['interval'][0])
+def _horizon_floor():
+    # a city that declares its horizon without a sweep (the second city's is a
+    # definition) has no floor: every completed run of its is then read as what
+    # its record says, never demoted to a probe (build_status_board._horizon_floor)
+    try:
+        return int(_CFG.sweep('RUN.controler.last_iteration')['interval'][0])
+    except Exception:
+        return 0
+
+
+HORIZON_FLOOR = _horizon_floor()
 
 # The colour ramp is FIXED and saturating, never fitted to the data in view.
 # Measured on a 1% probe over 59,399 loaded links: median delay ratio 1.10,
@@ -681,6 +691,14 @@ def modes(run_dir, iteration=None, compute=True):
     the runner has not written it. `computing` says a reading is on its way."""
     rmr = _reporter()
     targets = mode_targets()
+    # the reporter and the targets are the server's city's: a run of another
+    # city (the picker offers every city's) is not read against them
+    if run_city(run_dir) != _city.CITY:
+        return {'targets': {}, 'stop_pct': rmr.GATE_STOP_PCT, 'pass_pct': rmr.GATE_PASS_PCT,
+                'readable': [], 'stored': [], 'requested': None, 'computing': False, 'trend': {},
+                'current': {'error': 'a %s run: its modes are read by a viewer serving that city '
+                                     '(CITYSIM_CITY=%s python src/analyse/run_view.py --run %s)'
+                                     % (run_city(run_dir), run_city(run_dir), os.path.basename(run_dir))}}
     stored = stored_readings(run_dir)
     readable = readable_iterations(run_dir)
     run_dir = os.path.abspath(run_dir)
@@ -721,16 +739,32 @@ _NET_CACHE = collections.OrderedDict()   # run_dir -> network doc; a few runs at
 _NET_LOCK = threading.Lock()
 NET_CACHE_ENTRIES = 2        # ~130 MB of Python objects per 368,000-link network
 _BASEMAP_CACHE = {}
-_TRANSFORMER = None
+_TRANSFORMERS = {}
 
 
-def _to_wgs84():
-    """The city's projected CRS -> WGS84 lon/lat, built once."""
-    global _TRANSFORMER
-    if _TRANSFORMER is None:
+def run_city(run_dir):
+    """The city a run belongs to: its own record's `city` (9.204), else the
+    server's city for a record written before the field existed."""
+    meta = _load_json(os.path.join(run_dir, '_meta.json')) or {}
+    return meta.get('city') or _city.CITY
+
+
+def _to_wgs84(run_dir=None):
+    """A city's projected CRS -> WGS84 lon/lat, built once per city.
+
+    THE RUN'S city, never the server's: the results store holds every city's
+    runs and the picker offers them all, and a Mumbai run read through the
+    reference city's MGA zone 56 landed in the Southern Ocean off Antarctica
+    (the user's report, 22 September 2026, 9.206) - UTM zone 43N metres are
+    valid MGA 56 metres, so nothing failed, the map just drew it 100 degrees
+    of longitude away. The CRS is the run's city's `city.json`.
+    """
+    name = run_city(run_dir) if run_dir else _city.CITY
+    if name not in _TRANSFORMERS:
         from pyproj import Transformer
-        _TRANSFORMER = Transformer.from_crs(_city.crs(), 'EPSG:4326', always_xy=True)
-    return _TRANSFORMER
+        crs = 'EPSG:%d' % _city.descriptor(name)['crs']['epsg']
+        _TRANSFORMERS[name] = Transformer.from_crs(crs, 'EPSG:4326', always_xy=True)
+    return _TRANSFORMERS[name]
 
 
 def _input_network(run_dir):
@@ -805,7 +839,7 @@ def load_network(run_dir):
             ids.append(lid)
             xs += [pa[0], pb[0]]
             ys += [pa[1], pb[1]]
-    lons, lats = _to_wgs84().transform(xs, ys)
+    lons, lats = _to_wgs84(run_dir).transform(xs, ys)
     geom = {}
     index = {}
     for i, lid in enumerate(ids):
@@ -818,6 +852,136 @@ def load_network(run_dir):
         while len(_NET_CACHE) > NET_CACHE_ENTRIES:
             _NET_CACHE.popitem(last=False)
     return doc
+
+
+_ROUTES_CACHE = collections.OrderedDict()   # run_dir -> routes doc, cached by the schedule's stamp
+_ROUTES_LOCK = threading.Lock()
+
+
+def _input_schedule(run_dir):
+    """Resolve `transitScheduleFile` from the run's config, else the output copy."""
+    cfg = os.path.join(run_dir, 'config.xml')
+    try:
+        with open(cfg, encoding='utf-8') as f:
+            m = re.search(r'name="transitScheduleFile" value="([^"]+)"', f.read())
+    except OSError:
+        m = None
+    if m and m.group(1) not in ('null', ''):
+        p = m.group(1)
+        if not os.path.isabs(p):
+            p = os.path.join(run_dir, p)
+        if os.path.exists(p):
+            return p
+    fallback = os.path.join(run_dir, 'output', 'output_transitSchedule.xml.gz')
+    return fallback if os.path.exists(fallback) else None
+
+
+def load_routes(run_dir):
+    """Every transit route of the run's OWN schedule as a polyline over the run's
+    own network, grouped by transport mode: {mode: {'names': [...], 'lines': [...],
+    'counts': [...], 'coords': [lon, lat, ...]}}, cached by the schedule's stamp.
+
+    The schedule is whatever the city mapped - bus, rail, subway, tram, ferry, or
+    a mode of its own naming - so nothing here knows a mode by name: the modes are
+    read off the `<transportMode>` elements and handed to the page as they are.
+    A route's geometry is the chain of its mapped links (`<route><link refId/>`),
+    drawn from the network the run drove, so a ferry mapped onto a water link is
+    drawn on that link. Two routes of one line over the same links (the departures
+    of a pattern) are one polyline; a route with no mapped links (a stop-to-stop
+    pattern the mapper could not place) is counted and skipped.
+    """
+    import gzip
+    import xml.etree.ElementTree as ET
+    path = _input_schedule(run_dir)
+    net = load_network(run_dir)
+    if not path or not net:
+        return None
+    try:
+        stamp = os.path.getmtime(path)
+    except OSError:
+        return None
+    with _ROUTES_LOCK:
+        hit = _ROUTES_CACHE.get(run_dir)
+        if hit and hit['stamp'] == stamp and hit['net_stamp'] == net['stamp']:
+            return hit
+    geom = net['geom']
+    modes = {}
+    seen = set()
+    unplaced = 0
+    line_id = line_name = None
+    try:
+        with gzip.open(path, 'rb') as f:
+            for ev, el in ET.iterparse(f, events=('start', 'end')):
+                tag = el.tag.rsplit('}', 1)[-1]
+                if ev == 'start' and tag == 'transitLine':
+                    line_id, line_name = el.get('id'), el.get('name') or el.get('id')
+                    continue
+                if ev != 'end' or tag != 'transitRoute':
+                    continue
+                mode = (el.findtext('transportMode') or 'pt').strip()
+                links = [lk.get('refId') for lk in el.iter() if lk.tag.rsplit('}', 1)[-1] == 'link']
+                key = (mode, tuple(links))
+                if not links or key in seen:
+                    if not links:
+                        unplaced += 1
+                    el.clear()
+                    continue
+                seen.add(key)
+                coords = []
+                for lid in links:
+                    g = geom.get(lid)
+                    if not g:
+                        continue
+                    if not coords:
+                        coords += [g[0], g[1]]
+                    coords += [g[2], g[3]]
+                if len(coords) >= 4:
+                    m = modes.setdefault(mode, {'names': [], 'lines': [], 'counts': [], 'coords': []})
+                    m['names'].append(line_name)
+                    m['lines'].append(line_id)
+                    m['counts'].append(len(coords) // 2)
+                    m['coords'] += coords
+                el.clear()
+    except (OSError, ET.ParseError):
+        return None
+    doc = {'stamp': stamp, 'net_stamp': net['stamp'], 'path': path, 'modes': modes,
+           'unplaced_routes': unplaced}
+    with _ROUTES_LOCK:
+        _ROUTES_CACHE[run_dir] = doc
+        while len(_ROUTES_CACHE) > NET_CACHE_ENTRIES:
+            _ROUTES_CACHE.popitem(last=False)
+    return doc
+
+
+def routes_summary(run_dir):
+    """What the page asks first: which transport modes the schedule carries and
+    how many distinct routes each has; the geometry comes per mode on request."""
+    doc = load_routes(run_dir)
+    if not doc:
+        return {'available': False, 'reason': 'no schedule or network readable for this run'}
+    return {'available': True, 'stamp': doc['stamp'], 'unplaced_routes': doc['unplaced_routes'],
+            'modes': {m: {'routes': len(v['counts']), 'vertices': len(v['coords']) // 2}
+                      for m, v in sorted(doc['modes'].items())}}
+
+
+def routes_geojson(run_dir, mode):
+    """One transport mode's routes as a FeatureCollection of LineStrings, each
+    carrying its line's id and name, built once per schedule stamp."""
+    doc = load_routes(run_dir)
+    if not doc or mode not in doc['modes']:
+        return '{"type":"FeatureCollection","features":[]}'
+    cache = doc.setdefault('_geojson', {})
+    if mode not in cache:
+        m = doc['modes'][mode]
+        feats = []
+        v = 0
+        for name, line, n in zip(m['names'], m['lines'], m['counts']):
+            pts = [[round(m['coords'][2 * (v + k)], 6), round(m['coords'][2 * (v + k) + 1], 6)] for k in range(n)]
+            v += n
+            feats.append({'type': 'Feature', 'properties': {'name': name, 'line': line, 'mode': mode},
+                          'geometry': {'type': 'LineString', 'coordinates': pts}})
+        cache[mode] = json.dumps({'type': 'FeatureCollection', 'features': feats}, separators=(',', ':'))
+    return cache[mode]
 
 
 def _pack(fmt, vals):
@@ -984,11 +1148,11 @@ def _hotspot(run_dir, path):
     }
 
 
-def basemap_bytes():
+def basemap_bytes(run_dir=None):
     """`basemap_payload` as one binary body: a little-endian uint32 header length, the
     header JSON ({layer: {polylines, coords, area}} in order), then per layer its
     uint32 vertex counts and Float32 lon/lat pairs. Built once per basemap file."""
-    doc = basemap_payload()
+    doc = basemap_payload(run_dir)
     if not doc.get('available'):
         return None
     if '_bytes' not in doc:
@@ -1011,14 +1175,21 @@ def basemap_bytes():
     return doc['_bytes']
 
 
-def basemap_payload():
+def basemap_payload(run_dir=None):
     """The standing picture - coast, water, parkland, roads, rail, tram - from
-    the city's basemap.json, decoded from its projected packing and re-packed
-    as WGS84 Float32 polylines: one array of vertex counts and one of lon/lat
-    pairs per layer. Optional: the page draws the run without it."""
+    the RUN'S city's basemap.json, decoded from its projected packing and
+    re-packed as WGS84 Float32 polylines: one array of vertex counts and one of
+    lon/lat pairs per layer. Optional: the page draws the run without it. The
+    run's city, never the server's: the reference city's rails were drawn under
+    a Mumbai run (the user's report, 22 September 2026, 9.206)."""
     import base64
     import struct
+    name = run_city(run_dir) if run_dir else _city.CITY
+    # the server's city through city.path (the artefact ledger reads that call);
+    # another city's by the same city-relative path under its own directory
     path = _city.path('data', 'processed', 'basemap.json')
+    if name != _city.CITY:
+        path = os.path.join(_city.CITIES_DIR, name, 'data', 'processed', 'basemap.json')
     try:
         stamp = os.path.getmtime(path)
     except OSError:
@@ -1031,7 +1202,7 @@ def basemap_payload():
     if not doc:
         return {'available': False, 'reason': 'basemap.json unreadable'}
     ox, oy = doc['origin']
-    tf = _to_wgs84()
+    tf = _to_wgs84(run_dir)
     layers = {}
     for name, b64 in doc['layers'].items():
         raw = base64.b64decode(b64)
@@ -1139,27 +1310,29 @@ def make_handler(default_run_dir, reload_page=False):
                 self._send(json.dumps({'default': os.path.basename(default_run_dir),
                                        'runs': list_runs()}))
                 return
+            run_dir = self._run_dir(q)
+            if run_dir is None:
+                self._send('{"error":"no such run"}', code=404)
+                return
             if path in ('/thumb/default.light.png', '/thumb/default.dark.png', '/thumb/satellite.png'):
-                # the map-type pictures: the city's own snapshots of its two views, taken
-                # once and kept with its figures; a city without them shows the page's
-                # drawn illustration instead (the <img> falls back on a 404)
-                self._send_file(_city.city_docs('reference', 'figures', 'viewer_' + path[7:]),
-                                'image/png')
+                # the map-type pictures: the run's city's own snapshots of its two views,
+                # taken once and kept with its figures; a city without them shows the
+                # page's drawn illustration instead (the <img> falls back on a 404)
+                self._send_file(os.path.join(_city.CITIES_DIR, run_city(run_dir), 'docs', 'reference',
+                                             'figures', 'viewer_' + path[7:]), 'image/png')
                 return
             if path == '/basemap.bin':
-                body = basemap_bytes()
+                body = basemap_bytes(run_dir)
                 if body is None:
                     self._send('{"error":"no basemap"}', code=404)
                 else:
                     self._send(body, 'application/octet-stream')
                 return
-            run_dir = self._run_dir(q)
-            if run_dir is None:
-                self._send('{"error":"no such run"}', code=404)
-                return
             if path == '/status.json':
                 doc = scan(run_dir)
                 doc['family'] = family_of_run(doc['name'])
+                doc['city'] = run_city(run_dir)
+                doc['server_city'] = _city.CITY
                 # the per-iteration series stay in scan() for the digest; the page reads
                 # neither, and they were 50 KB of every half-second poll
                 doc.pop('modes', None)
@@ -1199,6 +1372,10 @@ def make_handler(default_run_dir, reload_page=False):
                     self._send('{"type":"FeatureCollection","features":[]}')
                 else:
                     self._send(doc['_geojson'], 'application/geo+json')
+            elif path == '/routes.json':
+                self._send(json.dumps(routes_summary(run_dir)))
+            elif path == '/routes.geojson':
+                self._send(routes_geojson(run_dir, (q.get('mode') or '').strip()), 'application/geo+json')
             elif path == '/links.json':
                 self._send_file(os.path.join(run_dir, 'output', 'telemetry_links.json'))
             else:

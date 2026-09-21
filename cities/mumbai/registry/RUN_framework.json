@@ -211,32 +211,32 @@
       "units": "GiB",
       "source": "measured",
       "status": "active",
-      "value": 13.7,
-      "description": "The sample-independent part of the heap rule. MEASURED: 13.74 GiB of 16g in the gc.log of 20260921T182708_2it_100pct, the explicit 1,000-person case - the mapped regional network, the combined feed and the routers before any population to speak of.",
-      "decisions_ref": "9.205",
+      "value": 7.4,
+      "description": "The sample-independent part of the heap rule. MEASURED as the live set after the last full collection: 7.36 GiB in the gc.log of 20260921T182708_2it_100pct (the explicit 1,000-person case: the mapped regional network, the combined feed and the routers) and 7.81 GiB in 20260921T220701_2it_0.1pct with 26,884 agents at one or two plans - 18 KB an agent, the reference city's per-plan rate. 9.205 read 13.74 from the pre-collection peak of a 16g heap, which is the heap size, not the need (9.206).",
+      "decisions_ref": "9.206",
       "consumers": [
         "src/run/run_matsim.py"
       ],
       "held_fixed": {
-        "rule": "the peak of the explicit 1,000-person case (the network, the combined feed and the routers, no population to speak of), read from its gc.log; re-read from every longer case",
-        "decisions_ref": "9.205",
-        "departure_requires": "a higher peak at a negligible population in a later Mumbai gc.log"
+        "rule": "the LIVE SET after the last full collection of a case with no population to speak of, read from its gc.log (Pause Full N->M: M), never the pre-collection peak - under ParallelGC with -Xms = -Xmx the peak tracks the heap GIVEN (16g peaked at 13.74, 24g at 17.30), not the heap needed; re-read from every longer case",
+        "decisions_ref": "9.206",
+        "departure_requires": "a higher live set after a full collection at a negligible population in a later Mumbai gc.log"
       }
     },
     "RUN.machine.heap_per_fraction_gib": {
       "units": "GiB_per_unit_fraction",
       "source": "measured",
       "status": "active",
-      "value": 3600.0,
-      "description": "The sample-dependent part of the heap rule, per unit of RUN.sample.fraction of the 27.06 M-person core: 3,600 GiB - so 1 % of the core (270,000 agents) needs 50 GiB and 5 % (1.35 M agents) 194 GiB. The launcher refuses what this host cannot hold; the fraction a defensible reading needs is the open question of docs/scaling.md.",
-      "decisions_ref": "9.205",
+      "value": 2400.0,
+      "description": "The sample-dependent part of the heap rule, per unit of RUN.sample.fraction of the 27.06 M-person core, at plan memory 5: 2,400 GiB - so 1 % of the core (270,000 agents) needs 31.4 GiB with the floor, 2 % 55 GiB (the last this 63 GB host holds) and 5 % (1.35 M agents) 127 GiB. The 3,600 of 9.205 was the slope between two PRE-collection peaks of differently sized heaps (9.206). The fraction a defensible reading needs is the open question of docs/scaling.md; the memory is no longer the first constraint below 2 %, the flow identity is.",
+      "decisions_ref": "9.206",
       "consumers": [
         "src/run/run_matsim.py"
       ],
       "held_fixed": {
-        "rule": "the slope between the two measured peaks: 13.74 GiB at a negligible population and 17.30 GiB at 0.001 of the core households (26,884 agents, 20260921T220701_2it_0.1pct), 3.56 GiB per 0.001 - about 140 KB an agent at two plans, the reference city rate; re-read at every new fraction",
-        "decisions_ref": "9.205",
-        "departure_requires": "a peak at another fraction in a Mumbai gc.log"
+        "rule": "persons in the core (27.06 M) x RUN.replanning.max_agent_plan_memory x the live heap a routed plan holds at steady state - 19 KB on the reference city's 25 % arm 20260916T063903_250it_25pct (20-28.6 GiB after a full collection for 155,000 agents at 8 plans over a 5 GiB floor), the same Java stack; 27.06 M x 5 x 19 KB = 2,400 GiB per unit fraction; re-read from the 1 % case's own live set once its plan memory has filled",
+        "decisions_ref": "9.206",
+        "departure_requires": "a live set after a full collection at another fraction, or a per-plan rate read from a Mumbai gc.log whose plan memory has filled"
       }
     },
     "RUN.machine.jfr_profile": {
@@ -419,17 +419,6 @@
       "value": "betweenAllAndFewerConstraints",
       "description": "How subtour mode choice treats tours it cannot close. Adopted from the reference city's declaration; not a Mumbai observation.",
       "decisions_ref": "9.202"
-    },
-    "RUN.monitor.enabled": {
-      "units": "boolean",
-      "source": "definition",
-      "status": "active",
-      "value": false,
-      "description": "Serve the live run view while a run is in flight. Off for this city: the monitor reads every mode against its target and no mode target has been derived yet (data/processed/validation/mode_targets_by_mode.csv does not exist).",
-      "decisions_ref": "9.204",
-      "consumers": [
-        "src/run/run_matsim.py"
-      ]
     },
     "RUN.monitor.live_poll_s": {
       "units": "seconds",
@@ -763,12 +752,17 @@
     },
     "RUN.replanning.max_agent_plan_memory": {
       "units": "plans",
-      "source": "definition",
+      "source": "literature",
       "status": "active",
       "matsim_param": "replanning.maxAgentPlanMemorySize",
-      "value": 9,
-      "description": "Plans an agent keeps. 9 for this city: the explicit population carries up to eight initial whole-day mode alternatives (build_baseline_choices.py) plus one slot for a new plan, so plan memory never discards a supplied alternative; the assembly refuses a smaller value.",
-      "decisions_ref": "9.204"
+      "value": 5,
+      "description": "Plans an agent keeps: MATSim's own default, the leanest choice set the reference city's sweep admits with room to innovate. The citywide plans carry ONE initial plan a person (build_plans.py; the assembly refuses a memory below the supplied count), so the 9 the retired explicit 1,000-person case needed for its eight seeded alternatives (9.204) bought nothing but heap: the reference city's 25 % arm lives at about 19 KB a plan (20-28.6 GiB after a full collection for 155,000 agents at 8 plans over a 5 GiB floor), so at 9 plans 1 % of the 27.06 M core needs 51 GiB against 63 GB and at 5 plans 32 GiB (9.206, D14). Inside the declared 3-10 sweep; the choice-set width it costs is what the equivalence experiments of docs/scaling.md measure.",
+      "decisions_ref": "9.206",
+      "sweep": [
+        3,
+        10
+      ],
+      "sweep_role": "uncertainty"
     },
     "RUN.replanning.plan_selector_for_removal": {
       "units": "enum",
@@ -1058,6 +1052,20 @@
       },
       "value": true,
       "description": "Scale transit vehicle seats by the sample fraction. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "RUN.sample.transit_pce_scaling": {
+      "units": "boolean",
+      "source": "derived",
+      "status": "active",
+      "derived_from": {
+        "fields": [
+          "RUN.sample.fraction"
+        ],
+        "identity": "pce = pce x RUN.sample.fraction for every transit vehicle type, no floor: the vehicle's share of a scaled link's flow is then the share it has of the real link's"
+      },
+      "value": true,
+      "description": "Scale every transit vehicle type's passenger-car equivalent by the sample fraction, as the road flow capacities are. Adopted from the reference city's declaration; not a Mumbai observation.",
       "decisions_ref": "9.202"
     },
     "RUN.sample.unit": {

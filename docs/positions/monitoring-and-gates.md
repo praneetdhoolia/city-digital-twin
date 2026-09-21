@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 21 September 2026 (fifty-seventh session) · **Record read through:** §9.205 · **Written against family:** `F35`
+**Updated:** 22 September 2026 (fifty-eighth session) · **Record read through:** §9.206 · **Written against family:** `F35`
 
 ## What is built
 
@@ -29,7 +29,7 @@
 - **The scoreboard is the newest ARM's, never a `failed` run's** (`build_status_board.py`, §9.168): it skips a run under the sweep floor on `RUN.controler.last_iteration` (§9.133), a family marked `"readings": "none"` (§9.148) and F33's `aborted_20260910T222830_300it_25pct`.
 - **Targets**: `mode_targets_by_mode.csv` (`build_mode_targets.py`, §9.87) and `pt_boardings_targets.json` (§9.130), never `validation_targets.csv` (§12). `CAL.gate.stop_deviation_pct` = 20.0 and `CAL.gate.pass_deviation_pct` = 10.0 are `definition`, not swept (§9.87).
 - **`src/calibrate/fit.py`**: `score_mode_share` folds `bike+taxi` to Other and `car+motorbike` to Vehicle driver (§9.87), unscorable targets listed with reasons (§9.80); `measure_iteration_modes.py` uses the same function (§9.83).
-- **The run viewer** `src/analyse/run_view.py` (§9.170–§9.175): every run from one picker, each mode against the 10 % goal and 20 % stop bar; MapLibre GL 5.24.0, Overture buildings, Terrarium terrain, a globe; the city's own overhead snapshots as the map-type pictures (`cities/newcastle/docs/reference/figures/viewer_*.png`); a scale bar accurate to 0.5 % (§9.175).
+- **The run viewer** `src/analyse/run_view.py` (§9.170–§9.175, §9.206): serves on EVERY run (`RUN.monitor.enabled` retired) and on any finished one (`--run <name>`); every run from one picker, each of a city's modes against the 10 % goal and 20 % stop bar; every transit route of the schedule the run drove, one layer and chip a transport mode (Mumbai 1,650 bus, 31 rail, 14 metro, 4 ferry); the CRS and the basemap are the RUN's city's, from its record; 3D on every base, 75° from zoom 8; MapLibre GL 5.24.0; nothing from a city by name.
 - **The ceiling watcher is proven**: `aborted_20260910T205517_20it_1pct` stopped `stopped_at_ceiling` at `reached_iteration` 3 (§9.164, #169); `start_gate_watch` refuses without `RUN.monitor` (#131).
 - **`CAL.objective.replication_band_pp` = 0.0** (`sweep_role: measurement`, bracket [0.0, 2.0]) is the objective's denominator, MEASURED before it is set by three arms differing only in `RUN.machine.seed` (§9.164, #163).
 
@@ -73,6 +73,7 @@
 
 ## History
 
+- §9.206 — viewer on every run 
 - §9.205 — build-fraction refusal
 - §9.204 — one launch path; readers degrade
 - §9.203 — both cities pass the contract
@@ -87,4 +88,3 @@
 - §9.169 — arm 0 a result; reader reads own schedule
 - §9.168 — scoreboard skips a failed run
 - §9.167 — the eighth report worked down
-- §9.166 — one boardings source; eighth report

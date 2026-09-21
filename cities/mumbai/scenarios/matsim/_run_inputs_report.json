@@ -13,7 +13,8 @@
     "transit_vehicles": "networks/matsim/schedules/baseline_regional/transitVehicles.xml.gz",
     "plans": "demand/baseline/plans_core_sample.xml.gz",
     "boarding_fares": "params/baseline/boarding_fares.csv",
-    "hired_fleet": "params/baseline/hired_fleet.json"
+    "hired_fleet": "params/baseline/hired_fleet.json",
+    "fleet_assignments": "networks/matsim/schedules/baseline_regional/fleet_assignments.json"
   },
   "inputs_sha256": {
     "network": "5a07a45b50860c4191996f1a84b9e736723aa730d8697f1c9a1bd3ea642f188e",
@@ -21,7 +22,8 @@
     "transit_vehicles": "0ec5558b558c0b6129b0636c3415ee4097919d3def51ba512d3c1fd058afc89d",
     "plans": "f5acf260fa4ce71cf16ab58050737c7f593ea0cff084627468f2548c6863c44d",
     "boarding_fares": "951d7ddaa057fe8ea57067b08572f910d68d340ac0cffbbee30137e53c0b8b9b",
-    "hired_fleet": "3970384fe178b88b91c1c54c0367656a8efe1f129e4f83f4417dd8a4947b3951"
+    "hired_fleet": "3970384fe178b88b91c1c54c0367656a8efe1f129e4f83f4417dd8a4947b3951",
+    "fleet_assignments": "31055aa2e4227b5502b27a4c170751feac0409d19ff5a512d0893900267bf821"
   },
   "demand": {
     "source_sha256": "f5acf260fa4ce71cf16ab58050737c7f593ea0cff084627468f2548c6863c44d",
@@ -9333,6 +9335,96 @@
         "final_arrival_s": 4501
       }
     ]
+  },
+  "fleet": {
+    "vehicles": 114670,
+    "vehicle_capacity_patched": [
+      [
+        "bus_city",
+        "70",
+        "0",
+        "36",
+        "30"
+      ],
+      [
+        "ferry_creek_launch",
+        "250",
+        "0",
+        "100",
+        "0"
+      ],
+      [
+        "ferry_elephanta_launch",
+        "250",
+        "0",
+        "80",
+        "0"
+      ],
+      [
+        "metro_beml_6car",
+        "300",
+        "0",
+        "239",
+        "1561"
+      ],
+      [
+        "metro_line1_4car",
+        "300",
+        "0",
+        "200",
+        "1300"
+      ],
+      [
+        "metro_line3_8car",
+        "300",
+        "0",
+        "399",
+        "2601"
+      ],
+      [
+        "metro_navi_3car",
+        "300",
+        "0",
+        "150",
+        "950"
+      ],
+      [
+        "rail_emu_12car",
+        "400",
+        "0",
+        "1168",
+        "3816"
+      ],
+      [
+        "rail_emu_12car_central",
+        "400",
+        "0",
+        "1168",
+        "3816"
+      ],
+      [
+        "rail_emu_12car_uran",
+        "300",
+        "0",
+        "1168",
+        "3816"
+      ]
+    ],
+    "vehicle_types_unpatched": [],
+    "fleet_assignment_mode": "explicit_vehicle",
+    "active_vehicles_by_profile": {
+      "bus_city": 109858,
+      "ferry_creek_launch": 76,
+      "ferry_elephanta_launch": 76,
+      "metro_beml_6car": 1104,
+      "metro_line1_4car": 276,
+      "metro_line3_8car": 276,
+      "metro_navi_3car": 276,
+      "rail_emu_12car": 1672,
+      "rail_emu_12car_central": 704,
+      "rail_emu_12car_uran": 352
+    },
+    "vehicle_refs": 114670
   },
   "tables_sha256": {
     "boarding_fares": "951d7ddaa057fe8ea57067b08572f910d68d340ac0cffbbee30137e53c0b8b9b",

@@ -301,7 +301,8 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
         else:
             scaled = scale_transit_capacity(
                 veh_src, veh_dst, fraction,
-                cfg.get('RUN.sample.transit_capacity_floor'))
+                cfg.get('RUN.sample.transit_capacity_floor'),
+                scale_pce=bool(cfg.get('RUN.sample.transit_pce_scaling')))
     elif fraction >= 1.0:
         n_in = n_out = n_hhless = None
         plans_dst, veh_dst = plans_src, veh_src
@@ -335,7 +336,8 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
         if cfg.get('RUN.sample.transit_capacity_scaling'):
             scaled = scale_transit_capacity(
                 veh_src, veh_dst, fraction,
-                cfg.get('RUN.sample.transit_capacity_floor'))
+                cfg.get('RUN.sample.transit_capacity_floor'),
+                scale_pce=bool(cfg.get('RUN.sample.transit_pce_scaling')))
         else:
             shutil.copyfile(veh_src, veh_dst)
             scaled = []
@@ -930,24 +932,17 @@ def refuse_if_no_automatic_stop(cfg):
         ceiling_h = float(cfg.get('RUN.gate.wall_ceiling_h'))
     except (TypeError, ValueError):
         ceiling_h = 0.0
-    # 9.164 (#131): AN INTERVAL IS NOT A GATE. The watcher reads what the
-    # monitor maintains and refuses to arm without it, so an interval declared
-    # beside `RUN.monitor.enabled = false` is a stop that does not exist -
-    # measured on 20260910T205517_20it_1pct, which declared an interval of 2,
-    # reached iteration 3 and wrote no verdict, no gate line and no warning.
-    # This refusal counted such a run as protected because it read the
-    # interval alone.
-    monitored = bool(cfg.get('RUN.monitor.enabled'))
-    if (interval > 0 and monitored) or ceiling_h > 0:
+    # 9.164 (#131): AN INTERVAL IS NOT A GATE unless the watcher can arm, and
+    # the watcher reads what the monitor maintains. Since 9.206 the monitor
+    # serves on every run (the user's direction of 22 September 2026: the
+    # viewer always runs with a run), so an interval is a stop again.
+    if interval > 0 or ceiling_h > 0:
         return
     raise SystemExit(
         'REFUSED: this run has no automatic stop of any kind.\n'
-        '  RUN.gate.interval_iterations = %d, RUN.monitor.enabled = %s  (%s, '
+        '  RUN.gate.interval_iterations = %d  (the gate watcher is off, '
         'so nothing stops it on the model being wrong)\n'
-        % (interval, str(monitored).lower(),
-           'the gate watcher is off' if interval <= 0
-           else 'the gate watcher cannot arm without the monitor it reads, '
-                '#131') +
+        % interval +
         '  RUN.gate.wall_ceiling_h      = 0  (no ceiling, so nothing stops it '
         'on cost)\n'
         'An arm in this state runs until it finishes or a person notices, and '
@@ -1093,10 +1088,10 @@ def start_live_view(run_dir, cfg):
     here is reported and swallowed: a run that dies because its instrumentation
     could not bind a socket is worse than a run with no instrumentation. The
     import is deferred for the same reason - the view is optional, the run is
-    not.
+    not. It serves on EVERY run since 9.206 - a smoke, a probe, an arm, either
+    city - so what a run is doing is always one url away; a finished run is
+    opened with `python src/analyse/run_view.py --run <name>`.
     """
-    if not cfg.get('RUN.monitor.enabled'):
-        return None
     try:
         import run_view                                   # noqa: PLC0415
         return run_view.serve(run_dir, port=cfg.get('RUN.monitor.port'),
@@ -1110,13 +1105,10 @@ def start_live_view(run_dir, cfg):
 def start_progress_digest(run_dir, cfg):
     """Start the `_progress.json` writer beside the live view (issue #76).
 
-    Gated on the same observer switch, running on the same terms: a daemon
-    thread that reads the run directory, writes one file atomically, and can
-    never stop a run. The import is deferred because the digest is optional
-    and the run is not.
+    On every run, on the same terms as the view: a daemon thread that reads
+    the run directory, writes one file atomically, and can never stop a run.
+    The import is deferred because the digest is optional and the run is not.
     """
-    if not cfg.get('RUN.monitor.enabled'):
-        return None
     try:
         import progress_digest                            # noqa: PLC0415
         return progress_digest.serve(
@@ -1687,14 +1679,8 @@ def start_gate_watch(run_dir, cfg, proc):
     # fallback - a 64 KiB tail - was measured 611 MiB behind EOF on a 25% arm.
     # A watcher that arms and judges nothing is worse than one that refuses:
     # the launch banner says the run has an automatic stop, and it has not.
-    if not bool(cfg.get('RUN.monitor.enabled')):
-        print('      GATE WATCHER NOT ARMED: RUN.gate.interval_iterations is '
-              '%d but RUN.monitor.enabled is false, and the watcher reads what '
-              'the monitor maintains. This run has NO modelling stop (#131). '
-              'Turn the monitor on, or state that the run is deliberately '
-              'unjudged beside the approval on its overlay.' % interval,
-              flush=True)
-        return None
+    # Since 9.206 the monitor serves on every run, so the watcher always has
+    # what it reads.
     import threading
     reporter = REPORTER
     verdict_path = os.path.join(run_dir, GATE_VERDICT)
@@ -2407,8 +2393,7 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
     # the whole run rather than after it. It reads the run directory and never
     # writes to it.
     view_url = start_live_view(run_dir, cfg)
-    print('live view: %s' % (view_url or 'disabled (RUN.monitor.enabled)'),
-          flush=True)
+    print('live view: %s' % (view_url or 'unavailable (see above)'), flush=True)
     # The machine-readable digest, refreshed beside the live view so an agent
     # or a script reads ONE file (_progress.json) instead of matsim.log.
     start_progress_digest(run_dir, cfg)

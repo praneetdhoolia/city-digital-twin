@@ -1,0 +1,373 @@
+{
+  "layer": "A",
+  "title": "Transit vehicle passenger capacities per operated configuration (9.206)",
+  "fields": {
+    "A.transit.fleet_assignment_mode": {
+      "value": "explicit_vehicle",
+      "units": "enum",
+      "source": "definition",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "consumers": [
+        "cities/mumbai/build/build_transit_fleet.py",
+        "cities/mumbai/build/build_baseline_run_inputs.py",
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "How the run-input assembly resolves transit passenger capacities (docs/transit_fleet.md). explicit_vehicle: every mapped vehicle is assigned a capacity profile by build_transit_fleet.py from the route relation it serves, so a 12-car EMU, a 4-car Line 1 train, a 6-car BEML train, an 8-car Line 3 train, a 3-car Navi Mumbai train, a creek ferry and a city bus each carry their own evidenced capacity. Until 9.206 the assembly copied the mapper's own defaults (Bus 70, Rail 400, Subway 300, Ferry 250 seats, no standing room), so a suburban train that carries about 5,000 was simulated as 400 seats."
+    },
+    "A.transit.rail_capacity_seated": {
+      "value": 1168,
+      "units": "persons_per_vehicle",
+      "source": "literature",
+      "sweep": [
+        1028,
+        1168
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "1,168 is the 12-car non-AC rake's seating in Indian Railways' own EMU primer (IRIMEE, Basics of EMU: 'A 12-car train can seat 1,168 and accommodate 2,336 standees'); 1,028 is the 12-car AC rake's seating in PIB's 24 December 2017 release (suburban_first_ac_capacity_2017.csv). The feed does not yet say which departures run AC stock (13 of 238 daily rakes in 2024-25, economic_survey_suburban_rail_controls.csv), so every suburban departure carries the non-AC figure.",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Seats in one suburban EMU rake (every Mumbai Suburban Railway and MEMU pattern in the provisional feed). Twelve-car non-AC formation: 1,168 (IRIMEE). The MEMU patterns (Diva-Panvel, Diva-Roha) are 3 of 31 rail patterns and carry the same profile for want of a MEMU figure; a 15-car formation (54 marked services, cr_service_markers.csv) is not yet assigned per departure."
+    },
+    "A.transit.rail_capacity_total": {
+      "value": 4984,
+      "units": "persons_per_vehicle",
+      "source": "literature",
+      "sweep": [
+        3504,
+        5964
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "The three published capacities of a 12-car rake in Indian Railways' EMU primer (IRIMEE, Basics of EMU): 3,504 is the design capacity (1,168 seated + 2,336 standees), 4,984 the stated capacity of the Siemens 12-car rake and 5,964 the Bombardier rake's (which PIB 2017 splits as 1,028 seated + 4,936 standing for the AC rake). MATSim denies boarding at seats + standing, so the value is the load a rake physically carries at peak, not the comfort design; the same primer records 5,000 in a 9-car rake at super-dense crush.",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Passengers one suburban EMU rake carries when boarding is refused (seated plus standing): the Siemens 12-car rake's stated capacity, the middle of the three published figures. Not the design capacity (3,504, at which every peak train would deny boarding to a third of its real load) and not the newest rake's (5,964)."
+    },
+    "A.transit.rail_capacity_standing": {
+      "value": 3816,
+      "units": "persons_per_vehicle",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "A.transit.rail_capacity_total",
+          "A.transit.rail_capacity_seated"
+        ],
+        "identity": "A.transit.rail_capacity_total - A.transit.rail_capacity_seated = 4984 - 1168"
+      },
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Standing places in one suburban EMU rake: the rake's carried capacity less its seats. 3,816 at 12 cars; the sample scaler multiplies it by RUN.sample.fraction."
+    },
+    "A.transit.metro_seated_share": {
+      "value": 0.133,
+      "units": "ratio",
+      "source": "literature",
+      "sweep": [
+        0.1,
+        0.25
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Line 1's operator states a 4-coach train carries 1,500 (reliancemumbaimetro.com, Features) and its 2019 seat-removal notice, as reported, left 1,300 standees - 200 seats, 0.133 of the load; 48-52 longitudinal seats a coach is the reported range. No Mumbai metro operator publishes the seated/standing split of the BEML 6-car, or the Alstom 8-car trains (metro_fleet_publication_claims.csv: 'not_stated_in_publication'), so Line 1's share is applied to their published totals until one does (Navi Mumbai's 150 of 1,100, 0.136, is reported and agrees); 0.25 is the upper end of longitudinal-seat metro cars at 6 standees a square metre.",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "The share of a metro train's published passenger capacity that is seated, from the Mumbai line whose split is reported by its operator (Line 1); Navi Mumbai's reported split (150 of 1,100) agrees. Applied to the other lines' published totals to derive their seats and standing places; superseded line by line as an operator publishes a split."
+    },
+    "A.transit.metro_line1_capacity_total": {
+      "value": 1500,
+      "units": "persons_per_vehicle",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Passengers one Line 1 (Versova-Ghatkopar, MMOPL) 4-coach train carries: 'Train Capacity is 1500 commuters in a 4 coach train' on the operator's Features page (catalogue mmopl_features_page)."
+    },
+    "A.transit.metro_line1_capacity_seated": {
+      "value": 200,
+      "units": "persons_per_vehicle",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "A.transit.metro_line1_capacity_total",
+          "A.transit.metro_seated_share"
+        ],
+        "identity": "round(A.transit.metro_line1_capacity_total x A.transit.metro_seated_share) = round(1500 x 0.133) = 200"
+      },
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Seats in one Line 1 train."
+    },
+    "A.transit.metro_line1_capacity_standing": {
+      "value": 1300,
+      "units": "persons_per_vehicle",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "A.transit.metro_line1_capacity_total",
+          "A.transit.metro_line1_capacity_seated"
+        ],
+        "identity": "A.transit.metro_line1_capacity_total - A.transit.metro_line1_capacity_seated = 1500 - 200"
+      },
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Standing places in one Line 1 train."
+    },
+    "A.transit.metro_beml_capacity_total": {
+      "value": 1800,
+      "units": "persons_per_vehicle",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Passengers one 6-car BEML train carries on Lines 2A, 2B, 7 and 9: 300 a car in PIB's 22 November 2018 order release (metro_fleet_publication_claims.csv, 'nominal_unspecified_density') x 6 cars. The density the 300 is stated at is not published."
+    },
+    "A.transit.metro_beml_capacity_seated": {
+      "value": 239,
+      "units": "persons_per_vehicle",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "A.transit.metro_beml_capacity_total",
+          "A.transit.metro_seated_share"
+        ],
+        "identity": "round(A.transit.metro_beml_capacity_total x A.transit.metro_seated_share) = round(1800 x 0.133) = 239"
+      },
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Seats in one BEML 6-car train (Lines 2A, 2B, 7, 9), by Line 1's seated share."
+    },
+    "A.transit.metro_beml_capacity_standing": {
+      "value": 1561,
+      "units": "persons_per_vehicle",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "A.transit.metro_beml_capacity_total",
+          "A.transit.metro_beml_capacity_seated"
+        ],
+        "identity": "A.transit.metro_beml_capacity_total - A.transit.metro_beml_capacity_seated = 1800 - 239"
+      },
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Standing places in one BEML 6-car train."
+    },
+    "A.transit.metro_line3_capacity_total": {
+      "value": 3000,
+      "units": "persons_per_vehicle",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Passengers one Line 3 (Aqua Line, MMRCL) 8-car Alstom train carries: 'at least 3,000' in Alstom's 5 October 2024 opening release (metro_fleet_publication_claims.csv). The lower bound is used; the density is not published."
+    },
+    "A.transit.metro_line3_capacity_seated": {
+      "value": 399,
+      "units": "persons_per_vehicle",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "A.transit.metro_line3_capacity_total",
+          "A.transit.metro_seated_share"
+        ],
+        "identity": "round(A.transit.metro_line3_capacity_total x A.transit.metro_seated_share) = round(3000 x 0.133) = 399"
+      },
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Seats in one Line 3 train, by Line 1's seated share."
+    },
+    "A.transit.metro_line3_capacity_standing": {
+      "value": 2601,
+      "units": "persons_per_vehicle",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "A.transit.metro_line3_capacity_total",
+          "A.transit.metro_line3_capacity_seated"
+        ],
+        "identity": "A.transit.metro_line3_capacity_total - A.transit.metro_line3_capacity_seated = 3000 - 399"
+      },
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Standing places in one Line 3 train."
+    },
+    "A.transit.metro_navi_capacity_total": {
+      "value": 1100,
+      "units": "persons_per_vehicle",
+      "source": "literature",
+      "sweep": [
+        1000,
+        1200
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "'each train can accommodate 1,100 people, has 150 seats' in the trade-press report of the CRRC trains' entry into service (catalogue rollingstockworld_navi_mumbai_crrc); the project profile railway_technology_navi_mumbai_metro confirms the 3-car CRRC formation but states no capacity; CIDCO and Maha Metro publish none in the acquired reports. The bracket is the rounding the source states.",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Passengers one Navi Mumbai Metro Line 1 (Belapur-Pendhar) 3-car train carries."
+    },
+    "A.transit.metro_navi_capacity_seated": {
+      "value": 150,
+      "units": "persons_per_vehicle",
+      "source": "literature",
+      "sweep": [
+        140,
+        160
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "150 seats a 3-car train in the trade-press report of the CRRC trains' entry into service (rollingstockworld_navi_mumbai_crrc); the bracket is one longitudinal bench a car either way.",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Seats in one Navi Mumbai Metro 3-car train."
+    },
+    "A.transit.metro_navi_capacity_standing": {
+      "value": 950,
+      "units": "persons_per_vehicle",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "A.transit.metro_navi_capacity_total",
+          "A.transit.metro_navi_capacity_seated"
+        ],
+        "identity": "A.transit.metro_navi_capacity_total - A.transit.metro_navi_capacity_seated = 1100 - 150"
+      },
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Standing places in one Navi Mumbai Metro train."
+    },
+    "A.transit.bus_capacity_seated": {
+      "value": 36,
+      "units": "persons_per_vehicle",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Seats in one city bus: 'Min 36 + Driver' for the 12 m electric buses in the MBMT gross-cost contract (mbmt_contract_capacities.csv), the one operator-side specification in the package; BEST's 12 m Tata order is 35-seater and the 9 m midi 31 (bus_manufacturer_seating_claims.csv). One profile serves every operator (BEST, NMMT, MBMT and the rest of the regional feed) until a per-operator vehicle assignment is evidenced."
+    },
+    "A.transit.bus_capacity_standing": {
+      "value": 30,
+      "units": "persons_per_vehicle",
+      "source": "assumed",
+      "sweep": [
+        20,
+        45
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "No operator or manufacturer in the package states a standing capacity (bus_capacity_evidence_audit.json: 'All standing capacities remain missing'); the MBMT contract defers it to the AIS-052 bus body code's area rule (0.125 square metres a standee), whose input - the net standing floor area of each body - is not published, so the derivation GOAL.md requirement 6 asks for is blocked on that one unpublished figure and this is the fallback it permits. 30 is a 12 m low-floor city bus at the AIS-052 rule on the 4-6 square metres of aisle and platform such a body leaves beside 36 seats; the bracket runs from a 9 m midi (20) to a licensed-capacity 12 m body (45). Replaced the moment a body drawing or a licence certificate is acquired.",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Standing places in one city bus. Assumed and swept: the only transit capacity in this file that no publication states."
+    },
+    "A.transit.ferry_elephanta_capacity_seated": {
+      "value": 80,
+      "units": "persons_per_vehicle",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Passengers one Gateway of India - Elephanta launch carries: 'Min. 40 Max. 80' in the Maharashtra Maritime Board's route service directory (water_service_directory.csv, route 10); the maximum is the vessel's capacity. Launches carry seated passengers."
+    },
+    "A.transit.ferry_creek_capacity_seated": {
+      "value": 100,
+      "units": "persons_per_vehicle",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Passengers one Vasai - Bhayander creek ferry carries: 100 in the Maharashtra Maritime Board's route service directory (water_service_directory.csv, route 16); the mapped OSM ferry relation 16777766 is that crossing (its endpoints at 19.339 N 72.844 E and 19.342 N 72.841 E)."
+    },
+    "A.transit.ferry_capacity_standing": {
+      "value": 0,
+      "units": "persons_per_vehicle",
+      "source": "definition",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "description": "Standing places on a licensed passenger launch: none, the directory's capacity is the licensed passenger count."
+    },
+    "A.transit.fleet_profiles": {
+      "value": {
+        "rail_emu_12car": {
+          "base_type": "Rail",
+          "seats_field": "A.transit.rail_capacity_seated",
+          "standing_field": "A.transit.rail_capacity_standing",
+          "transport_mode": "rail"
+        },
+        "bus_city": {
+          "base_type": "Bus",
+          "seats_field": "A.transit.bus_capacity_seated",
+          "standing_field": "A.transit.bus_capacity_standing",
+          "transport_mode": "bus"
+        },
+        "metro_line1_4car": {
+          "base_type": "Subway",
+          "seats_field": "A.transit.metro_line1_capacity_seated",
+          "standing_field": "A.transit.metro_line1_capacity_standing",
+          "relations": [
+            "3808111",
+            "7684032"
+          ]
+        },
+        "metro_beml_6car": {
+          "base_type": "Subway",
+          "seats_field": "A.transit.metro_beml_capacity_seated",
+          "standing_field": "A.transit.metro_beml_capacity_standing",
+          "relations": [
+            "13989912",
+            "13989913",
+            "13989914",
+            "13989915",
+            "20403808",
+            "20403809",
+            "20403864",
+            "20403865"
+          ]
+        },
+        "metro_line3_8car": {
+          "base_type": "Subway",
+          "seats_field": "A.transit.metro_line3_capacity_seated",
+          "standing_field": "A.transit.metro_line3_capacity_standing",
+          "relations": [
+            "7898597",
+            "17876723"
+          ]
+        },
+        "metro_navi_3car": {
+          "base_type": "Subway",
+          "seats_field": "A.transit.metro_navi_capacity_seated",
+          "standing_field": "A.transit.metro_navi_capacity_standing",
+          "relations": [
+            "16533435",
+            "16533436"
+          ]
+        },
+        "ferry_elephanta_launch": {
+          "base_type": "Ferry",
+          "seats_field": "A.transit.ferry_elephanta_capacity_seated",
+          "standing_field": "A.transit.ferry_capacity_standing",
+          "relations": [
+            "19764205"
+          ]
+        },
+        "ferry_creek_launch": {
+          "base_type": "Ferry",
+          "seats_field": "A.transit.ferry_creek_capacity_seated",
+          "standing_field": "A.transit.ferry_capacity_standing",
+          "relations": [
+            "16777766"
+          ]
+        },
+        "rail_emu_12car_central": {
+          "base_type": "C",
+          "seats_field": "A.transit.rail_capacity_seated",
+          "standing_field": "A.transit.rail_capacity_standing",
+          "transport_mode": "rail"
+        },
+        "rail_emu_12car_uran": {
+          "base_type": "U",
+          "seats_field": "A.transit.rail_capacity_seated",
+          "standing_field": "A.transit.rail_capacity_standing",
+          "transport_mode": "rail"
+        }
+      },
+      "units": "profile_table",
+      "source": "definition",
+      "status": "active",
+      "decisions_ref": "9.206",
+      "consumers": [
+        "cities/mumbai/build/build_transit_fleet.py"
+      ],
+      "description": "The capacity profiles build_transit_fleet.py assigns to the mapped vehicles (docs/transit_fleet.md): each names the mapper's base type it clones, the two registry fields that carry its seats and standing places, and EITHER the transport mode every line of that mode falls to (rail, bus) OR the OSM route relations it serves, read from the transit line id the feed builder writes as BASE_<relation>_<direction> (build_baseline_transit_feed.py). The relation ids are the identifiers of the mapped lines - Line 1 (3808111, 7684032), Lines 2A/2B/7/9 on BEML 6-car stock, Line 3 (7898597, 17876723), Navi Mumbai Line 1 (16533435, 16533436), the Gateway-Elephanta launch (19764205) and the Vasai-Bhayander creek ferry (16777766) - not values; a line with no profile refuses the build. The mapper typed the Central main-line and the Nerul-Uran patterns as their own base types (C, U) beside Rail; the three rail profiles carry one capacity and differ only in the base type each clones, because an assignment cannot change a vehicle's mapped type."
+    }
+  }
+}

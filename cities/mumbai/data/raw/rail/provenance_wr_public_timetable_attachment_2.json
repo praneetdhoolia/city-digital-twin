@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/wr_public_timetable_attachment_2_0d2d8d63517630eb.pdf",
+      "url": "https://wr.indianrailways.gov.in/cris//uploads/files/1788159720525-UP%20TRAINS%20PTT%2079%20W.E.F.%2001.09.2026.pdf",
+      "final_url": "https://wr.indianrailways.gov.in/cris//uploads/files/1788159720525-UP%20TRAINS%20PTT%2079%20W.E.F.%2001.09.2026.pdf",
+      "content_type": "application/pdf",
+      "source": "Western Railway POCKET TIME TABLE 79 UP",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-21T13:20:24.267750+00:00",
+      "sha256": "0d2d8d63517630eb0e9890901945577090a236f04ddc85f77e0fec9d4896be78",
+      "bytes": 544116,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Linked from official index of September 2026. Document effective date and calendar must be parsed individually; AC subsets must not be double counted.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

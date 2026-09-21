@@ -13,13 +13,11 @@ configuration that keeps ONE stop must still be allowed, because turning the
 gate watcher off stays entirely legitimate. Only the state with no stop at all
 is refused.
 
-**An interval is not a gate (9.164, #131).** The gate watcher reads what the
-monitor maintains and refuses to arm without it, so an interval declared beside
-`RUN.monitor.enabled = false` is a stop that does not exist. It was measured
-that way: `20260910T205517_20it_1pct` declared an interval of 2, reached
-iteration 3, and wrote no verdict, no gate line and no warning of any kind.
-This refusal counted such a run as protected because it read the interval
-alone, so the third field is now part of the same question.
+**An interval is a gate again (9.206).** From 9.164 (#131) the refusal also
+read `RUN.monitor.enabled`, because the watcher reads what the monitor
+maintains and an interval declared beside a disabled monitor was a stop that
+did not exist (`20260910T205517_20it_1pct`). Since 9.206 the monitor serves on
+every run and the field is retired, so the question is the two stops again.
 """
 import pytest
 
@@ -27,12 +25,11 @@ import run_matsim
 
 
 class _Cfg:
-    """The three fields the refusal reads, in the shape `cfg.get` returns them."""
+    """The two fields the refusal reads, in the shape `cfg.get` returns them."""
 
-    def __init__(self, interval, ceiling, monitor=True):
+    def __init__(self, interval, ceiling):
         self._d = {'RUN.gate.interval_iterations': interval,
-                   'RUN.gate.wall_ceiling_h': ceiling,
-                   'RUN.monitor.enabled': monitor}
+                   'RUN.gate.wall_ceiling_h': ceiling}
 
     def get(self, key):
         return self._d.get(key)
@@ -59,28 +56,11 @@ def test_one_stop_is_enough(interval, ceiling, why):
     run_matsim.refuse_if_no_automatic_stop(_Cfg(interval, ceiling)), why
 
 
-def test_a_gate_interval_without_the_monitor_is_not_a_stop():
-    """The measured state: interval declared, monitor off, nothing judged."""
-    with pytest.raises(SystemExit) as exc:
-        run_matsim.refuse_if_no_automatic_stop(_Cfg(2, 0, monitor=False))
-    msg = str(exc.value)
-    assert 'RUN.monitor.enabled' in msg, (
-        'the refusal does not name the field that made the gate inert, so the '
-        'operator is told to fix the wrong one')
-    assert '#131' in msg
+def test_a_gate_interval_is_a_stop_on_its_own():
+    """The monitor serves on every run (9.206), so the interval alone protects."""
+    run_matsim.refuse_if_no_automatic_stop(_Cfg(2, 0))
 
 
-def test_the_ceiling_alone_still_protects_a_run_with_no_monitor():
-    """A probe may legitimately run unmonitored and unjudged, on a budget."""
-    run_matsim.refuse_if_no_automatic_stop(_Cfg(2, 0.05, monitor=False))
-
-
-def test_unreadable_fields_are_treated_as_off_not_as_present():
-    """A missing or malformed field must not be read as a stop that exists.
-
-    Defaulting an unparseable value to "a stop is configured" would let a typo
-    buy back exactly the state this refusal exists to prevent.
-    """
-    for interval, ceiling in ((None, None), ('', ''), ('abc', 'xyz')):
-        with pytest.raises(SystemExit):
-            run_matsim.refuse_if_no_automatic_stop(_Cfg(interval, ceiling))
+def test_the_ceiling_alone_still_protects_an_unjudged_run():
+    """A probe may legitimately run unjudged, on a budget."""
+    run_matsim.refuse_if_no_automatic_stop(_Cfg(0, 0.05))

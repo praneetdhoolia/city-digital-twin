@@ -237,6 +237,7 @@ about its layout will otherwise cost you an hour:
 | **The Mumbai sessions verified for Newcastle** | **§9.203** - standing room never scaled at 25 % (fixed, #237), two manifest regressions fixed, the fleet report kept small |
 | **The second city through the harness; its extent and population** | **§9.204** - one launch path for every city (`RUN.scoring.translation`), D13 taken and derived leaf by leaf, 27.06 M persons synthesised from the census controls, the CTS/CMP mode splits transcribed; no target, no result |
 | **Citywide Mumbai plans, the first targets, the fraction** | **§9.205** - plans at the harness's own household sample (1.35 M persons), thirteen derived targets, the 0.1 % case through the harness; 140 KB an agent and 1.8 veh/h a lane at 0.001: D14 |
+| **The live-set heap rule, the leaner agent at 1 %, every Mumbai transit vehicle at its evidenced capacity, the viewer on every run** | **§9.206** - 9.205's 140 KB an agent was the heap given, not needed (7.4 GiB + ~19 KB a plan); plan memory 5; the mapper's default fleet replaced by profiles from Indian Railways', the operators' and the Maritime Board's figures; transit PCE scaled with the sample; two 1 % cases gridlock on the flow identity: D15 |
 | **Every open issue worked to done or to one measurement, and the fix that was half a fix** | **§9.164** - the twenty-one MATSim defaults that decided the model unreviewed go to **0** (nine declared at the framework's own values, twelve accepted with a reason). The demand STATES that a declared passenger rides: `B.mode.bound_passenger_placement` = `every_plan` puts a bound tour on `ride` in every seeded plan as the driver is already put on `car` - **194,131** fully bound weekday tours over **199,329** persons - and the demand, plans and 30 run-input sets are rebuilt on it, opening family **`F33`**. A tour that will not fit no longer discards the rest of the day (**547** weekday tours recovered; week trip rate **3.398** against the HTS 3.473). `C.time_weights.beta_headway` and `beta_reliability` REACH MATSIM after two reports asked, behind a gate shipped `absent`; the pt submodes get a plan-level control; the calibration objective gets the replication-band denominator it never had, at zero until one is measured. **The ceiling watcher stops a run for the first time** (`stopped_at_ceiling` at iteration 3) and the gate watcher is caught arming over a disabled monitor and judging nothing. **§9.161's #167 diagnosis was HALF right**: `routingMode` takes the failure 40 agents → 20 and the residual is not in our input at all - 0 mixed trips over 6,347 persons - so `accessEgressModeToLink` still cannot start and ships `none` |
 | **A deviation no constant can reach, and the tail of cheap fixes the reports kept re-issuing** | **§9.163** - MATSim writes `modeChoiceCoverage1x.txt` on every arm and nothing read it, so every gate ever taken blamed a constant without asking whether a constant could reach the target. On the landed arm **ride's target of 20.60 % sits ABOVE the 20.05 % of agents who have ever held a ride plan** - the only mode of twelve, and no value of any constant closes it. Every choice set is within 1 pp of its final coverage by iteration 5-10 and shut by 16-27, **except pt**, still opening at 233 and reaching 25.78 %. The count-station map had been orphaned by a network rebuild 47 minutes after it was written: **0 of 195 rows still named the road they claimed**, and on the repaired map counts read **+16.30 % mean, -1.1 % median, 0 zeros** against -89.35 % / -98.7 % / 7. Half of all declared escort pairs put the passenger in their own car (**10,224 of 20,902**) with 99.6 % of tours realised, so ride's loss is mode assignment, not pairing. `RUN.replanning.score_msa_representation` and `RUN.replanning.score_msa_fraction` declare score averaging at MATSim's own default literal (registry **497 -> 499**, byte-neutral); undeclared MATSim defaults **31 -> 21**; three fields shipped at their consumer's off value now say so via `inert_at`. Fourteen of sixteen `awaiting-run` issues were measured from a run that had already finished |
 | **A stated ceiling is enforced by the runner, and the teleported access leg is diagnosed to a missing attribute in our own plans** | **§9.161** - `RUN.gate.wall_ceiling_h` (0 = no ceiling) and `start_ceiling_watch` give an approved cost the enforcement it never had: a SECOND watcher beside the gate's, stopping through 9.143's marker path with a new completion `stopped_at_ceiling`, so `RUN.gate.interval_iterations = 0` keeps meaning "do not judge my modes" rather than "do not enforce my budget". #167 is DIAGNOSED and the cause is ours: the input plans carry **zero** `routingMode` attributes and every trip is a single leg, so under `accessEgressModeToLink` the router inserts walk access and egress legs and MATSim INFERS each leg's routing mode from its own mode - `walk` beside a `car` main leg - and rejects the trip it just built. The fix is to emit `routingMode` per leg in `build_matsim_plans.py`, a no-op at `access_egress_type = none`, and it needs the demand rebuilt in the same change |
@@ -17555,10 +17556,148 @@ it is the user's decision. A run at a fraction above the plans' build
 fraction is refused; a Mumbai fleet scales with the fraction; the overlays
 declare the fraction, the heap and the ceiling they run at.
 
+## 9.206 The heap rule re-read on the live set, the leaner agent measured at 1 %, and every transit vehicle given its evidenced capacity (21-22 September 2026, fifty-eighth session; #237 #239 #245)
+
+**What was wrong.** Three things, found at `/onboard` and in the first hour. *The heap rule* of 9.205
+(`RUN.machine.heap_floor_gib` 13.7, `RUN.machine.heap_per_fraction_gib` 3,600, "140 KB an agent") was
+read from the PRE-collection peaks of two `gc.log`s - and under ParallelGC with `-Xms = -Xmx` the pre-
+collection peak tracks the heap SIZE given, not the heap needed: the explicit case ran on 16g and peaked
+at 13.74 GiB, the 0.1 % case on 24g and peaked at 17.30. *Plan memory* was declared 9 for the retired
+explicit 1,000-person case's eight seeded alternatives (9.204); the citywide plans carry one initial
+plan a person (9.205), so the 9 bought nothing but heap. *The transit vehicles* the city ran were
+pt2matsim's own defaults: the assembly copied the mapped `transitVehicles.xml.gz` byte for byte - Bus 70
+seats, Rail 400, Subway 300, Ferry 250, no standing room anywhere - so a 12-car suburban rake that
+carries about 5,000 at peak was simulated as 400 seats, refused boarding at 400, and at 0.1 % as 4
+seats. Also found: the board's `RUN_DIR` and the issue gate's `RUN_NAME` required an integer sample
+percentage (`\d+pct`), so `20260921T220701_2it_0.1pct` and its aborted sibling were invisible to the
+runs block and absent from `results/INDEX.md` while the board said it labelled every one; a detached
+launch under `CITYSIM_CITY=mumbai` ran the DEFAULT city inside the scheduled task (the Task Scheduler
+starts the wrapper with the machine's environment) and died on Newcastle's missing BASE overlay; the
+wrapper was written `\r\r\n`; and Mumbai's front page carried four stale cells (1,293 manifest files
+against 1,319; 514/53 acquired/unobtained against 515/51/1; 313 fields against 380; "no target is
+derived" against its own Validation row).
+
+**What changed.** *The heap rule* is re-declared on the live set after the last full collection (`Pause
+Full N->M`: M), never the peak: floor 7.4 GiB (7.36 with no population, 7.81 with 26,884 agents at one
+or two plans - 18 KB an agent, about 19 KB a plan), slope 2,400 GiB per unit fraction = 27.06 M persons
+x plan memory 5 x 19 KB a plan, the per-plan rate read from the reference city's 25 % arm
+(`20260916T063903_250it_25pct`: 20-28.6 GiB after full collections for 155,000 agents at 8 plans over a
+5 GiB floor, the same Java stack). So 1 % of the core needs 31 GiB, 2 % 55, 5 % 127, 10 % 247, 25 % 607
+- at plan memory 9 the 1 % figure is 51 GiB, which is 9.205's 50 by coincidence: the wrong measurement
+gave nearly the right number at that one fraction. `RUN.replanning.max_agent_plan_memory` is 5 (MATSim's
+default, inside the reference city's 3-10 sweep). *The run-name regexes* admit a decimal percentage; the
+index and the board carry the two runs. *The detached launch wrapper* sets `CITYSIM_CITY` to the city
+the launching shell resolved (`tests/unit/test_detached_launch_carries_the_city.py`) and is written with
+one line ending. *The transit fleet*: `A.transit.fleet_assignment_mode` = `explicit_vehicle`;
+`cities/mumbai/build/build_transit_fleet.py` assigns every one of the 114,670 mapped vehicles a capacity
+profile from `A.transit.fleet_profiles` - by the OSM route relation the feed builder writes into the
+line id for the generated rail, metro and ferry lines, by transport mode and mapped base type for the
+rest - into `fleet_assignments.json` beside the mapped feed, bound to it by hash; the assembly resolves
+the profiles through `transit_fleet.prepare_fleet`. The capacities (`A_transit_fleet.json`, 23 fields):
+suburban EMU 1,168 seats + 3,816 standing (Indian Railways' IRIMEE primer *Basics of EMU*, acquired as
+`irimee_emu_basics`: 12-car 1,168 + 2,336 design, the Siemens rake 4,984, the Bombardier 5,964; the
+total swept 3,504-5,964, the seats 1,028-1,168); Line 1 1,500 a 4-car train (the operator's Features
+page, `mmopl_features_page`) split 200/1,300 by its reported seat count; Lines 2A/2B/7/9 1,800 (PIB's
+BEML order, 300 a car); Line 3 3,000 (Alstom); Navi Mumbai 1,100 with 150 seats
+(`rollingstockworld_navi_mumbai_crrc`); the BEML and Alstom trains' seats by Line 1's seated share 0.133
+(`A.transit.metro_seated_share`, swept 0.10-0.25; Navi Mumbai's reported 0.136 agrees); the Gateway-
+Elephanta launch 80 and the Vasai-Bhayander creek ferry 100 (the Maritime Board's directory); every bus
+36 seats (the MBMT contract's 12 m minimum) and 30 standing places - the ONE assumed capacity, swept
+20-45, because every published claim states seats only and the AIS-052 derivation the contract defers to
+needs unpublished net floor areas. Three sources are catalogued and acquired for it (568 → 571 catalogue
+entries, with the National Health Mission mirror of the 2011-2036 population projections whose MoHFW URL
+is 404: 567 → 572); the retry of every unobtained source landed ten more - Western Railway Pocket Time
+Table 79 UP and its UP AC trains, the 2022 Harbour services, Central Railway's timetable root, carsheds
+page and signalling assets chart, MRVC's fare rationalisation report and CSMT-Panvel fast corridor
+summary, the Maharashtra taxi and auto committee's part three - so 515 → 529 acquired, 51 → 42
+unobtained (the Western Railway attachment hosts drop connections after two files, MMMOCL refuses every
+connection, the DES district pages fail TLS trust, BEST's route network proxy times out, the paper hosts
+return 403). The manifest is 1,319 → 1,349 rows. `baseline_behaviour.py` reads the schedule from the
+run's own output (it looked beside the record, where the retired launcher copied it). Mumbai's front
+page is current on its four cells. *The live view* (the user's direction of 22 September 2026: the
+viewer for every run, every mode and route mapped, no city by name, and the viewer ALWAYS runs with a
+run): `RUN.monitor.enabled` is retired from both registries and the contract - the view and the progress
+digest serve on every launch, the gate watcher arms on its interval alone, and the no-automatic-stop
+refusal reads the interval and the ceiling (it read the switch from 9.164, #131, because a watcher
+without the monitor judged nothing); `run_view.py` draws the transit routes of the schedule the run
+drove (`/routes.json`, `/routes.geojson?mode=`: the `<transportMode>` groups as the mapper names them,
+each route the chain of its mapped links over the run's own network, so a ferry is drawn on its water
+link) as one layer and one chip a mode - Mumbai 1,650 bus routes, 31 rail, 14 metro, 4 ferry; Newcastle
+444, 62 rail, 2 tram, 2 ferry - under the traffic; the mode table labels any mode (auto-rickshaw,
+metro); a city whose horizon carries no sweep has no probe floor (`run_view`, `build_run_index`); the basemap chips hide where no basemap is drawn. Two defects the user found on the first look: a Mumbai run opened through a viewer serving the reference city was drawn in the Southern Ocean off Antarctica, with Newcastle's rails under it - the server reprojected every run through ITS city's CRS (UTM 43N metres are valid MGA 56 metres) and served ITS city's basemap; both are now the RUN's city's, read from its own record (`run_city`), and another city's run says so in the modes card. And a tilt over a city stopped short: the pitch ramp reached 75 degrees only at zoom 12 and the clamp sat on a transform the globe hands over at that zoom; the ramp reaches 75 from zoom 8, is re-applied on the projection transition, and 3D is allowed on every base. Verified in a scratch Edge on both cities' newest runs, each served under the other city.
+
+**Measured.** *The first 1 % case* `20260921T231313_4it_1pct` (`lean_agent_one_percent`: 0.01 of the
+core by the nested household hash, 269,690 persons, plan memory 5, the pooled fleet, xmx 34g against the
+rule's 31.4 GiB, iterations 0-4; the mapper-default vehicles at their full PCE, the sampler not yet
+scaling PCE) ran to its last iteration: 5,881.8 s wall, 1,159.8 s a median iteration (13x the 0.1 %
+case's 87.8 s for 10x the agents; PersonPrepareForSim alone 16 min, the 30 % SubtourModeChoice
+replanning 10 min an iteration, the mobsim 9-10 min). *Memory*: the live set after each full collection
+12.21, 14.70, 15.09, 15.48 GiB over iterations 1-4 (pre-collection peak 32.25 of 34g) - 8.1 GiB over the
+7.4 floor for 269,690 agents at about 2.2 plans each, 31 KB an agent, ~14 KB a plan; the rule's 31.4 GiB
+at a full memory of 5 plans holds. *Flow*: gridlock. At 36:00 of iteration 0 the qsim held 154,759
+agents still en route and had removed 122,192 stuck (the 1-hour `RUN.qsim.stuck_time_s`); iteration 4
+ended at 152,136 en route and 122,323 stuck; `baseline_behaviour.py` labels the stuck events car
+110,578, walk 50,896, taxi 36,292, auto-rickshaw 35,745, pt 28,129, bike 3,049 against 85,255 trips
+completed at their final mode. The reporter read every mode against its target and every one of ten is
+past the bar (walk +79.9 %, heavy rail -97.6 %, bus -81.0 %, car -45.0 %). The mechanism is the transit
+fleet's road space: 114,670 daily bus, train and ferry departures at pt2matsim's PCEs (2.8, 20.4, 7.1)
+on links whose flow capacity is 0.01 of the real one - a bus took 2.8 of a lane's 18 vehicles an hour,
+nine minutes of it, where in life it takes 2.8 of 1,800 - so the same identity the road demand scales by
+was never applied to the vehicles that share the road with it. That is a framework defect, not a Mumbai
+one: the reference city's 25 % arms have run buses at four times their road share since the first arm.
+*The corrected 1 % case* `20260922T005949_4it_1pct` (the same overlay on the re-assembled inputs: the
+evidenced fleet, and the sampler scaling every transit PCE by the fraction - bus 0.028, rail 0.204,
+ferry 0.071) ran to its last iteration in 5,145.1 s, 984.8 s a median iteration; live set after full
+collections 12.01, 14.78, 15.20, 15.58, 15.53 GiB. It halves the loss and does not remove it: at 36:00
+of iteration 0, 81,722 en route and 114,414 stuck (was 154,759 and 122,192); iteration 4 ended at 72,982
+en route and 110,173 stuck; trips completed at their final mode 149,502 (was 85,255), stuck events
+173,871 (was 268,754). The reporter's reading at iteration 4 against the thirteen targets: metro 1.13 %
+against 1.17 (-2.9 %, inside the pass band, the first Mumbai mode ever to be), bus 12.54 against 10.60
+(+18.3 %), heavy rail 3.70 against 22.90 (-83.9 %), walk 62.8 against 43.1, car 1.88 against 2.91, ride
+2.58 against 1.59, taxi 2.31 against 4.61, auto-rickshaw 3.81 against 2.70, motorbike 4.06 against 6.63,
+bike 5.18 against 3.88, ferry 0.005 against 0.136 - nine of ten past the bar, a structural measurement,
+not a reading. What remains is the fraction itself: at 0.01 every link passes one vehicle per 200 s and
+stores one, the mapped network's median link is 65 m (41 % under 50 m, 919,175 links on 377,626 nodes of
+which 156,616 - 41.5 % - are pass-through), so a merged network doubles the median to about 130 m and
+still stores a sixth of a vehicle at 1 %. On this host (63 GB; 55 GiB at 2 %) the city cannot be read at
+a fraction the flow identity carries; the MATSim literature's floor for a congested network is about 10
+%, 2.7 M agents and 247 GiB live.
+
+**Decision.** D14 is taken (21 September 2026, from the user's standing goal directive of the same day:
+scale down without compromising any mode's integrity, and do not pause to ask): measure the leaner agent
+on a 1 % case first. Measured, it says the agent was never the wall: plan memory 5 puts 1 % at 31 GiB
+and 2 % at 55, and both 1 % cases gridlock on the flow identity. D15 is asked (`lane.json`): merge the
+degree-2 chains and re-run the 1 % case as the diagnostic, a 384-512 GB host for a 10 % core (the
+recommended end), or hold Mumbai at the structural checks. The user's direction of 22 September 2026 -
+the viewer always runs with a run, every mode and route mapped, no city by name - is implemented above
+and retires `RUN.monitor.enabled`.
+
+**Deliberately not done.** No arm, no family for the reference city (its next 25 % arm opens one on #237
+and carries the transit PCE with it); no network merge yet (D15's diagnostic, the lane's task); the
+commuter ferry crossings stay out of the feed (#245); no per-departure AC / 15-car / MEMU stock, no per-
+operator bus body, no seated split for the BEML and Alstom trains beyond Line 1's share; the bus
+standing room stays the one assumed capacity; the 42 unobtained sources whose hosts refuse connections
+are left unobtained, not guessed.
+
+**Consequences.** No Mumbai case before 9.206 compares with one after it on any pt load or road delay
+(the fleet and the PCEs changed); the two 1 % cases compare with each other only as the same case on two
+input sets. The reference city's next arm runs buses at their real road share for the first time and
+opens a family. D15 is the next `/onboard`'s question.
+
+**Sweep.** `A.transit.rail_capacity_total` 3,504-5,964, `rail_capacity_seated` 1,028-1,168,
+`metro_seated_share` 0.10-0.25, `metro_navi_capacity_total` 1,000-1,200 and `_seated` 140-160,
+`bus_capacity_standing` 20-45, `RUN.replanning.max_agent_plan_memory` 3-10; the heap rule fields are
+launch refusals held fixed on their stated readings.
+
+**Supersedes.** 9.205's heap rule and its "140 KB an agent at two plans" (the live set says 18); 9.204's
+plan memory of 9. The mapper-default transit capacities that every Mumbai case before this one ran on:
+no earlier Mumbai case's pt loads compare with a later one's.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-22 | **The heap rule re-read on the live set, the leaner agent measured at 1 %, every transit vehicle given its evidenced capacity, the viewer on every run (§9.206).** Plan memory 9 → 5 and the heap rule 7.4 + 2,400 × fraction GiB; `A_transit_fleet.json` (23 fields) and `build_transit_fleet.py` assign all 114,670 mapped vehicles a profile (12-car EMU 1,168 + 3,816, Line 1 200 + 1,300, BEML 239 + 1,561, Line 3 399 + 2,601, Navi Mumbai 150 + 950, launches 80 and 100, bus 36 + 30 assumed) in place of pt2matsim's defaults; `RUN.sample.transit_pce_scaling` scales every transit PCE by the fraction (MOVES the reference city's RESULTS at its next arm, which opens a family on #237); `RUN.monitor.enabled` retired, the view serves on every run and draws every transit route; two 1 % cases (`20260921T231313_4it_1pct`, `20260922T005949_4it_1pct`) measured 31 KB an agent at two plans and a gridlock the fraction cannot carry. D14 taken from the user's directive; D15 asked. 14 sources acquired (529 of 572). No target value of the reference city changed, the 67/143 split is untouched, nothing here is a finding. |
 | 2026-09-21 | **Citywide Mumbai plans at the harness's sample, the first per-mode targets, the first citywide case (§9.205).** `build_plans.py` writes the households the nested hash keeps at a 0.05 build fraction (1,352,144 persons); `build_mode_targets.py` derives thirteen targets from the CTS 2017 split, B-28, the synthesised driver share, the MMB passengers and the CMP goods share; `20260921T220701_2it_0.1pct` ran through the harness and the reporter printed every mode - a structural check whose trip times are the flow identity at 0.001, not the city. The heap rule is measured on two points (1 % needs 50 GiB). D14 asked. No target value of the reference city changed, the 67/143 split is untouched, nothing here is a finding. |
 | 2026-09-21 | **Mumbai runs through the framework harness; its extent is the notified MMR; its population is synthesised (§9.204).** The city's own launcher is deleted; `RUN.scoring.translation`, `A.fare.boarding_representation` and `B.hired_fleet.representation` are framework gates; Newcastle's smoke config re-emits identically but for the new gate's own default. D13: 2,538 core leaves / 23.54 M persons at 2011, derived from the public MMR lists. 27,057,132 persons in 6,068,786 households for 2026 from the census controls; the published daily mode splits transcribed. Three sources acquired of 54 retried. No target value changed, the 67/143 split is untouched, nothing here is a finding. |
 | 2026-09-21 | **Verification of the 19 September changes for Newcastle (§9.203).** Standing room was never scaled at 25 % on any F35 arm; the fix opens a family (#237). Two build_manifest regressions and a per-vehicle report map fixed before landing. Newcastle's licence split 724 / 220 / 15. |

@@ -77,5 +77,15 @@ Capacity rounding and sampling equivalence still require measured experiments.
 
 The city producer must also establish auditable consumer wiring for any new
 registry capacity fields. References in bulk assignment JSON alone are not
-recognised by the static hardcoding audit. Mumbai's producer and this wiring
-remain to be implemented with its evidenced vehicle/configuration crosswalk.
+recognised by the static hardcoding audit; a producer names the fields it
+resolves. Mumbai's producer is `cities/mumbai/build/build_transit_fleet.py`
+(DECISIONS.md 9.206): it assigns every mapped vehicle a profile from the
+registry's `A.transit.fleet_profiles` table - by the OSM route relation the
+feed builder writes into a generated line's id, or by transport mode and
+mapped base type - and resolves each profile's capacity fields once, so an
+unobtained declaration refuses the assignment before the assembly reads it.
+
+The sample scaler also scales each vehicle type's passenger-car equivalent by
+the fraction when `RUN.sample.transit_pce_scaling` is set (9.206): transit
+vehicles run at full frequency on links whose flow capacity is scaled, and at
+their full PCE a bus took a hundred times its real share of a 1 % lane.

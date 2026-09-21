@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/cr_mumbai_carsheds_page_952416390a651efd.html",
+      "url": "https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,1191,1192,1202,1450",
+      "final_url": "https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,1191,1192,1202,1450",
+      "content_type": "text/html;charset=UTF-8",
+      "source": "Central Railway Mumbai division carsheds page",
+      "licence": "Indian Railways/MRVC publication; reuse terms unverified",
+      "retrieved": "2026-09-21T13:53:24.642445+00:00",
+      "sha256": "952416390a651efd87cf4650f264bce7afddae8b092ef7531271a2db2c1134b1",
+      "bytes": 1055689,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Carshed and fleet reference; distinguish publication review date, stock holding, serviceable stock, formations and actual daily assignment.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

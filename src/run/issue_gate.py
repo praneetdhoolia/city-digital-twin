@@ -220,7 +220,7 @@ def evidence(issue):
     return None
 
 
-RUN_NAME = re.compile(r'\b(\d{8}T\d{6}_\d+it_\d+pct)\b')
+RUN_NAME = re.compile(r'\b(\d{8}T\d{6}_\d+it_\d+(?:\.\d+)?pct)\b')
 OVERLAY_NAME = re.compile(r'\b(f\d+_[a-z0-9_]+_\d+pct)\b')
 FIELD_VALUE = re.compile(r'`([A-Z]+\.[\w.]+)`\s*=\s*`?([\w.]+)`?')
 

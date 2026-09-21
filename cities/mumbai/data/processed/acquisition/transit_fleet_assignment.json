@@ -1,0 +1,88 @@
+{
+ "source": "derived",
+ "assignment": "networks/matsim/schedules/baseline_regional/fleet_assignments.json",
+ "mapped_vehicles": 114670,
+ "assigned_vehicles": 114670,
+ "unassigned_mapped_vehicles": 0,
+ "lines": 1846,
+ "vehicles_by_profile": {
+  "bus_city": 109858,
+  "ferry_creek_launch": 76,
+  "ferry_elephanta_launch": 76,
+  "metro_beml_6car": 1104,
+  "metro_line1_4car": 276,
+  "metro_line3_8car": 276,
+  "metro_navi_3car": 276,
+  "rail_emu_12car": 1672,
+  "rail_emu_12car_central": 704,
+  "rail_emu_12car_uran": 352
+ },
+ "capacities_per_vehicle": {
+  "rail_emu_12car": {
+   "seats": 1168,
+   "standing": 3816,
+   "seats_field": "A.transit.rail_capacity_seated",
+   "standing_field": "A.transit.rail_capacity_standing"
+  },
+  "bus_city": {
+   "seats": 36,
+   "standing": 30,
+   "seats_field": "A.transit.bus_capacity_seated",
+   "standing_field": "A.transit.bus_capacity_standing"
+  },
+  "metro_line1_4car": {
+   "seats": 200,
+   "standing": 1300,
+   "seats_field": "A.transit.metro_line1_capacity_seated",
+   "standing_field": "A.transit.metro_line1_capacity_standing"
+  },
+  "metro_beml_6car": {
+   "seats": 239,
+   "standing": 1561,
+   "seats_field": "A.transit.metro_beml_capacity_seated",
+   "standing_field": "A.transit.metro_beml_capacity_standing"
+  },
+  "metro_line3_8car": {
+   "seats": 399,
+   "standing": 2601,
+   "seats_field": "A.transit.metro_line3_capacity_seated",
+   "standing_field": "A.transit.metro_line3_capacity_standing"
+  },
+  "metro_navi_3car": {
+   "seats": 150,
+   "standing": 950,
+   "seats_field": "A.transit.metro_navi_capacity_seated",
+   "standing_field": "A.transit.metro_navi_capacity_standing"
+  },
+  "ferry_elephanta_launch": {
+   "seats": 80,
+   "standing": 0,
+   "seats_field": "A.transit.ferry_elephanta_capacity_seated",
+   "standing_field": "A.transit.ferry_capacity_standing"
+  },
+  "ferry_creek_launch": {
+   "seats": 100,
+   "standing": 0,
+   "seats_field": "A.transit.ferry_creek_capacity_seated",
+   "standing_field": "A.transit.ferry_capacity_standing"
+  },
+  "rail_emu_12car_central": {
+   "seats": 1168,
+   "standing": 3816,
+   "seats_field": "A.transit.rail_capacity_seated",
+   "standing_field": "A.transit.rail_capacity_standing"
+  },
+  "rail_emu_12car_uran": {
+   "seats": 1168,
+   "standing": 3816,
+   "seats_field": "A.transit.rail_capacity_seated",
+   "standing_field": "A.transit.rail_capacity_standing"
+  }
+ },
+ "limitations": [
+  "One suburban profile: which departures run AC, 15-car or MEMU stock is not yet assigned per departure.",
+  "One bus profile for every operator; the standing room is the one assumed capacity (A.transit.bus_capacity_standing, swept).",
+  "Metro seated/standing splits other than Line 1 follow Line 1 seated share (A.transit.metro_seated_share).",
+  "Physical dimensions, doors and speeds stay the mapper base types; capacities only."
+ ]
+}
