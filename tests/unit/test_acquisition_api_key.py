@@ -18,7 +18,9 @@ sys.path.insert(0, os.path.join(ROOT, 'src'))
 @pytest.fixture
 def adapter():
     # the adapter only touches the city at request time; loading it leaves
-    # the framework's `city` module (and the suite's active city) alone
+    # the framework's `city` module (and the suite's active city) alone.
+    # It imports `requests`, which the offline CI image does not carry.
+    pytest.importorskip('requests')
     spec = importlib.util.spec_from_file_location(
         'acquire_sources', os.path.join(ROOT, 'cities', 'mumbai', 'extract', 'acquire_sources.py'))
     module = importlib.util.module_from_spec(spec)
