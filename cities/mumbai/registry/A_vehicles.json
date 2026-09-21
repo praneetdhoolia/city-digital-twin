@@ -1,0 +1,635 @@
+{
+  "layer": "A",
+  "title": "Vehicle types per routed mode (RUN.qsim.mode_vehicle_fields; 9.204)",
+  "fields": {
+    "A.vehicle.auto_rickshaw.length_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 3.0,
+      "units": "m",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).",
+      "description": "Length of a auto_rickshaw in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher."
+    },
+    "A.vehicle.auto_rickshaw.max_speed_ms": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 15.0,
+      "units": "m/s",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).",
+      "description": "Speed cap of a auto_rickshaw, metres per second; each link's own limit applies below it. Provisional (9.187)."
+    },
+    "A.vehicle.auto_rickshaw.pce": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0.7,
+      "units": "passenger_car_equivalents",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).",
+      "description": "Road space a auto_rickshaw consumes, in passenger-car equivalents. Provisional (9.187)."
+    },
+    "A.vehicle.auto_rickshaw.seats": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 3,
+      "units": "persons_per_vehicle",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          1,
+          5
+        ]
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "The permitted passenger seating of the class under the Maharashtra Motor Vehicles Rules as commonly stated (auto-rickshaw 3, taxi and car 4, motorcycle 1 pillion); to be pinned to the transcribed permit source. Inert while B.ride.pairing_enabled is false and the hired fleet counts vehicles, not seats.",
+      "description": "Passenger seats of a auto_rickshaw excluding the driver."
+    },
+    "A.vehicle.auto_rickshaw.standing": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0,
+      "units": "persons_per_vehicle",
+      "source": "definition",
+      "sweep": null,
+      "description": "Standing places in a auto_rickshaw: none, a road vehicle carries seated passengers only."
+    },
+    "A.vehicle.auto_rickshaw.width_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 1.0,
+      "units": "m",
+      "source": "definition",
+      "sweep": null,
+      "description": "Width of a auto_rickshaw, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses."
+    },
+    "A.vehicle.bike.length_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 2.0,
+      "units": "m",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).",
+      "description": "Length of a bike in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher."
+    },
+    "A.vehicle.bike.max_speed_ms": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 4.0,
+      "units": "m/s",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).",
+      "description": "Speed cap of a bike, metres per second; each link's own limit applies below it. Provisional (9.187)."
+    },
+    "A.vehicle.bike.pce": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0.2,
+      "units": "passenger_car_equivalents",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).",
+      "description": "Road space a bike consumes, in passenger-car equivalents. Provisional (9.187)."
+    },
+    "A.vehicle.bike.seats": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0,
+      "units": "persons_per_vehicle",
+      "source": "definition",
+      "sweep": null,
+      "description": "Passenger seats of a bike: none, it carries no passenger."
+    },
+    "A.vehicle.bike.standing": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0,
+      "units": "persons_per_vehicle",
+      "source": "definition",
+      "sweep": null,
+      "description": "Standing places in a bike: none, a road vehicle carries seated passengers only."
+    },
+    "A.vehicle.bike.width_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 1.0,
+      "units": "m",
+      "source": "definition",
+      "sweep": null,
+      "description": "Width of a bike, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses."
+    },
+    "A.vehicle.car.length_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 5.0,
+      "units": "m",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).",
+      "description": "Length of a car in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher."
+    },
+    "A.vehicle.car.max_speed_ms": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 30.0,
+      "units": "m/s",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).",
+      "description": "Speed cap of a car, metres per second; each link's own limit applies below it. Provisional (9.187)."
+    },
+    "A.vehicle.car.pce": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 1.0,
+      "units": "passenger_car_equivalents",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).",
+      "description": "Road space a car consumes, in passenger-car equivalents. Provisional (9.187)."
+    },
+    "A.vehicle.car.seats": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 4,
+      "units": "persons_per_vehicle",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          1,
+          6
+        ]
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "The permitted passenger seating of the class under the Maharashtra Motor Vehicles Rules as commonly stated (auto-rickshaw 3, taxi and car 4, motorcycle 1 pillion); to be pinned to the transcribed permit source. Inert while B.ride.pairing_enabled is false and the hired fleet counts vehicles, not seats.",
+      "description": "Passenger seats of a car excluding the driver."
+    },
+    "A.vehicle.car.standing": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0,
+      "units": "persons_per_vehicle",
+      "source": "definition",
+      "sweep": null,
+      "description": "Standing places in a car: none, a road vehicle carries seated passengers only."
+    },
+    "A.vehicle.car.width_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 1.0,
+      "units": "m",
+      "source": "definition",
+      "sweep": null,
+      "description": "Width of a car, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses."
+    },
+    "A.vehicle.freight_rail.length_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 700.0,
+      "units": "m",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).",
+      "description": "Length of a freight_rail in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher."
+    },
+    "A.vehicle.freight_rail.max_speed_ms": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 16.666666666666668,
+      "units": "m/s",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).",
+      "description": "Speed cap of a freight_rail, metres per second; each link's own limit applies below it. Provisional (9.187)."
+    },
+    "A.vehicle.freight_rail.pce": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 93.33333333333333,
+      "units": "passenger_car_equivalents",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).",
+      "description": "Road space a freight_rail consumes, in passenger-car equivalents. Provisional (9.187)."
+    },
+    "A.vehicle.freight_rail.seats": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0,
+      "units": "persons_per_vehicle",
+      "source": "definition",
+      "sweep": null,
+      "description": "Passenger seats of a freight_rail: none, it carries no passenger."
+    },
+    "A.vehicle.freight_rail.standing": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0,
+      "units": "persons_per_vehicle",
+      "source": "definition",
+      "sweep": null,
+      "description": "Standing places in a freight_rail: none, a road vehicle carries seated passengers only."
+    },
+    "A.vehicle.freight_rail.width_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 1.0,
+      "units": "m",
+      "source": "definition",
+      "sweep": null,
+      "description": "Width of a freight_rail, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses."
+    },
+    "A.vehicle.motorbike.length_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 2.0,
+      "units": "m",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).",
+      "description": "Length of a motorbike in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher."
+    },
+    "A.vehicle.motorbike.max_speed_ms": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 25.0,
+      "units": "m/s",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).",
+      "description": "Speed cap of a motorbike, metres per second; each link's own limit applies below it. Provisional (9.187)."
+    },
+    "A.vehicle.motorbike.pce": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0.4,
+      "units": "passenger_car_equivalents",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).",
+      "description": "Road space a motorbike consumes, in passenger-car equivalents. Provisional (9.187)."
+    },
+    "A.vehicle.motorbike.seats": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 1,
+      "units": "persons_per_vehicle",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          1,
+          3
+        ]
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "The permitted passenger seating of the class under the Maharashtra Motor Vehicles Rules as commonly stated (auto-rickshaw 3, taxi and car 4, motorcycle 1 pillion); to be pinned to the transcribed permit source. Inert while B.ride.pairing_enabled is false and the hired fleet counts vehicles, not seats.",
+      "description": "Passenger seats of a motorbike excluding the driver."
+    },
+    "A.vehicle.motorbike.standing": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0,
+      "units": "persons_per_vehicle",
+      "source": "definition",
+      "sweep": null,
+      "description": "Standing places in a motorbike: none, a road vehicle carries seated passengers only."
+    },
+    "A.vehicle.motorbike.width_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 1.0,
+      "units": "m",
+      "source": "definition",
+      "sweep": null,
+      "description": "Width of a motorbike, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses."
+    },
+    "A.vehicle.ride.length_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 5.0,
+      "units": "m",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).",
+      "description": "Length of a ride in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher."
+    },
+    "A.vehicle.ride.max_speed_ms": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 30.0,
+      "units": "m/s",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).",
+      "description": "Speed cap of a ride, metres per second; each link's own limit applies below it. Provisional (9.187)."
+    },
+    "A.vehicle.ride.pce": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 1.0,
+      "units": "passenger_car_equivalents",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).",
+      "description": "Road space a ride consumes, in passenger-car equivalents. Provisional (9.187)."
+    },
+    "A.vehicle.ride.seats": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 4,
+      "units": "persons_per_vehicle",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          1,
+          6
+        ]
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "The permitted passenger seating of the class under the Maharashtra Motor Vehicles Rules as commonly stated (auto-rickshaw 3, taxi and car 4, motorcycle 1 pillion); to be pinned to the transcribed permit source. Inert while B.ride.pairing_enabled is false and the hired fleet counts vehicles, not seats.",
+      "description": "Passenger seats of a ride excluding the driver."
+    },
+    "A.vehicle.ride.standing": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0,
+      "units": "persons_per_vehicle",
+      "source": "definition",
+      "sweep": null,
+      "description": "Standing places in a ride: none, a road vehicle carries seated passengers only."
+    },
+    "A.vehicle.ride.width_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 1.0,
+      "units": "m",
+      "source": "definition",
+      "sweep": null,
+      "description": "Width of a ride, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses."
+    },
+    "A.vehicle.taxi.length_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 5.0,
+      "units": "m",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).",
+      "description": "Length of a taxi in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher."
+    },
+    "A.vehicle.taxi.max_speed_ms": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 30.0,
+      "units": "m/s",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).",
+      "description": "Speed cap of a taxi, metres per second; each link's own limit applies below it. Provisional (9.187)."
+    },
+    "A.vehicle.taxi.pce": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 1.0,
+      "units": "passenger_car_equivalents",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).",
+      "description": "Road space a taxi consumes, in passenger-car equivalents. Provisional (9.187)."
+    },
+    "A.vehicle.taxi.seats": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 4,
+      "units": "persons_per_vehicle",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          1,
+          6
+        ]
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "The permitted passenger seating of the class under the Maharashtra Motor Vehicles Rules as commonly stated (auto-rickshaw 3, taxi and car 4, motorcycle 1 pillion); to be pinned to the transcribed permit source. Inert while B.ride.pairing_enabled is false and the hired fleet counts vehicles, not seats.",
+      "description": "Passenger seats of a taxi excluding the driver."
+    },
+    "A.vehicle.taxi.standing": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0,
+      "units": "persons_per_vehicle",
+      "source": "definition",
+      "sweep": null,
+      "description": "Standing places in a taxi: none, a road vehicle carries seated passengers only."
+    },
+    "A.vehicle.taxi.width_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 1.0,
+      "units": "m",
+      "source": "definition",
+      "sweep": null,
+      "description": "Width of a taxi, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses."
+    },
+    "A.vehicle.truck.length_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 12.0,
+      "units": "m",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).",
+      "description": "Length of a truck in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher."
+    },
+    "A.vehicle.truck.max_speed_ms": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 20.0,
+      "units": "m/s",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).",
+      "description": "Speed cap of a truck, metres per second; each link's own limit applies below it. Provisional (9.187)."
+    },
+    "A.vehicle.truck.pce": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 2.5,
+      "units": "passenger_car_equivalents",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).",
+      "description": "Road space a truck consumes, in passenger-car equivalents. Provisional (9.187)."
+    },
+    "A.vehicle.truck.seats": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0,
+      "units": "persons_per_vehicle",
+      "source": "definition",
+      "sweep": null,
+      "description": "Passenger seats of a truck: none, it carries no passenger."
+    },
+    "A.vehicle.truck.standing": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0,
+      "units": "persons_per_vehicle",
+      "source": "definition",
+      "sweep": null,
+      "description": "Standing places in a truck: none, a road vehicle carries seated passengers only."
+    },
+    "A.vehicle.truck.width_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 1.0,
+      "units": "m",
+      "source": "definition",
+      "sweep": null,
+      "description": "Width of a truck, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses."
+    },
+    "A.vehicle.walk.length_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0.5,
+      "units": "m",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).",
+      "description": "Length of a walk in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher."
+    },
+    "A.vehicle.walk.max_speed_ms": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 1.2,
+      "units": "m/s",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).",
+      "description": "Speed cap of a walk, metres per second; each link's own limit applies below it. Provisional (9.187)."
+    },
+    "A.vehicle.walk.pce": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0.1,
+      "units": "passenger_car_equivalents",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).",
+      "description": "Road space a walk consumes, in passenger-car equivalents. Provisional (9.187)."
+    },
+    "A.vehicle.walk.seats": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0,
+      "units": "persons_per_vehicle",
+      "source": "definition",
+      "sweep": null,
+      "description": "Passenger seats of a walk: none, it carries no passenger."
+    },
+    "A.vehicle.walk.standing": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 0,
+      "units": "persons_per_vehicle",
+      "source": "definition",
+      "sweep": null,
+      "description": "Standing places in a walk: none, a road vehicle carries seated passengers only."
+    },
+    "A.vehicle.walk.width_m": {
+      "status": "active",
+      "decisions_ref": "9.204",
+      "value": 1.0,
+      "units": "m",
+      "source": "definition",
+      "sweep": null,
+      "description": "Width of a walk, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses."
+    }
+  }
+}

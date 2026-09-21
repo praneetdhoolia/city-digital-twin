@@ -2,16 +2,15 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 21 September 2026 (fifty-sixth session) · **Record read through:** §9.203 · **Written against family:** `F35`
+**Updated:** 21 September 2026 (fifty-seventh session) · **Record read through:** §9.204 · **Written against family:** `F35`
 
 ## What is built
 
 - **The contract says who reads a field** (§9.202): `required_fields.json` carries `required_by` — `run` (220: a binding or a read in the harness, Java, resolver, readers, calibrator; every city), builders (239: a city whose manifest names one as a producer), `reference_city` (112: no other city) — derived from `check_hardcoding.key_uses`, beside `required_if_mode`. Newcastle's 571 stay required of Newcastle (PASS 41). A switched-off mechanism's fields are still `run`: the emitter writes them.
-- **A second city is in the repository** (§9.201, §9.202): Mumbai passes the city contract (PASS 25 FAIL 0) on **313** fields — its own plus the framework's run-side keys, moved from a private namespace or adopted from this city and labelled so; 889 tracked files, a 1,293-row manifest, eleven **harvests** (one archive and one provenance per family of public queries); an explicit 1,000-person population, one day type, no targets, its own launch path (#238). Its front page is [`cities/mumbai/docs/README.md`](../../cities/mumbai/docs/README.md); nothing about it is a result.
+- **The second city runs through the harness; its extent and population are built** (§9.201–§9.204, D13): 369 fields, `RUN.scoring.translation = bound_fields`, `scenarios/matsim/BASE/` assembled once; the core is the notified MMR, tiered leaf by leaf (`data/processed/zones/mmr_extent.csv`: 2,538 leaves, 23.54 M persons at 2011); **27.06 M persons / 6.07 M households synthesised for 2026** (`demand/population/`), no plans from them yet; the CTS/CMP daily mode splits transcribed; no targets. See [`cities/mumbai/docs/README.md`](../../cities/mumbai/docs/README.md).
 - **A provenance record is the package's own metadata** (§9.203): `build_manifest.record_for` no longer lets a `provenance_*.json` inherit a neighbour's source, licence and date — **724 CC-BY / 220 ODbL / 15 bespoke**. A glob that labelled the 30 `transitVehicles.xml.gz` rows ODbL was removed before it landed; `normalise_eol.py` walks `data/raw/**/provenance*.json`.
-- **The 30 run-input sets are re-assembled at 250 iterations** (§9.169): `RUN.controler.last_iteration` = 250 (was 1000) — cutoff at 200 plus a 50-iteration tail, on arm 0's post-settle drift of 0.128 pp (`20260912T202242_300it_25pct`); only `lastIteration` changed, pt2matsim NOT re-run.
+- **The 30 run-input sets are re-assembled at 250 iterations** (§9.169): `RUN.controler.last_iteration` = 250 (was 1000), cutoff at 200 plus a 50-iteration tail on arm 0's post-settle drift of 0.128 pp; only `lastIteration` changed, pt2matsim NOT re-run.
 - **A reading is taken through the run's own schedule** (§9.169): `extract_metrics.schedule_path` opens the run's `output/output_transitSchedule.xml.gz` first; the F34 rebuild had overwritten the city copy every run's stops were resolved through.
-- **Hygiene** (§9.169): `build_manifest.py` sorts its walk; the TPA host is in `.claude/settings.json`'s allowlist.
 - **The network is rebuilt with its footpaths and every feed re-mapped once on it** (§9.167, #183): **181,892 → 368,230 links, 84,242 → 153,237 nodes**; remap drift stop-link 100 %, route sequences 82.3 % (§3.5); signals, crossings, dwells, run inputs, the count-station map and the mode targets re-derived. Family **F34**.
 - **A rebuild costs 4 minutes** (§9.167); `RUN.machine.heap_floor_gib` 9.6 → 15.6 on the footpath network (`citysim.SharedModeNetworks`).
 - **MATSim defaults**: `config/schema/matsim_defaults_accepted.json` holds **29** accepted, none deciding the transport system; undeclared **0** (§9.163, §9.164, #155).
@@ -23,7 +22,7 @@
 - **MATSim network and schedules**: one base network (368,230 links, §9.167), E1 patches per scenario by `osm:way:id`; 15 GTFS feeds mapped in ONE pt2matsim build, 0 unmapped stops; day-type and variant schedules filtered, never remapped (§3.5, §11, §9.76, §9.90).
 - **Parking and land use**: `A.parking.price_hr_max` 3.2 AUD/h at the p99 of the job-density ramp, `A.parking.max_stay_min` 120 (§9.31); 7,710 facilities, 4,861 observed capacities (§6); 498 frontage segments, jobs by POI index (§7).
 - **Scenarios**: S0–S6 from `schedules/base2026.zip` by explicit transformation (§3.4, §10); 30 run-input sets by `build_matsim_run_inputs.py`, the config emitted from the registry (§9.38, §15).
-- **Registry**: **571 fields** (`cities/newcastle/docs/reference/CONFIG_REFERENCE.md`; §9.167, §9.179, #198); `check_hardcoding.py --strict` at 0; non-observed fields carry a sweep, `held_fixed` or `derived_from`; three unobtained fields `value: null` (§15); no key carries a currency (§9.140, #62).
+- **Registry**: **574 fields** (`cities/newcastle/docs/reference/CONFIG_REFERENCE.md`; §9.167, §9.179, #198); `check_hardcoding.py --strict` at 0; non-observed fields carry a sweep, `held_fixed` or `derived_from`; three unobtained fields `value: null` (§15); no key carries a currency (§9.140, #62).
 - **Manifest**: 959 files in `data/MANIFEST.csv`, hashed and licensed — **724 CC-BY 4.0, 220 ODbL 1.0 and 15 bespoke** (§9.167) — from declared sources and `derived_licences` globs (§9.141, #117); the resolver refuses a bad `derived_from` or an out-of-sweep value (`tests/check_registry_rules.py`, #124); `check_manifest.py` in CI (§9.79).
 - **The input contract is city-free**: HTS, counts and census read through `cities/newcastle/extract/reader_shapes.py` against `config/schema/reader_shapes.json`, no ABS column named (§9.140, #62).
 - **Two assumptions measured** (§9.140, #63): `E.s0.heavy_rail_detour_factor` 1.037 (sweep 1.0–1.1); `B.external.interaction_rate` 0.0900 = `B.external.commute_share_to_core` 0.1377 × `B.external.employed_share` 0.4575 / the HW split.
@@ -78,6 +77,7 @@
 
 ## History
 
+- §9.204 — Mumbai through the harness; the MMR extent
 - §9.201 — harvests; §9.202 — contract tiers, second city
 - §9.177 — 567 fields; builders read the registry
 - §9.176 — intro fixed: which runs are results is the board's

@@ -2,6 +2,42 @@
   "layer": "A",
   "title": "Provisional hired-vehicle supply",
   "fields": {
+    "A.hired.active_fraction": {
+      "value": 0.5,
+      "units": "fraction_of_registered_stock",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional simultaneous service availability, before explicit cohort scaling. Not measured operating supply.",
+      "decisions_ref": "9.199",
+      "consumers": [
+        "cities/mumbai/build/build_hired_fleet.py"
+      ],
+      "sweep": [
+        0.25,
+        0.75
+      ],
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad development proxy; no fleet calibration or scaling-equivalence claim."
+    },
+    "A.hired.categories": {
+      "value": {
+        "taxi": [
+          "7a",
+          "7b"
+        ],
+        "auto_rickshaw": [
+          "8"
+        ]
+      },
+      "units": "published_category_codes",
+      "source": "definition",
+      "status": "active",
+      "description": "Metered and luxury/tourist cabs form a broad taxi stock proxy; not all tourist cabs provide local hired trips.",
+      "decisions_ref": "9.199",
+      "consumers": [
+        "cities/mumbai/build/build_hired_fleet.py"
+      ]
+    },
     "A.hired.office_labels": {
       "value": [
         "Mumbai (C)",
@@ -24,58 +60,13 @@
         "cities/mumbai/build/build_hired_fleet.py"
       ]
     },
-    "A.hired.categories": {
-      "value": {
-        "taxi": [
-          "7a",
-          "7b"
-        ],
-        "auto_rickshaw": [
-          "8"
-        ]
-      },
-      "units": "published_category_codes",
-      "source": "definition",
-      "status": "active",
-      "description": "Metered and luxury/tourist cabs form a broad taxi stock proxy; not all tourist cabs provide local hired trips.",
-      "decisions_ref": "9.199",
-      "consumers": [
-        "cities/mumbai/build/build_hired_fleet.py"
-      ]
-    },
-    "A.hired.active_fraction": {
-      "value": 0.5,
-      "units": "fraction_of_registered_stock",
-      "source": "assumed",
-      "status": "active",
-      "description": "Provisional simultaneous service availability, before explicit cohort scaling. Not measured operating supply.",
-      "decisions_ref": "9.199",
-      "consumers": [
-        "cities/mumbai/build/build_hired_fleet.py"
-      ],
-      "sweep": [
-        0.25,
-        0.75
-      ],
-      "sweep_role": "uncertainty",
-      "sweep_basis": "Provisional broad development proxy; no fleet calibration or scaling-equivalence claim."
-    },
-    "RUN.smoke.hiredFleet.representation": {
-      "value": "absent",
-      "units": "enum",
-      "source": "definition",
-      "status": "active",
-      "description": "Bounded pooled availability is opt-in; original unlimited vehicle proxies remain the control.",
-      "decisions_ref": "9.199",
-      "matsim_param": "hiredFleet.representation"
-    },
-    "RUN.smoke.hiredFleet.maxWaitSeconds": {
+    "B.hired_fleet.max_wait_s": {
       "value": 900.0,
       "units": "seconds",
       "source": "assumed",
       "status": "active",
-      "description": "Provisional patience limit; a timed-out request aborts and receives native stuck scoring.",
-      "decisions_ref": "9.199",
+      "description": "Provisional patience limit; a timed-out request aborts and receives native stuck scoring. Moved from RUN.smoke.hiredFleet.maxWaitSeconds on 21 September 2026 (9.204): the framework's key for the pooled hired fleet.",
+      "decisions_ref": "9.204",
       "matsim_param": "hiredFleet.maxWaitSeconds",
       "sweep": [
         300,
@@ -84,13 +75,22 @@
       "sweep_role": "uncertainty",
       "sweep_basis": "Provisional broad development proxy; no fleet calibration or scaling-equivalence claim."
     },
-    "RUN.smoke.hiredFleet.turnaroundSeconds": {
+    "B.hired_fleet.representation": {
+      "value": "absent",
+      "units": "enum",
+      "source": "definition",
+      "status": "active",
+      "description": "Whether hired road modes (taxi, auto-rickshaw) are served from a pooled queue of finite vehicles by mode (citysim.HiredFleetQueue, 9.199; `pooled_queue`, the counts in hired_fleet.json beside the scenario network) or not (`absent`, unlimited vehicle proxies - the control). Absent at the base; the run overlays that exercise the fleet declare pooled_queue. Moved from RUN.smoke.hiredFleet.representation on 21 September 2026 (9.204): the framework's key for the pooled hired fleet.",
+      "decisions_ref": "9.204",
+      "matsim_param": "hiredFleet.representation"
+    },
+    "B.hired_fleet.turnaround_s": {
       "value": 300.0,
       "units": "seconds",
       "source": "assumed",
       "status": "active",
-      "description": "Provisional unavailable turnaround after actual arrival. No spatial dispatch or empty road movements.",
-      "decisions_ref": "9.199",
+      "description": "Provisional unavailable turnaround after actual arrival. No spatial dispatch or empty road movements. Moved from RUN.smoke.hiredFleet.turnaroundSeconds on 21 September 2026 (9.204): the framework's key for the pooled hired fleet.",
+      "decisions_ref": "9.204",
       "matsim_param": "hiredFleet.turnaroundSeconds",
       "sweep": [
         0,

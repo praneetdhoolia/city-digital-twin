@@ -20,6 +20,10 @@
       "type": "string",
       "description": "Run directory name; the run identity."
     },
+    "city": {
+      "type": "string",
+      "description": "The city this run executed (city.json id). The results store holds every city's runs (9.204); a record written before the field existed ran the default city."
+    },
     "scenario": {
       "type": "string",
       "description": "Validated against the CITY'S OWN declared intervention.scenarios at write time (src/registry/outputs.py injects the enum from city.json; issue #62 A1) - the portable schema file itself names no city's vocabulary."

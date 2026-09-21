@@ -4,20 +4,20 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. A field that carries a sweep MUST say what the sweep is for (sweep_role: answer, uncertainty or measurement), and an assumed field with a sweep MUST say how the interval was chosen (sweep_basis) - the resolver refuses either omission (#134). Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in cities/<city>/docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. Two narrowings are DERIVED: a field carrying `required_if_mode` is required ONLY of a city that runs that mode (the mode name is in the tool binding), and `required_by` says who reads the field - `run` (every city), a list of framework builders (a city whose manifest names one of them as a producer), or `reference_city` (read only by the reference city's own adapters and builders; required of no other city). A field a switched-off mechanism silences is still `run`: the emitter writes it, so the city declares it.",
-  "n_fields": 571,
+  "n_fields": 574,
   "n_by_layer": {
-    "A": 206,
-    "B": 130,
+    "A": 207,
+    "B": 131,
     "C": 58,
     "CAL": 30,
     "D": 10,
     "E": 26,
-    "RUN": 111
+    "RUN": 112
   },
   "n_by_required_by": {
-    "build": 239,
+    "build": 241,
     "reference_city": 112,
-    "run": 220
+    "run": 221
   },
   "fields": {
     "A.active.footway_width_default": {
@@ -437,6 +437,16 @@
       "type": "string",
       "source_in_reference_city": "assumed",
       "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json",
+      "required_by": "run"
+    },
+    "A.fare.boarding_representation": {
+      "layer": "A",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
       "required_by": "run"
@@ -2269,7 +2279,11 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": "run"
+      "required_by": [
+        "src/build/build_gtfs_extras.py",
+        "src/build/build_matsim_network.py",
+        "src/build/build_matsim_run_inputs.py"
+      ]
     },
     "B.activity.act_duration_min": {
       "layer": "B",
@@ -3025,6 +3039,16 @@
       "required_by": [
         "src/build/build_activity_chains.py"
       ]
+    },
+    "B.hired_fleet.representation": {
+      "layer": "B",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json",
+      "required_by": "run"
     },
     "B.mode.bike_feasible_km": {
       "layer": "B",
@@ -5989,6 +6013,18 @@
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",
       "required_by": "run"
+    },
+    "RUN.scoring.translation": {
+      "layer": "RUN",
+      "units": "policy",
+      "type": "string",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json",
+      "required_by": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
     },
     "RUN.scoring.waiting_utils_per_h": {
       "layer": "RUN",

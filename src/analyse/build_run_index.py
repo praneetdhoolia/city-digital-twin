@@ -83,6 +83,15 @@ def family_of(name, fams, overrides):
     meta = _load(records, '_meta.json') if records else None
     if meta and meta.get('run_kind') == 'behavioural_smoke':
         return None, 'behavioural development case; no calibration family'
+    # The results store holds every city's runs (9.204). A family is one
+    # city's - the reference city's unless it declares `city` - so a run of
+    # another city is assigned only among that city's families, and none
+    # declared means no family, said rather than the reference city's newest.
+    run_city = (meta or {}).get('city') or city.DEFAULT_CITY
+    fams = [(fam_id, fam) for fam_id, fam in fams
+            if (fam.get('city') or city.DEFAULT_CITY) == run_city]
+    if not fams and name not in overrides:
+        return None, 'no comparability family declared for city %s' % run_city
     if name in overrides:
         return overrides[name].get('family'), overrides[name].get('note', '')
     stamp = launch_stamp(name)

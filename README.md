@@ -218,11 +218,14 @@ The licence boundary stays visible: OSM-derived layers are ODbL 1.0
 ## The second city: Mumbai
 
 A broad acquisition and an executable development case, not a twin: the
-framework loads the city, maps its network and combined feed, and runs an
-explicit 1,000-person population for a few iterations on one day type
-(`CITYSIM_CITY=mumbai python run.py --baseline-smoke`). No target has been
-derived and nothing about its ridership is a result. Its state, extent,
-harvests and limits are on [`cities/mumbai/docs/README.md`](cities/mumbai/docs/README.md).
+framework loads the city, maps its network and combined feed, assembles its run
+inputs once and runs an explicit 1,000-person population for a few iterations
+on one day type through the same harness as any city
+(`CITYSIM_CITY=mumbai python run.py --scenario BASE --day WEEKDAY --run-config smoke_two_iterations`).
+Its study extent is the notified Mumbai Metropolitan Region, tiered leaf by
+leaf from the public lists. No target has been derived and nothing about its
+ridership is a result. Its state, extent, harvests and limits are on
+[`cities/mumbai/docs/README.md`](cities/mumbai/docs/README.md).
 
 ---
 
@@ -261,7 +264,7 @@ results/                     run outputs (gitignored): raw/ the budgeted cache, 
 
 cities/mumbai/               THE SECOND CITY - its acquisitions, harvests, provisional registry and development case
 cities/newcastle/            THE FIRST CITY - every Newcastle/NSW/Australia-specific input
-  registry/                  the 571 declared values, with units, provenance, sweeps
+  registry/                  the 574 declared values, with units, provenance, sweeps
   overlays/scenarios|day|runs  per-scenario, per-day-type and per-run value overlays
   extract/                   acquisition adapters: ABS, TfNSW Open Data, Overpass
   build/                     builders that encode THIS city's intervention, corridor and geography

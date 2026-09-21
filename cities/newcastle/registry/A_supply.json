@@ -3189,6 +3189,19 @@
       "status": "active",
       "decisions_ref": "9.183",
       "description": "Whether run-network assembly applies the existing road companion, nonmotor reverse-link and largest-component rules (legacy_companions), or preserves every mapped link permission and direction (preserve_mapped). The latter requires an upstream network with evidenced per-mode permissions and refuses a requested routing mode with no permitted links. It does not infer lawful access, add connectivity, delete disconnected islands or implement conditional restrictions. Scenario lane/capacity patches still apply. This city retains its existing assembly until a reviewed access model replaces it."
+    },
+    "A.fare.boarding_representation": {
+      "value": "absent",
+      "units": "enum",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.204",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py",
+        "src/run/run_matsim.py"
+      ],
+      "description": "Whether pt boardings are charged from a per-route boarding-fare table (citysim.BoardingFareHandler; `table`) assembled beside the scenario network as boarding_fares.csv, or not (`absent`). This city prices pt through the published Opal schedule (A.fare.*, citysim.PtFareChargeHandler, 9.135), so the table is absent; a city whose operators publish flat or stage fares per route declares `table` and the harness refuses a scenario that lost its table (#33)."
     }
   }
 }

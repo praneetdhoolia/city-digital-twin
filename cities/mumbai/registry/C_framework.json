@@ -18,6 +18,20 @@
       },
       "sweep_role": "uncertainty"
     },
+    "C.crowding.penalty_utils_per_h": {
+      "value": 6.0,
+      "units": "utility_per_hour",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional price of additional perceived in-vehicle time due to crowding. Bound directly because RUN.scoring.translation is bound_fields: the harness derives this price from the trip-weighted value of time only under the C1 translation (9.204). Renamed from C.smoke.crowding_price on 21 September 2026.",
+      "decisions_ref": "9.204",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad behavioural baseline; validate with observed choices before calibration.",
+      "matsim_param": "ptCrowding.penaltyUtilsPerHour"
+    },
     "C.crowding.representation": {
       "value": "in_vehicle_time",
       "units": "enum",
@@ -92,11 +106,29 @@
     },
     "C.scoring.activity_minimal_applied_s": {
       "units": "seconds",
+      "source": "derived",
+      "status": "computed",
+      "value": null,
+      "description": "The minimal activity duration written per activity type, derived at launch as in the reference city; 0 s for every type while C.scoring.activity_minimal_duration_s is 0.",
+      "decisions_ref": "9.204",
+      "derived_from": {
+        "fields": [
+          "C.scoring.activity_minimal_duration_s",
+          "C.scoring.activity_typical_duration_s"
+        ],
+        "identity": "min(C.scoring.activity_minimal_duration_s, typical duration) per activity type; the harness supplies it under the derived runtime role"
+      }
+    },
+    "C.scoring.activity_minimal_duration_s": {
+      "units": "seconds",
       "source": "definition",
-      "status": "placeholder",
+      "status": "active",
       "value": 0,
-      "description": "The minimal activity duration written per activity type. Not bound for this city: the baseline applies none, which is the MATSim default (undefined), so no minimalDuration parameter is emitted.",
-      "decisions_ref": "9.202"
+      "description": "The minimal duration an activity must reach before it scores, in seconds. 0 for this city: the baseline applies no minimal duration, which is what MATSim's own undefined default means, written as a zero floor so the harness's min(minimal, typical) identity holds for every activity type.",
+      "decisions_ref": "9.204",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
     },
     "C.scoring.activity_typical_duration_s": {
       "value": {
@@ -282,6 +314,34 @@
         "src/build/build_params.py",
         "src/build/build_matsim_run_inputs.py"
       ]
+    },
+    "C.time_weights.headway_utils_per_min": {
+      "value": 0.05,
+      "units": "utility_per_minute",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional schedule-delay price: half an in-vehicle minute per headway minute. Bound directly because RUN.scoring.translation is bound_fields: the harness derives this price from the trip-weighted value of time only under the C1 translation (9.204). Renamed from C.smoke.headway_price on 21 September 2026.",
+      "decisions_ref": "9.204",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad behavioural baseline; validate with observed choices before calibration.",
+      "matsim_param": "serviceQuality.headwayUtilsPerMin"
+    },
+    "C.time_weights.reliability_utils_per_min": {
+      "value": 0.13,
+      "units": "utility_per_minute",
+      "source": "assumed",
+      "status": "active",
+      "description": "Provisional price of delay standard deviation measured from the preceding iteration. Bound directly because RUN.scoring.translation is bound_fields: the harness derives this price from the trip-weighted value of time only under the C1 translation (9.204). Renamed from C.smoke.reliability_price on 21 September 2026.",
+      "decisions_ref": "9.204",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_role": "uncertainty",
+      "sweep_basis": "Provisional broad behavioural baseline; validate with observed choices before calibration.",
+      "matsim_param": "serviceQuality.reliabilityUtilsPerMin"
     },
     "C.time_weights.service_quality_representation": {
       "value": "headway_and_reliability",

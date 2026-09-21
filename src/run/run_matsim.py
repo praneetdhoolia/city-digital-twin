@@ -427,6 +427,26 @@ def scenario_inputs(cfg, scenario, base, fraction):
                 'first.' % p)
         signal_paths['change_events'] = fwd(p)
 
+    # A boarding-fare table and a hired-fleet derivation (9.204, #238): built
+    # artefacts beside the scenario network, like the parking price table,
+    # each required only under its declared representation and checked here
+    # in 0.1 s so a scenario that lost one is refused before the JVM starts.
+    if cfg.get('A.fare.boarding_representation') == 'table':
+        p = os.path.join(base, 'boarding_fares.csv')
+        if not os.path.exists(p):
+            raise SystemExit(
+                'A.fare.boarding_representation is table but %s is missing. '
+                'Assemble the scenario with its boarding-fare table.' % p)
+        signal_paths['boarding_fares'] = fwd(p)
+    if cfg.get('B.hired_fleet.representation') == 'pooled_queue':
+        p = os.path.join(base, 'hired_fleet.json')
+        if not os.path.exists(p):
+            raise SystemExit(
+                'B.hired_fleet.representation is pooled_queue but %s is '
+                'missing. Assemble the scenario with its hired-fleet '
+                'derivation.' % p)
+        signal_paths['hired_fleet'] = fwd(p)
+
     # Both capacity factors are identities on the sample fraction, and NEITHER
     # is a choice. Checked here, in 0.1 s, rather than in the JVM a second
     # later: MATSim's GlobalConfigGroup.checkConsistency throws when the two
@@ -448,9 +468,10 @@ def emit_run_config(run_dir, cfg, day, fraction, base, src_dir, plans_dst,
     """Emit config.xml and the per-mode vehicle types into `run_dir` from `cfg`,
     and refuse an override the run would record and not execute."""
     build_inputs.check_scoring_order(cfg)
-    scoring = build_inputs.scoring_from_c1(
-        cfg, json.load(open(build_inputs.PARAMS, encoding='utf-8')),
-        purpose_share())
+    # RUN.scoring.translation decides: the reference city's C1 translation
+    # (with the HTS purpose share the assembly reported), or None for a city
+    # whose scoring parameters are bound registry fields (9.204, #238).
+    scoring = build_inputs.c1_scoring(cfg, purpose_share_for(cfg))
     # The per-main-mode vehicle types are REGENERATED from this run's own
     # resolution, not copied from the shipped set: B.freight.pce is a swept
     # field, and a run overlay moving it must move the truck the mobsim
@@ -494,6 +515,14 @@ def emit_run_config(run_dir, cfg, day, fraction, base, src_dir, plans_dst,
 
 
 _PURPOSE_SHARE = {}
+
+
+def purpose_share_for(cfg):
+    """The purpose share the C1 translation averages over, or None when the
+    city's scoring is bound fields and nothing is translated."""
+    if build_inputs.scoring_translation(cfg) == 'bound_fields':
+        return None
+    return purpose_share()
 
 
 def purpose_share():
@@ -799,9 +828,7 @@ def refuse_unrealised_overrides(cfg, scoring, day, paths, emitted):
     for key in keys:
         at_base = _AtBase(cfg, key)
         try:
-            base_scoring = build_inputs.scoring_from_c1(
-                at_base, json.load(open(build_inputs.PARAMS, encoding='utf-8')),
-                purpose_share())
+            base_scoring = build_inputs.c1_scoring(at_base, purpose_share_for(at_base))
             runtime = build_inputs.config_runtime(at_base, base_scoring, day, paths)
             text = param_config.emit('matsim', at_base, runtime)
             with tempfile.TemporaryDirectory() as td:
@@ -1923,7 +1950,7 @@ def close_out(run_dir, completion, rc, wall_s, reached_iteration=None,
         # flight, the digest said 100, and the newest readable milestone was
         # 90. The record said 100 until this used the ENDS markers instead.
         reached_iteration = max(per) if per else _last_ended_iteration(run_dir)
-    doc = dict(name=name,
+    doc = dict(name=name, city=meta.get('city') or city.descriptor()['id'],
                scenario=meta.get('scenario'), day=meta.get('day'),
                fraction=meta.get('fraction'), iterations=meta.get('iterations'),
                threads=meta.get('threads'), xmx=meta.get('xmx'),
@@ -1951,12 +1978,6 @@ def close_out(run_dir, completion, rc, wall_s, reached_iteration=None,
         print('run record could not be written for %s: %s' % (name, e),
               flush=True)
         return None
-    if doc.get('run_kind') == 'behavioural_smoke':
-        # Development cities need not have calibration targets, relaxation
-        # rules or a storage budget yet. Keep their native completion record;
-        # the baseline reader reports execution without fitting it to targets.
-        results_store.mirror(run_dir)
-        return doc
     # `_summary.json` against its declared schema and `SUMMARY.md` for a person.
     # It reports the state of the RUN and refuses to report a finding: no mode
     # share, no fit statistic, no validation target.
@@ -2263,7 +2284,8 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
     # log. It is not the result gate: `_run.json`, written only on success,
     # stays that.
     meta = dict(
-        status='running', scenario=scenario, day=day, fraction=fraction,
+        status='running', city=city.descriptor()['id'],
+        scenario=scenario, day=day, fraction=fraction,
         sample_pct=float('%g' % (fraction * 100)), iterations=iterations,
         seed=seed, threads=threads, xmx=xmx, overrides=overrides or {},
         controler_sha256=controler, inputs_sha256=inputs,
@@ -2421,7 +2443,8 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
 
     per = iteration_times(log)
     steady = sorted(v for k, v in per.items() if k > 0)
-    doc = dict(name=name, scenario=scenario, day=day, fraction=fraction,
+    doc = dict(name=name, city=city.descriptor()['id'],
+               scenario=scenario, day=day, fraction=fraction,
                iterations=iterations, threads=threads, xmx=xmx, seed=seed,
                overrides=overrides,
                # The RAW `--set` channel above and the REGISTRY `--config-set`

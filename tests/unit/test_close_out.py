@@ -102,19 +102,21 @@ def test_a_gate_stop_is_closed_out_with_a_record(run_dir):
     assert written(run_dir)['completion'] == 'stopped_at_gate'
 
 
-def test_development_case_records_completion_without_calibration_readers(run_dir, monkeypatch):
-    mirrored = []
-    def refuse(*args, **kwargs):
-        pytest.fail('A development record must not invoke calibrated-city readers')
-    monkeypatch.setattr(run_matsim.results_store, 'mirror', mirrored.append)
-    monkeypatch.setattr(run_matsim.results_store, 'process', refuse)
-    monkeypatch.setattr(run_matsim.summarise_run, 'summarise', refuse)
+def test_a_second_city_closes_out_through_the_one_path(run_dir, monkeypatch):
+    """Until 9.204 a `behavioural_smoke` record skipped the summary and the
+    store's processing; the second city now runs through the harness and its
+    record closes out exactly as every run does - the readers say what a city
+    without targets lacks rather than being bypassed."""
+    seen = []
+    monkeypatch.setattr(run_matsim.results_store, 'mirror', lambda *a, **k: seen.append('mirror'))
+    monkeypatch.setattr(run_matsim.results_store, 'process', lambda *a, **k: seen.append('process'))
+    monkeypatch.setattr(run_matsim.summarise_run, 'summarise', lambda *a, **k: seen.append('summarise'))
     doc = run_matsim.close_out(str(run_dir), run_matsim.RAN_TO_LAST,
-        rc=0, wall_s=1.0, reached_iteration=1,
-        extra={'run_kind': 'behavioural_smoke', 'calibrated': False})
+                               rc=0, wall_s=1.0, reached_iteration=1,
+                               extra={'run_kind': 'behavioural_smoke', 'calibrated': False})
     assert doc['completion'] == run_matsim.RAN_TO_LAST
-    assert doc['calibrated'] is False
-    assert mirrored == [str(run_dir)]
+    assert 'summarise' in seen and 'process' in seen
+    assert doc['city']
 
 
 def test_the_record_states_the_LAST_ENDED_iteration_never_the_one_in_flight(run_dir):

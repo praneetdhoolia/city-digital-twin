@@ -2524,6 +2524,20 @@
         "src/build/build_matsim_plans.py"
       ],
       "description": "The scope over which B.activity.escort_excludes_ride applies. subtour denies ride only on the escorting tours themselves and leaves the person's other tours free; day denies it across the whole day plan, which is what the field did before 9.143 and what that sweep member reproduces exactly. Consumed by build_matsim_plans.py."
+    },
+    "B.hired_fleet.representation": {
+      "value": "absent",
+      "units": "enum",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.204",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py",
+        "src/run/run_matsim.py"
+      ],
+      "matsim_param": "hiredFleet.representation",
+      "description": "Whether hired road modes (a taxi, an auto-rickshaw) are served from a pooled queue of finite vehicles by mode (citysim.HiredFleetQueue, 9.199; `pooled_queue`, with the counts by mode in hired_fleet.json beside the scenario network) or not (`absent`). This city represents its taxi supply as a finite fleet through A.taxi.fleet_representation and citysim.TaxiFleetEngine instead, so the pooled queue is absent; the two engines are not run together."
     }
   }
 }

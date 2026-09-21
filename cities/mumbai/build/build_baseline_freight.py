@@ -11,6 +11,7 @@ import pyogrio
 
 import city
 import registry
+import subpopulations
 from build.extract_osm_network import fingerprint
 from build.mode_connectivity import largest_strong_component
 
@@ -104,7 +105,7 @@ def main():
             identity = f'background_{mode}_{index}'
             person = ET.SubElement(population, 'person', id=identity)
             attributes = ET.SubElement(person, 'attributes')
-            for key, value in [('subpopulation', 'freight'), ('lockedMode', mode), ('permittedModes', mode)]:
+            for key, value in [('subpopulation', subpopulations.FREIGHT), ('lockedMode', mode), ('permittedModes', mode)]:
                 ET.SubElement(attributes, 'attribute', name=key, attrib={'class': 'java.lang.String'}).text = value
             plan = ET.SubElement(person, 'plan', selected='yes')
             ET.SubElement(plan, 'activity', type='freight_start', link=origin['link'],

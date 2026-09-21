@@ -1,32 +1,34 @@
 {
   "schema_version": 1,
-  "updated": "2026-09-19",
-  "scope": "Mumbai Metropolitan Region provisionally, pending user geographical preference; retain cross-boundary travel.",
-  "completion": "Not complete. Native Mumbai passenger/freight cases, regional transit, fare-aware routing and broader daily activities have executed. Daily timing failures are measured; a nine-iteration learning case completed. A further nine-iteration case with point-and-area destinations also completed; supply throughput and daily scheduling remain unresolved. Representative current demand, complete ticket rules, fleet realism, scaling and calibration remain unverified. Initial eligible-alternative evaluation also completed with all retained plans scored; this does not establish convergence. A native hired-supply pool case also completed with experienced waiting and refusals; spatial dispatch, empty movements and refusal fallback remain incomplete.",
+  "updated": "2026-09-21",
+  "scope": "The notified Mumbai Metropolitan Region as the core and the four-district envelope as the external tier (decision D13, 21 September 2026; data/processed/zones/mmr_extent.csv); cross-boundary travel retained.",
+  "completion": "Not complete. The city runs through the framework harness (9.204): the run inputs are assembled once by build_baseline_run_inputs.py and the 20260921T182708_2it_100pct case ran to its last iteration under the harness's gates, watchers and record; the study extent is derived leaf by leaf from the public MMR lists. Not complete. Native Mumbai passenger/freight cases, regional transit, fare-aware routing and broader daily activities have executed. Daily timing failures are measured; a nine-iteration learning case completed. A further nine-iteration case with point-and-area destinations also completed; supply throughput and daily scheduling remain unresolved. Representative current demand, complete ticket rules, fleet realism, scaling and calibration remain unverified. Initial eligible-alternative evaluation also completed with all retained plans scored; this does not establish convergence. A native hired-supply pool case also completed with experienced waiting and refusals; spatial dispatch, empty movements and refusal fallback remain incomplete.",
   "requirements": [
     {
       "id": "extent",
       "title": "Boundary and cross-boundary connectors",
       "required": "Official 2019 MMR notification, cadastral or administrative polygons and station catchments",
       "source_ids": [
-        "mmr_boundary_2019",
-        "mmr_plan_2016_36",
         "iitb_boundary_mumbai_city",
         "iitb_boundary_mumbai_suburban",
-        "wri_mmr_service",
-        "wri_mmr_layer_1_features",
-        "wri_mmr_layer_5_features",
-        "wri_mmr_layer_6_features",
-        "mmr_ena_spa_notification_20240709",
+        "maharashtra_scheduled_areas_order_1985",
+        "maharashtra_tribal_administration_2017_18",
+        "mmr_boundary_2019",
         "mmr_ena_palghar_plan_notice_20250918",
         "mmr_ena_raigad_plan_notice_20250918",
-        "maharashtra_scheduled_areas_order_1985",
+        "mmr_ena_spa_notification_20240709",
+        "mmr_plan_2016_36",
         "palghar_zp_administrative_setup",
-        "maharashtra_tribal_administration_2017_18"
+        "wri_mmr_layer_1_features",
+        "wri_mmr_layer_2_features",
+        "wri_mmr_layer_3_features",
+        "wri_mmr_layer_5_features",
+        "wri_mmr_layer_6_features",
+        "wri_mmr_service"
       ],
       "method": "Resolve notified areas to georeferenced boundaries; reconcile 2011 districts, 2014 Palghar split and later municipality changes. Retain external through traffic.",
       "status": "incomplete",
-      "remaining": "Legal extent and public GIS acquired; public GIS omits Palghar and has ambiguous duplicate census codes. The extended-area English village list differs from a later notice by one Palghar village. Historical Scheduled Areas names have been transcribed and compared with census and planning names: candidates overlap the 2024 planning list, so no exclusion is inferred from name matching. Four scan readings remain uncertain. Historical/current village identities, legal scope and polygons still require reconciliation.",
+      "remaining": "The MMR core is derived leaf by leaf (build_mmr_extent.py, 9.204): 2,538 of 4,813 census leaves and 23,536,582 persons at the 2011 census are core by Greater Mumbai membership, the public MMR GIS municipalities and villages (by 2011 code) and the 2024 extended-area SPA village list matched by name within taluka; 2,275 leaves (5,200,278 persons) are the external tier. Remaining: four notification villages match no census leaf (candidates listed, not guessed); 1,053 leaves have no source polygon (the municipal corporations' wards among them - membership by town name does not need one, a location does); the 2019 extension notification is a scanned PDF whose village list is not transcribed; the census village directory is unobtained.",
       "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
     },
     {
@@ -152,7 +154,7 @@
       ],
       "method": "Acquire all intersecting districts; reconcile current boundaries; explicitly model post-2011 growth from independent controls.",
       "status": "incomplete",
-      "remaining": "Historical census controls and official state projections are extracted. IIPS district projections by age and sex for 2012-2031 are acquired and extracted for all 35 Maharashtra districts on 2011 boundaries; the four acquired census district baselines match. State and district arithmetic checks are rounding-compatible. Municipal estimates and IIPS totals differ and remain separate. Current small-area allocation, Palghar/Thane and municipal boundary crosswalks, household joint distributions and daily work patterns remain unresolved. The baseline synthesises representative people from historical marginals, not current joint households.",
+      "remaining": "The household population of the core extent is synthesised for the 2026 base year (build_population.py, 9.204): 27,057,132 persons in 6,068,786 households from the 2011 leaf controls, the HL-14 household sizes and vehicle possession per ward/village, the district single-year ages (C-13), work status (B-01) and attendance (C-12), projected by the IIPS district factors; sex, the 0-6 share and the worker counts hold at the leaf. Remaining: licence holding and income are declared assumptions (no published person-level source); tertiary attendance 20-24 is unobtained; vehicle possession is drawn independently per household (no joint table); the external tier is not synthesised; no plans, tours or destinations are built from this population, and no sample of it has been shown to preserve behaviour (scaling.md). Historical census controls and official state projections are extracted. IIPS district projections by age and sex for 2012-2031 are acquired and extracted for all 35 Maharashtra districts on 2011 boundaries; the four acquired census district baselines match. State and district arithmetic checks are rounding-compatible. Municipal estimates and IIPS totals differ and remain separate. Current small-area allocation, Palghar/Thane and municipal boundary crosswalks, household joint distributions and daily work patterns remain unresolved. The baseline synthesises representative people from historical marginals, not current joint households.",
       "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
     },
     {
@@ -594,7 +596,7 @@
       "source_ids": [],
       "method": "Replace remaining fixed-mode and country-specific assumptions through contracts; complete a run and independent all-mode validation.",
       "status": "incomplete",
-      "remaining": "City-owned network, schedules, representative-person demand, registry and executed native cases now exist. Portable framework mechanisms run both city packages; the full Mumbai schema/package, current supply and demand, convergence, scaling and independent all-mode validation remain incomplete.",
+      "remaining": "The launch path is the harness (9.204): run.py --scenario BASE --day WEEKDAY on the assembled scenarios/matsim/BASE set, the scoring translation declared bound_fields, the vehicle types declared per mode, the pooled hired fleet and the boarding-fare table entering under their own gates; the city's own launcher is deleted. City-owned network, schedules, representative-person demand, registry and executed native cases now exist. Portable framework mechanisms run both city packages; the full Mumbai schema/package, current supply and demand, convergence, scaling and independent all-mode validation remain incomplete.",
       "acceptance": "Observed or reproducibly derived inputs with uncertainty, implemented physical representation where relevant, and independent validation appropriate to the stated universe."
     },
     {

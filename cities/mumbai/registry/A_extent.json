@@ -1,0 +1,49 @@
+{
+  "layer": "A",
+  "title": "The study extent: the notified MMR reconciled to the census leaves (D13, 9.204)",
+  "fields": {
+    "A.extent.municipal_name_aliases": {
+      "value": {
+        "Kalyan-Dombiwali": "Kalyan-Dombivli",
+        "Bhiwandi": "Bhiwandi Nizampur",
+        "Vasai-Virar": "Vasai-Virar City"
+      },
+      "units": "name_map",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.204",
+      "consumers": [
+        "cities/mumbai/extract/build_mmr_extent.py"
+      ],
+      "description": "Spelling reconciliation between the municipality names of the public MMR GIS (WRI layers 2 and 3) and the town names of the Census 2011 ward rows, for the three that differ after case, punctuation and type suffixes are removed: the GIS writes Dombiwali where the census writes Dombivli, Bhiwandi where the census writes Bhiwandi Nizampur, and Vasai-Virar where the census writes Vasai-Virar City. A name reconciliation, not a modelling value; every match is listed in mmr_extent_audit.json."
+    },
+    "A.extent.village_name_aliases": {
+      "value": {
+        "alibag/barghar": "borghar",
+        "alibag/durgadarva": "durgadarya",
+        "alibag/fanaspur": "fanasapur",
+        "alibag/gavalikatha": "gavalikotha",
+        "alibag/kural": "kurul",
+        "alibag/pahnaspurtarfumate": "phanaspurtarfumate",
+        "alibag/tahvalitarfumate": "talavalitarfumate",
+        "palghar/khadakwane": "khadkawane",
+        "palghar/kumbhavli": "kumbhavali",
+        "palghar/umbarpadananadade": "umbarpadanandade",
+        "pen/aghal": "aghai",
+        "pen/dovli": "dolvi",
+        "pen/karambelighattishi": "karambelichattishi",
+        "pen/khardhambi": "khardhombi"
+      },
+      "units": "name_map",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.204",
+      "consumers": [
+        "cities/mumbai/extract/build_mmr_extent.py"
+      ],
+      "description": "Transliteration reconciliation between the village names of the MMR extended-notified-area SPA notification (9 July 2024) and the Census 2011 village names, keyed taluka/notification-name (normalised) -> census name (normalised). Declared only where the notification name has exactly ONE census village within its taluka at a difflib similarity of 0.8 or better (mmr_extent_audit.json lists the candidates for every unmatched name); the four names with two or more candidates (Alibag Chincholi; Palghar Kardai, Paragaon, Sawari) stay unmatched until the village directory is acquired (census_maharashtra_villages, unobtained). A name reconciliation, not a modelling value."
+    }
+  }
+}

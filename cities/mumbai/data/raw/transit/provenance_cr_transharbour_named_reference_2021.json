@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/cr_transharbour_named_reference_2021_49c53e7d4c42409c.pdf",
+      "url": "https://cr.indianrailways.gov.in/cris/uploads/files/1640069704271-5.%20Trans-Harbour.pdf",
+      "final_url": "https://cr.indianrailways.gov.in/cris/uploads/files/1640069704271-5.%20Trans-Harbour.pdf",
+      "content_type": "application/pdf",
+      "source": "Central Railway archived Trans-Harbour timetable with station names",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "retrieved": "2026-09-21T09:24:40.155115+00:00",
+      "sha256": "49c53e7d4c42409c05ac661fcb1d9d699eb067b2cf577f40152825279a552b91",
+      "bytes": 111567,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical named-station timetable for identity and corridor crosswalks. URL timestamp does not establish an effective operating date; not a current schedule.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}
