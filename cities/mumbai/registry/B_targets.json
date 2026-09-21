@@ -1,0 +1,81 @@
+{
+  "layer": "B",
+  "title": "The first per-mode targets from the published splits (9.205)",
+  "fields": {
+    "B.targets.published_split_area": {
+      "value": "Mumbai Metropolitan Region",
+      "units": "area_name",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.205",
+      "consumers": [
+        "cities/mumbai/build/build_mode_targets.py"
+      ],
+      "description": "Which published daily mode split (data/processed/observed/published_mode_splits.csv) the targets derive from: the MMR, the study core (D13), as the CTS Updation surveyed it."
+    },
+    "B.targets.published_split_year": {
+      "value": 2017,
+      "units": "year",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.205",
+      "consumers": [
+        "cities/mumbai/build/build_mode_targets.py"
+      ],
+      "description": "The survey year of the published split used: 2017, the CTS Updation household survey - the newest all-mode observation of the MMR the package holds."
+    },
+    "B.targets.active_share_sweep_pp": {
+      "value": 3.0,
+      "units": "percentage_points",
+      "source": "assumed",
+      "status": "active",
+      "decisions_ref": "9.205",
+      "sweep": {
+        "interval": [
+          1.0,
+          5.0
+        ],
+        "basis": "the CTS prints the active share as \"about 47 %\"; the sweep on every derived target carries the rounding of that statement, and its own width is the reading of \"about\""
+      },
+      "sweep_role": "uncertainty",
+      "consumers": [
+        "cities/mumbai/build/build_mode_targets.py"
+      ],
+      "description": "How far the printed \"about 47 %\" active share may sit from 47 in either direction; propagated to every target derived from the motorised split."
+    },
+    "B.targets.ferry_port_groups": {
+      "value": [
+        "Bandra",
+        "Mora"
+      ],
+      "units": "port_group_names",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.205",
+      "consumers": [
+        "cities/mumbai/build/build_mode_targets.py"
+      ],
+      "description": "The Maharashtra Maritime Board port groups whose routes lie in the MMR (Bandra: Versova-Madh and the Mumbai creek routes; Mora: the harbour routes to Uran and Elephanta); Rajpuri, Ratnagiri and Vengurla are outside the study extent."
+    },
+    "B.targets.goods_vehicle_traffic_share_pct": {
+      "value": 11.5,
+      "units": "percent_of_vehicles",
+      "source": "observed",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.205",
+      "held_fixed": {
+        "rule": "a published screenline observation (CMP for Greater Mumbai executive summary, traffic composition), never varied",
+        "decisions_ref": "9.205",
+        "departure_requires": "a newer classified count at the screenlines"
+      },
+      "consumers": [
+        "cities/mumbai/build/build_mode_targets.py"
+      ],
+      "description": "Goods vehicles as a share of screenline traffic, the CMP for Greater Mumbai's traffic composition (buses 4.4 %, goods vehicles 11.5 %): the level the truck row prints beside the modelled network-wide road-vehicle share."
+    }
+  }
+}

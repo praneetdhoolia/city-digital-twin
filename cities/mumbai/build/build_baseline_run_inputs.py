@@ -67,10 +67,11 @@ OUTPUT_INPUTS = {
         'networks/matsim/schedules/baseline_regional/network.xml.gz',
         'networks/matsim/schedules/baseline_regional/transitSchedule.xml.gz',
         'networks/matsim/schedules/baseline_regional/transitVehicles.xml.gz',
-        'demand/baseline/plans_with_choices.xml.gz',
+        'demand/baseline/plans_core_sample.xml.gz',
         'params/baseline/boarding_fares.csv',
         'params/baseline/hired_fleet.json'],
-    'demand/plans/matsim/population_WEEKDAY.xml.gz': ['demand/baseline/plans_with_choices.xml.gz'],
+    'demand/plans/matsim/population_WEEKDAY.xml.gz': ['demand/baseline/plans_core_sample.xml.gz'],
+    'demand/plans/matsim/_plans_report.json': ['demand/baseline/_plans_core_sample_report.json'],
 }
 
 
@@ -211,6 +212,16 @@ def main():
         tables['hired_fleet'] = copy_bytes(inputs['hired_fleet'], base / 'hired_fleet.json')
     plans_dst = PLANS / ('population_%s.xml.gz' % DAY)
     copy_bytes(inputs['plans'], plans_dst)
+    # the plans report the launcher reads for the build fraction (9.205): the
+    # plans builder's own report, or a report saying everyone is in the file
+    plans_report = Path(str(inputs['plans']).replace('plans_core_sample.xml.gz', '_plans_core_sample_report.json'))
+    if plans_report.is_file():
+        (PLANS / '_plans_report.json').write_text(plans_report.read_text(encoding='utf-8'),
+                                                  encoding='utf-8', newline='\n')
+    else:
+        (PLANS / '_plans_report.json').write_text(
+            json.dumps(dict(build_fraction=1.0, note='an explicit population: everyone is in the file'), indent=2) + '\n',
+            encoding='utf-8', newline='\n')
 
     # The shipped emission, through the same emitter and closure test the
     # harness uses per run; the paths are relative to the day directory.

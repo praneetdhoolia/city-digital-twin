@@ -1716,11 +1716,20 @@ def runtime_representation_entries(rc):
                 for mode, count in vehicles.items()):
             raise SystemExit('%s: hired fleet requires nonnegative integer counts '
                              'by mode' % rc.paths['hired_fleet'])
+        # A derivation for the WHOLE population is scaled to the run's sample,
+        # as the road capacities are (9.205); one for an explicit population
+        # (the development case) is taken as written.
+        if fleet.get('scale_with_sample_fraction'):
+            vehicles = {mode: max(1, int(round(count * rc.paths['fraction'])))
+                        for mode, count in vehicles.items()}
+            note = ('vehicles by mode from the city fleet derivation beside the scenario '
+                    '(hired_fleet.json) x RUN.sample.fraction, at least one a mode')
+        else:
+            note = ('vehicles by mode from the hashed city fleet derivation kept beside '
+                    'the scenario (hired_fleet.json)')
         rc.runtime['hiredFleet.vehiclesByMode'] = (
             ','.join('%s:%d' % (mode, count) for mode, count in sorted(vehicles.items())),
-            'derived',
-            'vehicles by mode from the hashed city fleet derivation kept beside '
-            'the scenario (hired_fleet.json)')
+            'derived', note)
     # Income-dependent money sensitivity (9.138, #108): the exponent and the
     # representation gate arrive by their declared matsim_param bindings; the
     # exclusion list is the demand builder's own non-resident subpopulation

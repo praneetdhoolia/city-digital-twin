@@ -1,0 +1,76 @@
+{
+  "source": "synthetic_plans_from_census_population_and_declared_mechanisms",
+  "build_fraction": 0.05,
+  "seed": 20260810,
+  "sample_unit": "household",
+  "households": 303384,
+  "households_in_population": 6068786,
+  "persons": 1352144,
+  "persons_in_population": 27057132,
+  "leaves": 2459,
+  "home_placement": {
+    "leaf_polygon": 1566,
+    "taluka_polygon": 299,
+    "municipality_polygon": 594
+  },
+  "persons_by_tour_count": {
+    "0": 394103,
+    "1": 659601,
+    "2": 253190,
+    "3": 45250
+  },
+  "initial_mode": {
+    "pt": 391738,
+    "taxi": 229114,
+    "walk": 394271,
+    "bike": 37523,
+    "auto_rickshaw": 228997,
+    "motorbike": 29594,
+    "ride": 27880,
+    "car": 13027
+  },
+  "work_distance_band_drawn": {
+    "2-5": 114759,
+    "51+": 20136,
+    "21-30": 35770,
+    "11-20": 54741,
+    "6-10": 84139,
+    "31-50": 38624,
+    "0-1": 80451
+  },
+  "work_band_without_candidate_redirected": {
+    "0-1": 12886,
+    "2-5": 1509,
+    "6-10": 33
+  },
+  "freight": "none: the port-to-gate proxy is not where goods traffic occurs; requirement open",
+  "inputs_sha256": {
+    "demand/population/B1_synthetic_population.csv": "fd686027971b9ca23f3da63d4e67e168b67f21bc16a1d9cef45ca2138bf957fe",
+    "demand/population/B1_households.csv": "de3c5a6fbd70d0bcf6a97ee62a932efc9a4f5372d99235102417422476de7912",
+    "data/processed/zones/mmr_extent.csv": "ca519a78985612c122962df1b0e085a6243c24ca1ed1200a117a02107e29dc7b",
+    "data/processed/geospatial/census_2011_geographies.gpkg": "bed805bb29e5642f2dfe01605721297bb07ff358cf40df1bba9e2ac8f6648b5f",
+    "data/processed/geospatial/baseline_activity_locations.csv": "3c5b62734562c1a6da0b07886dbf82e81d8e7cd8b9a118150c92cd0cb45c2c18",
+    "data/processed/observed/census_2011_b28_commuting.csv": "2a6d4efba74a86d175d2926a0ae2b82ba4838a5d25caefdbabe3b8f521e7c077",
+    "data/processed/observed/state_time_use_controls.csv": "f18f6ebf9ded7275e417397b678a266884f41b78f3c05608d77bd7c63d407512",
+    "registry/B_population.json": "c8158fc54a500b4574f5438bf878403f75a58f08f9d81660b1cb0f0db013a751",
+    "registry/B_baseline_demand.json": "0c85257bfa8359e07986f6a78e0f3562cb018d754eef9922732757f02c5d3891",
+    "registry/B_baseline_activities.json": "e4916057e85d16a75a718ec3caaaf2fc606424a943902e1ae2d7b190ff8496c8"
+  },
+  "sources": [
+    {
+      "source_id": "wri_mmr_layer_3_features",
+      "sha256": "fc9bbb28367191de2ed2604780f914fc081e12dbeacbde636f2e7f74a1973a3c"
+    },
+    {
+      "source_id": "wri_mmr_layer_2_features",
+      "sha256": "4bb278c6ee2e68c86202f2ae0bafd2216f8e9da34f8d1347aabc98237f525c41"
+    }
+  ],
+  "limitations": [
+    "Work distances are the district B-28 residence-to-work bands (2011, other workers); a workplace is an OSM work candidate uniform within the band, measured from the leaf's representative point.",
+    "Education and optional destinations follow the declared gravity scales; the time-use benchmarks are state figures (docs/requirements.json: demand).",
+    "Homes in a municipal ward without a polygon are uniform within the municipality; in a village without one, within its taluka.",
+    "One selected plan with one drawn seed mode; no initial alternatives (the run's mode choice innovates).",
+    "No freight, no external tier, no escort or joint travel, no observed trip diary."
+  ]
+}

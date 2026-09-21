@@ -56,6 +56,18 @@
       ],
       "description": "The share of persons aged 20-24 attending an educational institution. Unobtained: null, and the synthesiser makes nobody in that age range a student, which the report says.",
       "sweep_role": "uncertainty"
+    },
+    "B.population.plans_build_fraction": {
+      "value": 0.05,
+      "units": "fraction",
+      "source": "definition",
+      "status": "active",
+      "decisions_ref": "9.205",
+      "sweep": null,
+      "consumers": [
+        "cities/mumbai/build/build_plans.py"
+      ],
+      "description": "The share of core households whose plans are written (build_plans.py), by the framework's nested inclusion hash (sample_population.keep on the household id and B.seed.master), so a run at RUN.sample.fraction f at or below it keeps exactly the households a file of everyone would give and the capacity factors stay identities on f. A definition of what the file holds, not a modelling value: the plans report carries it and the launcher refuses a run fraction above the report's. 0.05 of 27.06 M persons is 1.35 M agents, the largest plans file the machine reads at launch in minutes."
     }
   }
 }

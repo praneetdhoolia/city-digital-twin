@@ -1,18 +1,17 @@
 {
-  "source": "derived_provisional_stock_and_historical_population_proxy",
+  "source": "derived_provisional_stock_proxy_for_the_whole_population",
   "vehicles_by_mode": {
-    "auto_rickshaw": 17,
-    "taxi": 8
+    "auto_rickshaw": 297664,
+    "taxi": 143224
   },
+  "scale_with_sample_fraction": true,
+  "population_basis": "the registration stock serves the region's whole population; the emitter scales the counts by RUN.sample.fraction at launch (9.205)",
   "active_fraction_assumed": 0.5,
-  "explicit_residents_count": 1000,
-  "historical_persons_count": 17158597,
-  "cohort_to_historical_population_ratio": 5.8279823227971376e-05,
   "modes": {
     "auto_rickshaw": {
       "registered_stock_vehicles_count": 595327,
-      "unrounded_simulated_vehicles_count": 17.347776161419258,
-      "rounding_error_vehicles_count": -0.34777616141925805,
+      "unrounded_simulated_vehicles_count": 297663.5,
+      "rounding_error_vehicles_count": 0.5,
       "observations": [
         {
           "office": "Mumbai (C)",
@@ -78,8 +77,8 @@
     },
     "taxi": {
       "registered_stock_vehicles_count": 286448,
-      "unrounded_simulated_vehicles_count": 8.347069402002973,
-      "rounding_error_vehicles_count": -0.34706940200297254,
+      "unrounded_simulated_vehicles_count": 143224.0,
+      "rounding_error_vehicles_count": 0.0,
       "observations": [
         {
           "office": "Mumbai (C)",
@@ -206,15 +205,14 @@
   },
   "input_sha256": {
     "registry/A_hired_fleet.json": "c164180db0ca612524f3edc3d8a1e4426c07cdf03370e014bb82b4e56b1a9baf",
-    "data/processed/observed/rto_2025_vehicle_categories.csv": "aff1ce03108631f8934e508bfc2d1433928bd270600b3d25483d53ea8d1f2710",
-    "data/processed/acquisition/baseline_population.json": "abe99045a8c69227412bb35fc03281768e0ac6d1ba0cd095b04d9f5ccc3ee8f7"
+    "data/processed/observed/rto_2025_vehicle_categories.csv": "aff1ce03108631f8934e508bfc2d1433928bd270600b3d25483d53ea8d1f2710"
   },
   "limitations": [
     "Registration stock is not observed simultaneous operating supply.",
     "RTO offices and historical census geography are not reconciled catchments; dates differ.",
     "Tourist/luxury cabs are grouped with metered taxis as a provisional local-supply proxy.",
     "Integer rounding may remove rare fleets; zero is preserved, never forced to one.",
-    "Cohort scaling is independent of road capacity but is not validated physical scaling.",
+    "The stock's office catchments are not reconciled to the core extent; the whole stock serves the whole population.",
     "Pool has no spatial dispatch, service shifts or empty road movements."
   ]
 }

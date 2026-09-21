@@ -163,3 +163,32 @@ def test_the_launcher_of_the_second_city_is_gone():
     repo = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
     assert not os.path.exists(os.path.join(repo, 'src', 'run', 'baseline_smoke.py'))
     assert '--baseline-smoke' not in open(os.path.join(repo, 'run.py'), encoding='utf-8').read()
+
+
+def test_a_run_fraction_above_the_plans_build_fraction_is_refused(tmp_path, monkeypatch):
+    """A city too large for a file of everyone writes the households the
+    sampler's nested hash keeps at a build fraction (9.205); the launcher
+    refuses a run above it and passes one at or below it, and a report
+    without the field (the reference city's) means everyone is there."""
+    import run_matsim
+    monkeypatch.setattr(run_matsim, 'PLANS', str(tmp_path))
+    assert run_matsim.plans_build_fraction() == 1.0
+    (tmp_path / '_plans_report.json').write_text(json.dumps({'build_fraction': 0.05}), encoding='utf-8')
+    assert run_matsim.plans_build_fraction() == 0.05
+    run_matsim.refuse_fraction_above_build(0.05)
+    run_matsim.refuse_fraction_above_build(0.001)
+    with pytest.raises(SystemExit):
+        run_matsim.refuse_fraction_above_build(0.25)
+
+
+def test_a_whole_population_fleet_scales_with_the_run_fraction(tmp_path):
+    cfg = FakeCfg(dict(BASE, **{'RUN.scoring.translation': 'bound_fields',
+                                'B.hired_fleet.representation': 'pooled_queue'}))
+    fleet = tmp_path / 'hired_fleet.json'
+    fleet.write_text(json.dumps({'vehicles_by_mode': {'taxi': 143224, 'auto_rickshaw': 297664},
+                                 'scale_with_sample_fraction': True}), encoding='utf-8')
+    runtime = bi.config_runtime(cfg, None, 'WEEKDAY', dict(PATHS, hired_fleet=str(fleet), fraction=0.001))
+    assert runtime['hiredFleet.vehiclesByMode'][0] == 'auto_rickshaw:298,taxi:143'
+    fleet.write_text(json.dumps({'vehicles_by_mode': {'taxi': 8}}), encoding='utf-8')
+    runtime = bi.config_runtime(cfg, None, 'WEEKDAY', dict(PATHS, hired_fleet=str(fleet), fraction=0.001))
+    assert runtime['hiredFleet.vehiclesByMode'][0] == 'taxi:8'

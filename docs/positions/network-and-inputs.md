@@ -2,12 +2,12 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 21 September 2026 (fifty-seventh session) · **Record read through:** §9.204 · **Written against family:** `F35`
+**Updated:** 21 September 2026 (fifty-seventh session) · **Record read through:** §9.205 · **Written against family:** `F35`
 
 ## What is built
 
 - **The contract says who reads a field** (§9.202): `required_fields.json` carries `required_by` — `run` (220: a binding or a read in the harness, Java, resolver, readers, calibrator; every city), builders (239: a city whose manifest names one as a producer), `reference_city` (112: no other city) — derived from `check_hardcoding.key_uses`, beside `required_if_mode`. Newcastle's 571 stay required of Newcastle (PASS 41). A switched-off mechanism's fields are still `run`: the emitter writes them.
-- **The second city runs through the harness; its extent and population are built** (§9.201–§9.204, D13): 369 fields, `RUN.scoring.translation = bound_fields`, `scenarios/matsim/BASE/` assembled once; the core is the notified MMR, tiered leaf by leaf (`data/processed/zones/mmr_extent.csv`: 2,538 leaves, 23.54 M persons at 2011); **27.06 M persons / 6.07 M households synthesised for 2026** (`demand/population/`), no plans from them yet; the CTS/CMP daily mode splits transcribed; no targets. See [`cities/mumbai/docs/README.md`](../../cities/mumbai/docs/README.md).
+- **The second city runs citywide plans through the harness against derived targets** (§9.201–§9.205, D13): 380 fields; the core is the notified MMR (2,538 leaves); 27.06 M persons for 2026; plans for the households the nested hash keeps at a 0.05 build fraction (1.35 M, `build_plans.py`); thirteen targets (`build_mode_targets.py`); the 0.1 % case is a check, not a reading: 140 KB an agent, 1.8 veh/h a lane (D14). See [`cities/mumbai/docs/README.md`](../../cities/mumbai/docs/README.md).
 - **A provenance record is the package's own metadata** (§9.203): `build_manifest.record_for` no longer lets a `provenance_*.json` inherit a neighbour's source, licence and date — **724 CC-BY / 220 ODbL / 15 bespoke**. A glob that labelled the 30 `transitVehicles.xml.gz` rows ODbL was removed before it landed; `normalise_eol.py` walks `data/raw/**/provenance*.json`.
 - **The 30 run-input sets are re-assembled at 250 iterations** (§9.169): `RUN.controler.last_iteration` = 250 (was 1000), cutoff at 200 plus a 50-iteration tail on arm 0's post-settle drift of 0.128 pp; only `lastIteration` changed, pt2matsim NOT re-run.
 - **A reading is taken through the run's own schedule** (§9.169): `extract_metrics.schedule_path` opens the run's `output/output_transitSchedule.xml.gz` first; the F34 rebuild had overwritten the city copy every run's stops were resolved through.
@@ -28,7 +28,6 @@
 - **Two assumptions measured** (§9.140, #63): `E.s0.heavy_rail_detour_factor` 1.037 (sweep 1.0–1.1); `B.external.interaction_rate` 0.0900 = `B.external.commute_share_to_core` 0.1377 × `B.external.employed_share` 0.4575 / the HW split.
 - **Producers**: `tests/check_package.py` asserts every processed row's producer names it (#115, #116, #119) and refuses a builder no longer reproducing the committed demand (§9.141, #120).
 - **Toolchain**: `.tools/toolchain.json` pins Temurin JDK 25.0.4+7, pt2matsim 26.6 (MATSim 2027.0-2026w25, §9.73), Maven 3.9.9, the signals stack (201 jars); SUMO descoped (§9.74); `requirements.txt` pinned.
-- **Documents at `docs/`, five typed defaults declared** (§9.170, #198, #199): `city.docs()`; the five `B.activity.*` and `A.transit.*` defaults are registry fields (the record lists them).
 
 ## What is observed, derived, and still unobtained
 
@@ -77,6 +76,7 @@
 
 ## History
 
+- §9.205 — citywide plans, targets, the fraction
 - §9.204 — Mumbai through the harness; the MMR extent
 - §9.201 — harvests; §9.202 — contract tiers, second city
 - §9.177 — 567 fields; builders read the registry

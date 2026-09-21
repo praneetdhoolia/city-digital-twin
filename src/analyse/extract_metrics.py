@@ -173,6 +173,13 @@ def _sa1_to_lga():
     return lga
 
 
+def has_home_zone_table():
+    """Whether this city supplies the population table and the zone-to-target
+    join the residents map is written from; a city without them (9.204, #242)
+    resolves residents from the run's own plans instead."""
+    return os.path.exists(POP) and os.path.exists(SA1_LGA)
+
+
 def write_residents(run_dir, person_ids=None, note=None):
     """Write the run's own `_residents.csv.gz` from the city's population table
     as it is NOW (#213). The launcher calls this at subsample time; an

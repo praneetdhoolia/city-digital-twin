@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 374 fields are made of
+## What the 380 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
-| `observed` | 1 | read directly from a raw download |
-| `measured` | 1 | computed from observed data in this package |
+| `observed` | 2 | read directly from a raw download |
+| `measured` | 2 | computed from observed data in this package |
 | `derived` | 13 | follows from another registry field by identity |
 | `literature` | 30 | a published value, not specific to this city |
 | `assumed` | 159 | chosen without direct empirical support |
-| `definition` | 170 | fixed by the formulation, not an empirical quantity |
+| `definition` | 174 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 332 | usable point value |
+| `active` | 338 | usable point value |
 | `computed` | 6 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 35 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 1 | the datum does not exist in the package; must be swept, never pinned |
@@ -53,14 +53,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 |---|---|---|
 | `B.population.tertiary_attendance_rate_20_24` | 0 - 0.35 | Unobtained: null, and the synthesiser makes nobody in that age range a student, which the report says. |
 
-### What the 181 sweeps are for
+### What the 182 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 5 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 175 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 176 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 1 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -73,19 +73,20 @@ The `answer` sweeps - the runs the study owes after the gate:
 | `RUN.replanning.score_msa_representation` | `absent` | `absent`, `at_innovation_cutoff` |
 | `RUN.routing.access_egress_consistency_check` | `reroute` | `reroute`, `disable`, `abortOnInconsistency` |
 
-### The 10 fields held fixed
+### The 11 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
 - `B.activity.detour_factor` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
 - `B.activity.short_trip_band_km` - the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - t
+- `B.targets.goods_vehicle_traffic_share_pct` - a published screenline observation (CMP for Greater Mumbai executive summary, traffic composition), never varied
 - `B.taxi.daily_trips_band` - A CONSTRAINT, NEVER A TARGET (9.8/9.13): the pre-registered 67/143 target split cannot grow. The modelled taxi volume is REPORTED against this band; nothing is fitted to it.
 - `B.taxi.fleet_size` - adopted from the reference city, where it is derived from B.taxi.daily_trips_band, B.taxi.vehicle_trips_per_day; those fields are not declared for this city, so the value is held
 - `CAL.asc.max_step_utils` - A REFUSAL THRESHOLD, not a model input, and so not swept - the A.signals.scats_match_radius_m precedent for a build guard's tolerance. It is the point past which a proposed step st
 - `CAL.objective.include_counts` - adopted from the reference city, where it is derived from B.external.interaction_rate; those fields are not declared for this city, so the value is held
 - `CAL.search.reading_drift_pct` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
-- `RUN.machine.heap_floor_gib` - the peak of the whole-population case read from its own gc.log; re-read from the gc.log of every longer case and never varied
-- `RUN.machine.heap_per_fraction_gib` - the explicit population is simulated whole (RUN.sample.fraction 1.0), so one measured peak cannot separate a floor from a slope; the whole peak is carried by the floor and the slop
+- `RUN.machine.heap_floor_gib` - the peak of the explicit 1,000-person case (the network, the combined feed and the routers, no population to speak of), read from its gc.log; re-read from every longer case
+- `RUN.machine.heap_per_fraction_gib` - the slope between the two measured peaks: 13.74 GiB at a negligible population and 17.30 GiB at 0.001 of the core households (26,884 agents, 20260921T220701_2it_0.1pct), 3.56 GiB p
 - `RUN.monitor.pace_band_s` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
 
 ## Broad baseline boarding fares
@@ -281,9 +282,9 @@ Provisional dedicated-link service envelope. Flow capacity derives as maximum ma
 
 #### `A.baseline.inputs`
 
-The prepared baseline inputs the scenario assembly reads: the mapped regional network and combined feed (one pt2matsim build), the explicit population with its initial mode alternatives, the boarding-fare table and the hired-fleet derivation. The assembly writes scenarios/matsim/BASE/ and demand/plans/matsim/population_WEEKDAY.xml.gz for the harness (9.204).
+The prepared baseline inputs the scenario assembly reads: the mapped regional network and combined feed (one pt2matsim build), the citywide plans written at B.population.plans_build_fraction from the synthesised core population (build_plans.py, 9.205), the boarding-fare table and the hired-fleet derivation. The assembly writes scenarios/matsim/BASE/, demand/plans/matsim/population_WEEKDAY.xml.gz and the plans report the launcher reads for the build fraction.
 
-***definition** · status **active** · DECISIONS.md §9.204*
+***definition** · status **active** · DECISIONS.md §9.205*
 
 #### `A.baseline.network_mode_sources`
 
@@ -2061,13 +2062,14 @@ Explicit setting for bounded provisional smoke only; full capacities serve the s
 
 ## The household population from the census controls at the core extent (9.204)
 
-*`cities/mumbai/registry/B_population.json` - 3 fields*
+*`cities/mumbai/registry/B_population.json` - 4 fields*
 
 
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
 | `B.population.household_size_open_band_max` | `12` | persons | `assumed` | 9 - 15 |
+| `B.population.plans_build_fraction` | `0.05` | fraction | `definition` | - |
 | `B.population.projection_district_names` | `{"519": "Mumbai", "518": "Mumbai Suburban", "517": "Thane", "520": "Raigarh"}` | name_map | `definition` | - |
 | `B.population.tertiary_attendance_rate_20_24` | *(null - unobtained)* | probability | `assumed` | 0 - 0.35 |
 
@@ -2078,6 +2080,12 @@ The largest household size drawn for the open 9+ band of the HL-14 household-siz
 ***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
 
 > **Sweep basis.** HL-14 publishes household sizes in bands and the top band is 9+; the largest size a 9+ household is drawn at, uniform from 9. The projected mean household size is compared with HL-1's published mean in _population_report.json
+
+#### `B.population.plans_build_fraction`
+
+The share of core households whose plans are written (build_plans.py), by the framework's nested inclusion hash (sample_population.keep on the household id and B.seed.master), so a run at RUN.sample.fraction f at or below it keeps exactly the households a file of everyone would give and the capacity factors stay identities on f. A definition of what the file holds, not a modelling value: the plans report carries it and the launcher refuses a run fraction above the report's. 0.05 of 27.06 M persons is 1.35 M agents, the largest plans file the machine reads at launch in minutes.
+
+***definition** · status **active** · DECISIONS.md §9.205*
 
 #### `B.population.projection_district_names`
 
@@ -2092,6 +2100,56 @@ The share of persons aged 20-24 attending an educational institution. Unobtained
 ***assumed** · status **unobtained** · DECISIONS.md §9.204 · sweep role **uncertainty***
 
 > **Sweep basis.** unobtained: the C-12 attendance table the package holds covers ages 5-19 and no district attendance rate for ages 20-24 is acquired; the range spans nobody attending to the age-19 attendance rate of the four districts, and the value stays null until the C-12 age-20-24 cells or a published tertiary rate is acquired
+
+## The first per-mode targets from the published splits (9.205)
+
+*`cities/mumbai/registry/B_targets.json` - 5 fields*
+
+
+
+| Field | Value | Units | Provenance | Sweep |
+|---|---|---|---|---|
+| `B.targets.active_share_sweep_pp` | `3.0` | percentage_points | `assumed` | 1 - 5 |
+| `B.targets.ferry_port_groups` | `["Bandra", "Mora"]` | port_group_names | `definition` | - |
+| `B.targets.goods_vehicle_traffic_share_pct` | `11.5` | percent_of_vehicles | `observed` | **held fixed** |
+| `B.targets.published_split_area` | `Mumbai Metropolitan Region` | area_name | `definition` | - |
+| `B.targets.published_split_year` | `2017` | year | `definition` | - |
+
+#### `B.targets.active_share_sweep_pp`
+
+How far the printed "about 47 %" active share may sit from 47 in either direction; propagated to every target derived from the motorised split.
+
+***assumed** · status **active** · DECISIONS.md §9.205 · sweep role **uncertainty***
+
+> **Sweep basis.** the CTS prints the active share as "about 47 %"; the sweep on every derived target carries the rounding of that statement, and its own width is the reading of "about"
+
+#### `B.targets.ferry_port_groups`
+
+The Maharashtra Maritime Board port groups whose routes lie in the MMR (Bandra: Versova-Madh and the Mumbai creek routes; Mora: the harbour routes to Uran and Elephanta); Rajpuri, Ratnagiri and Vengurla are outside the study extent.
+
+***definition** · status **active** · DECISIONS.md §9.205*
+
+#### `B.targets.goods_vehicle_traffic_share_pct`
+
+Goods vehicles as a share of screenline traffic, the CMP for Greater Mumbai's traffic composition (buses 4.4 %, goods vehicles 11.5 %): the level the truck row prints beside the modelled network-wide road-vehicle share.
+
+***observed** · status **active** · DECISIONS.md §9.205*
+
+> **Held fixed.** a published screenline observation (CMP for Greater Mumbai executive summary, traffic composition), never varied
+>
+> *Departure requires: a newer classified count at the screenlines*
+
+#### `B.targets.published_split_area`
+
+Which published daily mode split (data/processed/observed/published_mode_splits.csv) the targets derive from: the MMR, the study core (D13), as the CTS Updation surveyed it.
+
+***definition** · status **active** · DECISIONS.md §9.205*
+
+#### `B.targets.published_split_year`
+
+The survey year of the published split used: 2017, the CTS Updation household survey - the newest all-mode observation of the MMR the package holds.
+
+***definition** · status **active** · DECISIONS.md §9.205*
 
 ## Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)
 
@@ -2477,7 +2535,7 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 | `RUN.machine.gc_collector` | `ParallelGC` | enum | `assumed` | `ParallelGC`, `G1GC` |
 | `RUN.machine.gc_log` | `true` | boolean | `definition` | - |
 | `RUN.machine.heap_floor_gib` | `13.7` | GiB | `measured` | **held fixed** |
-| `RUN.machine.heap_per_fraction_gib` | `0.0` | GiB_per_unit_fraction | `assumed` | **held fixed** |
+| `RUN.machine.heap_per_fraction_gib` | `3600.0` | GiB_per_unit_fraction | `measured` | **held fixed** |
 | `RUN.machine.jfr_profile` | `false` | boolean | `definition` | - |
 | `RUN.machine.replanning_threads` | `2` | threads | `definition` | - |
 | `RUN.machine.seed` | `20260810` | integer_seed | `definition` | - |
@@ -2530,12 +2588,12 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 | `RUN.routing.pt_submode_scoring` | `aggregate` | enum | `definition` | - |
 | `RUN.routing.routing_randomness` | `3.0` | dimensionless | `literature` | 0 - 5 |
 | `RUN.sample.flow_capacity_factor` | *(null - unobtained)* | share_of_capacity | `derived` | derived: flowCapacityFactor = RUN.sample.fraction, the standard MATSim scaling  |
-| `RUN.sample.fraction` | `1.0` | share_of_population | `assumed` | 0.01 - 1 |
+| `RUN.sample.fraction` | `1.0` | share_of_population | `assumed` | 0.001 - 1 |
 | `RUN.sample.storage_capacity_exponent` | `1.0` | exponent | `derived` | derived: storageCapacityFactor = fraction ** 1.0 = flowCapacityFactor. MATSim e |
 | `RUN.sample.storage_capacity_factor` | *(null - unobtained)* | share_of_capacity | `derived` | derived: storageCapacityFactor = RUN.sample.fraction ** RUN.sample.storage_capa |
 | `RUN.sample.transit_capacity_floor` | `1` | seats | `assumed` | 1 - 4 |
 | `RUN.sample.transit_capacity_scaling` | `true` | boolean | `derived` | derived: seats = max(floor, round(seats x RUN.sample.fraction)); not scaling it |
-| `RUN.sample.unit` | `person` | enum | `derived` | derived: the baseline population carries no householdId, so the only inclusion  |
+| `RUN.sample.unit` | `household` | enum | `derived` | derived: the citywide plans carry householdId (build_plans.py writes the househ |
 | `RUN.scoring.brain_exp_beta` | `1.0` | logit_scale | `literature` | 0.5 - 2 |
 | `RUN.scoring.early_departure_utils_per_h` | `0.0` | utils_per_hour | `assumed` | -18 - 0 |
 | `RUN.scoring.late_arrival_utils_per_h` | `-18.0` | utils_per_hour | `literature` | -36 - -6 |
@@ -2681,23 +2739,23 @@ Whether the JVM writes a GC log to <run>/gc.log. Adopted from the reference city
 
 #### `RUN.machine.heap_floor_gib`
 
-The sample-independent part of the heap rule. MEASURED for this city: the whole explicit population (RUN.sample.fraction 1.0) peaked at 13.74 GiB of a 16g heap in the gc.log of 20260921T182708_2it_100pct, the first case launched through the harness; a two-iteration case sees no plan-memory growth, so the peak of a longer horizon is re-read from its own gc.log.
+The sample-independent part of the heap rule. MEASURED: 13.74 GiB of 16g in the gc.log of 20260921T182708_2it_100pct, the explicit 1,000-person case - the mapped regional network, the combined feed and the routers before any population to speak of.
 
-***measured** · status **active** · DECISIONS.md §9.204*
+***measured** · status **active** · DECISIONS.md §9.205*
 
-> **Held fixed.** the peak of the whole-population case read from its own gc.log; re-read from the gc.log of every longer case and never varied
+> **Held fixed.** the peak of the explicit 1,000-person case (the network, the combined feed and the routers, no population to speak of), read from its gc.log; re-read from every longer case
 >
-> *Departure requires: a higher peak in a later Mumbai gc.log*
+> *Departure requires: a higher peak at a negligible population in a later Mumbai gc.log*
 
 #### `RUN.machine.heap_per_fraction_gib`
 
-The sample-dependent part of the heap rule. Held at 0 for this city: the one measured peak (13.74 GiB at fraction 1.0) sits entirely in RUN.machine.heap_floor_gib until a case at another fraction gives the rule a second point.
+The sample-dependent part of the heap rule, per unit of RUN.sample.fraction of the 27.06 M-person core: 3,600 GiB - so 1 % of the core (270,000 agents) needs 50 GiB and 5 % (1.35 M agents) 194 GiB. The launcher refuses what this host cannot hold; the fraction a defensible reading needs is the open question of docs/scaling.md.
 
-***assumed** · status **active** · DECISIONS.md §9.204*
+***measured** · status **active** · DECISIONS.md §9.205*
 
-> **Held fixed.** the explicit population is simulated whole (RUN.sample.fraction 1.0), so one measured peak cannot separate a floor from a slope; the whole peak is carried by the floor and the slope is held at zero
+> **Held fixed.** the slope between the two measured peaks: 13.74 GiB at a negligible population and 17.30 GiB at 0.001 of the core households (26,884 agents, 20260921T220701_2it_0.1pct), 3.56 GiB per 0.001 - about 140 KB an agent at two plans, the reference city rate; re-read at every new fraction
 >
-> *Departure requires: a second peak at a sample fraction below one, from its own gc.log*
+> *Departure requires: a peak at another fraction in a Mumbai gc.log*
 
 #### `RUN.machine.jfr_profile`
 
@@ -3047,11 +3105,11 @@ Road flow capacity scaled to the sample. Derived at launch, as in the reference 
 
 #### `RUN.sample.fraction`
 
-Share of the explicit baseline population simulated. 1.0: the 1,000-person development population runs whole; no city expansion weight exists.
+Share of the population simulated. 1.0 for the explicit 1,000-person development case; a citywide case runs the plans built at B.population.plans_build_fraction at a fraction at or below it, declared on its overlay.
 
 ***assumed** · status **active** · DECISIONS.md §9.202 · sweep role **uncertainty***
 
-> **Sweep basis.** the explicit baseline population is 1,000 persons and is simulated whole; a sample fraction below one has no measured fidelity for this city (docs/scaling.md)
+> **Sweep basis.** the synthesised core population is 27.06 M persons (9.204) and the plans are written at B.population.plans_build_fraction (9.205); a fraction below one has no measured fidelity for this city (docs/scaling.md), and the floor admits the first citywide case the machine can run
 
 #### `RUN.sample.storage_capacity_exponent`
 
@@ -3087,11 +3145,11 @@ Scale transit vehicle seats by the sample fraction. Adopted from the reference c
 
 #### `RUN.sample.unit`
 
-Whether the population subsample keeps whole households or independent persons. `person`: the baseline population has no households.
+Whether the population subsample keeps whole households or independent persons. `household` since the citywide plans (9.205); the explicit 1,000-person development population had none.
 
-***derived** · status **active** · DECISIONS.md §9.202*
+***derived** · status **active** · DECISIONS.md §9.205*
 
-> **Derived from** `B.seed.master`: the baseline population carries no householdId, so the only inclusion unit the sampler can hash is the person
+> **Derived from** `B.seed.master`: the citywide plans carry householdId (build_plans.py writes the households the nested hash keeps), so the sampler keeps whole households, as the reference city does
 
 #### `RUN.scoring.brain_exp_beta`
 

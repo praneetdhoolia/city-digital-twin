@@ -236,6 +236,7 @@ about its layout will otherwise cost you an hour:
 | **The contract narrowed by who reads a field; Mumbai on the framework's keys** | **§9.202** - required_by derived from the reads; Mumbai declares 313 fields, passes the city contract, runs the structural check |
 | **The Mumbai sessions verified for Newcastle** | **§9.203** - standing room never scaled at 25 % (fixed, #237), two manifest regressions fixed, the fleet report kept small |
 | **The second city through the harness; its extent and population** | **§9.204** - one launch path for every city (`RUN.scoring.translation`), D13 taken and derived leaf by leaf, 27.06 M persons synthesised from the census controls, the CTS/CMP mode splits transcribed; no target, no result |
+| **Citywide Mumbai plans, the first targets, the fraction** | **§9.205** - plans at the harness's own household sample (1.35 M persons), thirteen derived targets, the 0.1 % case through the harness; 140 KB an agent and 1.8 veh/h a lane at 0.001: D14 |
 | **Every open issue worked to done or to one measurement, and the fix that was half a fix** | **§9.164** - the twenty-one MATSim defaults that decided the model unreviewed go to **0** (nine declared at the framework's own values, twelve accepted with a reason). The demand STATES that a declared passenger rides: `B.mode.bound_passenger_placement` = `every_plan` puts a bound tour on `ride` in every seeded plan as the driver is already put on `car` - **194,131** fully bound weekday tours over **199,329** persons - and the demand, plans and 30 run-input sets are rebuilt on it, opening family **`F33`**. A tour that will not fit no longer discards the rest of the day (**547** weekday tours recovered; week trip rate **3.398** against the HTS 3.473). `C.time_weights.beta_headway` and `beta_reliability` REACH MATSIM after two reports asked, behind a gate shipped `absent`; the pt submodes get a plan-level control; the calibration objective gets the replication-band denominator it never had, at zero until one is measured. **The ceiling watcher stops a run for the first time** (`stopped_at_ceiling` at iteration 3) and the gate watcher is caught arming over a disabled monitor and judging nothing. **§9.161's #167 diagnosis was HALF right**: `routingMode` takes the failure 40 agents → 20 and the residual is not in our input at all - 0 mixed trips over 6,347 persons - so `accessEgressModeToLink` still cannot start and ships `none` |
 | **A deviation no constant can reach, and the tail of cheap fixes the reports kept re-issuing** | **§9.163** - MATSim writes `modeChoiceCoverage1x.txt` on every arm and nothing read it, so every gate ever taken blamed a constant without asking whether a constant could reach the target. On the landed arm **ride's target of 20.60 % sits ABOVE the 20.05 % of agents who have ever held a ride plan** - the only mode of twelve, and no value of any constant closes it. Every choice set is within 1 pp of its final coverage by iteration 5-10 and shut by 16-27, **except pt**, still opening at 233 and reaching 25.78 %. The count-station map had been orphaned by a network rebuild 47 minutes after it was written: **0 of 195 rows still named the road they claimed**, and on the repaired map counts read **+16.30 % mean, -1.1 % median, 0 zeros** against -89.35 % / -98.7 % / 7. Half of all declared escort pairs put the passenger in their own car (**10,224 of 20,902**) with 99.6 % of tours realised, so ride's loss is mode assignment, not pairing. `RUN.replanning.score_msa_representation` and `RUN.replanning.score_msa_fraction` declare score averaging at MATSim's own default literal (registry **497 -> 499**, byte-neutral); undeclared MATSim defaults **31 -> 21**; three fields shipped at their consumer's off value now say so via `inert_at`. Fourteen of sixteen `awaiting-run` issues were measured from a run that had already finished |
 | **A stated ceiling is enforced by the runner, and the teleported access leg is diagnosed to a missing attribute in our own plans** | **§9.161** - `RUN.gate.wall_ceiling_h` (0 = no ceiling) and `start_ceiling_watch` give an approved cost the enforcement it never had: a SECOND watcher beside the gate's, stopping through 9.143's marker path with a new completion `stopped_at_ceiling`, so `RUN.gate.interval_iterations = 0` keeps meaning "do not judge my modes" rather than "do not enforce my budget". #167 is DIAGNOSED and the cause is ours: the input plans carry **zero** `routingMode` attributes and every trip is a single leg, so under `accessEgressModeToLink` the router inserts walk access and egress legs and MATSim INFERS each leg's routing mode from its own mode - `walk` beside a `car` main leg - and rejects the trip it just built. The fix is to emit `routingMode` per leg in `build_matsim_plans.py`, a no-op at `access_egress_type = none`, and it needs the demand rebuilt in the same change |
@@ -17468,10 +17469,97 @@ Mumbai work builds the plans at scale from the synthesised population and
 derives the first per-mode targets from the transcribed splits; the Newcastle
 lane is unchanged (the Java fold, the roots rebuild, #237's family boundary).
 
+## 9.205 Citywide Mumbai plans at the harness's sample, the first per-mode targets, and what the first citywide case measured (21 September 2026, fifty-seventh session continued; #239 #242)
+
+**What was wrong.** The synthesised core population (27.06 M persons, 9.204)
+had no plans: the 1,000-person development chain draws eight whole-day
+alternatives a person from a gravity over OSM candidates, and a plans file of
+everyone would be tens of gigabytes read at every launch. No per-mode target
+existed, so the twelve-mode reporter refused the city. The hired fleet was
+sized to the explicit cohort; the launcher wrote a residents map only from the
+reference city's tables (#242); the sample fraction's sweep floor was 0.01.
+
+**What changed.** *The plans* (`cities/mumbai/build/build_plans.py`) are
+written for the households the harness itself would keep: the framework's
+nested inclusion hash (`sample_population.keep`, household unit, the seed) at
+`B.population.plans_build_fraction` 0.05, so a run at `RUN.sample.fraction`
+f <= 0.05 keeps exactly what a file of everyone gives and the capacity factors
+stay identities on f; the plans report carries the build fraction and
+`run_matsim.refuse_fraction_above_build` refuses a larger run. A person's day:
+a home drawn inside the leaf's polygon (1,566 leaves), the municipality's from
+the public MMR GIS where a ward has none (594), the taluka's where a village
+has none (299); every worker a home-work-home tour unless drawn into B-28's
+"No travel" share, the workplace an OSM work candidate uniform within the
+distance band Census 2011 table B-28 draws for the district and residence
+type; students an education tour by the declared gravity; optional tours by
+the state time-use benchmarks and the declared out-of-home fractions;
+`permittedModes` from the person's own attributes; one selected plan with one
+drawn seed mode; the income attribute only where positive
+(`IncomeScoringConfigGroup`). No freight: the port-to-gate proxy is not where
+goods traffic occurs (GOAL.md requirement 4). `RUN.sample.unit` is
+`household`; the fraction's sweep floor is 0.001. *The hired fleet* is the
+registration stock times `A.hired.active_fraction` for the whole population,
+scaled by `RUN.sample.fraction` at emission (`scale_with_sample_fraction`) as
+the road capacities are. *The launcher* skips the residents map for a city
+without the home-zone tables (the readers resolve residents by subpopulation
+label, 9.204). *The targets* (`build_mode_targets.py` →
+`data/processed/validation/mode_targets_by_mode.csv`, thirteen rows): the
+CTS Updation's 2017 MMR motorised split times (1 - the active share of about
+47 %) for bus, heavy rail, metro, motorbike, taxi and auto-rickshaw; the
+active share split into walk and bicycle by Census B-28 (bicycle 0.0826 of
+foot-and-bicycle commutes); car and ride from the CTS car share by the
+synthesised population's driver share among persons aged 5+ in car-owning
+households (0.6461 drivers, resting on the licence assumption); ferry from
+the Maharashtra Maritime Board's 2024-25 passengers of the Bandra and Mora
+port groups (17,539,639 a year) against the CTS's 35.43 M daily trips; truck
+as the CMP screenline goods share (11.5 % of vehicles, a level); freight rail
+`not_simulated`. The five `B.targets.*` fields declare the survey, its year,
+the rounding of "about 47 %" (+/- 3 pp, swept 1-5) as every derived row's
+sweep, the port groups and the goods share. Targets (shares of resident trips):
+car 2.91, ride 1.59, walk 43.12, bike 3.88, motorbike 6.63, taxi 4.61,
+auto_rickshaw 2.70, bus 10.60, heavy_rail 22.90, metro 1.17, ferry 0.14. No
+projection to the 2026 base year; no holdout.
+
+**Measured.** `build_plans.py`: 303,384 households, 1,352,144 persons, 2,459
+leaves, 2.5 min, 51 MB; persons by tour count 0: 394,103, 1: 659,601, 2:
+253,190, 3: 45,250; work distance bands drawn 0-1 km 80,451, 2-5 114,759,
+6-10 84,139, 11-20 54,741, 21-30 35,770, 31-50 38,624, 51+ 20,136, with
+14,428 redirected to the nearest band holding a candidate. The first citywide
+case `20260921T220701_2it_0.1pct` (`smoke_two_iterations`: 0.001 of the core,
+26,884 persons, the pooled fleet at 298 autos and 143 taxis) ran to its last
+iteration in 354.3 s, 87.8 s an iteration, on the full 846,699-link network
+and combined feed; the reporter printed all thirteen modes against their
+targets with the gate verdicts (ten past the bar, four targets beyond their
+choice-set coverage) - and the reading is not a reading: the median 4.5 km
+car trip took 194 min, pt trips 13 h, and 5,454 agents were removed stuck,
+because at 0.001 the flow-capacity identity passes a 1,800 veh/h lane 1.8
+vehicles an hour. The heap peaked at 17.30 GiB against 13.74 for a negligible
+population: about 140 KB an agent, the reference city's rate; the heap rule
+is now two measured points (`RUN.machine.heap_floor_gib` 13.7,
+`RUN.machine.heap_per_fraction_gib` 3,600), so 1 % of the core needs 50 GiB
+and 5 % 194 GiB on a 63 GB host. Mumbai registry 375 → 380 fields; contract
+PASS 22 FAIL 0; the hardcoding ledger 0.
+
+**Deliberately not done.** No reading is taken from the 0.1 % case and no
+larger case is launched: at 1 % the lane passes 6-18 vehicles an hour and the
+heap is the host's; a defensible fraction is decision D14 (a leaner agent
+measured on a 1 % case first, or a larger host), the lane's next task. No
+projection of the 2017 split to 2026; no freight OD; no external tier; the
+car-driver split and the departure times remain declared assumptions with
+their sweeps; the residents map for a city with a B1 population stays #242.
+
+**Consequences.** The GOAL loop's instrument exists for the second city: a
+case through the harness, thirteen modes against derived targets, the gate.
+What it cannot yet do is stand on a reading, and the fraction that would let
+it is the user's decision. A run at a fraction above the plans' build
+fraction is refused; a Mumbai fleet scales with the fraction; the overlays
+declare the fraction, the heap and the ceiling they run at.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-21 | **Citywide Mumbai plans at the harness's sample, the first per-mode targets, the first citywide case (§9.205).** `build_plans.py` writes the households the nested hash keeps at a 0.05 build fraction (1,352,144 persons); `build_mode_targets.py` derives thirteen targets from the CTS 2017 split, B-28, the synthesised driver share, the MMB passengers and the CMP goods share; `20260921T220701_2it_0.1pct` ran through the harness and the reporter printed every mode - a structural check whose trip times are the flow identity at 0.001, not the city. The heap rule is measured on two points (1 % needs 50 GiB). D14 asked. No target value of the reference city changed, the 67/143 split is untouched, nothing here is a finding. |
 | 2026-09-21 | **Mumbai runs through the framework harness; its extent is the notified MMR; its population is synthesised (§9.204).** The city's own launcher is deleted; `RUN.scoring.translation`, `A.fare.boarding_representation` and `B.hired_fleet.representation` are framework gates; Newcastle's smoke config re-emits identically but for the new gate's own default. D13: 2,538 core leaves / 23.54 M persons at 2011, derived from the public MMR lists. 27,057,132 persons in 6,068,786 households for 2026 from the census controls; the published daily mode splits transcribed. Three sources acquired of 54 retried. No target value changed, the 67/143 split is untouched, nothing here is a finding. |
 | 2026-09-21 | **Verification of the 19 September changes for Newcastle (§9.203).** Standing room was never scaled at 25 % on any F35 arm; the fix opens a family (#237). Two build_manifest regressions and a per-vehicle report map fixed before landing. Newcastle's licence split 724 / 220 / 15. |
 | 2026-09-21 | **Contract tiers and the Mumbai registry fold (§9.202).** required_by (run / builders / reference_city) derived from the reads; Mumbai's private RUN.smoke namespace moved under the framework's keys, its descriptor completed; check_city passes for both cities. |
