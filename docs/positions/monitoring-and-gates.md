@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 18 September 2026 (fifty-fifth session) · **Record read through:** §9.178 · **Written against family:** `F35`
+**Updated:** 21 September 2026 (fifty-sixth session) · **Record read through:** §9.203 · **Written against family:** `F35`
 
 ## What is built
 
@@ -74,6 +74,7 @@
 
 ## History
 
+- §9.203 — both cities pass the contract
 - §9.178 — native Codex skills and workflow
 - §9.177 — detach by default; residents per run
 - §9.176 — the pair a result; orphan close-out; watchers die with the harness
@@ -88,4 +89,3 @@
 - §9.166 — one boardings source; eighth report
 - §9.164 — ceiling watcher fires; gate needs monitor
 - §9.163 — counts rung repaired; coverage bound reported
-- §9.162 — the F32 result; fit pipeline on it

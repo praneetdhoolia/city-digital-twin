@@ -1,21 +1,20 @@
 # Brief for the next agent
 
-**Written:** 18 September 2026 (fifty-fifth session) · **Open family:** `F35-the-engines-route-what-they-remode` · **Commit:** `722bfe9` plus this handoff's commits
+**Written:** 21 September 2026 (fifty-sixth session) · **Open family:** `F35-the-engines-route-what-they-remode` · **Commit:** `7286de1` plus this handoff's commits
 *A pointer, not a source: [GOAL.md](GOAL.md), the [board](STATUS.md) and the [position pages](positions/) win.*
 
 ## §0 Verify first — facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| Machine idle; newest arm `20260916T063903_250it_25pct` completed its declared horizon at iteration 250. | `python src/run/session_gate.py --digest` · `python src/run/watch_run.py --run 20260916T063903_250it_25pct` |
-| The onboarding gate passed. The separate package audit has 1,198 passes, two warnings and six failures: obsolete document roots (#234), incomplete run-input report coverage (#235). Full package consistency is unverified. | `python src/run/session_gate.py` · `python tests/check_package.py` |
-| Previous PR #233 merged. This session lands `praneetdhoolia/codex-skills`; verify its PR and branch state before starting work. | `gh pr list --state all --head praneetdhoolia/codex-skills` · `git status --short --branch` · `git log origin/main..HEAD --oneline` |
-| GitHub has 31 open issues. #234 and #235 record the package-audit defects. #210 remains open; Codex startup checks do not complete its hook/CI requirements. | `gh issue list --state open --limit 100` · `python src/run/issue_gate.py` · `gh issue view 210` |
-| No unanswered lane decisions. D6–D12 remain recorded. | `python src/analyse/lane.py --ask` |
-| The recommendation ledger has 19 open rows; this tooling migration does not complete a model recommendation. | `python src/analyse/report_recs.py` |
-| Registry **571** fields, manifest **959** files (**721 CC-BY / 220 ODbL** + 18 bespoke). The registry now declares the transit fleet representation (?9.179); no scenario package has been rebuilt. | `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` |
-| Codex loads the project instructions and skills. The native browser connection passed after its dedicated Chrome profile started. Availability is session-specific. | `python .agents/scripts/configure_codex.py --check` · `codex debug prompt-input` · `codex mcp list` |
-| The latest result's fit and supporting readings are preserved under processed results. | `python src/analyse/compare_runs.py 20260912T202242_300it_25pct 20260916T063903_250it_25pct --modes` |
+| Machine idle. The newest run on disk is the Mumbai structural check `20260921T165718_2it_100pct-mumbai-smoke` (`ran_to_last_iteration` at 2, 579.7 s); Newcastle's newest result is `20260916T063903_250it_25pct`. | `python src/run/session_gate.py --digest` |
+| The gate passes for both cities (`check_city --all` PASS 66 FAIL 0); Newcastle's manifest regenerates identical; the separate package audit (#234, #235) is unchanged and unverified. | `python src/run/session_gate.py` · `python src/registry/check_city.py --all` · `python tests/check_package.py` |
+| This session's PR is the branch `praneetdhoolia/mumbai-digital-twin`: open, or merged and the branch deleted. | `gh pr list --state all --head praneetdhoolia/mumbai-digital-twin` · `git status --short --branch` |
+| 34 open issues. New: #237 (standing room never scaled at 25 %, `awaiting-run`, blocks the launcher until the first arm after the fix measures it), #238 (the Mumbai launcher fold), #239 (D13, the study extent). | `gh issue list --state open --limit 100` · `python src/run/issue_gate.py` |
+| One lane decision unanswered: D13, Mumbai's study extent. D6–D12 recorded. | `python src/analyse/lane.py --ask` |
+| 25 report recommendations open (20260918T182209:1 and :2 taken this session). | `python src/analyse/report_recs.py` |
+| Registry **571** fields, manifest **959** files (**724 CC-BY / 220 ODbL** + 15 bespoke) for Newcastle; Mumbai 313 fields. The contract carries `required_by` (run 220 / builders 239 / reference_city 112). | `python src/registry/render_schema.py --check` · `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` |
+| Mumbai's manifest: 1,293 files, eleven harvest archives; 889 files tracked under `cities/mumbai/`. | `CITYSIM_CITY=mumbai python tests/check_manifest.py` · `git ls-files cities/mumbai \| wc -l` |
 
 Then: `python src/run/session_gate.py`.
 
@@ -34,50 +33,54 @@ Then: `python src/run/session_gate.py`.
 Decided: D8 = Re-derive the ferry target from the disclosed TPA tap-on series (recommended) (2026-09-16) · D9 = A literature marginal utility of distance for bike, with its sweep (recommended) (2026-09-16) · D10 = Document the scoped departure: gate off while a control is differenced against its arm 0 (recommended) (2026-09-16) · D11 = Yes - set the strict policy (recommended) (2026-09-16) · D12 = Hold escort members and joint companions to ride on their bound tours; car-less lift and shared passengers keep walk/bike/pt (recommended) (2026-09-16)
 <!-- generated:lane end -->
 
-Do the Java work first, then the roots rebuild: D12 needs both the plans builder and its Java gate.
-The rebuild opens a family. Its own probe prices the next arm, which requires stated-cost approval.
-The scoring representation ships as `absent` (§9.177). The earlier scratch patches are gone;
-the lane and position pages specify the work. The Codex migration is documented in [`.agents/README.md`](../.agents/README.md).
+The launcher fold is verified on a Newcastle 1 % smoke before the Mumbai case; it touches the harness the arms
+run on. Put D13 to the user at `/onboard`; the population synthesis, the mode targets and every count basis
+follow the extent. **The next Newcastle 25 % arm opens a family** (standing room scaled, §9.203) and needs a
+stated-cost approval; nothing after it compares with F35.
 
 ## §2 Traps — newest first, at most ten, each with what it cost
 
-1. **Configured MCP does not mean a live browser** (§9.178): the first tab check failed because CDP was offline.
-   Use browser-harness to check the endpoint and start its dedicated profile. Claude hooks do not run in Codex.
-2. **Builds and tests compete with an arm** (§9.177): verification stretched iterations from the idle probe's
-   383 s to 400–510 s. Batch work and do not price an arm from a busy-machine reading.
-3. **Mode-choice coverage counts trips** (§9.177): older records called these agents and misread ride's ceiling.
-   Read the coverage reader's wording and the bound-trip evidence together.
-4. **The cutoff snap survived score averaging** (§9.177): another long arm did not remove it.
-   Do not repeat a scoring remedy without new evidence.
-5. **Scratch work is not durable** (§9.177): seven prepared patches were lost.
-   Preserve authorised work on the branch or in the record before handoff.
-6. **Extraction by line number shifts later ranges** (§9.177): a refactor broke explicit-signals configuration.
-   Extract bottom-up and verify the resulting artefact.
-7. **Imports can acquire and rewrite data** (§9.177, #232): an import sweep executed nine extract adapters.
-   Compile these adapters for syntax checks until their entry points are guarded.
-8. **Pipelines can hide failed checks** (§9.177): three commits needed repairs after tail masked failures.
-   Inspect each check's own exit status.
-9. **CPU contention changes an arm's price** (§9.176, §9.174): a game stretched iterations to 405–561 s.
-   Account for competing processes when reading pace.
-10. **The launched viewer retains imported code** (§9.175): edits were invisible on the harness's port.
-    Develop the viewer with `--reload` on a separate port.
+1. **A framework builder change is verified by regenerating the reference artefact and diffing it** (§9.203):
+   two `build_manifest.py` regressions (thirty rows mislabelled ODbL, five provenance rows stripped) sat in the
+   tree for two days; the manifest takes 14 s to regenerate and found both.
+2. **A regex over MATSim XML scales what it matches first** (§9.203, #237): standing room ran at full size on every
+   25 % arm since the fleet gained standing places. Parse the XML; verify old against new on the real population.
+3. **A second city declares the framework's keys, never a parallel namespace** (§9.202): 59 `RUN.smoke.*` twins
+   bound the same MATSim parameters as framework fields, one to a parameter MATSim does not have
+   (`brainExpBeta`). The contract's `required_by` says which keys a city must declare.
+4. **A per-response API harvest is one archive** (§9.201): 13,500 loose files and 14,230 catalogue entries cost
+   a 22 MB manifest and four-minute readers. `harvest.py`; readers import the harvester's `Harvest` constant.
+5. **A per-vehicle audit map in a committed report** (§9.203): 2,139 ids a set times thirty sets, for no reader.
+   Report a count per profile.
+6. **`pdftotext` on Git Bash's PATH is poppler 4.00** (§9.201): it mangles the port-rail table and the extractor
+   refuses the blanks; PowerShell resolves MiKTeX's 24.04, which parses it. Run the PDF extractors from PowerShell.
+7. **Python `write_text` writes CRLF on Windows** (§9.201): all 514 Mumbai provenance records would have failed
+   their own hashes on a Linux checkout. `normalise_eol.py` now walks `data/raw/**/provenance*.json` and `city.json`;
+   run it before and after `build_manifest.py`.
+8. **A session without a handoff leaves the brief describing the session before it** (§9.203): 22 record
+   sections and 131 uncommitted paths arrived with §0 stale. `/onboard` re-derives §0 by command for this reason.
+9. **Builds and tests compete with an arm** (§9.177): verification stretched iterations 383 → 400–510 s.
+   Batch work; never price an arm from a busy-machine reading.
+10. **Mode-choice coverage counts trips** (§9.177): older records called these agents and misread ride's ceiling.
 
-Retired by checks: dead-harness detection (`run_failure.py`), concurrent arms and missing automatic stops
-(launcher), residents resolved through today's population (run snapshot), stale family stamps and oversized
-pages (document gates), and repeated lane questions (`lane.json`). See [monitoring-and-gates](positions/monitoring-and-gates.md).
+Retired by checks: the contract's Newcastle shape for another city (`required_by`, `check_city --all` green),
+CRLF under `data/raw/` (`normalise_eol.py`), dead-harness detection (`run_failure.py`), concurrent arms and
+missing automatic stops (the launcher), stale family stamps and oversized pages (the document gates), repeated
+lane questions (`lane.json`). See [monitoring-and-gates](positions/monitoring-and-gates.md).
 
 ## §3 Standing directives and approvals
 
-- **No run approval stands.** Previous approvals are SPENT (§9.169, §9.176, §9.177).
-  Quote the next arm from its own build's probe and set its approved wall ceiling.
-- **25 % arms only.** A structural smoke may use 1 %. One arm at a time; no recompilation under an arm.
-- Compare only within a family, sample fraction and network build. A result requires
-  `_run.json` to say `ran_to_last_iteration`; stopped readings are limited to `reached_iteration`.
-- The 67/143 holdout stays shut until the end. No invented data or unsupported coefficients.
-- D6–D12 remain settled in [lane.json](lane.json). The TfNSW request is the user's to send (D2).
-- #30 concerns allocation, not a new short-trip kernel (§9.177). The frozen constants remain governed by §8.5.
-- No run while an issue in its lane lacks its required declaration. Declare `answers_issues`.
-- Keep Codex support in `.agents/`; global skills and MCP credentials stay in user configuration.
-  Use the active git identity, verify the tracked hooks path, and inspect commits and PR bodies for attribution.
-- Never commit to `main`. Land the session through one PR targeting `main` and remove its branch after merge.
-- The model lane remains separate from this tooling close-out. Start it only under its own authorised scope.
+- **No run approval stands.** Every previous approval is SPENT (§9.169, §9.176, §9.177). The next arm is
+  quoted from its own build's probe (`arm_cost.py`) and needs a stated-cost approval; it opens a family.
+- **25 % arms only.** A structural smoke may use 1 % (Newcastle) or the explicit population (Mumbai,
+  `smoke_two_iterations`). One arm at a time; no recompilation under an arm.
+- Compare only within a family, sample fraction and network build. A result requires `_run.json` to say
+  `ran_to_last_iteration`; a stopped reading is citable at its `reached_iteration` only.
+- The 67/143 holdout stays shut. No invented data; an adopted value is labelled adopted and a switched-off
+  mechanism's parameters are placeholders (§9.202).
+- D6–D12 settled in [lane.json](lane.json); D13 open. The TfNSW request is the user's to send (D2).
+- Mumbai's `registry/*_framework.json` are regenerated by `cities/mumbai/build/adopt_framework_fields.py`
+  after a contract change, never edited by hand; Mumbai runs through `run.py --baseline-smoke` until #238 lands.
+- No run while an issue in its lane lacks its required declaration; #237 blocks the Newcastle launcher until
+  the first arm after the fix reads it. Declare `answers_issues`.
+- Never commit to `main`. Land the session through one PR targeting `main` and delete its branch after merge.

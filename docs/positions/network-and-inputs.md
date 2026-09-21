@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 17 September 2026 (fifty-fourth session) · **Record read through:** §9.177 · **Written against family:** `F35`
+**Updated:** 21 September 2026 (fifty-sixth session) · **Record read through:** §9.203 · **Written against family:** `F35`
 
 ## What is built
 
@@ -54,9 +54,8 @@
 - **The 15 `networks/matsim/schedules/*/transitVehicles.xml.gz` move to CC-BY 4.0 on internal evidence** (§9.159): `check_manifest.py` then read **512 rows agree, 0 undetermined**, **279 CC-BY / 218 ODbL** plus 15 bespoke.
 - **Four typed network fallbacks are declared, three never fired** (§9.151, #148): `A.road.speed_unknown_class_kmh`, `A.road.lanes_unknown_class`, `A.road.capacity_unknown_class_veh_hr_lane`, `A.active.footway_width_unknown_class_m`; only the footway one fires, on **830 of 40,195 active edges**.
 - **A derived file's provenance is resolved from its lineage** (§9.151, §9.158, #149): `retrieved` is the latest ancestor date, never a build time; `params/C1_*`, `C5_calibration.json` and the 15 GTFS records stay blank at source.
-- pt2matsim agrees with itself on stop-to-link assignment 100% and on route link sequences 81.9–82.3%; hence one build per comparison (§3.5).
 - Corridor trunk: 87.5% of lanes and 97.5% of speeds observed (§2.5); 669 of 714 corridor edges carry a regulated speed; kerbside 678, lane width 704, capacity 714 of 714 still imputed; speed-zone join 74.9% at 10 m (§9.34). Pre-LR: 9 of 21 segments tagged, all one lane per direction (§9.71).
-- Circuity walk 1.6938, bike 1.5570, road 1.3276 on the CURRENT network (§9.142); walk speed 1.25 m/s (§9.33). SAT:SUN 1.1473 (§9.61); `B.population.bike_available_rate` 0.493 (§9.78); VoT inside ±30% of EPV 2025 (§9.71).
+- Circuity walk 1.6938, bike 1.5570, road 1.3276 (§9.142); walk speed 1.25 m/s (§9.33); SAT:SUN 1.1473 (§9.61); `B.population.bike_available_rate` 0.493 (§9.78); VoT inside ±30% of EPV 2025 (§9.71).
 - Crossings 110 and 204 a day against an assumed 30 (§9.90); ferry 107 and tram 252 weekday departures (§9.113).
 - **Lineage is resolved per output and the licence boundary is checked** (§9.156, §9.158, #159): `OUTPUT_INPUTS` read statically; `share_alike_ancestor` undetermined **0**; `check_lineage_licence()` found a live breach on its first run.
 - **The demand DOES carry OSM geometry** (§9.158): 3,000 of 3,000 sampled `dest_placement=poi` destinations within 5 m of an OSM POI or building — the demand rows are ODbL.
@@ -79,6 +78,7 @@
 
 ## History
 
+- §9.201 — harvests; §9.202 — contract tiers, second city
 - §9.177 — 567 fields; builders read the registry
 - §9.176 — intro fixed: which runs are results is the board's
 - §9.170 — documents at `docs/`; five defaults
