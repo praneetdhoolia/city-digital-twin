@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mrvc_fare_rationalisation_report_2cfdc27d3a91ed9b.pdf",
+      "url": "https://mrvc.indianrailways.gov.in/works/uploads/File/Final%20Report.pdf",
+      "final_url": "https://mrvc.indianrailways.gov.in/works/uploads/File/Final%20Report.pdf",
+      "content_type": "application/pdf",
+      "source": "MRVC published fare and passenger willingness-to-pay study",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-21T13:51:04.489184+00:00",
+      "sha256": "2cfdc27d3a91ed9b242fd4228326833673b0bc1a163b6b33853e7912003fa7bc",
+      "bytes": 5939673,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical or current publication; each table needs its own period, universe and definition. Acquisition does not establish validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

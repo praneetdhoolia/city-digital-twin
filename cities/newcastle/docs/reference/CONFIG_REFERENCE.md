@@ -33,10 +33,10 @@ Three things are refused at every layer:
 |---|---:|---|
 | `observed` | 39 | read directly from a raw download |
 | `measured` | 42 | computed from observed data in this package |
-| `derived` | 46 | follows from another registry field by identity |
+| `derived` | 47 | follows from another registry field by identity |
 | `literature` | 82 | a published value, not specific to this city |
 | `assumed` | 212 | chosen without direct empirical support |
-| `definition` | 153 | fixed by the formulation, not an empirical quantity |
+| `definition` | 152 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
@@ -4163,7 +4163,6 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.mode_choice.pt_submode_alternatives` | `aggregate` | categorical | `assumed` | `aggregate`, `alternatives` |
 | `RUN.mode_choice.pt_submode_seed` | `bus` | enum | `assumed` | `bus`, `rail`, `tram`, `ferry` |
 | `RUN.mode_choice.subtour_behavior` | `betweenAllAndFewerConstraints` | enum | `literature` | `betweenAllAndFewerConstraints`, `fromSpecifiedModesToSpecifiedModes` |
-| `RUN.monitor.enabled` | `true` | boolean | `definition` | - |
 | `RUN.monitor.live_poll_s` | `0.5` | seconds | `definition` | - |
 | `RUN.monitor.pace_band_s` | `[217, 253]` | seconds_per_iteration | `measured` | **held fixed** |
 | `RUN.monitor.poll_s` | `3` | seconds | `definition` | - |
@@ -4209,6 +4208,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.sample.storage_capacity_factor` | *(null - unobtained)* | share_of_capacity | `derived` | derived: storageCapacityFactor = RUN.sample.fraction ** RUN.sample.storage_capa |
 | `RUN.sample.transit_capacity_floor` | `1` | seats | `assumed` | 1 - 4 |
 | `RUN.sample.transit_capacity_scaling` | `true` | boolean | `derived` | derived: seats = max(floor, round(seats x RUN.sample.fraction)); not scaling it |
+| `RUN.sample.transit_pce_scaling` | `true` | boolean | `derived` | derived: pce = pce x RUN.sample.fraction for every transit vehicle type, no flo |
 | `RUN.sample.unit` | `household` | enum | `derived` | derived: a sample drawn per PERSON keeps each household member independently, s |
 | `RUN.scoring.brain_exp_beta` | `1.0` | logit_scale | `literature` | 0.5 - 2 |
 | `RUN.scoring.early_departure_utils_per_h` | `0.0` | utils_per_hour | `assumed` | -18 - 0 |
@@ -4481,12 +4481,6 @@ How subtour mode choice treats tours it cannot close. Under the MATSim default f
 ***literature** · status **active** · DECISIONS.md §9.28 · MATSim `subtourModeChoice.behavior` · sweep role **uncertainty***
 
 > **Sweep basis.** the two values MATSim offers. Open Berlin, Leipzig and Kelheim all set the former; the latter is the MATSim default and was live here unset.
-
-#### `RUN.monitor.enabled`
-
-Serve the live run view while a run is in flight. An OBSERVER only: it reads the run directory, holds no lock and writes nothing, so a run observed is byte-for-byte a run unobserved. It is not part of the run identity and cannot alter a result.
-
-***definition** · status **active** · DECISIONS.md §9.19*
 
 #### `RUN.monitor.live_poll_s`
 
@@ -4807,6 +4801,14 @@ Scale transit vehicle seats by the sample fraction. NOT OPTIONAL in practice: at
 ***derived** · status **active** · DECISIONS.md §15*
 
 > **Derived from** `RUN.sample.fraction`: seats = max(floor, round(seats x RUN.sample.fraction)); not scaling it would give every vehicle 1/fraction times its real capacity
+
+#### `RUN.sample.transit_pce_scaling`
+
+Scale every transit vehicle type's passenger-car equivalent by the sample fraction, as the road flow capacities are. A transit vehicle runs at its full frequency on a link whose flow capacity is fraction x the real one: unscaled, a bus at PCE 2.8 takes 2.8/(1800 x fraction) hours of a lane that in life gives it 2.8/1800 - four times its real share at 25 %, a hundred times at 1 %. The second city's 1 % case gridlocked on its 110,000 daily bus departures at the mapper's full PCEs (9.206). MOVES RESULTS on the reference city: every arm before 9.206 ran buses at four times their road share; lands with the family the standing-room fix (#237, 9.203) already opens.
+
+***derived** · status **active** · DECISIONS.md §9.206*
+
+> **Derived from** `RUN.sample.fraction`: pce = pce x RUN.sample.fraction for every transit vehicle type, no floor: the vehicle's share of a scaled link's flow is then the share it has of the real link's
 
 #### `RUN.sample.unit`
 

@@ -5486,16 +5486,6 @@
       "declared_in": "RUN_execution.json",
       "required_by": "run"
     },
-    "RUN.monitor.enabled": {
-      "layer": "RUN",
-      "units": "boolean",
-      "type": "boolean",
-      "source_in_reference_city": "definition",
-      "sweep_required": false,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_execution.json",
-      "required_by": "run"
-    },
     "RUN.monitor.live_poll_s": {
       "layer": "RUN",
       "units": "seconds",
@@ -5945,6 +5935,16 @@
       "required_by": "run"
     },
     "RUN.sample.transit_capacity_scaling": {
+      "layer": "RUN",
+      "units": "boolean",
+      "type": "boolean",
+      "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json",
+      "required_by": "run"
+    },
+    "RUN.sample.transit_pce_scaling": {
       "layer": "RUN",
       "units": "boolean",
       "type": "boolean",

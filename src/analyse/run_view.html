@@ -29,7 +29,7 @@
   --t0:#3ddc6c; --t1:#ffa040; --t2:#ff4b3e; --t3:#a3241f;   /* traffic at night: a map app's four, lifted to carry on dark ground */
   --water:#0f1e2a; --land:#1b1e21; --green:#17261a; --sand:#2b2718;
   --rd5:#3a3f44; --rd4:#464c52; --rd3:#535a61; --rd2:#636b73; --rd1:#7c868f;
-  --rail:#bf5af2; --tram:#ff375f;
+  --rail:#bf5af2; --tram:#ff375f; --bus:#ffd60a; --subway:#0a84ff; --ferry:#64d2ff; --route:#ac8e68;
   --mono:"SF Mono",ui-monospace,Menlo,"Cascadia Mono",Consolas,monospace;
   --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue","Segoe UI Variable","Segoe UI",system-ui,sans-serif;
 }
@@ -45,7 +45,7 @@ html[data-theme="light"]{
   --t0:#63d668; --t1:#ff974d; --t2:#f23c32; --t3:#811f1f;   /* traffic by day: green, orange, red, stop-and-go */
   --water:#a4c8e6; --land:#e9e6df; --green:#c4dbb5; --sand:#ebe0bd;
   --rd5:#fbfbf9; --rd4:#f5f4f0; --rd3:#f2ead2; --rd2:#f3e094; --rd1:#eec96e;
-  --rail:#af52de; --tram:#ff2d55;
+  --rail:#af52de; --tram:#ff2d55; --bus:#c69c00; --subway:#007aff; --ferry:#0099cc; --route:#8e6b3f;
 }
 /* the material, once: every surface that floats over the map is this and nothing else
    is; the hairline rim is the glass's edge catching light, the shadow separates it from
@@ -517,6 +517,8 @@ table.kv2 tr.warn td{color:var(--stop)}
       <div class="lb" data-layer="roads"><span class="sw" style="background:var(--rd1)"></span>roads</div>
       <div class="lb" data-layer="ground"><span class="sq" style="background:var(--green)"></span>land &amp; water</div>
     </div>
+    <h3 id="rthead" hidden>Transit routes <span class="sp"></span><span class="note" id="rtnote"></span></h3>
+    <div class="lbs" id="rtchips"></div>
   </div>
 </div>
 <div id="ramp" class="hidden" title="delay ratio: 1 + (road-vehicle traversal time beyond free-flow and the simulator's one-second step) ÷ the free-flow time of at least 150 m; green to 1.25, orange to 1.67, red to 2.5, stop-and-go from 4; line width = vehicle volume"><b>delay</b><span>1.0 flowing</span><span class="bar"></span><span>4.0+ stopped</span></div>
@@ -689,6 +691,7 @@ function switchRun(name){
   doneShown = false; summaryMisses = 0; lastHead = null; $('verdicts').innerHTML = ''; $('modes').innerHTML = '';
   clockSamples = []; $('empty').classList.remove('hidden'); $('empty').textContent = 'loading ' + name + '…';
   loadNetwork().then(() => { tick(); refreshModes(); });
+  loadRoutes();
 }
 
 /* ---- the simulator's light: the sun's height and bearing over the study area's centre at the
@@ -792,7 +795,12 @@ requestAnimationFrame(paintClock);
 /* ---- the twelve modes ---- */
 const MODE_LABEL = {car:'car', ride:'ride (passenger)', walk:'walk', taxi:'taxi / rideshare', bike:'bike',
   motorbike:'motorbike', bus:'bus', heavy_rail:'heavy rail', light_rail:'light rail', ferry:'ferry',
-  truck:'truck', freight_train:'freight rail', metro:'metro'};
+  truck:'truck', freight_train:'freight rail', metro:'metro', auto_rickshaw:'auto-rickshaw', pt:'public transport'};
+const modeLabel = m => MODE_LABEL[m] || String(m).replace(/_/g, ' ');
+/* the transport modes a schedule may carry, as the mapper names them; an unknown one is drawn too */
+const ROUTE_LABEL = {bus:'bus routes', rail:'rail lines', subway:'metro lines', tram:'light rail lines', ferry:'ferry crossings', pt:'transit routes'};
+const ROUTE_COLOUR = {bus:'--bus', rail:'--rail', subway:'--subway', tram:'--tram', ferry:'--ferry'};
+const routeColour = m => ROUTE_COLOUR[m] || '--route';
 let readingsShown = null, modesTimer = null, wantIt = null, lastHead = null;
 function gateClass(dev, stop, pass){
   if (dev === null || dev === undefined) return 'na';
@@ -838,7 +846,7 @@ function renderModes(d){
     const flag = r && r.flag ? r.flag : (t.status === 'not_simulated' ? 'not simulated' : '');
     const levelOnly = /level only|representation|not simulated|no target/.test(flag);
     const devTxt = (dev === null || dev === undefined) ? '—' : (dev > 0 ? '+' : '') + dev.toFixed(1) + ' %';
-    h += '<tr><td class="m">' + (MODE_LABEL[t.mode] || t.mode) + '</td>'
+    h += '<tr><td class="m">' + modeLabel(t.mode) + '</td>'
        + '<td class="v">' + (r ? fmtVal(r.modelled, basis) : '—') + '</td>'
        + '<td class="t">' + fmtVal(t.target, basis) + '</td>'
        + '<td class="d ' + (levelOnly ? 'na' : cls) + '">' + (levelOnly ? '—' : devTxt) + '</td></tr>';
@@ -887,7 +895,7 @@ function rampColor(t){   // t in [0, 1] over the ramp 1..4 (the offline host's b
 let COL = {};
 function refreshPalette(){
   const cs = getComputedStyle(root);
-  for (const v of ['--water','--land','--green','--sand','--rd5','--rd4','--rd3','--rd2','--rd1','--rail','--tram','--bg','--t0','--t1','--t2','--t3'])
+  for (const v of ['--water','--land','--green','--sand','--rd5','--rd4','--rd3','--rd2','--rd1','--rail','--tram','--bus','--subway','--ferry','--route','--bg','--t0','--t1','--t2','--t3'])
     COL[v] = cs.getPropertyValue(v).trim();
 }
 const css = v => COL[v] || '#333';
@@ -903,6 +911,36 @@ function toMerc(coords){          // Float32 lon/lat pairs -> Float64 merc pairs
 }
 
 let NET = null, HS = null, BM = null, lastHotspotKey = null, fitted = false, prefit = false;
+let RT = null;                    // the run's transit routes by transport mode: {mode: {routes, vertices}}
+async function loadRoutes(){
+  RT = null;
+  try {
+    const d = await (await fetch(url('routes.json'))).json();
+    if (!d.available) { renderRouteChips(); return; }
+    RT = d;
+  } catch(e){ RT = null; }
+  renderRouteChips();
+  if (MAP) MAP.routes();
+}
+/* a chip per transport mode the schedule carries, remembered per mode; every mode is on
+   until the reader turns it off, so a city's whole network of routes is in view at once */
+function renderRouteChips(){
+  const box = $('rtchips'), head = $('rthead');
+  box.innerHTML = '';
+  if (!RT || !Object.keys(RT.modes).length){ head.hidden = true; return; }
+  head.hidden = false;
+  $('rtnote').textContent = RT.unplaced_routes ? RT.unplaced_routes + ' unplaced' : '';
+  for (const m of Object.keys(RT.modes)){
+    const key = 'rt:' + m;
+    if (!(key in SHOW)){ const saved = recall('rv.layer.' + key); SHOW[key] = saved !== 'off'; }
+    const el = document.createElement('div');
+    el.className = 'lb' + (SHOW[key] ? ' on' : '');
+    el.dataset.layer = key;
+    el.innerHTML = '<span class="sw" style="background:var(' + routeColour(m) + ')"></span>' + (ROUTE_LABEL[m] || String(m).replace(/_/g, ' ') + ' routes') + ' <span class="note">' + RT.modes[m].routes.toLocaleString('en-AU') + '</span>';
+    el.addEventListener('click', () => { SHOW[key] = !SHOW[key]; el.classList.toggle('on', SHOW[key]); store('rv.layer.' + key, SHOW[key] ? 'on' : 'off'); draw(); });
+    box.appendChild(el);
+  }
+}
 let MAP = null, BASE = ({map:'core', satellite:'satellite', core:'core', hybrid:'satellite', twin:'core'})[recall('rv.base')] || 'core';
 let THREE_D = recall('rv.3d') === 'on';
 let dpr = window.devicePixelRatio || 1;
@@ -924,7 +962,9 @@ async function loadBasemap(){
     // one binary body: a uint32 header length, the header JSON, then each layer's uint32
     // vertex counts and Float32 lon/lat pairs - typed arrays over the buffer, nothing decoded
     const r = await fetch('basemap.bin');
-    if (!r.ok) return;
+    // a city without a drawn basemap (the second city draws on the tiles alone) has no
+    // basemap rail or tram to switch: its lines come from the run's schedule instead
+    if (!r.ok){ for (const k of ['tram', 'rail']){ const el = document.querySelector('#lyrpanel .lb[data-layer="' + k + '"]'); if (el) el.hidden = true; } return; }
     let buf = await r.arrayBuffer();
     const hlen = new DataView(buf).getUint32(0, true);
     const d = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 4, hlen)));
@@ -1217,6 +1257,9 @@ function glHost(){
     map.addLayer({id:'bm-rail', type:'line', source:'bm-rail', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color': css('--rail'), 'line-width': metreWidth(5, 2), 'line-opacity': closeUp(1)}});
     map.addSource('bm-tram', {type:'geojson', data:EMPTY, maxzoom:14});
     map.addLayer({id:'bm-tram', type:'line', source:'bm-tram', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color': css('--tram'), 'line-width': metreWidth(4, 2.4), 'line-opacity': closeUp(1)}});
+    // the transit routes of the run's own schedule, one source and layer per transport mode,
+    // under the traffic so a congested link still reads; added when the schedule is known
+    routeLayers();
     // the congested links: colour by delay, width and opacity by volume, the worst on top
     map.addSource('traffic', {type:'geojson', data:EMPTY, maxzoom:14, buffer:8, tolerance:0});
     map.addLayer({id:'traffic', type:'line', source:'traffic', layout:{'line-cap':'round', 'line-sort-key':['get', 'd']},
@@ -1370,8 +1413,27 @@ function glHost(){
       hideTimer[id] = setTimeout(() => { if (!shown[id]) map.setLayoutProperty(id, 'visibility', 'none'); }, FADE_MS + 40);
     }
   }
+  const routeIds = new Set();
+  function routeLayers(){
+    if (!RT) return;
+    for (const m of Object.keys(RT.modes)){
+      const id = 'rt-' + m;
+      if (map.getSource(id)) continue;
+      // the worker fetches and parses the GeoJSON; the bus layer is thin and half-transparent
+      // so a thousand routes read as a network, the rail, metro and ferry lines full
+      const heavy = m !== 'bus';
+      map.addSource(id, {type:'geojson', data:url('routes.geojson', 'mode=' + encodeURIComponent(m)), maxzoom:14, tolerance:0.5});
+      const spec = {id, type:'line', source:id, layout:{'line-cap':'round', 'line-join':'round'},
+                    paint:{'line-color': css(routeColour(m)), 'line-width': heavy ? metreWidth(5, 2) : metreWidth(3, 1.2),
+                           'line-opacity': closeUp(heavy ? 0.95 : 0.55)}};
+      if (map.getLayer('traffic')) map.addLayer(spec, 'traffic'); else map.addLayer(spec);
+      routeIds.add(id);
+      if (!(('rt:' + m) in SHOW)) SHOW['rt:' + m] = true;
+    }
+  }
   function applyVisibility(){
     const twin = BASE === 'core';
+    for (const id of routeIds) vis(id, !!SHOW['rt:' + id.slice(3)]);
     const ground = twin || (SHOW.ground && BASE !== 'satellite');
     for (const k of ['coast', 'green', 'sand', 'water']) vis('bm-' + k, ground);
     const chip = document.querySelector('#lyrpanel .lb[data-layer="ground"]');
@@ -1387,6 +1449,7 @@ function glHost(){
     for (const spec of ROAD_ORDER) map.setPaintProperty('rd-' + spec[0], 'line-color', css(spec[1]));
     map.setPaintProperty('bm-rail', 'line-color', css('--rail'));
     map.setPaintProperty('bm-tram', 'line-color', css('--tram'));
+    for (const id of routeIds) map.setPaintProperty(id, 'line-color', css(routeColour(id.slice(3))));
     map.setPaintProperty('traffic', 'line-color', rampExpr());
     if (map.getLayer('buildings')){
       map.setPaintProperty('buildings', 'fill-extrusion-color', BASE === 'satellite' ? '#b8bcc2' : (dark() ? '#3c4148' : '#dcdcd8'));
@@ -1491,6 +1554,8 @@ function glHost(){
   const host = {
     map,
     refresh(){ when(() => { if (BM) setBasemap(BM); if (HS && HS.available && HS._url) setTraffic(HS); applyVisibility(); }); },
+    // a new run's schedule: a source that exists is pointed at the new run's routes, a new mode gets its layer
+    routes(){ when(() => { routeLayers(); for (const id of routeIds){ const src = map.getSource(id); if (src) src.setData(url('routes.geojson', 'mode=' + encodeURIComponent(id.slice(3)))); } applyVisibility(); }); },
     // the framed view is overhead: the study area from above, north up, whatever the tilt was,
     // and inside the map the sidebar leaves visible, not centred on the window behind it
     fit(box){ when(() => {
@@ -1715,5 +1780,6 @@ legend(); fadeEdges();
 loadRuns();
 loadBasemap();
 loadNetwork().then(() => { tick(); refreshModes(); });
+loadRoutes();
 </script>
 </html>

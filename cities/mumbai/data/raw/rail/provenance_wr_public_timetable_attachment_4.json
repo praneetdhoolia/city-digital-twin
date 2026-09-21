@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/wr_public_timetable_attachment_4_ecf5dec773953745.pdf",
+      "url": "https://wr.indianrailways.gov.in/cris//uploads/files/1788159808195-UP%20AC%20TRAINS%20PTT%2079%20W.E.F.%2001.09.2026.pdf",
+      "final_url": "https://wr.indianrailways.gov.in/cris//uploads/files/1788159808195-UP%20AC%20TRAINS%20PTT%2079%20W.E.F.%2001.09.2026.pdf",
+      "content_type": "application/pdf",
+      "source": "Western Railway UP AC TRAINS PTT 79 W.E.F. 01.09.2026",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-21T13:48:26.438026+00:00",
+      "sha256": "ecf5dec773953745764c7080bc0ac6aad627db5759d9fd9c835f69b892282089",
+      "bytes": 235119,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Linked from official index of September 2026. Document effective date and calendar must be parsed individually; AC subsets must not be double counted.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

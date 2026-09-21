@@ -1,6 +1,6 @@
 {
   "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
-  "updated": "2026-09-21",
+  "updated": "2026-09-22",
   "family": "F35-the-engines-route-what-they-remode",
   "tasks": [
     {
@@ -156,15 +156,44 @@
       "id": "mumbai-defensible-fraction",
       "title": "Give Mumbai a fraction it can be read at: measure the agent's memory (plan memory, events, telemetry) on a 1 % core case, then either a leaner agent or a larger host (D14), then the equivalence experiments of scaling.md at the fraction that fits; meanwhile the pt trips of 13 h and the 5,454 stuck agents of the 0.1 % case are read for what is granularity and what is the schedule",
       "kind": "measurement",
-      "status": "open",
-      "recommended": true,
+      "status": "done",
+      "recommended": false,
       "cost": "a 1 % core case of a few iterations (270,000 agents, xmx 50g on the 63 GB host; ~1 h by the 0.1 % case's 88 s an iteration scaled) to measure the per-agent memory and the pt trip times; no arm; opens no family (no result compares yet)",
       "blocked_on": "D14 (the host or the agent) for anything above 1 %; nothing for the 1 % measurement itself",
       "opens_family": false,
       "answers_issues": [
         239
       ],
-      "evidence": "9.205: 17.30 GiB at 0.001 against 13.74 at a negligible population (140 KB an agent), so 1 % needs 50 GiB and 5 % 194 GiB; at 0.001 the flow-capacity identity gives 1.8 veh/h a lane and a 4.5 km car trip 194 min; cities/mumbai/docs/scaling.md"
+      "evidence": "9.205: 17.30 GiB at 0.001 against 13.74 at a negligible population (140 KB an agent), so 1 % needs 50 GiB and 5 % 194 GiB; at 0.001 the flow-capacity identity gives 1.8 veh/h a lane and a 4.5 km car trip 194 min; cities/mumbai/docs/scaling.md",
+      "done_ref": "9.206"
+    },
+    {
+      "id": "mumbai-merged-network-one-percent",
+      "title": "Merge the mapped network's degree-2 link chains (length, capacity, lanes, modes and mapped stops preserved) and re-run the 1 % lean-agent case: if the stuck share falls from 43 % to the reference city's order, the equivalence series of scaling.md (0.5 / 1 / 2 %) follows on this host; if not, the fraction needs D15's host",
+      "kind": "build",
+      "status": "open",
+      "recommended": true,
+      "cost": "a network merge and one remap of the combined feed (~1 h of builds), then the 1 % case at 1.3 h (`python src/analyse/arm_cost.py --run-config lean_agent_one_percent --iterations 4` prices it on 20260922T005949_4it_1pct); no arm; opens no family (no result compares yet)",
+      "blocked_on": "D15 for anything above 2 %; nothing for the merge and the 1 % case",
+      "opens_family": false,
+      "answers_issues": [
+        239
+      ],
+      "evidence": "9.206: both 1 % cases removed 114,414-122,192 of 269,690 agents stuck with 81,722-154,759 still en route at 36:00; the network's median link is 65 m and 41 % are under 50 m, so at 0.01 a link stores under a tenth of a vehicle; the live heap is 31 GiB at 1 % and 55 at 2 %"
+    },
+    {
+      "id": "mumbai-ferry-crossings",
+      "title": "Bring the commuter ferry crossings into Mumbai's feed from the Maritime Board directory (Ferry Wharf-Mora/Rewas/Mandwa, Gateway-Mandwa, Versova-Madh, Marve-Manori, Gorai-Borivali, Belapur-Nerul), each on its OSM ferry way or the water line between its jetties, its window from the directory's first and last departures, its vessel capacity through a fleet profile",
+      "kind": "build",
+      "status": "open",
+      "recommended": false,
+      "cost": "a feed-builder change and one mapping of the combined feed (build_matsim_network.py --stage schedules, ~30 min); no arm; the 0.1 % structural check afterwards (6 min)",
+      "blocked_on": "nothing",
+      "opens_family": false,
+      "answers_issues": [
+        245
+      ],
+      "evidence": "9.206: the extract holds two route=ferry relations (Elephanta, Vasai-Bhayander); the target's port groups (9.205) are the crossings the directory lists and the feed lacks"
     }
   ],
   "decisions": [
@@ -539,6 +568,32 @@
       ],
       "evidence": "9.205: the measured heap rule (13.7 + 3,600 x fraction GiB) and the 0.1 % case's trip times; docs/scaling.md; the reference city's 25 % arms peak at 26.2 GiB for 155,000 agents (9.169)",
       "asked": "2026-09-21",
+      "answer": "Measure a leaner agent first on a 1 % case, then decide the host (recommended)",
+      "answered": "2026-09-21"
+    },
+    {
+      "id": "D15",
+      "question": "Both 1 % Mumbai cases gridlock with the transit fleet's road space scaled (114,414-122,192 of 269,690 agents removed stuck): at 0.01 every link is a gate of one vehicle per 200 s with storage for one, and 41.5 % of the network's nodes are pass-through, so merging them doubles a 65 m median link to about 130 m - still a sixth of a vehicle's storage at 1 %. Memory is no longer the first constraint (31 GiB at 1 %, 55 at 2 %, 247 at 10 % on this 63 GB host). Which way to a fraction a reading can stand on?",
+      "options": [
+        {
+          "label": "Merge the degree-2 link chains and re-run the 1 % case as the diagnostic, then take the host if the stuck share holds",
+          "detail": "cheap and informative (~1 h of builds, a 1.3 h case): if spillback on short links is the mechanism the stuck share falls; the arithmetic says it cannot fall to the reference city's order at 1 %, so this is the evidence the host option is priced on, not a substitute for it"
+        },
+        {
+          "label": "A larger host (cloud or workstation, 384-512 GB) for a 10 % core, after the merge diagnostic (recommended)",
+          "detail": "the MATSim literature's floor for a congested network is about 10 %: 2.7 M agents, 247 GiB live at plan memory 5, an iteration of hours on 8 threads; a probe on that host prices the arm before any approval; the merged network halves the links it routes on"
+        },
+        {
+          "label": "Hold Mumbai at the structural checks and finish the reference city first",
+          "detail": "the data, the extent, the population, the plans, the targets and the evidenced fleet stay built; the harness runs the 0.1 % check after every change"
+        }
+      ],
+      "recommended": 1,
+      "issues": [
+        239
+      ],
+      "evidence": "9.206: two 1 % cases (20260921T231313_4it_1pct, 20260922T005949_4it_1pct); the link-length distribution of scenarios/matsim/BASE/network.xml.gz; the live-set heap rule",
+      "asked": "2026-09-22",
       "answer": null,
       "answered": null
     }

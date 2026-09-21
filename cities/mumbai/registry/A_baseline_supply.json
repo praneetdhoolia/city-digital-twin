@@ -31,13 +31,14 @@
         "transit_vehicles": "networks/matsim/schedules/baseline_regional/transitVehicles.xml.gz",
         "plans": "demand/baseline/plans_core_sample.xml.gz",
         "boarding_fares": "params/baseline/boarding_fares.csv",
-        "hired_fleet": "params/baseline/hired_fleet.json"
+        "hired_fleet": "params/baseline/hired_fleet.json",
+        "fleet_assignments": "networks/matsim/schedules/baseline_regional/fleet_assignments.json"
       },
       "units": "city_relative_paths",
       "source": "definition",
       "status": "active",
-      "description": "The prepared baseline inputs the scenario assembly reads: the mapped regional network and combined feed (one pt2matsim build), the citywide plans written at B.population.plans_build_fraction from the synthesised core population (build_plans.py, 9.205), the boarding-fare table and the hired-fleet derivation. The assembly writes scenarios/matsim/BASE/, demand/plans/matsim/population_WEEKDAY.xml.gz and the plans report the launcher reads for the build fraction.",
-      "decisions_ref": "9.205",
+      "description": "The prepared baseline inputs the scenario assembly reads: the mapped regional network and combined feed (one pt2matsim build), the citywide plans written at B.population.plans_build_fraction from the synthesised core population (build_plans.py, 9.205), the boarding-fare table and the hired-fleet derivation. The assembly writes scenarios/matsim/BASE/, demand/plans/matsim/population_WEEKDAY.xml.gz and the plans report the launcher reads for the build fraction. fleet_assignments is the per-vehicle capacity assignment build_transit_fleet.py writes beside the mapped feed (9.206): the assembly resolves every mapped vehicle's seats and standing places through it, never copying the mapper's default capacities.",
+      "decisions_ref": "9.205, 9.206",
       "consumers": [
         "cities/mumbai/build/build_baseline_run_inputs.py"
       ]

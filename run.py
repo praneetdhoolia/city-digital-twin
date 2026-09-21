@@ -448,13 +448,20 @@ def _detach():
     # \"stop\""` and `X=50%` to a different command whose only record
     # was a log (eighth project report, 11 September 2026).
     quoted = subprocess.list2cmdline(args).replace('%', '%%')
-    with open(wrapper, 'w', encoding='ascii', newline='\r\n') as f:
+    # newline='' so the explicit \r\n below is written once, not as \r\r\n
+    with open(wrapper, 'w', encoding='ascii', newline='') as f:
         f.write('@echo off\r\n')
         f.write('cd /d "%s"\r\n' % HERE)
         # the run is NAMED by this stamp too, so `--stop <run>` finds the task:
         # the runner used to stamp the directory at JVM start, seconds after
         # the task was named, and the stop's task lookup matched nothing
         f.write('set CITYSIM_LAUNCH_STAMP=%s\r\n' % stamp)
+        # the Task Scheduler starts the wrapper with the machine's environment,
+        # not this shell's: a `CITYSIM_CITY=mumbai` launch resolved the default
+        # city inside the task and died on its missing BASE overlay
+        # (9.206). The city the launching shell resolved is written into the
+        # wrapper, so the task runs the city that was priced and preflighted.
+        f.write('set %s=%s\r\n' % (city.CITY_ENV, city.CITY))
         f.write('"%s" run.py %s > "%s" 2>&1\r\n' % (sys.executable, quoted, log))
         # the task deletes itself once the run ends, so a finished launch
         # leaves no scheduled-task residue behind

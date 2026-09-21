@@ -59,8 +59,17 @@ RESULTS = os.path.join(ROOT, 'results')
 _config = _registry.load()
 # A development city may have a smoke configuration before an arm horizon.
 # Explicit run_kind identifies those cases without inventing a threshold.
-PROBE_ITERATIONS_CEILING = (_config.sweep('RUN.controler.last_iteration')['interval'][0]
-                          if 'RUN.controler.last_iteration' in _config else None)
+def _probe_ceiling():
+    # a city that declares its horizon without a sweep (the second city's is a
+    # definition) has no probe boundary: its completed runs are what their
+    # records say (9.206; build_status_board._horizon_floor takes the same view)
+    try:
+        return _config.sweep('RUN.controler.last_iteration')['interval'][0]
+    except Exception:
+        return None
+
+
+PROBE_ITERATIONS_CEILING = _probe_ceiling()
 
 
 def load_families():

@@ -93,44 +93,58 @@ when every remaining score is within the pass band. This checks coverage of the
 city's declared target modes; the mode inventory must itself be complete. A fit
 statistic still cannot certify run completion or fulfil the other requirements.
 
-The run-input assembler now supports
-[explicit vehicle capacity profiles](../../../docs/transit_fleet.md), as well as
-the existing broad-mode capacities. Mumbai's distinct bus configurations,
-train formations and vessels still need evidenced per-vehicle assignments. The
+The run-input assembler supports
+[explicit vehicle capacity profiles](../../../docs/transit_fleet.md), and since
+21 September 2026 (9.206) Mumbai uses them: `build_transit_fleet.py` assigns
+every one of the 114,670 mapped vehicles a profile whose seats and standing
+places are registry fields with their sources - a 12-car EMU 1,168 + 3,816
+(Indian Railways' EMU primer), Line 1 200 + 1,300, the BEML 6-car 239 + 1,561,
+Line 3 399 + 2,601, Navi Mumbai 150 + 950, the two launches 80 and 100, every
+bus 36 + 30 - in place of the mapper's defaults (Bus 70, Rail 400, Subway 300,
+Ferry 250, no standing room) every case before it ran on. Which departures run
+AC, 15-car or MEMU stock, and which operator's buses carry which body, are not
+yet assigned per departure; the bus standing room is the one assumed capacity
+(swept 20-45). The
 [manufacturer evidence audit](../data/processed/acquisition/bus_capacity_evidence_audit.json)
-already contains different seating configurations and a conflicting brochure.
-Unknown standing capacity must not become zero. The explicit path refuses
-missing active assignments, invalid capacities and mismatched mapped-build
-hashes. Mumbai does not yet supply a validated assignment file or the physical
-base-type configurations. Scaling a generic average correctly would still give
-the wrong boarding and crowding behaviour.
+still holds conflicting seating claims and no standing capacity. Scaling a
+generic average correctly would still give the wrong boarding and crowding
+behaviour, so the explicit path stays per configuration.
 
-## What the first citywide case measured (21 September 2026, §9.205)
+## What the citywide cases measured (21-22 September 2026, §9.205, §9.206)
 
 The core plans are written at `B.population.plans_build_fraction` 0.05 by the
-harness's own nested household hash (1,352,144 persons in 303,384 households),
-and `20260921T220701_2it_0.1pct` ran 0.001 of the core (26,884 persons, 2
-iterations, 354 s, 88 s an iteration) through the harness on the full mapped
-regional network (846,699 links) and combined feed. It is a structural check
-and nothing else, and it measured the two constraints that decide the fraction:
+harness's own nested household hash (1,352,144 persons in 303,384 households).
+`20260921T220701_2it_0.1pct` ran 0.001 of the core (26,884 persons) and two
+1 % cases ran 0.01 (269,690 persons) with plan memory 5:
+`20260921T231313_4it_1pct` on the mapper's default fleet at full PCE and
+`20260922T005949_4it_1pct` on the evidenced fleet with every transit PCE
+scaled by the fraction. All three are structural measurements, not readings.
 
-- **Memory.** 17.30 GiB peak against 13.74 GiB for a negligible population:
-  about 140 KB an agent at two plans, the reference city's rate. The heap rule
-  is now measured on two points (`RUN.machine.heap_floor_gib` 13.7,
-  `RUN.machine.heap_per_fraction_gib` 3,600): 1 % of the core needs 50 GiB,
-  5 % needs 194 GiB, 25 % (the reference city's fraction) 914 GiB. The host has
-  63 GB.
-- **Flow granularity.** The capacity factors are identities on the fraction, so
-  at 0.001 a 1,800 veh/h lane passes 1.8 vehicles an hour and every second car
-  on a link waits half an hour: the case's median car trip of 4.5 km took
-  194 min and its pt trips 13 h, and 5,454 agents were removed stuck. That is
-  the discrete queue at a fraction far below what a reading can stand, not the
-  city. The reference city reads at 25 %; the MATSim literature's floor is
-  about 10 %.
+- **Memory.** §9.205's 140 KB an agent was read from pre-collection peaks,
+  which under ParallelGC with `-Xms = -Xmx` track the heap GIVEN (16g peaked
+  at 13.74 GiB, 24g at 17.30). The live set after a full collection is 7.4 GiB
+  with no population, 7.8 with 26,884 agents at two plans (18 KB an agent) and
+  15.5 GiB with 269,690 agents at about 2.2 plans (31 KB an agent, ~14-19 KB
+  a plan). The heap rule is `RUN.machine.heap_floor_gib` 7.4 +
+  `RUN.machine.heap_per_fraction_gib` 2,400 × fraction at plan memory 5: 1 %
+  needs 31 GiB, 2 % 55, 5 % 127, 10 % 247. The host has 63 GB.
+- **Flow granularity.** Both 1 % cases gridlock. The first removed 122,192
+  agents stuck and held 154,759 en route at 36:00; its cause was the transit
+  fleet's road space - 114,670 daily departures at pt2matsim's PCEs on links
+  whose flow capacity is 0.01 of the real one, a bus taking 2.8 of a lane's 18
+  vehicles an hour - which `RUN.sample.transit_pce_scaling` retires. The
+  second, corrected, still removed 110,173 and held 72,982 en route: at 0.01
+  every link is a gate of one vehicle per 200 s with storage for one, and the
+  mapped network's median link is 65 m (41 % under 50 m; 41.5 % of nodes are
+  pass-through, so a merge doubles the median and still stores a sixth of a
+  vehicle at 1 %). Trips completed rose from 85,255 to 149,502 and the
+  reporter's iteration-4 reading put metro inside its pass band (-2.9 %) and
+  bus at +18.3 %, with heavy rail at -83.9 % and nine of ten modes past the
+  bar. The reference city reads at 25 %; the MATSim literature's floor for a
+  congested network is about 10 %.
 
-So on this host Mumbai can execute at about 1 % and read at none: a defensible
-reading needs either a host of the order of 200-900 GB, or a leaner agent (plan
-memory, event handling and telemetry measured per agent) and the equivalence
-experiments above at the fraction that then fits. That is decision D14, the
-user's. No fraction has been shown to preserve behaviour.
-
+So on this host Mumbai executes at 1 % and reads at none: a defensible
+reading needs either a host of the order of 384-512 GB for a 10 % core (2.7 M
+agents, 247 GiB live) or evidence that a merged network changes the picture -
+decision D15, the user's, with the merge as its diagnostic. No fraction has
+been shown to preserve behaviour.

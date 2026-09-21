@@ -491,7 +491,11 @@
       "category": "rail",
       "licence": "Publication reuse terms unverified",
       "coverage": "Locate suburban schedule attachments.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/central_railway_timetable_root_f7c7d014c381e411.html",
+      "sha256": "f7c7d014c381e411245556a4d21f8e7672dc62f9dbeba28bf48747b0d060d27a",
+      "bytes": 475543,
+      "retrieved": "2026-09-21T13:19:58.442142+00:00"
     },
     {
       "id": "metro1_schedule",
@@ -1181,7 +1185,11 @@
       "category": "rail",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Linked from official index of September 2026. Document effective date and calendar must be parsed individually; AC subsets must not be double counted.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/wr_public_timetable_attachment_2_0d2d8d63517630eb.pdf",
+      "sha256": "0d2d8d63517630eb0e9890901945577090a236f04ddc85f77e0fec9d4896be78",
+      "bytes": 544116,
+      "retrieved": "2026-09-21T13:20:24.267750+00:00"
     },
     {
       "id": "wr_public_timetable_attachment_3",
@@ -1199,7 +1207,11 @@
       "category": "rail",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Linked from official index of September 2026. Document effective date and calendar must be parsed individually; AC subsets must not be double counted.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/wr_public_timetable_attachment_4_ecf5dec773953745.pdf",
+      "sha256": "ecf5dec773953745764c7080bc0ac6aad627db5759d9fd9c835f69b892282089",
+      "bytes": 235119,
+      "retrieved": "2026-09-21T13:48:26.438026+00:00"
     },
     {
       "id": "wr_public_timetable_attachment_5",
@@ -1217,7 +1229,11 @@
       "category": "rail",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Linked from official index of September 2026. Document effective date and calendar must be parsed individually; AC subsets must not be double counted.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/wr_public_timetable_attachment_6_659d6127b8c73199.pdf",
+      "sha256": "659d6127b8c73199038613364cf36af39ba786100116724160dcd8d61b5bbf91",
+      "bytes": 96067,
+      "retrieved": "2026-09-21T13:15:40.467198+00:00"
     },
     {
       "id": "monorail_status_official_20260918",
@@ -3118,7 +3134,11 @@
       "category": "transit",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical or current publication; each table needs its own period, universe and definition. Acquisition does not establish validation.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/transit/mrvc_fare_rationalisation_report_2cfdc27d3a91ed9b.pdf",
+      "sha256": "2cfdc27d3a91ed9b242fd4228326833673b0bc1a163b6b33853e7912003fa7bc",
+      "bytes": 5939673,
+      "retrieved": "2026-09-21T13:51:04.489184+00:00"
     },
     {
       "id": "mumbai_traffic_annual_index",
@@ -6466,7 +6486,11 @@
       "category": "roads",
       "licence": "Government of Maharashtra publication; reuse terms unverified",
       "coverage": "Historical committee report supporting material; distinguish recommendations, reported observations and later operative orders.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/roads/maharashtra_taxi_auto_committee_part3_41ad50fa03b6fb24.pdf",
+      "sha256": "41ad50fa03b6fb2442fd2322c42f843f0678d77997607f09a4bb50aec87bccad",
+      "bytes": 32301365,
+      "retrieved": "2026-09-21T13:47:55.815321+00:00"
     },
     {
       "id": "mpcb_mumbai_emissions_source_apportionment_2023",
@@ -6746,7 +6770,11 @@
       "category": "rail",
       "licence": "Indian Railways/MRVC publication; reuse terms unverified",
       "coverage": "Historical project report with existing-network context and future train-operation/design projections. Proposed fast corridor and projected demand are not existing Harbour service observations.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/mrvc_csmt_panvel_fast_dpr_summary_2016_49ab41fd26a93b15.pdf",
+      "sha256": "49ab41fd26a93b15b6ade8cd3bb4f915c76ec44c03f7bfbc81b526283d8a76bf",
+      "bytes": 3462810,
+      "retrieved": "2026-09-21T13:49:46.346687+00:00"
     },
     {
       "id": "cr_mumbai_carsheds_page",
@@ -6755,7 +6783,11 @@
       "category": "rail",
       "licence": "Indian Railways/MRVC publication; reuse terms unverified",
       "coverage": "Carshed and fleet reference; distinguish publication review date, stock holding, serviceable stock, formations and actual daily assignment.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/cr_mumbai_carsheds_page_952416390a651efd.html",
+      "sha256": "952416390a651efd87cf4650f264bce7afddae8b092ef7531271a2db2c1134b1",
+      "bytes": 1055689,
+      "retrieved": "2026-09-21T13:53:24.642445+00:00"
     },
     {
       "id": "cr_signalling_assets_page",
@@ -6786,7 +6818,11 @@
       "category": "rail",
       "licence": "Indian Railways publication; reuse terms unverified",
       "coverage": "Zonal asset chart; source date and division breakdown require image inspection.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/cr_signalling_assets_chart_20260514_990a531b6c7026b1.jpg",
+      "sha256": "990a531b6c7026b122d753aa500ab5bd28df930ca4906531dcce5367a2e1de75",
+      "bytes": 176470,
+      "retrieved": "2026-09-21T13:50:03.761341+00:00"
     },
     {
       "id": "cr_line_capacity_page",
@@ -7169,6 +7205,71 @@
       "sha256": "9b4a5d09236b22e043f966d5bf0bdd2ce49a0bf86a5bc5a292fe259ee360768a",
       "bytes": 3715204586,
       "retrieved": "2026-09-18T14:44:14.716996+00:00"
+    },
+    {
+      "id": "irimee_emu_basics",
+      "title": "Indian Railways IRIMEE: Basics of EMU (Silabhadra Das, P(MIS) IRIMEE)",
+      "url": "https://rskr.irimee.in/sites/default/files/EMU%20BASICS.pdf",
+      "category": "rail",
+      "licence": "Indian Railways training publication; reuse terms unverified",
+      "coverage": "Published carrying capacities of Mumbai suburban EMU rakes: 9-car 876 seated + 1,752 standees, 12-car 1,168 + 2,336 (design), the Siemens 12-car rake 4,984 and the Bombardier rake 5,964, and the super-dense crush load; historical and fleet-generation figures, not a per-departure stock assignment.",
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/irimee_emu_basics_8e6697fcbdcfb0b8.pdf",
+      "sha256": "8e6697fcbdcfb0b8ee1228b0d4ea6c010c53a5e3f98ad59a5139c6b726206d7e",
+      "bytes": 3571352,
+      "retrieved": "2026-09-21T13:33:53.574692+00:00"
+    },
+    {
+      "id": "mmopl_features_page",
+      "title": "Mumbai Metro One (MMOPL) Features and Facilities page",
+      "url": "https://www.reliancemumbaimetro.com/features",
+      "category": "transit",
+      "licence": "Operator publication; reuse terms unverified",
+      "coverage": "Operator statement of Line 1 train capacity (1,500 commuters in a 4-coach train, 2,250 in 6), route length, stations and depot; no seated/standing split, no dated timetable.",
+      "status": "acquired_unvalidated",
+      "path": "data/raw/transit/mmopl_features_page_3869d38f3271d6c7.html",
+      "sha256": "3869d38f3271d6c75a3bd05a4ddbc2fb945006954f6c5539700392c6a29efcdd",
+      "bytes": 131689,
+      "retrieved": "2026-09-21T13:33:55.302340+00:00"
+    },
+    {
+      "id": "railway_technology_navi_mumbai_metro",
+      "title": "Railway Technology project profile: Navi Mumbai Metro",
+      "url": "https://www.railway-technology.com/projects/navi-mumbai-metro/",
+      "category": "transit",
+      "licence": "Trade press publication; reuse terms unverified",
+      "coverage": "Trade-press profile of Navi Mumbai Metro Line 1: 3-car CRRC trainsets of about 1,100 passengers, 64.6 m long, 3.1 m wide, 90 km/h; CIDCO publishes no capacity. Secondary source, retained until an operator figure is acquired.",
+      "status": "acquired_unvalidated",
+      "path": "data/raw/transit/railway_technology_navi_mumbai_metro_9cb5a436bd99f5ef.html",
+      "sha256": "9cb5a436bd99f5ef0979249e9c2885dc2e7e9ce2cceaa15692b48995c17b1ccb",
+      "bytes": 254123,
+      "retrieved": "2026-09-21T13:33:57.281710+00:00"
+    },
+    {
+      "id": "rollingstockworld_navi_mumbai_crrc",
+      "title": "Rolling Stock World: CRRC trains start operating on a new metro line in Navi Mumbai",
+      "url": "https://rollingstockworld.com/lrv/crrcs-trains-start-operating-on-a-new-metro-line-in-navi-mumbai/",
+      "category": "transit",
+      "licence": "Trade press publication; reuse terms unverified",
+      "coverage": "Trade-press report of the CRRC 3-car Navi Mumbai Metro trains: each accommodates 1,100 people with 150 seats, 80 km/h. Secondary source; CIDCO and Maha Metro publish no train capacity in the acquired reports.",
+      "status": "acquired_unvalidated",
+      "path": "data/raw/transit/rollingstockworld_navi_mumbai_crrc_6bf3a9f6b019cb05.html",
+      "sha256": "6bf3a9f6b019cb057c859480e353b10a800980b3478ec7d2a398c00abe949687",
+      "bytes": 53254,
+      "retrieved": "2026-09-21T13:35:35.050021+00:00"
+    },
+    {
+      "id": "nhm_population_projections_2011_2036",
+      "title": "Technical Group population projections for India and states 2011-2036 (National Health Mission mirror)",
+      "url": "https://nhm.gov.in/New_Updates_2018/Report_Population_Projection_2019.pdf",
+      "category": "population",
+      "licence": "Government of India publication; reuse terms unverified",
+      "coverage": "Official demographic projections; state-level total, age, sex and urban/rural estimates. Not observed Mumbai small-area counts. The MoHFW URL returns 404 (21 September 2026); this is the same report hosted by the National Health Mission.",
+      "status": "acquired_unvalidated",
+      "path": "data/raw/population/nhm_population_projections_2011_2036_9a9031c9c75d609e.pdf",
+      "sha256": "9a9031c9c75d609e03ab94ce0ac6115cb9d8a9ab82d1b18a47b78e90ae01331b",
+      "bytes": 11543351,
+      "retrieved": "2026-09-21T13:47:21.403407+00:00"
     }
   ],
   "identical_bytes_groups": [
@@ -7204,6 +7305,10 @@
     [
       "mumbai_road_safety_2023",
       "mtp_road_safety_2023"
+    ],
+    [
+      "nhm_population_projection_2019",
+      "nhm_population_projections_2011_2036"
     ],
     [
       "vehicle_stock_2025",

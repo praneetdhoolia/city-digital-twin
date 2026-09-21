@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/irimee_emu_basics_8e6697fcbdcfb0b8.pdf",
+      "url": "https://rskr.irimee.in/sites/default/files/EMU%20BASICS.pdf",
+      "final_url": "https://rskr.irimee.in/sites/default/files/EMU%20BASICS.pdf",
+      "content_type": "application/pdf",
+      "source": "Indian Railways IRIMEE: Basics of EMU (Silabhadra Das, P(MIS) IRIMEE)",
+      "licence": "Indian Railways training publication; reuse terms unverified",
+      "retrieved": "2026-09-21T13:33:53.574692+00:00",
+      "sha256": "8e6697fcbdcfb0b8ee1228b0d4ea6c010c53a5e3f98ad59a5139c6b726206d7e",
+      "bytes": 3571352,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published carrying capacities of Mumbai suburban EMU rakes: 9-car 876 seated + 1,752 standees, 12-car 1,168 + 2,336 (design), the Siemens 12-car rake 4,984 and the Bombardier rake 5,964, and the super-dense crush load; historical and fleet-generation figures, not a per-departure stock assignment.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 380 fields are made of
+## What the 403 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
-| `observed` | 2 | read directly from a raw download |
+| `observed` | 8 | read directly from a raw download |
 | `measured` | 2 | computed from observed data in this package |
-| `derived` | 13 | follows from another registry field by identity |
-| `literature` | 30 | a published value, not specific to this city |
-| `assumed` | 159 | chosen without direct empirical support |
-| `definition` | 174 | fixed by the formulation, not an empirical quantity |
+| `derived` | 22 | follows from another registry field by identity |
+| `literature` | 36 | a published value, not specific to this city |
+| `assumed` | 160 | chosen without direct empirical support |
+| `definition` | 175 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 338 | usable point value |
+| `active` | 361 | usable point value |
 | `computed` | 6 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 35 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 1 | the datum does not exist in the package; must be swept, never pinned |
@@ -53,14 +53,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 |---|---|---|
 | `B.population.tertiary_attendance_rate_20_24` | 0 - 0.35 | Unobtained: null, and the synthesiser makes nobody in that age range a student, which the report says. |
 
-### What the 182 sweeps are for
+### What the 189 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 5 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 176 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 183 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 1 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -85,8 +85,8 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `CAL.asc.max_step_utils` - A REFUSAL THRESHOLD, not a model input, and so not swept - the A.signals.scats_match_radius_m precedent for a build guard's tolerance. It is the point past which a proposed step st
 - `CAL.objective.include_counts` - adopted from the reference city, where it is derived from B.external.interaction_rate; those fields are not declared for this city, so the value is held
 - `CAL.search.reading_drift_pct` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
-- `RUN.machine.heap_floor_gib` - the peak of the explicit 1,000-person case (the network, the combined feed and the routers, no population to speak of), read from its gc.log; re-read from every longer case
-- `RUN.machine.heap_per_fraction_gib` - the slope between the two measured peaks: 13.74 GiB at a negligible population and 17.30 GiB at 0.001 of the core households (26,884 agents, 20260921T220701_2it_0.1pct), 3.56 GiB p
+- `RUN.machine.heap_floor_gib` - the LIVE SET after the last full collection of a case with no population to speak of, read from its gc.log (Pause Full N->M: M), never the pre-collection peak - under ParallelGC wi
+- `RUN.machine.heap_per_fraction_gib` - persons in the core (27.06 M) x RUN.replanning.max_agent_plan_memory x the live heap a routed plan holds at steady state - 19 KB on the reference city's 25 % arm 20260916T063903_25
 - `RUN.monitor.pace_band_s` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
 
 ## Broad baseline boarding fares
@@ -282,9 +282,9 @@ Provisional dedicated-link service envelope. Flow capacity derives as maximum ma
 
 #### `A.baseline.inputs`
 
-The prepared baseline inputs the scenario assembly reads: the mapped regional network and combined feed (one pt2matsim build), the citywide plans written at B.population.plans_build_fraction from the synthesised core population (build_plans.py, 9.205), the boarding-fare table and the hired-fleet derivation. The assembly writes scenarios/matsim/BASE/, demand/plans/matsim/population_WEEKDAY.xml.gz and the plans report the launcher reads for the build fraction.
+The prepared baseline inputs the scenario assembly reads: the mapped regional network and combined feed (one pt2matsim build), the citywide plans written at B.population.plans_build_fraction from the synthesised core population (build_plans.py, 9.205), the boarding-fare table and the hired-fleet derivation. The assembly writes scenarios/matsim/BASE/, demand/plans/matsim/population_WEEKDAY.xml.gz and the plans report the launcher reads for the build fraction. fleet_assignments is the per-vehicle capacity assignment build_transit_fleet.py writes beside the mapped feed (9.206): the assembly resolves every mapped vehicle's seats and standing places through it, never copying the mapper's default capacities.
 
-***definition** · status **active** · DECISIONS.md §9.205*
+***definition** · status **active** · DECISIONS.md §9.205, 9.206*
 
 #### `A.baseline.network_mode_sources`
 
@@ -1025,6 +1025,204 @@ Terminal allowance in the pooled MBMT fleet-hours frequency derivation; not obse
 Local clock basis for published departures.
 
 ***definition** · status **active** · DECISIONS.md §9.187*
+
+## Transit vehicle passenger capacities per operated configuration (9.206)
+
+*`cities/mumbai/registry/A_transit_fleet.json` - 23 fields*
+
+
+
+| Field | Value | Units | Provenance | Sweep |
+|---|---|---|---|---|
+| `A.transit.bus_capacity_seated` | `36` | persons_per_vehicle | `observed` | - |
+| `A.transit.bus_capacity_standing` | `30` | persons_per_vehicle | `assumed` | 20 - 45 |
+| `A.transit.ferry_capacity_standing` | `0` | persons_per_vehicle | `definition` | - |
+| `A.transit.ferry_creek_capacity_seated` | `100` | persons_per_vehicle | `observed` | - |
+| `A.transit.ferry_elephanta_capacity_seated` | `80` | persons_per_vehicle | `observed` | - |
+| `A.transit.fleet_assignment_mode` | `explicit_vehicle` | enum | `definition` | - |
+| `A.transit.fleet_profiles` | `{"rail_emu_12car": {"base_type": "Rail", "seats_field": "A.transit.rail_capacity_seated", "standing_field":...` | profile_table | `definition` | - |
+| `A.transit.metro_beml_capacity_seated` | `239` | persons_per_vehicle | `derived` | derived: round(A.transit.metro_beml_capacity_total x A.transit.metro_seated_sha |
+| `A.transit.metro_beml_capacity_standing` | `1561` | persons_per_vehicle | `derived` | derived: A.transit.metro_beml_capacity_total - A.transit.metro_beml_capacity_se |
+| `A.transit.metro_beml_capacity_total` | `1800` | persons_per_vehicle | `observed` | - |
+| `A.transit.metro_line1_capacity_seated` | `200` | persons_per_vehicle | `derived` | derived: round(A.transit.metro_line1_capacity_total x A.transit.metro_seated_sh |
+| `A.transit.metro_line1_capacity_standing` | `1300` | persons_per_vehicle | `derived` | derived: A.transit.metro_line1_capacity_total - A.transit.metro_line1_capacity_ |
+| `A.transit.metro_line1_capacity_total` | `1500` | persons_per_vehicle | `observed` | - |
+| `A.transit.metro_line3_capacity_seated` | `399` | persons_per_vehicle | `derived` | derived: round(A.transit.metro_line3_capacity_total x A.transit.metro_seated_sh |
+| `A.transit.metro_line3_capacity_standing` | `2601` | persons_per_vehicle | `derived` | derived: A.transit.metro_line3_capacity_total - A.transit.metro_line3_capacity_ |
+| `A.transit.metro_line3_capacity_total` | `3000` | persons_per_vehicle | `observed` | - |
+| `A.transit.metro_navi_capacity_seated` | `150` | persons_per_vehicle | `literature` | 140 - 160 |
+| `A.transit.metro_navi_capacity_standing` | `950` | persons_per_vehicle | `derived` | derived: A.transit.metro_navi_capacity_total - A.transit.metro_navi_capacity_se |
+| `A.transit.metro_navi_capacity_total` | `1100` | persons_per_vehicle | `literature` | 1000 - 1200 |
+| `A.transit.metro_seated_share` | `0.133` | ratio | `literature` | 0.1 - 0.25 |
+| `A.transit.rail_capacity_seated` | `1168` | persons_per_vehicle | `literature` | 1028 - 1168 |
+| `A.transit.rail_capacity_standing` | `3816` | persons_per_vehicle | `derived` | derived: A.transit.rail_capacity_total - A.transit.rail_capacity_seated = 4984  |
+| `A.transit.rail_capacity_total` | `4984` | persons_per_vehicle | `literature` | 3504 - 5964 |
+
+#### `A.transit.bus_capacity_seated`
+
+Seats in one city bus: 'Min 36 + Driver' for the 12 m electric buses in the MBMT gross-cost contract (mbmt_contract_capacities.csv), the one operator-side specification in the package; BEST's 12 m Tata order is 35-seater and the 9 m midi 31 (bus_manufacturer_seating_claims.csv). One profile serves every operator (BEST, NMMT, MBMT and the rest of the regional feed) until a per-operator vehicle assignment is evidenced.
+
+***observed** · status **active** · DECISIONS.md §9.206*
+
+#### `A.transit.bus_capacity_standing`
+
+Standing places in one city bus. Assumed and swept: the only transit capacity in this file that no publication states.
+
+***assumed** · status **active** · DECISIONS.md §9.206 · sweep role **uncertainty***
+
+> **Sweep basis.** No operator or manufacturer in the package states a standing capacity (bus_capacity_evidence_audit.json: 'All standing capacities remain missing'); the MBMT contract defers it to the AIS-052 bus body code's area rule (0.125 square metres a standee), whose input - the net standing floor area of each body - is not published, so the derivation GOAL.md requirement 6 asks for is blocked on that one unpublished figure and this is the fallback it permits. 30 is a 12 m low-floor city bus at the AIS-052 rule on the 4-6 square metres of aisle and platform such a body leaves beside 36 seats; the bracket runs from a 9 m midi (20) to a licensed-capacity 12 m body (45). Replaced the moment a body drawing or a licence certificate is acquired.
+
+#### `A.transit.ferry_capacity_standing`
+
+Standing places on a licensed passenger launch: none, the directory's capacity is the licensed passenger count.
+
+***definition** · status **active** · DECISIONS.md §9.206*
+
+#### `A.transit.ferry_creek_capacity_seated`
+
+Passengers one Vasai - Bhayander creek ferry carries: 100 in the Maharashtra Maritime Board's route service directory (water_service_directory.csv, route 16); the mapped OSM ferry relation 16777766 is that crossing (its endpoints at 19.339 N 72.844 E and 19.342 N 72.841 E).
+
+***observed** · status **active** · DECISIONS.md §9.206*
+
+#### `A.transit.ferry_elephanta_capacity_seated`
+
+Passengers one Gateway of India - Elephanta launch carries: 'Min. 40 Max. 80' in the Maharashtra Maritime Board's route service directory (water_service_directory.csv, route 10); the maximum is the vessel's capacity. Launches carry seated passengers.
+
+***observed** · status **active** · DECISIONS.md §9.206*
+
+#### `A.transit.fleet_assignment_mode`
+
+How the run-input assembly resolves transit passenger capacities (docs/transit_fleet.md). explicit_vehicle: every mapped vehicle is assigned a capacity profile by build_transit_fleet.py from the route relation it serves, so a 12-car EMU, a 4-car Line 1 train, a 6-car BEML train, an 8-car Line 3 train, a 3-car Navi Mumbai train, a creek ferry and a city bus each carry their own evidenced capacity. Until 9.206 the assembly copied the mapper's own defaults (Bus 70, Rail 400, Subway 300, Ferry 250 seats, no standing room), so a suburban train that carries about 5,000 was simulated as 400 seats.
+
+***definition** · status **active** · DECISIONS.md §9.206*
+
+#### `A.transit.fleet_profiles`
+
+The capacity profiles build_transit_fleet.py assigns to the mapped vehicles (docs/transit_fleet.md): each names the mapper's base type it clones, the two registry fields that carry its seats and standing places, and EITHER the transport mode every line of that mode falls to (rail, bus) OR the OSM route relations it serves, read from the transit line id the feed builder writes as BASE_<relation>_<direction> (build_baseline_transit_feed.py). The relation ids are the identifiers of the mapped lines - Line 1 (3808111, 7684032), Lines 2A/2B/7/9 on BEML 6-car stock, Line 3 (7898597, 17876723), Navi Mumbai Line 1 (16533435, 16533436), the Gateway-Elephanta launch (19764205) and the Vasai-Bhayander creek ferry (16777766) - not values; a line with no profile refuses the build. The mapper typed the Central main-line and the Nerul-Uran patterns as their own base types (C, U) beside Rail; the three rail profiles carry one capacity and differ only in the base type each clones, because an assignment cannot change a vehicle's mapped type.
+
+***definition** · status **active** · DECISIONS.md §9.206*
+
+#### `A.transit.metro_beml_capacity_seated`
+
+Seats in one BEML 6-car train (Lines 2A, 2B, 7, 9), by Line 1's seated share.
+
+***derived** · status **active** · DECISIONS.md §9.206*
+
+> **Derived from** `A.transit.metro_beml_capacity_total`, `A.transit.metro_seated_share`: round(A.transit.metro_beml_capacity_total x A.transit.metro_seated_share) = round(1800 x 0.133) = 239
+
+#### `A.transit.metro_beml_capacity_standing`
+
+Standing places in one BEML 6-car train.
+
+***derived** · status **active** · DECISIONS.md §9.206*
+
+> **Derived from** `A.transit.metro_beml_capacity_total`, `A.transit.metro_beml_capacity_seated`: A.transit.metro_beml_capacity_total - A.transit.metro_beml_capacity_seated = 1800 - 239
+
+#### `A.transit.metro_beml_capacity_total`
+
+Passengers one 6-car BEML train carries on Lines 2A, 2B, 7 and 9: 300 a car in PIB's 22 November 2018 order release (metro_fleet_publication_claims.csv, 'nominal_unspecified_density') x 6 cars. The density the 300 is stated at is not published.
+
+***observed** · status **active** · DECISIONS.md §9.206*
+
+#### `A.transit.metro_line1_capacity_seated`
+
+Seats in one Line 1 train.
+
+***derived** · status **active** · DECISIONS.md §9.206*
+
+> **Derived from** `A.transit.metro_line1_capacity_total`, `A.transit.metro_seated_share`: round(A.transit.metro_line1_capacity_total x A.transit.metro_seated_share) = round(1500 x 0.133) = 200
+
+#### `A.transit.metro_line1_capacity_standing`
+
+Standing places in one Line 1 train.
+
+***derived** · status **active** · DECISIONS.md §9.206*
+
+> **Derived from** `A.transit.metro_line1_capacity_total`, `A.transit.metro_line1_capacity_seated`: A.transit.metro_line1_capacity_total - A.transit.metro_line1_capacity_seated = 1500 - 200
+
+#### `A.transit.metro_line1_capacity_total`
+
+Passengers one Line 1 (Versova-Ghatkopar, MMOPL) 4-coach train carries: 'Train Capacity is 1500 commuters in a 4 coach train' on the operator's Features page (catalogue mmopl_features_page).
+
+***observed** · status **active** · DECISIONS.md §9.206*
+
+#### `A.transit.metro_line3_capacity_seated`
+
+Seats in one Line 3 train, by Line 1's seated share.
+
+***derived** · status **active** · DECISIONS.md §9.206*
+
+> **Derived from** `A.transit.metro_line3_capacity_total`, `A.transit.metro_seated_share`: round(A.transit.metro_line3_capacity_total x A.transit.metro_seated_share) = round(3000 x 0.133) = 399
+
+#### `A.transit.metro_line3_capacity_standing`
+
+Standing places in one Line 3 train.
+
+***derived** · status **active** · DECISIONS.md §9.206*
+
+> **Derived from** `A.transit.metro_line3_capacity_total`, `A.transit.metro_line3_capacity_seated`: A.transit.metro_line3_capacity_total - A.transit.metro_line3_capacity_seated = 3000 - 399
+
+#### `A.transit.metro_line3_capacity_total`
+
+Passengers one Line 3 (Aqua Line, MMRCL) 8-car Alstom train carries: 'at least 3,000' in Alstom's 5 October 2024 opening release (metro_fleet_publication_claims.csv). The lower bound is used; the density is not published.
+
+***observed** · status **active** · DECISIONS.md §9.206*
+
+#### `A.transit.metro_navi_capacity_seated`
+
+Seats in one Navi Mumbai Metro 3-car train.
+
+***literature** · status **active** · DECISIONS.md §9.206 · sweep role **uncertainty***
+
+> **Sweep basis.** 150 seats a 3-car train in the trade-press report of the CRRC trains' entry into service (rollingstockworld_navi_mumbai_crrc); the bracket is one longitudinal bench a car either way.
+
+#### `A.transit.metro_navi_capacity_standing`
+
+Standing places in one Navi Mumbai Metro train.
+
+***derived** · status **active** · DECISIONS.md §9.206*
+
+> **Derived from** `A.transit.metro_navi_capacity_total`, `A.transit.metro_navi_capacity_seated`: A.transit.metro_navi_capacity_total - A.transit.metro_navi_capacity_seated = 1100 - 150
+
+#### `A.transit.metro_navi_capacity_total`
+
+Passengers one Navi Mumbai Metro Line 1 (Belapur-Pendhar) 3-car train carries.
+
+***literature** · status **active** · DECISIONS.md §9.206 · sweep role **uncertainty***
+
+> **Sweep basis.** 'each train can accommodate 1,100 people, has 150 seats' in the trade-press report of the CRRC trains' entry into service (catalogue rollingstockworld_navi_mumbai_crrc); the project profile railway_technology_navi_mumbai_metro confirms the 3-car CRRC formation but states no capacity; CIDCO and Maha Metro publish none in the acquired reports. The bracket is the rounding the source states.
+
+#### `A.transit.metro_seated_share`
+
+The share of a metro train's published passenger capacity that is seated, from the Mumbai line whose split is reported by its operator (Line 1); Navi Mumbai's reported split (150 of 1,100) agrees. Applied to the other lines' published totals to derive their seats and standing places; superseded line by line as an operator publishes a split.
+
+***literature** · status **active** · DECISIONS.md §9.206 · sweep role **uncertainty***
+
+> **Sweep basis.** Line 1's operator states a 4-coach train carries 1,500 (reliancemumbaimetro.com, Features) and its 2019 seat-removal notice, as reported, left 1,300 standees - 200 seats, 0.133 of the load; 48-52 longitudinal seats a coach is the reported range. No Mumbai metro operator publishes the seated/standing split of the BEML 6-car, or the Alstom 8-car trains (metro_fleet_publication_claims.csv: 'not_stated_in_publication'), so Line 1's share is applied to their published totals until one does (Navi Mumbai's 150 of 1,100, 0.136, is reported and agrees); 0.25 is the upper end of longitudinal-seat metro cars at 6 standees a square metre.
+
+#### `A.transit.rail_capacity_seated`
+
+Seats in one suburban EMU rake (every Mumbai Suburban Railway and MEMU pattern in the provisional feed). Twelve-car non-AC formation: 1,168 (IRIMEE). The MEMU patterns (Diva-Panvel, Diva-Roha) are 3 of 31 rail patterns and carry the same profile for want of a MEMU figure; a 15-car formation (54 marked services, cr_service_markers.csv) is not yet assigned per departure.
+
+***literature** · status **active** · DECISIONS.md §9.206 · sweep role **uncertainty***
+
+> **Sweep basis.** 1,168 is the 12-car non-AC rake's seating in Indian Railways' own EMU primer (IRIMEE, Basics of EMU: 'A 12-car train can seat 1,168 and accommodate 2,336 standees'); 1,028 is the 12-car AC rake's seating in PIB's 24 December 2017 release (suburban_first_ac_capacity_2017.csv). The feed does not yet say which departures run AC stock (13 of 238 daily rakes in 2024-25, economic_survey_suburban_rail_controls.csv), so every suburban departure carries the non-AC figure.
+
+#### `A.transit.rail_capacity_standing`
+
+Standing places in one suburban EMU rake: the rake's carried capacity less its seats. 3,816 at 12 cars; the sample scaler multiplies it by RUN.sample.fraction.
+
+***derived** · status **active** · DECISIONS.md §9.206*
+
+> **Derived from** `A.transit.rail_capacity_total`, `A.transit.rail_capacity_seated`: A.transit.rail_capacity_total - A.transit.rail_capacity_seated = 4984 - 1168
+
+#### `A.transit.rail_capacity_total`
+
+Passengers one suburban EMU rake carries when boarding is refused (seated plus standing): the Siemens 12-car rake's stated capacity, the middle of the three published figures. Not the design capacity (3,504, at which every peak train would deny boarding to a third of its real load) and not the newest rake's (5,964).
+
+***literature** · status **active** · DECISIONS.md §9.206 · sweep role **uncertainty***
+
+> **Sweep basis.** The three published capacities of a 12-car rake in Indian Railways' EMU primer (IRIMEE, Basics of EMU): 3,504 is the design capacity (1,168 seated + 2,336 standees), 4,984 the stated capacity of the Siemens 12-car rake and 5,964 the Bombardier rake's (which PIB 2017 splits as 1,028 seated + 4,936 standing for the AC rake). MATSim denies boarding at seats + standing, so the value is the load a rake physically carries at peak, not the comfort design; the same primer records 5,000 in a 9-car rake at super-dense crush.
 
 ## Vehicle types per routed mode (RUN.qsim.mode_vehicle_fields; 9.204)
 
@@ -2534,8 +2732,8 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 | `RUN.machine.events_synchronize_on_simsteps` | `true` | boolean | `definition` | - |
 | `RUN.machine.gc_collector` | `ParallelGC` | enum | `assumed` | `ParallelGC`, `G1GC` |
 | `RUN.machine.gc_log` | `true` | boolean | `definition` | - |
-| `RUN.machine.heap_floor_gib` | `13.7` | GiB | `measured` | **held fixed** |
-| `RUN.machine.heap_per_fraction_gib` | `3600.0` | GiB_per_unit_fraction | `measured` | **held fixed** |
+| `RUN.machine.heap_floor_gib` | `7.4` | GiB | `measured` | **held fixed** |
+| `RUN.machine.heap_per_fraction_gib` | `2400.0` | GiB_per_unit_fraction | `measured` | **held fixed** |
 | `RUN.machine.jfr_profile` | `false` | boolean | `definition` | - |
 | `RUN.machine.replanning_threads` | `2` | threads | `definition` | - |
 | `RUN.machine.seed` | `20260810` | integer_seed | `definition` | - |
@@ -2550,7 +2748,6 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 | `RUN.mode_choice.pt_submode_alternatives` | `aggregate` | categorical | `assumed` | `aggregate`, `alternatives` |
 | `RUN.mode_choice.pt_submode_seed` | `bus` | enum | `assumed` | `bus`, `rail`, `tram`, `ferry` |
 | `RUN.mode_choice.subtour_behavior` | `betweenAllAndFewerConstraints` | enum | `literature` | `betweenAllAndFewerConstraints`, `fromSpecifiedModesToSpecifiedModes` |
-| `RUN.monitor.enabled` | `false` | boolean | `definition` | - |
 | `RUN.monitor.live_poll_s` | `0.5` | seconds | `definition` | - |
 | `RUN.monitor.pace_band_s` | `[217, 253]` | seconds_per_iteration | `assumed` | **held fixed** |
 | `RUN.monitor.poll_s` | `3` | seconds | `definition` | - |
@@ -2572,7 +2769,7 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 | `RUN.relaxation.drift_tolerance_pp` | `0.5` | percentage_points | `assumed` | 0.1 - 1 |
 | `RUN.relaxation.settle_margin_iterations` | `10` | iterations | `assumed` | 1 - 100 |
 | `RUN.replanning.fraction_to_disable_innovation` | `0.8` | share_of_iterations | `definition` | - |
-| `RUN.replanning.max_agent_plan_memory` | `9` | plans | `definition` | - |
+| `RUN.replanning.max_agent_plan_memory` | `5` | plans | `literature` | 3 - 10 |
 | `RUN.replanning.plan_selector_for_removal` | `WorstPlanSelector` | enum | `assumed` | `WorstPlanSelector`, `SelectRandom`, `SelectExpBetaForRemoval`, `ChangeExpBetaForRemoval`, `PathSizeLogitSelectorForRemoval` |
 | `RUN.replanning.score_msa_fraction` | *(null - unobtained)* | share_of_iterations | `derived` | derived: the literal MATSim writes for its own default when the representation  |
 | `RUN.replanning.score_msa_representation` | `absent` | categorical | `assumed` | `absent`, `at_innovation_cutoff` |
@@ -2593,6 +2790,7 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 | `RUN.sample.storage_capacity_factor` | *(null - unobtained)* | share_of_capacity | `derived` | derived: storageCapacityFactor = RUN.sample.fraction ** RUN.sample.storage_capa |
 | `RUN.sample.transit_capacity_floor` | `1` | seats | `assumed` | 1 - 4 |
 | `RUN.sample.transit_capacity_scaling` | `true` | boolean | `derived` | derived: seats = max(floor, round(seats x RUN.sample.fraction)); not scaling it |
+| `RUN.sample.transit_pce_scaling` | `true` | boolean | `derived` | derived: pce = pce x RUN.sample.fraction for every transit vehicle type, no flo |
 | `RUN.sample.unit` | `household` | enum | `derived` | derived: the citywide plans carry householdId (build_plans.py writes the househ |
 | `RUN.scoring.brain_exp_beta` | `1.0` | logit_scale | `literature` | 0.5 - 2 |
 | `RUN.scoring.early_departure_utils_per_h` | `0.0` | utils_per_hour | `assumed` | -18 - 0 |
@@ -2739,23 +2937,23 @@ Whether the JVM writes a GC log to <run>/gc.log. Adopted from the reference city
 
 #### `RUN.machine.heap_floor_gib`
 
-The sample-independent part of the heap rule. MEASURED: 13.74 GiB of 16g in the gc.log of 20260921T182708_2it_100pct, the explicit 1,000-person case - the mapped regional network, the combined feed and the routers before any population to speak of.
+The sample-independent part of the heap rule. MEASURED as the live set after the last full collection: 7.36 GiB in the gc.log of 20260921T182708_2it_100pct (the explicit 1,000-person case: the mapped regional network, the combined feed and the routers) and 7.81 GiB in 20260921T220701_2it_0.1pct with 26,884 agents at one or two plans - 18 KB an agent, the reference city's per-plan rate. 9.205 read 13.74 from the pre-collection peak of a 16g heap, which is the heap size, not the need (9.206).
 
-***measured** · status **active** · DECISIONS.md §9.205*
+***measured** · status **active** · DECISIONS.md §9.206*
 
-> **Held fixed.** the peak of the explicit 1,000-person case (the network, the combined feed and the routers, no population to speak of), read from its gc.log; re-read from every longer case
+> **Held fixed.** the LIVE SET after the last full collection of a case with no population to speak of, read from its gc.log (Pause Full N->M: M), never the pre-collection peak - under ParallelGC with -Xms = -Xmx the peak tracks the heap GIVEN (16g peaked at 13.74, 24g at 17.30), not the heap needed; re-read from every longer case
 >
-> *Departure requires: a higher peak at a negligible population in a later Mumbai gc.log*
+> *Departure requires: a higher live set after a full collection at a negligible population in a later Mumbai gc.log*
 
 #### `RUN.machine.heap_per_fraction_gib`
 
-The sample-dependent part of the heap rule, per unit of RUN.sample.fraction of the 27.06 M-person core: 3,600 GiB - so 1 % of the core (270,000 agents) needs 50 GiB and 5 % (1.35 M agents) 194 GiB. The launcher refuses what this host cannot hold; the fraction a defensible reading needs is the open question of docs/scaling.md.
+The sample-dependent part of the heap rule, per unit of RUN.sample.fraction of the 27.06 M-person core, at plan memory 5: 2,400 GiB - so 1 % of the core (270,000 agents) needs 31.4 GiB with the floor, 2 % 55 GiB (the last this 63 GB host holds) and 5 % (1.35 M agents) 127 GiB. The 3,600 of 9.205 was the slope between two PRE-collection peaks of differently sized heaps (9.206). The fraction a defensible reading needs is the open question of docs/scaling.md; the memory is no longer the first constraint below 2 %, the flow identity is.
 
-***measured** · status **active** · DECISIONS.md §9.205*
+***measured** · status **active** · DECISIONS.md §9.206*
 
-> **Held fixed.** the slope between the two measured peaks: 13.74 GiB at a negligible population and 17.30 GiB at 0.001 of the core households (26,884 agents, 20260921T220701_2it_0.1pct), 3.56 GiB per 0.001 - about 140 KB an agent at two plans, the reference city rate; re-read at every new fraction
+> **Held fixed.** persons in the core (27.06 M) x RUN.replanning.max_agent_plan_memory x the live heap a routed plan holds at steady state - 19 KB on the reference city's 25 % arm 20260916T063903_250it_25pct (20-28.6 GiB after a full collection for 155,000 agents at 8 plans over a 5 GiB floor), the same Java stack; 27.06 M x 5 x 19 KB = 2,400 GiB per unit fraction; re-read from the 1 % case's own live set once its plan memory has filled
 >
-> *Departure requires: a peak at another fraction in a Mumbai gc.log*
+> *Departure requires: a live set after a full collection at another fraction, or a per-plan rate read from a Mumbai gc.log whose plan memory has filled*
 
 #### `RUN.machine.jfr_profile`
 
@@ -2848,12 +3046,6 @@ How subtour mode choice treats tours it cannot close. Adopted from the reference
 ***literature** · status **active** · DECISIONS.md §9.202 · MATSim `subtourModeChoice.behavior` · sweep role **uncertainty***
 
 > **Sweep basis.** the two values MATSim offers. Open Berlin, Leipzig and Kelheim all set the former; the latter is the MATSim default and was live here unset.
-
-#### `RUN.monitor.enabled`
-
-Serve the live run view while a run is in flight. Off for this city: the monitor reads every mode against its target and no mode target has been derived yet (data/processed/validation/mode_targets_by_mode.csv does not exist).
-
-***definition** · status **active** · DECISIONS.md §9.204*
 
 #### `RUN.monitor.live_poll_s`
 
@@ -2991,9 +3183,9 @@ Explicit setting for bounded provisional smoke only; full capacities serve the s
 
 #### `RUN.replanning.max_agent_plan_memory`
 
-Plans an agent keeps. 9 for this city: the explicit population carries up to eight initial whole-day mode alternatives (build_baseline_choices.py) plus one slot for a new plan, so plan memory never discards a supplied alternative; the assembly refuses a smaller value.
+Plans an agent keeps: MATSim's own default, the leanest choice set the reference city's sweep admits with room to innovate. The citywide plans carry ONE initial plan a person (build_plans.py; the assembly refuses a memory below the supplied count), so the 9 the retired explicit 1,000-person case needed for its eight seeded alternatives (9.204) bought nothing but heap: the reference city's 25 % arm lives at about 19 KB a plan (20-28.6 GiB after a full collection for 155,000 agents at 8 plans over a 5 GiB floor), so at 9 plans 1 % of the 27.06 M core needs 51 GiB against 63 GB and at 5 plans 32 GiB (9.206, D14). Inside the declared 3-10 sweep; the choice-set width it costs is what the equivalence experiments of docs/scaling.md measure.
 
-***definition** · status **active** · DECISIONS.md §9.204 · MATSim `replanning.maxAgentPlanMemorySize`*
+***literature** · status **active** · DECISIONS.md §9.206 · MATSim `replanning.maxAgentPlanMemorySize` · sweep role **uncertainty***
 
 #### `RUN.replanning.plan_selector_for_removal`
 
@@ -3142,6 +3334,14 @@ Scale transit vehicle seats by the sample fraction. Adopted from the reference c
 ***derived** · status **active** · DECISIONS.md §9.202*
 
 > **Derived from** `RUN.sample.fraction`: seats = max(floor, round(seats x RUN.sample.fraction)); not scaling it would give every vehicle 1/fraction times its real capacity
+
+#### `RUN.sample.transit_pce_scaling`
+
+Scale every transit vehicle type's passenger-car equivalent by the sample fraction, as the road flow capacities are. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***derived** · status **active** · DECISIONS.md §9.202*
+
+> **Derived from** `RUN.sample.fraction`: pce = pce x RUN.sample.fraction for every transit vehicle type, no floor: the vehicle's share of a scaled link's flow is then the share it has of the real link's
 
 #### `RUN.sample.unit`
 

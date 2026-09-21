@@ -56,3 +56,22 @@ def test_invalid_fraction_is_rejected(tmp_path, fraction):
 def test_unknown_capacity_cannot_silently_remain_full_size(tmp_path):
     with pytest.raises(ValueError, match='recognised'):
         scaled(tmp_path, '<vehicleDefinitions><capacity passengers="100"/></vehicleDefinitions>')
+
+
+def test_pce_scales_with_the_fraction_only_when_asked(tmp_path):
+    """A bus at full PCE on a scaled lane takes 1/fraction times its real share (9.206)."""
+    xml = ('<vehicleDefinitions xmlns="http://www.matsim.org/files/dtd"><vehicleType id="bus">'
+           '<capacity seats="70" standingRoomInPersons="0"/><length meter="18"/>'
+           '<passengerCarEquivalents pce="2.8"/></vehicleType></vehicleDefinitions>')
+    root, audit = scaled(tmp_path, xml, 0.01, 1)
+    assert next(e for e in root.iter() if e.tag.endswith('passengerCarEquivalents')).get('pce') == '2.8'
+    assert not any(a[0] == 'pce' for a in audit)
+    src, dst = tmp_path / 'f2.xml.gz', tmp_path / 's2.xml.gz'
+    with gzip.open(src, 'wt', encoding='utf-8') as stream:
+        stream.write(xml)
+    audit = scale_transit_capacity(src, dst, 0.01, 1, scale_pce=True)
+    with gzip.open(dst, 'rb') as stream:
+        root = ET.parse(stream).getroot()
+    assert next(e for e in root.iter() if e.tag.endswith('passengerCarEquivalents')).get('pce') == '0.028'
+    assert ('pce', 2.8, pytest.approx(0.028)) in audit
+    assert next(e for e in root.iter() if e.tag.endswith('capacity')).get('seats') == '1'

@@ -53,7 +53,10 @@ import results_store as _store                                    # noqa: E402
 RESULTS = os.path.join(ROOT, 'results')
 MARK = re.compile(r'<!-- generated:(\w+) start -->\n(.*?)<!-- generated:\1 end -->',
                   re.S)
-RUN_DIR = re.compile(r'^(aborted_)?\d{8}T\d{6}_\d+it_\d+pct(?:-[a-z0-9-]+)?$')
+# The sample percentage is `%g` of the fraction (run_matsim.py), so a fraction
+# below 1 % carries a decimal point: `20260921T220701_2it_0.1pct`, the first
+# citywide Mumbai case, was invisible to this block for a session (9.206).
+RUN_DIR = re.compile(r'^(aborted_)?\d{8}T\d{6}_\d+it_\d+(?:\.\d+)?pct(?:-[a-z0-9-]+)?$')
 
 
 # ------------------------------------------------------------------ helpers

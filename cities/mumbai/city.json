@@ -967,7 +967,9 @@
       "url": "https://cr.indianrailways.gov.in/view_section.jsp?fontColor=black&backgroundColor=LIGHTSTEELBLUE&lang=0&id=0,5",
       "licence": "Publication reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/central_railway_timetable_root_f7c7d014c381e411.html"
+      ]
     },
     {
       "name": "Mumbai Metro One train schedule",
@@ -1447,7 +1449,9 @@
       "url": "https://wr.indianrailways.gov.in/cris//uploads/files/1788159720525-UP%20TRAINS%20PTT%2079%20W.E.F.%2001.09.2026.pdf",
       "licence": "Government publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/wr_public_timetable_attachment_2_0d2d8d63517630eb.pdf"
+      ]
     },
     {
       "name": "Western Railway DN AC TRAINS PTT 79 W.E.F. 01.09.2026",
@@ -1461,7 +1465,9 @@
       "url": "https://wr.indianrailways.gov.in/cris//uploads/files/1788159808195-UP%20AC%20TRAINS%20PTT%2079%20W.E.F.%2001.09.2026.pdf",
       "licence": "Government publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/wr_public_timetable_attachment_4_ecf5dec773953745.pdf"
+      ]
     },
     {
       "name": "Western Railway DAHANU ROAD SERVICES PTT W.E.F. 01.09.2026",
@@ -1475,7 +1481,9 @@
       "url": "https://wr.indianrailways.gov.in/cris//uploads/files/1680671789509-HARBOUR%20SERVICES%20W.E.F%20%20%2001.10.2022.pdf",
       "licence": "Government publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/wr_public_timetable_attachment_6_659d6127b8c73199.pdf"
+      ]
     },
     {
       "name": "MMRDA Monorail overview and current status",
@@ -2798,7 +2806,9 @@
       "url": "https://mrvc.indianrailways.gov.in/works/uploads/File/Final%20Report.pdf",
       "licence": "Government publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/transit/mrvc_fare_rationalisation_report_2cfdc27d3a91ed9b.pdf"
+      ]
     },
     {
       "name": "Mumbai Traffic Police annual-report index",
@@ -5129,7 +5139,9 @@
       "url": "https://transport.maharashtra.gov.in/Site/Upload/GR/Part-3.pdf",
       "licence": "Government of Maharashtra publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/roads/maharashtra_taxi_auto_committee_part3_41ad50fa03b6fb24.pdf"
+      ]
     },
     {
       "name": "MPCB Mumbai air quality, emissions inventory and source apportionment final report, December 2023",
@@ -5329,14 +5341,18 @@
       "url": "https://mrvc.indianrailways.gov.in/uploads/Executive%20Summary%20CSTM%20PNVL%20FAST%20CORRIDOR.pdf",
       "licence": "Indian Railways/MRVC publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/mrvc_csmt_panvel_fast_dpr_summary_2016_49ab41fd26a93b15.pdf"
+      ]
     },
     {
       "name": "Central Railway Mumbai division carsheds page",
       "url": "https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,1191,1192,1202,1450",
       "licence": "Indian Railways/MRVC publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/cr_mumbai_carsheds_page_952416390a651efd.html"
+      ]
     },
     {
       "name": "Central Railway signalling assets page",
@@ -5359,7 +5375,9 @@
       "url": "https://cr.indianrailways.gov.in/cris//uploads/files/1778763482049-signalling-assets-english-new-1.jpg",
       "licence": "Indian Railways publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/cr_signalling_assets_chart_20260514_990a531b6c7026b1.jpg"
+      ]
     },
     {
       "name": "Central Railway line capacity page",
@@ -5625,6 +5643,51 @@
       "share_alike": false,
       "provides": [
         "data/raw/roads/mtp_traffic_notices_20260101_20260918.zip"
+      ]
+    },
+    {
+      "name": "Indian Railways IRIMEE: Basics of EMU (Silabhadra Das, P(MIS) IRIMEE)",
+      "url": "https://rskr.irimee.in/sites/default/files/EMU%20BASICS.pdf",
+      "licence": "Indian Railways training publication; reuse terms unverified",
+      "share_alike": false,
+      "provides": [
+        "data/raw/rail/irimee_emu_basics_8e6697fcbdcfb0b8.pdf"
+      ]
+    },
+    {
+      "name": "Mumbai Metro One (MMOPL) Features and Facilities page",
+      "url": "https://www.reliancemumbaimetro.com/features",
+      "licence": "Operator publication; reuse terms unverified",
+      "share_alike": false,
+      "provides": [
+        "data/raw/transit/mmopl_features_page_3869d38f3271d6c7.html"
+      ]
+    },
+    {
+      "name": "Railway Technology project profile: Navi Mumbai Metro",
+      "url": "https://www.railway-technology.com/projects/navi-mumbai-metro/",
+      "licence": "Trade press publication; reuse terms unverified",
+      "share_alike": false,
+      "provides": [
+        "data/raw/transit/railway_technology_navi_mumbai_metro_9cb5a436bd99f5ef.html"
+      ]
+    },
+    {
+      "name": "Rolling Stock World: CRRC trains start operating on a new metro line in Navi Mumbai",
+      "url": "https://rollingstockworld.com/lrv/crrcs-trains-start-operating-on-a-new-metro-line-in-navi-mumbai/",
+      "licence": "Trade press publication; reuse terms unverified",
+      "share_alike": false,
+      "provides": [
+        "data/raw/transit/rollingstockworld_navi_mumbai_crrc_6bf3a9f6b019cb05.html"
+      ]
+    },
+    {
+      "name": "Technical Group population projections for India and states 2011-2036 (National Health Mission mirror)",
+      "url": "https://nhm.gov.in/New_Updates_2018/Report_Population_Projection_2019.pdf",
+      "licence": "Government of India publication; reuse terms unverified",
+      "share_alike": false,
+      "provides": [
+        "data/raw/population/nhm_population_projections_2011_2036_9a9031c9c75d609e.pdf"
       ]
     }
   ]

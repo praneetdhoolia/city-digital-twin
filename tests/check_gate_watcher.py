@@ -78,14 +78,10 @@ print('\nGATE: no mode at or past 20% deviation.')
 
 
 class FakeCfg(object):
-    # RUN.monitor.enabled is here because the watcher now REFUSES TO ARM
-    # without it (9.164, #131): an interval declared beside a disabled monitor
-    # is a stop that does not exist, measured on 20260910T205517_20it_1pct,
-    # which declared an interval of 2, reached iteration 3 and wrote no
-    # verdict. This harness proves the watcher's behaviour, so it must supply
-    # the state the watcher reads.
-    def __init__(self, monitor=True):
-        self.monitor = monitor
+    # The monitor serves on every run since 9.206, so the watcher arms on the
+    # interval alone (it read RUN.monitor.enabled from 9.164 to 9.206).
+    def __init__(self):
+        pass
 
     def get(self, key):
         return {'RUN.gate.interval_iterations': 100,
@@ -94,8 +90,7 @@ class FakeCfg(object):
                 # reading by the declared timeout (9.177); the harness runs
                 # fast, so it polls fast
                 'RUN.monitor.progress_interval_s': 1,
-                'RUN.gate.reader_timeout_s': 120,
-                'RUN.monitor.enabled': self.monitor}[key]
+                'RUN.gate.reader_timeout_s': 120}[key]
 
 
 class FakeProc(object):
@@ -168,19 +163,10 @@ proc, stop = drive(NO_VERDICT, 'no verdict')
 check(not proc.killed, 'no verdict: a reporter that wrote no verdict stops nothing')
 check(not os.path.exists(stop), 'no verdict: no _gate_stop.json without a verdict')
 
-# 9.164 (#131): the watcher must REFUSE TO ARM without the monitor. That
-# refusal is the whole of what makes RUN.gate.interval_iterations honest - a
-# watcher that arms and judges nothing tells the launch banner the run has a
-# modelling stop when it has none. Measured on 20260910T205517_20it_1pct,
-# which declared an interval of 2, reached iteration 3, and wrote no verdict,
-# no gate line and no warning of any kind.
-_tmp = tempfile.mkdtemp(prefix='gate_watch_nomon_')
-_proc = FakeProc()
-_handle = run_matsim.start_gate_watch(_tmp, FakeCfg(monitor=False), _proc)
-check(_handle is None, 'monitor off: the watcher REFUSED to arm')
-check(not _proc.killed, 'monitor off: nothing was killed')
-check(not os.path.exists(os.path.join(_tmp, run_matsim.GATE_STOP)),
-      'monitor off: no _gate_stop.json was written')
+# 9.164 (#131) had the watcher REFUSE TO ARM without the monitor; since 9.206
+# the monitor serves on every run, so the check that the watcher refused when
+# the monitor was off is retired with the field (the harness above proves the
+# watcher arms and judges on the interval alone).
 
 if FAILS:
     print('\n%d check(s) failed' % len(FAILS))

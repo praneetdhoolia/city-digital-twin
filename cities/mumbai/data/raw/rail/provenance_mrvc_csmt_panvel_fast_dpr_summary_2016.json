@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/mrvc_csmt_panvel_fast_dpr_summary_2016_49ab41fd26a93b15.pdf",
+      "url": "https://mrvc.indianrailways.gov.in/uploads/Executive%20Summary%20CSTM%20PNVL%20FAST%20CORRIDOR.pdf",
+      "final_url": "https://mrvc.indianrailways.gov.in/uploads/Executive%20Summary%20CSTM%20PNVL%20FAST%20CORRIDOR.pdf",
+      "content_type": "application/pdf",
+      "source": "MRVC CSTM-Panvel fast corridor detailed project report executive summary, June 2016",
+      "licence": "Indian Railways/MRVC publication; reuse terms unverified",
+      "retrieved": "2026-09-21T13:49:46.346687+00:00",
+      "sha256": "49ab41fd26a93b15b6ade8cd3bb4f915c76ec44c03f7bfbc81b526283d8a76bf",
+      "bytes": 3462810,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical project report with existing-network context and future train-operation/design projections. Proposed fast corridor and projected demand are not existing Harbour service observations.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

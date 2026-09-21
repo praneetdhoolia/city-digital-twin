@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/rollingstockworld_navi_mumbai_crrc_6bf3a9f6b019cb05.html",
+      "url": "https://rollingstockworld.com/lrv/crrcs-trains-start-operating-on-a-new-metro-line-in-navi-mumbai/",
+      "final_url": "https://rollingstockworld.com/lrv/crrcs-trains-start-operating-on-a-new-metro-line-in-navi-mumbai/",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Rolling Stock World: CRRC trains start operating on a new metro line in Navi Mumbai",
+      "licence": "Trade press publication; reuse terms unverified",
+      "retrieved": "2026-09-21T13:35:35.050021+00:00",
+      "sha256": "6bf3a9f6b019cb057c859480e353b10a800980b3478ec7d2a398c00abe949687",
+      "bytes": 53254,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Trade-press report of the CRRC 3-car Navi Mumbai Metro trains: each accommodates 1,100 people with 150 seats, 80 km/h. Secondary source; CIDCO and Maha Metro publish no train capacity in the acquired reports.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -63,7 +63,12 @@ def analyse(name, summary=False):
     record = json.loads((run / '_run.json').read_text(encoding='utf-8'))
     if record.get('completion') != 'ran_to_last_iteration':
         raise ValueError('Behavioural completion report requires a finished run')
-    with gzip.open(run / 'transitSchedule.xml.gz') as stream:
+    # the run's own schedule: the harness writes it to output/ (9.169), the
+    # retired city launcher copied it beside the record
+    schedule_path = run / 'output' / 'output_transitSchedule.xml.gz'
+    if not schedule_path.is_file():
+        schedule_path = run / 'transitSchedule.xml.gz'
+    with gzip.open(schedule_path) as stream:
         schedule = ET.parse(stream).getroot()
     modes = {(line.get('id'), route.get('id')): route.findtext('transportMode')
              for line in schedule.findall('transitLine')

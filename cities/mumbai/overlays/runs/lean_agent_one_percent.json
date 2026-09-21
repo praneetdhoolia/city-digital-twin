@@ -1,0 +1,13 @@
+{
+  "overlay": "lean_agent_one_percent",
+  "description": "D14's measurement (21 September 2026): 1 % of the core households (about 270,000 agents) through the harness with the leanest agent the registry declares - plan memory 5, the citywide plans carrying one initial plan a person - four iterations, stopped by its own ceiling at two hours, to read from gc.log the live heap after each full collection (the floor and the per-agent, per-plan rate at 0.01), the iteration time at this fraction, and the trip times and stuck agents the flow identity gives a lane at 18 vehicles an hour. A structural measurement, not a reading of the city: docs/scaling.md. Decisions 9.205, 9.206.",
+  "set": {
+    "RUN.sample.fraction": 0.01,
+    "RUN.controler.last_iteration": 4,
+    "B.hired_fleet.representation": "pooled_queue",
+    "RUN.gate.wall_ceiling_h": 2.0,
+    "RUN.machine.xmx": "34g",
+    "RUN.machine.threads": 8,
+    "RUN.machine.replanning_threads": 8
+  }
+}

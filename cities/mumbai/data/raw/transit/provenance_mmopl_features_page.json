@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmopl_features_page_3869d38f3271d6c7.html",
+      "url": "https://www.reliancemumbaimetro.com/features",
+      "final_url": "https://www.reliancemumbaimetro.com/features",
+      "content_type": "text/html; charset=utf-8",
+      "source": "Mumbai Metro One (MMOPL) Features and Facilities page",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-21T13:33:55.302340+00:00",
+      "sha256": "3869d38f3271d6c75a3bd05a4ddbc2fb945006954f6c5539700392c6a29efcdd",
+      "bytes": 131689,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Operator statement of Line 1 train capacity (1,500 commuters in a 4-coach train, 2,250 in 6), route length, stations and depot; no seated/standing split, no dated timetable.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

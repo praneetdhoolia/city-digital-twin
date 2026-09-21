@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/cr_signalling_assets_chart_20260514_990a531b6c7026b1.jpg",
+      "url": "https://cr.indianrailways.gov.in/cris//uploads/files/1778763482049-signalling-assets-english-new-1.jpg",
+      "final_url": "https://cr.indianrailways.gov.in/cris//uploads/files/1778763482049-signalling-assets-english-new-1.jpg",
+      "source": "Central Railway signalling assets chart linked from page reviewed 14 May 2026",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "retrieved": "2026-09-21T13:50:03.761341+00:00",
+      "sha256": "990a531b6c7026b122d753aa500ab5bd28df930ca4906531dcce5367a2e1de75",
+      "bytes": 176470,
+      "content_type": "image/jpeg",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Zonal asset chart; source date and division breakdown require image inspection."
+    }
+  ]
+}

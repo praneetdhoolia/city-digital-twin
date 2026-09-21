@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/railway_technology_navi_mumbai_metro_9cb5a436bd99f5ef.html",
+      "url": "https://www.railway-technology.com/projects/navi-mumbai-metro/",
+      "final_url": "https://www.railway-technology.com/projects/navi-mumbai-metro/",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Railway Technology project profile: Navi Mumbai Metro",
+      "licence": "Trade press publication; reuse terms unverified",
+      "retrieved": "2026-09-21T13:33:57.281710+00:00",
+      "sha256": "9cb5a436bd99f5ef0979249e9c2885dc2e7e9ce2cceaa15692b48995c17b1ccb",
+      "bytes": 254123,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Trade-press profile of Navi Mumbai Metro Line 1: 3-car CRRC trainsets of about 1,100 passengers, 64.6 m long, 3.1 m wide, 90 km/h; CIDCO publishes no capacity. Secondary source, retained until an operator figure is acquired.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

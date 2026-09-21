@@ -39,6 +39,7 @@ import city
 import registry
 from build.extract_osm_network import fingerprint
 from build.repair_transit_order import repair_schedule
+from build import transit_fleet
 import build_matsim_run_inputs as build_inputs
 from build_matsim_run_inputs import add_nonmotor_reverse_links, strip_unreachable_mode_links
 
@@ -60,7 +61,10 @@ OUTPUT_INPUTS = {
         'networks/matsim/schedules/baseline_regional/network.xml.gz',
         'networks/matsim/schedules/baseline_regional/transitVehicles.xml.gz'],
     'scenarios/matsim/BASE/WEEKDAY/transitVehicles.xml.gz': [
-        'networks/matsim/schedules/baseline_regional/transitVehicles.xml.gz'],
+        'networks/matsim/schedules/baseline_regional/transitVehicles.xml.gz',
+        'networks/matsim/schedules/baseline_regional/transitSchedule.xml.gz',
+        'networks/matsim/schedules/baseline_regional/fleet_assignments.json',
+        'registry/A_transit_fleet.json'],
     'scenarios/matsim/BASE/WEEKDAY/vehicles.xml': [],
     'scenarios/matsim/BASE/WEEKDAY/config.xml': [],
     'scenarios/matsim/_run_inputs_report.json': [
@@ -166,6 +170,37 @@ def prepare_network(source, destination, cfg, transit_vehicles):
                 dedicated_transit_capacity_changes=dict(transit_capacity_changes))
 
 
+def write_fleet(inputs, repaired_schedule, destination, cfg):
+    """The mapped vehicles with every capacity resolved through the registry (9.206).
+
+    Until 21 September 2026 the mapped file was copied byte for byte, and it
+    carries pt2matsim's defaults (Bus 70, Rail 400, Subway 300, Ferry 250
+    seats, no standing room). The framework's explicit representation
+    (docs/transit_fleet.md) assigns each vehicle the profile
+    build_transit_fleet.py derived for the line it serves and reads the
+    profile's seats and standing places from `A.transit.*`; the assignment is
+    bound to the mapped build by hash, so a remapped feed refuses an old file.
+    """
+    if cfg.get('A.transit.fleet_assignment_mode') != 'explicit_vehicle':
+        raise SystemExit('this city assigns capacities per vehicle; declare '
+                         'A.transit.fleet_assignment_mode = explicit_vehicle and run build_transit_fleet.py')
+    assignment = transit_fleet.load_assignment(str(inputs['fleet_assignments']),
+                                               str(inputs['transit_vehicles']), str(inputs['schedule']))
+    with gzip.open(repaired_schedule, 'rb') as f:
+        used = set(etree.parse(f).xpath('//departure/@vehicleRefId'))
+    # the framework's own parser and writer for the vehicles file, as
+    # build_matsim_run_inputs.py uses them, so both cities ship one shape
+    import xml.etree.ElementTree as ET
+    with gzip.open(inputs['transit_vehicles'], 'rb') as f:
+        vtree = ET.parse(f)
+    root, audit = transit_fleet.prepare_fleet(vtree.getroot(), used, cfg, {}, assignment)
+    vtree._setroot(root)
+    from det_io import gzip_writer
+    with gzip_writer(str(destination), text=False) as f:
+        vtree.write(f, encoding='utf-8', xml_declaration=True)
+    return dict(audit, vehicle_refs=len(used))
+
+
 def copy_bytes(src, dst):
     shutil.copyfile(src, dst)
     return fingerprint(dst)
@@ -197,7 +232,8 @@ def main():
     schedule = repair_schedule(inputs['schedule'], base / 'network.xml.gz',
                                day_dir / 'transitSchedule.xml.gz',
                                cfg.get('A.baseline.transit_timing'))
-    copy_bytes(inputs['transit_vehicles'], day_dir / 'transitVehicles.xml.gz')
+    fleet = write_fleet(inputs, day_dir / 'transitSchedule.xml.gz', day_dir / 'transitVehicles.xml.gz', cfg)
+    print('fleet: %d vehicles on %d capacity profiles' % (fleet['vehicle_refs'], len(fleet['vehicle_capacity_patched'])), flush=True)
     build_inputs.write_mode_vehicles(str(day_dir / 'vehicles.xml'), cfg)
     # No parking price is observed for this city: a header-only table prices
     # every link free, which the parking module reads as a run with no charge.
@@ -249,7 +285,7 @@ def main():
                            'registry field, so no purpose-weighted value of time is averaged',
         inputs=dict(cfg.get('A.baseline.inputs')),
         inputs_sha256={key: fingerprint(path) for key, path in inputs.items()},
-        demand=demand, network=network, schedule=schedule, tables_sha256=tables,
+        demand=demand, network=network, schedule=schedule, fleet=fleet, tables_sha256=tables,
         parking='header only: no parking price is observed for this city; every link is free',
         note='The explicit 1,000-person development case assembled for the harness (9.204). '
              'No citywide expansion, no target, no result.')

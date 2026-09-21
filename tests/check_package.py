@@ -1896,7 +1896,7 @@ for _p, _var in (('src/analyse/run_view.py', 'view'),
         else:
             _runm_src = _txt
 if _registry is not None and _view_src and _runm_src:
-    for _k in ('RUN.monitor.enabled', 'RUN.monitor.port', 'RUN.monitor.poll_s',
+    for _k in ('RUN.monitor.port', 'RUN.monitor.poll_s',
                'RUN.monitor.stall_s', 'RUN.monitor.live_poll_s'):
         check(_fields.get(_k) is not None
               and (_k in _view_src or _k in _runm_src),
