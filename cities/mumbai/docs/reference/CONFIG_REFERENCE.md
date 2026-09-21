@@ -27,37 +27,40 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 313 fields are made of
+## What the 374 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 1 | read directly from a raw download |
-| `derived` | 10 | follows from another registry field by identity |
+| `measured` | 1 | computed from observed data in this package |
+| `derived` | 13 | follows from another registry field by identity |
 | `literature` | 30 | a published value, not specific to this city |
-| `assumed` | 129 | chosen without direct empirical support |
-| `definition` | 143 | fixed by the formulation, not an empirical quantity |
+| `assumed` | 159 | chosen without direct empirical support |
+| `definition` | 170 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 272 | usable point value |
-| `computed` | 3 | written at run time from other fields; do not hand-edit |
-| `placeholder` | 38 | a structural stand-in; the model runs but the field is not defensible |
+| `active` | 332 | usable point value |
+| `computed` | 6 | written at run time from other fields; do not hand-edit |
+| `placeholder` | 35 | a structural stand-in; the model runs but the field is not defensible |
+| `unobtained` | 1 | the datum does not exist in the package; must be swept, never pinned |
 
-### The 0 fields with no value
+### The 1 fields with no value
 
 These carry `value: null` and the resolver refuses to return a point value for them. They are the project's honest edge: what it does not know, declared rather than guessed.
 
 | Field | Sweep | Why it has no value |
 |---|---|---|
+| `B.population.tertiary_attendance_rate_20_24` | 0 - 0.35 | Unobtained: null, and the synthesiser makes nobody in that age range a student, which the report says. |
 
-### What the 150 sweeps are for
+### What the 181 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 5 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 144 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 175 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 1 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -81,8 +84,8 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `CAL.asc.max_step_utils` - A REFUSAL THRESHOLD, not a model input, and so not swept - the A.signals.scats_match_radius_m precedent for a build guard's tolerance. It is the point past which a proposed step st
 - `CAL.objective.include_counts` - adopted from the reference city, where it is derived from B.external.interaction_rate; those fields are not declared for this city, so the value is held
 - `CAL.search.reading_drift_pct` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
-- `RUN.machine.heap_floor_gib` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
-- `RUN.machine.heap_per_fraction_gib` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `RUN.machine.heap_floor_gib` - the peak of the whole-population case read from its own gc.log; re-read from the gc.log of every longer case and never varied
+- `RUN.machine.heap_per_fraction_gib` - the explicit population is simulated whole (RUN.sample.fraction 1.0), so one measured peak cannot separate a floor from a slope; the whole peak is carried by the floor and the slop
 - `RUN.monitor.pace_band_s` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
 
 ## Broad baseline boarding fares
@@ -216,12 +219,21 @@ Provisional stop dwell applied to generated schedules.
 
 ## Provisional broad Mumbai supply
 
-*`cities/mumbai/registry/A_baseline_supply.json` - 36 fields*
+*`cities/mumbai/registry/A_baseline_supply.json` - 45 fields*
 
 First runnable baseline; provisional parameters are explicit and are not calibrated observations.
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
+| `A.baseline.dedicated_transit_headway_s` | `{"rail": 90, "light_rail": 90, "subway": 90, "ferry": 900}` | seconds_per_vehicle | `assumed` | plus/minus 50% |
+| `A.baseline.inputs` | `{"network": "networks/matsim/schedules/baseline_regional/network.xml.gz", "schedule": "networks/matsim/sche...` | city_relative_paths | `definition` | - |
+| `A.baseline.network_mode_sources` | `{"truck": "car", "freight_rail": "rail"}` | mode_mapping | `definition` | - |
+| `A.baseline.road_capacity_factors` | `{"motorway": 1.0, "motorway_link": 1.0, "trunk": 1.0, "trunk_link": 1.0, "primary": 1.0, "primary_link": 1....` | dimensionless_flow_capacity_factor | `assumed` | 0.5 - 3 |
+| `A.baseline.road_mode_exclusions` | `{"car": [], "ride": [], "walk": ["motorway", "motorway_link"], "bike": ["motorway", "motorway_link"], "moto...` | highway_classes_by_mode | `definition` | - |
+| `A.baseline.transit_mode_aliases` | `{"light_rail": "subway"}` | mode_mapping | `definition` | - |
+| `A.baseline.transit_timing` | `{"speed_ms": {"bus": 8.333333333333334, "rail": 16.666666666666668, "subway": 16.666666666666668, "ferry": ...` | metres_per_second_and_seconds | `assumed` | plus/minus 50% |
+| `A.fare.boarding_representation` | `table` | enum | `definition` | - |
+| `A.fare.boarding_route_choice` | `true` | boolean | `definition` | - |
 | `A.network.freespeed_factor` | `1.0` | factor | `definition` | - |
 | `A.network.keep_paths` | `false` | boolean | `definition` | - |
 | `A.network.keep_tags_as_attributes` | `true` | boolean | `definition` | - |
@@ -258,6 +270,66 @@ First runnable baseline; provisional parameters are explicit and are not calibra
 | `A.transit.walk_speed_ms` | `1.2` | metres_per_second | `assumed` | 0.6 - 1.8 |
 | `B.bike.speed_ms` | `4.0` | m/s | `assumed` | 2 - 7 |
 | `RUN.machine.build_xmx` | `16g` | jvm_heap | `definition` | - |
+
+#### `A.baseline.dedicated_transit_headway_s`
+
+Provisional dedicated-link service envelope. Flow capacity derives as maximum mapped vehicle PCU times 3600/headway, preserving any greater mapped capacity. This avoids interpreting a train headway as car-equivalent flow and is not a validated signalling capacity. Moved from RUN.smoke.dedicated_transit_headway_s on 21 September 2026 (9.204): the launch path is the harness, and the field is read by the build step that assembles the scenario.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Dedicated-mode headway sensitivity; replace with observed sectional signalling and vessel constraints.
+
+#### `A.baseline.inputs`
+
+The prepared baseline inputs the scenario assembly reads: the mapped regional network and combined feed (one pt2matsim build), the explicit population with its initial mode alternatives, the boarding-fare table and the hired-fleet derivation. The assembly writes scenarios/matsim/BASE/ and demand/plans/matsim/population_WEEKDAY.xml.gz for the harness (9.204).
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.baseline.network_mode_sources`
+
+Provisional goods modes share their source network, with connected components audited. Detailed HGV and freight operating restrictions remain incomplete. Moved from RUN.smoke.network_mode_sources on 21 September 2026 (9.204): the launch path is the harness, and the field is read by the build step that assembles the scenario.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.baseline.road_capacity_factors`
+
+Declared class sensitivity factors on the already mapped network. Identity preserves source capacities; this is not population sampling or evidence of correct road capacity. Geometry, lanes, speed and service departures are retained. Moved from RUN.smoke.road_capacity_factors on 21 September 2026 (9.204): the launch path is the harness, and the field is read by the build step that assembles the scenario.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional flow-capacity sensitivity envelope, not fitted or observed Mumbai capacities.
+
+#### `A.baseline.road_mode_exclusions`
+
+Coarse class-based availability pending refined corridor access rules. Moved from RUN.smoke.road_mode_exclusions on 21 September 2026 (9.204): the launch path is the harness, and the field is read by the build step that assembles the scenario.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.baseline.transit_mode_aliases`
+
+Mapped metro track permission uses light_rail; mapped metro vehicle profiles use subway. Moved from RUN.smoke.transit_mode_aliases on 21 September 2026 (9.204): the launch path is the harness, and the field is read by the build step that assembles the scenario.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.baseline.transit_timing`
+
+Provisional moving-speed caps and intermediate-stop dwell derive physically feasible timetable offsets from the mapped path. Later source times are retained; no observed timetable is overwritten. Moved from RUN.smoke.transit_timing on 21 September 2026 (9.204): the launch path is the harness, and the field is read by the build step that assembles the scenario.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional broad behavioural baseline; validate with observed choices before calibration.
+
+#### `A.fare.boarding_representation`
+
+Whether pt boardings are charged from a per-route boarding-fare table (citysim.BoardingFareHandler; `table`) assembled beside the scenario network as boarding_fares.csv, or not (`absent`). `table` for this city: the published BEST, NMMT, suburban-rail, metro and ferry tariffs are transcribed per route into params/baseline/boarding_fares.csv (build_baseline_fares.py) and the harness refuses a scenario that lost its table.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.fare.boarding_route_choice`
+
+Price each candidate transit boarding with the same city fare table and person-specific money utility as executed scoring, before RAPTOR prunes paths. This enables a mechanism, not a calibrated preference. Moved from RUN.smoke.boardingFare.routeChoice on 21 September 2026 (9.204): one key per MATSim parameter, under the framework's fare vocabulary.
+
+***definition** · status **active** · DECISIONS.md §9.204 · MATSim `boardingFare.routeChoice`*
 
 #### `A.network.freespeed_factor`
 
@@ -503,9 +575,32 @@ Memory ceiling for network preprocessing on the current workstation; throughput 
 
 ***definition** · status **active** · DECISIONS.md §9.187*
 
+## The study extent: the notified MMR reconciled to the census leaves (D13, 9.204)
+
+*`cities/mumbai/registry/A_extent.json` - 2 fields*
+
+
+
+| Field | Value | Units | Provenance | Sweep |
+|---|---|---|---|---|
+| `A.extent.municipal_name_aliases` | `{"Kalyan-Dombiwali": "Kalyan-Dombivli", "Bhiwandi": "Bhiwandi Nizampur", "Vasai-Virar": "Vasai-Virar City"}` | name_map | `definition` | - |
+| `A.extent.village_name_aliases` | `{"alibag/barghar": "borghar", "alibag/durgadarva": "durgadarya", "alibag/fanaspur": "fanasapur", "alibag/ga...` | name_map | `definition` | - |
+
+#### `A.extent.municipal_name_aliases`
+
+Spelling reconciliation between the municipality names of the public MMR GIS (WRI layers 2 and 3) and the town names of the Census 2011 ward rows, for the three that differ after case, punctuation and type suffixes are removed: the GIS writes Dombiwali where the census writes Dombivli, Bhiwandi where the census writes Bhiwandi Nizampur, and Vasai-Virar where the census writes Vasai-Virar City. A name reconciliation, not a modelling value; every match is listed in mmr_extent_audit.json.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.extent.village_name_aliases`
+
+Transliteration reconciliation between the village names of the MMR extended-notified-area SPA notification (9 July 2024) and the Census 2011 village names, keyed taluka/notification-name (normalised) -> census name (normalised). Declared only where the notification name has exactly ONE census village within its taluka at a difflib similarity of 0.8 or better (mmr_extent_audit.json lists the candidates for every unmatched name); the four names with two or more candidates (Alibag Chincholi; Palghar Kardai, Paragaon, Sawari) stay unmatched until the village directory is acquired (census_maharashtra_villages, unobtained). A name reconciliation, not a modelling value.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
 ## Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)
 
-*`cities/mumbai/registry/A_framework.json` - 33 fields*
+*`cities/mumbai/registry/A_framework.json` - 35 fields*
 
 
 
@@ -521,11 +616,13 @@ Memory ceiling for network preprocessing on the current workstation; throughput 
 | `A.gradient.representation` | `absent` | enum | `assumed` | `absent`, `link_speed` |
 | `A.gradient.walk_tobler_offset` | `0.05` | gradient_fraction | `literature` | 0.03 - 0.07 |
 | `A.gradient.walk_tobler_slope_coeff` | `3.5` | dimensionless | `literature` | 2.5 - 4.5 |
-| `A.parking.charged_end_hour` | `0` | hour_of_day | `definition` | - |
+| `A.parking.charged_end_hour` | *(null - unobtained)* | hour_of_day | `derived` | derived: A.parking.charged_hours_by_day_type[day][1], 0 for a day with no windo |
+| `A.parking.charged_hours_by_day_type` | `{"WEEKDAY": null}` | hour_of_day | `definition` | - |
 | `A.parking.charged_modes` | `["car"]` | enum | `definition` | - |
-| `A.parking.charged_start_hour` | `0` | hour_of_day | `definition` | - |
+| `A.parking.charged_start_hour` | *(null - unobtained)* | hour_of_day | `derived` | derived: A.parking.charged_hours_by_day_type[day][0], 0 for a day with no windo |
 | `A.parking.exempt_activity_types` | `["home"]` | enum | `assumed` | `['home']`, `[]` |
 | `A.parking.max_stay_min` | `120.0` | minutes | `assumed` | 60 - 180 |
+| `A.parking.search_time_representation` | `absent` | enum | `definition` | - |
 | `A.signals.control_regime` | `fixed_time` | enum | `definition` | - |
 | `A.signals.min_green_s` | `6.0` | seconds | `literature` | 4 - 10 |
 | `A.signals.representation` | `implicit_delay` | enum | `assumed` | `implicit_delay`, `explicit_signals` |
@@ -627,9 +724,17 @@ Slope coefficient of the Tobler hiking function, normalised so a flat link keeps
 
 #### `A.parking.charged_end_hour`
 
-Hour at which parking stops being charged. Inert placeholder: no parking price file is supplied, so the parking module is off and the window is never read.
+Hour at which parking stops being charged, derived at launch from the day type's window as in the reference city.
 
-***definition** · status **placeholder** · DECISIONS.md §9.202 · MATSim `parking.chargedEndHour`*
+***derived** · status **computed** · DECISIONS.md §9.204 · MATSim `parking.chargedEndHour`*
+
+> **Derived from** `A.parking.charged_hours_by_day_type`: A.parking.charged_hours_by_day_type[day][1], 0 for a day with no window; the harness supplies it under the derived runtime role
+
+#### `A.parking.charged_hours_by_day_type`
+
+The charged parking window per day type. None for the one day type: no parking price is observed for this city, the assembled price table beside the scenario network is empty (every link free), and a free day is written as a window of (0, 0) exactly as the reference city writes its Sunday.
+
+***definition** · status **active** · DECISIONS.md §9.204*
 
 #### `A.parking.charged_modes`
 
@@ -639,9 +744,11 @@ Leg modes that occupy a parking space and are charged for it. Adopted from the r
 
 #### `A.parking.charged_start_hour`
 
-Hour at which parking begins to be charged. Inert placeholder: no parking price file is supplied, so the parking module is off (parking.priceFile empty) and the window is never read.
+Hour at which parking begins to be charged, derived at launch from the day type's window as in the reference city.
 
-***definition** · status **placeholder** · DECISIONS.md §9.202 · MATSim `parking.chargedStartHour`*
+***derived** · status **computed** · DECISIONS.md §9.204 · MATSim `parking.chargedStartHour`*
+
+> **Derived from** `A.parking.charged_hours_by_day_type`: A.parking.charged_hours_by_day_type[day][0], 0 for a day with no window; the harness supplies it under the derived runtime role
 
 #### `A.parking.exempt_activity_types`
 
@@ -658,6 +765,12 @@ Maximum charged parking duration. Adopted from the reference city's declaration;
 ***assumed** · status **active** · DECISIONS.md §9.202 · MATSim `parking.maxStayMinutes` · sweep role **uncertainty***
 
 > **Sweep basis.** +/-50% of the point value.
+
+#### `A.parking.search_time_representation`
+
+Whether a derived parking search time reaches the car's score. `absent` for this city: no parking price or occupancy is observed, the assembled price table is empty and there is no search time to derive.
+
+***definition** · status **active** · DECISIONS.md §9.204*
 
 #### `A.signals.control_regime`
 
@@ -800,9 +913,9 @@ Taxi trips use vehicle proxies before finite-fleet dispatch is introduced. Moved
 | `A.hired.active_fraction` | `0.5` | fraction_of_registered_stock | `assumed` | 0.25 - 0.75 |
 | `A.hired.categories` | `{"taxi": ["7a", "7b"], "auto_rickshaw": ["8"]}` | published_category_codes | `definition` | - |
 | `A.hired.office_labels` | `["Mumbai (C)", "Mumbai (W)", "Mumbai (E)", "Borivali", "Thane", "Kalyan", "Vashi N.mumbai", "Vasai", "Panve...` | published_office_labels | `definition` | - |
-| `RUN.smoke.hiredFleet.maxWaitSeconds` | `900.0` | seconds | `assumed` | 300 - 1800 |
-| `RUN.smoke.hiredFleet.representation` | `absent` | enum | `definition` | - |
-| `RUN.smoke.hiredFleet.turnaroundSeconds` | `300.0` | seconds | `assumed` | 0 - 900 |
+| `B.hired_fleet.max_wait_s` | `900.0` | seconds | `assumed` | 300 - 1800 |
+| `B.hired_fleet.representation` | `absent` | enum | `definition` | - |
+| `B.hired_fleet.turnaround_s` | `300.0` | seconds | `assumed` | 0 - 900 |
 
 #### `A.hired.active_fraction`
 
@@ -824,25 +937,25 @@ Broad regional registration-stock proxy; office catchments do not match the hist
 
 ***definition** · status **active** · DECISIONS.md §9.199*
 
-#### `RUN.smoke.hiredFleet.maxWaitSeconds`
+#### `B.hired_fleet.max_wait_s`
 
-Provisional patience limit; a timed-out request aborts and receives native stuck scoring.
+Provisional patience limit; a timed-out request aborts and receives native stuck scoring. Moved from RUN.smoke.hiredFleet.maxWaitSeconds on 21 September 2026 (9.204): the framework's key for the pooled hired fleet.
 
-***assumed** · status **active** · DECISIONS.md §9.199 · MATSim `hiredFleet.maxWaitSeconds` · sweep role **uncertainty***
+***assumed** · status **active** · DECISIONS.md §9.204 · MATSim `hiredFleet.maxWaitSeconds` · sweep role **uncertainty***
 
 > **Sweep basis.** Provisional broad development proxy; no fleet calibration or scaling-equivalence claim.
 
-#### `RUN.smoke.hiredFleet.representation`
+#### `B.hired_fleet.representation`
 
-Bounded pooled availability is opt-in; original unlimited vehicle proxies remain the control.
+Whether hired road modes (taxi, auto-rickshaw) are served from a pooled queue of finite vehicles by mode (citysim.HiredFleetQueue, 9.199; `pooled_queue`, the counts in hired_fleet.json beside the scenario network) or not (`absent`, unlimited vehicle proxies - the control). Absent at the base; the run overlays that exercise the fleet declare pooled_queue. Moved from RUN.smoke.hiredFleet.representation on 21 September 2026 (9.204): the framework's key for the pooled hired fleet.
 
-***definition** · status **active** · DECISIONS.md §9.199 · MATSim `hiredFleet.representation`*
+***definition** · status **active** · DECISIONS.md §9.204 · MATSim `hiredFleet.representation`*
 
-#### `RUN.smoke.hiredFleet.turnaroundSeconds`
+#### `B.hired_fleet.turnaround_s`
 
-Provisional unavailable turnaround after actual arrival. No spatial dispatch or empty road movements.
+Provisional unavailable turnaround after actual arrival. No spatial dispatch or empty road movements. Moved from RUN.smoke.hiredFleet.turnaroundSeconds on 21 September 2026 (9.204): the framework's key for the pooled hired fleet.
 
-***assumed** · status **active** · DECISIONS.md §9.199 · MATSim `hiredFleet.turnaroundSeconds` · sweep role **uncertainty***
+***assumed** · status **active** · DECISIONS.md §9.204 · MATSim `hiredFleet.turnaroundSeconds` · sweep role **uncertainty***
 
 > **Sweep basis.** Provisional broad development proxy; no fleet calibration or scaling-equivalence claim.
 
@@ -911,6 +1024,457 @@ Terminal allowance in the pooled MBMT fleet-hours frequency derivation; not obse
 Local clock basis for published departures.
 
 ***definition** · status **active** · DECISIONS.md §9.187*
+
+## Vehicle types per routed mode (RUN.qsim.mode_vehicle_fields; 9.204)
+
+*`cities/mumbai/registry/A_vehicles.json` - 54 fields*
+
+
+
+| Field | Value | Units | Provenance | Sweep |
+|---|---|---|---|---|
+| `A.vehicle.auto_rickshaw.length_m` | `3.0` | m | `assumed` | plus/minus 50% |
+| `A.vehicle.auto_rickshaw.max_speed_ms` | `15.0` | m/s | `assumed` | plus/minus 50% |
+| `A.vehicle.auto_rickshaw.pce` | `0.7` | passenger_car_equivalents | `assumed` | plus/minus 50% |
+| `A.vehicle.auto_rickshaw.seats` | `3` | persons_per_vehicle | `assumed` | 1 - 5 |
+| `A.vehicle.auto_rickshaw.standing` | `0` | persons_per_vehicle | `definition` | - |
+| `A.vehicle.auto_rickshaw.width_m` | `1.0` | m | `definition` | - |
+| `A.vehicle.bike.length_m` | `2.0` | m | `assumed` | plus/minus 50% |
+| `A.vehicle.bike.max_speed_ms` | `4.0` | m/s | `assumed` | plus/minus 50% |
+| `A.vehicle.bike.pce` | `0.2` | passenger_car_equivalents | `assumed` | plus/minus 50% |
+| `A.vehicle.bike.seats` | `0` | persons_per_vehicle | `definition` | - |
+| `A.vehicle.bike.standing` | `0` | persons_per_vehicle | `definition` | - |
+| `A.vehicle.bike.width_m` | `1.0` | m | `definition` | - |
+| `A.vehicle.car.length_m` | `5.0` | m | `assumed` | plus/minus 50% |
+| `A.vehicle.car.max_speed_ms` | `30.0` | m/s | `assumed` | plus/minus 50% |
+| `A.vehicle.car.pce` | `1.0` | passenger_car_equivalents | `assumed` | plus/minus 50% |
+| `A.vehicle.car.seats` | `4` | persons_per_vehicle | `assumed` | 1 - 6 |
+| `A.vehicle.car.standing` | `0` | persons_per_vehicle | `definition` | - |
+| `A.vehicle.car.width_m` | `1.0` | m | `definition` | - |
+| `A.vehicle.freight_rail.length_m` | `700.0` | m | `assumed` | plus/minus 50% |
+| `A.vehicle.freight_rail.max_speed_ms` | `16.666666666666668` | m/s | `assumed` | plus/minus 50% |
+| `A.vehicle.freight_rail.pce` | `93.33333333333333` | passenger_car_equivalents | `assumed` | plus/minus 50% |
+| `A.vehicle.freight_rail.seats` | `0` | persons_per_vehicle | `definition` | - |
+| `A.vehicle.freight_rail.standing` | `0` | persons_per_vehicle | `definition` | - |
+| `A.vehicle.freight_rail.width_m` | `1.0` | m | `definition` | - |
+| `A.vehicle.motorbike.length_m` | `2.0` | m | `assumed` | plus/minus 50% |
+| `A.vehicle.motorbike.max_speed_ms` | `25.0` | m/s | `assumed` | plus/minus 50% |
+| `A.vehicle.motorbike.pce` | `0.4` | passenger_car_equivalents | `assumed` | plus/minus 50% |
+| `A.vehicle.motorbike.seats` | `1` | persons_per_vehicle | `assumed` | 1 - 3 |
+| `A.vehicle.motorbike.standing` | `0` | persons_per_vehicle | `definition` | - |
+| `A.vehicle.motorbike.width_m` | `1.0` | m | `definition` | - |
+| `A.vehicle.ride.length_m` | `5.0` | m | `assumed` | plus/minus 50% |
+| `A.vehicle.ride.max_speed_ms` | `30.0` | m/s | `assumed` | plus/minus 50% |
+| `A.vehicle.ride.pce` | `1.0` | passenger_car_equivalents | `assumed` | plus/minus 50% |
+| `A.vehicle.ride.seats` | `4` | persons_per_vehicle | `assumed` | 1 - 6 |
+| `A.vehicle.ride.standing` | `0` | persons_per_vehicle | `definition` | - |
+| `A.vehicle.ride.width_m` | `1.0` | m | `definition` | - |
+| `A.vehicle.taxi.length_m` | `5.0` | m | `assumed` | plus/minus 50% |
+| `A.vehicle.taxi.max_speed_ms` | `30.0` | m/s | `assumed` | plus/minus 50% |
+| `A.vehicle.taxi.pce` | `1.0` | passenger_car_equivalents | `assumed` | plus/minus 50% |
+| `A.vehicle.taxi.seats` | `4` | persons_per_vehicle | `assumed` | 1 - 6 |
+| `A.vehicle.taxi.standing` | `0` | persons_per_vehicle | `definition` | - |
+| `A.vehicle.taxi.width_m` | `1.0` | m | `definition` | - |
+| `A.vehicle.truck.length_m` | `12.0` | m | `assumed` | plus/minus 50% |
+| `A.vehicle.truck.max_speed_ms` | `20.0` | m/s | `assumed` | plus/minus 50% |
+| `A.vehicle.truck.pce` | `2.5` | passenger_car_equivalents | `assumed` | plus/minus 50% |
+| `A.vehicle.truck.seats` | `0` | persons_per_vehicle | `definition` | - |
+| `A.vehicle.truck.standing` | `0` | persons_per_vehicle | `definition` | - |
+| `A.vehicle.truck.width_m` | `1.0` | m | `definition` | - |
+| `A.vehicle.walk.length_m` | `0.5` | m | `assumed` | plus/minus 50% |
+| `A.vehicle.walk.max_speed_ms` | `1.2` | m/s | `assumed` | plus/minus 50% |
+| `A.vehicle.walk.pce` | `0.1` | passenger_car_equivalents | `assumed` | plus/minus 50% |
+| `A.vehicle.walk.seats` | `0` | persons_per_vehicle | `definition` | - |
+| `A.vehicle.walk.standing` | `0` | persons_per_vehicle | `definition` | - |
+| `A.vehicle.walk.width_m` | `1.0` | m | `definition` | - |
+
+#### `A.vehicle.auto_rickshaw.length_m`
+
+Length of a auto_rickshaw in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).
+
+#### `A.vehicle.auto_rickshaw.max_speed_ms`
+
+Speed cap of a auto_rickshaw, metres per second; each link's own limit applies below it. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).
+
+#### `A.vehicle.auto_rickshaw.pce`
+
+Road space a auto_rickshaw consumes, in passenger-car equivalents. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).
+
+#### `A.vehicle.auto_rickshaw.seats`
+
+Passenger seats of a auto_rickshaw excluding the driver.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** The permitted passenger seating of the class under the Maharashtra Motor Vehicles Rules as commonly stated (auto-rickshaw 3, taxi and car 4, motorcycle 1 pillion); to be pinned to the transcribed permit source. Inert while B.ride.pairing_enabled is false and the hired fleet counts vehicles, not seats.
+
+#### `A.vehicle.auto_rickshaw.standing`
+
+Standing places in a auto_rickshaw: none, a road vehicle carries seated passengers only.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.auto_rickshaw.width_m`
+
+Width of a auto_rickshaw, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.bike.length_m`
+
+Length of a bike in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).
+
+#### `A.vehicle.bike.max_speed_ms`
+
+Speed cap of a bike, metres per second; each link's own limit applies below it. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).
+
+#### `A.vehicle.bike.pce`
+
+Road space a bike consumes, in passenger-car equivalents. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).
+
+#### `A.vehicle.bike.seats`
+
+Passenger seats of a bike: none, it carries no passenger.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.bike.standing`
+
+Standing places in a bike: none, a road vehicle carries seated passengers only.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.bike.width_m`
+
+Width of a bike, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.car.length_m`
+
+Length of a car in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).
+
+#### `A.vehicle.car.max_speed_ms`
+
+Speed cap of a car, metres per second; each link's own limit applies below it. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).
+
+#### `A.vehicle.car.pce`
+
+Road space a car consumes, in passenger-car equivalents. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).
+
+#### `A.vehicle.car.seats`
+
+Passenger seats of a car excluding the driver.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** The permitted passenger seating of the class under the Maharashtra Motor Vehicles Rules as commonly stated (auto-rickshaw 3, taxi and car 4, motorcycle 1 pillion); to be pinned to the transcribed permit source. Inert while B.ride.pairing_enabled is false and the hired fleet counts vehicles, not seats.
+
+#### `A.vehicle.car.standing`
+
+Standing places in a car: none, a road vehicle carries seated passengers only.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.car.width_m`
+
+Width of a car, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.freight_rail.length_m`
+
+Length of a freight_rail in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).
+
+#### `A.vehicle.freight_rail.max_speed_ms`
+
+Speed cap of a freight_rail, metres per second; each link's own limit applies below it. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).
+
+#### `A.vehicle.freight_rail.pce`
+
+Road space a freight_rail consumes, in passenger-car equivalents. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).
+
+#### `A.vehicle.freight_rail.seats`
+
+Passenger seats of a freight_rail: none, it carries no passenger.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.freight_rail.standing`
+
+Standing places in a freight_rail: none, a road vehicle carries seated passengers only.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.freight_rail.width_m`
+
+Width of a freight_rail, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.motorbike.length_m`
+
+Length of a motorbike in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).
+
+#### `A.vehicle.motorbike.max_speed_ms`
+
+Speed cap of a motorbike, metres per second; each link's own limit applies below it. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).
+
+#### `A.vehicle.motorbike.pce`
+
+Road space a motorbike consumes, in passenger-car equivalents. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).
+
+#### `A.vehicle.motorbike.seats`
+
+Passenger seats of a motorbike excluding the driver.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** The permitted passenger seating of the class under the Maharashtra Motor Vehicles Rules as commonly stated (auto-rickshaw 3, taxi and car 4, motorcycle 1 pillion); to be pinned to the transcribed permit source. Inert while B.ride.pairing_enabled is false and the hired fleet counts vehicles, not seats.
+
+#### `A.vehicle.motorbike.standing`
+
+Standing places in a motorbike: none, a road vehicle carries seated passengers only.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.motorbike.width_m`
+
+Width of a motorbike, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.ride.length_m`
+
+Length of a ride in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).
+
+#### `A.vehicle.ride.max_speed_ms`
+
+Speed cap of a ride, metres per second; each link's own limit applies below it. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).
+
+#### `A.vehicle.ride.pce`
+
+Road space a ride consumes, in passenger-car equivalents. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).
+
+#### `A.vehicle.ride.seats`
+
+Passenger seats of a ride excluding the driver.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** The permitted passenger seating of the class under the Maharashtra Motor Vehicles Rules as commonly stated (auto-rickshaw 3, taxi and car 4, motorcycle 1 pillion); to be pinned to the transcribed permit source. Inert while B.ride.pairing_enabled is false and the hired fleet counts vehicles, not seats.
+
+#### `A.vehicle.ride.standing`
+
+Standing places in a ride: none, a road vehicle carries seated passengers only.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.ride.width_m`
+
+Width of a ride, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.taxi.length_m`
+
+Length of a taxi in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).
+
+#### `A.vehicle.taxi.max_speed_ms`
+
+Speed cap of a taxi, metres per second; each link's own limit applies below it. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).
+
+#### `A.vehicle.taxi.pce`
+
+Road space a taxi consumes, in passenger-car equivalents. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).
+
+#### `A.vehicle.taxi.seats`
+
+Passenger seats of a taxi excluding the driver.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** The permitted passenger seating of the class under the Maharashtra Motor Vehicles Rules as commonly stated (auto-rickshaw 3, taxi and car 4, motorcycle 1 pillion); to be pinned to the transcribed permit source. Inert while B.ride.pairing_enabled is false and the hired fleet counts vehicles, not seats.
+
+#### `A.vehicle.taxi.standing`
+
+Standing places in a taxi: none, a road vehicle carries seated passengers only.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.taxi.width_m`
+
+Width of a taxi, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.truck.length_m`
+
+Length of a truck in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).
+
+#### `A.vehicle.truck.max_speed_ms`
+
+Speed cap of a truck, metres per second; each link's own limit applies below it. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).
+
+#### `A.vehicle.truck.pce`
+
+Road space a truck consumes, in passenger-car equivalents. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).
+
+#### `A.vehicle.truck.seats`
+
+Passenger seats of a truck: none, it carries no passenger.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.truck.standing`
+
+Standing places in a truck: none, a road vehicle carries seated passengers only.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.truck.width_m`
+
+Width of a truck, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.walk.length_m`
+
+Length of a walk in the queue, metres. Provisional (9.187), carried from the per-launch vehicle writer of the city's own launcher.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional behavioural baseline vehicle body; not measured for this city (was RUN.smoke.vehicle_length_m).
+
+#### `A.vehicle.walk.max_speed_ms`
+
+Speed cap of a walk, metres per second; each link's own limit applies below it. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional per-mode movement cap; not calibrated to observed speeds (was RUN.smoke.vehicle_speed_ms).
+
+#### `A.vehicle.walk.pce`
+
+Road space a walk consumes, in passenger-car equivalents. Provisional (9.187).
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional passenger-car equivalent; the mixed-traffic PCE of this city is to be taken from the arterial capacity literature acquired (extract_arterial_capacity_literature.py) before calibration (was RUN.smoke.vehicle_pcu).
+
+#### `A.vehicle.walk.seats`
+
+Passenger seats of a walk: none, it carries no passenger.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.walk.standing`
+
+Standing places in a walk: none, a road vehicle carries seated passengers only.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `A.vehicle.walk.width_m`
+
+Width of a walk, metres: MATSim's own default vehicle width. The queue runs on length and PCE; the width is read by the visualiser and the lane model only, neither of which this model uses.
+
+***definition** · status **active** · DECISIONS.md §9.204*
 
 ## Provisional daily activities and mapped destinations
 
@@ -1495,6 +2059,40 @@ Explicit setting for bounded provisional smoke only; full capacities serve the s
 
 ***definition** · status **active** · DECISIONS.md §9.202 · MATSim `modeAvailability.taxiMinAge`*
 
+## The household population from the census controls at the core extent (9.204)
+
+*`cities/mumbai/registry/B_population.json` - 3 fields*
+
+
+
+| Field | Value | Units | Provenance | Sweep |
+|---|---|---|---|---|
+| `B.population.household_size_open_band_max` | `12` | persons | `assumed` | 9 - 15 |
+| `B.population.projection_district_names` | `{"519": "Mumbai", "518": "Mumbai Suburban", "517": "Thane", "520": "Raigarh"}` | name_map | `definition` | - |
+| `B.population.tertiary_attendance_rate_20_24` | *(null - unobtained)* | probability | `assumed` | 0 - 0.35 |
+
+#### `B.population.household_size_open_band_max`
+
+The largest household size drawn for the open 9+ band of the HL-14 household-size distribution; sizes within the 6-8 and 9+ bands are drawn uniform.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** HL-14 publishes household sizes in bands and the top band is 9+; the largest size a 9+ household is drawn at, uniform from 9. The projected mean household size is compared with HL-1's published mean in _population_report.json
+
+#### `B.population.projection_district_names`
+
+Census 2011 district code -> the district name as printed in the IIPS district projections 2012-2031 (data/processed/observed/district_age_population_projections.csv): 519 is Mumbai (the island city, 3.09 M in 2011), 518 Mumbai Suburban (9.36 M), 517 the 2011 Thane district whole (with today's Palghar), 520 Raigad, which the projections spell Raigarh. A name reconciliation, not a modelling value; the report shows each district's factor.
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
+#### `B.population.tertiary_attendance_rate_20_24`
+
+The share of persons aged 20-24 attending an educational institution. Unobtained: null, and the synthesiser makes nobody in that age range a student, which the report says.
+
+***assumed** · status **unobtained** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** unobtained: the C-12 attendance table the package holds covers ages 5-19 and no district attendance rate for ages 20-24 is acquired; the range spans nobody attending to the age-19 attendance rate of the four districts, and the value stays null until the C-12 age-20-24 cells or a published tertiary rate is acquired
+
 ## Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)
 
 *`cities/mumbai/registry/CAL_framework.json` - 14 fields*
@@ -1630,20 +2228,22 @@ How much the objective moves between iteration 80 and iteration 100 OF THE SAME 
 
 ## Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)
 
-*`cities/mumbai/registry/C_framework.json` - 19 fields*
+*`cities/mumbai/registry/C_framework.json` - 23 fields*
 
 
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
 | `C.asc.car_passenger` | `0.0` | utils | `assumed` | -2 - 2 |
+| `C.crowding.penalty_utils_per_h` | `6.0` | utility_per_hour | `assumed` | plus/minus 50% |
 | `C.crowding.representation` | `in_vehicle_time` | enum | `definition` | - |
 | `C.crowding.seated_multiplier` | `1.1` | ratio | `assumed` | plus/minus 50% |
 | `C.crowding.standing_multiplier` | `1.8` | ratio | `assumed` | plus/minus 50% |
 | `C.income.exponent` | `1.0` | exponent | `definition` | - |
 | `C.income.representation` | `person_marginal_utility_of_money` | enum | `definition` | - |
 | `C.raptor.mode_cost_representation` | `absent` | enum | `assumed` | `absent`, `mode_constant` |
-| `C.scoring.activity_minimal_applied_s` | `0` | seconds | `definition` | - |
+| `C.scoring.activity_minimal_applied_s` | *(null - unobtained)* | seconds | `derived` | derived: min(C.scoring.activity_minimal_duration_s, typical duration) per activ |
+| `C.scoring.activity_minimal_duration_s` | `0` | seconds | `definition` | - |
 | `C.scoring.activity_typical_duration_s` | `{"home": 43200, "work": 28800, "education": 21600, "other": 3600, "freight_start": 86400, "freight_end": 86...` | seconds | `assumed` | plus/minus 50% |
 | `C.scoring.marginal_utility_of_money` | `0.05` | utils_per_INR | `assumed` | plus/minus 50% |
 | `C.scoring.marginal_utility_of_traveling` | `{"car": -6.0, "ride": -6.0, "walk": -6.0, "bike": -6.0, "motorbike": -6.0, "taxi": -6.0, "auto_rickshaw": -...` | utils_per_hour | `assumed` | plus/minus 50% |
@@ -1654,6 +2254,8 @@ How much the objective moves between iteration 80 and iteration 100 OF THE SAME 
 | `C.scoring.waiting_pt` | `-12.0` | utils_per_hour | `assumed` | plus/minus 50% |
 | `C.time_weights.beta_headway` | `0.5` | ratio_to_ivt | `literature` | 0.35 - 0.65 |
 | `C.time_weights.beta_reliability` | `1.3` | ratio_to_ivt | `literature` | 0.8 - 1.8 |
+| `C.time_weights.headway_utils_per_min` | `0.05` | utility_per_minute | `assumed` | plus/minus 50% |
+| `C.time_weights.reliability_utils_per_min` | `0.13` | utility_per_minute | `assumed` | plus/minus 50% |
 | `C.time_weights.service_quality_representation` | `headway_and_reliability` | categorical | `definition` | - |
 
 #### `C.asc.car_passenger`
@@ -1663,6 +2265,14 @@ Car-passenger constant. Placeholder at zero: the baseline scores one constant fo
 ***assumed** · status **placeholder** · DECISIONS.md §9.202 · sweep role **uncertainty***
 
 > **Sweep basis.** the baseline has one constant for every mode; a passenger-specific constant is not solved for this city
+
+#### `C.crowding.penalty_utils_per_h`
+
+Provisional price of additional perceived in-vehicle time due to crowding. Bound directly because RUN.scoring.translation is bound_fields: the harness derives this price from the trip-weighted value of time only under the C1 translation (9.204). Renamed from C.smoke.crowding_price on 21 September 2026.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · MATSim `ptCrowding.penaltyUtilsPerHour` · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional broad behavioural baseline; validate with observed choices before calibration.
 
 #### `C.crowding.representation`
 
@@ -1708,9 +2318,17 @@ The representation gate for the PT mode constant in the TRANSIT ROUTER's cost. S
 
 #### `C.scoring.activity_minimal_applied_s`
 
-The minimal activity duration written per activity type. Not bound for this city: the baseline applies none, which is the MATSim default (undefined), so no minimalDuration parameter is emitted.
+The minimal activity duration written per activity type, derived at launch as in the reference city; 0 s for every type while C.scoring.activity_minimal_duration_s is 0.
 
-***definition** · status **placeholder** · DECISIONS.md §9.202*
+***derived** · status **computed** · DECISIONS.md §9.204*
+
+> **Derived from** `C.scoring.activity_minimal_duration_s`, `C.scoring.activity_typical_duration_s`: min(C.scoring.activity_minimal_duration_s, typical duration) per activity type; the harness supplies it under the derived runtime role
+
+#### `C.scoring.activity_minimal_duration_s`
+
+The minimal duration an activity must reach before it scores, in seconds. 0 for this city: the baseline applies no minimal duration, which is what MATSim's own undefined default means, written as a zero floor so the harness's min(minimal, typical) identity holds for every activity type.
+
+***definition** · status **active** · DECISIONS.md §9.204*
 
 #### `C.scoring.activity_typical_duration_s`
 
@@ -1786,177 +2404,54 @@ Weight on travel time variability, as a ratio to in-vehicle time - the RELIABILI
 
 ***literature** · status **active** · DECISIONS.md §9.202 · sweep role **uncertainty***
 
+#### `C.time_weights.headway_utils_per_min`
+
+Provisional schedule-delay price: half an in-vehicle minute per headway minute. Bound directly because RUN.scoring.translation is bound_fields: the harness derives this price from the trip-weighted value of time only under the C1 translation (9.204). Renamed from C.smoke.headway_price on 21 September 2026.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · MATSim `serviceQuality.headwayUtilsPerMin` · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional broad behavioural baseline; validate with observed choices before calibration.
+
+#### `C.time_weights.reliability_utils_per_min`
+
+Provisional price of delay standard deviation measured from the preceding iteration. Bound directly because RUN.scoring.translation is bound_fields: the harness derives this price from the trip-weighted value of time only under the C1 translation (9.204). Renamed from C.smoke.reliability_price on 21 September 2026.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · MATSim `serviceQuality.reliabilityUtilsPerMin` · sweep role **uncertainty***
+
+> **Sweep basis.** Provisional broad behavioural baseline; validate with observed choices before calibration.
+
 #### `C.time_weights.service_quality_representation`
 
 Enable the existing behavioural mechanism in the broad provisional baseline. Moved from RUN.smoke.service_quality on 21 September 2026: one key per MATSim parameter.
 
 ***definition** · status **active** · DECISIONS.md §9.202 · MATSim `serviceQuality.representation`*
 
-## Bounded behavioural smoke
+## Baseline run settings the city declares itself (9.187, 9.204)
 
-*`cities/mumbai/registry/RUN_baseline_smoke.json` - 19 fields*
+*`cities/mumbai/registry/RUN_baseline.json` - 2 fields*
 
 
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
-| `C.smoke.crowding_price` | `6.0` | utility_per_hour | `assumed` | plus/minus 50% |
-| `C.smoke.headway_cap` | `120.0` | minutes | `assumed` | plus/minus 50% |
-| `C.smoke.headway_price` | `0.05` | utility_per_minute | `assumed` | plus/minus 50% |
-| `C.smoke.reliability_price` | `0.13` | utility_per_minute | `assumed` | plus/minus 50% |
-| `RUN.replanning.strategy_subpopulations` | `{"SubtourModeChoice": ["resident"]}` | subpopulation_names_per_strategy | `definition` | - |
-| `RUN.replanning.subpopulations` | `["resident", "freight"]` | subpopulation_names | `definition` | - |
-| `RUN.smoke.boardingFare.routeChoice` | `true` | boolean | `definition` | - |
-| `RUN.smoke.dedicated_transit_headway_s` | `{"rail": 90, "light_rail": 90, "subway": 90, "ferry": 900}` | seconds_per_vehicle | `assumed` | plus/minus 50% |
-| `RUN.smoke.incomeScoring.excludeSubpopulations` | `freight` | subpopulation_names | `definition` | - |
-| `RUN.smoke.inputs` | `{"network": "networks/matsim/schedules/baseline_regional/network.xml.gz", "schedule": "networks/matsim/sche...` | city_relative_paths | `definition` | - |
-| `RUN.smoke.network_mode_sources` | `{"truck": "car", "freight_rail": "rail"}` | mode_mapping | `definition` | - |
-| `RUN.smoke.road_capacity_factors` | `{"motorway": 1.0, "motorway_link": 1.0, "trunk": 1.0, "trunk_link": 1.0, "primary": 1.0, "primary_link": 1....` | dimensionless_flow_capacity_factor | `assumed` | 0.5 - 3 |
-| `RUN.smoke.road_mode_exclusions` | `{"car": [], "ride": [], "walk": ["motorway", "motorway_link"], "bike": ["motorway", "motorway_link"], "moto...` | highway_classes_by_mode | `definition` | - |
-| `RUN.smoke.transit_mode_aliases` | `{"light_rail": "subway"}` | mode_mapping | `definition` | - |
-| `RUN.smoke.transit_timing` | `{"speed_ms": {"bus": 8.333333333333334, "rail": 16.666666666666668, "subway": 16.666666666666668, "ferry": ...` | metres_per_second_and_seconds | `assumed` | plus/minus 50% |
-| `RUN.smoke.vehicle_length_m` | `{"car": 5.0, "ride": 5.0, "walk": 0.5, "bike": 2.0, "motorbike": 2.0, "taxi": 5.0, "auto_rickshaw": 3.0, "t...` | metres | `assumed` | plus/minus 50% |
-| `RUN.smoke.vehicle_pcu` | `{"car": 1.0, "ride": 1.0, "walk": 0.1, "bike": 0.2, "motorbike": 0.4, "taxi": 1.0, "auto_rickshaw": 0.7, "t...` | passenger_car_units | `assumed` | plus/minus 50% |
-| `RUN.smoke.vehicle_speed_ms` | `{"car": 30.0, "ride": 30.0, "walk": 1.2, "bike": 4.0, "motorbike": 25.0, "taxi": 30.0, "auto_rickshaw": 15....` | m/s | `assumed` | plus/minus 50% |
-| `RUN.smoke.wall_ceiling_s` | `900` | seconds | `definition` | - |
-
-#### `C.smoke.crowding_price`
-
-Provisional price of additional perceived in-vehicle time due to crowding.
-
-***assumed** · status **active** · DECISIONS.md §9.187 · MATSim `ptCrowding.penaltyUtilsPerHour` · sweep role **uncertainty***
-
-> **Sweep basis.** Provisional broad behavioural baseline; validate with observed choices before calibration.
-
-#### `C.smoke.headway_cap`
-
-Provisional cap for sparse/single-departure service headway scoring.
-
-***assumed** · status **active** · DECISIONS.md §9.187 · MATSim `serviceQuality.headwayCapMin` · sweep role **uncertainty***
-
-> **Sweep basis.** Provisional broad behavioural baseline; validate with observed choices before calibration.
-
-#### `C.smoke.headway_price`
-
-Provisional schedule-delay price: half an in-vehicle minute per headway minute.
-
-***assumed** · status **active** · DECISIONS.md §9.187 · MATSim `serviceQuality.headwayUtilsPerMin` · sweep role **uncertainty***
-
-> **Sweep basis.** Provisional broad behavioural baseline; validate with observed choices before calibration.
-
-#### `C.smoke.reliability_price`
-
-Provisional price of delay standard deviation measured from the preceding iteration.
-
-***assumed** · status **active** · DECISIONS.md §9.187 · MATSim `serviceQuality.reliabilityUtilsPerMin` · sweep role **uncertainty***
-
-> **Sweep basis.** Provisional broad behavioural baseline; validate with observed choices before calibration.
+| `RUN.replanning.strategy_subpopulations` | `{"SubtourModeChoice": ["person"]}` | subpopulation_names_per_strategy | `definition` | - |
+| `RUN.replanning.subpopulations` | `["person", "freight"]` | subpopulation_names | `definition` | - |
 
 #### `RUN.replanning.strategy_subpopulations`
 
 Apply baseline choice strategies to residents.
 
-***definition** · status **active** · DECISIONS.md §9.187*
+***definition** · status **active** · DECISIONS.md §9.204*
 
 #### `RUN.replanning.subpopulations`
 
-Smoke traveller population.
+The subpopulations the plans carry, in the framework's vocabulary (src/build/subpopulations.py): `person` for a resident, `freight` for a goods movement. Until 21 September 2026 (9.204) this city wrote `resident`, which the framework's readers and its income-scoring exclusion did not know.
 
-***definition** · status **active** · DECISIONS.md §9.187*
-
-#### `RUN.smoke.boardingFare.routeChoice`
-
-Price each candidate transit boarding with the same city fare table and person-specific money utility as executed scoring, before RAPTOR prunes paths. This enables a mechanism, not a calibrated preference.
-
-***definition** · status **active** · DECISIONS.md §9.192 · MATSim `boardingFare.routeChoice`*
-
-#### `RUN.smoke.dedicated_transit_headway_s`
-
-Provisional dedicated-link service envelope. Flow capacity derives as maximum mapped vehicle PCU times 3600/headway, preserving any greater mapped capacity. This avoids interpreting a train headway as car-equivalent flow and is not a validated signalling capacity.
-
-***assumed** · status **active** · DECISIONS.md §9.187 · sweep role **uncertainty***
-
-> **Sweep basis.** Dedicated-mode headway sensitivity; replace with observed sectional signalling and vessel constraints.
-
-#### `RUN.smoke.incomeScoring.excludeSubpopulations`
-
-Background goods movements are exogenous volumes, not passenger budgets.
-
-***definition** · status **active** · DECISIONS.md §9.187 · MATSim `incomeScoring.excludeSubpopulations`*
-
-#### `RUN.smoke.inputs`
-
-Prepared broad regional baseline including acquired NMMT departures and derived MBMT service supply.
-
-***definition** · status **active** · DECISIONS.md §9.187*
-
-#### `RUN.smoke.network_mode_sources`
-
-Provisional goods modes share their source network, with connected components audited. Detailed HGV and freight operating restrictions remain incomplete.
-
-***definition** · status **active** · DECISIONS.md §9.187*
-
-#### `RUN.smoke.road_capacity_factors`
-
-Declared class sensitivity factors on the already mapped network. Identity preserves source capacities; this is not population sampling or evidence of correct road capacity. Geometry, lanes, speed and service departures are retained.
-
-***assumed** · status **active** · DECISIONS.md §9.196 · sweep role **uncertainty***
-
-> **Sweep basis.** Provisional flow-capacity sensitivity envelope, not fitted or observed Mumbai capacities.
-
-#### `RUN.smoke.road_mode_exclusions`
-
-Coarse class-based availability pending refined corridor access rules.
-
-***definition** · status **active** · DECISIONS.md §9.187*
-
-#### `RUN.smoke.transit_mode_aliases`
-
-Mapped metro track permission uses light_rail; mapped metro vehicle profiles use subway.
-
-***definition** · status **active** · DECISIONS.md §9.187*
-
-#### `RUN.smoke.transit_timing`
-
-Provisional moving-speed caps and intermediate-stop dwell derive physically feasible timetable offsets from the mapped path. Later source times are retained; no observed timetable is overwritten.
-
-***assumed** · status **active** · DECISIONS.md §9.187 · sweep role **uncertainty***
-
-> **Sweep basis.** Provisional broad behavioural baseline; validate with observed choices before calibration.
-
-#### `RUN.smoke.vehicle_length_m`
-
-Provisional vehicle lengths.
-
-***assumed** · status **active** · DECISIONS.md §9.187 · sweep role **uncertainty***
-
-> **Sweep basis.** Provisional behavioural smoke coefficient; not calibrated to ridership.
-
-#### `RUN.smoke.vehicle_pcu`
-
-Provisional network occupancy; ride uses an independent vehicle proxy in this smoke.
-
-***assumed** · status **active** · DECISIONS.md §9.187 · sweep role **uncertainty***
-
-> **Sweep basis.** Provisional behavioural smoke coefficient; not calibrated to ridership.
-
-#### `RUN.smoke.vehicle_speed_ms`
-
-Provisional per-mode movement caps.
-
-***assumed** · status **active** · DECISIONS.md §9.187 · sweep role **uncertainty***
-
-> **Sweep basis.** Provisional behavioural smoke coefficient; not calibrated to ridership.
-
-#### `RUN.smoke.wall_ceiling_s`
-
-Automatic short smoke ceiling; this path refuses multi-hour budgets.
-
-***definition** · status **active** · DECISIONS.md §9.187*
+***definition** · status **active** · DECISIONS.md §9.204*
 
 ## Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)
 
-*`cities/mumbai/registry/RUN_framework.json` - 101 fields*
+*`cities/mumbai/registry/RUN_framework.json` - 105 fields*
 
 
 
@@ -1971,7 +2466,7 @@ Automatic short smoke ceiling; this path refuses multi-hour budgets.
 | `RUN.controler.write_plans_interval` | `1` | iterations | `definition` | - |
 | `RUN.controler.write_trips_interval` | `1` | iterations | `definition` | - |
 | `RUN.gate.ceiling_poll_s` | `60` | seconds | `definition` | - |
-| `RUN.gate.interval_iterations` | `100` | iterations | `definition` | - |
+| `RUN.gate.interval_iterations` | `0` | iterations | `definition` | - |
 | `RUN.gate.reader_timeout_s` | `1800` | seconds | `definition` | - |
 | `RUN.gate.retry_interval_s` | `300` | seconds | `definition` | - |
 | `RUN.gate.stall_kill_s` | `1800` | seconds | `definition` | - |
@@ -1981,8 +2476,8 @@ Automatic short smoke ceiling; this path refuses multi-hour budgets.
 | `RUN.machine.events_synchronize_on_simsteps` | `true` | boolean | `definition` | - |
 | `RUN.machine.gc_collector` | `ParallelGC` | enum | `assumed` | `ParallelGC`, `G1GC` |
 | `RUN.machine.gc_log` | `true` | boolean | `definition` | - |
-| `RUN.machine.heap_floor_gib` | `15.6` | GiB | `assumed` | **held fixed** |
-| `RUN.machine.heap_per_fraction_gib` | `87` | GiB_per_unit_fraction | `assumed` | **held fixed** |
+| `RUN.machine.heap_floor_gib` | `13.7` | GiB | `measured` | **held fixed** |
+| `RUN.machine.heap_per_fraction_gib` | `0.0` | GiB_per_unit_fraction | `assumed` | **held fixed** |
 | `RUN.machine.jfr_profile` | `false` | boolean | `definition` | - |
 | `RUN.machine.replanning_threads` | `2` | threads | `definition` | - |
 | `RUN.machine.seed` | `20260810` | integer_seed | `definition` | - |
@@ -1997,7 +2492,7 @@ Automatic short smoke ceiling; this path refuses multi-hour budgets.
 | `RUN.mode_choice.pt_submode_alternatives` | `aggregate` | categorical | `assumed` | `aggregate`, `alternatives` |
 | `RUN.mode_choice.pt_submode_seed` | `bus` | enum | `assumed` | `bus`, `rail`, `tram`, `ferry` |
 | `RUN.mode_choice.subtour_behavior` | `betweenAllAndFewerConstraints` | enum | `literature` | `betweenAllAndFewerConstraints`, `fromSpecifiedModesToSpecifiedModes` |
-| `RUN.monitor.enabled` | `true` | boolean | `definition` | - |
+| `RUN.monitor.enabled` | `false` | boolean | `definition` | - |
 | `RUN.monitor.live_poll_s` | `0.5` | seconds | `definition` | - |
 | `RUN.monitor.pace_band_s` | `[217, 253]` | seconds_per_iteration | `assumed` | **held fixed** |
 | `RUN.monitor.poll_s` | `3` | seconds | `definition` | - |
@@ -2008,6 +2503,7 @@ Automatic short smoke ceiling; this path refuses multi-hour budgets.
 | `RUN.qsim.end_time_h` | `36` | hours | `definition` | - |
 | `RUN.qsim.link_dynamics` | `PassingQ` | enum | `definition` | - |
 | `RUN.qsim.main_mode` | `["car", "ride", "walk", "bike", "motorbike", "taxi", "auto_rickshaw", "truck", "freight_rail"]` | enum | `definition` | - |
+| `RUN.qsim.mode_vehicle_fields` | `{"car": {"length_m_field": "A.vehicle.car.length_m", "width_m_field": "A.vehicle.car.width_m", "pce_field":...` | registry_field_mapping | `definition` | - |
 | `RUN.qsim.remove_stuck_vehicles` | `true` | boolean | `definition` | - |
 | `RUN.qsim.snapshot_period` | `00:00:00` | hh:mm:ss | `definition` | - |
 | `RUN.qsim.start_time_h` | `0` | hours | `definition` | - |
@@ -2018,7 +2514,7 @@ Automatic short smoke ceiling; this path refuses multi-hour budgets.
 | `RUN.relaxation.drift_tolerance_pp` | `0.5` | percentage_points | `assumed` | 0.1 - 1 |
 | `RUN.relaxation.settle_margin_iterations` | `10` | iterations | `assumed` | 1 - 100 |
 | `RUN.replanning.fraction_to_disable_innovation` | `0.8` | share_of_iterations | `definition` | - |
-| `RUN.replanning.max_agent_plan_memory` | `5` | plans | `definition` | - |
+| `RUN.replanning.max_agent_plan_memory` | `9` | plans | `definition` | - |
 | `RUN.replanning.plan_selector_for_removal` | `WorstPlanSelector` | enum | `assumed` | `WorstPlanSelector`, `SelectRandom`, `SelectExpBetaForRemoval`, `ChangeExpBetaForRemoval`, `PathSizeLogitSelectorForRemoval` |
 | `RUN.replanning.score_msa_fraction` | *(null - unobtained)* | share_of_iterations | `derived` | derived: the literal MATSim writes for its own default when the representation  |
 | `RUN.replanning.score_msa_representation` | `absent` | categorical | `assumed` | `absent`, `at_innovation_cutoff` |
@@ -2031,6 +2527,7 @@ Automatic short smoke ceiling; this path refuses multi-hour budgets.
 | `RUN.routing.activity_link_assignment` | `mode_specific_access` | policy | `definition` | - |
 | `RUN.routing.clear_default_teleported_params` | `true` | boolean | `definition` | - |
 | `RUN.routing.network_modes` | `["car", "ride", "walk", "bike", "motorbike", "taxi", "auto_rickshaw", "truck", "freight_rail"]` | enum | `definition` | - |
+| `RUN.routing.pt_submode_scoring` | `aggregate` | enum | `definition` | - |
 | `RUN.routing.routing_randomness` | `3.0` | dimensionless | `literature` | 0 - 5 |
 | `RUN.sample.flow_capacity_factor` | *(null - unobtained)* | share_of_capacity | `derived` | derived: flowCapacityFactor = RUN.sample.fraction, the standard MATSim scaling  |
 | `RUN.sample.fraction` | `1.0` | share_of_population | `assumed` | 0.01 - 1 |
@@ -2044,6 +2541,7 @@ Automatic short smoke ceiling; this path refuses multi-hour budgets.
 | `RUN.scoring.late_arrival_utils_per_h` | `-18.0` | utils_per_hour | `literature` | -36 - -6 |
 | `RUN.scoring.learning_rate` | `1.0` | share | `definition` | - |
 | `RUN.scoring.path_size_logit_beta` | `1.0` | dimensionless | `literature` | 0.5 - 2 |
+| `RUN.scoring.translation` | `bound_fields` | policy | `definition` | - |
 | `RUN.scoring.waiting_utils_per_h` | `0.0` | utils_per_hour | `assumed` | -6 - 0 |
 | `RUN.storage.extract_grace_s` | `3600` | seconds | `definition` | - |
 | `RUN.storage.raw_cap_gb` | `500` | gibibytes | `definition` | - |
@@ -2051,6 +2549,7 @@ Automatic short smoke ceiling; this path refuses multi-hour budgets.
 | `RUN.telemetry.live_interval_s` | `3600.0` | seconds | `definition` | - |
 | `RUN.transit.transit_modes` | `["pt"]` | mode_names | `definition` | - |
 | `RUN.transit.use_transit` | `true` | boolean | `definition` | - |
+| `RUN.transit_router.access_egress_basis` | `beeline` | enum | `assumed` | `beeline`, `network` |
 | `RUN.transit_router.additional_transfer_time_s` | `0.0` | s | `assumed` | 0 - 120 |
 | `RUN.transit_router.direct_walk_basis` | `network` | enum | `definition` | - |
 | `RUN.transit_router.direct_walk_factor` | `1.0` | ratio | `literature` | 1 - 2 |
@@ -2120,9 +2619,9 @@ How often the ceiling watcher looks at the clock. Adopted from the reference cit
 
 #### `RUN.gate.interval_iterations`
 
-How often the runner's own gate watcher reads all twelve modes against their targets and stops the run if any is at or past CAL.gate.stop_deviation_pct - the GOAL.md loop's 'every 100 iterations', executed by the harness instead of by a person watching. Adopted from the reference city's declaration; not a Mumbai observation.
+How often the gate watcher reads the modes against their targets. 0 for this city: no target exists to judge a mode by, so the only automatic stop is the wall ceiling every run overlay declares (RUN.gate.wall_ceiling_h).
 
-***definition** · status **active** · DECISIONS.md §9.202*
+***definition** · status **active** · DECISIONS.md §9.204*
 
 #### `RUN.gate.reader_timeout_s`
 
@@ -2182,23 +2681,23 @@ Whether the JVM writes a GC log to <run>/gc.log. Adopted from the reference city
 
 #### `RUN.machine.heap_floor_gib`
 
-The sample-independent part of the heap rule RUN.machine.xmx used to carry as prose. Adopted from the reference city's declaration; not a Mumbai observation.
+The sample-independent part of the heap rule. MEASURED for this city: the whole explicit population (RUN.sample.fraction 1.0) peaked at 13.74 GiB of a 16g heap in the gc.log of 20260921T182708_2it_100pct, the first case launched through the harness; a two-iteration case sees no plan-memory growth, so the peak of a longer horizon is re-read from its own gc.log.
 
-***assumed** · status **active** · DECISIONS.md §9.202*
+***measured** · status **active** · DECISIONS.md §9.204*
 
-> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+> **Held fixed.** the peak of the whole-population case read from its own gc.log; re-read from the gc.log of every longer case and never varied
 >
-> *Departure requires: a Mumbai measurement of the same quantity*
+> *Departure requires: a higher peak in a later Mumbai gc.log*
 
 #### `RUN.machine.heap_per_fraction_gib`
 
-The sample-dependent part of the heap rule. Adopted from the reference city's declaration; not a Mumbai observation.
+The sample-dependent part of the heap rule. Held at 0 for this city: the one measured peak (13.74 GiB at fraction 1.0) sits entirely in RUN.machine.heap_floor_gib until a case at another fraction gives the rule a second point.
 
-***assumed** · status **active** · DECISIONS.md §9.202*
+***assumed** · status **active** · DECISIONS.md §9.204*
 
-> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+> **Held fixed.** the explicit population is simulated whole (RUN.sample.fraction 1.0), so one measured peak cannot separate a floor from a slope; the whole peak is carried by the floor and the slope is held at zero
 >
-> *Departure requires: a Mumbai measurement of the same quantity*
+> *Departure requires: a second peak at a sample fraction below one, from its own gc.log*
 
 #### `RUN.machine.jfr_profile`
 
@@ -2208,7 +2707,7 @@ Whether the JVM records a Java Flight Recorder profile of the run into <run>/pro
 
 #### `RUN.machine.replanning_threads`
 
-Replanning threads for the baseline case. Moved from RUN.smoke.global.numberOfThreads on 21 September 2026: one key per MATSim parameter.
+Replanning threads for the baseline case.
 
 ***definition** · status **active** · DECISIONS.md §9.202 · MATSim `global.numberOfThreads`*
 
@@ -2226,7 +2725,7 @@ Whether RunTelemetry depends on the sim-step barrier for memory visibility. Adop
 
 #### `RUN.machine.threads`
 
-qsim threads for the baseline case; the explicit population is small enough that two threads keep the machine free. Moved from RUN.smoke.qsim.numberOfThreads on 21 September 2026: one key per MATSim parameter.
+qsim threads for the baseline case; the explicit population is small enough that two threads keep the machine free.
 
 ***definition** · status **active** · DECISIONS.md §9.202 · MATSim `qsim.numberOfThreads`*
 
@@ -2294,9 +2793,9 @@ How subtour mode choice treats tours it cannot close. Adopted from the reference
 
 #### `RUN.monitor.enabled`
 
-Serve the live run view while a run is in flight. Adopted from the reference city's declaration; not a Mumbai observation.
+Serve the live run view while a run is in flight. Off for this city: the monitor reads every mode against its target and no mode target has been derived yet (data/processed/validation/mode_targets_by_mode.csv does not exist).
 
-***definition** · status **active** · DECISIONS.md §9.202*
+***definition** · status **active** · DECISIONS.md §9.204*
 
 #### `RUN.monitor.live_poll_s`
 
@@ -2361,6 +2860,12 @@ Explicit setting for bounded provisional smoke only; full capacities serve the s
 Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.qsim.mainMode on 21 September 2026: one key per MATSim parameter.
 
 ***definition** · status **active** · DECISIONS.md §9.202 · MATSim `qsim.mainMode`*
+
+#### `RUN.qsim.mode_vehicle_fields`
+
+Explicit network-mode vehicle definitions: one profile per routed mode, each naming the A.vehicle.<mode>.* scalar fields (registry/A_vehicles.json) for its length, width, PCE, seats, standing room and speed cap. Replaces the per-launch vehicle writer of the city's own launcher (9.204).
+
+***definition** · status **active** · DECISIONS.md §9.204*
 
 #### `RUN.qsim.remove_stuck_vehicles`
 
@@ -2428,9 +2933,9 @@ Explicit setting for bounded provisional smoke only; full capacities serve the s
 
 #### `RUN.replanning.max_agent_plan_memory`
 
-Native plan-memory limit; must retain supplied alternatives while exploration adds new plans. Moved from RUN.smoke.replanning.maxAgentPlanMemorySize on 21 September 2026: one key per MATSim parameter.
+Plans an agent keeps. 9 for this city: the explicit population carries up to eight initial whole-day mode alternatives (build_baseline_choices.py) plus one slot for a new plan, so plan memory never discards a supplied alternative; the assembly refuses a smaller value.
 
-***definition** · status **active** · DECISIONS.md §9.202 · MATSim `replanning.maxAgentPlanMemorySize`*
+***definition** · status **active** · DECISIONS.md §9.204 · MATSim `replanning.maxAgentPlanMemorySize`*
 
 #### `RUN.replanning.plan_selector_for_removal`
 
@@ -2517,6 +3022,12 @@ Explicit routing helper configuration for the provisional network-mode smoke; ma
 Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.routing.networkModes on 21 September 2026: one key per MATSim parameter.
 
 ***definition** · status **active** · DECISIONS.md §9.202 · MATSim `routing.networkModes`*
+
+#### `RUN.routing.pt_submode_scoring`
+
+Whether each scheduled transport mode is scored as a passenger mode of its own (per_submode) or every pt leg as one pt mode (aggregate). `aggregate` for this city: the transit router combines bus, suburban rail, metro and ferry under one pt mode (RUN.transit.transit_modes = [pt]) and one bound constant; splitting them is a declared change of its own once a ridership series per operator exists to score it by.
+
+***definition** · status **active** · DECISIONS.md §9.204*
 
 #### `RUN.routing.routing_randomness`
 
@@ -2620,6 +3131,12 @@ The path-size logit's beta. Adopted from the reference city's declaration; not a
 
 > **Sweep basis.** The path-size correction's exponent in the path-size logit of Ben-Akiva and Bierlaire (1999); 1.0 is the standard formulation and the framework default. WHAT THE SWEEP ANSWERS: how strongly two plans that overlap are treated as one alternative rather than two. It reads only under a path-size-logit selector, which is why it is declared in the same change as RUN.replanning.plan_selector_for_removal: `PathSizeLogitSelectorForRemoval` is one of that field's sweep members, and an arm that spent it would otherwise be spending this undeclared value with it.
 
+#### `RUN.scoring.translation`
+
+Where this city's MATSim scoring parameters come from. `bound_fields`: this city has no C1 nested-logit table; every scoring parameter is a bound registry field (C.scoring.mode_constant, C.scoring.marginal_utility_of_traveling, C.scoring.waiting_pt, C.scoring.utility_of_line_switch, the crowding and service-quality prices) and the harness translates nothing (9.204).
+
+***definition** · status **active** · DECISIONS.md §9.204*
+
 #### `RUN.scoring.waiting_utils_per_h`
 
 Disutility of general waiting, over and above the opportunity cost of the time. Adopted from the reference city's declaration; not a Mumbai observation.
@@ -2663,6 +3180,14 @@ Explicit setting for bounded provisional smoke only; full capacities serve the s
 Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.transit.useTransit on 21 September 2026: one key per MATSim parameter.
 
 ***definition** · status **active** · DECISIONS.md §9.202 · MATSim `transit.useTransit`*
+
+#### `RUN.transit_router.access_egress_basis`
+
+How a pt trip reaches its first stop and leaves its last. `beeline` for the fold: the previous cases' behaviour, to be switched to `network` by a declared change of its own.
+
+***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
+
+> **Sweep basis.** beeline reproduces the pre-fold cases exactly (the raptor draws access and egress straight); network routes them on the walk network, which GOAL.md requirement 1 asks for and which is switched on once the walk network's reach to the boarding links is measured for this city
 
 #### `RUN.transit_router.additional_transfer_time_s`
 

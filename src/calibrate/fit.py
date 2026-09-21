@@ -58,12 +58,18 @@ C4 = _city.path('params/C4_mode_constraints.json')
 # is NOT in it: it sits inside Vehicle driver/passenger, so the car and ride
 # targets silently contain motorcycles. An imperfect map, stated here rather
 # than hidden in a lookup.
-_SURVEY = _city.readers().mode_category_labels()
-MODE_TO_HTS = {'car': _SURVEY['car_driver'], 'ride': _SURVEY['car_passenger'],
-               'pt': _SURVEY['public_transport'], 'walk': _SURVEY['walk_only'],
-               'bike': _SURVEY['other']}
+# A city with no household travel survey supplies no reader adapter (9.204):
+# it has no hts_mode_share target for this map to speak, and every one it
+# ever acquires is unscorable until it declares the adapter.
+try:
+    _SURVEY = _city.readers().mode_category_labels()
+except _city.CityError:
+    _SURVEY = None
+MODE_TO_HTS = ({'car': _SURVEY['car_driver'], 'ride': _SURVEY['car_passenger'],
+                'pt': _SURVEY['public_transport'], 'walk': _SURVEY['walk_only'],
+                'bike': _SURVEY['other']} if _SURVEY else {})
 # The survey vintage of the base year, in the survey's own spelling.
-BASE_YEAR_HTS = _city.readers().survey_vintage()
+BASE_YEAR_HTS = _city.readers().survey_vintage() if _SURVEY else None
 
 
 def load_targets():

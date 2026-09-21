@@ -19,6 +19,13 @@ keys into `registry/RUN_framework.json` and its companions (decision 9.202):
 
 Run once per contract change; idempotent. Reads the reference city's registry
 directly (it is the contract's `generated_from`), never the framework code.
+
+A field already in a `*_framework.json` is kept as it stands (a moved twin
+carries Mumbai's own value and must not be re-adopted from the reference), and
+the file is rewritten as the union of what it held and what a contract change
+adds: until 21 September 2026 (9.204) a contract change would have rewritten
+each file with the new keys alone. An entry in OVERRIDES or GATES is re-applied
+to a kept field, so a Mumbai fact stated here reaches the file on every run.
 """
 import json
 import os
@@ -53,7 +60,7 @@ GATED_BY = {
     'A.signals.': 'A.signals.representation', 'A.gradient.': 'A.gradient.representation',
     'A.crossings.': 'A.crossings.representation', 'A.bike_stress.': 'A.bike_stress.representation',
     'B.ride.': 'B.ride.pairing_enabled', 'B.taxi.': 'A.taxi.fleet_representation',
-    'A.parking.': 'A.parking.representation', 'CAL.': None,
+    'CAL.': None,
 }
 # Mumbai's own facts, where adopting the reference city's value would be wrong.
 OVERRIDES = {
@@ -79,12 +86,48 @@ OVERRIDES = {
                                           [45, 49], [50, 54], [55, 59], [60, 64], [65, 69], [70, 74], [75, 79], [80, 120]],
                                    source='definition', status='active',
                                    description='Age banding for population synthesis: the five-year bands of the Census of India 2011 C-14 table the package holds (data/processed/observed/census_2011_age_sex.csv), 80+ open.'),
-    'A.parking.charged_start_hour': dict(value=0, source='definition', status='placeholder',
-                                         description='Hour at which parking begins to be charged. Inert placeholder: no parking price file is supplied, so the parking module is off (parking.priceFile empty) and the window is never read.'),
-    'A.parking.charged_end_hour': dict(value=0, source='definition', status='placeholder',
-                                       description='Hour at which parking stops being charged. Inert placeholder: no parking price file is supplied, so the parking module is off and the window is never read.'),
-    'C.scoring.activity_minimal_applied_s': dict(value=0, source='definition', status='placeholder',
-                                                 description='The minimal activity duration written per activity type. Not bound for this city: the baseline applies none, which is the MATSim default (undefined), so no minimalDuration parameter is emitted.'),
+    'A.parking.charged_hours_by_day_type': dict(decisions_ref='9.204', value={'WEEKDAY': None}, source='definition', status='active',
+                                                description='The charged parking window per day type. None for the one day type: no parking price is observed for this city, the assembled price table beside the scenario network is empty (every link free), and a free day is written as a window of (0, 0) exactly as the reference city writes its Sunday.'),
+    'A.parking.charged_start_hour': dict(decisions_ref='9.204', value=None, source='derived', status='computed',
+                                         derived_from={'fields': ['A.parking.charged_hours_by_day_type'], 'identity': 'A.parking.charged_hours_by_day_type[day][0], 0 for a day with no window; the harness supplies it under the derived runtime role'},
+                                         description='Hour at which parking begins to be charged, derived at launch from the day type\'s window as in the reference city.'),
+    'A.parking.charged_end_hour': dict(decisions_ref='9.204', value=None, source='derived', status='computed',
+                                       derived_from={'fields': ['A.parking.charged_hours_by_day_type'], 'identity': 'A.parking.charged_hours_by_day_type[day][1], 0 for a day with no window; the harness supplies it under the derived runtime role'},
+                                       description='Hour at which parking stops being charged, derived at launch from the day type\'s window as in the reference city.'),
+    'C.scoring.activity_minimal_duration_s': dict(decisions_ref='9.204', value=0, source='definition', status='active',
+                                                  description='The minimal duration an activity must reach before it scores, in seconds. 0 for this city: the baseline applies no minimal duration, which is what MATSim\'s own undefined default means, written as a zero floor so the harness\'s min(minimal, typical) identity holds for every activity type.'),
+    'C.scoring.activity_minimal_applied_s': dict(decisions_ref='9.204', value=None, source='derived', status='computed',
+                                                 derived_from={'fields': ['C.scoring.activity_minimal_duration_s', 'C.scoring.activity_typical_duration_s'], 'identity': 'min(C.scoring.activity_minimal_duration_s, typical duration) per activity type; the harness supplies it under the derived runtime role'},
+                                                 description='The minimal activity duration written per activity type, derived at launch as in the reference city; 0 s for every type while C.scoring.activity_minimal_duration_s is 0.'),
+    'RUN.scoring.translation': dict(decisions_ref='9.204', value='bound_fields', source='definition', status='active',
+                                    description='Where this city\'s MATSim scoring parameters come from. `bound_fields`: this city has no C1 nested-logit table; every scoring parameter is a bound registry field (C.scoring.mode_constant, C.scoring.marginal_utility_of_traveling, C.scoring.waiting_pt, C.scoring.utility_of_line_switch, the crowding and service-quality prices) and the harness translates nothing (9.204).'),
+    'RUN.transit_router.access_egress_basis': dict(decisions_ref='9.204', value='beeline', source='assumed', status='active',
+                                                   sweep={'categorical': ['beeline', 'network'], 'basis': 'beeline reproduces the pre-fold cases exactly (the raptor draws access and egress straight); network routes them on the walk network, which GOAL.md requirement 1 asks for and which is switched on once the walk network\'s reach to the boarding links is measured for this city'},
+                                                   sweep_role='uncertainty',
+                                                   description='How a pt trip reaches its first stop and leaves its last. `beeline` for the fold: the previous cases\' behaviour, to be switched to `network` by a declared change of its own.'),
+    'RUN.monitor.enabled': dict(decisions_ref='9.204', value=False, source='definition', status='active',
+                                description='Serve the live run view while a run is in flight. Off for this city: the monitor reads every mode against its target and no mode target has been derived yet (data/processed/validation/mode_targets_by_mode.csv does not exist).'),
+    'RUN.gate.interval_iterations': dict(decisions_ref='9.204', value=0, source='definition', status='active',
+                                         description='How often the gate watcher reads the modes against their targets. 0 for this city: no target exists to judge a mode by, so the only automatic stop is the wall ceiling every run overlay declares (RUN.gate.wall_ceiling_h).'),
+    'RUN.machine.heap_floor_gib': dict(decisions_ref='9.204', value=13.7, source='measured', status='active',
+                                       held_fixed={'rule': 'the peak of the whole-population case read from its own gc.log; re-read from the gc.log of every longer case and never varied', 'decisions_ref': '9.204', 'departure_requires': 'a higher peak in a later Mumbai gc.log'},
+                                       description='The sample-independent part of the heap rule. MEASURED for this city: the whole explicit population (RUN.sample.fraction 1.0) peaked at 13.74 GiB of a 16g heap in the gc.log of 20260921T182708_2it_100pct, the first case launched through the harness; a two-iteration case sees no plan-memory growth, so the peak of a longer horizon is re-read from its own gc.log.'),
+    'RUN.machine.heap_per_fraction_gib': dict(decisions_ref='9.204', value=0.0, source='assumed', status='active',
+                                              held_fixed={'rule': 'the explicit population is simulated whole (RUN.sample.fraction 1.0), so one measured peak cannot separate a floor from a slope; the whole peak is carried by the floor and the slope is held at zero', 'decisions_ref': '9.204', 'departure_requires': 'a second peak at a sample fraction below one, from its own gc.log'},
+                                              description='The sample-dependent part of the heap rule. Held at 0 for this city: the one measured peak (13.74 GiB at fraction 1.0) sits entirely in RUN.machine.heap_floor_gib until a case at another fraction gives the rule a second point.'),
+    'RUN.replanning.max_agent_plan_memory': dict(decisions_ref='9.204', value=9, source='definition', status='active',
+                                                 description='Plans an agent keeps. 9 for this city: the explicit population carries up to eight initial whole-day mode alternatives (build_baseline_choices.py) plus one slot for a new plan, so plan memory never discards a supplied alternative; the assembly refuses a smaller value.'),
+    'RUN.routing.pt_submode_scoring': dict(decisions_ref='9.204', value='aggregate', source='definition', status='active',
+                                           description='Whether each scheduled transport mode is scored as a passenger mode of its own (per_submode) or every pt leg as one pt mode (aggregate). `aggregate` for this city: the transit router combines bus, suburban rail, metro and ferry under one pt mode (RUN.transit.transit_modes = [pt]) and one bound constant; splitting them is a declared change of its own once a ridership series per operator exists to score it by.'),
+    'A.parking.search_time_representation': dict(decisions_ref='9.204', value='absent', source='definition', status='active',
+                                                 description='Whether a derived parking search time reaches the car\'s score. `absent` for this city: no parking price or occupancy is observed, the assembled price table is empty and there is no search time to derive.'),
+    'RUN.qsim.mode_vehicle_fields': dict(decisions_ref='9.204', value={
+                                             mode: dict(length_m_field='A.vehicle.%s.length_m' % mode, width_m_field='A.vehicle.%s.width_m' % mode,
+                                                        pce_field='A.vehicle.%s.pce' % mode, seats_field='A.vehicle.%s.seats' % mode,
+                                                        standing_field='A.vehicle.%s.standing' % mode, maximum_speed_ms_field='A.vehicle.%s.max_speed_ms' % mode)
+                                             for mode in ('car', 'ride', 'walk', 'bike', 'motorbike', 'taxi', 'auto_rickshaw', 'truck', 'freight_rail')},
+                                         source='definition', status='active',
+                                         description='Explicit network-mode vehicle definitions: one profile per routed mode, each naming the A.vehicle.<mode>.* scalar fields (registry/A_vehicles.json) for its length, width, PCE, seats, standing room and speed cap. Replaces the per-launch vehicle writer of the city\'s own launcher (9.204).'),
     'RUN.replanning.score_msa_fraction': dict(value=None, source='derived', status='computed',
                                               derived_from={'fields': ['RUN.replanning.score_msa_representation'], 'identity': 'the literal MATSim writes for its own default when the representation is absent; the launcher supplies it under the derived runtime role'},
                                               description='The iteration fraction at which a plan score becomes a moving average. Derived at launch from the representation gate, as in the reference city.'),
@@ -208,6 +251,8 @@ def override(key, ref):
         out.pop(k, None)
     out.update(spec)
     out['units'] = contract_units(key)
+    if 'decisions_ref' in spec:
+        out['decisions_ref'] = spec['decisions_ref']
     if key == 'B.seed.master':
         out['value'] = city.descriptor()['seed']
     if key in DROP_BINDING:
@@ -267,22 +312,41 @@ def main():
     written = {}
     for target, (source_key, field) in twins.items():
         written[target] = field
-    for key in sorted(applicable):
-        if key in mine or key in written:
+    # what the framework files already hold: kept, an OVERRIDES or GATES entry re-applied
+    held = {}
+    for key, path in origin.items():
+        if os.path.basename(path) in TARGET.values():
+            field = dict(mine[key])
+            if key in OVERRIDES:
+                field = override(key, reference[key]) if key in reference else dict(field, **OVERRIDES[key])
+            elif key in GATES:
+                field = adopt(key, reference[key])
+            held[key] = field
+    for key in sorted(applicable | set(OVERRIDES)):
+        if key in written or key in held or (key in mine and key not in held):
+            continue
+        if key not in reference:
+            # a Mumbai fact with no reference declaration: written from OVERRIDES alone
+            spec = dict(OVERRIDES[key])
+            spec.setdefault('units', CONTRACT['fields'][key]['units'] if key in CONTRACT['fields'] else 'see description')
+            spec['decisions_ref'] = spec.get('decisions_ref', DECISION)
+            written[key] = spec
             continue
         ref = reference[key]
         written[key] = override(key, ref) if key in OVERRIDES else adopt(key, ref)
-    # write per layer; remove the moved private fields from their files
+    # write per layer as the union of the kept and the new; remove the moved
+    # private fields from their files
     files = {}
-    for key, field in written.items():
+    for key, field in list(held.items()) + list(written.items()):
         files.setdefault(TARGET[key.split('.')[0]], {})[key] = field
     for name, fields in files.items():
         path = Path(city.path('registry', name))
         doc = {'layer': name.split('_')[0],
                'title': 'Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)',
                'fields': dict(sorted(fields.items()))}
-        path.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
-        print('wrote', name, len(fields))
+        # LF explicitly: write_text writes CRLF on Windows (9.201, trap 7)
+        path.write_text(json.dumps(doc, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
+        print('wrote', name, len(fields), 'kept', sum(1 for k in fields if k in held), 'new', sum(1 for k in fields if k in written))
     retired = {}
     for target, (source_key, _) in twins.items():
         retired.setdefault(origin[source_key], []).append(source_key)
@@ -290,7 +354,7 @@ def main():
         doc = json.loads(Path(path).read_text(encoding='utf-8'))
         for k in keys:
             doc['fields'].pop(k, None)
-        Path(path).write_text(json.dumps(doc, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+        Path(path).write_text(json.dumps(doc, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
         print('retired', len(keys), 'private keys from', os.path.basename(path))
     print(json.dumps({k: v for k, v in sorted((t, s) for t, (s, _) in twins.items())}, indent=1))
 

@@ -166,6 +166,9 @@ def block_scoreboard():
         meta = _json(os.path.join(run_dir, '_meta.json')) or {}
         if meta.get('status') == 'failed':
             continue
+        # this board is one city's; the store holds every city's runs (9.204)
+        if (meta.get('city') or _city.DEFAULT_CITY) != _city.CITY:
+            continue
         try:
             have = sorted(set(mim.iterations_with_trips(run_dir))
                           | set(itr.iterations_with_plans(run_dir)))
@@ -260,8 +263,8 @@ def block_runs():
     names = _run_dirs()
     if not names:
         return None
-    lines = ['| run | status | family | reached | cause / note |',
-             '|---|---|---|---:|---|']
+    lines = ['| run | city | status | family | reached | cause / note |',
+             '|---|---|---|---|---:|---|']
     for name in names[:6]:
         run_dir = _dir_of(name)
         meta = _json(os.path.join(run_dir, '_meta.json')) or {}
@@ -290,8 +293,11 @@ def block_runs():
             reached_cell = 'live'
         else:
             reached_cell = '-' if reached is None else reached
-        lines.append('| `%s` | %s | %s | %s | %s |'
-                     % (name, meta.get('status', '?'), _family_of(name) or '-',
+        # The results store holds every city's runs (9.204): a record names
+        # its city; one written before the field existed ran the default city
+        lines.append('| `%s` | %s | %s | %s | %s | %s |'
+                     % (name, meta.get('city') or _city.DEFAULT_CITY,
+                        meta.get('status', '?'), _family_of(name) or '-',
                         reached_cell, cause or record or '-'))
     lines.append('')
     lines.append('%d run directories on disk; `results/INDEX.md` labels every one. '

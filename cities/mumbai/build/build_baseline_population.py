@@ -16,6 +16,7 @@ import pyogrio
 
 import city
 import registry
+import subpopulations
 from build.extract_osm_network import fingerprint
 
 OUTPUT_INPUTS = {
@@ -121,7 +122,7 @@ def main():
         person = ET.SubElement(root, 'person', id=identity)
         attrs = ET.SubElement(person, 'attributes')
         for key, value, java_type in (
-                ('subpopulation', 'resident', 'String'), ('age', int(age), 'Integer'),
+                ('subpopulation', subpopulations.RESIDENT, 'String'), ('age', int(age), 'Integer'),
                 ('sex', sex, 'String'), ('income', float(income), 'Double'),
                 ('carAvail', 'always' if licence and access['car'] else 'never', 'String'),
                 ('hasLicense', 'yes' if licence else 'no', 'String'),

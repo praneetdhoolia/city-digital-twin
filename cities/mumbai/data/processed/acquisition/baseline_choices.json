@@ -22,12 +22,12 @@
     "8": 2
   },
   "maximum_plans_per_person_count": 8,
-  "before_selected_demand_sha256": "3a313ec63528a6e31893c367708276e6eb1bcd4662f93a5d5e7af2b07e3e0dc6",
-  "after_selected_demand_sha256": "3a313ec63528a6e31893c367708276e6eb1bcd4662f93a5d5e7af2b07e3e0dc6",
+  "before_selected_demand_sha256": "e853a90b7e136fcead8d43aff5dd6150008f84093069c6700782a6f1fb08033a",
+  "after_selected_demand_sha256": "e853a90b7e136fcead8d43aff5dd6150008f84093069c6700782a6f1fb08033a",
   "source": "derived_initial_choice_set_not_observed_mode_shares",
   "input_sha256": {
-    "demand/baseline/plans_with_freight.xml.gz": "26df4512fc0e66b7d8766906e5b2d17d414334ab272b2d07bf5c43fef77cd573",
-    "registry/RUN_baseline_smoke.json": "316e69dbb2ec04c5acc397afd13d97198bf272c442c5a96f11f44bd76132ce9d"
+    "demand/baseline/plans_with_freight.xml.gz": "7fbc26412b0ed519d2639b81e6aa140a70603ff28180f6a3581763d16e33cc99",
+    "registry/RUN_framework.json": "2aea78d5acd4b35821c4835a2950a3f1afbd68c4dda53a2ed0c3fb99c53a154f"
   },
   "limitations": [
     "Alternatives are unscored; only native execution can evaluate them.",

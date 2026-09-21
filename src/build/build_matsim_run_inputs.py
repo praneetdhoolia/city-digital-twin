@@ -184,6 +184,19 @@ def check_scoring_order(cfg):
     every short trip to bike (DECISIONS.md 9.28). Checked against the resolved
     configuration, so an overlay cannot reintroduce it either.
     """
+    if scoring_translation(cfg) == 'bound_fields':
+        # the same ordering, read where a bound-fields city declares it: the
+        # per-mode time rate itself (utils/h, negative), bike no dearer than
+        # walk being the inversion
+        rates = cfg.get('C.scoring.marginal_utility_of_traveling')
+        walk, bike = rates.get('walk'), rates.get('bike')
+        if walk is None or bike is None or bike > walk:
+            raise SystemExit('C.scoring.marginal_utility_of_traveling must price bike '
+                             '(%s utils/h) at or below walk (%s): cycling time is dearer '
+                             'per hour than walking time in every calibrated model, and '
+                             'inverting that ordering is the DECISIONS.md 9.28 defect'
+                             % (bike, walk))
+        return
     walk = cfg.get('C.time_weights.beta_walk_mode')
     bike = cfg.get('C.time_weights.beta_bike_mode')
     if bike < walk:
@@ -1265,6 +1278,46 @@ def _score_msa(cfg):
         'no emission and must not be guessed at.' % (gate,))
 
 
+SCORING_TRANSLATIONS = ('c1_translation', 'bound_fields')
+
+
+def scoring_translation(cfg):
+    """Where this city's MATSim scoring comes from - the one gate the fold declares.
+
+    `c1_translation`: the reference city's way. A nested-logit specification
+    (`params/C1_parameters.json`) is translated into MATSim's Charypar-Nagel
+    utility at emission - the constants, the per-mode time rates, waitingPt and
+    utilityOfLineSwitch - and the derived scoring prices (crowding, headway,
+    reliability, parking search, bike stress, the taxi fare blend) ride the
+    trip-weighted value of time that translation computes. The fields those
+    parameters bind to are declared `computed`.
+
+    `bound_fields`: a city that declares every scoring parameter as a bound
+    registry field (`C.scoring.mode_constant` a mapping, `C.scoring.waiting_pt`
+    a number, ...) and has no C1 table. Nothing is translated; the emitter
+    supplies only what no registry can hold (paths, the capacity identities,
+    the parking window, the score-MSA literal) and every scoring value reaches
+    the config from its own field. A derived price that needs the trip-weighted
+    VOT is not emitted - the city binds it or leaves the mechanism `absent`.
+
+    Until 21 September 2026 the harness knew only the first way, so a second
+    city ran through its own launcher (`src/run/baseline_smoke.py`, 9.202).
+    """
+    value = cfg.get('RUN.scoring.translation')
+    if value not in SCORING_TRANSLATIONS:
+        raise SystemExit('RUN.scoring.translation is %r; it must be one of %s'
+                         % (value, ', '.join(SCORING_TRANSLATIONS)))
+    return value
+
+
+def c1_scoring(cfg, purpose_share):
+    """The C1 translation under `c1_translation`, None under `bound_fields`."""
+    if scoring_translation(cfg) == 'bound_fields':
+        return None
+    return scoring_from_c1(cfg, json.load(open(PARAMS, encoding='utf-8')),
+                           purpose_share)
+
+
 def scoring_from_c1(cfg, c1, purpose_share):
     """Translate the C1 nested-logit parameters into MATSim scoring.
 
@@ -1548,7 +1601,11 @@ def runtime_representation_entries(rc):
     # ridden - the same identity chain every other derived scoring value
     # uses. Emitted only under the declared representation, so `absent`
     # leaves the module holding representation=absent and nothing installs.
-    if rc.cfg.get('A.bike_stress.representation') == 'felt_time':
+    # Every price below that rides the trip-weighted VOT exists only under the
+    # C1 translation; a `bound_fields` city binds the price itself or leaves the
+    # mechanism `absent`. `translated` is the one test, made once.
+    translated = rc.scoring is not None
+    if translated and rc.cfg.get('A.bike_stress.representation') == 'felt_time':
         rc.runtime['bikeStress.penaltyUtilsPerHour'] = (
             round(rc.scoring['vot_aud_hr_used']
                   * rc.cfg.get('C.time_weights.beta_bike_mode')
@@ -1564,7 +1621,7 @@ def runtime_representation_entries(rc):
     # felt extra hour on a stressed link. Emitted only under the declared
     # representation, so `absent` leaves the module holding
     # representation=absent and citysim.PtCrowdingScoring never installs.
-    if rc.cfg.get('C.crowding.representation') == 'in_vehicle_time':
+    if translated and rc.cfg.get('C.crowding.representation') == 'in_vehicle_time':
         rc.runtime['ptCrowding.penaltyUtilsPerHour'] = (
             round(rc.scoring['vot_aud_hr_used']
                   * rc.cfg.get('C.time_weights.beta_ivt')
@@ -1581,7 +1638,8 @@ def runtime_representation_entries(rc):
     # it wireable and no new number enters. Emitted only under the declared
     # representation, so `absent` leaves the module holding
     # representation=absent and citysim.ServiceQualityScoring never installs.
-    if rc.cfg.get('C.time_weights.service_quality_representation') != 'absent':
+    if translated and \
+            rc.cfg.get('C.time_weights.service_quality_representation') != 'absent':
         rc.runtime['serviceQuality.headwayUtilsPerMin'] = (
             round(rc.scoring['vot_aud_hr_used']
                   * rc.cfg.get('C.time_weights.beta_headway')
@@ -1591,17 +1649,20 @@ def runtime_representation_entries(rc):
             'C.scoring.marginal_utility_of_money) / 60 - a minute of the '
             "boarded route's service interval costs beta_headway of a minute "
             'in the vehicle, which at 0.5 is the half-headway convention')
+    if rc.cfg.get('C.time_weights.service_quality_representation') != 'absent':
         # The cap a single-departure route is charged at. A route with one
         # departure has no gap to measure and its honest interval is the
         # service day, so the day is what it pays - taken from the declared
-        # mobsim window rather than typed into the Java.
+        # mobsim window rather than typed into the Java. Needs no VOT, so it
+        # is emitted under either translation.
         rc.runtime['serviceQuality.headwayCapMin'] = (
             round(60.0 * (float(rc.cfg.get('RUN.qsim.end_time_h'))
                           - float(rc.cfg.get('RUN.qsim.start_time_h'))), 4),
             'derived',
             '(RUN.qsim.end_time_h - RUN.qsim.start_time_h) x 60: the service '
             'day, which is the interval of a route with one daily departure')
-    if rc.cfg.get('C.time_weights.service_quality_representation')             == 'headway_and_reliability':
+    if translated and rc.cfg.get('C.time_weights.service_quality_representation') \
+            == 'headway_and_reliability':
         rc.runtime['serviceQuality.reliabilityUtilsPerMin'] = (
             round(rc.scoring['vot_aud_hr_used']
                   * rc.cfg.get('C.time_weights.beta_reliability')
@@ -1615,13 +1676,51 @@ def runtime_representation_entries(rc):
     # Parking search/access time (9.138): the MINUTES are the price file's
     # derived third column; this prices one minute at the utilityOfLineSwitch
     # identity, per minute instead of per transfer.
-    if rc.cfg.get('A.parking.search_time_representation') == 'scoring':
+    if translated and rc.cfg.get('A.parking.search_time_representation') == 'scoring':
         rc.runtime['parking.searchPenaltyUtilsPerMin'] = (
             round(rc.scoring['vot_aud_hr_used']
                   * rc.cfg.get('C.scoring.marginal_utility_of_money') / 60.0, 6),
             'derived',
             '(trip-weighted VOT x marginalUtilityOfMoney) / 60 - the '
             'transfer-penalty identity applied per search minute')
+    # A boarding-fare table (citysim.BoardingFareHandler): every pt boarding is
+    # charged the table's fare for the boarded route, and the raptor prices
+    # routes by it when boardingFare.routeChoice is on. The table is a built
+    # artefact beside the scenario network, like the parking price table, and
+    # it enters ONLY under the declared representation: a lost table would
+    # otherwise run fare-free and look exactly like a correct run (#33).
+    if rc.cfg.get('A.fare.boarding_representation') == 'table':
+        if 'boarding_fares' not in rc.paths:
+            raise SystemExit(
+                'A.fare.boarding_representation is table but the caller '
+                'supplied no boarding_fares path. Assemble the scenario with '
+                'its boarding_fares.csv beside the network.')
+        rc.runtime['boardingFare.tableFile'] = (
+            rc.paths['boarding_fares'], 'path',
+            'the city boarding-fare table assembled with the scenario')
+    # A pooled hired fleet (citysim.HiredFleetQueue, 9.199): the vehicle counts
+    # by mode are a built derivation (the city's registration stock scaled to
+    # the population it serves) kept beside the scenario, and they reach the
+    # module only under the declared representation.
+    if rc.cfg.get('B.hired_fleet.representation') == 'pooled_queue':
+        if 'hired_fleet' not in rc.paths:
+            raise SystemExit(
+                'B.hired_fleet.representation is pooled_queue but the caller '
+                'supplied no hired_fleet path. Assemble the scenario with its '
+                'hired_fleet.json beside the network.')
+        fleet = json.load(open(rc.paths['hired_fleet'], encoding='utf-8'))
+        vehicles = fleet.get('vehicles_by_mode') or {}
+        if not vehicles or any(
+                not isinstance(mode, str) or not mode or ':' in mode or ',' in mode
+                or type(count) is not int or count < 0
+                for mode, count in vehicles.items()):
+            raise SystemExit('%s: hired fleet requires nonnegative integer counts '
+                             'by mode' % rc.paths['hired_fleet'])
+        rc.runtime['hiredFleet.vehiclesByMode'] = (
+            ','.join('%s:%d' % (mode, count) for mode, count in sorted(vehicles.items())),
+            'derived',
+            'vehicles by mode from the hashed city fleet derivation kept beside '
+            'the scenario (hired_fleet.json)')
     # Income-dependent money sensitivity (9.138, #108): the exponent and the
     # representation gate arrive by their declared matsim_param bindings; the
     # exclusion list is the demand builder's own non-resident subpopulation
@@ -1687,20 +1786,6 @@ def runtime_mode_entries(rc):
         'parking.chargedEndHour': (
             end_h, 'derived',
             'A.parking.charged_hours_by_day_type[%s][1]' % rc.day),
-        'scoring.waitingPt': (
-            rc.scoring['waiting_pt'], 'derived',
-            'performing - trip-weighted VOT * beta_wait * marginalUtilityOfMoney'),
-        'scoring.utilityOfLineSwitch': (
-            rc.scoring['utility_of_line_switch'], 'derived',
-            '-(C.transfer.beta_transfer_penalty_min / 60) * trip-weighted VOT * '
-            'marginalUtilityOfMoney'),
-        'scoring.modeParams[*].constant': (
-            {m: v['constant'] for m, v in rc.scoring['modes'].items()},
-            'derived', 'the C1 alternative-specific constant for each mode'),
-        'scoring.modeParams[*].marginalUtilityOfTraveling_util_hr': (
-            {m: v['marginalUtilityOfTraveling'] for m, v in rc.scoring['modes'].items()},
-            'derived',
-            'performing - trip-weighted VOT * beta[mode] * marginalUtilityOfMoney'),
         # Applied as min(minimal, typical): a 15-minute floor over a 5-minute
         # drop-off would be self-contradictory, and MATSim would hold the
         # vehicle there.
@@ -1710,6 +1795,25 @@ def runtime_mode_entries(rc):
             'min(C.scoring.activity_minimal_duration_s, typical duration) per activity',
             _param_config.HHMMSS, 'seconds'),
     }
+    # The C1 TRANSLATION (RUN.scoring.translation = c1_translation): the four
+    # scoring parameters no registry field can hold because they are computed
+    # from the nested-logit table. Under `bound_fields` `rc.scoring` is None and
+    # the city's own bound fields write these four parameters instead.
+    if rc.scoring is not None:
+        runtime['scoring.waitingPt'] = (
+            rc.scoring['waiting_pt'], 'derived',
+            'performing - trip-weighted VOT * beta_wait * marginalUtilityOfMoney')
+        runtime['scoring.utilityOfLineSwitch'] = (
+            rc.scoring['utility_of_line_switch'], 'derived',
+            '-(C.transfer.beta_transfer_penalty_min / 60) * trip-weighted VOT * '
+            'marginalUtilityOfMoney')
+        runtime['scoring.modeParams[*].constant'] = (
+            {m: v['constant'] for m, v in rc.scoring['modes'].items()},
+            'derived', 'the C1 alternative-specific constant for each mode')
+        runtime['scoring.modeParams[*].marginalUtilityOfTraveling_util_hr'] = (
+            {m: v['marginalUtilityOfTraveling'] for m, v in rc.scoring['modes'].items()},
+            'derived',
+            'performing - trip-weighted VOT * beta[mode] * marginalUtilityOfMoney')
     # taxi (issue #49): the fare reaches scoring in two parts. The per-km
     # part is native (monetaryDistanceRate on the taxi modeParams; negative,
     # AUD per METRE); the flagfall is a per-trip charge no scoring parameter
@@ -1717,7 +1821,9 @@ def runtime_mode_entries(rc):
     # (the ParkingChargeHandler PersonMoneyEvent pattern). Both are BLENDS of
     # the measured taxi schedule and the literature rideshare rates at the
     # declared rideshare share - one mode honestly carrying two services.
-    if 'taxi' in rc.cfg.get('RUN.mode_choice.modes'):
+    # Under `bound_fields` the hired trip is priced by the city's own bound
+    # monetaryDistanceRate and its boarding-fare table, not by this blend.
+    if rc.scoring is not None and 'taxi' in rc.cfg.get('RUN.mode_choice.modes'):
         s_ride = rc.cfg.get('B.taxi.rideshare_trip_share')
         blend_km = ((1 - s_ride) * rc.cfg.get('B.taxi.fare_per_km_taxi')
                     + s_ride * rc.cfg.get('B.taxi.fare_per_km_rideshare'))

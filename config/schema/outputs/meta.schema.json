@@ -136,6 +136,10 @@
       "type": "object",
       "description": "The evidence behind `cause`: the exception class, its message, its Caused by chain, and the matsim.log line it was read from. Absent when the log carried nothing to quote.",
       "additionalProperties": true
+    },
+    "city": {
+      "type": "string",
+      "description": "The city this run executed (city.json id). The results store holds every city's runs (9.204); a record written before the field existed ran the default city."
     }
   },
   "additionalProperties": true,

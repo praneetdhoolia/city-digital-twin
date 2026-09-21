@@ -1,0 +1,217 @@
+{
+  "source": "derived",
+  "decision": "D13 (21 September 2026): the notified MMR as the core, the four-district envelope as the external tier",
+  "leaves": 4813,
+  "tiers": {
+    "core": 2538,
+    "external": 2275
+  },
+  "persons_by_tier": {
+    "core": 23536582,
+    "external": 5200278
+  },
+  "rules": {
+    "ena_2024_village": {
+      "leaves": 207,
+      "persons": 459965
+    },
+    "external": {
+      "leaves": 2275,
+      "persons": 5200278
+    },
+    "greater_mumbai": {
+      "leaves": 97,
+      "persons": 12442373
+    },
+    "wri_municipality": {
+      "leaves": 874,
+      "persons": 8258845
+    },
+    "wri_village_code": {
+      "leaves": 1360,
+      "persons": 2375399
+    }
+  },
+  "public_boundary_check": {
+    "ena_2024_village": {
+      "outside_public_boundary": 193,
+      "no_polygon": 14
+    },
+    "external": {
+      "outside_public_boundary": 2067,
+      "no_polygon": 200,
+      "inside_public_boundary": 8
+    },
+    "greater_mumbai": {
+      "inside_public_boundary": 96,
+      "no_polygon": 1
+    },
+    "wri_municipality": {
+      "no_polygon": 874
+    },
+    "wri_village_code": {
+      "outside_public_boundary": 2,
+      "inside_public_boundary": 1348,
+      "no_polygon": 10
+    }
+  },
+  "public_boundary_note": "WRI layer 1 is the public GIS boundary (evidence only; omits the 2019 Palghar extension): a core leaf outside it is expected under ena_2024_village, and an external leaf inside it is a name the lists and the polygon disagree on",
+  "ena_villages_listed": 444,
+  "ena_villages_matched_by_name": 440,
+  "ena_villages_already_core_by_another_rule": {
+    "wri_village_code": 235
+  },
+  "ena_villages_unmatched": [
+    {
+      "taluka": "alibag",
+      "name": "chincholi",
+      "serials": [
+        "391"
+      ],
+      "census_name_candidates": [
+        "chinchoti",
+        "chinchawali"
+      ]
+    },
+    {
+      "taluka": "palghar",
+      "name": "kardai",
+      "serials": [
+        "79"
+      ],
+      "census_name_candidates": [
+        "khardi",
+        "kardal"
+      ]
+    },
+    {
+      "taluka": "palghar",
+      "name": "paragaon",
+      "serials": [
+        "145"
+      ],
+      "census_name_candidates": [
+        "pargaon",
+        "karalgaon",
+        "gargaon"
+      ]
+    },
+    {
+      "taluka": "palghar",
+      "name": "sawari",
+      "serials": [
+        "2"
+      ],
+      "census_name_candidates": [
+        "sawarai",
+        "saware"
+      ]
+    }
+  ],
+  "external_leaves_inside_public_boundary": [
+    {
+      "geography_id": "27:517:04166:552473:0000:000000",
+      "name": "Khardi",
+      "persons": "600"
+    },
+    {
+      "geography_id": "27:520:04172:553308:0000:000000",
+      "name": "Mhatwali",
+      "persons": "3304"
+    },
+    {
+      "geography_id": "27:520:04173:553443:0000:000000",
+      "name": "Ulawe",
+      "persons": "2636"
+    },
+    {
+      "geography_id": "27:520:04175:553728:0000:000000",
+      "name": "Kandroli Tarf Wankhal",
+      "persons": "757"
+    },
+    {
+      "geography_id": "27:520:04176:553841:0000:000000",
+      "name": "Shirki Chawl No.1",
+      "persons": "868"
+    },
+    {
+      "geography_id": "27:520:04177:554064:0000:000000",
+      "name": "Wagholi (new)",
+      "persons": "593"
+    },
+    {
+      "geography_id": "27:520:04177:554065:0000:000000",
+      "name": "Vagholi",
+      "persons": "844"
+    },
+    {
+      "geography_id": "27:520:04177:554098:0000:000000",
+      "name": "Talband",
+      "persons": "492"
+    }
+  ],
+  "municipal_names": [
+    "alibag",
+    "ambarnath",
+    "badlapur",
+    "bhiwandinizampur",
+    "greatermumbai",
+    "kalyandombivli",
+    "karjat",
+    "khopoli",
+    "matheran",
+    "mirabhayandar",
+    "navimumbai",
+    "panvel",
+    "pen",
+    "thane",
+    "ulhasnagar",
+    "uran",
+    "vasaivirarcity"
+  ],
+  "village_codes": 1377,
+  "sources": [
+    {
+      "source_id": "census_2011_leaf_controls",
+      "sha256": "96de17bef80e1557cdf7a985cb690279b291ce8794fa96bbbf629c6e248376d3"
+    },
+    {
+      "source_id": "wri_mmr_layer_3_features",
+      "sha256": "fc9bbb28367191de2ed2604780f914fc081e12dbeacbde636f2e7f74a1973a3c"
+    },
+    {
+      "source_id": "wri_mmr_layer_2_features",
+      "sha256": "4bb278c6ee2e68c86202f2ae0bafd2216f8e9da34f8d1347aabc98237f525c41"
+    },
+    {
+      "source_id": "wri_mmr_layer_5_features",
+      "sha256": "612ab0ba79fec6ade7ed107e1bbc910e0ee48c13f04d5b49dfdac27f3f20f085"
+    },
+    {
+      "source_id": "wri_mmr_layer_1_features",
+      "sha256": "9ad20cc3726576bbdb3541fee7320ce082dce6c6c9508531a1082179e4fa96c5"
+    },
+    {
+      "source_id": "iitb_boundary_palghar",
+      "sha256": "7996d29bd1ea41de6cf97ed8920871080211aa602942b24f2b3b5884819438ae"
+    },
+    {
+      "source_id": "iitb_boundary_raigad",
+      "sha256": "24f9cb3d7e86badce003b1c6df644abe999769a406df2b41dd3b45e291b664d2"
+    },
+    {
+      "source_id": "iitb_boundary_thane",
+      "sha256": "82ba2c2c3165e5062ddfa441aa7dac7bf142bcc8286a5da608a6ab57a239358c"
+    },
+    {
+      "source_id": "mmr_ena_villages_2024",
+      "sha256": "ce1028b262431ff5820dd0a6139c8815c1446056cd51657516aba97024008482"
+    }
+  ],
+  "limitations": [
+    "A leaf is wholly core or wholly external; no census count is apportioned across the boundary.",
+    "The 2019 extension notification is a scanned PDF whose village list is not transcribed; the 2024 SPA list is the later statement of the extended area and is what is read.",
+    "An ENA village that matches no census leaf by normalised name within its taluka is listed, not guessed; a village renamed or merged since 2011 stays unmatched until a crosswalk is acquired.",
+    "The public boundary polygon confirms the lists where they overlap; it decides nothing."
+  ]
+}

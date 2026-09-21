@@ -210,6 +210,50 @@ def _person_ids_in_plans(path):
     return ids
 
 
+class _ResidentsBySubpopulation(dict):
+    """A residents map for a city with no home-zone table (9.204): every
+    person the plans label with the framework's RESIDENT subpopulation is a
+    resident of the target geography, and nobody else is. Answers like the
+    person -> LGA map so every reader keeps one code path."""
+
+    def get(self, person, default=None):
+        return TARGET_LGA if dict.get(self, person) else ''
+
+
+def _residents_by_subpopulation(run_dir):
+    """person id -> whether the run's plans label it RESIDENT, from the plans
+    file the run's own config names (or the run directory's copy)."""
+    import subpopulations                                     # noqa: PLC0415
+    plans = None
+    for name in ('config.xml', os.path.join('output', 'output_config.xml')):
+        cp = os.path.join(run_dir, name)
+        if not os.path.exists(cp):
+            continue
+        m = re.search(r'<module name="plans">.*?<param name="inputPlansFile" '
+                      r'value="([^"]+)"', open(cp, encoding='utf-8').read(), re.S)
+        if m:
+            plans = m.group(1)
+            if not os.path.isabs(plans):
+                plans = os.path.join(os.path.dirname(cp), plans)
+            break
+    if not plans or not os.path.exists(plans):
+        plans = os.path.join(run_dir, 'plans.xml.gz')
+    out = _ResidentsBySubpopulation()
+    if not os.path.exists(plans):
+        return out
+    # streamed: a population is one line of XML, so a line reader sees nothing
+    import xml.etree.ElementTree as ET                        # noqa: PLC0415
+    with gzip.open(plans, 'rb') as f:
+        for _event, person in ET.iterparse(f, events=('end',)):
+            if person.tag != 'person':
+                continue
+            label = person.findtext("attributes/attribute[@name='subpopulation']",
+                                    default='')
+            out[person.get('id')] = (label.strip() == subpopulations.RESIDENT)
+            person.clear()
+    return out
+
+
 def home_lga(run_dir=None):
     """person id -> LGA, from the RUN's own residents map when it carries one,
     else via the city's current B1 and the ABS boundary join (with a warning:
@@ -236,6 +280,11 @@ def home_lga(run_dir=None):
                 out[p['person_id']] = p['home_lga']
         _HOME_LGA_CACHE[key] = out
         return out
+    if key and not (os.path.exists(POP) and os.path.exists(SA1_LGA)):
+        # no home-zone table for this city (9.204): the plans' own labels
+        if key not in _HOME_LGA_CACHE:
+            _HOME_LGA_CACHE[key] = _residents_by_subpopulation(key)
+        return _HOME_LGA_CACHE[key]
     if key and key not in _RESIDENTS_WARNED:
         _RESIDENTS_WARNED.add(key)
         print('WARNING: %s carries no %s - residents resolved through the '
@@ -648,6 +697,11 @@ def link_volumes(run_dir, fraction):
     # and 0 of 195 rows named their road for 25 days (#82); the assertion
     # that caught it runs on a workstation only. The map now records the
     # sha256 of its network and this reader compares it with the run's own.
+    if not (os.path.exists(STATION_LINKS) and os.path.exists(C3)):
+        return dict(links_matched_in_output=0, links_expected=0, scale=None,
+                    stations=[], note='no count-station map or count '
+                    'comparison is declared for this city, so the run has no '
+                    'modelled count side (9.204)')
     stale = _stale_station_map(run_dir)
     if stale:
         return dict(links_matched_in_output=0, links_expected=0, scale=None,
@@ -774,7 +828,10 @@ def main():
         if isinstance(reached, int):
             _READ_AT['iteration'] = reached
 
-    c3 = json.load(open(C3, encoding='utf-8'))
+    # The comparison-time corrections are the city's C3; a city that declares
+    # no count comparison carries empty ones, and the counts block says why.
+    c3 = (json.load(open(C3, encoding='utf-8')) if os.path.exists(C3)
+          else dict(vehicles_per_leg={}, heavy_vehicle_share={}))
     person_lga = home_lga(run_dir)
     ms = mode_share(run_dir, person_lga)
     doc = dict(run=rec['name'], scenario=rec['scenario'], day=rec['day'],

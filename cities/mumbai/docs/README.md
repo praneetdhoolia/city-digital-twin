@@ -5,14 +5,20 @@ and the documents specific to it. The simulator and its results are at
 [`docs/`](../../../docs/README.md); the board is
 [`docs/STATUS.md`](../../../docs/STATUS.md).
 
-**Where it stands (21 September 2026).** A broad acquisition and an executable
-development case, not a digital twin. The framework loads the city, maps its
-network and combined feed once, and runs an explicit **1,000-person synthetic
-population** (labelled `synthetic_from_historical_marginals_and_provisional_assumptions`)
-for a handful of iterations on one day type. No mode target has been derived,
-no population has been synthesised from the census controls, no sample
-fraction has been shown to preserve behaviour, and nothing about its ridership
-is a result. The [requirements ledger](requirements.json) holds **33 of 33
+**Where it stands (21 September 2026, fifty-seventh session).** A broad
+acquisition and an executable development case, not a digital twin. The city
+runs through the framework's own harness (`run.py --scenario BASE --day WEEKDAY`,
+§9.204): it loads the city, reads the assembled run inputs, and runs an explicit
+**1,000-person synthetic population** (labelled
+`synthetic_from_historical_marginals_and_provisional_assumptions`) for a handful
+of iterations on one day type under the harness's gates, watchers and record.
+The study extent is decided (D13, §9.204): the notified Mumbai Metropolitan
+Region is the core and the four-district remainder the external tier, tiered
+leaf by leaf in [`mmr_extent.csv`](../data/processed/zones/mmr_extent.csv). The
+household population of the core extent is synthesised from the census
+controls (27.06 M persons for 2026), but no plans are built from it yet; no
+mode target has been derived, no sample fraction has been shown to preserve
+behaviour, and nothing about its ridership is a result. The [requirements ledger](requirements.json) holds **33 of 33
 requirements `incomplete`**. The city passes the framework's city contract
 (`python src/registry/check_city.py`), which says its declarations are complete
 and well-formed, not that they are right.
@@ -21,13 +27,13 @@ and well-formed, not that they are right.
 
 | | From [`city.json`](../city.json) and the record |
 |---|---|
-| Core | The four Census of India 2011 districts **Mumbai, Mumbai Suburban, Thane and Raigad** (IIT Bombay MahaCensus shapefiles) — the research OVERCOVERAGE the acquisition used, not the notified Mumbai Metropolitan Region. The 2011 Thane district includes today's Palghar; the MMR takes only parts of Thane, Palghar and Raigad. **Decision D13 (awaiting the user):** the MMR notified extent is the intended core once its villages are reconciled ([`census_geography_audit.json`](../data/processed/acquisition/census_geography_audit.json): 1,053 of 4,813 census leaves without a source polygon) |
-| External tier | None declared: through-demand from beyond the four districts (the Pune, Nashik and Gujarat corridors) is not represented |
+| Core | The **notified Mumbai Metropolitan Region** (decision D13, 21 September 2026): **2,538 of the 4,813 Census 2011 leaves, 23,536,582 persons at the 2011 census**, derived leaf by leaf by [`build_mmr_extent.py`](../extract/build_mmr_extent.py) — every Greater Mumbai ward (97 leaves), the wards of the municipal corporations and councils the public MMR GIS names (874), the villages and census towns whose 2011 code the GIS villages layer carries (1,360) and the villages of the extended-notified-area SPA notification of 9 July 2024 matched by name within their taluka (207). Four notification villages match no census leaf and are listed with their candidates, not guessed; 1,053 leaves still lack a source polygon ([`mmr_extent_audit.json`](../data/processed/acquisition/mmr_extent_audit.json)) |
+| External tier | The rest of the four 2011 census districts Mumbai, Mumbai Suburban, Thane (with today's Palghar) and Raigad — **2,275 leaves, 5,200,278 persons at the 2011 census**, rural Thane, Palghar and Raigad — represented at the district level. Through-demand from beyond the four districts (the Pune, Nashik and Gujarat corridors) is not represented |
 | Zones | Census 2011 leaves — 1,183 urban wards and 3,630 villages (`geography_id`); residence and workplace at the leaf, external at the district |
 | CRS | EPSG:32643, WGS 84 / UTM zone 43N, metres (`city.json`) |
 | Years · days · seed · currency | Base year 2026 on 2011 Census controls; one day type, WEEKDAY; seed 20260810; INR (`city.json`) |
 | Modes | Mode choice over car, ride, walk, bike, motorbike, taxi, auto_rickshaw, pt (`city.json`, `RUN.mode_choice.modes`); the transit router combines bus, suburban rail, metro and ferry |
-| Observed mode series | Census 2011 table B-28, other workers by mode of travel to work, residence end — the ONLY observed mode series held; not an all-trip share, not a target |
+| Observed mode series | Census 2011 table B-28 (other workers by mode of travel to work, residence end) — a commute series, not an all-trip share; and, since 21 September 2026, the **published daily mode splits** transcribed from the CTS Updation (MMR 2017: 18.78 M motorised main-mode trips a day, train 43.2 %, bus 20.0 %, two-wheeler 12.5 %, taxi 8.7 %, car 8.5 %, rickshaw 5.1 %, metro and mono 2.2 %; active modes about 47 % of all trips) and the CMP for Greater Mumbai (2005 and 2014) into [`published_mode_splits.csv`](../data/processed/observed/published_mode_splits.csv). No target is derived from them yet |
 
 ## Scenarios
 
@@ -36,9 +42,13 @@ and well-formed, not that they are right.
 | BASE | The base year as acquired: the mapped network and combined feed as built, nothing overridden ([`BASE.json`](../overlays/scenarios/BASE.json)) |
 
 Run overlays under [`overlays/runs/`](../overlays/runs/) declare the bounded
-development cases: `smoke_mode_coverage`, `smoke_low_capacity_double`,
-`smoke_hired_fleet` and `smoke_two_iterations` (the structural check after a
-registry or launcher change).
+development cases: `smoke_two_iterations` (the structural check after a
+registry, harness or assembly change: two iterations, a fifteen-minute
+ceiling) and `smoke_hired_fleet` (the pooled hired-fleet case, nine iterations,
+a one-hour ceiling). The 19 September cases `smoke_mode_coverage` and
+`smoke_low_capacity_double` were retired at the fold (§9.204): the one chose a
+plans file the assembly now fixes, the other varied a build-time capacity
+factor no run overlay can reach.
 
 ## What is here
 
@@ -49,7 +59,7 @@ registry or launcher change).
 | Package on disk | 9.2 GB under `data/raw/`, mostly gitignored: 3.6 GB of traffic-police road orders, 633 MB of transit responses, 582 MB of raster and geospatial layers |
 | Network | 846,699 links, 101,306 km, from one native OSM extract (`networks/osm/network_source.osm.gz`, Geofabrik western zone 15 September 2026) |
 | PT | Three feeds mapped once: community bus GTFS (1,120 bus routes, 99,080 departures); the multimodal feed adding 31 suburban rail, 14 metro and 4 ferry patterns; the regional feed adding NMMT and MBMT (1,802 bus routes, 114,670 departures, 18,105 stop facilities, 0 unmapped) |
-| Population | 1,000 explicit persons with activities, freight movements and initial mode alternatives under `demand/baseline/`; no census synthesis, no households, no expansion weight |
+| Population | **27,057,132 persons in 6,068,786 households at the core extent for the 2026 base year**, synthesised by [`build_population.py`](../build/build_population.py) from the Census 2011 leaf controls (households, persons and workers by sex, ages 0-6), the ward/village HL-14 household sizes and vehicle possession, the district single-year ages, work status and school attendance, and the IIPS district projections to 2026 ([`_population_report.json`](../demand/population/_population_report.json)); licence holding and income are declared assumptions, tertiary attendance 20-24 unobtained. **No plans are built from it yet**: the executable case still runs the explicit 1,000-person population under `demand/baseline/` |
 | Input registry | **313** fields — the city's own supply, demand, fare and fleet declarations plus the framework's run-side keys, moved from a private namespace or adopted from the reference city and labelled so (§9.202) |
 | Validation | No targets. `data/processed/validation/mode_targets_by_mode.csv` does not exist |
 
@@ -109,24 +119,32 @@ been unobtained and was acquired on 21 September 2026.
 
 ## Rebuilding
 
-The bounded development entry point (a few minutes; it prepares the network
-and schedule at launch and records the case under the results store):
+The city runs through the framework's harness like any other (§9.204). Assemble
+the run inputs once, then launch a declared case; the harness prices it, refuses
+a case with no automatic stop, records it and extracts its metrics:
 
 ```powershell
 $env:CITYSIM_CITY = 'mumbai'
-python run.py --baseline-smoke --run-config smoke_hired_fleet
+$env:PYTHONPATH = 'src'
+python cities/mumbai/build/build_baseline_run_inputs.py
+python run.py --scenario BASE --day WEEKDAY --run-config smoke_two_iterations --foreground
 ```
 
+The assembly writes `scenarios/matsim/BASE/` (the mapped regional network with
+the declared mode permissions, the repaired combined feed, the vehicle types,
+the boarding-fare table, the hired-fleet derivation and a header-only parking
+table: no parking price is observed) and `demand/plans/matsim/population_WEEKDAY.xml.gz`.
 `python src/analyse/baseline_behaviour.py --run <name>` reads a case's execution
-and choice diagnostics. The launch path is still the city's own
-(`src/run/baseline_smoke.py`), not the framework's `run.py <scenario>`: folding
-it in is the lane's next task (§9.202).
+and choice diagnostics; `report_mode_ridership.py` refuses the city until a
+per-mode target artefact exists, which is the next build.
 
 To rebuild the development demand and combined feed after changing their
 registries:
 
 ```powershell
 $env:PYTHONPATH = 'src'
+python cities/mumbai/extract/build_mmr_extent.py
+python cities/mumbai/build/build_population.py
 python cities/mumbai/build/build_baseline_bus_feed.py
 python cities/mumbai/build/build_baseline_transit_feed.py
 python cities/mumbai/build/build_regional_bus_feed.py
@@ -138,6 +156,7 @@ python cities/mumbai/build/build_baseline_freight.py
 python cities/mumbai/build/build_baseline_choices.py
 python cities/mumbai/build/build_hired_fleet.py
 python src/build/build_matsim_network.py --stage schedules --only baseline_regional --workers 1 --threads 2
+python cities/mumbai/build/build_baseline_run_inputs.py
 ```
 
 Map a changed feed once; reuse that mapped network for comparisons, never

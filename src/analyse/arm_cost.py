@@ -41,6 +41,8 @@ import csv
 import io
 import os
 
+import city                                                       # noqa: E402
+
 REPO = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
 
@@ -253,6 +255,7 @@ def observed_arms(min_iterations: int = 2) -> list:
         setup = setup_seconds(wall, reached, median, secs, plain)
         out.append(dict(
             name=name,
+            city=meta.get('city') or city.DEFAULT_CITY,
             plain=plain,
             # A run that carried a flight recorder paid for it: the first two
             # profiled probes ran ~8 % slower than the same stack unprofiled.
@@ -286,8 +289,10 @@ def _fmt_hours(seconds: float) -> str:
 
 def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
     """The quote, and everything it rests on."""
+    # the same city's runs only: the store holds every city's (9.204)
     same = [a for a in arms
             if (fraction is None or a['fraction'] == fraction)
+            and a.get('city', city.DEFAULT_CITY) == city.CITY
             and not a.get('profiled')]
     if not same:
         return dict(error=(

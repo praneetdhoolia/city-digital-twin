@@ -3309,7 +3309,11 @@
       "category": "freight",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Port operations, freight and passenger evidence for the stated financial year. Extract units and table definitions before conversion to simulated movements.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/freight/mumbai_port_administration_2024_25_9de42d5d69111ea0.pdf",
+      "sha256": "9de42d5d69111ea074267a474acd260d464ca28775c05c47090f5ff282874d33",
+      "bytes": 19477822,
+      "retrieved": "2026-09-21T09:03:00.469949+00:00"
     },
     {
       "id": "nmmt_current_portal",
@@ -6676,7 +6680,11 @@
       "category": "transit",
       "licence": "Indian Railways publication; reuse terms unverified",
       "coverage": "Historical named-station timetable for identity and corridor crosswalks. URL timestamp does not establish an effective operating date; not a current schedule.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/transit/cr_transharbour_named_reference_2021_49c53e7d4c42409c.pdf",
+      "sha256": "49c53e7d4c42409c05ac661fcb1d9d699eb067b2cf577f40152825279a552b91",
+      "bytes": 111567,
+      "retrieved": "2026-09-21T09:24:40.155115+00:00"
     },
     {
       "id": "mrvc_cbtc_terms_reference_2018",

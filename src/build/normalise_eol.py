@@ -16,8 +16,11 @@ import sys
 REPO = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
 
-TEXT_EXT = {'.csv', '.json', '.txt', '.md', '.py', '.html', '.yml', '.yaml',
-            '.jsonl', '.cfg', '.ini', '.sh'}
+# .geojson and .tsv joined on 21 September 2026 (9.204): a 5.8 MB GeoJSON with
+# one CRLF at its tail was hashed as written and committed as LF, one byte
+# short of its own manifest row on every Linux checkout.
+TEXT_EXT = {'.csv', '.json', '.geojson', '.tsv', '.txt', '.md', '.py', '.html',
+            '.yml', '.yaml', '.jsonl', '.cfg', '.ini', '.sh'}
 BINARY_EXT = {'.zip', '.tif', '.tiff', '.pdf', '.xlsx', '.xls', '.gpkg', '.pbf',
               '.png', '.jpg', '.jpeg', '.osm'}
 # Two trees, because the repository holds a framework and one city's instance of

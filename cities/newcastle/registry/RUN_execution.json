@@ -1585,6 +1585,19 @@
       "decisions_ref": "9.184",
       "matsim_param": "activityLinks.assignment",
       "description": "Activity-to-road assignment policy. common_modes retains the existing intersection of all usable mode networks. mode_specific_access retains each activity location and link and delegates mode-specific boarding/alighting connections to routed access/egress. The latter requires accessEgressModeToLink or accessEgressModeToLinkPlusTimeConstant and independently validated access routing; it does not confer legal road access or supply a passenger fleet."
+    },
+    "RUN.scoring.translation": {
+      "value": "c1_translation",
+      "units": "policy",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.204",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py",
+        "src/run/run_matsim.py"
+      ],
+      "description": "Where this city's MATSim scoring parameters come from. `c1_translation`: the nested-logit specification in params/C1_parameters.json is translated into the Charypar-Nagel utility at every emission - the mode constants (from C.asc.*), the per-mode time rates, waitingPt and utilityOfLineSwitch are computed from the trip-weighted value of time and the HTS purpose share, and every derived scoring price (crowding, headway, reliability, parking search, bike stress, the taxi fare blend) rides that VOT; the fields those parameters bind to are declared `computed`. `bound_fields`: a city with no C1 table declares every scoring parameter as a bound registry field and nothing is translated - the emitter supplies only what no registry can hold (paths, the capacity identities, the parking window, the score-MSA literal). A definition of this city's method, not a value to vary: the two members are two ways of declaring the same parameters, and a city is one or the other."
     }
   }
 }

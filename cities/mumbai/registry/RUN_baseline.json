@@ -1,0 +1,29 @@
+{
+  "layer": "RUN",
+  "title": "Baseline run settings the city declares itself (9.187, 9.204)",
+  "fields": {
+    "RUN.replanning.strategy_subpopulations": {
+      "value": {
+        "SubtourModeChoice": [
+          "person"
+        ]
+      },
+      "units": "subpopulation_names_per_strategy",
+      "source": "definition",
+      "status": "active",
+      "description": "Apply baseline choice strategies to residents.",
+      "decisions_ref": "9.204"
+    },
+    "RUN.replanning.subpopulations": {
+      "value": [
+        "person",
+        "freight"
+      ],
+      "units": "subpopulation_names",
+      "source": "definition",
+      "status": "active",
+      "description": "The subpopulations the plans carry, in the framework's vocabulary (src/build/subpopulations.py): `person` for a resident, `freight` for a goods movement. Until 21 September 2026 (9.204) this city wrote `resident`, which the framework's readers and its income-scoring exclusion did not know.",
+      "decisions_ref": "9.204"
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "layer": "B",
+  "title": "The household population from the census controls at the core extent (9.204)",
+  "fields": {
+    "B.population.projection_district_names": {
+      "value": {
+        "519": "Mumbai",
+        "518": "Mumbai Suburban",
+        "517": "Thane",
+        "520": "Raigarh"
+      },
+      "units": "name_map",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.204",
+      "consumers": [
+        "cities/mumbai/build/build_population.py"
+      ],
+      "description": "Census 2011 district code -> the district name as printed in the IIPS district projections 2012-2031 (data/processed/observed/district_age_population_projections.csv): 519 is Mumbai (the island city, 3.09 M in 2011), 518 Mumbai Suburban (9.36 M), 517 the 2011 Thane district whole (with today's Palghar), 520 Raigad, which the projections spell Raigarh. A name reconciliation, not a modelling value; the report shows each district's factor."
+    },
+    "B.population.household_size_open_band_max": {
+      "value": 12,
+      "units": "persons",
+      "source": "assumed",
+      "status": "active",
+      "decisions_ref": "9.204",
+      "sweep": {
+        "interval": [
+          9,
+          15
+        ],
+        "basis": "HL-14 publishes household sizes in bands and the top band is 9+; the largest size a 9+ household is drawn at, uniform from 9. The projected mean household size is compared with HL-1's published mean in _population_report.json"
+      },
+      "sweep_role": "uncertainty",
+      "consumers": [
+        "cities/mumbai/build/build_population.py"
+      ],
+      "description": "The largest household size drawn for the open 9+ band of the HL-14 household-size distribution; sizes within the 6-8 and 9+ bands are drawn uniform."
+    },
+    "B.population.tertiary_attendance_rate_20_24": {
+      "value": null,
+      "units": "probability",
+      "source": "assumed",
+      "status": "unobtained",
+      "decisions_ref": "9.204",
+      "sweep": {
+        "interval": [
+          0.0,
+          0.35
+        ],
+        "basis": "unobtained: the C-12 attendance table the package holds covers ages 5-19 and no district attendance rate for ages 20-24 is acquired; the range spans nobody attending to the age-19 attendance rate of the four districts, and the value stays null until the C-12 age-20-24 cells or a published tertiary rate is acquired"
+      },
+      "consumers": [
+        "cities/mumbai/build/build_population.py"
+      ],
+      "description": "The share of persons aged 20-24 attending an educational institution. Unobtained: null, and the synthesiser makes nobody in that age range a student, which the report says.",
+      "sweep_role": "uncertainty"
+    }
+  }
+}

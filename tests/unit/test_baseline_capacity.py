@@ -3,7 +3,15 @@ import xml.etree.ElementTree as ET
 
 import pytest
 
-from baseline_smoke import prepare_network
+import importlib.util
+from pathlib import Path
+
+# the assembly lives with its city (9.204); the functions under test are pure
+PATH = Path(__file__).resolve().parents[2] / 'cities/mumbai/build/build_baseline_run_inputs.py'
+SPEC = importlib.util.spec_from_file_location('baseline_run_inputs', PATH)
+assembly = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(assembly)
+prepare_network = assembly.prepare_network
 
 
 @pytest.mark.parametrize('road_factor', [1.0, 2.0])
@@ -21,11 +29,11 @@ def test_dedicated_flow_and_road_sensitivity_preserve_other_attributes(tmp_path,
         stream.write('''<vehicleDefinitions xmlns="http://www.matsim.org/files/dtd">
         <vehicleType id="train"><networkMode networkMode="rail"/>
         <passengerCarEquivalents pce="27.1"/></vehicleType></vehicleDefinitions>''')
-    cfg = {'RUN.smoke.road_mode_exclusions': {},
-           'RUN.smoke.road_capacity_factors': {'motorway_link': road_factor},
-           'RUN.smoke.network_mode_sources': {},
-           'RUN.smoke.dedicated_transit_headway_s': {'rail': 90},
-           'RUN.smoke.transit_mode_aliases': {}, 'A.transit.walk_speed_ms': 1.2}
+    cfg = {'A.baseline.road_mode_exclusions': {},
+           'A.baseline.road_capacity_factors': {'motorway_link': road_factor},
+           'A.baseline.network_mode_sources': {},
+           'A.baseline.dedicated_transit_headway_s': {'rail': 90},
+           'A.baseline.transit_mode_aliases': {}, 'A.transit.walk_speed_ms': 1.2}
     original = source.read_bytes()
     audit = prepare_network(source, output, cfg, vehicles)
     links = {x.get('id'): x for x in ET.parse(gzip.open(output)).findall('links/link')}
@@ -54,10 +62,10 @@ def test_goods_modes_inherit_only_their_declared_physical_network(tmp_path):
         stream.write(ET.tostring(root))
     with gzip.open(vehicles, 'wt') as stream:
         stream.write('<vehicleDefinitions/>')
-    cfg = {'RUN.smoke.road_mode_exclusions': {}, 'RUN.smoke.dedicated_transit_headway_s': {},
-           'RUN.smoke.road_capacity_factors': {},
-           'RUN.smoke.transit_mode_aliases': {}, 'A.transit.walk_speed_ms': 1.2,
-           'RUN.smoke.network_mode_sources': {'truck': 'car', 'freight_rail': 'rail'}}
+    cfg = {'A.baseline.road_mode_exclusions': {}, 'A.baseline.dedicated_transit_headway_s': {},
+           'A.baseline.road_capacity_factors': {},
+           'A.baseline.transit_mode_aliases': {}, 'A.transit.walk_speed_ms': 1.2,
+           'A.baseline.network_mode_sources': {'truck': 'car', 'freight_rail': 'rail'}}
     prepare_network(source, output, cfg, vehicles)
     modes = {x.get('id'): set(x.get('modes').split(','))
              for x in ET.parse(gzip.open(output)).findall('links/link')}

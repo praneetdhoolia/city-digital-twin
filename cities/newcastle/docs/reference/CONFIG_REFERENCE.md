@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 571 fields are made of
+## What the 574 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -36,11 +36,11 @@ Three things are refused at every layer:
 | `derived` | 46 | follows from another registry field by identity |
 | `literature` | 82 | a published value, not specific to this city |
 | `assumed` | 212 | chosen without direct empirical support |
-| `definition` | 150 | fixed by the formulation, not an empirical quantity |
+| `definition` | 153 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 550 | usable point value |
+| `active` | 553 | usable point value |
 | `computed` | 11 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -131,7 +131,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 205 fields*
+*`cities/newcastle/registry/A_supply.json` - 206 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -177,6 +177,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.crossings.node_cluster_m` | `50.0` | metres | `definition` | - |
 | `A.crossings.rail_match_radius_m` | `40.0` | m | `definition` | - |
 | `A.crossings.representation` | `change_events` | enum | `assumed` | `absent`, `change_events` |
+| `A.fare.boarding_representation` | `absent` | enum | `definition` | - |
 | `A.fare.bus_adult_offpeak` | `[2.31, 3.14, 4.03]` | AUD | `observed` | - |
 | `A.fare.bus_adult_peak` | `[3.3, 4.49, 5.77]` | AUD | `observed` | - |
 | `A.fare.bus_band_upper_km` | `[3, 8]` | km | `observed` | - |
@@ -658,6 +659,12 @@ The representation gate for the two boom-gated freight level crossings. Flipped 
 ***assumed** · status **active** · DECISIONS.md §9.70, 9.76, 9.77 · sweep role **uncertainty***
 
 > **Sweep basis.** Whether the freight-rail level-crossing closures (9.70, issue #68) reach the model at all. absent: the crossings are not represented (the pre-9.77 state - closures were a stated, unmodelled limitation). change_events: the derived crossing_change_events.xml enters every run input as a time-variant network, closing the crossing links for the swept closure pattern. The closure PATTERN stays swept on its own fields (closures_per_day, closure_duration_s); this switch is the representation gate, mirroring A.signals.representation's one-gate discipline.
+
+#### `A.fare.boarding_representation`
+
+Whether pt boardings are charged from a per-route boarding-fare table (citysim.BoardingFareHandler; `table`) assembled beside the scenario network as boarding_fares.csv, or not (`absent`). This city prices pt through the published Opal schedule (A.fare.*, citysim.PtFareChargeHandler, 9.135), so the table is absent; a city whose operators publish flat or stage fares per route declares `table` and the harness refuses a scenario that lost its table (#33).
+
+***definition** · status **active** · DECISIONS.md §9.204*
 
 #### `A.fare.bus_adult_offpeak`
 
@@ -1841,7 +1848,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 131 fields*
+*`cities/newcastle/registry/B_demand.json` - 132 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1912,6 +1919,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.freight.max_speed_kmh` | `100.0` | km/h | `definition` | - |
 | `B.freight.pce` | `2.0` | passenger_car_equivalents | `literature` | 1.5 - 3.5 |
 | `B.freight.trip_ratio` | `0.0697` | heavy_vehicle_trips_per_light_vehicle_trip | `assumed` | 0 - 0.14 |
+| `B.hired_fleet.representation` | `absent` | enum | `definition` | - |
 | `B.mode.bike_feasible_km` | `0.0` | km_straight_line | `derived` | derived: the 99th percentile of an exponential trip-length distribution with th |
 | `B.mode.bound_passenger_placement` | `every_plan` | enum | `assumed` | `every_plan`, `alternative` |
 | `B.mode.bound_passenger_seed` | `ride` | enum | `assumed` | `ride`, `uninformed` |
@@ -2492,6 +2500,12 @@ Internal heavy-vehicle trips generated per resident light-vehicle trip, applied 
 ***assumed** · status **active** · DECISIONS.md §9.49 · sweep role **uncertainty***
 
 > **Sweep basis.** The default restates the MEASURED median heavy share of classified station flow (B.counts.heavy_vehicle_share, 0.0652) as a ratio to light vehicles: 0.0652 / (1 - 0.0652). What is ASSUMED is the transfer from a flow share at count stations to a trip share of the resident vehicle-trip base - trucks travel further per trip than cars, so a flow share overstates a trip share by an unobserved factor, and no freight OD survey exists for this or any comparable city in the package. The lower bound is zero, which turns the internal freight layer off entirely so its whole effect is measurable as a sweep member; the upper bound is roughly the classified stations' upper-quartile share expressed the same way.
+
+#### `B.hired_fleet.representation`
+
+Whether hired road modes (a taxi, an auto-rickshaw) are served from a pooled queue of finite vehicles by mode (citysim.HiredFleetQueue, 9.199; `pooled_queue`, with the counts by mode in hired_fleet.json beside the scenario network) or not (`absent`). This city represents its taxi supply as a finite fleet through A.taxi.fleet_representation and citysim.TaxiFleetEngine instead, so the pooled queue is absent; the two engines are not run together.
+
+***definition** · status **active** · DECISIONS.md §9.204 · MATSim `hiredFleet.representation`*
 
 #### `B.mode.bike_feasible_km`
 
@@ -4107,7 +4121,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 111 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 112 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -4201,6 +4215,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.scoring.late_arrival_utils_per_h` | `-18.0` | utils_per_hour | `literature` | -36 - -6 |
 | `RUN.scoring.learning_rate` | `1.0` | share | `literature` | 0.5 - 1 |
 | `RUN.scoring.path_size_logit_beta` | `1.0` | dimensionless | `literature` | 0.5 - 2 |
+| `RUN.scoring.translation` | `c1_translation` | policy | `definition` | - |
 | `RUN.scoring.waiting_utils_per_h` | `0.0` | utils_per_hour | `assumed` | -6 - 0 |
 | `RUN.storage.extract_grace_s` | `3600` | seconds | `definition` | - |
 | `RUN.storage.raw_cap_gb` | `500` | gibibytes | `definition` | - |
@@ -4840,6 +4855,12 @@ The path-size logit's beta. Inert under the shipped RUN.replanning.plan_selector
 ***literature** · status **active** · DECISIONS.md §9.164 · MATSim `scoring.pathSizeLogitBeta` · sweep role **uncertainty***
 
 > **Sweep basis.** The path-size correction's exponent in the path-size logit of Ben-Akiva and Bierlaire (1999); 1.0 is the standard formulation and the framework default. WHAT THE SWEEP ANSWERS: how strongly two plans that overlap are treated as one alternative rather than two. It reads only under a path-size-logit selector, which is why it is declared in the same change as RUN.replanning.plan_selector_for_removal: `PathSizeLogitSelectorForRemoval` is one of that field's sweep members, and an arm that spent it would otherwise be spending this undeclared value with it.
+
+#### `RUN.scoring.translation`
+
+Where this city's MATSim scoring parameters come from. `c1_translation`: the nested-logit specification in params/C1_parameters.json is translated into the Charypar-Nagel utility at every emission - the mode constants (from C.asc.*), the per-mode time rates, waitingPt and utilityOfLineSwitch are computed from the trip-weighted value of time and the HTS purpose share, and every derived scoring price (crowding, headway, reliability, parking search, bike stress, the taxi fare blend) rides that VOT; the fields those parameters bind to are declared `computed`. `bound_fields`: a city with no C1 table declares every scoring parameter as a bound registry field and nothing is translated - the emitter supplies only what no registry can hold (paths, the capacity identities, the parking window, the score-MSA literal). A definition of this city's method, not a value to vary: the two members are two ways of declaring the same parameters, and a city is one or the other.
+
+***definition** · status **active** · DECISIONS.md §9.204*
 
 #### `RUN.scoring.waiting_utils_per_h`
 

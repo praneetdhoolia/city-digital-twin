@@ -11,9 +11,9 @@ from build.extract_osm_network import fingerprint
 
 OUTPUT_INPUTS = {
     'demand/baseline/plans_with_choices.xml.gz': [
-        'demand/baseline/plans_with_freight.xml.gz', 'registry/RUN_baseline_smoke.json'],
+        'demand/baseline/plans_with_freight.xml.gz', 'registry/RUN_framework.json'],
     'data/processed/acquisition/baseline_choices.json': [
-        'demand/baseline/plans_with_freight.xml.gz', 'registry/RUN_baseline_smoke.json'],
+        'demand/baseline/plans_with_freight.xml.gz', 'registry/RUN_framework.json'],
 }
 
 

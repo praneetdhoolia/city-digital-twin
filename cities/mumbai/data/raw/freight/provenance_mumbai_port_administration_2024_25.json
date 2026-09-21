@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/freight/mumbai_port_administration_2024_25_9de42d5d69111ea0.pdf",
+      "url": "https://mumbaiport.gov.in/WriteReadData/RTF1984/1765289688.pdf",
+      "final_url": "https://mumbaiport.gov.in/WriteReadData/RTF1984/1765289688.pdf",
+      "content_type": "application/pdf",
+      "source": "Mumbai Port Administration Report 2024-25",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-21T09:03:00.469949+00:00",
+      "sha256": "9de42d5d69111ea074267a474acd260d464ca28775c05c47090f5ff282874d33",
+      "bytes": 19477822,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Port operations, freight and passenger evidence for the stated financial year. Extract units and table definitions before conversion to simulated movements.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

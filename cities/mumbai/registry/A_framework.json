@@ -188,12 +188,31 @@
     },
     "A.parking.charged_end_hour": {
       "units": "hour_of_day",
-      "source": "definition",
-      "status": "placeholder",
+      "source": "derived",
+      "status": "computed",
       "matsim_param": "parking.chargedEndHour",
-      "value": 0,
-      "description": "Hour at which parking stops being charged. Inert placeholder: no parking price file is supplied, so the parking module is off and the window is never read.",
-      "decisions_ref": "9.202"
+      "value": null,
+      "description": "Hour at which parking stops being charged, derived at launch from the day type's window as in the reference city.",
+      "decisions_ref": "9.204",
+      "derived_from": {
+        "fields": [
+          "A.parking.charged_hours_by_day_type"
+        ],
+        "identity": "A.parking.charged_hours_by_day_type[day][1], 0 for a day with no window; the harness supplies it under the derived runtime role"
+      }
+    },
+    "A.parking.charged_hours_by_day_type": {
+      "units": "hour_of_day",
+      "source": "definition",
+      "status": "active",
+      "value": {
+        "WEEKDAY": null
+      },
+      "description": "The charged parking window per day type. None for the one day type: no parking price is observed for this city, the assembled price table beside the scenario network is empty (every link free), and a free day is written as a window of (0, 0) exactly as the reference city writes its Sunday.",
+      "decisions_ref": "9.204",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
     },
     "A.parking.charged_modes": {
       "units": "enum",
@@ -212,12 +231,18 @@
     },
     "A.parking.charged_start_hour": {
       "units": "hour_of_day",
-      "source": "definition",
-      "status": "placeholder",
+      "source": "derived",
+      "status": "computed",
       "matsim_param": "parking.chargedStartHour",
-      "value": 0,
-      "description": "Hour at which parking begins to be charged. Inert placeholder: no parking price file is supplied, so the parking module is off (parking.priceFile empty) and the window is never read.",
-      "decisions_ref": "9.202"
+      "value": null,
+      "description": "Hour at which parking begins to be charged, derived at launch from the day type's window as in the reference city.",
+      "decisions_ref": "9.204",
+      "derived_from": {
+        "fields": [
+          "A.parking.charged_hours_by_day_type"
+        ],
+        "identity": "A.parking.charged_hours_by_day_type[day][0], 0 for a day with no window; the harness supplies it under the derived runtime role"
+      }
     },
     "A.parking.exempt_activity_types": {
       "units": "enum",
@@ -259,6 +284,18 @@
       "decisions_ref": "9.202",
       "consumers": [
         "src/registry/param_config.py"
+      ]
+    },
+    "A.parking.search_time_representation": {
+      "units": "enum",
+      "source": "definition",
+      "status": "active",
+      "value": "absent",
+      "description": "Whether a derived parking search time reaches the car's score. `absent` for this city: no parking price or occupancy is observed, the assembled price table is empty and there is no search time to derive.",
+      "decisions_ref": "9.204",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py",
+        "src/java/citysim/ParkingConfigGroup.java"
       ]
     },
     "A.signals.control_regime": {

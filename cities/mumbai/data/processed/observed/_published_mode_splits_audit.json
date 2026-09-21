@@ -1,0 +1,42 @@
+{
+  "source": "observed",
+  "rows": 33,
+  "sources": [
+    {
+      "source_id": "cts_2021_mirror",
+      "sha256": "025fa4604a024210f3e523665c8ab843c1e741738be5c15f06b7bd4a20f03b21",
+      "path": "data/raw/planning/cts_2021_mirror_025fa4604a024210.pdf"
+    },
+    {
+      "source_id": "mumbai_cmp_summary",
+      "sha256": "e8ffa49d3d0e7b56b036063c4b6a2fc128776a25f870cb2b1d788d5d6f9b3ee2",
+      "path": "data/raw/demand/mumbai_cmp_summary_e8ffa49d3d0e7b56.pdf"
+    }
+  ],
+  "arithmetic_as_printed": {
+    "Mumbai Metropolitan Region 2017": {
+      "modes": 7,
+      "sum_of_mode_trips": 18780000,
+      "printed_total": 18780000,
+      "sum_of_mode_shares_pct": 100.2
+    },
+    "Greater Mumbai 2005": {
+      "modes": 6,
+      "sum_of_mode_trips": 10774158,
+      "printed_total": 10774158,
+      "sum_of_mode_shares_pct": 99.9
+    },
+    "Greater Mumbai 2014": {
+      "modes": 7,
+      "sum_of_mode_trips": 14121082,
+      "printed_total": 14121082,
+      "sum_of_mode_shares_pct": 100.0
+    }
+  },
+  "limitations": [
+    "Shares are the publications' own over MOTORISED main-mode trips; the active (walk/cycle) share is a separate statement over all trips and is approximate as printed.",
+    "A multimodal trip is classified by its main mode (train or metro when one is boarded), as the CTS states; access and egress legs are not trips here.",
+    "The MMR 2017 and Greater Mumbai 2014 surveys are different areas and years; neither is the base year, and no projection is applied here.",
+    "No target is derived here: the mapping of Rickshaw/Taxi, Metro & Mono and the active share onto the simulated modes is the target builder's, with the record."
+  ]
+}
