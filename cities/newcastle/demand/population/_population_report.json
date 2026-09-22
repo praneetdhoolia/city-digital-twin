@@ -1,69 +1,98 @@
 {
-  "households": 246865,
-  "persons": 612634,
-  "employed": 326933,
-  "students": 87844,
-  "zero_car_hh": 14747,
+  "households": 247596,
+  "persons": 612667,
+  "employed": 326585,
+  "students": 87800,
+  "zero_car_hh": 14715,
   "seed": 20260810,
   "sample_fraction": 1.0,
-  "mean_household_size": 2.482,
-  "pct_zero_car_households": 6.0,
-  "pct_employed_of_persons": 53.4,
+  "mean_household_size": 2.474,
+  "pct_zero_car_households": 5.9,
+  "pct_employed_of_persons": 53.3,
+  "household_size": {
+    "bands": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6+"
+    ],
+    "census_pct": [
+      25.9,
+      35.08,
+      15.67,
+      14.72,
+      5.98,
+      2.66
+    ],
+    "drawn_pct": [
+      26.49,
+      35.07,
+      15.54,
+      14.47,
+      5.85,
+      2.59
+    ],
+    "top_band_mean_declared": 6.6,
+    "top_band_mean_drawn": 6.596,
+    "tail_p": 0.625
+  },
   "by_abs_age_band": {
     "0_4": {
-      "persons": 21425,
+      "persons": 21305,
       "employed_pct": 0.0,
-      "student_full_time_pct": 32.4
+      "student_full_time_pct": 32.5
     },
     "15_19": {
-      "persons": 30784,
-      "employed_pct": 54.9,
-      "student_full_time_pct": 59.0
+      "persons": 30697,
+      "employed_pct": 54.8,
+      "student_full_time_pct": 59.1
     },
     "20_24": {
-      "persons": 41737,
-      "employed_pct": 79.6,
+      "persons": 41748,
+      "employed_pct": 79.4,
       "student_full_time_pct": 26.7
     },
     "25_34": {
-      "persons": 88844,
-      "employed_pct": 83.3,
+      "persons": 88886,
+      "employed_pct": 83.2,
       "student_full_time_pct": 2.0
     },
     "35_44": {
-      "persons": 84481,
-      "employed_pct": 83.8,
-      "student_full_time_pct": 1.6
+      "persons": 84697,
+      "employed_pct": 84.0,
+      "student_full_time_pct": 1.7
     },
     "45_54": {
-      "persons": 84615,
-      "employed_pct": 81.1,
+      "persons": 84214,
+      "employed_pct": 81.0,
       "student_full_time_pct": 1.5
     },
     "55_64": {
-      "persons": 84786,
-      "employed_pct": 61.2,
+      "persons": 84893,
+      "employed_pct": 61.0,
       "student_full_time_pct": 1.4
     },
     "5_14": {
-      "persons": 46829,
+      "persons": 46777,
       "employed_pct": 0.0,
       "student_full_time_pct": 94.7
     },
     "65_74": {
-      "persons": 71518,
+      "persons": 71694,
       "employed_pct": 15.2,
-      "student_full_time_pct": 1.3
+      "student_full_time_pct": 1.2
     },
     "75_84": {
-      "persons": 41327,
-      "employed_pct": 1.5,
-      "student_full_time_pct": 1.1
+      "persons": 41387,
+      "employed_pct": 1.4,
+      "student_full_time_pct": 1.2
     },
     "85ov": {
-      "persons": 16288,
+      "persons": 16369,
       "employed_pct": 0.1,
-      "student_full_time_pct": 1.2
+      "student_full_time_pct": 1.3
     }
   }
 }

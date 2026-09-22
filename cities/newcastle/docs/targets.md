@@ -16,7 +16,7 @@ Sweeps are the CSV's `sweep_low`–`sweep_high`; `—` is a target with no sweep
 | bus | 2.38% of resident trips | HTS PT 3.8% × Opal/station boardings share 62.681% over 2024-10..2025-03 | derived | 2.38–3.09% | `mode_targets_by_mode.csv`, §9.100 |
 | heavy_rail | 6,529 boardings/weekday | disclosed station entries at the 24 mapped stations, 6,086/day × `CAL.pt.weekday_factor` 1.0727 | measured | 6,086–7,912 | `pt_boardings_targets.json`, §9.130 |
 | light_rail | 2,954 boardings/weekday | the line's own disclosed Opal series, 2,754/day × `CAL.pt.weekday_factor` | measured | 2,754–3,580 | `pt_boardings_targets.json`, §9.130 |
-| ferry | 0.143% of resident trips | census G62 ferry share within PT (34 of 904) × HTS PT 3.8%; nothing is published | derived | 0–0.29% | `mode_targets_by_mode.csv`, §9.89 |
+| ferry | 790 boardings/weekday | the TPA daily Opal patronage series, Ferry, 300 weekdays: the mean of each day's midpoint between its published lower and upper bound (hourly cells rounded to 100); both wharves, both directions | measured | 234–1,347 | `mode_targets_by_mode.csv`, §9.211 (supersedes §9.89) |
 | truck | 15.47% of weekday vehicles at classified stations | TfNSW classified counts; not a person-trip share | derived | 13.73–17.40% | `mode_targets_by_mode.csv`, §9.101 |
 | freight_train | 405 crossing closures/weekday | 313 timetable-derived plus 92 freight derived from the Cobbora survey (44 Saint James Road + 48 Clyde Street); the train is not a mobsim vehicle | derived | — | `mode_targets_by_mode.csv`, §9.90, §9.167 |
 
@@ -29,8 +29,10 @@ Sweeps are the CSV's `sweep_low`–`sweep_high`; `—` is a target with no sweep
 - **Heavy rail and light rail** are disclosed counts, used exactly: every
   traveller who boards, all subpopulations, × 1/fraction, heavy rail at the 24
   disclosed stations only (§9.130). The PT total is still read against the HTS
-  3.8% level. **Ferry** is derived and its sweep is 0 to twice the point value
-  (§9.89); it is never labelled observed.
+  3.8% level. **Ferry** is on the same basis since the roots rebuild (D8,
+  §9.211): the disclosed daily tap-on series carries an interval per day, never
+  a point, so the sweep is the bounds' own means; the census G62 lockdown-month
+  cell (§9.89) is superseded.
 
 The 143 holdout targets in
 [`data/processed/validation/validation_targets.csv`](../data/processed/validation/validation_targets.csv)

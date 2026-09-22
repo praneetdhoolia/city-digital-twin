@@ -4,11 +4,11 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. A field that carries a sweep MUST say what the sweep is for (sweep_role: answer, uncertainty or measurement), and an assumed field with a sweep MUST say how the interval was chosen (sweep_basis) - the resolver refuses either omission (#134). Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in cities/<city>/docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. Two narrowings are DERIVED: a field carrying `required_if_mode` is required ONLY of a city that runs that mode (the mode name is in the tool binding), and `required_by` says who reads the field - `run` (every city), a list of framework builders (a city whose manifest names one of them as a producer), or `reference_city` (read only by the reference city's own adapters and builders; required of no other city). A field a switched-off mechanism silences is still `run`: the emitter writes it, so the city declares it.",
-  "n_fields": 574,
+  "n_fields": 575,
   "n_by_layer": {
     "A": 207,
     "B": 131,
-    "C": 58,
+    "C": 59,
     "CAL": 30,
     "D": 10,
     "E": 26,
@@ -17,7 +17,7 @@
   "n_by_required_by": {
     "build": 241,
     "reference_city": 112,
-    "run": 221
+    "run": 222
   },
   "fields": {
     "A.active.footway_width_default": {
@@ -3321,7 +3321,7 @@
       "layer": "B",
       "units": "probability",
       "type": "number",
-      "source_in_reference_city": "assumed",
+      "source_in_reference_city": "derived",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
@@ -4175,6 +4175,16 @@
       "units": "seconds",
       "type": "object",
       "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "C_behaviour.json",
+      "required_by": "run"
+    },
+    "C.scoring.marginal_utility_of_distance_per_m": {
+      "layer": "C",
+      "units": "utils_per_metre",
+      "type": "object",
+      "source_in_reference_city": "derived",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "C_behaviour.json",

@@ -778,14 +778,29 @@ else:
                 _cap = int(_reg.load().get('RUN.replanning.max_agent_plan_memory'))
             except Exception:                                 # noqa: BLE001
                 _cap = None
+            # The LOWER bound is 2 for everyone the model offers a choice to.
+            # Since D12 (9.211, #86) one person does not get a choice: someone
+            # every one of whose tours exists BECAUSE they are escorted or as
+            # a joint activity rides on all of them in every plan, so the
+            # fold's alternative is the plan itself and their choice set is a
+            # singleton BY CONSTRUCTION. That is allowed only in exactly the
+            # number the builder reports as folded for that reason - so a
+            # one-plan person can never appear for any other cause unnoticed.
+            _held_fold = int((v.get('bound_placement') or {})
+                             .get('alternatives_folded_held', 0))
+            _ones = int(hist.get('1', 0))
             check(bool(hist) and _cap is not None
-                  and all(2 <= int(k) <= _cap for k in hist),
+                  and all(1 <= int(k) <= _cap for k in hist)
+                  and _ones == _held_fold,
                   '%s: the full-choice-set seed holds one plan per usable '
                   'mode plus its bound-ride variants (%s plans per person), '
-                  'every person inside the declared plan memory of %s, so the '
-                  'calibration is not handed its answer by a starting share '
-                  'nor quietly deprived of part of its choice set'
-                  % (day, '/'.join(sorted(hist, key=int)), _cap))
+                  'every person inside the declared plan memory of %s, and '
+                  'the only single-plan persons are the %d whose every tour '
+                  'is held to ride (%d reported), so the calibration is not '
+                  'handed its answer by a starting share nor quietly deprived '
+                  'of part of its choice set'
+                  % (day, '/'.join(sorted(hist, key=int)), _cap,
+                     _held_fold, _ones))
         elif tgt_share:
             car = 100 * seed.get('car', 0)
             check(abs(car - tgt_share['car']) > 20.0,

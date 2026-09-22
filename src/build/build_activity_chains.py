@@ -2143,6 +2143,27 @@ EMPLOYMENT_ANZSIC = _city.path(
     'data/processed/landuse/D1_employment_by_anzsic_POW_SA2.csv')
 
 
+def _band_share_placed(path):
+    """The share of CORE legs whose straight-line length x the detour factor
+    is at or under B.activity.short_trip_band_km, on the PLACED coordinates
+    the file holds (#30, 9.211): the decay solve reports the band on the
+    zone matrix; this is the same band after within-zone placement, the
+    figure a run's routed reading is compared with."""
+    band_straight = SHORT_BAND_KM / DETOUR_FACTOR
+    n = short = 0
+    with open(path, encoding='utf-8') as fh:
+        for r in csv.DictReader(fh):
+            if r.get('agent_tier') != 'core':
+                continue
+            n += 1
+            try:
+                if float(r['straight_dist_km']) <= band_straight:
+                    short += 1
+            except (KeyError, ValueError):
+                pass
+    return round(100.0 * short / n, 4) if n else None
+
+
 def _count_core(path):
     """(legs, tours, travelling persons) for the CORE rows of a day file.
 
@@ -3088,6 +3109,7 @@ def record_day_stats(sc):
     """One iteration of the loop this replaced in build_and_bind_day(); `sc` carries the
     enclosing scope (21 names). Extracted mechanically, byte-identical outputs."""
     sc.mc.stats['by_day'][sc.d] = dict(
+        short_trip_band_share_placed_pct=sc.band_share_placed,
         legs_generated_before_binders=sc.n_legs_gen,
         tours_generated_before_binders=sc.n_tours_gen,
         travelling_persons_before_binders=sc.n_travel_gen,
@@ -3244,7 +3266,8 @@ def build_and_bind_day(d, mc):
     # exactly what the binders did.
     n_legs_gen, n_tours_gen, n_travel_gen = n_legs, n_tours, n_travel
     n_legs, n_tours, n_travel = _count_core(path)
-    sc = _types.SimpleNamespace(by_purpose=by_purpose, d=d, dropped=dropped, esc=esc, ext_legs=ext_legs, hh_bindings=hh_bindings, joint=joint, lift=lift, mc=mc, n_ext=n_ext, n_frt=n_frt, n_legs=n_legs, n_legs_gen=n_legs_gen, n_thr=n_thr, n_thr_truck=n_thr_truck, n_tours=n_tours, n_tours_gen=n_tours_gen, n_travel=n_travel, n_travel_gen=n_travel_gen, shared=shared, thr_legs=thr_legs)
+    band_share_placed = _band_share_placed(path)
+    sc = _types.SimpleNamespace(band_share_placed=band_share_placed, by_purpose=by_purpose, d=d, dropped=dropped, esc=esc, ext_legs=ext_legs, hh_bindings=hh_bindings, joint=joint, lift=lift, mc=mc, n_ext=n_ext, n_frt=n_frt, n_legs=n_legs, n_legs_gen=n_legs_gen, n_thr=n_thr, n_thr_truck=n_thr_truck, n_tours=n_tours, n_tours_gen=n_tours_gen, n_travel=n_travel, n_travel_gen=n_travel_gen, shared=shared, thr_legs=thr_legs)
     record_day_stats(sc)
 
 

@@ -2,12 +2,12 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 22 September 2026 (fifty-eighth session) · **Record read through:** §9.206 · **Written against family:** `F35`
+**Updated:** 22 September 2026 (sixty-first session) · **Record read through:** §9.211 · **Written against family:** `F35`
 
 ## What is built
 
-- **Standing room is scaled with the seats** (§9.203, §9.185, #237): the old regex scaled only `seats`; the F35 result ran Bus 11 + 18, Tram 15 + 210, Rail 24 + 48, Ferry 37 + 51 at 25 % — standing room at full size, crowding unable to bind on tram, rail or ferry. `scale_transit_capacity` parses the XML and scales both (Tram 15 + 52), floor `RUN.sample.transit_capacity_floor`. **Every arm after it opens a family.**
-- **Transit vehicles' road space is scaled with the sample** (§9.206, `RUN.sample.transit_pce_scaling`): each type's PCE × fraction at launch. Transit runs at full frequency on links whose flow is fraction × real, so a bus at full PCE took 4× its road share at 25 % and 100× at 1 %; Mumbai's first 1 % case gridlocked on 110,000 bus departures (122,192 of 269,690 agents stuck, 154,759 en route at 36:00). MOVES RESULTS; lands with #237's family.
+- **Standing room is scaled with the seats** (§9.203, §9.185, #237): the old regex scaled only `seats`, so every F35 arm ran Tram 15 + 210 at 25 % and crowding could not bind on tram, rail or ferry. `scale_transit_capacity` parses the XML and scales both (Tram 15 + 52), floor `RUN.sample.transit_capacity_floor`. **Lands in F36; its first arm measures it.**
+- **Transit vehicles' road space is scaled with the sample** (§9.206, `RUN.sample.transit_pce_scaling`): each type's PCE × fraction at launch. Transit runs at full frequency on links whose flow is fraction × real, so a bus at full PCE took 4× its road share at 25 %; MOVES RESULTS, and lands in F36 with #237.
 - **The sampling unit is the household.** `RUN.sample.unit` = `household` (`derived`): a household is kept when blake2b(`household|<id>|RUN.machine.seed`) / 2^64 falls below the fraction, so the sample nests (1 % is a strict subset of 10 %) and every household-coupled mechanism is fraction-independent (§9.45). External and through tiers hash on their own id. `RUN.machine.seed` = 20260810 = `B.seed.master`.
 - **Lift couplings extend the unit**: the sampler union-finds (`householdId`, `liftHousehold`) pairs; shared-ride driver households are named in `sharedDriverHousehold` and excluded from those unions (§9.60, §9.127).
 - **A shared pair shares a hash bucket the width of the campaign fraction.** `B.ride.shared_lift_hash_bucket` **0.25** (`assumed`, sweep [0.05, 0.25]; 0.05 is the control, §9.129, §9.149): the fourth binder pass (`B.ride.shared_lift_scope` = `same_sa2_od`) binds a passenger only to drivers in the same bucket, so a nested sample at a multiple of the width keeps both members. A 1 % smoke breaks pairs and never reads pairing (§9.128).
@@ -56,6 +56,7 @@ A family boundary is a recorded model, data or network change after which nothin
 | `F33-the-passenger-is-put-on-ride` | 20260910T203622 | demand rebuilt: `B.mode.bound_passenger_placement` = `every_plan`, the placement loop no longer discards a day, `routingMode` on every leg; opened at probe `20260910T203622`; no reading | §9.164 |
 | `F34-walk-has-a-footpath-network` | 20260912T062457 | the footpath network (40,203 ways, 181,892 → 368,230 links), pt access/egress walks executed (#167), crossings with Cobbora freight (#184); CLOSED with no arm | §9.167, §9.168 |
 | `F35-the-engines-route-what-they-remode` | 20260912T184108 | the taxi and ride engines route what they re-mode; opened at the FIX; arm 0 `20260912T202242_300it_25pct` ran to 300 in 30.35 h, a RESULT | §9.168, §9.169 |
+| `F36-the-passenger-is-held-and-bike-pays-for-distance` | 20260922T210005 | the roots rebuild: `heldRideTrips` (D12, #86), bike's derived distance cost (D9, #107), the household tail derived (#196), the ferry target on the disclosed tap-ons (D8, #94), standing room scaled (#237); opened at the REBUILD; no reading | §9.211 |
 
 Overrides in the file: three dead 30 Aug launches are attributed by name (`aborted_20260830T163010_300it_10pct` to F18; `aborted_20260830T170153_300it_10pct` and `aborted_20260830T170743_300it_10pct` to F19); `aborted_20260818T162538_1000it_25pct` is left unattributed because the record cannot settle it.
 
@@ -68,9 +69,9 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## What is open
 
-- **The first 25 % arm with standing room scaled** measures what F35 could not: peak standing occupancy per vehicle type and whether `C.crowding.standing_multiplier` moves a score (#237, `AWAITING-RUN`). It opens F36.
-- **F35 is open and has its reading** (§9.168, §9.169): opened at the controler fix `20260912T184108`; its probes `20260912T184134_4it_1pct` and `20260912T185005_4it_25pct` (460.0 s) are citable for a yes/no and a clock. Arm 0 `20260912T202242_300it_25pct` is a RESULT and the CONTROL HALF of the pairs (#172): each opens a family on ONE field and differences against arm 0's it.300 reading. No approval stands.
-- **F32's result stays a RESULT and is no longer the newest reading** (§9.162, §9.169): `20260909T015217_300it_25pct`, `reached_iteration` 300, 21.5 h, the first `_fit.json` with `is_a_result: true`; it compares with nothing in F35.
+- **F36 is open and has NO reading** (§9.211): opened at the demand rebuild `20260922T210005`, not at an arm, so the family's first act is a 25 % probe for its price. Its arm 0 carries five measurements at once — what a roots rebuild costs: `measure_bound_trips.py` on the held passengers, bike's mean trip by car availability, the household-size draw, the ferry on a boardings target, and #237's peak standing occupancy (the first arm ever with standing room scaled).
+- **F35 is CLOSED with three results** and compares with nothing after `20260922T210005`.
+- **F35's three results are closed history** (§9.168, §9.169, §9.176, §9.177): arm 0 `20260912T202242_300it_25pct`, the routers pair `20260915T000704_250it_25pct` and the scoring pair `20260916T063903_250it_25pct`, each a RESULT, each citable inside F35 and against nothing after it.
 - Whether a separate 25 % confirmation arm is still needed now that the loop runs at 25 % (§9.129) is the user's call at convergence.
 - The design-effect penalty of household cluster sampling is unestimated and no seed-variance measurement exists; `n_replications` stays 30 (§9.45). The threshold between 10 % and 25 % is unmeasured (§9.12).
 - One arm at a time; the machine-level stall that hit two concurrent arms is #66.
@@ -89,6 +90,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## History
 
+- §9.211 — F36 opens at the roots rebuild
 - §9.206 — transit PCE scaled; 1 % gridlock 
 - §9.203 — standing room scaled at last
 - §9.176 — intro fixed: which runs are results is the board's
@@ -103,4 +105,3 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 - §9.158 — no launch, so no family row; the next arm opens one
 - §9.157 — F31's first arm stopped at its gate at iteration 100
 - §9.156 — F31 opened at the arm; the car router reads only cars
-- §9.153 — F30's first arm stopped at 23 on its own cost

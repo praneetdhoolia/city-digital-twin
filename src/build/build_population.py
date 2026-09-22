@@ -36,7 +36,12 @@ CFG = _registry.load()
 # the household-size, home-placement and age-threshold values the draw uses,
 # declared (#188): each was an inline literal in main() until 12 Sep 2026
 HH_TOP_BAND_MEAN = float(CFG.get('B.population.household_size_top_band_mean'))
-HH_TAIL_P = float(CFG.get('B.population.household_size_tail_p'))
+# the tail parameter is DERIVED from the declared top-band mean (#196):
+# size = 6 + Geometric(p) - 1 has mean 5 + 1/p, so p = 1 / (mean - 5); the
+# registry carries the same identity and its resolver checks it
+HH_TAIL_P = 1.0 / (HH_TOP_BAND_MEAN - 5.0)
+assert abs(HH_TAIL_P - float(CFG.get('B.population.household_size_tail_p'))) < 1e-6, \
+    'B.population.household_size_tail_p is not 1/(top_band_mean - 5)'
 HOME_JITTER_FACTOR = float(CFG.get('B.population.home_jitter_radius_factor'))
 LABOUR_FORCE_MIN_AGE = int(CFG.get('B.population.labour_force_min_age'))
 LICENCE_MIN_AGE = int(CFG.get('B.population.licence_min_age'))
@@ -302,6 +307,12 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
     hid = 0
     pid = 0
     stats = dict(households=0, persons=0, employed=0, students=0, zero_car_hh=0)
+    # the household-size bands (1..5, 6+) as the census counts them over the
+    # SA1s drawn, and as the draw realised them - the measurement #196 asks
+    # for: the top band's realised mean against the declared one
+    hs_census = np.zeros(6)
+    hs_drawn = np.zeros(6)
+    hs_top_persons = 0
     # ABS-band accumulators so the report states the realised age-conditional
     # rates beside the census they were drawn from: [persons, employed, FT students]
     bands = {}
@@ -329,6 +340,9 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
 
         # household size distribution (1..6+)
         hs = norm(m['household_size'])
+        hs_census += np.nan_to_num(np.asarray([v or 0 for v in m['household_size']][:6], dtype=float))
+        # the band midpoints 1-5; the top band (index 5) is drawn from the
+        # geometric tail whose mean is HH_TOP_BAND_MEAN (#196)
         hs_vals = np.array([1, 2, 3, 4, 5, HH_TOP_BAND_MEAN])
         # vehicles per dwelling (0..4+)
         veh = norm(m['vehicles'])
@@ -359,6 +373,9 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
             size = max(1, min(size, 10))
             if made + size > pop + 2:
                 size = max(1, pop - made)
+            hs_drawn[min(size, 6) - 1] += 1
+            if size >= 6:
+                hs_top_persons += size
             nv = int(rng.choice(veh_vals, p=veh))
             dt = dw_names[int(rng.choice(len(dw_names), p=dw))]
             ang = rng.uniform(0, 2 * math.pi)
@@ -442,6 +459,13 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
     stats['mean_household_size'] = round(stats['persons'] / max(stats['households'], 1), 3)
     stats['pct_zero_car_households'] = round(stats['zero_car_hh'] / max(stats['households'], 1) * 100, 1)
     stats['pct_employed_of_persons'] = round(stats['employed'] / max(stats['persons'], 1) * 100, 1)
+    stats['household_size'] = dict(
+        bands=['1', '2', '3', '4', '5', '6+'],
+        census_pct=[round(100.0 * v / max(hs_census.sum(), 1), 2) for v in hs_census],
+        drawn_pct=[round(100.0 * v / max(hs_drawn.sum(), 1), 2) for v in hs_drawn],
+        top_band_mean_declared=HH_TOP_BAND_MEAN,
+        top_band_mean_drawn=round(hs_top_persons / max(hs_drawn[5], 1), 3),
+        tail_p=round(HH_TAIL_P, 6))
     stats['by_abs_age_band'] = {
         k: dict(persons=n, employed_pct=round(100.0 * e / max(n, 1), 1),
                 student_full_time_pct=round(100.0 * s / max(n, 1), 1))

@@ -242,6 +242,7 @@ about its layout will otherwise cost you an hour:
 | **The refusing hosts reached through the Internet Archive; Metro 2A/7 in their published windows; RDSO's coach loads** | **§9.208** - 22 of the 41 sources whose hosts refuse this address acquired as dated Wayback copies (4 empty ones kept unusable, 17 without a capture); `A.baseline_transit.line_windows_s` runs Lines 2A and 7 in MMMOCL's published first-to-last windows (552 → 500 departures); RDSO's MRVC-III coach loads (1,148 + 4,924 at 16/m²) raise the rail capacity sweep to 6,072 |
 | **Mumbai's suburban trains run the printed timetables; household vehicles reach 2026 from the registration stock; work follows the built volume; every link carries its grade; every acquisition has a stated use** | **§9.209** - 3,289 timetable trains (WR 1,394 / CR 1,895 against 1,414 / 1,820 published) replace 31 generated patterns; `B.population.vehicle_possession_projection` carries the 2011 HL-14 shares to 2026 by the RTO stock (NFHS-4/5 pace check); GHSL 2025 built volume weights work destinations; 788,523 links stamped with a GLO-30 grade; 20 refusing sources landed through the user's VPN; `source_use.json` - 0 unread of 600 |
 | **The Java fold landed; MMRDA's daily metro ridership imported and made the metro target** | **§9.210** - `taxiFleet.sampleFraction` (#215), one routing pool per run (#216), no zero-second timed-out ride (#217), `retimed= restoreRetimed=` by name (#187), the `heldRideTrips` refusal (D12, #86), verified on the 1 % smoke `20260922T172813_4it_1pct`; the two OGD CSVs imported from the user's logged-in browser (`--portal-download`), 984 days of ridership, the Mumbai metro target 1.17 → 2.56 % of trips |
+| **The roots rebuild: the held passenger, bike's distance cost, the derived household tail and the ferry's disclosed target** | **§9.211** - `heldRideTrips` written for 276,816 trips on 141,633 persons (D12, #86); `C.scoring.marginal_utility_of_distance_per_m` bike −0.000192308 derived from the observed 5.2 km mean (D9, #107); `household_size_tail_p` derived as 1/(mean − 5) = 0.625, drawn top band 6.596 (#196); the ferry target 790 boardings/weekday from 300 TPA weekdays, sweep 234–1,347 (D8, #94); the placed short-trip band 17.81 % (#30); opens **F36** |
 | **Every open issue worked to done or to one measurement, and the fix that was half a fix** | **§9.164** - the twenty-one MATSim defaults that decided the model unreviewed go to **0** (nine declared at the framework's own values, twelve accepted with a reason). The demand STATES that a declared passenger rides: `B.mode.bound_passenger_placement` = `every_plan` puts a bound tour on `ride` in every seeded plan as the driver is already put on `car` - **194,131** fully bound weekday tours over **199,329** persons - and the demand, plans and 30 run-input sets are rebuilt on it, opening family **`F33`**. A tour that will not fit no longer discards the rest of the day (**547** weekday tours recovered; week trip rate **3.398** against the HTS 3.473). `C.time_weights.beta_headway` and `beta_reliability` REACH MATSIM after two reports asked, behind a gate shipped `absent`; the pt submodes get a plan-level control; the calibration objective gets the replication-band denominator it never had, at zero until one is measured. **The ceiling watcher stops a run for the first time** (`stopped_at_ceiling` at iteration 3) and the gate watcher is caught arming over a disabled monitor and judging nothing. **§9.161's #167 diagnosis was HALF right**: `routingMode` takes the failure 40 agents → 20 and the residual is not in our input at all - 0 mixed trips over 6,347 persons - so `accessEgressModeToLink` still cannot start and ships `none` |
 | **A deviation no constant can reach, and the tail of cheap fixes the reports kept re-issuing** | **§9.163** - MATSim writes `modeChoiceCoverage1x.txt` on every arm and nothing read it, so every gate ever taken blamed a constant without asking whether a constant could reach the target. On the landed arm **ride's target of 20.60 % sits ABOVE the 20.05 % of agents who have ever held a ride plan** - the only mode of twelve, and no value of any constant closes it. Every choice set is within 1 pp of its final coverage by iteration 5-10 and shut by 16-27, **except pt**, still opening at 233 and reaching 25.78 %. The count-station map had been orphaned by a network rebuild 47 minutes after it was written: **0 of 195 rows still named the road they claimed**, and on the repaired map counts read **+16.30 % mean, -1.1 % median, 0 zeros** against -89.35 % / -98.7 % / 7. Half of all declared escort pairs put the passenger in their own car (**10,224 of 20,902**) with 99.6 % of tours realised, so ride's loss is mode assignment, not pairing. `RUN.replanning.score_msa_representation` and `RUN.replanning.score_msa_fraction` declare score averaging at MATSim's own default literal (registry **497 -> 499**, byte-neutral); undeclared MATSim defaults **31 -> 21**; three fields shipped at their consumer's off value now say so via `inert_at`. Fourteen of sixteen `awaiting-run` issues were measured from a run that had already finished |
 | **A stated ceiling is enforced by the runner, and the teleported access leg is diagnosed to a missing attribute in our own plans** | **§9.161** - `RUN.gate.wall_ceiling_h` (0 = no ceiling) and `start_ceiling_watch` give an approved cost the enforcement it never had: a SECOND watcher beside the gate's, stopping through 9.143's marker path with a new completion `stopped_at_ceiling`, so `RUN.gate.interval_iterations = 0` keeps meaning "do not judge my modes" rather than "do not enforce my budget". #167 is DIAGNOSED and the cause is ours: the input plans carry **zero** `routingMode` attributes and every trip is a single leg, so under `accessEgressModeToLink` the router inserts walk access and egress legs and MATSim INFERS each leg's routing mode from its own mode - `walk` beside a `car` main leg - and rejects the trip it just built. The fix is to emit `routingMode` per leg in `build_matsim_plans.py`, a no-op at `access_egress_type = none`, and it needs the demand rebuilt in the same change |
@@ -18078,10 +18079,84 @@ target moves 1.17 → 2.56 % of trips; every earlier Mumbai reading against the 
 target the operators' counts refute. The roots rebuild is now blocked on its probe and approval
 alone.
 
+## 9.211 The roots rebuild: the escorted passenger is held to ride, bike pays for distance, the household tail is derived, and the ferry is scored against its disclosed tap-ons (22 September 2026, sixty-first session; #30 #86 #94 #107 #196 #235)
+
+**What was wrong.** Four roots of the scoreboard's worst deviations were decided on 16 September
+(D8, D9, D12) and prepared as patches on their issues, and none had been applied: every arm since
+had measured the same demand. Ride read −40.2 % against a 20.60 % target its 19.11 % choice-set
+coverage cannot reach, because 41 % of bound trips do not ride — car-available escort members drive
+themselves on 50.4–50.7 % of their bound tours and joint companions on 35.8–36.3 % (§9.177). Bike
+read +188.4 % at an 8.13 km mean against an observed 5.2 with **no distance cost in its score at
+all** (`C.scoring.marginal_utility_of_distance_per_m` did not exist; every mode sat at MATSim's
+0.0). The household-size tail `B.population.household_size_tail_p` was a second free assumed number
+beside the declared top-band mean, which the builder never consumed (#196, three reports). The ferry
+read −61.1 % against a target derived from a census G62 lockdown-month cell — 0.1429 % of resident
+trips, about three times the 1 km cross-harbour market the pairs measured — while the modelled
+1,148–1,236 boardings sat INSIDE the disclosed Opal tap-on bound (§9.177, #185).
+
+**What changed.** *The demand* (`build_matsim_plans.py`, D12, #86): a tour that exists BECAUSE its
+member is escorted, or AS a joint activity, has no solo-car alternative by definition, so the plans
+builder keeps `ride` on it in every seeded plan and writes the covered trips as `heldRideTrips` —
+the attribute `GatedSubtourModeChoice` has refused car on since §9.210 and which nothing wrote.
+A car-less lift or shared passenger is NOT held: walk, bike and pt stay theirs to choose against
+the wait. *The scoring* (D9, #107): `C.scoring.marginal_utility_of_distance_per_m` is declared,
+`derived`, bike **−0.000192308 utils/m** = −1/(`C.constraint.trip_length_km.bike` × 1000) — a
+utility linear in distance decays the choice exponentially with mean 1/|β|, so the observed 5.2 km
+mean fixes the coefficient and its sweep is that mean's own observed spread over the survey years
+(3.1–5.2 km, i.e. −0.000322581 to −0.000192308); every other mode stays 0.0. Bike's coefficient is
+derived from the length it is CONSTRAINED to, never fitted to its share. *The population* (#196):
+`household_size_tail_p` becomes `derived` with the identity p = 1/(top_band_mean − 5) = 0.625, and
+`build_population.py` computes it from the mean instead of reading a second number, asserting the
+two agree. *The target* (D8, #94): `build_mode_targets.py` gains `tpa_ferry_weekday_boardings()`
+and the ferry leaves the census cell for the disclosed TPA daily Opal series on the boardings basis
+heavy and light rail already use. *The report* (#30): `build_activity_chains.py` states the
+short-trip band share on PLACED coordinates beside the zone-matrix figure.
+
+**Measured.** The rebuilt WEEKDAY demand: **276,816 held ride trips on 141,633 persons**, and
+**47,529 persons whose whole day is held now seed ONE plan** (there is no base-mode alternative left
+to differ on; `alternatives_kept` 90,134 → 42,658, counted as `alternatives_folded_held`, never
+silently dropped). The drawn top band's mean reads **6.596 against the declared 6.6** (6.82 on the
+free tail), and the drawn household-size distribution tracks the census within 0.6 pp in every band
+(1: 26.49 vs 25.90; 6+: 2.59 vs 2.66). The ferry target is **790.285 boardings per weekday**,
+`measured`, over **300 TPA weekdays**, sweep **234–1,347** — the bounds' own means, because each
+day's hourly cells are rounded to 100 and so carry an interval, never a point. The placed short-trip
+band is **17.8143 %** against the 17.70 % the zone matrix realised. The emitted config carries
+`scoring.modeParams[bike].marginalUtilityOfDistance_util_m = -0.000192308` and 0.0 on every other
+mode. Registry **574 → 575** fields; manifest 959 files, 0 undetermined. **Nothing here is a
+reading**: no run has executed on this demand.
+
+**Found on the way.** The plans builder's staging refactor of 16 September (`5b8f54f6`, committed as
+"byte-identical outputs") had never been executed end to end: three of its extracted functions
+returned locals bound only on the resident branch, so `build_matsim_plans.py` raised
+`UnboundLocalError` on the first external, motorbike or freight person — `h` (the seed-order hash,
+which nothing reads), `escort_denied` and the loop index `i`. Fixed here: `h` and `i` leave the
+returns, `escort_denied` and `by_tour` are initialised once. Every other person's output is
+unchanged — the rebuilt `B1_*` and `population_WEEKDAY.xml.gz` are byte-identical across two runs of
+the fixed builder. Separately, the complete `_run_inputs_report.json` is restored (S0–S6 and every
+day type against the committed S2/WEEKDAY-only file), which is #235's stated cause: a filtered build
+had replaced the full report.
+
+**Deliberately not done.** No arm. The rebuild opens **F36** and every earlier reading stops
+comparing, so the new arm 0 needs a 25 % probe on these inputs for its price and a stated-cost
+approval — neither exists. The ASC contraction test for bike stays held (D7). The reach mechanism
+for the ferry (intermodal access at the wharves) stays on #94; only the target moved. `#30` is not
+closed: its measurement is the ROUTED short-trip mode split on the rebuilt arm 0. The 67/143
+holdout is untouched; no target but the ferry's changed.
+
+**Consequences.** Nothing run before `20260922T210005` compares with anything after it. Ride's
+ceiling is no longer fixed at the seed's 14.9 %: the held trips ride in every plan, so the choice
+set carries them and `GatedSubtourModeChoice` refuses to take them off. Bike's score now falls with
+distance, which is the only mechanism its +188 % had none of. The ferry is scored on boardings
+against a disclosed observation, so a deviation against it is an error statistic for the first time
+— and the model already sits inside that observation's bound, which is why the mode's reading is
+expected to move mostly by the target's own basis change. The household tail can no longer be swept
+independently of the mean it contradicts. The lane's next step is the probe, then the approval.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-22 | **The roots rebuild (§9.211).** The plans builder holds escorted members and joint companions to `ride` in every plan and writes `heldRideTrips`; `C.scoring.marginal_utility_of_distance_per_m` is declared and derived (bike −0.000192308 utils/m, sweep −0.000322581 to −0.000192308); `B.population.household_size_tail_p` becomes `derived` at 0.625 from the declared top-band mean; `build_mode_targets.py` re-derives the ferry target from the disclosed TPA daily tap-ons (0.1429 % of resident trips → 790 boardings per weekday, a BASIS change); `build_activity_chains.py` reports the short-trip band on placed coordinates; three unbound locals in the 16 September plans refactor fixed. Registry 574 → 575. Opens F36; no run. |
 | 2026-09-22 | **The Java fold landed; MMRDA's daily metro ridership imported and made the metro target (§9.210).** One recompile: `TaxiFleetEngine` scales by `taxiFleet.sampleFraction`, `RemodeRestore.routingPool` is one per run, `JointRideEngine` never clocks a timed-out ride at zero, `RidePairingEngine` logs `retimed= restoreRetimed=`, `GatedSubtourModeChoice` refuses a `heldRideTrips` passenger off ride; `import_browser_acquisition.py --portal-download`; `extract_ogd_metro_ridership.py`; `build_mode_targets.py` metro from the operators' daily passengers (2.5597 %, sweep 2.3634–2.6283); manifest 1,453 → 1,459. No target value changed for the reference city; the 67/143 split is untouched; nothing here is a finding. |
 | 2026-09-22 | **Mumbai's suburban trains run the printed timetables, household vehicles reach 2026 from the registration stock, work follows the built volume, every link carries its grade, every acquisition has a stated use (§9.209).** `build_suburban_timetable_feed.py` (3,289 trains, 495 patterns; gate `A.baseline_transit.suburban_timetable`), Metro 2A/7/9/2B in live windows at the April 2026 headways, `derive_vehicle_possession_growth.py` + `B.population.vehicle_possession_projection`, `build_activity_attraction.py` + `B.activities.work_attraction`, `A.gradient.representation` = `link_speed` for Mumbai; 20 sources acquired through an Indian VPN endpoint, 3 catalogued (NFHS-4, NFHS-5, BMC parking lots); catalogue 597 → 600, manifest 1,397 → 1,453, Mumbai registry 412 → 428; `audit_source_use.py` gives every entry a disposition (0 unread). No target value changed; the 67/143 split is untouched; nothing here is a finding. |
 | 2026-09-22 | **The refusing hosts reached through the Internet Archive, Metro Lines 2A and 7 in their published windows, RDSO's coach loads (§9.208).** 22 dated Wayback copies catalogued and acquired (`<id>_archived_<date>`; catalogue 575 → 597, manifest 1,353 → 1,397; 4 empty captures kept unusable, 17 sources without a capture stay with D17); `A.baseline_transit.line_windows_s` (observed, MMMOCL's timetable) sets the four 2A/7 patterns' windows; `A.transit.rail_capacity_total`'s sweep top 5,964 → 6,072 on RDSO/PE/SPEC/D/EMU/0190-2017; one mapping (18,113 stops, 1,865 routes), 115,048 vehicles, the 0.1 % check `20260922T041420_2it_0.1pct` ran to its last iteration. No target value of the reference city changed, the 67/143 split is untouched, nothing here is a finding. |

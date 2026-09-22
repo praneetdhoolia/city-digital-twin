@@ -155,6 +155,35 @@
       "sweep_basis": "Provisional behavioural smoke coefficient; not calibrated to ridership.",
       "matsim_format": "hh:mm:ss"
     },
+    "C.scoring.marginal_utility_of_distance_per_m": {
+      "units": "utils_per_metre",
+      "source": "definition",
+      "status": "active",
+      "matsim_param": "scoring.modeParams[*].marginalUtilityOfDistance_util_m",
+      "value": {
+        "car": 0.0,
+        "ride": 0.0,
+        "walk": 0.0,
+        "bike": 0.0,
+        "motorbike": 0.0,
+        "taxi": 0.0,
+        "auto_rickshaw": 0.0,
+        "pt": 0.0,
+        "truck": 0.0,
+        "freight_rail": 0.0
+      },
+      "description": "MATSim's marginal utility of distance per mode (utils per metre travelled), the term that makes a mode's use fall with trip length beyond what its time already costs. Declared for this city at 0.0 on ITS OWN mode vocabulary (auto_rickshaw included), not adopted from the reference city, because the reference city's value is derived from an observation this city does not have (9.211).",
+      "decisions_ref": "9.211",
+      "consumers": [
+        "src/registry/param_config.py"
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "every mode at MATSim's own 0.0: no distance term is priced for this city, which is what every Mumbai case has run with. The reference city derives bike's coefficient as -1/(its observed mean bike trip length); this city has no such observation, and adopting the reference city's number would import ITS mean (5.2 km) and ITS mode vocabulary into this config",
+        "decisions_ref": "9.211",
+        "departure_requires": "an observed mean trip length per mode for this city (C.constraint.trip_length_km.*), from which the coefficient is derived by the same identity"
+      }
+    },
     "C.scoring.marginal_utility_of_money": {
       "value": 0.05,
       "units": "utils_per_INR",

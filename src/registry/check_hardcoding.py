@@ -740,6 +740,9 @@ STRUCTURAL_INLINE = {
     '<city>/build/build_mode_targets.py:road_person_targets:0.5':
         'the midpoint of the IPART trips-per-day band (lo + hi) / 2 - the band is '
         'the declared value, B.taxi.daily_trips_band',
+    '<city>/build/build_mode_targets.py:tpa_ferry_weekday_boardings:0.5':
+        'the midpoint of a published day\'s tap-on interval (lower + upper) / 2 - '
+        'the interval is the disclosed value, its hourly cells rounded to 100 (D8)',
     '<city>/extract/extract_bitre_registrations.py:study_area_postcodes:0.5':
         'a postcode is inside the study area when more than half of it is - a '
         'majority rule for a boundary clip',
