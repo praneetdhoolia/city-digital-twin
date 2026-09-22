@@ -249,6 +249,7 @@
         "registry": []
       },
       "cited_by": [
+        "population",
         "private_car",
         "two_wheeler",
         "auto",
@@ -2046,7 +2047,9 @@
           "cities/mumbai/registry/A_baseline_services.json"
         ]
       },
-      "cited_by": [],
+      "cited_by": [
+        "suburban_rail"
+      ],
       "declared_use": null,
       "discovered_from": null,
       "archived_copy_of": null,
@@ -2068,7 +2071,9 @@
           "cities/mumbai/registry/A_baseline_services.json"
         ]
       },
-      "cited_by": [],
+      "cited_by": [
+        "suburban_rail"
+      ],
       "declared_use": null,
       "discovered_from": null,
       "archived_copy_of": null,
@@ -2090,7 +2095,9 @@
           "cities/mumbai/registry/A_baseline_services.json"
         ]
       },
-      "cited_by": [],
+      "cited_by": [
+        "suburban_rail"
+      ],
       "declared_use": null,
       "discovered_from": null,
       "archived_copy_of": null,
@@ -2172,7 +2179,9 @@
         ],
         "registry": []
       },
-      "cited_by": [],
+      "cited_by": [
+        "metro"
+      ],
       "declared_use": "MMRDA's March 2026 integration release: its \"over 3.5 lakh daily passengers on Lines 2A and 7\" is transcribed in published_observations.json",
       "discovered_from": null,
       "archived_copy_of": null,
@@ -3471,7 +3480,9 @@
         "transcriptions": [],
         "registry": []
       },
-      "cited_by": [],
+      "cited_by": [
+        "suburban_rail"
+      ],
       "declared_use": null,
       "discovered_from": null,
       "archived_copy_of": null,
@@ -3690,7 +3701,9 @@
         ],
         "registry": []
       },
-      "cited_by": [],
+      "cited_by": [
+        "metro"
+      ],
       "declared_use": "the operator's owner's annual report: Metro One's cumulative 1,101 million passengers to 30 April 2025 is transcribed in published_observations.json; no daily figure is printed",
       "discovered_from": null,
       "archived_copy_of": null,
@@ -5706,7 +5719,9 @@
           "cities/mumbai/registry/A_baseline_services.json"
         ]
       },
-      "cited_by": [],
+      "cited_by": [
+        "metro"
+      ],
       "declared_use": null,
       "discovered_from": null,
       "archived_copy_of": null,
@@ -5854,7 +5869,9 @@
           "cities/mumbai/registry/A_baseline_services.json"
         ]
       },
-      "cited_by": [],
+      "cited_by": [
+        "metro"
+      ],
       "declared_use": null,
       "discovered_from": null,
       "archived_copy_of": null,
@@ -6567,7 +6584,9 @@
         "transcriptions": [],
         "registry": []
       },
-      "cited_by": [],
+      "cited_by": [
+        "activities"
+      ],
       "declared_use": null,
       "discovered_from": null,
       "archived_copy_of": null,
@@ -6608,7 +6627,9 @@
         "transcriptions": [],
         "registry": []
       },
-      "cited_by": [],
+      "cited_by": [
+        "activities"
+      ],
       "declared_use": null,
       "discovered_from": null,
       "archived_copy_of": null,
@@ -8836,7 +8857,9 @@
         ],
         "registry": []
       },
-      "cited_by": [],
+      "cited_by": [
+        "population"
+      ],
       "declared_use": null,
       "discovered_from": null,
       "archived_copy_of": null,
@@ -12100,7 +12123,9 @@
         "transcriptions": [],
         "registry": []
       },
-      "cited_by": [],
+      "cited_by": [
+        "population"
+      ],
       "declared_use": null,
       "discovered_from": null,
       "archived_copy_of": null,
@@ -12120,7 +12145,9 @@
         "transcriptions": [],
         "registry": []
       },
-      "cited_by": [],
+      "cited_by": [
+        "population"
+      ],
       "declared_use": null,
       "discovered_from": null,
       "archived_copy_of": null,
@@ -12138,7 +12165,9 @@
         "transcriptions": [],
         "registry": []
       },
-      "cited_by": [],
+      "cited_by": [
+        "parking"
+      ],
       "declared_use": "95 public parking lot locations (developer-provided lots under BMC development control), without capacity or tariff: the parking requirement's supply evidence (docs/requirements.json: parking); no parking price or capacity is modelled for this city yet, so nothing reads it",
       "discovered_from": null,
       "archived_copy_of": null,
