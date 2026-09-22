@@ -20,12 +20,12 @@ from build.extract_osm_network import fingerprint
 
 OUTPUT_INPUTS = {
     'schedules/baseline_multimodal.zip': [
-        'schedules/baseline_bus.zip', 'registry/A_baseline_services.json',
+        'schedules/baseline_bus.zip', 'schedules/baseline_suburban_timetable.zip', 'registry/A_baseline_services.json',
         'data/processed/observed/osm_transport_relations.csv',
         'data/processed/observed/osm_transport_points.csv',
         'data/processed/geospatial/osm_research.gpkg'],
     'data/processed/acquisition/baseline_transit_feed.json': [
-        'schedules/baseline_bus.zip', 'registry/A_baseline_services.json',
+        'schedules/baseline_bus.zip', 'schedules/baseline_suburban_timetable.zip', 'registry/A_baseline_services.json',
         'data/processed/observed/osm_transport_relations.csv',
         'data/processed/observed/osm_transport_points.csv',
         'data/processed/observed/water_service_directory.csv',
@@ -121,8 +121,18 @@ def main():
     if len(calendars) != 1:
         raise ValueError('Expected one baseline calendar to make provisional service dates explicit')
     service_id = calendars[0]['service_id']
+    # the suburban trains: the printed timetables' trips (build_suburban_timetable_feed.py)
+    # in place of the generated patterns of the lines they cover (9.209)
+    timetable_gate = cfg.get('A.baseline_transit.suburban_timetable')
+    timetabled_relations = set()
+    if timetable_gate == 'printed_timetables':
+        for spec in cfg.get('A.baseline_transit.suburban_lines').values():
+            timetabled_relations.update(spec['relations'])
     for row in sorted(selected, key=lambda r: int(r['osm_relation_id'])):
         identity, mode = row['osm_relation_id'], row['route_tag']
+        if identity in timetabled_relations:
+            skipped.append(dict(osm_relation_id=identity, reason='line_served_by_printed_timetable'))
+            continue
         members = json.loads(row['ordered_members_json'])
         stops = [m for m in members if m['role'].startswith('stop')]
         if len(stops) < 2:
@@ -246,6 +256,23 @@ def main():
                                window_s=[first, last], length_m=round(length),
                                geometry_source='straight_water_line_between_osm_terminals',
                                timetable_source='directory_window_provisional_headway'))
+    timetable_trips = 0
+    if timetable_gate == 'printed_timetables':
+        with zipfile.ZipFile(city.path('schedules/baseline_suburban_timetable.zip')) as timetable:
+            for name, target in (('stops.txt', None), ('routes.txt', new_routes), ('trips.txt', new_trips), ('stop_times.txt', new_times)):
+                extra = list(csv.DictReader(io.StringIO(timetable.read(name).decode('utf-8-sig'))))
+                if name == 'stops.txt':
+                    for stop in extra:
+                        new_stops.setdefault(stop['stop_id'], dict(stop_id=stop['stop_id'], stop_name=stop['stop_name'],
+                                                                   stop_lon=float(stop['stop_lon']), stop_lat=float(stop['stop_lat'])))
+                else:
+                    target.extend(extra)
+            timetable_trips = sum(1 for _ in new_trips if _['trip_id'].startswith('BASE_TT_'))
+        for r in new_routes:
+            if r['route_id'].startswith('BASE_TT_'):
+                report.append(dict(route_id=r['route_id'], mode='train', stops_count=None,
+                                   departures_count=sum(1 for x in new_trips if x['route_id'] == r['route_id']),
+                                   geometry_source='mapped_native_stops', timetable_source='printed_timetable_trips'))
     additions = {'agency.txt': [dict(agency_id='BASELINE', agency_name='Provisional model services',
                     agency_url='https://www.openstreetmap.org', agency_timezone='Asia/Kolkata')],
                  'stops.txt': list(new_stops.values()), 'routes.txt': new_routes,
@@ -268,6 +295,7 @@ def main():
         output_sha256=fingerprint(output), generated_routes=report, skipped=skipped,
         published_weekday_trips_check=published_trips_check(cfg, report),
         generated_route_counts=dict(Counter(r['mode'] for r in report)),
+        suburban_timetable=timetable_gate, printed_timetable_trips=timetable_trips,
         limitation='Operating frequencies/times are provisional; historical/current operation and corridor details require later refinement. No ridership targets were used.')
     Path(city.path('data/processed/acquisition/baseline_transit_feed.json')).write_text(
         json.dumps(audit, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')

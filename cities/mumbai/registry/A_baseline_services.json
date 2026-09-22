@@ -375,6 +375,192 @@
         "cities/mumbai/build/build_baseline_transit_feed.py"
       ],
       "description": "The operator's printed weekday trips per corridor, compared in the feed audit with the departures generated for the corridor's relations."
+    },
+    "A.baseline_transit.suburban_timetable": {
+      "value": "printed_timetables",
+      "units": "enum",
+      "source": "assumed",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "sweep": {
+        "categorical": [
+          "relation_headways",
+          "printed_timetables"
+        ],
+        "basis": "How the suburban trains enter the feed. relation_headways: every OSM suburban route relation runs at the assumed A.baseline_transit.peak_headway_s / offpeak_headway_s inside A.baseline_transit.service_window_s (every case before 22 September 2026: 31 patterns, 4,278 departures against the operators' 3,234 daily services). printed_timetables: the trains of the operators' printed timetables (A.baseline_transit.printed_timetables) as trips, built by build_suburban_timetable_feed.py from the extracted cells; a suburban relation of a line with a timetable is not generated, one without (the Vasai Road-Diva line, the Diva-Panvel and Diva-Roha MEMU) still is."
+      },
+      "sweep_role": "uncertainty",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_transit_feed.py"
+      ],
+      "description": "The representation gate for the suburban rail timetable."
+    },
+    "A.baseline_transit.suburban_lines": {
+      "value": {
+        "western": {
+          "operator": "WR",
+          "short_name": "WR",
+          "route_type": 2,
+          "relations": [
+            "11094508",
+            "11094509",
+            "11511059",
+            "11511060"
+          ]
+        },
+        "central_main": {
+          "operator": "CR",
+          "short_name": "CR Main",
+          "route_type": 2,
+          "relations": [
+            "9953729",
+            "9953730",
+            "11491270",
+            "11491271",
+            "11514142",
+            "11514143",
+            "11514202",
+            "11514203"
+          ]
+        },
+        "harbour": {
+          "operator": "CR",
+          "short_name": "CR Harbour",
+          "route_type": 2,
+          "relations": [
+            "8130328",
+            "9622461",
+            "9623798",
+            "11093105"
+          ]
+        },
+        "trans_harbour": {
+          "operator": "CR",
+          "short_name": "CR Trans-Harbour",
+          "route_type": 2,
+          "relations": [
+            "8414240",
+            "11511942",
+            "11511950",
+            "11511951"
+          ]
+        },
+        "port": {
+          "operator": "CR",
+          "short_name": "CR Nerul-Uran",
+          "route_type": 2,
+          "relations": [
+            "8418422",
+            "11512072",
+            "11512075",
+            "11512076"
+          ]
+        }
+      },
+      "units": "definition",
+      "source": "definition",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "sweep": null,
+      "consumers": [
+        "cities/mumbai/build/build_suburban_timetable_feed.py",
+        "cities/mumbai/build/build_baseline_transit_feed.py"
+      ],
+      "description": "The suburban lines the printed timetables describe: the operator, the GTFS route type and the OSM route relations whose stop members name the line's stations (and which the feed no longer generates when A.baseline_transit.suburban_timetable = printed_timetables)."
+    },
+    "A.baseline_transit.printed_timetables": {
+      "value": {
+        "wr_public_timetable_attachment_1": {
+          "line": "western",
+          "role": "primary",
+          "sheet": "WR pocket time table 79 DN, w.e.f. 1 September 2026"
+        },
+        "wr_public_timetable_attachment_2": {
+          "line": "western",
+          "role": "primary",
+          "sheet": "WR pocket time table 79 UP, w.e.f. 1 September 2026"
+        },
+        "wr_public_timetable_attachment_5": {
+          "line": "western",
+          "role": "primary",
+          "sheet": "WR Dahanu Road services, w.e.f. 1 September 2026",
+          "order": "printed_clock"
+        },
+        "wr_public_timetable_attachment_3": {
+          "line": "western",
+          "role": "supplement",
+          "flag": "AC",
+          "sheet": "WR DN AC trains PTT 79, w.e.f. 1 September 2026"
+        },
+        "wr_public_timetable_attachment_4": {
+          "line": "western",
+          "role": "supplement",
+          "flag": "AC",
+          "sheet": "WR UP AC trains PTT 79, w.e.f. 1 September 2026"
+        },
+        "cr_public_main_down_2024": {
+          "line": "central_main",
+          "role": "primary",
+          "sheet": "CR main line down, 2024"
+        },
+        "cr_public_main_up_2024": {
+          "line": "central_main",
+          "role": "primary",
+          "sheet": "CR main line up, 2024"
+        },
+        "cr_public_main_ac_20250416": {
+          "line": "central_main",
+          "role": "supplement",
+          "flag": "AC",
+          "sheet": "CR main line AC services, 16 April 2025"
+        },
+        "cr_public_main_15_car_20260815": {
+          "line": "central_main",
+          "role": "supplement",
+          "flag": "15car",
+          "sheet": "CR main line 15-car services, 15 August 2026"
+        },
+        "cr_public_harbour_down_20260501": {
+          "line": "harbour",
+          "role": "primary",
+          "sheet": "CR harbour line down, 1 May 2026"
+        },
+        "cr_public_harbour_up_20260501": {
+          "line": "harbour",
+          "role": "primary",
+          "sheet": "CR harbour line up, 1 May 2026"
+        },
+        "cr_public_harbour_ac_20260501": {
+          "line": "harbour",
+          "role": "supplement",
+          "flag": "AC",
+          "sheet": "CR harbour line AC services, 1 May 2026"
+        },
+        "cr_public_trans_harbour_20240113": {
+          "line": "trans_harbour",
+          "role": "primary",
+          "sheet": "CR trans-harbour line, 13 January 2024"
+        },
+        "cr_public_port_line_20251215": {
+          "line": "port",
+          "role": "primary",
+          "sheet": "CR Nerul-Uran port line, 15 December 2025"
+        }
+      },
+      "units": "definition",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the operators' printed timetable sheets the package holds (wr_printed_timetable_cells.csv, cr_printed_timetable_cells.csv), each assigned to its line and read as a primary table or as a supplement that flags AC or 15-car trains; the WR harbour sheet of October 2022 (wr_public_timetable_attachment_6) is superseded by the CR harbour sheets of May 2026 and not read. Never varied",
+        "decisions_ref": "9.209",
+        "departure_requires": "a newer printed sheet"
+      },
+      "consumers": [
+        "cities/mumbai/build/build_suburban_timetable_feed.py"
+      ],
+      "description": "The printed timetable sheets that make the suburban services, by catalogue source id: the line, the role (primary or supplement) and the flag a supplement carries. A sheet marked order = printed_clock (the WR Dahanu Road sheet, whose two side-by-side tables the cell reader cannot order) has its stops taken in clock order."
     }
   }
 }

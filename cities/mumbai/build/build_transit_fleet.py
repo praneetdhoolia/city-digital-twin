@@ -62,6 +62,8 @@ CAPACITY_FIELDS = (
     'A.transit.ferry_wharf_mora_capacity_seated', 'A.transit.ferry_gateway_mandwa_capacity_seated',
     'A.transit.ferry_m2m_mandwa_capacity_seated',
     'A.transit.rail_capacity_seated', 'A.transit.rail_capacity_standing', 'A.transit.rail_capacity_total',
+    'A.transit.rail_ac_capacity_seated', 'A.transit.rail_ac_capacity_standing',
+    'A.transit.rail_15car_capacity_seated', 'A.transit.rail_15car_capacity_standing',
     'A.transit.bus_capacity_seated', 'A.transit.bus_capacity_standing',
     'A.transit.metro_seated_share',
     'A.transit.metro_line1_capacity_total', 'A.transit.metro_line1_capacity_seated', 'A.transit.metro_line1_capacity_standing',
@@ -101,10 +103,13 @@ def lines_of(schedule_text):
         yield line_id, modes.pop(), vehicles
 
 
-def profile_for(line_id, mode, base_type, by_relation, by_mode, by_directory=None):
+def profile_for(line_id, mode, base_type, by_relation, by_mode, by_directory=None, by_substring=None):
     m = GENERATED_LINE_RE.match(line_id)
     if m and m.group(1) in by_relation:
         return by_relation[m.group(1)]
+    for needle, profile_id in sorted((by_substring or {}).items(), key=lambda kv: -len(kv[0])):
+        if needle in line_id:               # the timetable's AC and 15-car routes
+            return profile_id
     m = DIRECTORY_LINE_RE.match(line_id)
     if m and m.group(1) in (by_directory or {}):
         return by_directory[m.group(1)]
@@ -127,8 +132,12 @@ def main():
         cfg.get(field)
     declared = cfg.get('A.transit.fleet_profiles')
     cfg.get('A.baseline_transit.directory_crossings')   # the crossings the directory lines come from
-    profiles, by_relation, by_mode, by_directory = {}, {}, {}, {}
+    profiles, by_relation, by_mode, by_directory, by_substring = {}, {}, {}, {}, {}
     for profile_id, spec in declared.items():
+        if spec.get('route_id_contains'):
+            if spec['route_id_contains'] in by_substring:
+                raise SystemExit('route id substring %s is claimed by two profiles' % spec['route_id_contains'])
+            by_substring[spec['route_id_contains']] = profile_id
         profiles[profile_id] = dict(base_type=spec['base_type'], seats_field=spec['seats_field'],
                                     standing_field=spec['standing_field'])
         for rel in spec.get('relations', []):
@@ -158,7 +167,7 @@ def main():
         mapped_types = sorted(set(vehicle_types.get(v) for v in line_vehicles))
         if len(mapped_types) != 1:
             raise SystemExit('transit line %s runs %d mapped vehicle types; one expected' % (line_id, len(mapped_types)))
-        profile_id = profile_for(line_id, mode, mapped_types[0], by_relation, by_mode, by_directory)
+        profile_id = profile_for(line_id, mode, mapped_types[0], by_relation, by_mode, by_directory, by_substring)
         base = profiles[profile_id]['base_type']
         for vid in line_vehicles:
             if vid not in vehicle_types:
