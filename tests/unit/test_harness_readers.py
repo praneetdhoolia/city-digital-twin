@@ -93,6 +93,33 @@ def test_a_recorded_pid_that_is_gone_is_still_dead(tmp_path, monkeypatch):
     assert 'DEAD' in watch_run.one_line(snap)
 
 
+def test_a_half_written_iteration_does_not_kill_the_watch(tmp_path, monkeypatch):
+    """A reading that is still being written is retried, never fatal.
+
+    `readable_iterations` sees an iteration's tables the moment they appear,
+    and reading `trips.csv.gz` while MATSim was still writing it raised
+    EOFError out of gzip and killed the watcher of a live 42 h arm.
+    """
+    d = _run(tmp_path, dict(status='running', pid=11, jvm_pid=22), 'log\n')
+
+    import report_mode_ridership as rmr
+    monkeypatch.setattr(rmr, '_reader_stamp', lambda: 'stamp')
+    monkeypatch.setattr(rmr, 'read_memo', lambda *a, **k: None)
+
+    def _mid_write(*a, **k):
+        raise EOFError('Compressed file ended before the end-of-stream marker '
+                       'was reached')
+    monkeypatch.setattr(rmr, 'report', _mid_write)
+    with pytest.raises(watch_run.NotWrittenYet):
+        watch_run.reading_line(str(d), 0)
+
+    # any OTHER failure is reported on the line, and still does not raise
+    def _broken(*a, **k):
+        raise ValueError('a malformed row')
+    monkeypatch.setattr(rmr, 'report', _broken)
+    assert 'reading failed' in watch_run.reading_line(str(d), 0)
+
+
 def test_verify_launch_binds_to_the_stamp_not_the_newest_run(tmp_path, monkeypatch):
     """The stamp names the run before the run exists; the newest is the wrong one."""
     raw = tmp_path / 'raw'

@@ -242,11 +242,25 @@ def one_line(s):
     return '; '.join(parts)
 
 
+class NotWrittenYet(Exception):
+    """The iteration's tables exist but MATSim has not finished writing them.
+
+    `readable_iterations` sees a file the moment it appears, and a 25 % arm
+    takes appreciable time to finish writing one: reading `trips.csv.gz` mid
+    write raised `EOFError: Compressed file ended before the end-of-stream
+    marker was reached` and killed the whole watch, which is the failure
+    9.176 exists to prevent - a run left with nobody reporting on it. The
+    iteration is left unseen and read again at the next poll.
+    """
+
+
 def reading_line(run_dir, it):
     """One compact line of the twelve modes at one iteration, from the memo
     where it exists (report_mode_ridership 9.176) and derived otherwise."""
     import contextlib
+    import csv
     import io
+    import zlib
     import report_mode_ridership as rmr
     stamp = rmr._reader_stamp()
     doc = rmr.read_memo(run_dir, it, False, stamp)
@@ -256,6 +270,10 @@ def reading_line(run_dir, it):
                 rmr.report(run_dir, it, False)
         except SystemExit as e:
             return 'reading unavailable: %s' % e
+        except (EOFError, OSError, zlib.error, csv.Error) as e:
+            raise NotWrittenYet('%s: %s' % (type(e).__name__, e))
+        except Exception as e:      # a READING must never take the watch down
+            return 'reading failed: %s: %s' % (type(e).__name__, e)
         doc = rmr.write_memo(run_dir, it, False, stamp)
     bits = []
     for m, v in doc['modelled'].items():
@@ -284,10 +302,14 @@ def events(run_dir, poll, read, heartbeat):
         for it in readable_iterations(run_dir):
             if it in seen:
                 continue
-            seen.add(it)
             line = 'READABLE it.%d landed; %s' % (it, one_line(s))
             if read:
-                line += '\n    ' + reading_line(run_dir, it)
+                try:
+                    line += '\n    ' + reading_line(run_dir, it)
+                except NotWrittenYet:
+                    # still being written; leave it unseen and try next poll
+                    continue
+            seen.add(it)
             print(line, flush=True)
         if s['harness_alive'] is False and s['jvm_alive'] and not said_dead:
             print('HARNESS DEAD %s: pid %s is gone while the JVM writes on (log %s s old): '
