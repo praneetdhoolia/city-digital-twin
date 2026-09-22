@@ -33,7 +33,13 @@ registrations without scrappage for the 2026 leg.
 
 Registration stock counts vehicles on record at the office, not vehicles in
 use in the district: a growth RATIO cancels a constant record inflation, not a
-changing one, and the report says so. Output: `data/processed/derived/vehicle_possession_growth.csv`.
+changing one, and the report says so. The only later survey observation of
+possession the package holds - NFHS-4 (2015-16) and NFHS-5 (2019-21),
+Maharashtra urban households (`nfhs_household_vehicle_possession.csv`) - is
+compared in the report as a yearly growth of the Poisson rate lambda =
+-ln(1 - share) beside each district's derived yearly growth: a state-level
+check on the direction and pace, not a control. Outputs:
+`data/processed/derived/vehicle_possession_growth.csv` and its report.
 """
 from collections import defaultdict
 import csv
@@ -54,6 +60,10 @@ OUTPUT_INPUTS = {
         'data/processed/observed/district_population_projections.csv',
         'data/processed/zones/mmr_extent.csv',
         'registry/B_population.json',
+    ],
+    'data/processed/derived/_vehicle_possession_growth_report.json': [
+        'data/processed/derived/vehicle_possession_growth.csv',
+        'data/processed/observed/nfhs_household_vehicle_possession.csv',
     ],
 }
 # the RTO offices of registration inside each Census 2011 district (Palghar,
@@ -152,6 +162,30 @@ def main():
         writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator='\n')
         writer.writeheader()
         writer.writerows(rows)
+    # the NFHS check: the state's urban lambda growth a year between the two surveys
+    nfhs = read('data/processed/observed/nfhs_household_vehicle_possession.csv')
+    survey_mid = {'2015-16': 2015.5, '2019-21': 2020.0}       # the survey periods' midpoints
+    check = {}
+    for category, item in (('two_wheeler', 'motorcycle_or_scooter'), ('car', 'car')):
+        shares = {r['reference_period']: float(r['households_possessing_pct']) / 100
+                  for r in nfhs if r['residence'] == 'urban' and r['item'] == item}
+        periods = sorted(shares, key=survey_mid.get)
+        lam = [-math.log(1 - shares[p]) for p in periods]
+        years = survey_mid[periods[-1]] - survey_mid[periods[0]]
+        check[category] = dict(nfhs_urban_share_by_period={p: shares[p] for p in periods},
+                               nfhs_urban_lambda_growth_per_year=round((lam[-1] / lam[0]) ** (1 / years), 4),
+                               derived_growth_per_year_by_district={
+                                   r['district_code']: round(r['growth_per_household'] ** (1 / (base_year_int - year_2011)), 4)
+                                   for r in rows if r['category'] == category})
+    report = dict(source='derived', method='see the module docstring', rows=len(rows),
+                  years=dict(census=year_2011, office_stock_first=year_2017, office_stock_last=year_2025, base=base_year_int),
+                  nfhs_check=check,
+                  reading='the derived per-household stock growth a year is compared with the growth a year of the '
+                          'Poisson rate of the state urban possession share between the two surveys; a district whose '
+                          'derived rate exceeds the survey rate is projected faster than the state moved')
+    Path(city.path('data/processed/derived/_vehicle_possession_growth_report.json')).write_text(
+        json.dumps(report, indent=2) + '\n', encoding='utf-8', newline='\n')
+    print(json.dumps(check, indent=1))
     for r in rows:
         print('%s %-11s stock %9d -> %9d  per household %.3f -> %.3f  growth %.2f [%.2f, %.2f]' % (
             r['district_code'], r['category'], r['stock_20170331'], r['stock_20250331'],

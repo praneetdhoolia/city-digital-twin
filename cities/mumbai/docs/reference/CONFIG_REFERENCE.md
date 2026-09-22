@@ -27,22 +27,22 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 412 fields are made of
+## What the 428 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
-| `observed` | 9 | read directly from a raw download |
+| `observed` | 14 | read directly from a raw download |
 | `measured` | 9 | computed from observed data in this package |
-| `derived` | 22 | follows from another registry field by identity |
+| `derived` | 25 | follows from another registry field by identity |
 | `literature` | 36 | a published value, not specific to this city |
-| `assumed` | 160 | chosen without direct empirical support |
-| `definition` | 176 | fixed by the formulation, not an empirical quantity |
+| `assumed` | 166 | chosen without direct empirical support |
+| `definition` | 178 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 370 | usable point value |
+| `active` | 392 | usable point value |
 | `computed` | 6 | written at run time from other fields; do not hand-edit |
-| `placeholder` | 35 | a structural stand-in; the model runs but the field is not defensible |
+| `placeholder` | 29 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 1 | the datum does not exist in the package; must be swept, never pinned |
 
 ### The 1 fields with no value
@@ -53,14 +53,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 |---|---|---|
 | `B.population.tertiary_attendance_rate_20_24` | 0 - 0.35 | Unobtained: null, and the synthesiser makes nobody in that age range a student, which the report says. |
 
-### What the 196 sweeps are for
+### What the 202 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 5 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 183 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 189 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 8 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -73,11 +73,16 @@ The `answer` sweeps - the runs the study owes after the gate:
 | `RUN.replanning.score_msa_representation` | `absent` | `absent`, `at_innovation_cutoff` |
 | `RUN.routing.access_egress_consistency_check` | `reroute` | `reroute`, `disable`, `abortOnInconsistency` |
 
-### The 12 fields held fixed
+### The 17 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
-- `A.baseline_transit.line_windows_s` - the operator's published first and last trains (MMMOCL Train Time Table, Internet Archive capture of 17 September 2025: mmmocl_schedule_20260918_archived_20250917), read per direct
+- `A.baseline_transit.line_headways_s` - MMRDA's press release PRC/PR/12/2026 of 6 April 2026 (mmr_metro_april_2026_timetable; metro_timetable_april2026 is the same bytes), the timetables effective 8 April 2026: Line 2A p
+- `A.baseline_transit.line_published_weekday_trips` - MMRDA's press release PRC/PR/12/2026 of 6 April 2026 (mmr_metro_april_2026_timetable): total weekday trips per corridor, both directions - Line 2A 289, the integrated Line 7 and Li
+- `A.baseline_transit.line_windows_s` - the operator's published first and last trains (MMMOCL Train Time Table as served on 22 September 2026, mmmocl_schedule_20260918, Marathi page, Devanagari digits read as their ASCI
+- `A.baseline_transit.printed_timetables` - the operators' printed timetable sheets the package holds (wr_printed_timetable_cells.csv, cr_printed_timetable_cells.csv), each assigned to its line and read as a primary table or
+- `A.transit.rail_ac_capacity_seated` - PIB's release of 24 December 2017 (pib_first_ac_emu_2017; suburban_first_ac_capacity_2017.csv, 'Complete rake'): the 12-car AC EMU rake seats 1,028 with 4,936 standing, 5,964 in al
+- `A.transit.rail_ac_capacity_standing` - PIB's release of 24 December 2017 (suburban_first_ac_capacity_2017.csv, 'Complete rake'): 4,936 standing places in the 12-car AC rake. Never varied
 - `B.activity.detour_factor` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
 - `B.activity.short_trip_band_km` - the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - t
 - `B.targets.goods_vehicle_traffic_share_pct` - a published screenline observation (CMP for Greater Mumbai executive summary, traffic composition), never varied
@@ -135,7 +140,7 @@ Adult-priced development population pending verified concessions and pass owners
 
 ## Provisional broad transit services
 
-*`cities/mumbai/registry/A_baseline_services.json` - 11 fields*
+*`cities/mumbai/registry/A_baseline_services.json` - 16 fields*
 
 
 
@@ -145,13 +150,18 @@ Adult-priced development population pending verified concessions and pass owners
 | `A.baseline_transit.directory_crossings` | `{"1": {"from": "1640461450", "to": "4306257482", "profile": "ferry_versova_madh"}, "3": {"from": "627734256...` | crossing_table | `definition` | - |
 | `A.baseline_transit.distance_multiplier` | `{"train": 1.25, "subway": 1.15, "ferry": 1.0}` | factor | `assumed` | 1 - 1.75 |
 | `A.baseline_transit.gtfs_route_types` | `{"train": 2, "subway": 1, "ferry": 4}` | GTFS_route_type_codes | `definition` | - |
-| `A.baseline_transit.line_windows_s` | `{"13989912": [21300, 82800], "13989913": [23580, 81360], "13989914": [21600, 82800], "13989915": [20580, 81...` | seconds_after_midnight | `observed` | **held fixed** |
+| `A.baseline_transit.line_headways_s` | `{"13989912": {"peak": 360, "offpeak": 540}, "13989913": {"peak": 360, "offpeak": 540}, "13989914": {"peak":...` | seconds_per_vehicle | `observed` | **held fixed** |
+| `A.baseline_transit.line_published_weekday_trips` | `{"Line 2A": {"relations": ["13989912", "13989913"], "trips": 289}, "Line 7 with Line 9": {"relations": ["13...` | trips_per_weekday | `observed` | **held fixed** |
+| `A.baseline_transit.line_windows_s` | `{"13989912": [21300, 82800], "13989913": [21600, 81300], "13989914": [21600, 82800], "13989915": [21480, 81...` | seconds_after_midnight | `observed` | **held fixed** |
 | `A.baseline_transit.networks` | `{"train": ["Mumbai Suburban Railway", "IR"], "subway": ["Mumbai Metro", "Navi Mumbai Metro"]}` | OSM_network_tags | `definition` | - |
 | `A.baseline_transit.offpeak_headway_s` | `{"train": 900, "subway": 600, "ferry": 1800}` | seconds | `assumed` | 300 - 5400 |
 | `A.baseline_transit.peak_headway_s` | `{"train": 600, "subway": 360, "ferry": 1800}` | seconds | `assumed` | 180 - 3600 |
 | `A.baseline_transit.peak_windows_s` | `[[25200, 36000], [61200, 72000]]` | seconds_after_midnight | `assumed` | 21600 - 75600 |
+| `A.baseline_transit.printed_timetables` | `{"wr_public_timetable_attachment_1": {"line": "western", "role": "primary", "sheet": "WR pocket time table ...` | definition | `observed` | **held fixed** |
 | `A.baseline_transit.service_window_s` | `[18000, 86400]` | seconds_after_midnight | `assumed` | 14400 - 90000 |
 | `A.baseline_transit.stop_dwell_s` | `{"train": 30, "subway": 30, "ferry": 120}` | seconds | `assumed` | 15 - 300 |
+| `A.baseline_transit.suburban_lines` | `{"western": {"operator": "WR", "short_name": "WR", "route_type": 2, "relations": ["11094508", "11094509", "...` | definition | `definition` | - |
+| `A.baseline_transit.suburban_timetable` | `printed_timetables` | enum | `assumed` | `relation_headways`, `printed_timetables` |
 
 #### `A.baseline_transit.commercial_speed_kmh`
 
@@ -181,13 +191,33 @@ GTFS mode vocabulary.
 
 ***definition** · status **active** · DECISIONS.md §9.187*
 
+#### `A.baseline_transit.line_headways_s`
+
+The published peak and off-peak headways of a generated line, keyed by its OSM route relation, in place of the mode-wide assumed A.baseline_transit.peak_headway_s / offpeak_headway_s for that relation; the peak windows are A.baseline_transit.peak_windows_s.
+
+***observed** · status **active** · DECISIONS.md §9.209*
+
+> **Held fixed.** MMRDA's press release PRC/PR/12/2026 of 6 April 2026 (mmr_metro_april_2026_timetable; metro_timetable_april2026 is the same bytes), the timetables effective 8 April 2026: Line 2A peak 6 minutes, non-peak 8-10 minutes (289 weekday trips); the integrated Line 7 and Line 9 corridor peak 5:50 minutes, non-peak 8-10 minutes (276 weekday trips); Line 2B phase 1 every about 9 minutes 30 seconds (209 trips). A printed band is taken at its midpoint (9 minutes); the builder prints the departures it generates beside the printed weekday trips. Never varied
+>
+> *Departure requires: a newer published timetable or a dated departure list for the line*
+
+#### `A.baseline_transit.line_published_weekday_trips`
+
+The operator's printed weekday trips per corridor, compared in the feed audit with the departures generated for the corridor's relations.
+
+***observed** · status **active** · DECISIONS.md §9.209*
+
+> **Held fixed.** MMRDA's press release PRC/PR/12/2026 of 6 April 2026 (mmr_metro_april_2026_timetable): total weekday trips per corridor, both directions - Line 2A 289, the integrated Line 7 and Line 9 corridor 276, Line 2B phase 1 209. A check the feed builder prints against the departures it generates from the published windows and headways, never a generator input; the Line 7 and Line 9 relations are separate OSM routes while the operator runs one through corridor, so their generated departures are compared with twice the printed count. Never varied
+>
+> *Departure requires: a newer published timetable*
+
 #### `A.baseline_transit.line_windows_s`
 
-The service window of a generated line, keyed by its OSM route relation, where the operator publishes first and last trains; a relation not listed runs the assumed A.baseline_transit.service_window_s. Lines 2A and 7 (MMMOCL) are the first; Line 1, Line 3 and Navi Mumbai Line 1 windows await their operators' published timetables in the same shape.
+The service window of a generated line, keyed by its OSM route relation, where the operator publishes first and last trains; a relation not listed runs the assumed A.baseline_transit.service_window_s. Lines 2A, 7, 9 and 2B (MMMOCL) are listed; Line 1, Line 3 and Navi Mumbai Line 1 windows await their operators' published timetables in the same shape.
 
-***observed** · status **active** · DECISIONS.md §9.208*
+***observed** · status **active** · DECISIONS.md §9.209*
 
-> **Held fixed.** the operator's published first and last trains (MMMOCL Train Time Table, Internet Archive capture of 17 September 2025: mmmocl_schedule_20260918_archived_20250917), read per direction as the earliest first and latest last departure from the pattern's origin terminal - Line 2A Andheri West to Dahisar East 05:55-23:00, Dahisar East to Andheri West 06:33-22:36, Line 7 Gundavali to Dahisar East 06:00-23:00 (the 06:00 and 23:00 services run through to Andheri West / Dahanukarwadi), Dahisar East to Gundavali 05:43-22:38; never varied
+> **Held fixed.** the operator's published first and last trains (MMMOCL Train Time Table as served on 22 September 2026, mmmocl_schedule_20260918, Marathi page, Devanagari digits read as their ASCII values), per direction as the earliest first and latest last departure from the pattern's origin terminal, a through service counting for every pattern it traverses - Line 2A Andheri West to Dahisar East 05:55-23:00, Dahisar East to Andheri West 06:00-22:35; Line 7 Gundavali to Dahisar East 06:00-23:00 (the Gundavali-Kashigaon through services), Dahisar East to Gundavali 05:58-22:38; Line 9 Kashigaon to Dahisar East 05:50-22:30 (the Kashigaon-Gundavali through services), Dahisar East to Kashigaon 06:33-23:33; Line 2B Chembur to Mandale 06:00-22:30, Mandale to Chembur 06:00-22:15. The 17 September 2025 archive capture (mmmocl_schedule_20260918_archived_20250917) gave the earlier 2A/7 windows (9.208); never varied
 >
 > *Departure requires: a newer published timetable, or a dated departure list for the line*
 
@@ -221,6 +251,16 @@ Provisional morning and evening service peaks.
 
 > **Sweep basis.** Provisional broad service assumptions; test service supply sensitivity, not fitted ridership shares.
 
+#### `A.baseline_transit.printed_timetables`
+
+The printed timetable sheets that make the suburban services, by catalogue source id: the line, the role (primary or supplement) and the flag a supplement carries. A sheet marked order = printed_clock (the WR Dahanu Road sheet, whose two side-by-side tables the cell reader cannot order) has its stops taken in clock order.
+
+***observed** · status **active** · DECISIONS.md §9.209*
+
+> **Held fixed.** the operators' printed timetable sheets the package holds (wr_printed_timetable_cells.csv, cr_printed_timetable_cells.csv), each assigned to its line and read as a primary table or as a supplement that flags AC or 15-car trains; the WR harbour sheet of October 2022 (wr_public_timetable_attachment_6) is superseded by the CR harbour sheets of May 2026 and not read. Never varied
+>
+> *Departure requires: a newer printed sheet*
+
 #### `A.baseline_transit.service_window_s`
 
 Provisional operating window for generated rail, metro and ferry services.
@@ -237,9 +277,23 @@ Provisional stop dwell applied to generated schedules.
 
 > **Sweep basis.** Provisional broad service assumptions; test service supply sensitivity, not fitted ridership shares.
 
+#### `A.baseline_transit.suburban_lines`
+
+The suburban lines the printed timetables describe: the operator, the GTFS route type and the OSM route relations whose stop members name the line's stations (and which the feed no longer generates when A.baseline_transit.suburban_timetable = printed_timetables).
+
+***definition** · status **active** · DECISIONS.md §9.209*
+
+#### `A.baseline_transit.suburban_timetable`
+
+The representation gate for the suburban rail timetable.
+
+***assumed** · status **active** · DECISIONS.md §9.209 · sweep role **uncertainty***
+
+> **Sweep basis.** How the suburban trains enter the feed. relation_headways: every OSM suburban route relation runs at the assumed A.baseline_transit.peak_headway_s / offpeak_headway_s inside A.baseline_transit.service_window_s (every case before 22 September 2026: 31 patterns, 4,278 departures against the operators' 3,234 daily services). printed_timetables: the trains of the operators' printed timetables (A.baseline_transit.printed_timetables) as trips, built by build_suburban_timetable_feed.py from the extracted cells; a suburban relation of a line with a timetable is not generated, one without (the Vasai Road-Diva line, the Diva-Panvel and Diva-Roha MEMU) still is.
+
 ## Provisional broad Mumbai supply
 
-*`cities/mumbai/registry/A_baseline_supply.json` - 45 fields*
+*`cities/mumbai/registry/A_baseline_supply.json` - 47 fields*
 
 First runnable baseline; provisional parameters are explicit and are not calibrated observations.
 
@@ -254,6 +308,8 @@ First runnable baseline; provisional parameters are explicit and are not calibra
 | `A.baseline.transit_timing` | `{"speed_ms": {"bus": 8.333333333333334, "rail": 16.666666666666668, "subway": 16.666666666666668, "ferry": ...` | metres_per_second_and_seconds | `assumed` | plus/minus 50% |
 | `A.fare.boarding_representation` | `table` | enum | `definition` | - |
 | `A.fare.boarding_route_choice` | `true` | boolean | `definition` | - |
+| `A.gradient.dem_tiles` | `data/raw/geospatial/copernicus_dsm_*.tif` | city_relative_glob | `definition` | - |
+| `A.gradient.grade_clamp_pct` | `20.0` | percent | `assumed` | 10 - 35 |
 | `A.network.freespeed_factor` | `1.0` | factor | `definition` | - |
 | `A.network.keep_paths` | `false` | boolean | `definition` | - |
 | `A.network.keep_tags_as_attributes` | `true` | boolean | `definition` | - |
@@ -350,6 +406,20 @@ Whether pt boardings are charged from a per-route boarding-fare table (citysim.B
 Price each candidate transit boarding with the same city fare table and person-specific money utility as executed scoring, before RAPTOR prunes paths. This enables a mechanism, not a calibrated preference. Moved from RUN.smoke.boardingFare.routeChoice on 21 September 2026 (9.204): one key per MATSim parameter, under the framework's fare vocabulary.
 
 ***definition** · status **active** · DECISIONS.md §9.204 · MATSim `boardingFare.routeChoice`*
+
+#### `A.gradient.dem_tiles`
+
+The acquired Copernicus GLO-30 DSM tiles (copernicus_dsm_cog_10_N17..N20_00_E072..E073_00_DEM, seven one-degree tiles selected by raster_tile_selection.json) the run-network node elevations are sampled from.
+
+***definition** · status **active** · DECISIONS.md §9.209*
+
+#### `A.gradient.grade_clamp_pct`
+
+The largest absolute grade, in percent, stamped on a run-network link from the Copernicus GLO-30 node elevations (A.gradient.representation = link_speed).
+
+***assumed** · status **active** · DECISIONS.md §9.209 · sweep role **uncertainty***
+
+> **Sweep basis.** Node-elevation differencing of a 30 m DEM over very short links (the converted network's median link is 63 m, 41 % under 50 m) produces grade outliers no street sustains; the clamp bounds the stamped attribute. The assembly report prints the stamped-grade distribution (p99 and maximum) so the clamp can be re-declared on it; the reference city's declaration, adopted with the same sweep.
 
 #### `A.network.freespeed_factor`
 
@@ -633,7 +703,7 @@ Transliteration reconciliation between the village names of the MMR extended-not
 | `A.gradient.bike_speed_ceiling_factor` | `1.3` | share | `assumed` | 1 - 1.5 |
 | `A.gradient.bike_speed_floor_factor` | `0.2` | share | `assumed` | 0.1 - 0.3 |
 | `A.gradient.bike_uphill_slowdown_per_pct` | `0.065` | share_of_flat_speed_per_pct | `literature` | 0.03 - 0.1 |
-| `A.gradient.representation` | `absent` | enum | `assumed` | `absent`, `link_speed` |
+| `A.gradient.representation` | `link_speed` | enum | `assumed` | `absent`, `link_speed` |
 | `A.gradient.walk_tobler_offset` | `0.05` | gradient_fraction | `literature` | 0.03 - 0.07 |
 | `A.gradient.walk_tobler_slope_coeff` | `3.5` | dimensionless | `literature` | 2.5 - 4.5 |
 | `A.parking.charged_end_hour` | *(null - unobtained)* | hour_of_day | `derived` | derived: A.parking.charged_hours_by_day_type[day][1], 0 for a day with no windo |
@@ -688,39 +758,39 @@ The representation gate for the two boom-gated freight level crossings. Switched
 
 #### `A.gradient.bike_downhill_speedup_per_pct`
 
-Fraction of flat cycling speed gained per percent of downhill grade. Adopted from the reference city and INERT here: A.gradient.representation = "absent" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+Fraction of flat cycling speed gained per percent of downhill grade. Adopted from the reference city's declaration; not a Mumbai observation.
 
-***literature** · status **placeholder** · DECISIONS.md §9.202 · MATSim `gradient.bikeDownhillSpeedupPerPct` · sweep role **uncertainty***
+***literature** · status **active** · DECISIONS.md §9.202 · MATSim `gradient.bikeDownhillSpeedupPerPct` · sweep role **uncertainty***
 
 > **Sweep basis.** Downhill gains are much smaller than uphill losses in the same on-road measurements (braking and control dominate); zero - no downhill gain at all - is inside the sweep.
 
 #### `A.gradient.bike_speed_ceiling_factor`
 
-Upper clamp on the bike gradient speed factor. Adopted from the reference city and INERT here: A.gradient.representation = "absent" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+Upper clamp on the bike gradient speed factor. Adopted from the reference city's declaration; not a Mumbai observation.
 
-***assumed** · status **placeholder** · DECISIONS.md §9.202 · MATSim `gradient.bikeCeilingFactor` · sweep role **uncertainty***
+***assumed** · status **active** · DECISIONS.md §9.202 · MATSim `gradient.bikeCeilingFactor` · sweep role **uncertainty***
 
 > **Sweep basis.** Upper clamp on downhill gain over the declared cap; 1.0 - no downhill gain past the cap - is inside the sweep.
 
 #### `A.gradient.bike_speed_floor_factor`
 
-Lower clamp on the bike gradient speed factor. Adopted from the reference city and INERT here: A.gradient.representation = "absent" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+Lower clamp on the bike gradient speed factor. Adopted from the reference city's declaration; not a Mumbai observation.
 
-***assumed** · status **placeholder** · DECISIONS.md §9.202 · MATSim `gradient.bikeFloorFactor` · sweep role **uncertainty***
+***assumed** · status **active** · DECISIONS.md §9.202 · MATSim `gradient.bikeFloorFactor` · sweep role **uncertainty***
 
 > **Sweep basis.** The slowest a climbing cyclist goes before dismounting; no observation held, so declared and swept. 0.2 of the 4.2 m/s cap is 0.84 m/s - slow walking pace, a dismounted push.
 
 #### `A.gradient.bike_uphill_slowdown_per_pct`
 
-Fraction of flat cycling speed lost per percent of uphill grade, applied multiplicatively to the declared bike speed cap on each graded link. Adopted from the reference city and INERT here: A.gradient.representation = "absent" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+Fraction of flat cycling speed lost per percent of uphill grade, applied multiplicatively to the declared bike speed cap on each graded link. Adopted from the reference city's declaration; not a Mumbai observation.
 
-***literature** · status **placeholder** · DECISIONS.md §9.202 · MATSim `gradient.bikeUphillSlowdownPerPct` · sweep role **uncertainty***
+***literature** · status **active** · DECISIONS.md §9.202 · MATSim `gradient.bikeUphillSlowdownPerPct` · sweep role **uncertainty***
 
 > **Sweep basis.** Parkin & Rotheram 2010 (Ergonomics 53(8), on-road cyclist speeds) measure mean speed falling ~1.4 km/h per 1% of uphill grade against a ~21.6 km/h flat mean, i.e. ~6.5% of flat speed per grade percent; the sweep spans the spread of published grade-speed slopes.
 
 #### `A.gradient.representation`
 
-The representation gate for link gradient in walk and bike travel time (issue #21, reopened by measurement in 9.83). Switched off for this baseline ("absent"): no elevation is attached to the mapped network yet.
+The representation gate for link gradient in walk and bike travel time (issue #21, reopened by measurement in 9.83). Switched on for this baseline ("link_speed"): the Copernicus GLO-30 elevation is sampled at every node of the run network and a signed grade_pct stamped on every link by build_baseline_run_inputs.py (9.209), so walk and bike speeds follow the ground.
 
 ***assumed** · status **active** · DECISIONS.md §9.202 · MATSim `gradient.representation` · sweep role **uncertainty***
 
@@ -728,17 +798,17 @@ The representation gate for link gradient in walk and bike travel time (issue #2
 
 #### `A.gradient.walk_tobler_offset`
 
-Grade offset of the Tobler hiking function (the downgrade at which walking is fastest). Adopted from the reference city and INERT here: A.gradient.representation = "absent" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+Grade offset of the Tobler hiking function (the downgrade at which walking is fastest). Adopted from the reference city's declaration; not a Mumbai observation.
 
-***literature** · status **placeholder** · DECISIONS.md §9.202 · MATSim `gradient.walkToblerOffset` · sweep role **uncertainty***
+***literature** · status **active** · DECISIONS.md §9.202 · MATSim `gradient.walkToblerOffset` · sweep role **uncertainty***
 
 > **Sweep basis.** The published Tobler offset: maximum walking speed occurs on a slight (-5%) downgrade. Swept narrowly around the published value.
 
 #### `A.gradient.walk_tobler_slope_coeff`
 
-Slope coefficient of the Tobler hiking function, normalised so a flat link keeps the declared walk speed cap unchanged. Adopted from the reference city and INERT here: A.gradient.representation = "absent" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+Slope coefficient of the Tobler hiking function, normalised so a flat link keeps the declared walk speed cap unchanged. Adopted from the reference city's declaration; not a Mumbai observation.
 
-***literature** · status **placeholder** · DECISIONS.md §9.202 · MATSim `gradient.walkToblerSlopeCoeff` · sweep role **uncertainty***
+***literature** · status **active** · DECISIONS.md §9.202 · MATSim `gradient.walkToblerSlopeCoeff` · sweep role **uncertainty***
 
 > **Sweep basis.** Tobler 1993 (Three presentations on geographical analysis and modeling): W = 6 exp(-3.5 |dh/dx + 0.05|) km/h. The same function already produced walk_speed_factor_fwd/_rev on the A6 footway layer, so the run-time formula and the P2 data layer share one published source. Swept around the published coefficient.
 
@@ -1047,7 +1117,7 @@ Local clock basis for published departures.
 
 ## Transit vehicle passenger capacities per operated configuration (9.206)
 
-*`cities/mumbai/registry/A_transit_fleet.json` - 30 fields*
+*`cities/mumbai/registry/A_transit_fleet.json` - 34 fields*
 
 
 
@@ -1080,6 +1150,10 @@ Local clock basis for published departures.
 | `A.transit.metro_navi_capacity_standing` | `950` | persons_per_vehicle | `derived` | derived: A.transit.metro_navi_capacity_total - A.transit.metro_navi_capacity_se |
 | `A.transit.metro_navi_capacity_total` | `1100` | persons_per_vehicle | `literature` | 1000 - 1200 |
 | `A.transit.metro_seated_share` | `0.133` | ratio | `literature` | 0.1 - 0.25 |
+| `A.transit.rail_15car_capacity_seated` | `1460` | persons_per_vehicle | `derived` | derived: A.transit.rail_capacity_seated x 15 / 12 = 1168 x 1.25 = 1460: the 15- |
+| `A.transit.rail_15car_capacity_standing` | `4770` | persons_per_vehicle | `derived` | derived: A.transit.rail_capacity_standing x 15 / 12 = 3816 x 1.25 = 4770 |
+| `A.transit.rail_ac_capacity_seated` | `1028` | persons_per_vehicle | `observed` | **held fixed** |
+| `A.transit.rail_ac_capacity_standing` | `4936` | persons_per_vehicle | `observed` | **held fixed** |
 | `A.transit.rail_capacity_seated` | `1168` | persons_per_vehicle | `literature` | 1028 - 1168 |
 | `A.transit.rail_capacity_standing` | `3816` | persons_per_vehicle | `derived` | derived: A.transit.rail_capacity_total - A.transit.rail_capacity_seated = 4984  |
 | `A.transit.rail_capacity_total` | `4984` | persons_per_vehicle | `literature` | 3504 - 6072 |
@@ -1180,7 +1254,7 @@ How the run-input assembly resolves transit passenger capacities (docs/transit_f
 
 #### `A.transit.fleet_profiles`
 
-The capacity profiles build_transit_fleet.py assigns to the mapped vehicles (docs/transit_fleet.md): each names the mapper's base type it clones, the two registry fields that carry its seats and standing places, and EITHER the transport mode every line of that mode falls to (rail, bus) OR the OSM route relations it serves, read from the transit line id the feed builder writes as BASE_<relation>_<direction> (build_baseline_transit_feed.py). The relation ids are the identifiers of the mapped lines - Line 1 (3808111, 7684032), Lines 2A/2B/7/9 on BEML 6-car stock, Line 3 (7898597, 17876723), Navi Mumbai Line 1 (16533435, 16533436), the Gateway-Elephanta launch (19764205) and the Vasai-Bhayander creek ferry (16777766) - not values; a line with no profile refuses the build. The mapper typed the Central main-line and the Nerul-Uran patterns as their own base types (C, U) beside Rail; the three rail profiles carry one capacity and differ only in the base type each clones, because an assignment cannot change a vehicle's mapped type. A profile may instead name the Maritime Board directory routes it serves (`directory_routes`): the feed builder writes those lines as BASE_MMB_<directory route>_<direction> (9.207).
+The capacity profiles build_transit_fleet.py assigns to the mapped vehicles (docs/transit_fleet.md): each names the mapper's base type it clones, the two registry fields that carry its seats and standing places, and EITHER the transport mode every line of that mode falls to (rail, bus) OR the OSM route relations it serves, read from the transit line id the feed builder writes as BASE_<relation>_<direction> (build_baseline_transit_feed.py). The relation ids are the identifiers of the mapped lines - Line 1 (3808111, 7684032), Lines 2A/2B/7/9 on BEML 6-car stock, Line 3 (7898597, 17876723), Navi Mumbai Line 1 (16533435, 16533436), the Gateway-Elephanta launch (19764205) and the Vasai-Bhayander creek ferry (16777766) - not values; a line with no profile refuses the build. The mapper typed the Central main-line and the Nerul-Uran patterns as their own base types (C, U) beside Rail; the three rail profiles carry one capacity and differ only in the base type each clones, because an assignment cannot change a vehicle's mapped type. A profile may instead name the Maritime Board directory routes it serves (`directory_routes`): the feed builder writes those lines as BASE_MMB_<directory route>_<direction> (9.207). A profile with route_id_contains claims every timetable line whose id carries the substring (the AC and 15-car trains of the printed timetables, build_suburban_timetable_feed.py), before the transport-mode default.
 
 ***definition** · status **active** · DECISIONS.md §9.206*
 
@@ -1281,6 +1355,42 @@ The share of a metro train's published passenger capacity that is seated, from t
 ***literature** · status **active** · DECISIONS.md §9.206 · sweep role **uncertainty***
 
 > **Sweep basis.** Line 1's operator states a 4-coach train carries 1,500 (reliancemumbaimetro.com, Features) and its 2019 seat-removal notice, as reported, left 1,300 standees - 200 seats, 0.133 of the load; 48-52 longitudinal seats a coach is the reported range. No Mumbai metro operator publishes the seated/standing split of the BEML 6-car, or the Alstom 8-car trains (metro_fleet_publication_claims.csv: 'not_stated_in_publication'), so Line 1's share is applied to their published totals until one does (Navi Mumbai's 150 of 1,100, 0.136, is reported and agrees); 0.25 is the upper end of longitudinal-seat metro cars at 6 standees a square metre.
+
+#### `A.transit.rail_15car_capacity_seated`
+
+Seats in one 15-car non-AC suburban EMU rake, the trains the CR 15-car sheet lists.
+
+***derived** · status **active** · DECISIONS.md §9.209*
+
+> **Derived from** `A.transit.rail_capacity_seated`: A.transit.rail_capacity_seated x 15 / 12 = 1168 x 1.25 = 1460: the 15-car rake is the 12-car formation with three more coaches of the same type (cr_public_main_15_car_20260815 lists the 54 services that run it)
+
+#### `A.transit.rail_15car_capacity_standing`
+
+Standing places in one 15-car non-AC suburban EMU rake.
+
+***derived** · status **active** · DECISIONS.md §9.209*
+
+> **Derived from** `A.transit.rail_capacity_standing`: A.transit.rail_capacity_standing x 15 / 12 = 3816 x 1.25 = 4770
+
+#### `A.transit.rail_ac_capacity_seated`
+
+Seats in one 12-car AC suburban EMU rake, the trains the WR and CR AC timetable supplements list.
+
+***observed** · status **active** · DECISIONS.md §9.209*
+
+> **Held fixed.** PIB's release of 24 December 2017 (pib_first_ac_emu_2017; suburban_first_ac_capacity_2017.csv, 'Complete rake'): the 12-car AC EMU rake seats 1,028 with 4,936 standing, 5,964 in all. Applied to every train the AC supplements list (A.baseline_transit.printed_timetables, flag AC). Never varied
+>
+> *Departure requires: a published capacity of a later AC rake formation*
+
+#### `A.transit.rail_ac_capacity_standing`
+
+Standing places in one 12-car AC suburban EMU rake.
+
+***observed** · status **active** · DECISIONS.md §9.209*
+
+> **Held fixed.** PIB's release of 24 December 2017 (suburban_first_ac_capacity_2017.csv, 'Complete rake'): 4,936 standing places in the 12-car AC rake. Never varied
+>
+> *Departure requires: a published capacity of a later AC rake formation*
 
 #### `A.transit.rail_capacity_seated`
 
@@ -1759,12 +1869,13 @@ Width of a walk, metres: MATSim's own default vehicle width. The queue runs on l
 
 ## Provisional daily activities and mapped destinations
 
-*`cities/mumbai/registry/B_baseline_activities.json` - 12 fields*
+*`cities/mumbai/registry/B_baseline_activities.json` - 15 fields*
 
 
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
+| `B.activities.attraction_radius_m` | `300` | metres | `assumed` | 100 - 600 |
 | `B.activities.departure_spread_s` | `3600` | seconds | `assumed` | 900 - 7200 |
 | `B.activities.discretionary_departure_s` | `39600` | seconds_after_midnight | `assumed` | 32400 - 50400 |
 | `B.activities.distance_scale_m` | `{"work": 12000, "education": 2500, "shopping": 3000, "social": 4000, "leisure": 6000}` | metres | `assumed` | plus/minus 50% |
@@ -1774,9 +1885,19 @@ Width of a walk, metres: MATSim's own default vehicle width. The queue runs on l
 | `B.activities.optional_min_age_years` | `18` | years | `definition` | - |
 | `B.activities.out_of_home_fraction` | `{"shopping": 0.5, "social": 0.35, "leisure": 0.2}` | probabilities | `assumed` | plus/minus 50% |
 | `B.activities.out_of_home_time_fraction` | `{"shopping": 0.25, "social": 0.5, "leisure": 0.5}` | fractions | `assumed` | plus/minus 50% |
+| `B.activities.own_account_job_share` | `{"519": 0.1156, "518": 0.1841, "517": 0.1849, "520": 0.2955}` | share_by_district | `derived` | derived: Sixth Economic Census 2013, Maharashtra, Table 2.9 (ec6_district_contr |
 | `B.activities.poi_probability` | `{"work": 0.75, "education": 0.9, "shopping": 0.9, "social": 0.6, "leisure": 0.9}` | probabilities | `assumed` | plus/minus 50% |
 | `B.activities.seed` | `20260810` | integer_seed | `definition` | - |
 | `B.activities.time_use_activities` | `{"shopping": "Unpaid domestic services for household members", "social": "Socializing and communication, co...` | source_activity_labels | `definition` | - |
+| `B.activities.work_attraction` | `ghsl_nres_volume` | enum | `assumed` | `uniform`, `ghsl_nres_volume` |
+
+#### `B.activities.attraction_radius_m`
+
+Radius, in metres, of the built-volume sum that weights an activity candidate: non-residential volume (GHS_BUILT_V_NRES_E2025) for work, total volume (GHS_BUILT_V_E2025) for education, shopping, social and leisure.
+
+***assumed** · status **active** · DECISIONS.md §9.209 · sweep role **uncertainty***
+
+> **Sweep basis.** The radius around an activity candidate within which the GHSL 100 m built-volume cells are summed as its attraction (build_activity_attraction.py). 100 m is the cell itself (a point on a cell edge reads half its block); 600 m is a walkable catchment that blurs neighbouring candidates together. Not observed: no employment-by-building register is published for the region.
 
 #### `B.activities.departure_spread_s`
 
@@ -1846,6 +1967,14 @@ Assumed allocation of benchmark per-participant minutes to one out-of-home episo
 
 > **Sweep basis.** Provisional broad activity model; not inferred trip diaries or fitted mode shares. Validate out-of-home demand and location coverage separately.
 
+#### `B.activities.own_account_job_share`
+
+The share of a district's jobs that are located in proportion to TOTAL built volume (own-account work in homes and residential street fronts); the rest follow the non-residential built volume. Keyed by Census 2011 district code; a candidate takes the share of the district its coordinates fall in, else the four districts' combined 0.1750.
+
+***derived** · status **active** · DECISIONS.md §9.209*
+
+> **Derived from** `B.activities.attraction_radius_m`: Sixth Economic Census 2013, Maharashtra, Table 2.9 (ec6_district_controls.csv, maharashtra_ec6_final p. 36): persons engaged in establishments without a hired worker / all persons engaged, per district (Mumbai 119,694 / 1,035,482 = 0.1156; Mumbai Suburban 307,703 / 1,670,999 = 0.1841; Thane 267,086 / 1,444,660 = 0.1849; Raigarh 78,019 / 264,044 = 0.2955). The own-account establishment is the job that sits in a home or a residential street front, which the GHSL non-residential volume does not see. Applied within B.activities.attraction_radius_m of each candidate.
+
 #### `B.activities.poi_probability`
 
 Provisional mixture of mapped point opportunities and historical zone proxies. Retains demand where point coverage is incomplete.
@@ -1865,6 +1994,14 @@ Deterministic activities stream; the existing resident cohort is read unchanged.
 State time-use benchmark rows. These broad divisions include in-home activity, and are not trip purposes measured locally.
 
 ***definition** · status **active** · DECISIONS.md §9.193*
+
+#### `B.activities.work_attraction`
+
+The representation gate for destination attraction in build_plans.py.
+
+***assumed** · status **active** · DECISIONS.md §9.209 · sweep role **uncertainty***
+
+> **Sweep basis.** How a work destination is drawn among the OSM candidates inside the B-28 distance band. uniform: every candidate equally (every case before 22 September 2026 - a kiosk drew as many workers as a business park). ghsl_nres_volume: in proportion to the non-residential built volume within B.activities.attraction_radius_m (activity_location_attraction.csv, JRC GHSL R2023A epoch 2025), the observed proxy for the jobs a place holds; the optional purposes multiply their distance decay by the total built volume the same way. A band whose candidates all carry zero volume falls back to uniform and is counted.
 
 ## Provisional behavioural baseline population
 
@@ -2342,7 +2479,7 @@ Explicit setting for bounded provisional smoke only; full capacities serve the s
 
 ## The household population from the census controls at the core extent (9.204)
 
-*`cities/mumbai/registry/B_population.json` - 4 fields*
+*`cities/mumbai/registry/B_population.json` - 6 fields*
 
 
 
@@ -2352,6 +2489,8 @@ Explicit setting for bounded provisional smoke only; full capacities serve the s
 | `B.population.plans_build_fraction` | `0.05` | fraction | `definition` | - |
 | `B.population.projection_district_names` | `{"519": "Mumbai", "518": "Mumbai Suburban", "517": "Thane", "520": "Raigarh"}` | name_map | `definition` | - |
 | `B.population.tertiary_attendance_rate_20_24` | *(null - unobtained)* | probability | `assumed` | 0 - 0.35 |
+| `B.population.vehicle_possession_growth_bound` | `central` | enum | `assumed` | `low`, `central`, `high` |
+| `B.population.vehicle_possession_projection` | `poisson_stock_growth` | enum | `assumed` | `none`, `poisson_stock_growth` |
 
 #### `B.population.household_size_open_band_max`
 
@@ -2380,6 +2519,22 @@ The share of persons aged 20-24 attending an educational institution. Unobtained
 ***assumed** · status **unobtained** · DECISIONS.md §9.204 · sweep role **uncertainty***
 
 > **Sweep basis.** unobtained: the C-12 attendance table the package holds covers ages 5-19 and no district attendance rate for ages 20-24 is acquired; the range spans nobody attending to the age-19 attendance rate of the four districts, and the value stays null until the C-12 age-20-24 cells or a published tertiary rate is acquired
+
+#### `B.population.vehicle_possession_growth_bound`
+
+The bound of the derived per-household vehicle stock growth the projection applies; inert while B.population.vehicle_possession_projection = none.
+
+***assumed** · status **active** · DECISIONS.md §9.209 · sweep role **uncertainty***
+
+> **Sweep basis.** Which column of vehicle_possession_growth.csv the projection reads: central (the state 2011-2017 category ratio, the offices' 2017-2025 ratio, one more year at the offices' rate), low (the offices' own 2017-2025 rate extrapolated over the whole 2011-2026 span, no state leg) or high (the 2024-25 gross registrations added without scrappage). Registration stock counts vehicles on record, not in use; a ratio cancels a constant record inflation only.
+
+#### `B.population.vehicle_possession_projection`
+
+The representation gate for projecting household vehicle possession from the 2011 census to the base year. poisson_stock_growth reads data/processed/derived/vehicle_possession_growth.csv (derive_vehicle_possession_growth.py); the population report states the resulting district shares beside the 2011 ones.
+
+***assumed** · status **active** · DECISIONS.md §9.209 · sweep role **uncertainty***
+
+> **Sweep basis.** How the Census 2011 HL-14 household vehicle possession reaches the 2026 base year. none: the 2011 shares as published, fifteen years stale (every case before 22 September 2026). poisson_stock_growth: each leaf's two-wheeler and car shares are carried by its district's growth of registered vehicles per household (data/processed/derived/vehicle_possession_growth.csv - RTO office stock 2017 and 2025, the state category ratio 2011-2017, the census and projected households) through the Poisson identity for owning at least one: lambda_2011 = -ln(1 - share), lambda_2026 = growth x lambda_2011, share_2026 = 1 - exp(-lambda_2026), so owners adding second vehicles do not count as new owning households. The growth table carries its own low and high bounds (the offices' own rate extrapolated back to 2011; the 2024-25 gross registrations without scrappage).
 
 ## The first per-mode targets from the published splits (9.205)
 

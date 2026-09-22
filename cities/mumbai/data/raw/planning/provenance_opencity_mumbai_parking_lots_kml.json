@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/planning/opencity_mumbai_parking_lots_kml_c49cde1958b883e5.xml",
+      "url": "https://data.opencity.in/dataset/84505f49-7ac8-4fe6-a986-b988713933c0/resource/c99a8c04-4bb3-4065-bd02-434244c3bff2/download/43c7137e-9874-4680-a311-908774a1b2b5.kml",
+      "final_url": "https://data.opencity.in/dataset/84505f49-7ac8-4fe6-a986-b988713933c0/resource/c99a8c04-4bb3-4065-bd02-434244c3bff2/download/43c7137e-9874-4680-a311-908774a1b2b5.kml",
+      "source": "Mumbai public parking lots (BMC), OpenCity-hosted KML",
+      "licence": "Public Domain (OpenCity dataset licence as stated)",
+      "retrieved": "2026-09-22T06:40:20.037565+00:00",
+      "sha256": "c49cde1958b883e5efd9f6b4ae04fdbebf72eb6f4b8c4abe1426ecd039c9eaca",
+      "bytes": 48151,
+      "content_type": "application/vnd.google-earth.kml+xml",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "95 placemarks of public parking lots provided under development-control concessions (developer-named), locations only; no capacity or tariff. Parking supply evidence for docs/requirements.json: parking, not a priced-parking input."
+    }
+  ]
+}

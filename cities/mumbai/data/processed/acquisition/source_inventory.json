@@ -7672,6 +7672,45 @@
       "bytes": 464715,
       "retrieved": "2026-09-21T18:12:52.888735+00:00",
       "content_review_reason": "The archived page is the Central Railway site menu (departments and links) with no suburban operations content; the figures sit on sub-pages the capture does not include."
+    },
+    {
+      "id": "nfhs5_maharashtra_report_2019_21",
+      "title": "National Family Health Survey (NFHS-5) 2019-21, Maharashtra state report",
+      "url": "https://dhsprogram.com/pubs/pdf/FR374/FR374_Maharashtra.pdf",
+      "category": "population",
+      "licence": "IIPS / DHS Program publication; reuse terms unverified",
+      "coverage": "Household possessions (motorcycle or scooter, car or truck, bicycle) by urban and rural residence for Maharashtra, 2019-21: a state-level survey observation of vehicle possession eight years after the census, a check on the derived possession projection (derive_vehicle_possession_growth.py), not a district control.",
+      "status": "acquired_unvalidated",
+      "path": "data/raw/population/nfhs5_maharashtra_report_2019_21_982ecbc44ecf1297.pdf",
+      "sha256": "982ecbc44ecf1297c322489da16869062a0513bd92fb5bc1f4edb9cc3028c794",
+      "bytes": 2084134,
+      "retrieved": "2026-09-22T06:40:13.253311+00:00"
+    },
+    {
+      "id": "nfhs4_maharashtra_report_2015_16",
+      "title": "National Family Health Survey (NFHS-4) 2015-16, Maharashtra state report",
+      "url": "https://dhsprogram.com/pubs/pdf/FR338/FR338.MH.pdf",
+      "category": "population",
+      "licence": "IIPS / DHS Program publication; reuse terms unverified",
+      "coverage": "Household possessions (motorcycle or scooter, car or truck, bicycle) by urban and rural residence for Maharashtra, 2015-16: the mid-point survey observation between the 2011 census and the base year.",
+      "status": "acquired_unvalidated",
+      "path": "data/raw/population/nfhs4_maharashtra_report_2015_16_287318f787280797.pdf",
+      "sha256": "287318f787280797305fac0a58686efeb405afca489c4a50655aa29b46021358",
+      "bytes": 2981512,
+      "retrieved": "2026-09-22T06:40:18.086568+00:00"
+    },
+    {
+      "id": "opencity_mumbai_parking_lots_kml",
+      "title": "Mumbai public parking lots (BMC), OpenCity-hosted KML",
+      "url": "https://data.opencity.in/dataset/84505f49-7ac8-4fe6-a986-b988713933c0/resource/c99a8c04-4bb3-4065-bd02-434244c3bff2/download/43c7137e-9874-4680-a311-908774a1b2b5.kml",
+      "category": "planning",
+      "licence": "Public Domain (OpenCity dataset licence as stated)",
+      "coverage": "95 placemarks of public parking lots provided under development-control concessions (developer-named), locations only; no capacity or tariff. Parking supply evidence for docs/requirements.json: parking, not a priced-parking input.",
+      "status": "acquired_unvalidated",
+      "path": "data/raw/planning/opencity_mumbai_parking_lots_kml_c49cde1958b883e5.xml",
+      "sha256": "c49cde1958b883e5efd9f6b4ae04fdbebf72eb6f4b8c4abe1426ecd039c9eaca",
+      "bytes": 48151,
+      "retrieved": "2026-09-22T06:40:20.037565+00:00"
     }
   ],
   "identical_bytes_groups": [

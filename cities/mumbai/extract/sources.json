@@ -6629,6 +6629,37 @@
         "sha256": "54179a39a46989753db0dcf3fcf93162033de8ac85ebccb19363a865b3d1bfe8",
         "reason": "The archived page is the Central Railway site menu (departments and links) with no suburban operations content; the figures sit on sub-pages the capture does not include."
       }
+    },
+    {
+      "id": "nfhs5_maharashtra_report_2019_21",
+      "url": "https://dhsprogram.com/pubs/pdf/FR374/FR374_Maharashtra.pdf",
+      "title": "National Family Health Survey (NFHS-5) 2019-21, Maharashtra state report",
+      "category": "population",
+      "format": "pdf",
+      "licence": "IIPS / DHS Program publication; reuse terms unverified",
+      "coverage": "Household possessions (motorcycle or scooter, car or truck, bicycle) by urban and rural residence for Maharashtra, 2019-21: a state-level survey observation of vehicle possession eight years after the census, a check on the derived possession projection (derive_vehicle_possession_growth.py), not a district control."
+    },
+    {
+      "id": "nfhs4_maharashtra_report_2015_16",
+      "url": "https://dhsprogram.com/pubs/pdf/FR338/FR338.MH.pdf",
+      "title": "National Family Health Survey (NFHS-4) 2015-16, Maharashtra state report",
+      "category": "population",
+      "format": "pdf",
+      "licence": "IIPS / DHS Program publication; reuse terms unverified",
+      "coverage": "Household possessions (motorcycle or scooter, car or truck, bicycle) by urban and rural residence for Maharashtra, 2015-16: the mid-point survey observation between the 2011 census and the base year."
+    },
+    {
+      "id": "opencity_mumbai_parking_lots_kml",
+      "url": "https://data.opencity.in/dataset/84505f49-7ac8-4fe6-a986-b988713933c0/resource/c99a8c04-4bb3-4065-bd02-434244c3bff2/download/43c7137e-9874-4680-a311-908774a1b2b5.kml",
+      "title": "Mumbai public parking lots (BMC), OpenCity-hosted KML",
+      "category": "planning",
+      "format": "xml",
+      "licence": "Public Domain (OpenCity dataset licence as stated)",
+      "coverage": "95 placemarks of public parking lots provided under development-control concessions (developer-named), locations only; no capacity or tariff. Parking supply evidence for docs/requirements.json: parking, not a priced-parking input.",
+      "use": {
+        "disposition": "reference",
+        "reason": "95 public parking lot locations (developer-provided lots under BMC development control), without capacity or tariff: the parking requirement's supply evidence (docs/requirements.json: parking); no parking price or capacity is modelled for this city yet, so nothing reads it"
+      }
     }
   ]
 }

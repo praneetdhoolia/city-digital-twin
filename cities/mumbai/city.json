@@ -5950,6 +5950,33 @@
       "provides": [
         "data/raw/rail/cr_suburban_operations_page_archived_20240424_54179a39a4698975.html"
       ]
+    },
+    {
+      "name": "National Family Health Survey (NFHS-5) 2019-21, Maharashtra state report",
+      "url": "https://dhsprogram.com/pubs/pdf/FR374/FR374_Maharashtra.pdf",
+      "licence": "IIPS / DHS Program publication; reuse terms unverified",
+      "share_alike": false,
+      "provides": [
+        "data/raw/population/nfhs5_maharashtra_report_2019_21_982ecbc44ecf1297.pdf"
+      ]
+    },
+    {
+      "name": "National Family Health Survey (NFHS-4) 2015-16, Maharashtra state report",
+      "url": "https://dhsprogram.com/pubs/pdf/FR338/FR338.MH.pdf",
+      "licence": "IIPS / DHS Program publication; reuse terms unverified",
+      "share_alike": false,
+      "provides": [
+        "data/raw/population/nfhs4_maharashtra_report_2015_16_287318f787280797.pdf"
+      ]
+    },
+    {
+      "name": "Mumbai public parking lots (BMC), OpenCity-hosted KML",
+      "url": "https://data.opencity.in/dataset/84505f49-7ac8-4fe6-a986-b988713933c0/resource/c99a8c04-4bb3-4065-bd02-434244c3bff2/download/43c7137e-9874-4680-a311-908774a1b2b5.kml",
+      "licence": "Public Domain (OpenCity dataset licence as stated)",
+      "share_alike": false,
+      "provides": [
+        "data/raw/planning/opencity_mumbai_parking_lots_kml_c49cde1958b883e5.xml"
+      ]
     }
   ]
 }

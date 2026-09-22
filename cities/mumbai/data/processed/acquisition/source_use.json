@@ -3,10 +3,10 @@
   "purpose": "Which acquired source is read by what: the package's data-use ledger.",
   "counts": {
     "cited": 56,
-    "consumed": 249,
+    "consumed": 251,
     "discovery": 121,
     "not_needed": 97,
-    "reference": 44,
+    "reference": 45,
     "unobtained": 24,
     "unread": 0,
     "unusable": 6
@@ -76,12 +76,12 @@
       "unobtained": 4,
       "not_needed": 6,
       "unusable": 1,
-      "reference": 1
+      "reference": 2
     },
     "population": {
       "discovery": 31,
       "cited": 8,
-      "consumed": 21,
+      "consumed": 23,
       "not_needed": 8,
       "unobtained": 6,
       "reference": 1
@@ -12084,6 +12084,64 @@
       "declared_use": null,
       "discovered_from": null,
       "archived_copy_of": "cr_suburban_operations_page",
+      "discovered": 0
+    },
+    {
+      "id": "nfhs5_maharashtra_report_2019_21",
+      "category": "population",
+      "format": "pdf",
+      "status": "acquired_unvalidated",
+      "disposition": "consumed",
+      "path": "data/raw/population/nfhs5_maharashtra_report_2019_21_982ecbc44ecf1297.pdf",
+      "readers": {
+        "scripts": [
+          "cities/mumbai/extract/extract_nfhs_household_possessions.py"
+        ],
+        "transcriptions": [],
+        "registry": []
+      },
+      "cited_by": [],
+      "declared_use": null,
+      "discovered_from": null,
+      "archived_copy_of": null,
+      "discovered": 0
+    },
+    {
+      "id": "nfhs4_maharashtra_report_2015_16",
+      "category": "population",
+      "format": "pdf",
+      "status": "acquired_unvalidated",
+      "disposition": "consumed",
+      "path": "data/raw/population/nfhs4_maharashtra_report_2015_16_287318f787280797.pdf",
+      "readers": {
+        "scripts": [
+          "cities/mumbai/extract/extract_nfhs_household_possessions.py"
+        ],
+        "transcriptions": [],
+        "registry": []
+      },
+      "cited_by": [],
+      "declared_use": null,
+      "discovered_from": null,
+      "archived_copy_of": null,
+      "discovered": 0
+    },
+    {
+      "id": "opencity_mumbai_parking_lots_kml",
+      "category": "planning",
+      "format": "xml",
+      "status": "acquired_unvalidated",
+      "disposition": "reference",
+      "path": "data/raw/planning/opencity_mumbai_parking_lots_kml_c49cde1958b883e5.xml",
+      "readers": {
+        "scripts": [],
+        "transcriptions": [],
+        "registry": []
+      },
+      "cited_by": [],
+      "declared_use": "95 public parking lot locations (developer-provided lots under BMC development control), without capacity or tariff: the parking requirement's supply evidence (docs/requirements.json: parking); no parking price or capacity is modelled for this city yet, so nothing reads it",
+      "discovered_from": null,
+      "archived_copy_of": null,
       "discovered": 0
     }
   ]

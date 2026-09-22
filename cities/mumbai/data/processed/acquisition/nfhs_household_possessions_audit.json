@@ -1,0 +1,29 @@
+{
+  "rows": 18,
+  "reports": [
+    {
+      "source_id": "nfhs4_maharashtra_report_2015_16",
+      "page": 47,
+      "table": "Table 5 Household possessions and land ownership",
+      "items": [
+        "Bicycle",
+        "Car",
+        "Motorcycle or scooter"
+      ]
+    },
+    {
+      "source_id": "nfhs5_maharashtra_report_2019_21",
+      "page": 53,
+      "table": "Table 7 Household possessions and land ownership",
+      "items": [
+        "Bicycle",
+        "Car",
+        "Motorcycle or scooter"
+      ]
+    }
+  ],
+  "limitations": [
+    "State-level percentages of households; the Mumbai districts are not published separately.",
+    "A survey share of owning households, not a vehicle count; second vehicles are invisible."
+  ]
+}
