@@ -1,0 +1,30 @@
+{
+  "overlay": "f36_baseline_25pct",
+  "description": "ARM 0 OF FAMILY F36: the first run to execute on the roots-rebuilt demand (9.211, family opened 20260922T210005). Nothing run before 20260922T210005 compares with this arm - F35 is closed and its three results compare with nothing after it. WHAT IS NEW IN THE INPUTS, and what this arm exists to read: (1) #86/#145, D12 - 276,816 held ride trips on 141,633 persons carry `heldRideTrips`, the gate refuses car on them, and a person whose whole day is held now seeds ONE plan (47,529 of them) because no base-mode alternative remains to differ on; a car-less lift or shared passenger is NOT held. The measurement is `measure_bound_trips.py` on this arm and ride's share against the 20.6 % target it could not reach at 19.11 % coverage (9.177). (2) #107, D9 - bike carries `C.scoring.marginal_utility_of_distance_per_m` = -0.000192308 utils/m, DERIVED as -1/(observed 5.2 km mean), where it previously had none at all while running 8.10-8.13 km; the measurement is bike's mean trip length and its share by car availability. (3) #196 - the household tail is derived from its declared top-band mean (p = 1/(6.6-5) = 0.625; the drawn top band reads 6.596 against 6.6), so the population itself differs. (4) #94, D8 - the ferry target moves off the census G62 lockdown cell onto the disclosed TPA tap-ons, 790 boardings a weekday over 300 weekdays; this is a BASIS change, so the measurement is `measure_near_wharf.py` and an error statistic against an observation, not a re-reading of the old number. (5) #237 - transit standing room is scaled with the seats by the sampler, which no F35 arm did (every one ran trams with 210 standing places), so crowding can bind on tram, rail and ferry for the first time; the measurement is peak standing occupancy per vehicle type. (6) #30 - the placed short-trip band reads 17.81 % of core legs under 1 km against the 18.8 % band, and the loss is at allocation; the measurement is the routed short-trip mode split. (7) #172/#187/#215/#216/#217 - the first 25 % arm after the Java fold (9.210): the taxi fleet scales by the sample (the probe read fleet=200 from declared 800 x 0.25), one routing pool serves the run, no zero-second timed-out ride leg, and the retime counters and held-ride gate are readable. IT IS ALSO THE CONTROL HALF of the paired arms the separation design orders (#172): scoring, the choice set, service quality, the routers and the pt submodes all ship at their off value here, so every pair is differenced against this one arm. COST: priced by f36_pricing_probe_25pct ON THIS BUILD AND THIS DEMAND (20260923T022419_4it_25pct, ran_to_last_iteration at 4): the recurring iteration is 469.5 s over iterations 2 and 3, against 348.5 s on the previously priced arm - +35 %, which is why no inherited quote was spent. arm_cost.py quotes 33.2 h for 250 iterations and that quote holds NO milestone iteration, since a four-iteration probe never meets one; the five milestones cost 523-862 s against ~349 s recurring on the last full arm, about 0.7 h of excess carried forward at +35 %, so ~34 h is the expectation. RUN.gate.wall_ceiling_h = 42 is the operator's stated-cost approval of 23 September 2026 for THIS launch and nothing carried over. HEAP: 48g, the rule reading 37.4 GiB at 0.25; the probe's live set was 15.6 GiB after its last full collection at iteration 4, and F35's arm plateaued at 21-27 GiB, so the slope is not re-declared on four iterations and the GC log stays on.",
+  "answers_issues": [
+    30,
+    86,
+    94,
+    107,
+    145,
+    172,
+    187,
+    196,
+    237
+  ],
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 250,
+    "RUN.gate.wall_ceiling_h": 42,
+    "RUN.gate.interval_iterations": 0,
+    "RUN.machine.xmx": "48g",
+    "RUN.controler.create_graphs": false,
+    "RUN.controler.write_plans_interval": 25
+  },
+  "allow_outside_sweep": [
+    "RUN.gate.interval_iterations"
+  ],
+  "justification": {
+    "RUN.gate.interval_iterations": "THE MODE GATE IS OFF, and this is the 9.159 scoped departure already taken for `depth_convergence_25pct` and for f35_baseline_25pct, not a new one. GOAL.md's loop says to stop a run when a mode passes 20 %, and on F35's landed reading six modes did. This arm is the CONTROL HALF of five pairs (#172): an arm the watcher stops at iteration 100 cannot be differenced against anything read at 250, so arming the gate would guarantee that none of the five pairs can ever be read. Switching the watcher off does NOT make the arm blind and does not suspend the loop: every 10th iteration stays readable on all twelve modes on their own bases (9.120, 9.170), the run viewer shows them against their targets, and the operator can stop the arm by hand with `run.py --stop` the moment a reading says the rebuild failed. What made the 9.159 arm indefensible was the OTHER half - it declared no ceiling, so it had no automatic stop of any kind and its approved hours were held by a person watching a clock (#169). This arm declares RUN.gate.wall_ceiling_h = 42, the ceiling watcher is PROVEN on a run (`aborted_20260910T205517_20it_1pct`, completion `stopped_at_ceiling`), and RUN.gate.stall_kill_s = 1800 guards a stall separately, so the run has two automatic stops and is never left without one."
+  }
+}
