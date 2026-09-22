@@ -5735,14 +5735,18 @@
       "url": "https://api.data.gov.in/resource/a1b36307-9207-4672-86e2-ae1421ffac24?format=csv&limit=2000",
       "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/transit/ogd_metro_2a_7_ridership_daily_2024_2025_46e3b6fd316a2ba8.csv"
+      ]
     },
     {
       "name": "OGD: MMRDA daily ridership of the Mumbai Monorail, 1 October 2024 to 21 September 2025",
       "url": "https://api.data.gov.in/resource/c1712e3f-1a3a-4cd1-b146-bf6d89be3031?format=csv&limit=2000",
       "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/transit/ogd_monorail_ridership_daily_2024_2025_fbc5f2fad3c16d07.csv"
+      ]
     },
     {
       "name": "OGD: the resource listing of the MMRDA ridership catalog (Metro Line 2A, 7, Monorail)",

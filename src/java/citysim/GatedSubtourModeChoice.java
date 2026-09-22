@@ -129,6 +129,12 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
          *  this person is that driver. Absent means none. */
         static final String BOUND_RIDE_ATTRIBUTE = "boundRideTrips";
         static final String BOUND_DRIVE_ATTRIBUTE = "boundDriveTrips";
+        /** D12 (DECISIONS.md 9.177, #86): the 1-based trip indices on which
+         *  this person is HELD to ride - an escort member or a joint
+         *  companion whose driver drives the tour - written by the plans
+         *  builder at the roots rebuild. Absent means nothing is held, so a
+         *  plans file without it runs exactly as before. */
+        static final String HELD_RIDE_ATTRIBUTE = "heldRideTrips";
         /** Proposals refused for putting ride on an unserved trip, and for
          *  taking a declared driver off car - counted so the effect is a
          *  number in the log rather than an assertion. */
@@ -136,6 +142,9 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                 BOUND_RIDE_REFUSALS = new java.util.concurrent.atomic.AtomicInteger();
         static final java.util.concurrent.atomic.AtomicInteger
                 BOUND_DRIVE_REFUSALS = new java.util.concurrent.atomic.AtomicInteger();
+        /** Proposals refused for taking a held passenger off ride (D12). */
+        static final java.util.concurrent.atomic.AtomicInteger
+                HELD_RIDE_REFUSALS = new java.util.concurrent.atomic.AtomicInteger();
 
         /** The first few refusals of each kind in full, then every
          *  thousandth as a running count - a number in the log rather than
@@ -530,6 +539,8 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                                 boundTrips(plan, BOUND_RIDE_ATTRIBUTE);
                         final java.util.Set<Integer> driveTrips =
                                 boundTrips(plan, BOUND_DRIVE_ATTRIBUTE);
+                        final java.util.Set<Integer> heldTrips =
+                                boundTrips(plan, HELD_RIDE_ATTRIBUTE);
                         for (int i = 0; i < after.size(); i++) {
                             final List<Leg> legs = after.get(i).getLegsOnly();
                             if (legs.isEmpty()) {
@@ -558,6 +569,19 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                                 logRefusal("a declared driver off car on a "
                                         + "trip they serve", BOUND_DRIVE_REFUSALS
                                         .incrementAndGet(), plan);
+                                break;
+                            }
+                            // D12: an escort member or joint companion is
+                            // held to ride on the tour their driver drives;
+                            // the driver drives them, so the proposal that
+                            // puts them in a car of their own, or on foot,
+                            // is refused whole
+                            if (heldTrips.contains(i + 1)
+                                    && !TransportMode.ride.equals(mode)) {
+                                infeasible = true;
+                                logRefusal("a held passenger off ride on a "
+                                        + "tour their driver drives (D12)",
+                                        HELD_RIDE_REFUSALS.incrementAndGet(), plan);
                                 break;
                             }
                         }

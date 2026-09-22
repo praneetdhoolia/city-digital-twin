@@ -1,6 +1,6 @@
 {
   "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
-  "updated": "2026-09-22 (sixtieth session)",
+  "updated": "2026-09-22 (sixtieth session, continued)",
   "family": "F35-the-engines-route-what-they-remode",
   "tasks": [
     {
@@ -61,7 +61,7 @@
       "id": "java-fold",
       "title": "The Java fold on the idle machine: the held-ride refusal in `GatedSubtourModeChoice` (D12's gate half, #86), the taxi fleet's own sample fraction (#215), the ride engine's thread pools (#216), the zero-second timed-out ride (#217), #187's restore counters and the telemetry twins - one recompile of `.tools/classes`, verified on a 1 % smoke",
       "kind": "fix",
-      "status": "open",
+      "status": "done",
       "recommended": false,
       "cost": "no arm; one recompile (`bootstrap_toolchain.py --verify`) and a 1 % smoke of a few minutes; no family until the roots rebuild ships it",
       "blocked_on": "nothing - the machine is idle (the scoring pair landed 17 September 2026)",
@@ -73,7 +73,8 @@
         216,
         217
       ],
-      "evidence": "9.177: prepared and held under the arm because .tools/classes is never recompiled under one; report #12's ledger rows on the Java"
+      "evidence": "9.210: landed in one recompile - taxiFleet.sampleFraction (#215), one routing pool per run (#216), no zero-second timed-out ride (#217), retimed= / restoreRetimed= by name (#187), the heldRideTrips refusal (D12 gate half, #86); both probes PASS; the 1 % smoke 20260922T172813_4it_1pct ran to its last iteration with fleet=8 (declared 800 x 0.01) and retimed = restoreRetimed every iteration; 9.177: prepared and held under the arm because .tools/classes is never recompiled under one; report #12's ledger rows on the Java",
+      "done_ref": "9.210"
     },
     {
       "id": "roots-rebuild",
@@ -82,7 +83,7 @@
       "status": "open",
       "recommended": false,
       "cost": "a demand rebuild (~2 h of builds) that opens a family and re-baselines every pair; then a new arm 0 at a probe-priced stated cost (25.1 h for 250 iterations on the scoring pair's stopwatch, spread 24.5-32.8 h; `python src/analyse/arm_cost.py --iterations 250 --fraction 0.25`)",
-      "blocked_on": "the Java fold landing first (one recompile of .tools/classes on the idle machine: the held-ride gate is half of D12), then a 25 % probe on the rebuilt inputs for the price and a stated-cost approval",
+      "blocked_on": "a 25 % probe on the rebuilt inputs for the price and a stated-cost approval (the Java fold landed in 9.210)",
       "opens_family": true,
       "answers_issues": [
         30,
@@ -201,13 +202,14 @@
       "id": "mumbai-ogd-ridership-series",
       "title": "Import the two OGD daily ridership series (Metro Lines 2A and 7 from 1 January 2024, the Monorail from 1 October 2024) from the user's logged-in browser download, extract them into an observed operator series and re-derive the metro target from them",
       "kind": "data",
-      "status": "open",
+      "status": "done",
       "recommended": false,
       "cost": "minutes once the two CSVs are in Downloads/city-twin-captures: an import path for a portal download, an extractor, build_mode_targets.py; no run",
       "blocked_on": "the user's browser: the OGD platform serves the two resources as datafiles (is_api_available 0) behind a logged-in download form with a captcha; the API answers 502 for them with the registered key (D16 done: OGD_API_KEY is in .env)",
       "opens_family": false,
       "answers_issues": [],
-      "evidence": "9.209: the key is registered and in .env; api.data.gov.in answers 502 after 62 s for both resource ids at any page size, and the resource listing says is_api_available 0; the two CSVs (13 KB) download only from the logged-in portal; 9.207: the catalog listing is acquired (ogd_mmrda_ridership_catalog_20260922: two daily CSV resources published by MMRDA on 23 September 2025); the platform sample key answers 429 to everyone"
+      "evidence": "9.210: the user downloaded the two CSVs from the logged-in portal; imported with import_browser_acquisition.py --portal-download, extracted (extract_ogd_metro_ridership.py), the metro target re-derived (2.56 %); 9.209: the key is registered and in .env; api.data.gov.in answers 502 after 62 s for both resource ids at any page size, and the resource listing says is_api_available 0; the two CSVs (13 KB) download only from the logged-in portal; 9.207: the catalog listing is acquired (ogd_mmrda_ridership_catalog_20260922: two daily CSV resources published by MMRDA on 23 September 2025); the platform sample key answers 429 to everyone",
+      "done_ref": "9.210"
     },
     {
       "id": "mumbai-geoblocked-hosts",
@@ -243,7 +245,7 @@
       "status": "open",
       "recommended": false,
       "cost": "an extractor over the unit files (the layout is tus_2024_data_layout) and a plans rebuild (~2 min); no run",
-      "blocked_on": "the user's browser: the NADA portal login form carries an image captcha; the account exists (MOSPI_MICRODATA_EMAIL in .env)",
+      "blocked_on": "the user's browser: the first download (22 September 2026) carried the documentation only (layout, codes, instructions, README, sample design, Vol II - all already acquired); the unit data files under the Data block of the Get Microdata tab are still to download",
       "opens_family": false,
       "answers_issues": [],
       "evidence": "9.209: the layout, codes and instructions are acquired and declared reference; the state aggregate tables are the current basis"

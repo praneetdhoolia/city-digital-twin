@@ -1,0 +1,985 @@
+line,date,weekday,paper_qr,mobile_application,whatsapp,ncmc_and_other_trip,total_ridership,channel_sum_equals_total,source,source_id,source_sha256,printed_line
+Metro Lines 2A and 7,2024-01-01,True,105702,3294,0,32577,141573,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-02,True,131305,7220,0,86589,225114,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-03,True,133816,7952,0,91122,232890,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-04,True,128843,7958,0,89462,226263,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-05,True,138907,7684,0,86978,233569,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-06,False,140277,4994,0,53149,198420,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-07,False,111100,2751,0,17592,131443,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-08,True,135338,7795,0,92320,235453,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-09,True,132807,7991,0,95028,235826,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-10,True,132503,8220,0,95001,235724,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-11,True,128578,7916,0,92023,228517,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-12,True,134964,7457,0,89221,231642,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-13,False,136297,4411,0,45604,186312,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-14,False,103295,2453,0,16910,122658,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-15,True,126393,5209,0,85656,217258,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-16,True,124680,6809,0,85797,217286,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-17,True,134242,8049,0,96086,238377,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-18,True,134857,7744,0,94265,236866,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-19,True,135281,7621,0,89922,232824,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-20,False,135561,4859,0,55236,195656,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-21,False,105262,2514,0,17842,125618,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-22,True,90367,4805,0,56274,151446,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-23,True,126670,7688,0,94563,228921,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-24,True,130182,7994,0,94483,232659,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-25,True,136731,7735,0,88991,233457,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-26,True,94774,2513,0,19187,116474,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-27,False,123110,3840,0,41345,168295,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-28,False,100000,2587,0,16653,119240,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-29,True,129064,7759,0,90857,227680,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-30,True,137061,8322,0,95141,240524,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-01-31,True,135624,8148,0,92828,236600,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-01,True,129334,7993,0,92190,229517,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-02,True,134217,7913,0,89188,231318,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-03,False,133086,4694,0,53081,190861,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-04,False,107216,2606,0,17375,127197,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-05,True,128012,8170,0,93114,229296,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-06,True,136451,7518,0,96284,240253,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-07,True,136858,8500,0,97298,242656,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-08,True,134093,8226,0,95128,237447,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-09,True,133530,7811,0,89971,231312,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-10,False,133711,4665,0,45695,184071,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-11,False,108382,2586,0,17763,128731,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-12,True,133051,7984,0,93295,234330,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-13,True,137707,8385,0,95073,241165,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-14,True,139163,8214,0,94305,241682,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-15,True,131350,8110,0,93852,233312,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-16,True,133079,7776,0,89823,230678,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-17,False,136931,4214,0,53212,194357,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-18,False,110498,1485,0,17944,129927,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-19,True,117585,6880,0,77354,201819,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-20,True,127253,8329,0,96534,232116,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-21,True,135326,8375,0,97014,240715,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-22,True,131306,8095,0,94700,234101,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-23,True,136163,7657,0,90082,233902,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-24,False,128949,4495,0,45679,179123,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-25,False,97583,2556,0,17724,117863,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-26,True,127775,7822,0,92491,228088,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-27,True,130012,8335,0,96279,234626,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-28,True,127815,7183,0,94948,229946,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-02-29,True,129709,7594,0,93721,231024,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-01,True,125630,6825,0,88709,221164,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-02,False,130909,4575,0,54064,189548,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-03,False,105683,2671,0,18067,126421,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-04,True,129286,8010,0,94558,231854,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-05,True,128051,8040,0,97509,233600,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-06,True,131760,8041,0,97512,237313,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-07,True,133383,8002,0,94093,235478,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-08,True,106384,5667,0,64758,176809,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-09,False,127626,4284,0,45391,177301,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-10,False,99079,2576,0,17948,119603,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-11,True,124664,7665,0,94802,227131,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-12,True,125284,8099,0,97704,231087,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-13,True,128349,7713,0,97560,233622,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-14,True,125263,7845,0,95543,228651,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-15,True,129384,7402,0,91369,228155,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-16,False,128854,4916,0,54346,188116,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-17,False,101949,2561,0,18737,123247,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-18,True,124700,7638,0,95349,227687,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-19,True,125662,7970,0,96983,230615,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-20,True,130162,8066,0,96619,234847,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-21,True,127571,7179,0,94403,229153,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-22,True,130914,5947,0,88012,224873,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-23,False,119665,3228,0,45886,168779,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-24,False,78482,1601,0,16258,96341,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-25,True,53201,1033,0,8228,62462,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-26,True,123640,5743,0,89208,218591,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-27,True,124697,7031,0,91573,223301,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-28,True,127308,6427,0,90321,224056,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-29,True,110915,4664,0,59857,175436,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-30,False,124561,3777,0,53892,182230,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-03-31,False,94200,2023,0,19973,116196,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-01,True,123888,5352,0,90228,219468,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-02,True,125305,5982,0,95557,226844,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-03,True,126981,6602,0,96119,229702,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-04,True,126816,6464,0,93935,227215,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-05,True,130358,6313,0,89936,226607,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-06,False,130954,3896,0,54364,189214,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-07,False,99338,1967,0,17887,119192,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-08,True,128692,6282,0,92235,227209,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-09,True,101997,3255,0,42588,147840,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-10,True,128584,6237,0,93490,228311,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-11,True,119837,3864,0,58386,182087,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-12,True,143883,6421,0,87192,237496,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-13,False,131374,4060,0,44192,179626,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-14,False,105051,1769,0,17461,124281,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-15,True,129040,7342,0,93211,229593,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-16,True,132279,7682,0,94308,234269,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-17,True,117633,6661,0,77012,201306,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-18,True,130549,7473,0,92492,230514,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-19,True,127883,7046,0,88311,223240,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-20,False,128026,4515,0,51564,184105,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-21,False,106257,2559,0,17763,126579,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-22,True,124916,7617,0,90720,223253,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-23,True,126766,7869,0,91869,226504,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-24,True,130115,7964,0,94040,232119,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-25,True,130992,7853,0,92174,231019,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-26,True,127028,7427,0,85477,219932,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-27,False,120460,4129,0,44533,169122,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-28,False,105444,2540,0,17775,125759,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-29,True,125789,7920,0,89744,223453,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-04-30,True,128874,7653,0,89286,225813,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-01,True,97562,3015,0,24557,125134,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-02,True,126258,6567,0,88393,221218,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-03,True,125125,7219,0,84998,217342,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-04,False,121878,4645,0,49605,176128,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-05,False,106971,2762,0,17487,127220,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-06,True,121922,7878,0,87818,217618,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-07,True,122182,8019,0,90666,220867,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-08,True,122958,8101,0,89666,220725,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-09,True,123154,7836,0,88430,219420,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-10,True,131585,6288,0,82229,220102,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-11,False,122868,4325,0,41372,168565,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-12,False,105868,2838,0,17357,126063,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-13,True,123808,2828,0,86731,213367,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-14,True,129298,4858,0,91232,225388,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-15,True,125028,6036,0,87665,218729,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-16,True,125721,6848,0,89659,222228,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-17,True,129956,6427,0,85328,221711,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-18,False,129419,4379,0,51385,185183,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-19,False,108978,2665,0,18529,130172,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-20,True,103232,3076,0,34582,140890,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-21,True,128967,7732,0,92776,229475,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-22,True,129526,7693,0,91824,229043,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-23,True,123568,6532,0,81500,211600,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-24,True,129353,7081,0,84900,221334,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-25,False,126486,4331,0,44289,175106,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-26,False,104382,2657,0,17640,124679,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-27,True,124193,7263,0,87882,219338,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-28,True,129021,8005,0,91474,228500,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-29,True,130659,8050,0,91508,230217,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-30,True,133106,8288,0,89849,231243,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-05-31,True,143060,7576,0,84630,235266,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-01,False,137176,4892,0,50059,192127,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-02,False,109729,2797,0,17459,129985,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-03,True,157650,8025,0,94796,260471,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-04,True,129596,8192,0,92910,230698,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-05,True,134242,8440,0,97673,240355,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-06,True,130151,8389,0,95211,233751,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-07,True,135048,8300,0,90978,234326,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-08,False,130885,4701,0,45650,181236,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-09,False,101777,2772,0,18054,122603,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-10,True,130075,8647,0,96370,235092,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-11,True,131210,8823,0,101097,241130,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-12,True,137866,4523,0,101196,243585,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-13,True,131313,8341,0,100225,239879,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-14,True,133020,8119,0,96543,237682,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-15,False,129953,5201,0,56501,191655,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-16,False,106886,2905,0,19467,129258,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-17,True,111766,6211,0,70668,188645,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-18,True,131374,8560,0,101938,241872,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-19,True,134798,5902,0,103729,244429,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-20,True,135605,7602,0,101949,245156,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-21,True,133587,7531,0,98169,239287,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-22,False,129574,4605,0,51056,185235,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-23,False,105969,2920,0,19851,128740,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-24,True,129582,8501,0,103404,241487,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-25,True,130368,8492,0,104931,243791,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-26,True,130996,8672,0,105140,244808,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-27,True,134406,7697,0,104072,246175,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-28,True,132834,8266,0,98030,239130,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-29,False,133578,5094,0,59800,198472,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-06-30,False,107710,3003,0,20810,131523,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-01,True,132421,7294,0,102969,242684,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-02,True,133652,8612,0,107284,249548,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-03,True,136529,8119,0,107704,252355,False,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-04,True,133028,8470,0,104354,245852,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-05,True,139418,6622,0,101128,247168,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-06,False,136052,5194,0,60044,201290,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-07,False,112104,3058,0,20352,135514,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-08,True,130371,7512,0,95998,233881,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-09,True,123877,8394,0,93795,226066,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-10,True,142584,7918,0,107288,257790,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-11,True,136583,9151,0,109209,254943,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-12,True,140827,8285,0,104107,253219,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-13,False,120495,4174,0,49843,174512,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-14,False,103551,2927,0,20824,127302,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-15,True,133622,8295,0,108264,250181,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-16,True,138491,8983,0,113881,261355,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-17,True,122141,7865,0,91623,221629,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-18,True,134219,8927,0,111644,254790,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-19,True,139401,8310,0,107864,255575,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-20,False,128019,4084,0,61447,193550,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-21,False,86842,2406,0,19433,108681,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-22,True,132469,7962,0,106816,247247,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-23,True,144628,9197,0,115668,270141,False,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-24,True,141684,7447,0,113463,262594,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-25,True,125378,8104,0,102618,236100,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-26,True,144118,8044,0,107500,259662,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-27,False,136574,5232,0,57867,199673,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-28,False,107285,3270,0,22514,133069,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-29,True,137439,8589,0,112898,258926,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-30,True,140618,8491,0,115828,264937,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-07-31,True,140158,7219,0,114537,261914,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-01,True,141146,9728,0,114343,265217,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-02,True,143557,9372,0,110095,263024,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-03,False,131319,5696,0,64977,201992,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-04,False,106918,3173,0,22027,132118,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-05,True,139483,8217,0,116027,263727,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-06,True,141356,8168,0,119706,270903,False,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-07,True,140877,9299,0,119527,269703,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-08,True,140356,9638,0,117614,267608,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-09,True,153106,9196,0,113037,275339,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-10,False,149979,5472,0,57292,212743,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-11,False,120489,2588,0,22694,145771,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-12,True,144651,9648,0,117319,271618,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-13,True,146856,10356,0,121231,278443,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-14,True,147670,9618,0,116262,273550,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-15,True,112161,3131,0,24580,139872,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-16,True,139529,8027,0,99501,247057,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-17,False,140077,5591,0,62747,208415,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-18,False,123406,3288,0,22204,148898,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-19,True,180314,7677,0,73522,261513,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-20,True,146773,9111,0,116979,272863,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-21,True,143655,9966,0,119373,272994,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-22,True,144077,9744,0,117238,271059,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-23,True,143324,9677,0,109219,262220,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-24,False,117549,4542,0,52876,174967,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-25,False,102746,3130,0,21776,127652,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-26,True,135732,9411,0,110257,255400,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-27,True,125010,8375,0,92177,225562,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-28,True,147549,10232,0,120479,278260,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-29,True,147089,10499,0,119093,276681,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-30,True,149392,9816,0,113524,272732,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-08-31,False,145310,6195,0,69891,221396,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-01,False,103982,3102,0,22222,129306,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-02,True,140341,9856,0,116146,266343,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-03,True,147662,10591,0,121464,279717,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-04,True,149576,10531,0,119486,279593,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-05,True,156192,10200,0,114857,281249,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-06,True,145767,5765,0,101497,253029,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-07,False,130083,2424,0,24726,157233,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-08,False,132167,3366,0,22240,157773,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-09,True,145582,8397,0,95033,249012,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-10,True,147114,8327,0,100956,256397,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-11,True,141970,4862,0,96670,243502,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-12,True,137931,8124,0,102628,248683,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-13,True,140448,7813,0,103323,251584,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-14,False,130767,4456,0,54019,189242,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-15,False,105460,2743,0,21791,129994,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-16,True,139950,8089,0,106290,254329,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-17,True,133723,5527,0,81960,221210,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-18,True,127499,7719,0,100935,236153,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-19,True,144592,9217,0,119089,272898,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-20,True,150088,8923,0,114806,273817,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-21,False,142625,5590,0,69841,218056,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-22,False,107342,2963,0,23630,133935,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-23,True,143918,9423,0,120344,273685,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-24,True,144599,10085,0,122620,277304,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-25,True,155246,10436,0,121391,287073,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-26,True,139627,8445,0,105194,253266,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-27,True,144481,9209,0,114830,268520,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-28,False,139691,4766,0,63254,207711,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-29,False,109297,2586,0,25025,136908,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-09-30,True,151287,9845,0,120689,281821,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-01,True,156228,8965,0,120567,285760,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-02,True,108837,3137,0,38269,150243,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-03,True,150255,9688,0,119917,279860,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-04,True,153126,10175,0,116988,280289,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-05,False,150286,6650,0,70622,227558,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-06,False,118150,3671,0,23837,145658,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-07,True,160629,10659,0,121287,292575,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-08,True,156168,11066,0,122667,289901,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-09,True,152831,10986,0,121858,285675,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-10,True,153205,10315,0,117541,281061,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-11,True,158647,9791,2073,106317,276828,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-12,False,99762,3528,4484,25795,133569,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-13,False,97746,3089,5979,19971,126785,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-14,True,129725,10019,9700,117900,267344,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-15,True,128725,9953,13712,121830,274220,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-16,True,128370,9892,15871,117690,271823,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-17,True,127344,9715,17856,119073,273988,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-18,True,133253,9362,19499,115105,277219,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-19,False,127483,5817,18096,68660,220056,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-20,False,92801,2925,11791,23839,131356,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-21,True,128194,9398,18783,119140,275515,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-22,True,125902,9769,20568,121116,277355,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-23,True,129964,9857,20693,119013,279527,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-24,True,131432,9009,18789,116086,275316,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-25,True,136030,9377,23412,107635,276454,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-26,False,125602,5218,18066,58639,207525,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-27,False,99315,2962,13147,23094,138518,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-28,True,122704,8403,19790,100619,251516,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-29,True,114367,8015,20521,95051,237954,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-30,True,110960,7411,20605,85569,224545,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-10-31,True,80806,3806,14104,42972,141688,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-01,True,73542,2196,10606,18843,105187,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-02,False,97092,3081,13125,20804,134102,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-03,False,114411,2909,13099,16606,147025,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-04,True,112885,7477,17913,86833,225108,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-05,True,113271,7994,19970,98564,239799,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-06,True,111612,8067,20604,101512,241795,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-07,True,116326,8093,18790,100564,243773,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-08,True,112928,7612,21002,96309,237851,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-09,False,113695,4280,18312,50770,187057,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-10,False,99348,3016,13306,21336,137006,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-11,True,110883,8150,21592,106849,247474,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-12,True,113981,8749,22820,110527,256077,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-13,True,113577,8398,22911,111861,256747,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-14,True,120014,8082,23539,110691,262326,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-15,True,112562,5315,21218,81010,220105,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-16,False,121675,4942,20676,61114,208407,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-17,False,103874,3001,13611,20142,140628,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-18,True,120012,8134,16492,111339,255977,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-19,True,115737,8385,23119,109519,256760,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-20,True,87455,3347,14227,40942,145971,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-21,True,113462,8116,22395,110001,253974,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-22,True,118581,7725,24197,105993,256496,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-23,False,111740,4572,20248,56198,192758,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-24,False,90549,2663,14261,21505,128978,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-25,True,112736,7723,23132,109359,252950,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-26,True,112377,8146,24097,111491,256111,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-27,True,113013,8030,25717,110725,257485,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-28,True,112765,7895,24131,108741,253532,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-29,True,116047,5391,28118,105429,254985,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-11-30,False,114568,3522,25018,65732,208840,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-01,False,90289,2792,16552,21715,131348,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-02,True,108300,7462,28556,109581,253899,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-03,True,115456,8124,23768,111073,258421,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-04,True,111096,7913,28463,111377,258849,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-05,True,112226,7680,29829,108528,258263,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-06,True,104085,6896,29821,93597,234399,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-07,False,114513,4915,27043,62811,209282,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-08,False,91522,2838,18515,21861,134736,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-09,True,106436,7571,30368,110038,254413,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-10,True,104965,7872,33835,111337,258009,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-11,True,105543,6465,34236,110974,257218,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-12,True,103710,7117,36165,108206,255198,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-13,True,107348,6785,39464,103984,257581,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-14,False,108797,4350,32180,53046,198373,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-15,False,90705,2660,25728,22268,141361,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-16,True,100144,7183,38400,108433,254160,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-17,True,100122,7376,39823,111430,258751,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-18,True,100469,7424,40941,111181,260015,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-19,True,97998,6917,40896,107271,253082,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-20,True,109572,6507,41753,101554,259386,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-21,False,108573,4573,37052,62284,212482,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-22,False,92734,2861,25569,22608,143772,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-23,True,105219,6685,40510,100255,252669,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-24,True,106550,6195,41079,95903,249727,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-25,True,101146,3955,35942,41907,182950,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-26,True,95585,5827,37994,85925,225331,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-27,True,94813,5647,38822,85108,224390,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-28,False,95700,3734,33047,48802,181283,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-29,False,86552,2572,24150,21020,134294,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-30,True,93134,5820,37412,86933,223299,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2024-12-31,True,99539,5443,37401,79709,222092,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-01,True,84509,2700,26432,40782,154423,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-02,True,93169,6825,40640,105165,245799,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-03,True,96914,6694,42231,105798,251637,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-04,False,99697,4495,35855,64767,204814,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-05,False,85036,1053,25209,21514,132812,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-06,True,102910,6009,44261,113702,266882,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-07,True,101615,7187,45124,116543,270469,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-08,True,97934,7377,44994,115347,265652,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-09,True,96755,7022,44126,113842,261745,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-10,True,101767,6615,44187,108391,260960,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-11,False,101370,3947,35691,55954,196962,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-12,False,85200,2541,25939,22585,136265,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-13,True,99354,6443,42317,112907,261021,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-14,True,111943,6776,17436,99667,235822,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-15,True,103594,4456,43537,115057,266644,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-16,True,104255,6847,44247,114235,269584,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-17,True,102722,6510,43933,108429,261594,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-18,False,100884,4158,35857,63294,204193,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-19,False,84596,2422,23587,21719,132324,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-20,True,99292,6720,42178,113185,261375,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-21,True,98865,6951,44176,115503,265495,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-22,True,98747,6944,44316,116098,266105,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-23,True,99122,6736,44690,114375,264923,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-24,True,103475,6716,46391,109742,266324,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-25,False,111987,3974,40673,57640,214274,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-26,False,85151,2141,24837,20887,133016,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-27,True,94881,6642,43519,112421,257463,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-28,True,94700,6690,45305,116728,263423,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-29,True,95158,6600,45061,114172,260991,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-30,True,95581,6497,44841,111772,258691,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-01-31,True,104942,5955,38233,105058,254188,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-01,False,104292,4062,37400,63990,209744,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-02,False,89052,2327,25008,21357,137744,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-03,True,95658,6397,45155,109623,256833,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-04,True,96376,6533,46503,114404,263816,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-05,True,92391,6483,46392,114877,260143,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-06,True,92455,6339,46399,111343,256536,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-07,True,98632,6218,46818,105404,257072,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-08,False,94830,3389,34304,53049,185572,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-09,False,79583,2198,25466,21448,128695,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-10,True,94281,5938,44568,111231,256018,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-11,True,99051,6219,46803,114587,266660,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-12,True,92463,6258,44871,113899,257491,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-13,True,96470,5553,39282,111549,252854,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-14,True,93286,5977,45584,105894,250741,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-15,False,97190,3902,38279,62600,201971,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-16,False,80072,2170,25572,21653,129467,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-17,True,96289,3694,45637,110478,256098,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-18,True,94610,3893,44977,112893,256373,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-19,True,84566,5021,41077,96582,227246,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-20,True,94684,5563,45218,110944,256409,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-21,True,93463,5444,44200,104421,247528,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-22,False,97647,3462,36087,55207,192403,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-23,False,76714,1849,22460,20269,121292,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-24,True,90818,5844,43924,111200,251786,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-25,True,94428,6008,45488,113827,259751,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-26,True,73247,4042,33635,72567,183491,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-27,True,90459,5758,44095,111283,251595,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-02-28,True,96492,5182,44902,106815,253391,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-01,False,100147,3334,37472,64135,205088,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-02,False,75398,2068,22483,20977,120926,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-03,True,90083,5860,44759,112597,253299,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-04,True,88841,5736,44782,114830,254189,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-05,True,93201,5789,44399,116196,259585,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-06,True,94309,5600,44394,115451,259754,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-07,True,97800,5372,45059,109302,257533,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-08,False,98100,3189,35040,56993,193322,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-09,False,70215,1506,20475,20517,112713,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-10,True,93530,5438,43942,114311,257221,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-11,True,92999,5249,45121,117719,261088,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-12,True,100996,4654,41484,115747,262881,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-13,True,89525,4972,42978,105501,242976,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-14,True,42528,1220,15163,10818,69729,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-15,False,87232,2974,32051,55751,178008,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-16,False,71264,1959,21648,21009,115880,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-17,True,99731,5785,41906,112118,259540,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-18,True,95484,5814,46193,115908,263399,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-19,True,94762,5763,45930,115487,261942,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-20,True,92297,5309,45286,112949,255841,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-21,True,94296,5221,45178,107057,251752,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-22,False,95013,3274,35382,58222,191891,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-23,False,79581,1944,21879,22160,125564,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-24,True,93268,5540,44732,113180,256720,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-25,True,93756,5680,45937,115384,260757,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-26,True,100687,5330,39583,115298,260898,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-27,True,94310,5546,45054,112916,257826,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-28,True,94036,5192,44494,105575,249297,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-29,False,91004,3514,36638,66482,197638,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-30,False,77329,2066,22680,21391,123466,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-03-31,True,91372,3555,34728,67359,197014,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-01,True,103378,4858,43457,111497,263190,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-02,True,104635,5960,37644,114712,262951,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-03,True,94262,5821,47016,113963,261062,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-04,True,95960,5693,46291,109294,257238,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-05,False,98178,3338,38257,63768,203541,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-06,False,79302,1972,24019,21471,126764,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-07,True,96207,5688,46953,113785,262633,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-08,True,97475,6002,48953,117574,270004,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-09,True,98018,6004,49092,116632,269746,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-10,True,90436,4693,42566,92912,230607,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-11,True,99230,5260,47558,103748,255796,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-12,False,101774,2853,29742,47473,181842,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-13,False,86588,2191,25234,21768,135782,False,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-14,True,89530,4527,39241,86031,219329,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-15,True,98479,5867,47600,114770,266716,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-16,True,95576,5865,48582,114006,264029,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-17,True,95202,5484,46994,108460,256140,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-18,True,90024,3374,36084,66622,196104,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-19,False,97777,3290,36061,59165,196293,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-20,False,86835,1961,23632,21019,133447,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-21,True,95524,5352,46585,107822,255283,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-22,True,98939,5292,48206,113042,265479,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-23,True,96587,5393,47519,112806,262305,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-24,True,94218,5535,46972,110712,257437,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-25,True,98564,5463,46727,105112,255867,False,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-26,False,98651,3276,35799,53878,191604,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-27,False,81403,2024,23971,21000,128398,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-28,True,99642,6080,49666,112186,267574,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-29,True,103588,5849,51037,112332,272806,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-04-30,True,111838,6188,51991,106527,276544,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-01,True,77650,2164,24974,28195,132983,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-02,True,93530,4947,46223,95823,240523,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-03,False,92404,3389,37313,58122,191228,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-04,False,81126,1970,23304,20390,126790,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-05,True,93142,5619,46904,102662,248327,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-06,True,93926,5607,47454,106730,253717,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-07,True,85237,5202,43605,100082,234126,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-08,True,88565,5515,46103,102922,243105,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-09,True,91069,5033,45042,96158,237302,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-10,False,91312,2950,33140,47306,174708,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-11,False,79052,2215,23242,19965,124474,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-12,True,90761,4352,38800,91672,225585,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-13,True,95364,5574,45756,106263,252957,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-14,True,94194,5496,46169,105958,251817,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-15,True,93180,5250,45586,104638,248654,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-16,True,95931,5153,46557,99526,247168,False,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-17,False,99314,3418,37194,57291,197218,False,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-18,False,95552,1763,14653,21250,133218,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-19,True,96196,5520,46125,104247,252089,False,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-20,True,103611,5535,49329,107288,265763,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-21,True,95927,5577,48748,105426,255678,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-22,True,96141,5403,47454,105686,254684,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-23,True,100569,5047,45120,99159,249895,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-24,False,103390,2677,35778,50330,192175,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-25,False,87386,1934,21759,20922,132001,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-26,True,89271,5727,44623,99618,239239,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-27,True,100168,5689,48033,109285,263175,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-28,True,98750,5793,49308,109606,263457,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-29,True,105566,4640,50004,108423,268633,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-30,True,107899,3257,50692,102661,264509,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-05-31,False,106738,3311,40910,61535,212494,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-01,False,89758,2060,25713,21806,139337,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-02,True,98918,5122,50267,107835,262142,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-03,True,100861,5242,51290,113708,271101,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-04,True,99433,5365,51118,112912,268828,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-05,True,100997,4999,51475,112479,269950,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-06,True,100624,5002,51650,105388,262664,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-07,False,94556,2926,35272,50783,183537,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-08,False,95245,2196,27709,22295,147445,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-09,True,99695,5183,51221,112331,268430,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-10,True,97785,5252,52049,114412,269498,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-11,True,99009,5438,53679,117532,275658,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-12,True,99171,5298,52689,116599,273757,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-13,True,99343,5115,53055,111753,269266,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-14,False,102699,3143,40931,55300,202073,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-15,False,85373,2181,28524,22613,138691,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-16,True,93530,5284,51609,112838,263261,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-17,True,105606,5880,56235,124027,291748,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-18,True,103670,6002,59463,125838,294973,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-19,True,98542,5487,56379,121180,281588,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-20,True,106727,5498,59143,119676,291044,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-21,False,104340,3340,45312,68567,221559,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-22,False,87866,2188,30595,24156,144805,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-23,True,104016,5390,57063,122802,289271,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-24,True,106700,5794,58855,126257,297606,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-25,True,105269,5658,59216,125685,295828,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-26,True,101322,5417,58003,123103,287845,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-27,True,107444,5153,59227,116839,288664,False,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-28,False,102545,3031,44448,60685,210709,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-29,False,88608,2208,28504,24526,143846,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-06-30,True,107318,5531,52033,121486,286368,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-01,True,105355,5640,60611,126356,297962,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-02,True,103257,5733,60883,126159,296032,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-03,True,104590,5597,60098,125641,295926,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-04,True,104179,5360,59862,119452,288853,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-05,False,101643,3396,48310,70804,224153,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-06,False,74281,1868,28554,22857,127560,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-07,True,102533,5124,59858,126054,293569,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-08,True,102048,5753,62282,131046,301129,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-09,True,100027,5616,62908,127921,296472,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-10,True,104272,5603,61410,126198,297483,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-11,True,100363,5205,61304,121121,287993,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-12,False,100658,2958,46225,60980,210821,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-13,False,84078,2057,32998,25154,144287,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-14,True,104164,5568,62044,129527,301303,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-15,True,106323,6045,65613,133325,311306,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-16,True,108310,5960,64472,133629,312371,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-17,True,101047,5581,62012,131541,300181,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-18,True,105632,5412,62209,125344,298597,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-19,False,106711,3315,49690,73282,232998,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-20,False,89140,2082,28447,25704,145373,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-21,True,99553,5316,60264,127197,292330,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-22,True,106958,6037,66210,136065,315270,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-23,True,102815,6007,66340,134264,309426,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-24,True,100842,5779,63855,133611,304087,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-25,True,98149,5330,61305,121914,286698,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-26,False,103043,3311,49395,66796,222545,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-27,False,82925,2127,33741,26264,145057,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-28,True,103639,5845,64130,134516,308130,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-29,True,103929,5934,66417,136805,313085,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-30,True,104821,5990,67119,136447,314377,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-07-31,True,116656,6278,62637,133444,319015,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-01,True,116890,5532,70202,128579,321203,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-02,False,117514,4069,56585,78031,256199,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-03,False,94897,2431,38320,28349,163997,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-04,True,105775,5885,66510,135142,313312,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-05,True,105808,6078,67999,139012,318897,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-06,True,103896,5957,67256,138105,315214,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-07,True,106917,5877,66255,137071,316120,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-08,True,110086,5759,67631,126436,309912,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-09,False,147327,4218,59774,43785,255104,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-10,False,96988,2529,35759,26690,161966,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-11,True,109371,5787,65406,135568,316132,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-12,True,111443,6019,68680,140346,326488,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-13,True,110883,6065,70131,139515,326594,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-14,True,113753,6090,70321,131755,321919,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-15,True,81676,1983,32613,30744,147016,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-16,False,83667,2650,40469,53534,180320,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-17,False,79564,1981,31452,27085,140082,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-18,True,93108,4980,59849,119926,277863,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-19,True,59798,2427,33129,60832,156186,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-20,True,87380,3767,49757,97757,238661,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-21,True,113097,6306,73043,142320,334766,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-22,True,115889,6330,74283,138569,335071,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-23,False,109117,3653,55900,76222,244892,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-24,False,82615,2139,36645,29975,151374,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-25,True,107661,6117,70062,136920,320760,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-26,True,105496,5702,66043,127343,304584,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-27,True,94614,2695,42138,31833,171280,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-28,True,106946,5014,61692,103108,276760,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-29,True,103367,5398,54372,108150,271287,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-30,False,109332,3987,56573,70725,240617,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-08-31,False,88927,2386,36285,28309,155907,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-01,True,103721,5380,62053,117696,288850,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-02,True,97586,5508,63305,120370,286769,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-03,True,100741,5683,65855,130317,302596,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-04,True,106097,5707,68190,130799,310793,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-05,True,101926,5113,63751,114293,285083,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-06,False,93412,3024,48069,59611,204116,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-07,False,74638,1940,32137,27831,136546,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-08,True,98791,5218,63664,121602,289275,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-09,True,114347,5763,72413,144478,337001,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-10,True,112369,5476,72774,143788,334407,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-11,True,111787,5477,70092,140757,328113,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-12,True,112876,5358,70717,136003,324954,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-13,False,110230,3237,52821,73312,239600,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-14,False,84792,2101,35581,31018,153492,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-15,True,97622,5129,64832,133108,300691,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-16,True,114046,5495,73683,147347,340571,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-17,True,108061,5696,69231,144197,327185,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-18,True,108756,5552,69414,143286,327008,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Metro Lines 2A and 7,2025-09-19,True,110542,5166,70193,138755,324656,True,observed,ogd_metro_2a_7_ridership_daily_2024_2025,46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7,2A & 7
+Monorail,2024-10-01,True,15135,,,3680,18815,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-02,True,11087,,,881,11968,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-03,True,15217,,,3792,19009,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-04,True,14229,,,3605,17834,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-05,False,14020,,,1721,15741,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-06,False,11412,,,453,11865,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-07,True,15803,,,3860,19663,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-08,True,16697,,,4011,20708,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-09,True,15579,,,3928,19507,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-10,True,16132,,,3835,19967,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-11,True,15908,,,3422,19330,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-12,False,11011,,,618,11629,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-13,False,10290,,,475,10765,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-14,True,16075,,,3975,20050,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-15,True,16116,,,4062,20178,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-16,True,16016,,,3935,19951,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-17,True,15552,,,3948,19500,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-18,True,14984,,,3623,18607,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-19,False,14415,,,1778,16193,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-20,False,11004,,,537,11541,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-21,True,16005,,,4023,20028,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-22,True,15531,,,4129,19660,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-23,True,15759,,,3957,19716,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-24,True,16007,,,3899,19906,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-25,True,16336,,,3555,19891,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-26,False,13731,,,1556,15287,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-27,False,9199,,,469,9668,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-28,True,14283,,,3109,17392,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-29,True,13760,,,2821,16581,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-30,True,12798,,,2576,15374,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-10-31,True,10690,,,1234,11924,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-01,True,9599,,,696,10295,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-02,False,10954,,,581,11535,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-03,False,12065,,,320,12385,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-04,True,13767,,,2926,16693,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-05,True,14037,,,3260,17297,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-06,True,14108,,,3386,17494,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-07,True,13993,,,3401,17394,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-08,True,14357,,,3032,17389,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-09,False,12828,,,1358,14186,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-10,False,12064,,,514,12578,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-11,True,14837,,,3691,18528,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-12,True,14994,,,3721,18715,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-13,True,14676,,,3897,18573,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-14,True,14641,,,3643,18284,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-15,True,12536,,,2013,14549,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-16,False,13414,,,1633,15047,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-17,False,11070,,,516,11586,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-18,True,15147,,,3870,19017,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-19,True,15044,,,3599,18643,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-20,True,11181,,,1016,12197,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-21,True,14368,,,3500,17868,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-22,True,14972,,,3604,18576,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-23,False,13212,,,1451,14663,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-24,False,10240,,,497,10737,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-25,True,15281,,,3873,19154,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-26,True,15074,,,3869,18943,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-27,True,14275,,,3814,18089,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-28,True,14646,,,3807,18453,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-29,True,14654,,,3535,18189,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-11-30,False,12959,,,1620,14579,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-01,False,10542,,,503,11045,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-02,True,14321,,,3693,18014,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-03,True,15649,,,3857,19506,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-04,True,14749,,,3799,18548,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-05,True,16142,,,3713,19855,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-06,True,13638,,,3016,16654,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-07,False,13867,,,1732,15599,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-08,False,11362,,,492,11854,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-09,True,15386,,,3823,19209,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-10,True,14936,,,3865,18801,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-11,True,14979,,,3799,18778,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-12,True,15332,,,3777,19109,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-13,True,15264,,,3568,18832,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-14,False,13910,,,1512,15422,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-15,False,11139,,,508,11647,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-16,True,14926,,,3834,18760,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-17,True,15079,,,3969,19048,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-18,True,15272,,,3918,19190,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-19,True,14759,,,3712,18471,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-20,True,14971,,,3530,18501,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-21,False,13455,,,1709,15164,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-22,False,11407,,,526,11933,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-23,True,15075,,,3444,18519,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-24,True,14457,,,3148,17605,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-25,True,11267,,,1001,12268,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-26,True,13309,,,2885,16194,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-27,True,13961,,,2790,16751,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-28,False,12784,,,1310,14094,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-29,False,11081,,,455,11536,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-30,True,13841,,,2994,16835,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2024-12-31,True,13525,,,2740,16265,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-01,True,13101,,,2000,15101,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-02,True,14118,,,3632,17750,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-03,True,14508,,,3576,18084,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-04,False,13118,,,1643,14761,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-05,False,10728,,,482,11210,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-06,True,14983,,,3878,18861,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-07,True,13888,,,3825,17713,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-08,True,14589,,,3995,18584,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-09,True,14013,,,3755,17768,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-10,True,13234,,,3460,16694,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-11,False,12839,,,1480,14319,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-12,False,9278,,,459,9737,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-13,True,15851,,,3823,19674,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-14,True,13845,,,3445,17290,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-15,True,14525,,,3820,18345,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-16,True,13214,,,3062,16276,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-17,True,15118,,,3532,18650,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-18,False,13686,,,1815,15501,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-19,False,11686,,,490,12176,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-20,True,15134,,,3928,19062,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-21,True,14407,,,3885,18292,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-22,True,14841,,,3957,18798,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-23,True,14813,,,3925,18738,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-24,True,15147,,,3790,18937,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-25,False,13651,,,1564,15215,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-26,False,12329,,,525,12854,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-27,True,14643,,,3886,18529,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-28,True,14810,,,4021,18831,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-29,True,15088,,,4081,19169,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-30,True,14232,,,3916,18148,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-01-31,True,14896,,,3592,18488,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-01,False,13650,,,1702,15352,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-02,False,11592,,,513,12105,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-03,True,14778,,,3809,18587,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-04,True,14782,,,3945,18727,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-05,True,14088,,,3992,18080,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-06,True,14450,,,3836,18286,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-07,True,14907,,,3665,18572,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-08,False,13347,,,1478,14825,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-09,False,11592,,,572,12164,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-10,True,15127,,,3971,19098,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-11,True,15795,,,4029,19824,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-12,True,14784,,,3951,18735,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-13,True,14713,,,3938,18651,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-14,True,14106,,,3540,17646,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-15,False,13550,,,1680,15230,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-16,False,11055,,,496,11551,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-17,True,14533,,,3902,18435,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-18,True,14867,,,3994,18861,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-19,True,12326,,,3282,15608,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-20,True,14902,,,4011,18913,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-21,True,13946,,,3764,17710,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-22,False,12524,,,1587,14111,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-23,False,9685,,,512,10197,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-24,True,14432,,,4035,18467,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-25,True,15159,,,3983,19142,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-26,True,10961,,,1958,12919,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-27,True,14507,,,3920,18427,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-02-28,True,14426,,,3746,18172,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-01,False,14395,,,1839,16234,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-02,False,8389,,,512,8901,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-03,True,14672,,,4060,18732,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-04,True,13680,,,4151,17831,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-05,True,14670,,,4175,18845,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-06,True,13296,,,4025,17321,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-07,True,14457,,,3868,18325,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-08,False,11708,,,1615,13323,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-09,False,9028,,,513,9541,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-10,True,14503,,,3953,18456,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-11,True,12910,,,3968,16878,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-12,True,14783,,,3874,18657,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-13,True,13183,,,3605,16788,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-14,True,4547,,,283,4830,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-15,False,12424,,,1595,14019,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-16,False,8761,,,508,9269,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-17,True,15213,,,3899,19112,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-18,True,14861,,,4169,19030,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-19,True,13753,,,4090,17843,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-20,True,13711,,,4003,17714,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-21,True,13832,,,3724,17556,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-22,False,0,,,1615,1615,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-23,False,9278,,,539,9817,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-24,True,13837,,,4043,17880,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-25,True,14127,,,4211,18338,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-26,True,14043,,,4131,18174,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-27,True,13856,,,4080,17936,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-28,True,13556,,,3743,17299,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-29,False,12155,,,2165,14320,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-30,False,9360,,,782,10142,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-03-31,True,16817,,,1848,18665,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-01,True,17883,,,3942,21825,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-02,True,15389,,,4136,19525,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-03,True,14406,,,4138,18544,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-04,True,13864,,,3760,17624,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-05,False,12793,,,1750,14543,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-06,False,11144,,,488,11632,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-07,True,13882,,,3729,17611,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-08,True,14168,,,4158,18326,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-09,True,14377,,,4063,18440,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-10,True,12827,,,2602,15429,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-11,True,14517,,,3670,18187,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-12,False,13077,,,1454,14531,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-13,False,11467,,,548,12015,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-14,True,12134,,,2148,14282,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-15,True,14824,,,3858,18682,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-16,True,13336,,,3600,16936,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-17,True,14054,,,3735,17789,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-18,True,11931,,,1846,13777,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-19,False,12935,,,1759,14694,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-20,False,10874,,,531,11405,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-21,True,13934,,,3726,17660,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-22,True,13908,,,3893,17801,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-23,True,14010,,,4042,18052,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-24,True,13738,,,3838,17576,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-25,True,14135,,,3603,17738,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-26,False,12919,,,1594,14513,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-27,False,9979,,,535,10514,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-28,True,13393,,,3858,17251,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-29,True,12454,,,3570,16024,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-04-30,True,13311,,,3499,16810,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-01,True,10730,,,1452,12182,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-02,True,12807,,,3245,16052,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-03,False,12150,,,1604,13754,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-04,False,10276,,,539,10815,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-05,True,13294,,,3600,16894,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-06,True,12850,,,3659,16509,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-07,True,12435,,,3613,16048,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-08,True,12605,,,3632,16237,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-09,True,13037,,,3491,16528,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-10,False,11825,,,1413,13238,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-11,False,10169,,,534,10703,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-12,True,11708,,,2483,14191,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-13,True,14361,,,3735,18096,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-14,True,13746,,,3776,17522,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-15,True,13636,,,3771,17407,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-16,True,13857,,,3531,17388,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-17,False,12704,,,1681,14385,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-18,False,11678,,,549,12227,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-19,True,14239,,,3672,17911,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-20,True,15050,,,3721,18771,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-21,True,12842,,,3595,16437,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-22,True,13617,,,3714,17331,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-23,True,13337,,,3370,16707,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-24,False,12944,,,1501,14445,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-25,False,9810,,,541,10351,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-26,True,12072,,,3092,15164,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-27,True,13497,,,3640,17137,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-28,True,13100,,,3646,16746,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-29,True,14011,,,3715,17726,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-30,True,14008,,,3428,17436,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-05-31,False,12887,,,1615,14502,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-01,False,11105,,,531,11636,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-02,True,13645,,,3755,17400,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-03,True,13591,,,3847,17438,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-04,True,12949,,,3734,16683,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-05,True,13591,,,3805,17396,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-06,True,13547,,,3513,17060,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-07,False,12754,,,1243,13997,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-08,False,12390,,,492,12882,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-09,True,14293,,,3712,18005,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-10,True,13887,,,3741,17628,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-11,True,13726,,,3874,17600,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-12,True,13712,,,3764,17476,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-13,True,13339,,,3731,17070,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-14,False,12767,,,1645,14412,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-15,False,9638,,,576,10214,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-16,True,11256,,,3361,14617,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-17,True,14400,,,3986,18386,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-18,True,14010,,,4000,18010,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-19,True,12945,,,3555,16500,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-20,True,14517,,,3719,18236,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-21,False,13253,,,1982,15235,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-22,False,10681,,,584,11265,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-23,True,15001,,,4035,19036,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-24,True,14628,,,4097,18725,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-25,True,15149,,,4026,19175,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-26,True,14498,,,3954,18452,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-27,True,14647,,,3786,18433,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-28,False,13503,,,1773,15276,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-29,False,9467,,,535,10002,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-06-30,True,14265,,,3747,18012,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-01,True,14506,,,3832,18338,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-02,True,14315,,,4007,18322,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-03,True,14116,,,3932,18048,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-04,True,14286,,,3807,18093,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-05,False,11630,,,1767,13397,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-06,False,14147,,,540,14687,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-07,True,7935,,,2284,10219,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-08,True,13936,,,3760,17696,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-09,True,13571,,,3405,16976,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-10,True,14184,,,3662,17846,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-11,True,13619,,,3428,17047,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-12,False,13268,,,1653,14921,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-13,False,10808,,,569,11377,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-14,True,13904,,,3662,17566,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-15,True,14204,,,3901,18105,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-16,True,15193,,,3848,19041,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-17,True,15434,,,3883,19317,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-18,True,14999,,,3651,18650,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-19,False,14143,,,1886,16029,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-20,False,11761,,,628,12389,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-21,True,14841,,,3917,18758,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-22,True,15080,,,3994,19074,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-23,True,14751,,,3809,18560,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-24,True,15284,,,3817,19101,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-25,True,14024,,,3480,17504,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-26,False,13741,,,1618,15359,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-27,False,10678,,,548,11226,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-28,True,14776,,,3592,18368,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-29,True,15320,,,3841,19161,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-30,True,15566,,,3907,19473,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-07-31,True,15726,,,3888,19614,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-01,True,15598,,,3674,19272,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-02,False,14733,,,1680,16413,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-03,False,13935,,,547,14482,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-04,True,15591,,,3737,19328,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-05,True,15867,,,3741,19608,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-06,True,13669,,,3091,16760,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-07,True,14424,,,3242,17666,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-08,True,15064,,,3068,18132,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-09,False,15305,,,959,16264,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-10,False,14381,,,517,14898,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-11,True,16454,,,3364,19818,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-12,True,16604,,,3531,20135,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-13,True,16679,,,3430,20109,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-14,True,16311,,,3267,19578,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-15,True,12609,,,644,13253,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-16,False,10082,,,1047,11129,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-17,False,13995,,,521,14516,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-18,True,11051,,,2665,13716,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-19,True,9841,,,1340,11181,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-20,True,7384,,,1834,9218,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-21,True,10117,,,2118,12235,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-22,True,10118,,,2359,12477,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-23,False,13583,,,1327,14910,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-24,False,11582,,,551,12133,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-25,True,13777,,,2832,16609,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-26,True,14910,,,2910,17820,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-27,True,14308,,,632,14940,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-28,True,14541,,,2529,17070,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-29,True,15439,,,2487,17926,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-30,False,17394,,,1411,18805,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-08-31,False,13233,,,526,13759,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-01,True,12374,,,2744,15118,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-02,True,16952,,,2811,19763,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-03,True,17426,,,3054,20480,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-04,True,19000,,,3355,22355,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-05,True,15833,,,2497,18330,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-06,False,22931,,,1230,24161,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-07,False,9996,,,546,10542,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-08,True,16922,,,2410,19332,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-09,True,15899,,,3333,19232,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-10,True,14764,,,3259,18023,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-11,True,15920,,,3552,19472,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-12,True,16036,,,3458,19494,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-13,False,15102,,,1626,16728,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-14,False,13728,,,630,14358,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-15,True,10454,,,2040,12494,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-16,True,16048,,,3586,19634,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-17,True,16137,,,3643,19780,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-18,True,16109,,,3554,19663,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-19,True,15491,,,3196,18687,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-20,False,0,,,0,0,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail
+Monorail,2025-09-21,False,0,,,0,0,True,observed,ogd_monorail_ridership_daily_2024_2025,fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51,Monorail

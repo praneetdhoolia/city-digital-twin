@@ -141,12 +141,14 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
         this.timeInterpretation = TimeInterpretation.create(scenario.getConfig());
         this.cfg = ConfigUtils.addOrGetModule(scenario.getConfig(),
                 TaxiFleetConfigGroup.NAME, TaxiFleetConfigGroup.class);
-        this.sampleFraction = scenario.getConfig().qsim().getFlowCapFactor();
+        // #215: the SAMPLE fraction, its own emitted field, not the flow
+        // capacity factor that happens to equal it
+        this.sampleFraction = this.cfg.getSampleFraction();
         if (this.sampleFraction <= 0) {
             throw new IllegalStateException(
-                    "qsim.flowCapacityFactor is " + this.sampleFraction
+                    "taxiFleet.sampleFraction is " + this.sampleFraction
                     + "; the fleet is declared at full scale and scaled by it, "
-                    + "so a non-positive factor cannot size a fleet");
+                    + "so a non-positive fraction cannot size a fleet");
         }
     }
 

@@ -2,9 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 17 September 2026 (fifty-fourth session) · **Record read through:** §9.177 · **Written against family:** `F35`
+**Updated:** 22 September 2026 (sixtieth session) · **Record read through:** §9.210 · **Written against family:** `F35`
 
 ## What is built
+
+- **Mumbai's metro target is the operators' observed daily ridership** (§9.210): MMRDA's OGD daily series for Lines 2A/7 (628 days) and the Monorail (356), imported from the user's logged-in browser, plus the Economic Survey's Line 1, 3 and Navi Mumbai averages - 906,988 a weekday of the CTS's 35.4 M trips, **2.5597 %** (sweep 2.3634–2.6283; the 2017 split gave 1.166 %; `mode_targets_by_mode.csv`).
 
 **Light rail — the intervention (S2 and its variants).**
 
@@ -39,7 +41,6 @@
 - **The ferry's cross-harbour market is small and the ferry takes a sixth of it** (§9.177, #94, `_near_wharf.json` on `20260915T000704_250it_25pct`, `measure_near_wharf.py`): **305** resident trips (**0.19 %**) have both ends within `RUN.transit_router.search_radius_m` of two DIFFERENT wharves; ferry **15.7 %** of them, car 51.8 %; boardings scale to **1,148 a weekday**, inside the 234–1,347 tap-on bound; the scoring pair `20260916T063903_250it_25pct` reads 304 trips, ferry 16.1 %, 1,236 boardings (§9.177). §9.163's one-wharf market (3.60 %) counted trips that need no ferry.
 - **THE ROUTERS PAIR, F35's second result** (`20260915T000704_250it_25pct`, iteration 250, `ran_to_last_iteration`, §9.176; `C.raptor.mode_cost_representation` = `mode_constant`, against arm 0 inside F35): light rail **856 boardings against 2,954, −71.0 %, STOP** (arm 0 772); ferry **0.0473 %, −66.9 %, STOP** (arm 0 0.0524); heavy rail **10,476, +60.5 %** (arm 0 10,092); bus −12.3 %; pt coverage **15.78 %** (arm 0 17.53). The raptor's constants move 84 boardings onto the tram and 384 onto the train: the split is NOT the router's constants; the tram sits below its 2,090–3,751 bracket (#185).
 - **ARM 0, F35's first result** (`20260912T202242_300it_25pct`, iteration 300, `ran_to_last_iteration`, §9.169): light rail **772 boardings a weekday against 2,954, −73.9 %, STOP** (193 sampled); ferry **0.0524 % against 0.1429 %, −63.3 %, STOP** (83 trips); heavy rail **10,092 against 6,529 (+54.6 %)**, bus 2.0045 % (−15.8 %); pt choice-set coverage **17.53 %** (F32 25.78 %); **752** pt trips board more than one submode. Not a comparison with F32 (§3.5) but a direction: light rail moved AWAY (F32 −58.6 %) when the pt access leg became a network walk (§9.167).
-- **The F32 RESULT** (`20260909T015217_300it_25pct`, iteration 300, `ran_to_last_iteration`): light rail **1,224 boardings against 2,954, −58.6 %** through its own schedule (§9.169; §9.162 recorded 1,260 / −57.3 %); ferry **0.0571 % against 0.1429 %, −60.1 %**. Light rail moved AWAY across the run — 2,720 boardings at iteration 0, 1,436 at 200 (§9.162) — so the DIRECTION is the finding. Comparable with no earlier family (§3.5).
 - The pre-pandemic V001/V002 count (3,417 boardings a day, 2019–20) is unscorable in `src/calibrate/fit.py`; no error is quoted against it (§9.80, #84).
 
 ## What is open
@@ -67,6 +68,8 @@
 
 ## History
 
+- §9.169 — F32 result: light rail −58.6 %
+- §9.210 — the Java fold; the metro target
 - §9.177 — cross-harbour market 305 trips; D8
 - §9.176 — the routers pair: tram 856, ferry −66.9 %
 - §9.170 — corridor builder reads registry tram values
@@ -80,5 +83,3 @@
 - §9.157 — F31 gate: light rail −47.2 %, ferry −65.6 %
 - §9.156 — tsp refused as a lever
 - §9.142 — corridor gets its arrivals
-- §9.140 — ferry market and memory measured
-- §9.139 — F23 gate: both unmoved

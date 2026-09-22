@@ -13,6 +13,8 @@ import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.events.PersonEntersVehicleEvent;
 import org.matsim.api.core.v01.events.PersonLeavesVehicleEvent;
 import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.network.Network;
+import org.matsim.core.population.routes.NetworkRoute;
 import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.mobsim.framework.MobsimAgent;
 import org.matsim.core.mobsim.framework.PassengerAgent;
@@ -95,6 +97,10 @@ public final class JointRideEngine implements MobsimEngine, DepartureHandler {
     private int waitBoarded;
     private int waitTimeouts;
     private int abortedAtSimEnd;
+    /** #217: timed-out rides clocked by a free-flow or beeline estimate
+     *  because the leg carried no travel time. */
+    private int fallbackFreeflow;
+    private int fallbackBeeline;
 
     private static final class Riding {
         final MobsimVehicle vehicle;
@@ -208,21 +214,70 @@ public final class JointRideEngine implements MobsimEngine, DepartureHandler {
     }
 
     /** The current ride leg's routed travel time - the Tier-1 clock. */
-    private static double fallbackTravelTime(final MobsimAgent agent) {
+    /** The time a timed-out passenger takes to the destination: the leg's own
+     *  travel time where the route carries one; else the free-flow time over
+     *  the route's links; else the beeline at the network's mean free speed.
+     *  Never 0 (#217): a zero made a timed-out ride an instant teleport the
+     *  accounting did not flag. The two estimates are counted in the log. */
+    private double fallbackTravelTime(final MobsimAgent agent) {
+        org.matsim.api.core.v01.population.Route route = null;
         if (agent instanceof org.matsim.core.mobsim.framework.PlanAgent) {
             final org.matsim.api.core.v01.population.PlanElement e =
                     ((org.matsim.core.mobsim.framework.PlanAgent) agent)
                             .getCurrentPlanElement();
             if (e instanceof org.matsim.api.core.v01.population.Leg) {
-                final org.matsim.api.core.v01.population.Route route =
-                        ((org.matsim.api.core.v01.population.Leg) e).getRoute();
-                if (route != null
-                        && route.getTravelTime().isDefined()) {
+                route = ((org.matsim.api.core.v01.population.Leg) e).getRoute();
+                if (route != null && route.getTravelTime().isDefined()
+                        && route.getTravelTime().seconds() > 0) {
                     return route.getTravelTime().seconds();
                 }
             }
         }
-        return 0.0;
+        final Network network = this.qsim.getScenario().getNetwork();
+        if (route instanceof NetworkRoute) {
+            double seconds = 0.0;
+            for (final Id<Link> id : ((NetworkRoute) route).getLinkIds()) {
+                final Link link = network.getLinks().get(id);
+                if (link != null) {
+                    seconds += link.getLength() / Math.max(link.getFreespeed(), 0.1);
+                }
+            }
+            final Link end = network.getLinks().get(route.getEndLinkId());
+            if (end != null) {
+                seconds += end.getLength() / Math.max(end.getFreespeed(), 0.1);
+            }
+            if (seconds > 0) {
+                this.fallbackFreeflow++;
+                return seconds;
+            }
+        }
+        final Link from = network.getLinks().get(agent.getCurrentLinkId());
+        final Link to = network.getLinks().get(agent.getDestinationLinkId());
+        if (from != null && to != null) {
+            final double beeline = org.matsim.core.utils.geometry.CoordUtils.calcEuclideanDistance(
+                    from.getToNode().getCoord(), to.getToNode().getCoord());
+            this.fallbackBeeline++;
+            return Math.max(1.0, beeline / meanFreespeed(network));
+        }
+        this.fallbackBeeline++;
+        return 1.0;
+    }
+
+    private double meanFreespeedCache = Double.NaN;
+
+    private double meanFreespeed(final Network network) {
+        if (Double.isNaN(this.meanFreespeedCache)) {
+            double sum = 0.0;
+            int n = 0;
+            for (final Link link : network.getLinks().values()) {
+                if (link.getAllowedModes().contains(TransportMode.car)) {
+                    sum += link.getFreespeed();
+                    n++;
+                }
+            }
+            this.meanFreespeedCache = n > 0 ? Math.max(sum / n, 0.1) : 1.0;
+        }
+        return this.meanFreespeedCache;
     }
 
     private MobsimVehicle vehicleOf(
@@ -371,10 +426,12 @@ public final class JointRideEngine implements MobsimEngine, DepartureHandler {
             it.remove();
         }
         LOG.info("jointRide: boarded={} alighted={} missed(gone={} absent={} "
-                 + "full={}) waited(boarded={} timedOut={}) abortedAtSimEnd={}",
+                 + "full={}) waited(boarded={} timedOut={}) abortedAtSimEnd={} "
+                 + "timeoutClock(freeflow={} beeline={})",
                  this.boarded, this.alighted, this.missedVehicleGone,
                  this.missedVehicleAbsent, this.missedFull,
-                 this.waitBoarded, this.waitTimeouts, this.abortedAtSimEnd);
+                 this.waitBoarded, this.waitTimeouts, this.abortedAtSimEnd,
+                 this.fallbackFreeflow, this.fallbackBeeline);
     }
 
     @Override

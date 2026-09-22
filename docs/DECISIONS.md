@@ -241,6 +241,7 @@ about its layout will otherwise cost you an hour:
 | **The commuter crossings in Mumbai's feed, the pass-through merge measured and not applied, the hosts that refuse this address** | **§9.207** - seven Maritime Board crossings at their printed vessel capacities (`A.baseline_transit.directory_crossings`, 115,100 vehicles, one mapping, the 0.1 % check ran them); the merge moves the median link 62.7 → 69.0 m and the user keeps the network as converted; D15 a 384-512 GB host, D16 the OGD key, D17 a browser capture from a network the hosts admit |
 | **The refusing hosts reached through the Internet Archive; Metro 2A/7 in their published windows; RDSO's coach loads** | **§9.208** - 22 of the 41 sources whose hosts refuse this address acquired as dated Wayback copies (4 empty ones kept unusable, 17 without a capture); `A.baseline_transit.line_windows_s` runs Lines 2A and 7 in MMMOCL's published first-to-last windows (552 → 500 departures); RDSO's MRVC-III coach loads (1,148 + 4,924 at 16/m²) raise the rail capacity sweep to 6,072 |
 | **Mumbai's suburban trains run the printed timetables; household vehicles reach 2026 from the registration stock; work follows the built volume; every link carries its grade; every acquisition has a stated use** | **§9.209** - 3,289 timetable trains (WR 1,394 / CR 1,895 against 1,414 / 1,820 published) replace 31 generated patterns; `B.population.vehicle_possession_projection` carries the 2011 HL-14 shares to 2026 by the RTO stock (NFHS-4/5 pace check); GHSL 2025 built volume weights work destinations; 788,523 links stamped with a GLO-30 grade; 20 refusing sources landed through the user's VPN; `source_use.json` - 0 unread of 600 |
+| **The Java fold landed; MMRDA's daily metro ridership imported and made the metro target** | **§9.210** - `taxiFleet.sampleFraction` (#215), one routing pool per run (#216), no zero-second timed-out ride (#217), `retimed= restoreRetimed=` by name (#187), the `heldRideTrips` refusal (D12, #86), verified on the 1 % smoke `20260922T172813_4it_1pct`; the two OGD CSVs imported from the user's logged-in browser (`--portal-download`), 984 days of ridership, the Mumbai metro target 1.17 → 2.56 % of trips |
 | **Every open issue worked to done or to one measurement, and the fix that was half a fix** | **§9.164** - the twenty-one MATSim defaults that decided the model unreviewed go to **0** (nine declared at the framework's own values, twelve accepted with a reason). The demand STATES that a declared passenger rides: `B.mode.bound_passenger_placement` = `every_plan` puts a bound tour on `ride` in every seeded plan as the driver is already put on `car` - **194,131** fully bound weekday tours over **199,329** persons - and the demand, plans and 30 run-input sets are rebuilt on it, opening family **`F33`**. A tour that will not fit no longer discards the rest of the day (**547** weekday tours recovered; week trip rate **3.398** against the HTS 3.473). `C.time_weights.beta_headway` and `beta_reliability` REACH MATSIM after two reports asked, behind a gate shipped `absent`; the pt submodes get a plan-level control; the calibration objective gets the replication-band denominator it never had, at zero until one is measured. **The ceiling watcher stops a run for the first time** (`stopped_at_ceiling` at iteration 3) and the gate watcher is caught arming over a disabled monitor and judging nothing. **§9.161's #167 diagnosis was HALF right**: `routingMode` takes the failure 40 agents → 20 and the residual is not in our input at all - 0 mixed trips over 6,347 persons - so `accessEgressModeToLink` still cannot start and ships `none` |
 | **A deviation no constant can reach, and the tail of cheap fixes the reports kept re-issuing** | **§9.163** - MATSim writes `modeChoiceCoverage1x.txt` on every arm and nothing read it, so every gate ever taken blamed a constant without asking whether a constant could reach the target. On the landed arm **ride's target of 20.60 % sits ABOVE the 20.05 % of agents who have ever held a ride plan** - the only mode of twelve, and no value of any constant closes it. Every choice set is within 1 pp of its final coverage by iteration 5-10 and shut by 16-27, **except pt**, still opening at 233 and reaching 25.78 %. The count-station map had been orphaned by a network rebuild 47 minutes after it was written: **0 of 195 rows still named the road they claimed**, and on the repaired map counts read **+16.30 % mean, -1.1 % median, 0 zeros** against -89.35 % / -98.7 % / 7. Half of all declared escort pairs put the passenger in their own car (**10,224 of 20,902**) with 99.6 % of tours realised, so ride's loss is mode assignment, not pairing. `RUN.replanning.score_msa_representation` and `RUN.replanning.score_msa_fraction` declare score averaging at MATSim's own default literal (registry **497 -> 499**, byte-neutral); undeclared MATSim defaults **31 -> 21**; three fields shipped at their consumer's off value now say so via `inert_at`. Fourteen of sixteen `awaiting-run` issues were measured from a run that had already finished |
 | **A stated ceiling is enforced by the runner, and the teleported access leg is diagnosed to a missing attribute in our own plans** | **§9.161** - `RUN.gate.wall_ceiling_h` (0 = no ceiling) and `start_ceiling_watch` give an approved cost the enforcement it never had: a SECOND watcher beside the gate's, stopping through 9.143's marker path with a new completion `stopped_at_ceiling`, so `RUN.gate.interval_iterations = 0` keeps meaning "do not judge my modes" rather than "do not enforce my budget". #167 is DIAGNOSED and the cause is ours: the input plans carry **zero** `routingMode` attributes and every trip is a single leg, so under `accessEgressModeToLink` the router inserts walk access and egress legs and MATSim INFERS each leg's routing mode from its own mode - `walk` beside a `car` main leg - and rejects the trip it just built. The fix is to emit `routingMode` per leg in `build_matsim_plans.py`, a no-op at `access_egress_type = none`, and it needs the demand rebuilt in the same change |
@@ -18018,10 +18019,70 @@ the clamp bounds; a ground model is the next derivation if walk or bike speeds r
 acquisition must be read, cited or declared, or the README's pinned unread count moves. Next on this
 host: the through corridor, the roster, the two imports when the files arrive; the reading is D15's.
 
+## 9.210 The Java fold landed, and MMRDA's daily metro ridership imported from the user's browser and made the metro target (22 September 2026, sixtieth session continued; #86 #187 #215 #216 #217 #239)
+
+**What was wrong.** Five Java items had waited since §9.177 for an idle machine (`.tools/classes`
+is never recompiled under an arm): the taxi fleet sized itself by `qsim.flowCapacityFactor`
+(#215), three thread pools were built and torn down every iteration (#216), a ride whose wait timed
+out completed in zero seconds (#217), the #187 restore count had no name in the log, and D12's
+gate half - a held passenger refused off ride - existed on paper. The two OGD ridership resources
+turned out to be datafiles the API answers 502 for (§9.209), and the metro target was the 2017
+CTS share of 2.2 % of motorised trips, from a year when Line 1 and the Monorail were the network.
+
+**What changed.** *The fold* (one recompile, `bootstrap_toolchain.py --verify`): `TaxiFleetEngine`
+reads `taxiFleet.sampleFraction`, emitted by the harness from `RUN.sample.fraction` beside the two
+capacity factors, not the flow factor that merely equals it. `RemodeRestore.routingPool` holds the
+run's one pool (daemon threads, `global.numberOfThreads`) for the ride engine's restore, the taxi
+fleet's restore and `routeDetoursInParallel`; the routers stay one per task, so the number created
+per iteration - part of the RNG sequence - and the results are unchanged. `JointRideEngine`
+clocks a timed-out ride by the leg's own travel time, else the free-flow time over its route's
+links, else the beeline at the network's mean free speed, never zero, and logs
+`timeoutClock(freeflow= beeline=)`. `RidePairingEngine` logs `retimed= restoreRetimed=
+restoreOrphan=` by name every iteration. `GatedSubtourModeChoice` refuses whole any proposal that
+takes a `heldRideTrips` passenger off ride (`HELD_RIDE_REFUSALS`); the attribute is the roots
+rebuild's to write, absent it nothing changes; `GatedSubtourProbe` proves the refusal. *The OGD
+series*: `import_browser_acquisition.py --portal-download FILE --id ID --portal-page URL` imports a
+file the user downloaded from a logged-in portal (the bytes hashed and stored under the entry, the
+portal page and the file's modification time as provenance, nothing of the session recorded); the
+Monorail file's 13,472 bytes equal the platform's listed size. `extract_ogd_metro_ridership.py`
+keeps every day (628 for Lines 2A/7 from 1 January 2024, 356 for the Monorail from 1 October
+2024; 9 channel-sum mismatches on the 2A/7 file, kept and flagged) and prints the weekday mean of
+the latest three full months. `build_mode_targets.py` derives the metro target from the
+operators' daily passengers against the CTS all-mode daily trips: Lines 2A/7 289,556 (OGD,
+June–August 2025 weekdays), Monorail 17,432, Line 1 500,000, Line 3 78,000, Navi Mumbai 22,000
+(Economic Survey 2025-26 averages) = 906,988 of 35,433,962 → **2.5597 %**, sweep 2.3634 (the
+Survey's 2A/7 average) to 2.6283 (the series' busiest weekday month); the 2017 share gave 1.166 %.
+The run inputs are re-assembled on the new target table.
+
+**Measured.** `20260922T172813_4it_1pct` (Newcastle S0, the `access_egress_structure_1pct`
+overlay, 4 of 4 iterations, 42 s an iteration, `ran_to_last_iteration`): `taxiFleet: fleet=8
+(declared 800.0 x sample 0.01)` - the #215 measurement; `ridePairing: retimed=274
+restoreRetimed=274 restoreOrphan=0` through `501 / 501 / 0` on the four iterations - the #187
+measurement's first half; `timeoutClock(freeflow=0 beeline=0)` - no timed-out ride lacked its leg's
+travel time at 1 %. Both probes PASS (`held_ride_kept` true, `held_ride_refusals_counted` 1). A 1 %
+structural check; nothing about its modes is a reading. Manifest 1,453 → 1,459; catalogue 572
+acquired, 22 unobtained; `source_use.json` 253 consumed, 0 unread. The share targets now sum to
+101.6 %: the metro figure is 2024-25 against the other shares' 2017 split.
+
+**Deliberately not done.** No family opens for the fold: the reference city's next arm opens one
+anyway (#237), and no Mumbai family exists. The `heldRideTrips` attribute is not written - that is
+the roots rebuild. The TUS 2024 unit files are still missing: the user's download carried the
+documentation only. The Monorail runs in the feed on the assumed window (no timetable is published).
+No target value changed for the reference city; the 67/143 split is untouched; nothing here is a
+finding.
+
+**Consequences.** Every arm after this recompile runs the folded controler; the reference city's
+next arm compares with nothing before it in any case (#237). A timed-out ride's clock is a
+free-flow estimate the log counts - read `timeoutClock` on the first 25 % arm. Mumbai's metro
+target moves 1.17 → 2.56 % of trips; every earlier Mumbai reading against the 1.17 % is against a
+target the operators' counts refute. The roots rebuild is now blocked on its probe and approval
+alone.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-22 | **The Java fold landed; MMRDA's daily metro ridership imported and made the metro target (§9.210).** One recompile: `TaxiFleetEngine` scales by `taxiFleet.sampleFraction`, `RemodeRestore.routingPool` is one per run, `JointRideEngine` never clocks a timed-out ride at zero, `RidePairingEngine` logs `retimed= restoreRetimed=`, `GatedSubtourModeChoice` refuses a `heldRideTrips` passenger off ride; `import_browser_acquisition.py --portal-download`; `extract_ogd_metro_ridership.py`; `build_mode_targets.py` metro from the operators' daily passengers (2.5597 %, sweep 2.3634–2.6283); manifest 1,453 → 1,459. No target value changed for the reference city; the 67/143 split is untouched; nothing here is a finding. |
 | 2026-09-22 | **Mumbai's suburban trains run the printed timetables, household vehicles reach 2026 from the registration stock, work follows the built volume, every link carries its grade, every acquisition has a stated use (§9.209).** `build_suburban_timetable_feed.py` (3,289 trains, 495 patterns; gate `A.baseline_transit.suburban_timetable`), Metro 2A/7/9/2B in live windows at the April 2026 headways, `derive_vehicle_possession_growth.py` + `B.population.vehicle_possession_projection`, `build_activity_attraction.py` + `B.activities.work_attraction`, `A.gradient.representation` = `link_speed` for Mumbai; 20 sources acquired through an Indian VPN endpoint, 3 catalogued (NFHS-4, NFHS-5, BMC parking lots); catalogue 597 → 600, manifest 1,397 → 1,453, Mumbai registry 412 → 428; `audit_source_use.py` gives every entry a disposition (0 unread). No target value changed; the 67/143 split is untouched; nothing here is a finding. |
 | 2026-09-22 | **The refusing hosts reached through the Internet Archive, Metro Lines 2A and 7 in their published windows, RDSO's coach loads (§9.208).** 22 dated Wayback copies catalogued and acquired (`<id>_archived_<date>`; catalogue 575 → 597, manifest 1,353 → 1,397; 4 empty captures kept unusable, 17 sources without a capture stay with D17); `A.baseline_transit.line_windows_s` (observed, MMMOCL's timetable) sets the four 2A/7 patterns' windows; `A.transit.rail_capacity_total`'s sweep top 5,964 → 6,072 on RDSO/PE/SPEC/D/EMU/0190-2017; one mapping (18,113 stops, 1,865 routes), 115,048 vehicles, the 0.1 % check `20260922T041420_2it_0.1pct` ran to its last iteration. No target value of the reference city changed, the 67/143 split is untouched, nothing here is a finding. |
 | 2026-09-22 | **The commuter ferry crossings in Mumbai's feed, the pass-through merge measured and not applied, the hosts that refuse this address (§9.207).** `A.baseline_transit.directory_crossings` and seven `A.transit.ferry_*_capacity_seated` fields (Mumbai 403 → 411) put the Maritime Board's seven crossings in the regional feed (18,116 stops, 1,865 routes, 115,100 vehicles); `merge_pass_through_nodes.py` measured 37,122 of 377,443 nodes mergeable and the median link 62.7 → 69.0 m - the user keeps the network as converted (D15 taken: a 384-512 GB host for a 10 % core); `check_hardcoding.py` judges a `<city>` entry against the reference city's file (Mumbai 268 → 225); the acquisition adapter sends a registered key from `.env` (D16: OGD); 40 sources refuse this address under every client (D17: a browser capture from a network they admit); manifest 1,349 → 1,353, catalogue 575. No target value of the reference city changed, the 67/143 split is untouched, nothing here is a finding. |

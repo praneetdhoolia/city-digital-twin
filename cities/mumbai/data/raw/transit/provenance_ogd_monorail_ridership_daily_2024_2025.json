@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "url": "https://api.data.gov.in/resource/c1712e3f-1a3a-4cd1-b146-bf6d89be3031?format=csv&limit=2000",
+      "final_url": "https://www.data.gov.in/resource/ridership-data-monorail-01-10-2024-21-09-2025",
+      "content_type": null,
+      "retrieved": "2026-09-22T07:26:20.874511+00:00",
+      "bytes": 13472,
+      "path": "data/raw/transit/ogd_monorail_ridership_daily_2024_2025_fbc5f2fad3c16d07.csv",
+      "sha256": "fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51",
+      "source": "OGD: MMRDA daily ridership of the Mumbai Monorail, 1 October 2024 to 21 September 2025",
+      "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
+      "coverage": "Daily ridership by payment method, published by MMRDA on data.gov.in 23 September 2025 (catalog nid 604084764, resource nid 604084815); the monorail has no line in the feed yet.",
+      "producing_script": "extract/import_browser_acquisition.py",
+      "transport": "the user's logged-in browser download from the portal page named as final_url (a download form a script cannot pass); the file's modification time is the retrieval",
+      "validation_status": "acquired_unvalidated"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "source": "observed",
+  "purpose": "MMRDA daily ridership on the OGD platform, per line",
+  "lines": {
+    "ogd_metro_2a_7_ridership_daily_2024_2025": {
+      "line": "Metro Lines 2A and 7",
+      "rows": 628,
+      "first_date": "2024-01-01",
+      "last_date": "2025-09-19",
+      "channels": [
+        "Paper QR",
+        "Mobile Application",
+        "Whatspp",
+        "NCMC and Other Trip"
+      ],
+      "channel_sum_mismatches": 9,
+      "latest_full_months": [
+        "2025-06",
+        "2025-07",
+        "2025-08"
+      ],
+      "weekday_mean_latest_three_months": 289556,
+      "weekend_mean_latest_three_months": 182787,
+      "weekday_mean_by_month": {
+        "2024-01": 218998,
+        "2024-02": 232824,
+        "2024-03": 215995,
+        "2024-04": 220627,
+        "2024-05": 214815,
+        "2024-06": 238587,
+        "2024-07": 250807,
+        "2024-08": 260698,
+        "2024-09": 262342,
+        "2024-10": 262029,
+        "2024-11": 237166,
+        "2024-12": 246005,
+        "2025-01": 256140,
+        "2025-02": 251092,
+        "2025-03": 245392,
+        "2025-04": 256765,
+        "2025-05": 245154,
+        "2025-06": 279023,
+        "2025-07": 301808,
+        "2025-08": 286668,
+        "2025-09": 313863
+      }
+    },
+    "ogd_monorail_ridership_daily_2024_2025": {
+      "line": "Monorail",
+      "rows": 356,
+      "first_date": "2024-10-01",
+      "last_date": "2025-09-21",
+      "channels": [
+        "Paper QR",
+        "NCMC and Other Trip"
+      ],
+      "channel_sum_mismatches": 0,
+      "latest_full_months": [
+        "2025-06",
+        "2025-07",
+        "2025-08"
+      ],
+      "weekday_mean_latest_three_months": 17432,
+      "weekend_mean_latest_three_months": 13763,
+      "weekday_mean_by_month": {
+        "2024-10": 18503,
+        "2024-11": 17350,
+        "2024-12": 17987,
+        "2025-01": 18164,
+        "2025-02": 18143,
+        "2025-03": 17439,
+        "2025-04": 17540,
+        "2025-05": 16655,
+        "2025-06": 17683,
+        "2025-07": 18038,
+        "2025-08": 16517,
+        "2025-09": 18790
+      }
+    }
+  },
+  "limitations": [
+    "The count is the operator's trips; entries or linked journeys is not stated.",
+    "Line 2A and Line 7 are one series; the two lines are not separated.",
+    "The Monorail series begins 1 October 2024 (the line reopened after its suspension)."
+  ]
+}
