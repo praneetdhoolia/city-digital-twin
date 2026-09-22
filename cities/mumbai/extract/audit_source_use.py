@@ -18,6 +18,13 @@ catalogue entry one disposition:
 - `cited`: a document the requirements ledger cites as evidence, with no
   script, transcription or registry field reading it - a human read it;
 - `unread`: a data-bearing acquisition nothing reads - the ledger's work;
+- `not_needed`: acquired and judged, in the catalogue entry's own `use`
+  block, to bear on none of the twelve modes' simulation (a road-safety
+  report, a future line's project report, an earlier epoch of a layer the
+  package reads at a later one) - kept as provenance, read by nothing, and
+  the reason stated;
+- `reference`: a document a person read and whose facts stand in the
+  requirements ledger or a registry rationale, declared so in `use`;
 - `unusable` and `unobtained`: the inventory's own statuses.
 
 A `discovery` page is recognised by its id or title, never by hand: the
@@ -105,8 +112,8 @@ def literal_reads(literal, raw_path):
 
 def main():
     catalogue = json.loads(Path(city.path('extract/sources.json')).read_text(encoding='utf-8'))['sources']
-    inventory = json.loads(Path(city.path('data/processed/acquisition/source_inventory.json'))
-                           .read_text(encoding='utf-8'))['sources']
+    inventory_doc = json.loads(Path(city.path('data/processed/acquisition/source_inventory.json')).read_text(encoding='utf-8'))
+    inventory = inventory_doc['sources']
     if isinstance(inventory, list):
         inventory = {row['id']: row for row in inventory}
     requirements = json.loads(Path(city.path('docs/requirements.json')).read_text(encoding='utf-8'))
@@ -159,10 +166,13 @@ def main():
         readers['registry'] = sorted(p for p, text in registry.items() if pattern.search(text))
         readers['scripts'] = sorted(readers['scripts'])
 
+        declared = entry.get('use') or {}
         if status == 'unobtained':
             disposition = 'unobtained'
         elif status == 'acquired_unusable':
             disposition = 'unusable'
+        elif declared.get('disposition') in ('not_needed', 'reference') and declared.get('reason'):
+            disposition = declared['disposition']
         elif readers['transcriptions'] or readers['registry'] or any(
                 not Path(s).name.startswith(('audit_', 'register_')) for s in readers['scripts']):
             disposition = 'consumed'
@@ -181,9 +191,22 @@ def main():
             'id': source_id, 'category': entry.get('category'), 'format': entry.get('format'),
             'status': status, 'disposition': disposition, 'path': raw_path,
             'readers': readers, 'cited_by': cited_by.get(source_id, []),
+            'declared_use': declared.get('reason'),
             'discovered_from': entry.get('discovered_from'),
             'archived_copy_of': entry.get('archived_copy_of'),
         })
+    # identical bytes at two URLs are one observation (inventory_sources.py):
+    # a twin of a consumed source is consumed
+    by_id = {r['id']: r for r in ledger}
+    for group in inventory_doc.get('identical_bytes_groups') or []:
+        ids = group if isinstance(group, list) else group.get('ids', [])
+        if any(by_id.get(i, {}).get('disposition') == 'consumed' for i in ids):
+            for i in ids:
+                if by_id.get(i, {}).get('disposition') in ('unread', 'cited', 'audited'):
+                    counts[by_id[i]['disposition']] -= 1
+                    by_id[i]['disposition'] = 'consumed'
+                    by_id[i]['readers']['identical_bytes_twin'] = [j for j in ids if j != i]
+                    counts['consumed'] += 1
     # a discovery page that led to nothing acquired is a dead end, not evidence
     children = Counter(e.get('discovered_from') for e in catalogue if e.get('discovered_from'))
     for row in ledger:

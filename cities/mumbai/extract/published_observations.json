@@ -71,6 +71,49 @@
         "The unit is the operator-reported rake; loaded/empty and arrival/departure counting definitions remain to be reconciled.",
         "An annual total does not supply daily departure times, terminal paths, train lengths or section occupancy."
       ]
+    },
+    {
+      "id": "metro_2a_7_daily_passengers_march_2026",
+      "source_id": "metro_lastmile_20260319",
+      "source_sha256": "6da1623841650cfa3fd24b6820f6103315ca616e0c151ff670562041f077ccd9",
+      "source_anchor": "Page 1, paragraph on first and last-mile connectivity: 'Currently serving over 3.5 lakh daily passengers on Metro Lines 2A and 7'",
+      "mode": "metro",
+      "operator": "Maha Mumbai Metro (MMMOCL), Lines 2A and 7",
+      "metric": "operator_reported_daily_passengers_lower_bound",
+      "value": 350000,
+      "unit": "passengers_per_day",
+      "period_start": "2026-03-01",
+      "period_end": "2026-03-19",
+      "aggregation": "stated_as_current_daily_figure",
+      "geography": "Metro Lines 2A and 7 together",
+      "source": "observed",
+      "status": "transcribed_not_yet_validation_target",
+      "limitations": [
+        "'Over 3.5 lakh' is a rounded lower bound, not a counted day.",
+        "Two lines together; no split.",
+        "The counting convention (entries, journeys) is not stated; MMRDA's OGD daily series (ogd_metro_2a_7_ridership_daily_2024_2025) is the counted series once acquired."
+      ]
+    },
+    {
+      "id": "metro_one_cumulative_passengers_20250430",
+      "source_id": "rinfra_annual_2024_25",
+      "source_sha256": "d72cee77d25997e4cf1f343a4fa89abdb18400602f438074c6dc8c0b27c3e75b",
+      "source_anchor": "Page 71, 'Unparalleled Ridership and Network Synergy': 'having served over 1,101 million passengers as of April 30, 2025'",
+      "mode": "metro",
+      "operator": "Mumbai Metro One (MMOPL)",
+      "metric": "operator_reported_cumulative_passengers",
+      "value": 1101000000,
+      "unit": "passengers_cumulative_since_opening",
+      "period_start": "2014-06-08",
+      "period_end": "2025-04-30",
+      "aggregation": "cumulative",
+      "geography": "Versova-Andheri-Ghatkopar Line 1",
+      "source": "observed",
+      "status": "transcribed_not_yet_validation_target",
+      "limitations": [
+        "A cumulative total since June 2014; the daily figure is the operator's performance page (metro1_ridership_july_2026).",
+        "'Over' is a lower bound."
+      ]
     }
   ]
 }
