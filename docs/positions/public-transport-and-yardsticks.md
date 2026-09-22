@@ -2,16 +2,16 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 17 September 2026 (fifty-fourth session) · **Record read through:** §9.177 · **Written against family:** `F35`
+**Updated:** 22 September 2026 (sixtieth session) · **Record read through:** §9.209 · **Written against family:** `F35`
 
 ## What is built
 
-- **The reader resolves every run through its own schedule** (§9.169): the F34 rebuild had overwritten the city schedule the board read heavy rail **0 / −100 %** through; `extract_metrics.schedule_path` reads the run's own `output/output_transitSchedule.xml.gz` first (F32 reads **20,932 / +220.6 %**). A boardings reading with no sample fraction is REFUSED.
+- **Mumbai's suburban schedule is the printed timetable** (§9.209): 3,289 trains from nine WR and CR sheets (`build_suburban_timetable_feed.py`; WR 1,394 / CR 1,895 against 1,414 / 1,820 published), 255 AC and 54 fifteen-car trains on their own profiles; Metro 2A/7/9/2B in live windows at the April 2026 headways, within 8.3 % of the printed weekday trips (`baseline_transit_feed.json`). The Line 7–9 through corridor still runs as two lines (`docs/lane.json`).
+
 - **The access leg is a network leg** (§9.167, #167): `RemodeRestore.remodeTrip` replaces a five-leg ride trip whole; `NetworkDirectWalkPtRouter` routes the raptor's transfer beelines; `RUN.routing.access_egress_type` = `accessEgressModeToLink`, `RUN.transit_router.access_egress_basis` = `network`; teleports **1,572 → 554 → 0** an iteration on the 1 % probes.
 - **The first disclosed ferry observation, as bounds** (§9.167, #185): TfNSW's daily Opal Patronage series (`cities/newcastle/extract/fetch_tpa_daily.py`) gives ferry tap-ons of **234–1,347 a weekday** and light rail **2,090–3,751**, bracketing the 2,954 target — bounds because hourly cells are rounded to 100 (`CAL.pt.opal_patronage_rounding`). Constraints, never targets (§9.8).
 - **The nine `C.asc.*` constants reach the run from the registry** (§9.166): `scoring_from_c1` had read the build-time `params/C1_parameters.json`, so a `--config-set` override never executed; `tests/unit/test_override_reaches_the_run.py`.
 - **The router that picks the submode has a constant to pick it with, behind a gate** (§9.162, #49): `citysim.RaptorModeCostCalculator` adds the boarded submode's own `scoring.modeParams` constant to the stock in-vehicle cost — a CONSISTENCY with scoring, no value of its own; gated by `C.raptor.mode_cost_representation`, **shipped `absent`**; **built, NEVER RUN** — it opens a family.
-- **Where the constant lands** (§9.162): `getInVehicleCost` is called once per candidate alighting stop, so the constant is charged **once per boarded leg**; the fare and a distance term CANNOT go there (`RouteSegmentIterator` exposes no distance), so the fare stays in scoring.
 - **Four scheduled submodes, score-distinct** (§9.78): SwissRailRaptor with `useModeMappingForPassengers`, one `scoring.modeParams` block each, behind `RUN.routing.pt_submode_scoring` = `per_submode`; plan-level choice stays `pt` (`citysim.PtSubmodeMainModeIdentifier`).
 - **The raptor's cost carries no mode constant, no fare and no distance term** (§9.158): `RaptorUtils.createParameters` prices travel time, waiting and a line switch, nothing else — the split inside a pt trip is decided on TRAVEL TIME ALONE (§9.130); its one per-submode input is emitted as **-10.9608 for all four** (§9.162, `results/raw/20260909T015217_300it_25pct/config.xml`).
 - **Crowding reaches scoring** (§9.158): `citysim.PtCrowdingScoring` charges each passenger `m(n) − 1` against the vehicle's runtime seat count at `ptCrowding.penaltyUtilsPerHour` = 16.961; `C.crowding.seated_multiplier` 1.0 (sweep 1.0–1.15), `C.crowding.standing_multiplier` 1.45 (sweep 1.2–1.8); `C.crowding.representation` = `absent` recovers the previous model. `standingRoomInPersons` was never 0: bus 44 / 18, ferry 149 / 51, rail 98 / 48 (§9.30).
@@ -83,6 +83,7 @@ Latest twelve-mode reading: `results/raw/20260915T000704_250it_25pct` at iterati
 
 ## History
 
+- §9.209 — printed timetables; possession; grades
 - §9.177 — no transit route for 67 %
 - §9.176 — the routers pair: raptor constant not the lever
 - §9.170 — router-scorer consistency unrun
@@ -97,4 +98,3 @@ Latest twelve-mode reading: `results/raw/20260915T000704_250it_25pct` at iterati
 - §9.158 — walking priced as riding
 - §9.157 — F31 gate: heavy rail +247.2 %
 - §9.142 — censoring rule named
-- §9.140 — bus count unobtainable
