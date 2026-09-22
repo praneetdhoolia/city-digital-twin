@@ -243,31 +243,138 @@
           82800
         ],
         "13989913": [
-          23580,
-          81360
+          21600,
+          81300
         ],
         "13989914": [
           21600,
           82800
         ],
         "13989915": [
-          20580,
+          21480,
           81480
+        ],
+        "20403864": [
+          21000,
+          81000
+        ],
+        "20403865": [
+          23580,
+          84780
+        ],
+        "20403809": [
+          21600,
+          81000
+        ],
+        "20403808": [
+          21600,
+          80100
         ]
       },
       "units": "seconds_after_midnight",
       "source": "observed",
       "status": "active",
-      "decisions_ref": "9.208",
+      "decisions_ref": "9.209",
       "held_fixed": {
-        "rule": "the operator's published first and last trains (MMMOCL Train Time Table, Internet Archive capture of 17 September 2025: mmmocl_schedule_20260918_archived_20250917), read per direction as the earliest first and latest last departure from the pattern's origin terminal - Line 2A Andheri West to Dahisar East 05:55-23:00, Dahisar East to Andheri West 06:33-22:36, Line 7 Gundavali to Dahisar East 06:00-23:00 (the 06:00 and 23:00 services run through to Andheri West / Dahanukarwadi), Dahisar East to Gundavali 05:43-22:38; never varied",
-        "decisions_ref": "9.208",
+        "rule": "the operator's published first and last trains (MMMOCL Train Time Table as served on 22 September 2026, mmmocl_schedule_20260918, Marathi page, Devanagari digits read as their ASCII values), per direction as the earliest first and latest last departure from the pattern's origin terminal, a through service counting for every pattern it traverses - Line 2A Andheri West to Dahisar East 05:55-23:00, Dahisar East to Andheri West 06:00-22:35; Line 7 Gundavali to Dahisar East 06:00-23:00 (the Gundavali-Kashigaon through services), Dahisar East to Gundavali 05:58-22:38; Line 9 Kashigaon to Dahisar East 05:50-22:30 (the Kashigaon-Gundavali through services), Dahisar East to Kashigaon 06:33-23:33; Line 2B Chembur to Mandale 06:00-22:30, Mandale to Chembur 06:00-22:15. The 17 September 2025 archive capture (mmmocl_schedule_20260918_archived_20250917) gave the earlier 2A/7 windows (9.208); never varied",
+        "decisions_ref": "9.209",
         "departure_requires": "a newer published timetable, or a dated departure list for the line"
       },
       "consumers": [
         "cities/mumbai/build/build_baseline_transit_feed.py"
       ],
-      "description": "The service window of a generated line, keyed by its OSM route relation, where the operator publishes first and last trains; a relation not listed runs the assumed A.baseline_transit.service_window_s. Lines 2A and 7 (MMMOCL) are the first; Line 1, Line 3 and Navi Mumbai Line 1 windows await their operators' published timetables in the same shape."
+      "description": "The service window of a generated line, keyed by its OSM route relation, where the operator publishes first and last trains; a relation not listed runs the assumed A.baseline_transit.service_window_s. Lines 2A, 7, 9 and 2B (MMMOCL) are listed; Line 1, Line 3 and Navi Mumbai Line 1 windows await their operators' published timetables in the same shape."
+    },
+    "A.baseline_transit.line_headways_s": {
+      "value": {
+        "13989912": {
+          "peak": 360,
+          "offpeak": 540
+        },
+        "13989913": {
+          "peak": 360,
+          "offpeak": 540
+        },
+        "13989914": {
+          "peak": 350,
+          "offpeak": 540
+        },
+        "13989915": {
+          "peak": 350,
+          "offpeak": 540
+        },
+        "20403864": {
+          "peak": 350,
+          "offpeak": 540
+        },
+        "20403865": {
+          "peak": 350,
+          "offpeak": 540
+        },
+        "20403808": {
+          "peak": 570,
+          "offpeak": 570
+        },
+        "20403809": {
+          "peak": 570,
+          "offpeak": 570
+        }
+      },
+      "units": "seconds_per_vehicle",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "MMRDA's press release PRC/PR/12/2026 of 6 April 2026 (mmr_metro_april_2026_timetable; metro_timetable_april2026 is the same bytes), the timetables effective 8 April 2026: Line 2A peak 6 minutes, non-peak 8-10 minutes (289 weekday trips); the integrated Line 7 and Line 9 corridor peak 5:50 minutes, non-peak 8-10 minutes (276 weekday trips); Line 2B phase 1 every about 9 minutes 30 seconds (209 trips). A printed band is taken at its midpoint (9 minutes); the builder prints the departures it generates beside the printed weekday trips. Never varied",
+        "decisions_ref": "9.209",
+        "departure_requires": "a newer published timetable or a dated departure list for the line"
+      },
+      "consumers": [
+        "cities/mumbai/build/build_baseline_transit_feed.py"
+      ],
+      "description": "The published peak and off-peak headways of a generated line, keyed by its OSM route relation, in place of the mode-wide assumed A.baseline_transit.peak_headway_s / offpeak_headway_s for that relation; the peak windows are A.baseline_transit.peak_windows_s."
+    },
+    "A.baseline_transit.line_published_weekday_trips": {
+      "value": {
+        "Line 2A": {
+          "relations": [
+            "13989912",
+            "13989913"
+          ],
+          "trips": 289
+        },
+        "Line 7 with Line 9": {
+          "relations": [
+            "13989914",
+            "13989915",
+            "20403864",
+            "20403865"
+          ],
+          "trips": 276
+        },
+        "Line 2B phase 1": {
+          "relations": [
+            "20403808",
+            "20403809"
+          ],
+          "trips": 209
+        }
+      },
+      "units": "trips_per_weekday",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "MMRDA's press release PRC/PR/12/2026 of 6 April 2026 (mmr_metro_april_2026_timetable): total weekday trips per corridor, both directions - Line 2A 289, the integrated Line 7 and Line 9 corridor 276, Line 2B phase 1 209. A check the feed builder prints against the departures it generates from the published windows and headways, never a generator input; the Line 7 and Line 9 relations are separate OSM routes while the operator runs one through corridor, so their generated departures are compared with twice the printed count. Never varied",
+        "decisions_ref": "9.209",
+        "departure_requires": "a newer published timetable"
+      },
+      "consumers": [
+        "cities/mumbai/build/build_baseline_transit_feed.py"
+      ],
+      "description": "The operator's printed weekday trips per corridor, compared in the feed audit with the departures generated for the corridor's relations."
     }
   }
 }

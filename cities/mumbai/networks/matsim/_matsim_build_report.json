@@ -69,10 +69,10 @@
     "baseline_regional": {
       "artificial_link_refs": 1960,
       "artificial_share_pct": 0.55,
-      "departures": 115048,
+      "departures": 115006,
       "feed": "schedules/baseline_regional.zip",
-      "gtfs_seconds": 4.4,
-      "mapping_seconds": 85.3,
+      "gtfs_seconds": 4.7,
+      "mapping_seconds": 119.2,
       "modes": {
         "bus": 1802,
         "ferry": 18,
@@ -80,9 +80,9 @@
         "subway": 14
       },
       "network_bytes": 27524715,
-      "route_link_fingerprint": "4828f5d615cdff9078c078837aa9249a719a4b77d5b1a2ac38a63e2c5deeb6f1",
+      "route_link_fingerprint": "cc8c99fcd37ec25746fe91f868ae431f6816b8382766a3d7dd46eefeb00aec29",
       "route_link_refs": 353952,
-      "schedule_bytes": 3843210,
+      "schedule_bytes": 3845839,
       "stop_facilities": 18113,
       "stop_link_fingerprint": "d30525ef7bc46aa3c94eea047a8dfa321ba6d0c97505c8a2f708942ab8eed95f",
       "stops_with_link": 18113,

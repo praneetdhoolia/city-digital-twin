@@ -18,26 +18,26 @@
   },
   "inputs_sha256": {
     "network": "b1831b682904303c346fc226994da47007974c5e8754b8b4443824137a5c9fa2",
-    "schedule": "09a1c1864edbd123ef9850a8aa0c401e220eec7177af8394592b1b52f38473ef",
-    "transit_vehicles": "4ad2880690aa3fed6bb40d910f5ceafd85227711070fd6acb25b3932a7ddb272",
-    "plans": "f5acf260fa4ce71cf16ab58050737c7f593ea0cff084627468f2548c6863c44d",
+    "schedule": "e8f0ef487595142351caf66917e488974c6864fc59967dcb91ff3e80762af891",
+    "transit_vehicles": "bccca912dc43e386b6726c3adff35140900d87e14fea4716aafd66f53360f7bf",
+    "plans": "d90668cd39e91e1a65a3771fc501c7d203136a1e3934184d864f9c32f4689d79",
     "boarding_fares": "951d7ddaa057fe8ea57067b08572f910d68d340ac0cffbbee30137e53c0b8b9b",
     "hired_fleet": "3970384fe178b88b91c1c54c0367656a8efe1f129e4f83f4417dd8a4947b3951",
-    "fleet_assignments": "e48947463de550e9ac28f3bca9e09f9ab777f6b90782e3df6bf163572f7bf51f"
+    "fleet_assignments": "e689e5eb70c319e5373a0534f7f72555df8d74986d0194adf57cf37ad8f2e7f8"
   },
   "demand": {
-    "source_sha256": "f5acf260fa4ce71cf16ab58050737c7f593ea0cff084627468f2548c6863c44d",
+    "source_sha256": "d90668cd39e91e1a65a3771fc501c7d203136a1e3934184d864f9c32f4689d79",
     "by_subpopulation": {
       "person": {
         "persons_count": 1352144,
-        "input_legs_count": 2603462,
+        "input_legs_count": 2604526,
         "destination_activities": {
-          "work": 428620,
-          "home": 1301731,
-          "shopping": 241947,
-          "social": 246957,
-          "leisure": 182381,
-          "education": 201826
+          "work": 428736,
+          "home": 1302263,
+          "shopping": 242252,
+          "education": 201613,
+          "social": 247311,
+          "leisure": 182351
         }
       }
     },
@@ -59,6 +59,21 @@
     "dedicated_transit_capacity_changes": {
       "light_rail": 2177,
       "rail": 18352
+    },
+    "gradient": {
+      "links": 919202,
+      "stamped": 788505,
+      "flat": 130697,
+      "nodes_with_elevation": 377638,
+      "dem_tiles": [
+        "copernicus_dsm_cog_10_n17_00_e073_00_dem_8a8c7a13062dd3a9.tif",
+        "copernicus_dsm_cog_10_n18_00_e072_00_dem_5b5e3ac02d569235.tif",
+        "copernicus_dsm_cog_10_n18_00_e073_00_dem_e5e127b1a1b56c04.tif",
+        "copernicus_dsm_cog_10_n19_00_e072_00_dem_b90f91a2b8cd69da.tif",
+        "copernicus_dsm_cog_10_n19_00_e073_00_dem_9e2f952a8d5b1a88.tif",
+        "copernicus_dsm_cog_10_n20_00_e072_00_dem_a7fbf68f8dddbb80.tif",
+        "copernicus_dsm_cog_10_n20_00_e073_00_dem_4fc2ff36a7a83023.tif"
+      ]
     }
   },
   "schedule": {
@@ -185,7 +200,7 @@
         "final_arrival_s": 16054.0
       },
       {
-        "route": "BASE_13989912_0_35220",
+        "route": "BASE_13989912_0_31380",
         "adjusted_stops": 16,
         "final_arrival_s": 2626.0
       },
@@ -195,12 +210,12 @@
         "final_arrival_s": 2624.0
       },
       {
-        "route": "BASE_13989914_0_27360",
+        "route": "BASE_13989914_0_80750",
         "adjusted_stops": 13,
         "final_arrival_s": 2341.0
       },
       {
-        "route": "BASE_13989915_0_27540",
+        "route": "BASE_13989915_0_51770",
         "adjusted_stops": 13,
         "final_arrival_s": 2342.0
       },
@@ -255,22 +270,22 @@
         "final_arrival_s": 12361.0
       },
       {
-        "route": "BASE_20403808_0_28800",
+        "route": "BASE_20403808_0_46110",
         "adjusted_stops": 5,
         "final_arrival_s": 792.0
       },
       {
-        "route": "BASE_20403809_0_22200",
+        "route": "BASE_20403809_0_42690",
         "adjusted_stops": 5,
         "final_arrival_s": 778.0
       },
       {
-        "route": "BASE_20403864_0_40800",
+        "route": "BASE_20403864_0_29170",
         "adjusted_stops": 3,
         "final_arrival_s": 496.0
       },
       {
-        "route": "BASE_20403865_0_32760",
+        "route": "BASE_20403865_0_34300",
         "adjusted_stops": 3,
         "final_arrival_s": 495.0
       },
@@ -9250,14 +9265,14 @@
         "final_arrival_s": 25535
       },
       {
-        "route": "vvmt_trip_13_0_1420",
-        "adjusted_stops": 44,
-        "final_arrival_s": 2850
-      },
-      {
         "route": "vvmt_trip_13_1_0855",
         "adjusted_stops": 44,
         "final_arrival_s": 2806
+      },
+      {
+        "route": "vvmt_trip_13_0_1420",
+        "adjusted_stops": 44,
+        "final_arrival_s": 2850
       },
       {
         "route": "vvmt_trip_14_0_1030",
@@ -9265,14 +9280,14 @@
         "final_arrival_s": 4447
       },
       {
-        "route": "vvmt_trip_17_0_1600",
-        "adjusted_stops": 25,
-        "final_arrival_s": 1545
-      },
-      {
         "route": "vvmt_trip_17_1_2040",
         "adjusted_stops": 25,
         "final_arrival_s": 1636
+      },
+      {
+        "route": "vvmt_trip_17_0_1600",
+        "adjusted_stops": 25,
+        "final_arrival_s": 1545
       },
       {
         "route": "vvmt_trip_18_0_0730",
@@ -9290,14 +9305,14 @@
         "final_arrival_s": 3242
       },
       {
-        "route": "vvmt_trip_20_0_2055",
-        "adjusted_stops": 35,
-        "final_arrival_s": 2549
-      },
-      {
         "route": "vvmt_trip_20_1_0915",
         "adjusted_stops": 35,
         "final_arrival_s": 2621
+      },
+      {
+        "route": "vvmt_trip_20_0_2055",
+        "adjusted_stops": 35,
+        "final_arrival_s": 2549
       },
       {
         "route": "vvmt_trip_21_0_1000",
@@ -9315,14 +9330,14 @@
         "final_arrival_s": 4851
       },
       {
-        "route": "vvmt_trip_26_0_0700",
-        "adjusted_stops": 19,
-        "final_arrival_s": 937
-      },
-      {
         "route": "vvmt_trip_26_1_2030",
         "adjusted_stops": 19,
         "final_arrival_s": 929
+      },
+      {
+        "route": "vvmt_trip_26_0_0700",
+        "adjusted_stops": 19,
+        "final_arrival_s": 937
       },
       {
         "route": "vvmt_trip_27_0_0600",
@@ -9407,7 +9422,7 @@
     ]
   },
   "fleet": {
-    "vehicles": 115048,
+    "vehicles": 115006,
     "vehicle_capacity_patched": [
       [
         "bus_city",
@@ -9542,7 +9557,7 @@
       "ferry_marve_manori": 76,
       "ferry_versova_madh": 74,
       "ferry_wharf_mora": 52,
-      "metro_beml_6car": 1052,
+      "metro_beml_6car": 1010,
       "metro_line1_4car": 276,
       "metro_line3_8car": 276,
       "metro_navi_3car": 276,
@@ -9550,7 +9565,7 @@
       "rail_emu_12car_central": 704,
       "rail_emu_12car_uran": 352
     },
-    "vehicle_refs": 115048
+    "vehicle_refs": 115006
   },
   "tables_sha256": {
     "boarding_fares": "951d7ddaa057fe8ea57067b08572f910d68d340ac0cffbbee30137e53c0b8b9b",

@@ -1,8 +1,8 @@
 {
  "source": "derived",
  "assignment": "networks/matsim/schedules/baseline_regional/fleet_assignments.json",
- "mapped_vehicles": 115048,
- "assigned_vehicles": 115048,
+ "mapped_vehicles": 115006,
+ "assigned_vehicles": 115006,
  "unassigned_mapped_vehicles": 0,
  "lines": 1860,
  "vehicles_by_profile": {
@@ -16,7 +16,7 @@
   "ferry_marve_manori": 76,
   "ferry_versova_madh": 74,
   "ferry_wharf_mora": 52,
-  "metro_beml_6car": 1052,
+  "metro_beml_6car": 1010,
   "metro_line1_4car": 276,
   "metro_line3_8car": 276,
   "metro_navi_3car": 276,

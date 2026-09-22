@@ -2,13 +2,13 @@
   "source": "modelled_provisional_service_supply",
   "input_sha256": {
     "schedules/baseline_bus.zip": "497b42cbffbc24f7f11bb535e68a1edfdcbfa35323d5630ff7353fd1b09ee68f",
-    "registry/A_baseline_services.json": "3dacaaaacd9703b3bbb65ab15e6363de08ad385853ab286e9b7aa02514dd8262",
+    "registry/A_baseline_services.json": "a1322ff548203b8660e701fc061a6eae4842f751a8dc326cca17490ec5e2ab9d",
     "data/processed/observed/osm_transport_relations.csv": "727f0ff9567863417095b80fd016828d3e880734d3981b7f6b6262a517088a01",
     "data/processed/observed/osm_transport_points.csv": "95b51e278e8fcc2710fc57ad040032525538a5819de4140535a85e6012b067a9",
     "data/processed/geospatial/osm_research.gpkg": "e95023a6a853e11501d57864be9c89e20e3b8e072300eda753c880bb5690e25e",
     "data/processed/observed/water_service_directory.csv": "9a96aeb23ead63099c58c8bf0665584955d491f86908f6af020986788ce067d1"
   },
-  "output_sha256": "dc1a7cd3510a00f14fd09ff32077f8973a30d1347ecd5b3e8278076221c040b3",
+  "output_sha256": "ce5f4c4a2f3e47a65f267e43b8a4bb90cbe1a7d39dfdb43a41d2beddf10be8b3",
   "generated_routes": [
     {
       "route_id": "BASE_3808111_0",
@@ -449,56 +449,56 @@
       "osm_relation_id": "13989912",
       "mode": "subway",
       "stops_count": 17,
-      "departures_count": 127,
+      "departures_count": 134,
       "duration_s": 2656,
       "window_s": [
         21300,
         82800
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "published_window_provisional_headway"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_13989913_0",
       "osm_relation_id": "13989913",
       "mode": "subway",
       "stops_count": 17,
-      "departures_count": 121,
+      "departures_count": 131,
       "duration_s": 2654,
       "window_s": [
-        23580,
-        81360
+        21600,
+        81300
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "published_window_provisional_headway"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_13989914_0",
       "osm_relation_id": "13989914",
       "mode": "subway",
       "stops_count": 14,
-      "departures_count": 126,
+      "departures_count": 135,
       "duration_s": 2371,
       "window_s": [
         21600,
         82800
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "published_window_provisional_headway"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_13989915_0",
       "osm_relation_id": "13989915",
       "mode": "subway",
       "stops_count": 14,
-      "departures_count": 126,
+      "departures_count": 133,
       "duration_s": 2372,
       "window_s": [
-        20580,
+        21480,
         81480
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "published_window_provisional_headway"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_16533435_0",
@@ -645,56 +645,56 @@
       "osm_relation_id": "20403808",
       "mode": "subway",
       "stops_count": 6,
-      "departures_count": 138,
+      "departures_count": 103,
       "duration_s": 822,
       "window_s": [
-        18000,
-        86400
+        21600,
+        80100
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_20403809_0",
       "osm_relation_id": "20403809",
       "mode": "subway",
       "stops_count": 6,
-      "departures_count": 138,
+      "departures_count": 105,
       "duration_s": 808,
       "window_s": [
-        18000,
-        86400
+        21600,
+        81000
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_20403864_0",
       "osm_relation_id": "20403864",
       "mode": "subway",
       "stops_count": 4,
-      "departures_count": 138,
+      "departures_count": 133,
       "duration_s": 526,
       "window_s": [
-        18000,
-        86400
+        21000,
+        81000
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_20403865_0",
       "osm_relation_id": "20403865",
       "mode": "subway",
       "stops_count": 4,
-      "departures_count": 138,
+      "departures_count": 136,
       "duration_s": 525,
       "window_s": [
-        18000,
-        86400
+        23580,
+        84780
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_MMB_1_0",
@@ -908,6 +908,37 @@
     }
   ],
   "skipped": [],
+  "published_weekday_trips_check": {
+    "Line 2A": {
+      "relations": [
+        "13989912",
+        "13989913"
+      ],
+      "generated_departures": 265,
+      "published_weekday_trips": 289,
+      "deviation_pct": -8.3
+    },
+    "Line 7 with Line 9": {
+      "relations": [
+        "13989914",
+        "13989915",
+        "20403864",
+        "20403865"
+      ],
+      "generated_departures": 537,
+      "published_weekday_trips": 552,
+      "deviation_pct": -2.7
+    },
+    "Line 2B phase 1": {
+      "relations": [
+        "20403808",
+        "20403809"
+      ],
+      "generated_departures": 208,
+      "published_weekday_trips": 209,
+      "deviation_pct": -0.5
+    }
+  },
   "generated_route_counts": {
     "subway": 14,
     "train": 31,

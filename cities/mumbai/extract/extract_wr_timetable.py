@@ -46,9 +46,10 @@ def main():
     sources = [s for s in catalogue['sources'] if s['id'].startswith('wr_public_timetable_attachment_')]
     rows, audits = [], []
     for source in sources:
-        # AC supplements and Dahanu/Harbour layouts require separate parsing.
-        if source['id'] not in ('wr_public_timetable_attachment_1', 'wr_public_timetable_attachment_2'):
-            continue
+        # the pocket timetable (1, 2), the AC supplements (3, 4) and the Dahanu
+        # Road services (5) print one layout: train numbers across, stations
+        # down, a time per cell; the Harbour services sheet (6) is the older
+        # 2022 layout and is read the same way where its cells align
         record_path = Path(city.path('data/raw/rail/provenance_' + source['id'] + '.json'))
         if not record_path.exists():
             audits.append(dict(source_id=source['id'], status='unobtained'))
@@ -86,7 +87,9 @@ def main():
                 if abs(station['y']-cell['y']) > station['height']/2:
                     unassigned.append(cell)
                     continue
-                key = (train['text'], station['name'])
+                # a station label can print twice on a sheet (arrival and
+                # departure rows, or a station served twice); the row is the key
+                key = (train['text'], stations.index(station))
                 if key in used:
                     raise ValueError('Ambiguous duplicate train/station cell: ' + repr(key))
                 used.add(key)

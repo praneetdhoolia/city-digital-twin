@@ -887,7 +887,7 @@ def stamp_gradients(net_path, clamp_pct):
     return out
 
 
-NODE_RE = re.compile(r'<node[^>]*id="([^"]+)"[^>]*x="([^"]+)"[^>]*y="([^"]+)"')
+NODE_RE = re.compile(r'<node\b[^>]*\bid="([^"]+)"[^>]*\bx="([^"]+)"[^>]*\by="([^"]+)"')
 
 
 def node_elevations_from_dem(xml, dem_tiles, network_epsg):

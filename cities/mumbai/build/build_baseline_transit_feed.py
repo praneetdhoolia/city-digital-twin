@@ -75,6 +75,24 @@ def table(rows_, fields):
     return out.getvalue().encode('utf-8')
 
 
+def published_trips_check(cfg, report):
+    """Generated departures per corridor beside the operator's printed weekday
+    trips (A.baseline_transit.line_published_weekday_trips): a reading of the
+    provisional peak windows, never an input to the generator. A corridor the
+    operator runs through as one line but OSM holds as two relations counts
+    its printed trips once per relation pair."""
+    out = {}
+    generated = {r['osm_relation_id']: r['departures_count'] for r in report if 'osm_relation_id' in r}
+    for corridor, spec in cfg.get('A.baseline_transit.line_published_weekday_trips').items():
+        pairs = len(spec['relations']) // 2
+        total = sum(generated.get(rel, 0) for rel in spec['relations'])
+        printed = spec['trips'] * pairs
+        out[corridor] = dict(relations=spec['relations'], generated_departures=total,
+                             published_weekday_trips=printed,
+                             deviation_pct=round(100.0 * (total - printed) / printed, 1) if printed else None)
+    return out
+
+
 def main():
     csv.field_size_limit(10_000_000)
     cfg = registry.load()
@@ -94,6 +112,7 @@ def main():
     report, skipped = [], []
     start, end = cfg.get('A.baseline_transit.service_window_s')
     line_windows = cfg.get('A.baseline_transit.line_windows_s')   # published first/last trains, per relation (9.208)
+    line_headways = cfg.get('A.baseline_transit.line_headways_s')  # published peak / off-peak headways, per relation (9.209)
     peaks, peak_headway, offpeak = cfg.get('A.baseline_transit.peak_windows_s'), cfg.get('A.baseline_transit.peak_headway_s'), cfg.get('A.baseline_transit.offpeak_headway_s')
     speed, dwell, factor = cfg.get('A.baseline_transit.commercial_speed_kmh'), cfg.get('A.baseline_transit.stop_dwell_s'), cfg.get('A.baseline_transit.distance_multiplier')
     with zipfile.ZipFile(city.path('schedules/baseline_bus.zip')) as incoming:
@@ -165,7 +184,11 @@ def main():
                 for index, (sid, (arr, dep)) in enumerate(zip(stop_ids, offsets)):
                     new_times.append(dict(trip_id=tid, arrival_time=clock(departure + arr),
                         departure_time=clock(departure + dep), stop_id=sid, stop_sequence=index))
-                headway = peak_headway[mode] if any(a <= departure < b for a, b in peaks) else offpeak[mode]
+                in_peak = any(a <= departure < b for a, b in peaks)
+                if identity in line_headways:
+                    headway = line_headways[identity]['peak' if in_peak else 'offpeak']
+                else:
+                    headway = peak_headway[mode] if in_peak else offpeak[mode]
                 if headway <= 0:
                     raise ValueError('Headway must be positive')
                 departure += headway
@@ -174,7 +197,8 @@ def main():
                 stops_count=len(stop_ids), departures_count=departures, duration_s=round(elapsed),
                 window_s=[first, last],
                 geometry_source='mapped_native_stops_or_ferry_way',
-                timetable_source=('published_window_provisional_headway' if identity in line_windows
+                timetable_source=('published_window_published_headway' if identity in line_windows and identity in line_headways
+                                  else 'published_window_provisional_headway' if identity in line_windows
                                   else 'modelled_from_provisional_registry')))
     # The Maritime Board's crossings (9.207): a directory route between the two OSM
     # terminals the registry names, on the straight water line between them (the
@@ -242,6 +266,7 @@ def main():
             archive.writestr(entry, data)
     audit = dict(source='modelled_provisional_service_supply', input_sha256=hashes,
         output_sha256=fingerprint(output), generated_routes=report, skipped=skipped,
+        published_weekday_trips_check=published_trips_check(cfg, report),
         generated_route_counts=dict(Counter(r['mode'] for r in report)),
         limitation='Operating frequencies/times are provisional; historical/current operation and corridor details require later refinement. No ridership targets were used.')
     Path(city.path('data/processed/acquisition/baseline_transit_feed.json')).write_text(
