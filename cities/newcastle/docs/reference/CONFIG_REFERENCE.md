@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 574 fields are made of
+## What the 575 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 39 | read directly from a raw download |
 | `measured` | 42 | computed from observed data in this package |
-| `derived` | 47 | follows from another registry field by identity |
+| `derived` | 49 | follows from another registry field by identity |
 | `literature` | 82 | a published value, not specific to this city |
-| `assumed` | 212 | chosen without direct empirical support |
+| `assumed` | 211 | chosen without direct empirical support |
 | `definition` | 152 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 553 | usable point value |
+| `active` | 554 | usable point value |
 | `computed` | 11 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -1943,7 +1943,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.population.bike_min_age` | `12` | years | `assumed` | 0 - 16 |
 | `B.population.build_sample_share` | `1.0` | share_of_population | `definition` | - |
 | `B.population.home_jitter_radius_factor` | `0.6` | ratio | `assumed` | 0.3 - 1 |
-| `B.population.household_size_tail_p` | `0.55` | probability | `assumed` | 0.4 - 0.8 |
+| `B.population.household_size_tail_p` | `0.625` | probability | `derived` | derived: the geometric tail size = 6 + Geometric(p) - 1 has mean 5 + 1/p, so p  |
 | `B.population.household_size_top_band_mean` | `6.6` | persons | `assumed` | 6 - 7.5 |
 | `B.population.labour_force_min_age` | `15` | years | `definition` | - |
 | `B.population.licence_min_age` | `16` | years | `definition` | - |
@@ -2693,15 +2693,15 @@ Home locations are jittered inside their SA1 within a radius of this factor time
 
 #### `B.population.household_size_tail_p`
 
-The geometric-tail parameter that spreads a "6 or more" household above six persons (size = 6 + Geometric(p) - 1, capped at 10). Was an inline literal in the script until 12 September 2026 (#188).
+The geometric-tail parameter that spreads a "6 or more" household above six persons (size = 6 + Geometric(p) - 1, capped at 10). DERIVED since the roots rebuild (D7, #196): it was a second free number beside the declared top-band mean, which the builder never consumed (the ninth and twelfth reports); the mean now fixes it. Was an inline literal until 12 September 2026 (#188).
 
-***assumed** · status **active** · DECISIONS.md §9.167 · sweep role **uncertainty***
+***derived** · status **active** · DECISIONS.md §9.167, 9.211*
 
-> **Sweep basis.** a chosen bracket: 0.4 gives a long tail of very large households, 0.8 nearly none above six. No observed spread at SA1.
+> **Derived from** `B.population.household_size_top_band_mean`: the geometric tail size = 6 + Geometric(p) - 1 has mean 5 + 1/p, so p = 1 / (household_size_top_band_mean - 5); 6.6 -> 0.625
 
 #### `B.population.household_size_top_band_mean`
 
-The mean household size assumed for the census top band ("6 or more persons"), used with the band midpoints 1-5 to size households. Was an inline literal in the script until 12 September 2026 (#188).
+The mean household size assumed for the census top band ("6 or more persons"). CONSUMED since the roots rebuild (D7, #196): the geometric tail's parameter is derived from it (B.population.household_size_tail_p = 1/(mean - 5)); before that the builder held it at index 5 of a value array its top-band branch never read. Was an inline literal until 12 September 2026 (#188).
 
 ***assumed** · status **active** · DECISIONS.md §9.167 · sweep role **uncertainty***
 
@@ -3282,7 +3282,7 @@ The earliest classified-count year pooled into the heavy-vehicle share that road
 
 ## Behavioural parameters (C1)
 
-*`cities/newcastle/registry/C_behaviour.json` - 58 fields*
+*`cities/newcastle/registry/C_behaviour.json` - 59 fields*
 
 Proposal 6.2 calls this the layer that decides the answer. It is also the layer with no Newcastle measurement in it: of the twenty distinct parameters, ten are assumed, eight are literature and two are definitional. Everything here is therefore either swept or explicitly held fixed under a stated rule - see the sweep and held_fixed keys. The per-segment C1 table (30 sets = 5 segments x 6 purposes) is generated from these fields by src/build/build_params.py; the registry holds the parameters, the CSV holds their expansion.
 
@@ -3322,6 +3322,7 @@ Proposal 6.2 calls this the layer that decides the answer. It is also the layer 
 | `C.scoring.activity_minimal_applied_s` | *(null - unobtained)* | seconds | `derived` | derived: minimalDuration[a] = min(C.scoring.activity_minimal_duration_s, C.scor |
 | `C.scoring.activity_minimal_duration_s` | `900` | seconds | `assumed` | 300 - 1800 |
 | `C.scoring.activity_typical_duration_s` | `{"home": 43200, "work": 28800, "education": 21600, "shopping": 3600, "other": 7200, "business": 3600, "esco...` | seconds | `assumed` | plus/minus 25% |
+| `C.scoring.marginal_utility_of_distance_per_m` | `{"car": 0.0, "ride": 0.0, "pt": 0.0, "walk": 0.0, "bike": -0.000192308, "truck": 0.0, "motorbike": 0.0, "no...` | utils_per_metre | `derived` | derived: bike = -1 / (C.constraint.trip_length_km.bike x 1000): a utility linea |
 | `C.scoring.marginal_utility_of_money` | `1.0` | utils_per_AUD | `definition` | - |
 | `C.scoring.marginal_utility_of_traveling` | *(null - unobtained)* | utils_per_hour | `derived` | derived: marginalUtilityOfTraveling[m] = performing - trip_weighted_VOT * beta[ |
 | `C.scoring.mode_constant` | *(null - unobtained)* | utils | `derived` | derived: constant[m] = the C1 alternative-specific constant for the mode m maps |
@@ -3614,6 +3615,16 @@ MATSim typical activity duration per activity type. THIS DICTIONARY IS THE ACTIV
 ***assumed** · status **active** · DECISIONS.md §9.3, 9.15 · MATSim `scoring.activityParams[*].typicalDuration` · sweep role **uncertainty***
 
 > **Sweep basis.** DECISIONS.md 9.3: +/-25% on each typical duration, a property of the MATSim scoring formulation rather than an observable of Newcastle; the escort duration (9.15) is minutes rather than hours by the same reasoning and carries the same proportional sweep.
+
+#### `C.scoring.marginal_utility_of_distance_per_m`
+
+MATSim's marginal utility of distance per mode (utils per metre travelled), the term that makes a mode's use fall with trip length beyond what its time already costs. Every mode was at MATSim's 0.0 until the roots rebuild (D9, #107): bike ran +197.8 % at 8.13 km against an observed 5.2 with a stress channel live and no distance cost, for the car-available (2.9 % at 10.6 km) as for the car-less (14.8 % at 11.5 km) - length was the mechanism. Bike's coefficient is DERIVED from the observed mean it is constrained to, not fitted to bike's share; car and ride keep their distance cost in money (C.scoring.monetary_distance_rate).
+
+***derived** · status **active** · DECISIONS.md §9.13, 9.211 · MATSim `scoring.modeParams[*].marginalUtilityOfDistance_util_m` · sweep role **uncertainty***
+
+> **Sweep basis.** bike only: -1 / (the observed mean bike trip length in metres), over the observed spread of that mean across the survey years (C.constraint.trip_length_km.bike, 3.1-5.2 km); every other mode 0.0, the MATSim default, so nothing else moves. The roots rebuild's arm 0 reads bike's share and mean trip against 2.9 %/14.8 % by car availability and 10.6/11.5 km (#107).
+
+> **Derived from** `C.constraint.trip_length_km.bike`: bike = -1 / (C.constraint.trip_length_km.bike x 1000): a utility linear in distance decays the choice exponentially with a mean of 1/|beta|, so the observed mean fixes the coefficient; the other modes' entries are 0.0
 
 #### `C.scoring.marginal_utility_of_money`
 

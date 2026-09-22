@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 22 September 2026 (sixtieth session) · **Record read through:** §9.210 · **Written against family:** `F35`
+**Updated:** 22 September 2026 (sixty-first session) · **Record read through:** §9.211 · **Written against family:** `F35`
 
 ## What is built
 
@@ -48,7 +48,7 @@
 
 ## What is open
 
-- **#86 — the root is the alternative plan a held passenger keeps, and D12 is the fix, NOT yet built** (§9.177, the lane): escort members and joint companions ride their bound tours in EVERY plan (a tour that exists because they are escorted, or as a joint activity, has no solo-car alternative), the gate refuses car on those trips (`heldRideTrips`); car-less lift and shared passengers keep walk/bike/pt against the wait. It rebuilds the demand and opens a family, after the scoring pair's reading; its arithmetic bound is the 20.62 % the binders bind.
+- **#86 — D12 is BUILT and unread** (§9.211): the plans builder holds an escorted member's and a joint companion's bound trips to `ride` in every seeded plan and writes them as `heldRideTrips` — **276,816 trips on 141,633 persons** on WEEKDAY — arming the refusal `GatedSubtourModeChoice` has carried inert since §9.210. A car-less lift or shared passenger is NOT held. 47,529 persons whose every tour is held now seed ONE plan (`alternatives_folded_held`). `measure_bound_trips.py` on F36's arm 0 reads the held share executed as car: 0 against 50.4–50.7 % (escort), 35.8–36.3 % (joint).
 - #187 — the `restoreRetimed` counter is not in arm 0's log under that name; the re-time restore count is unmeasured until it is (§9.169).
 - **`C.asc.car_passenger` STAYS FROZEN** (§9.158): ride's deficit is VOLUME, not utility — on arm 0 the trip is 10.09 km (+3 %) at −41.6 % (§9.169); the constant is already CONSTRAINED by §9.8 to the observed 0.3503 ride:car ratio, and `src/calibrate/asc_fixed_point.py` refuses it.
 - Whether a suburb is the right carpool precision is the sweep's question (§9.124); where the car-less quarter's excess settles once a fifth of their tours ride (§9.123, §9.126).
@@ -67,6 +67,7 @@
 
 ## History
 
+- §9.211 — D12 built: the held passenger
 - §9.169 — arm 0: 99.6 % paired, ride −41.6 %
 - §9.210 — the Java fold; the metro target
 - §9.177 — coverage is trips; bound trips read
@@ -81,4 +82,3 @@
 - §9.160 — ride CONVERGED; it is supply
 - §9.158 — listener stops past the cutoff
 - §9.157 — F31 gate: gap is volume
-- §9.156 — deficit is the small modes' excess

@@ -807,6 +807,42 @@
         "src/registry/param_config.py"
       ]
     },
+    "C.scoring.marginal_utility_of_distance_per_m": {
+      "value": {
+        "car": 0.0,
+        "ride": 0.0,
+        "pt": 0.0,
+        "walk": 0.0,
+        "bike": -0.000192308,
+        "truck": 0.0,
+        "motorbike": 0.0,
+        "non_network_walk": 0.0
+      },
+      "units": "utils_per_metre",
+      "source": "derived",
+      "sweep": [
+        -0.000322581,
+        -0.000192308
+      ],
+      "sweep_keys": [
+        "bike"
+      ],
+      "sweep_basis": "bike only: -1 / (the observed mean bike trip length in metres), over the observed spread of that mean across the survey years (C.constraint.trip_length_km.bike, 3.1-5.2 km); every other mode 0.0, the MATSim default, so nothing else moves. The roots rebuild's arm 0 reads bike's share and mean trip against 2.9 %/14.8 % by car availability and 10.6/11.5 km (#107).",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.13, 9.211",
+      "matsim_param": "scoring.modeParams[*].marginalUtilityOfDistance_util_m",
+      "derived_from": {
+        "fields": [
+          "C.constraint.trip_length_km.bike"
+        ],
+        "identity": "bike = -1 / (C.constraint.trip_length_km.bike x 1000): a utility linear in distance decays the choice exponentially with a mean of 1/|beta|, so the observed mean fixes the coefficient; the other modes' entries are 0.0"
+      },
+      "description": "MATSim's marginal utility of distance per mode (utils per metre travelled), the term that makes a mode's use fall with trip length beyond what its time already costs. Every mode was at MATSim's 0.0 until the roots rebuild (D9, #107): bike ran +197.8 % at 8.13 km against an observed 5.2 with a stress channel live and no distance cost, for the car-available (2.9 % at 10.6 km) as for the car-less (14.8 % at 11.5 km) - length was the mechanism. Bike's coefficient is DERIVED from the observed mean it is constrained to, not fitted to bike's share; car and ride keep their distance cost in money (C.scoring.monetary_distance_rate).",
+      "consumers": [
+        "src/registry/param_config.py"
+      ]
+    },
     "C.scoring.activity_typical_duration_s": {
       "value": {
         "home": 43200,

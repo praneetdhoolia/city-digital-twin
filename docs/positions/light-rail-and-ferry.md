@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 22 September 2026 (sixtieth session) · **Record read through:** §9.210 · **Written against family:** `F35`
+**Updated:** 22 September 2026 (sixty-first session) · **Record read through:** §9.211 · **Written against family:** `F35`
 
 ## What is built
 
@@ -48,7 +48,7 @@
 - **The routers control is run and exonerated** (§9.176): giving the raptor the submode constants (`C.raptor.mode_cost_representation` = `mode_constant`) leaves light rail at −71.0 % against −73.9 %, heavy rail at +60.5 % against +54.6 % and ferry at −66.9 % against −63.3 % — inside the noise of two runs of one build (§9.142, #163). What decides the split is still open: the crowding control (`C.crowding.representation` `absent`, never run, #174), the service-quality pair (#175), the seed (pt coverage 15.78–17.53 %, §9.176), or the demand's placement of pt trips (#30).
 - Light rail: where the boardings between arm 0's 772 and the 2,954 target are — longer corridor trips, rail transferees, visitors — is the question at the next arm (§9.130, §9.169).
 - **A third of all PT routing finds no service** (§9.158): of **2,553,357** pt routing requests on the F31 arm, **33.4 %** got no transit route and **40.6 %** of the answered took the network walk — **60.5 %** came back as a walk, because `(marginalUtilityOfTraveling − performing)/3600` prices a second walking at 1.0400 seconds riding. A tram or ferry leg cannot be chosen inside a journey answered with a walk. Supply, radius and schedule integrity are exonerated (§9.113; 1,270 routes with 0 lacking departures, §9.158).
-- **#94 — the ferry's deficit is against a derived target the disclosed bound contradicts, and D8 re-derives it** (§9.177, user decision): the modelled boardings (1,148) sit inside the Opal tap-on bound (234–1,347, #185) while the share target 0.1429 % (a lockdown-month census cell, §9.89) reads −66 %; at the roots rebuild the target is re-derived from the disclosed TPA tap-on series (its midpoint, bounds as the sweep), a target change recorded in its own section. Supply, hour, routing and the router's constant are exonerated (§9.140, §9.176).
+- **#94 — D8 is BUILT: the ferry is scored against its disclosed tap-ons** (§9.211): `build_mode_targets.py` reads the TPA daily Opal series over **300 weekdays**, taking each day's midpoint between its published bounds (hourly cells rounded to 100, so a day is an interval, never a point) — **790.285 boardings per weekday**, `measured`, sweep **234–1,347**, on the boardings basis the rail targets use. The census G62 lockdown cell (§9.89) is superseded. A BASIS change: the next reading is an error statistic against an observation. The reach mechanism stays open on #94.
 - The seated/standing split of the Urbos stays assumed; the acquisition route is field observation at Civic or Crown Street, or GTFS-Realtime dwell distributions (§4.3, §9.18).
 
 ## Refused — do not re-raise
@@ -68,6 +68,7 @@
 
 ## History
 
+- §9.211 — the ferry target on its tap-ons
 - §9.169 — F32 result: light rail −58.6 %
 - §9.210 — the Java fold; the metro target
 - §9.177 — cross-harbour market 305 trips; D8
@@ -82,4 +83,3 @@
 - §9.158 — ferry constant declared; raptor prices no constant
 - §9.157 — F31 gate: light rail −47.2 %, ferry −65.6 %
 - §9.156 — tsp refused as a lever
-- §9.142 — corridor gets its arrivals

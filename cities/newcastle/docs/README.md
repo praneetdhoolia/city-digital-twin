@@ -37,11 +37,11 @@ to it. The simulator and its results are at [`docs/`](../../../docs/README.md); 
 | Package on disk | 6.64 GiB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` — mostly gitignored and regenerable |
 | Study area | Newcastle, Lake Macquarie, Maitland, Cessnock, Port Stephens — 4,086 km² |
 | Zones | 1,500 core SA1 + 201 external SA1, 222 core DZN |
-| Population | 611,915 (2021 Census) → 612,634 synthetic agents |
+| Population | 611,915 (2021 Census) → 612,667 synthetic agents |
 | Road network | 50,182 edges, 11,434 km, gradient-attached |
 | Active network | 40,195 edges, 7,920 km, directional walk-speed factors — and walk- and bike-capable links of the MATSim network itself (368,230 links with the roads and railways) |
 | PT | 5 GTFS eras + 10 scenario variants, 15 feeds mapped, 0 unmapped stops |
-| Input registry | 574 controllable fields, each with units, provenance and a sweep or a held-fixed rule |
+| Input registry | 575 controllable fields, each with units, provenance and a sweep or a held-fixed rule |
 | Validation | 210 targets, pre-registered 67 calibration / 143 holdout |
 | Base year | 2026 · CRS EPSG:28356 (GDA94 / MGA Zone 56) |
 

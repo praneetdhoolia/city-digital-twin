@@ -410,6 +410,26 @@ def opal_pt_boardings(cfg):
     return window, got, excluded, lr_share
 
 
+def tpa_ferry_weekday_boardings():
+    """(lower mean, midpoint mean, upper mean, days) of the TPA daily Ferry
+    tap-ons on WEEKDAY: the disclosed ferry level, with its rounding bound."""
+    path = os.path.join(OBS, 'opal_patronage_newcastle_daily.csv')
+    lo = hi = mid = 0.0
+    n = 0
+    with open(path, encoding='utf-8') as fh:
+        for r in csv.DictReader(fh):
+            if r['mode'] != 'Ferry' or r['day_type'] != 'WEEKDAY':
+                continue
+            a, b = float(r['tap_ons_lower']), float(r['tap_ons_upper'])
+            lo += a
+            hi += b
+            mid += 0.5 * (a + b)
+            n += 1
+    if not n:
+        raise SystemExit('no TPA Ferry WEEKDAY rows in %s (#185)' % path)
+    return lo / n, mid / n, hi / n, n
+
+
 def disclosed_pt_boardings(cfg):
     """Light rail line boardings and heavy rail station entries, per day.
 
@@ -691,32 +711,27 @@ def pt_person_targets(add, cfg, g, lr_share, lv, pt, pt_excluded, window, year):
               open(os.path.join(OUT, 'pt_boardings_targets.json'), 'w', newline='\n'),
               indent=2)
 
-    # Ferry: no Newcastle ferry patronage is published in any acquired
-    # artefact. The all-modes Opal series carries a Ferry row but it is
-    # NSW-wide and Sydney-dominated, so it identifies nothing here. The only
-    # city-specific ferry observation in existence in this package is the
-    # census one-method count, and it is lockdown-vintage. Declared UNOBTAINED
-    # and swept, per the standing rule for an input this project cannot
-    # observe: it is not pinned to a point value.
-    ferry_cen = pt_level * g['ferry'] / g_pt
-    add('ferry', ferry_cen, 'resident person trips', 'derived',
-        'DERIVED, not observed: no Newcastle ferry patronage is published in '
-        'any acquired artefact - the Opal all-modes Ferry series is NSW-wide '
-        'and Sydney-dominated, and the station entries/exits publication '
-        'carries Train and Light rail only. The one city-specific ferry '
-        'observation that exists is the census G62 one-method count, %d of %d '
-        'PT journeys (%.3f%%), and it sets the ferry share WITHIN public '
-        'transport, which the HTS PT level then scales. Two things make that '
-        'transfer more defensible for this mode than for the others: the '
-        'Stockton service is a CAPTIVE crossing (the road alternative is a '
-        '~20 km detour via Hexham), so its riders are not choosing it on the '
-        'margin the way a bus rider might; and a share WITHIN PT is far less '
-        'sensitive to the August 2021 lockdown than an absolute level, because '
-        'the lockdown suppressed the numerator and denominator together. The '
-        'sweep is nonetheless wide - 0 to twice the point value - because the '
-        'lockdown vintage is real and unquantified'
-        % (g['ferry'], g_pt, 100.0 * g['ferry'] / g_pt),
-        (0.0, 2.0 * ferry_cen))
+    # Ferry: the DISCLOSED daily Opal patronage (TPA, #185) carries the
+    # Newcastle slice's Ferry tap-ons every day, each hour rounded to 100, so
+    # a weekday is a lower and an upper bound and the midpoint is the level
+    # the publication discloses. Both wharves' tap-ons are boardings in both
+    # directions - the basis the model counts (D8, 16 September 2026): the
+    # census G62 cell this replaced was a lockdown month and gave a resident
+    # share three times the ferry's 1 km cross-harbour market (#94).
+    ferry_lo, ferry_mid, ferry_hi, ferry_days = tpa_ferry_weekday_boardings()
+    add('ferry', ferry_mid,
+        'boardings per weekday at the wharves (all travellers)', 'measured',
+        'DISCLOSED: the TPA daily Opal patronage series (opal_patronage_'
+        'newcastle_daily.csv, #185), Ferry, WEEKDAY, %d days: the mean of the '
+        'day\'s midpoint between its published lower and upper bound (hourly '
+        'cells rounded to 100, so a day carries an interval, never a point); '
+        'the bounds\' own means %.0f and %.0f are the sweep. Every tap-on at '
+        'either wharf is a boarding, as the model counts them (D8; the census '
+        'G62 one-method cell this replaced is DECISIONS.md 9.89, a lockdown '
+        'month, and gave 0.1429 %% of resident trips, three times the 1 km '
+        'cross-harbour market measured on the pair, #94)'
+        % (ferry_days, ferry_lo, ferry_hi),
+        (ferry_lo, ferry_hi))
 
 
 def person_trip_targets(add, cfg, g, lga, lr_share, lv, pt, pt_excluded, window, year):

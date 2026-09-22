@@ -41,9 +41,9 @@
    "what": "Rebuild the demand so that ride is seeded at the HTS share (B.mode.bound_passenger_placement) and the short end of destination placement has an observed shape - one rebuild, one family, then re-baseline.",
    "repeat_of": "ninth (roots)",
    "opens_family": true,
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.211",
+   "updated": "2026-09-22"
   },
   {
    "id": "20260914T152907:5",
@@ -74,9 +74,9 @@
    "what": "Consume B.population.household_size_top_band_mean (size the 6+ band from its mean) at the next demand rebuild, or retire it now with a record entry.",
    "repeat_of": "ninth #6",
    "opens_family": true,
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.211",
+   "updated": "2026-09-22"
   },
   {
    "id": "20260914T152907:8",
@@ -241,9 +241,9 @@
    "repeat_of": 3,
    "opens_family": true,
    "category": "model",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.211",
+   "updated": "2026-09-22"
   },
   {
    "id": "20260916T062246:3",
@@ -543,7 +543,7 @@
    "category": "code",
    "status": "open",
    "evidence": null,
-   "updated": null
+   "updated": "2026-09-22"
   },
   {
    "id": "20260918T182209:8",

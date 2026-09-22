@@ -79,6 +79,27 @@ OVERRIDES = {
     'A.crossings.freight_closures_per_day': dict(value={}, source='derived', status='active',
                                                  derived_from={'fields': ['A.crossings.representation'], 'identity': 'no boom-gated crossing is represented (A.crossings.representation = absent), so the closure table is empty'},
                                                  description='Non-timetabled freight movements a day at each boom-gated crossing. Empty: none is represented in this baseline.'),
+    'C.scoring.marginal_utility_of_distance_per_m': dict(
+        value={'car': 0.0, 'ride': 0.0, 'walk': 0.0, 'bike': 0.0, 'motorbike': 0.0,
+               'taxi': 0.0, 'auto_rickshaw': 0.0, 'pt': 0.0, 'truck': 0.0,
+               'freight_rail': 0.0},
+        source='definition', status='active', decisions_ref='9.211', sweep=None,
+        held_fixed={'rule': "every mode at MATSim's own 0.0: no distance term is priced for this "
+                            'city, which is what every Mumbai case has run with. The reference '
+                            "city derives bike's coefficient as -1/(its observed mean bike trip "
+                            'length); this city has no such observation, and adopting the '
+                            "reference city's number would import ITS mean (5.2 km) and ITS mode "
+                            'vocabulary into this config',
+                    'decisions_ref': '9.211',
+                    'departure_requires': 'an observed mean trip length per mode for this city '
+                                          '(C.constraint.trip_length_km.*), from which the '
+                                          'coefficient is derived by the same identity'},
+        description="MATSim's marginal utility of distance per mode (utils per metre travelled), "
+                    "the term that makes a mode's use fall with trip length beyond what its time "
+                    'already costs. Declared for this city at 0.0 on ITS OWN mode vocabulary '
+                    '(auto_rickshaw included), not adopted from the reference city, because the '
+                    "reference city's value is derived from an observation this city does not "
+                    'have (9.211).'),
     'CAL.asc.mode_to_constant': dict(value={}, source='definition', status='active',
                                      description='Which declared alternative-specific constant carries which board mode. Empty: the baseline scores one constant for every mode (C.scoring.mode_constant) and no ASC loop runs for this city.'),
     'C.asc.car_passenger': dict(value=0.0, source='assumed', status='placeholder',
@@ -251,7 +272,7 @@ def adopt(key, ref):
 def override(key, ref):
     out = adopt(key, ref)
     spec = OVERRIDES[key]
-    for k in ('sweep', 'sweep_role', 'held_fixed', 'derived_from', 'sweep_basis'):
+    for k in ('sweep', 'sweep_role', 'sweep_keys', 'held_fixed', 'derived_from', 'sweep_basis'):
         out.pop(k, None)
     out.update(spec)
     out['units'] = contract_units(key)
@@ -282,7 +303,7 @@ def move_bound_twins(mine, reference):
             out['value'] = CONVERT[target](field['value'])
         if target in OVERRIDES:
             spec = OVERRIDES[target]
-            for k in ('sweep', 'sweep_role', 'held_fixed', 'derived_from', 'sweep_basis'):
+            for k in ('sweep', 'sweep_role', 'sweep_keys', 'held_fixed', 'derived_from', 'sweep_basis'):
                 out.pop(k, None)
             out.update(spec)
         if target in LAUNCH_DERIVED:

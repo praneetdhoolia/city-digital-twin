@@ -1057,27 +1057,28 @@
       "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.167",
-      "description": "The mean household size assumed for the census top band (\"6 or more persons\"), used with the band midpoints 1-5 to size households. Was an inline literal in the script until 12 September 2026 (#188).",
+      "description": "The mean household size assumed for the census top band (\"6 or more persons\"). CONSUMED since the roots rebuild (D7, #196): the geometric tail's parameter is derived from it (B.population.household_size_tail_p = 1/(mean - 5)); before that the builder held it at index 5 of a value array its top-band branch never read. Was an inline literal until 12 September 2026 (#188).",
       "consumers": [
         "src/build/build_population.py"
       ]
     },
     "B.population.household_size_tail_p": {
-      "value": 0.55,
+      "value": 0.625,
       "units": "probability",
-      "source": "assumed",
-      "sweep": [
-        0.4,
-        0.8
-      ],
-      "sweep_basis": "a chosen bracket: 0.4 gives a long tail of very large households, 0.8 nearly none above six. No observed spread at SA1.",
-      "sweep_role": "uncertainty",
+      "source": "derived",
       "status": "active",
-      "decisions_ref": "9.167",
-      "description": "The geometric-tail parameter that spreads a \"6 or more\" household above six persons (size = 6 + Geometric(p) - 1, capped at 10). Was an inline literal in the script until 12 September 2026 (#188).",
+      "decisions_ref": "9.167, 9.211",
+      "description": "The geometric-tail parameter that spreads a \"6 or more\" household above six persons (size = 6 + Geometric(p) - 1, capped at 10). DERIVED since the roots rebuild (D7, #196): it was a second free number beside the declared top-band mean, which the builder never consumed (the ninth and twelfth reports); the mean now fixes it. Was an inline literal until 12 September 2026 (#188).",
       "consumers": [
         "src/build/build_population.py"
-      ]
+      ],
+      "sweep": null,
+      "derived_from": {
+        "fields": [
+          "B.population.household_size_top_band_mean"
+        ],
+        "identity": "the geometric tail size = 6 + Geometric(p) - 1 has mean 5 + 1/p, so p = 1 / (household_size_top_band_mean - 5); 6.6 -> 0.625"
+      }
     },
     "B.population.home_jitter_radius_factor": {
       "value": 0.6,

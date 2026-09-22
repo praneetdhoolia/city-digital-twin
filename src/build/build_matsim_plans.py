@@ -558,6 +558,9 @@ def leaf_mixed_tours(rows, plan_modes):
 def person_availability(pc):
     """One iteration of the loop this replaced in write_person(); `pc` carries the
     enclosing scope (5 names). Extracted mechanically, byte-identical outputs."""
+    # the day-wide escort denial is a resident's; a boundary or freight agent
+    # never reads it (the extraction left it unbound for them)
+    escort_denied = False
     if pc.tier in ('through', 'freight'):
         # A through agent is a boundary-tier vehicle crossing the study
         # area (issue #20, DECISIONS.md 9.41); a freight agent is a
@@ -742,26 +745,44 @@ def person_tours_and_bound_trips(pc):
     # `ride` proposal off the first list and a non-car proposal on
     # the second, and by the full-choice-set seed below.
     bound_ride_trips = []
+    held_ride_trips = []
+    held_tours = set()
     bound_drive_trips = []
+    by_tour = {}
     if not pc.external:
-        by_tour = {}
         for i, r in enumerate(pc.rows):
             by_tour.setdefault(int(r['tour_id']), []).append(i + 1)
         for tid, idx in by_tour.items():
             dirs = set()
-            dirs |= pc.ctx.escort_cover.get((pc.pid, tid), EMPTY_SET)
+            # D12 (9.211, #86): a tour that exists BECAUSE this member is
+            # escorted, or AS a joint activity, has no solo alternative -
+            # its bound trips are HELD to ride in every plan and the gate
+            # refuses car on them (heldRideTrips). A car-less lift or
+            # shared passenger's bound trips stay merely bound: walk,
+            # bike and pt remain theirs to choose against the wait.
+            esc = pc.ctx.escort_cover.get((pc.pid, tid), EMPTY_SET)
+            dirs |= esc
             dirs |= pc.ctx.lift_cover.get((pc.pid, tid), EMPTY_SET)
             if tid in pc.ctx.joint_companion.get(pc.pid, EMPTY_SET):
                 dirs |= {'drop', 'pickup'}
                 bound_ride_trips.extend(idx)
+                held_ride_trips.extend(idx)
+                held_tours.add(tid)
             else:
                 if 'drop' in dirs:
                     bound_ride_trips.append(idx[0])
+                    if 'drop' in esc:
+                        held_ride_trips.append(idx[0])
+                        held_tours.add(tid)
                 if 'pickup' in dirs and len(idx) > 1:
                     bound_ride_trips.append(idx[-1])
+                    if 'pickup' in esc:
+                        held_ride_trips.append(idx[-1])
+                        held_tours.add(tid)
             if tid in serve_tours:
                 bound_drive_trips.extend(idx)
         bound_ride_trips = sorted(set(bound_ride_trips))
+        held_ride_trips = sorted(set(held_ride_trips))
         bound_drive_trips = sorted(set(bound_drive_trips))
         # 9.143 (#86): a bound trip on a person the availability
         # identity denies `ride` to is unreachable no matter what the
@@ -777,7 +798,7 @@ def person_tours_and_bound_trips(pc):
             else:
                 pc.ctx.unreachable['no_vehicle_trips'] += len(bound_ride_trips)
                 pc.ctx.unreachable['no_vehicle_persons'].add(pc.pid)
-    return bound_drive_trips, bound_ride_trips, by_tour, covered_seed_tids, i, serve_tours, tour_mode
+    return bound_drive_trips, bound_ride_trips, by_tour, covered_seed_tids, held_ride_trips, held_tours, serve_tours, tour_mode
 
 
 
@@ -818,10 +839,19 @@ def plan_set_bound_variants(pp):
             for tid in pp.pc.by_tour:
                 if tid in pp.pc.serve_tours and pp.pc.car_av:
                     alt[tid] = 'car'
+                elif tid in pp.pc.held_tours:
+                    # D12: an escorted member's or a joint companion's tour
+                    # rides in the alternative too - the only thing that
+                    # may differ is the person's other tours
+                    alt[tid] = 'ride'
                 else:
                     alt[tid] = pp.base_modes[0]
-            uniq.append((alt, {}))
-            pp.pc.ctx.bound_placement['alternatives_kept'] += 1
+            if (alt, {}) in uniq or any(a == alt and not o for a, o in uniq):
+                pp.pc.ctx.bound_placement['alternatives_folded_held'] = \
+                    pp.pc.ctx.bound_placement.get('alternatives_folded_held', 0) + 1
+            else:
+                uniq.append((alt, {}))
+                pp.pc.ctx.bound_placement['alternatives_kept'] += 1
         pp.plan_set = uniq
         pp.pc.ctx.bound_placement['ride_tours'] += len(pp.ride_tours)
         pp.pc.ctx.bound_placement['partial_tours'] += len(pp.partial_tours)
@@ -1014,7 +1044,10 @@ def person_plan_set(pc):
         first = int(h[:12], 16) % len(plan_set)
         if first:
             plan_set = [plan_set[first]] + plan_set[:first] + plan_set[first + 1:]
-    return h, plan_set
+    # `h` is the seed-order hash, local to the full-choice-set branch: the
+    # staging extraction of 16 September 2026 returned it too, unbound for
+    # every external, motorbike and truck person, and nothing read it
+    return plan_set
 
 
 
@@ -1095,6 +1128,17 @@ def write_person_attributes(pc):
         pc.ctx.w.write('\t\t\t<attribute name="boundRideTrips" '
                 'class="java.lang.String">%s</attribute>\n'
                 % ','.join('%d' % i for i in pc.bound_ride_trips))
+    if pc.held_ride_trips:
+        pc.ctx.bound_placement['held_ride_trips'] = (
+            pc.ctx.bound_placement.get('held_ride_trips', 0) + len(pc.held_ride_trips))
+        pc.ctx.bound_placement.setdefault('held_persons', set()).add(pc.pid)
+        # D12 (9.211, #86): consumed by citysim.GatedSubtourModeChoice -
+        # the subset of boundRideTrips on which car is refused: the trips
+        # of a tour that exists because this member is escorted or as a
+        # joint activity, which has no solo-car alternative by definition
+        pc.ctx.w.write('\t\t\t<attribute name="heldRideTrips" '
+                'class="java.lang.String">%s</attribute>\n'
+                % ','.join('%d' % i for i in pc.held_ride_trips))
     if pc.bound_drive_trips:
         # 9.120: consumed by citysim.GatedSubtourModeChoice - the
         # trips on which this person is the declared driver of a
@@ -1206,7 +1250,7 @@ def write_person(pid, rows, ctx):
 
     # one mode per tour keeps chain-based modes conserved from the start
     pc = _types.SimpleNamespace(age=age, bike_av=bike_av, car_av=car_av, ctx=ctx, escort_denied=escort_denied, external=external, moto=moto, pid=pid, ride_av=ride_av, rows=rows, tier=tier, trk=trk)
-    bound_drive_trips, bound_ride_trips, by_tour, covered_seed_tids, i, serve_tours, tour_mode = person_tours_and_bound_trips(pc)
+    bound_drive_trips, bound_ride_trips, by_tour, covered_seed_tids, held_ride_trips, held_tours, serve_tours, tour_mode = person_tours_and_bound_trips(pc)
 
     # The plans this person starts with. `uniform_draw`: the one
     # plan the loop above drew. `full_choice_set` (9.120): one plan
@@ -1218,10 +1262,10 @@ def write_person(pid, rows, ctx):
     # override is empty for every plan but the partial-bind variant,
     # so `uniform_draw` and every base-mode plan behave exactly as
     # before.
-    pc = _types.SimpleNamespace(age=age, bike_av=bike_av, bound_ride_trips=bound_ride_trips, by_tour=by_tour, car_av=car_av, covered_seed_tids=covered_seed_tids, ctx=ctx, external=external, moto=moto, pid=pid, ride_av=ride_av, rows=rows, serve_tours=serve_tours, tour_mode=tour_mode, trk=trk)
-    h, plan_set = person_plan_set(pc)
+    pc = _types.SimpleNamespace(age=age, bike_av=bike_av, bound_ride_trips=bound_ride_trips, held_ride_trips=held_ride_trips, held_tours=held_tours, by_tour=by_tour, car_av=car_av, covered_seed_tids=covered_seed_tids, ctx=ctx, external=external, moto=moto, pid=pid, ride_av=ride_av, rows=rows, serve_tours=serve_tours, tour_mode=tour_mode, trk=trk)
+    plan_set = person_plan_set(pc)
 
-    pc = _types.SimpleNamespace(age=age, bike_av=bike_av, bound_drive_trips=bound_drive_trips, bound_ride_trips=bound_ride_trips, car_av=car_av, ctx=ctx, emp=emp, external=external, hh_id=hh_id, inc=inc, lic=lic, mob=mob, moto=moto, pid=pid, ride_av=ride_av, tier=tier, trk=trk)
+    pc = _types.SimpleNamespace(age=age, bike_av=bike_av, bound_drive_trips=bound_drive_trips, bound_ride_trips=bound_ride_trips, held_ride_trips=held_ride_trips, held_tours=held_tours, car_av=car_av, ctx=ctx, emp=emp, external=external, hh_id=hh_id, inc=inc, lic=lic, mob=mob, moto=moto, pid=pid, ride_av=ride_av, tier=tier, trk=trk)
     write_person_attributes(pc)
     pc = _types.SimpleNamespace(covered_seed_tids=covered_seed_tids, ctx=ctx, plan_set=plan_set, rows=rows)
     write_person_plans(pc)
@@ -1392,7 +1436,8 @@ def write_day(day, attrs, rng, report, seed_table=None):
     # bases became the same plan once the bound tours agreed.
     bound_placement = {'ride_tours': 0, 'partial_tours': 0,
                        'plans_folded': 0, 'alternatives_kept': 0,
-                       'persons': set()}
+                       'alternatives_folded_held': 0, 'held_ride_trips': 0,
+                       'held_persons': set(), 'persons': set()}
     unreachable = {'escort_day_trips': 0, 'escort_day_persons': set(),
                    'no_vehicle_trips': 0, 'no_vehicle_persons': set()}
 
@@ -1449,6 +1494,12 @@ def write_day(day, attrs, rng, report, seed_table=None):
                            partial_tours=bound_placement['partial_tours'],
                            plans_folded=bound_placement['plans_folded'],
                            alternatives_kept=bound_placement['alternatives_kept'],
+                           # D12 (9.211, #86): a person whose every tour is
+                           # held to ride has no base-mode alternative and
+                           # seeds ONE plan; counted, never silently folded
+                           alternatives_folded_held=bound_placement.get('alternatives_folded_held', 0),
+                           held_ride_trips=bound_placement.get('held_ride_trips', 0),
+                           held_persons=len(bound_placement.get('held_persons', ())),
                            persons=len(bound_placement['persons'])),
                        partial_bind=dict(
                            tours=partial_bind['tours'],
