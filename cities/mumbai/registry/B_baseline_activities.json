@@ -266,6 +266,66 @@
       ],
       "sweep_role": "uncertainty",
       "sweep_basis": "Provisional broad activity model; not inferred trip diaries or fitted mode shares. Validate out-of-home demand and location coverage separately."
+    },
+    "B.activities.attraction_radius_m": {
+      "value": 300,
+      "units": "metres",
+      "source": "assumed",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "sweep": {
+        "interval": [
+          100,
+          600
+        ],
+        "basis": "The radius around an activity candidate within which the GHSL 100 m built-volume cells are summed as its attraction (build_activity_attraction.py). 100 m is the cell itself (a point on a cell edge reads half its block); 600 m is a walkable catchment that blurs neighbouring candidates together. Not observed: no employment-by-building register is published for the region."
+      },
+      "sweep_role": "uncertainty",
+      "consumers": [
+        "cities/mumbai/build/build_activity_attraction.py"
+      ],
+      "description": "Radius, in metres, of the built-volume sum that weights an activity candidate: non-residential volume (GHS_BUILT_V_NRES_E2025) for work, total volume (GHS_BUILT_V_E2025) for education, shopping, social and leisure."
+    },
+    "B.activities.work_attraction": {
+      "value": "ghsl_nres_volume",
+      "units": "enum",
+      "source": "assumed",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "sweep": {
+        "categorical": [
+          "uniform",
+          "ghsl_nres_volume"
+        ],
+        "basis": "How a work destination is drawn among the OSM candidates inside the B-28 distance band. uniform: every candidate equally (every case before 22 September 2026 - a kiosk drew as many workers as a business park). ghsl_nres_volume: in proportion to the non-residential built volume within B.activities.attraction_radius_m (activity_location_attraction.csv, JRC GHSL R2023A epoch 2025), the observed proxy for the jobs a place holds; the optional purposes multiply their distance decay by the total built volume the same way. A band whose candidates all carry zero volume falls back to uniform and is counted."
+      },
+      "sweep_role": "uncertainty",
+      "consumers": [
+        "cities/mumbai/build/build_plans.py"
+      ],
+      "description": "The representation gate for destination attraction in build_plans.py."
+    },
+    "B.activities.own_account_job_share": {
+      "value": {
+        "519": 0.1156,
+        "518": 0.1841,
+        "517": 0.1849,
+        "520": 0.2955
+      },
+      "units": "share_by_district",
+      "source": "derived",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "derived_from": {
+        "fields": [
+          "B.activities.attraction_radius_m"
+        ],
+        "identity": "Sixth Economic Census 2013, Maharashtra, Table 2.9 (ec6_district_controls.csv, maharashtra_ec6_final p. 36): persons engaged in establishments without a hired worker / all persons engaged, per district (Mumbai 119,694 / 1,035,482 = 0.1156; Mumbai Suburban 307,703 / 1,670,999 = 0.1841; Thane 267,086 / 1,444,660 = 0.1849; Raigarh 78,019 / 264,044 = 0.2955). The own-account establishment is the job that sits in a home or a residential street front, which the GHSL non-residential volume does not see. Applied within B.activities.attraction_radius_m of each candidate."
+      },
+      "consumers": [
+        "cities/mumbai/build/build_activity_attraction.py"
+      ],
+      "description": "The share of a district's jobs that are located in proportion to TOTAL built volume (own-account work in homes and residential street fronts); the rest follow the non-residential built volume. Keyed by Census 2011 district code; a candidate takes the share of the district its coordinates fall in, else the four districts' combined 0.1750."
     }
   }
 }

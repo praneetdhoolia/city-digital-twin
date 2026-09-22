@@ -9,15 +9,18 @@ from extract_census_controls import source, write
 
 OUTPUT_INPUTS = {
     'data/processed/observed/suburban_first_ac_capacity_2017.csv': ['data/raw/rail/pib_first_ac_emu_2017_*.html'],
-    'data/processed/observed/suburban_service_counts_202604.csv': ['data/raw/rail/pib_suburban_services_20260402_*.html'],
-    'data/processed/observed/suburban_stock_claims_202604.csv': ['data/raw/rail/pib_suburban_services_20260402_*.html'],
+    'data/processed/observed/suburban_service_counts_202604.csv': [
+        'data/raw/rail/pib_suburban_services_20260402_*.html', 'data/raw/transit/pib_suburban_capacity_20260313_*.html'],
+    'data/processed/observed/suburban_stock_claims_202604.csv': [
+        'data/raw/rail/pib_suburban_services_20260402_*.html', 'data/raw/transit/pib_suburban_capacity_20260313_*.html'],
     'data/processed/acquisition/suburban_fleet_claims_audit.json': [
-        'data/raw/rail/pib_first_ac_emu_2017_*.html', 'data/raw/rail/pib_suburban_services_20260402_*.html'],
+        'data/raw/rail/pib_first_ac_emu_2017_*.html', 'data/raw/rail/pib_suburban_services_20260402_*.html',
+        'data/raw/transit/pib_suburban_capacity_20260313_*.html'],
 }
 
 
-def publication(sid, release_id):
-    record, path = source(sid, 'rail')
+def publication(sid, release_id, category='rail'):
+    record, path = source(sid, category)
     soup = BeautifulSoup(path.read_bytes(), 'html.parser')
     body = soup.select_one('.innner-page-main-about-us-content-right-part')
     if body is None:
@@ -94,6 +97,25 @@ def main():
                                  counting_unit='train_service_not_physical_rake_or_passenger',
                                  overlap='AC is a subset of All; WR+CR overlaps both operators',
                                  source_anchor='Opening paragraph; combined AC count in release heading'))
+    # the Parliament answer of 13 March 2026 (pib_suburban_capacity_20260313):
+    # the trains handled daily in the Mumbai area, rounded as printed, a second
+    # dated count beside the operators' own of 2 April
+    march_sid = 'pib_suburban_capacity_20260313'
+    march_record, _, march_text = publication(march_sid, '2239780', 'transit')
+    if '13 MAR 2026' not in march_text:
+        raise ValueError('March capacity publication date changed')
+    march_suburban = int(one(r'about (\d[\d,]*) suburban trains are handled daily', march_text).replace(',', ''))
+    march_express = int(one(r'about (\d+) originating Mail/Express trains', march_text))
+    march_common = dict(source_id=march_sid, source_sha256=march_record['sha256'], publication_date='2026-03-13',
+                        reference_day='present_tense_publication_rounded_as_printed',
+                        current_trip_assignment_status='unresolved')
+    for category, value in (('All suburban trains handled daily, Mumbai area (about)', march_suburban),
+                            ('Originating Mail/Express trains daily, Mumbai area (about)', march_express)):
+        services.append(dict(**march_common, source='published_operational_count', operator='WR+CR',
+                             category=category, daily_services_count=value,
+                             counting_unit='train_handled_not_physical_rake_or_passenger',
+                             overlap='a rounded Parliament answer; the 2 April operator counts sum to %d' % all_services,
+                             source_anchor='Opening paragraph'))
     write('suburban_service_counts_202604.csv', services)
     receipts = one(r'During the year 2025-26, four (\d+)-car rakes of AC EMU \((\d+) each to CR & WR\) and one (\d+)-car rake of Non-AC EMU to WR has been received', text)
     ac_cars, each, non_ac_cars = map(int, receipts)
@@ -112,9 +134,17 @@ def main():
                        category='EMU with doors', rakes_count=sanctioned, formation_cars=formation,
                        reference_period='as_reported_in_publication', status='sanctioned_procurement_not_operational_fleet',
                        source_anchor='New generation trains paragraph'))
+    march_sanctioned, march_formation = map(int, one(r'(\d+) rakes of (\d+) cars each with doors have been sanctioned', march_text))
+    if (march_sanctioned, march_formation) != (sanctioned, formation):
+        raise ValueError('The two Parliament answers disagree on the sanctioned rakes')
+    stocks.append(dict(**march_common, source='published_procurement_status', operator='MRVC MUTP-III and IIIA',
+                       category='EMU with doors', rakes_count=march_sanctioned, formation_cars=march_formation,
+                       reference_period='as_reported_in_publication', status='sanctioned_procurement_not_operational_fleet',
+                       source_anchor='Passenger carrying capacity paragraph'))
     write('suburban_stock_claims_202604.csv', stocks)
     audit = dict(capacity_rows=len(capacities), capacity_checks=checks, service_rows=len(services),
-                 service_totals=dict(all_services=all_services, ac_subset=all_ac, operator_sum_status='exact'),
+                 service_totals=dict(all_services=all_services, ac_subset=all_ac, operator_sum_status='exact',
+                                     march_2026_trains_handled_daily_rounded=march_suburban),
                  stock_claim_rows=len(stocks), model_parameters_adopted=False,
                  limitations=[
                      'The 2017 capacity statement describes the first BHEL AC rake, not every later rake or an observed passenger load.',

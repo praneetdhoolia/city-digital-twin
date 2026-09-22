@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/boundaries/maharashtra_scheduled_areas_statistical_index_04b7baed4fe72aa0.html",
+      "url": "https://trti.maharashtra.gov.in/page/statistical-report",
+      "final_url": "https://trti.maharashtra.gov.in/page/statistical-report",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Tribal Research and Training Institute statistical reports",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-22T05:06:45.988793+00:00",
+      "sha256": "04b7baed4fe72aa0c95cbaaaee0464a20a631ea21688cd9a430643b3bfca4d63",
+      "bytes": 182771,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Legal/planning boundary evidence; no automatic model inclusion or exclusion.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

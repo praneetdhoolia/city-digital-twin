@@ -2,13 +2,14 @@
   "source": "modelled_provisional_service_supply",
   "input_sha256": {
     "schedules/baseline_bus.zip": "497b42cbffbc24f7f11bb535e68a1edfdcbfa35323d5630ff7353fd1b09ee68f",
-    "registry/A_baseline_services.json": "3dacaaaacd9703b3bbb65ab15e6363de08ad385853ab286e9b7aa02514dd8262",
+    "schedules/baseline_suburban_timetable.zip": "96b584ad647e8f7d5e53cc160772c97aea9480d6c089f9a5d2bc33b8df0171fe",
+    "registry/A_baseline_services.json": "f2afd4b12219ae652bed42e340c0319a9ce3d8af7e42b2c645121458067768b3",
     "data/processed/observed/osm_transport_relations.csv": "727f0ff9567863417095b80fd016828d3e880734d3981b7f6b6262a517088a01",
     "data/processed/observed/osm_transport_points.csv": "95b51e278e8fcc2710fc57ad040032525538a5819de4140535a85e6012b067a9",
     "data/processed/geospatial/osm_research.gpkg": "e95023a6a853e11501d57864be9c89e20e3b8e072300eda753c880bb5690e25e",
     "data/processed/observed/water_service_directory.csv": "9a96aeb23ead63099c58c8bf0665584955d491f86908f6af020986788ce067d1"
   },
-  "output_sha256": "dc1a7cd3510a00f14fd09ff32077f8973a30d1347ecd5b3e8278076221c040b3",
+  "output_sha256": "e0a9d48fe14d4eef07b4bad88a36b567c7918b94463f3cd86104e1cc256cde54",
   "generated_routes": [
     {
       "route_id": "BASE_3808111_0",
@@ -45,146 +46,6 @@
       "stops_count": 27,
       "departures_count": 138,
       "duration_s": 4605,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_8130328_0",
-      "osm_relation_id": "8130328",
-      "mode": "train",
-      "stops_count": 25,
-      "departures_count": 88,
-      "duration_s": 7012,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_8414240_0",
-      "osm_relation_id": "8414240",
-      "mode": "train",
-      "stops_count": 9,
-      "departures_count": 88,
-      "duration_s": 2352,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_8418422_0",
-      "osm_relation_id": "8418422",
-      "mode": "train",
-      "stops_count": 8,
-      "departures_count": 88,
-      "duration_s": 2999,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_9622461_0",
-      "osm_relation_id": "9622461",
-      "mode": "train",
-      "stops_count": 25,
-      "departures_count": 88,
-      "duration_s": 6709,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_9623798_0",
-      "osm_relation_id": "9623798",
-      "mode": "train",
-      "stops_count": 18,
-      "departures_count": 88,
-      "duration_s": 3885,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_9953729_0",
-      "osm_relation_id": "9953729",
-      "mode": "train",
-      "stops_count": 8,
-      "departures_count": 88,
-      "duration_s": 6545,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_9953730_0",
-      "osm_relation_id": "9953730",
-      "mode": "train",
-      "stops_count": 8,
-      "departures_count": 88,
-      "duration_s": 6547,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11093105_0",
-      "osm_relation_id": "11093105",
-      "mode": "train",
-      "stops_count": 18,
-      "departures_count": 88,
-      "duration_s": 3884,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11094508_0",
-      "osm_relation_id": "11094508",
-      "mode": "train",
-      "stops_count": 16,
-      "departures_count": 88,
-      "duration_s": 8075,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11094509_0",
-      "osm_relation_id": "11094509",
-      "mode": "train",
-      "stops_count": 16,
-      "departures_count": 88,
-      "duration_s": 8075,
       "window_s": [
         18000,
         86400
@@ -249,256 +110,60 @@
       "timetable_source": "modelled_from_provisional_registry"
     },
     {
-      "route_id": "BASE_11491270_0",
-      "osm_relation_id": "11491270",
-      "mode": "train",
-      "stops_count": 26,
-      "departures_count": 88,
-      "duration_s": 7295,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11491271_0",
-      "osm_relation_id": "11491271",
-      "mode": "train",
-      "stops_count": 26,
-      "departures_count": 88,
-      "duration_s": 7298,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11511059_0",
-      "osm_relation_id": "11511059",
-      "mode": "train",
-      "stops_count": 29,
-      "departures_count": 88,
-      "duration_s": 8499,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11511060_0",
-      "osm_relation_id": "11511060",
-      "mode": "train",
-      "stops_count": 29,
-      "departures_count": 88,
-      "duration_s": 8504,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11511942_0",
-      "osm_relation_id": "11511942",
-      "mode": "train",
-      "stops_count": 14,
-      "departures_count": 88,
-      "duration_s": 4060,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11511950_0",
-      "osm_relation_id": "11511950",
-      "mode": "train",
-      "stops_count": 9,
-      "departures_count": 88,
-      "duration_s": 2349,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11511951_0",
-      "osm_relation_id": "11511951",
-      "mode": "train",
-      "stops_count": 15,
-      "departures_count": 88,
-      "duration_s": 4521,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11512072_0",
-      "osm_relation_id": "11512072",
-      "mode": "train",
-      "stops_count": 7,
-      "departures_count": 88,
-      "duration_s": 2787,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11512075_0",
-      "osm_relation_id": "11512075",
-      "mode": "train",
-      "stops_count": 8,
-      "departures_count": 88,
-      "duration_s": 3002,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11512076_0",
-      "osm_relation_id": "11512076",
-      "mode": "train",
-      "stops_count": 7,
-      "departures_count": 88,
-      "duration_s": 2789,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11514142_0",
-      "osm_relation_id": "11514142",
-      "mode": "train",
-      "stops_count": 19,
-      "departures_count": 88,
-      "duration_s": 14735,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11514143_0",
-      "osm_relation_id": "11514143",
-      "mode": "train",
-      "stops_count": 22,
-      "departures_count": 88,
-      "duration_s": 14600,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11514202_0",
-      "osm_relation_id": "11514202",
-      "mode": "train",
-      "stops_count": 22,
-      "departures_count": 88,
-      "duration_s": 14594,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
-      "route_id": "BASE_11514203_0",
-      "osm_relation_id": "11514203",
-      "mode": "train",
-      "stops_count": 19,
-      "departures_count": 88,
-      "duration_s": 16084,
-      "window_s": [
-        18000,
-        86400
-      ],
-      "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
-    },
-    {
       "route_id": "BASE_13989912_0",
       "osm_relation_id": "13989912",
       "mode": "subway",
       "stops_count": 17,
-      "departures_count": 127,
+      "departures_count": 134,
       "duration_s": 2656,
       "window_s": [
         21300,
         82800
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "published_window_provisional_headway"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_13989913_0",
       "osm_relation_id": "13989913",
       "mode": "subway",
       "stops_count": 17,
-      "departures_count": 121,
+      "departures_count": 131,
       "duration_s": 2654,
       "window_s": [
-        23580,
-        81360
+        21600,
+        81300
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "published_window_provisional_headway"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_13989914_0",
       "osm_relation_id": "13989914",
       "mode": "subway",
       "stops_count": 14,
-      "departures_count": 126,
+      "departures_count": 135,
       "duration_s": 2371,
       "window_s": [
         21600,
         82800
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "published_window_provisional_headway"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_13989915_0",
       "osm_relation_id": "13989915",
       "mode": "subway",
       "stops_count": 14,
-      "departures_count": 126,
+      "departures_count": 133,
       "duration_s": 2372,
       "window_s": [
-        20580,
+        21480,
         81480
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "published_window_provisional_headway"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_16533435_0",
@@ -645,56 +310,56 @@
       "osm_relation_id": "20403808",
       "mode": "subway",
       "stops_count": 6,
-      "departures_count": 138,
+      "departures_count": 103,
       "duration_s": 822,
       "window_s": [
-        18000,
-        86400
+        21600,
+        80100
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_20403809_0",
       "osm_relation_id": "20403809",
       "mode": "subway",
       "stops_count": 6,
-      "departures_count": 138,
+      "departures_count": 105,
       "duration_s": 808,
       "window_s": [
-        18000,
-        86400
+        21600,
+        81000
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_20403864_0",
       "osm_relation_id": "20403864",
       "mode": "subway",
       "stops_count": 4,
-      "departures_count": 138,
+      "departures_count": 133,
       "duration_s": 526,
       "window_s": [
-        18000,
-        86400
+        21000,
+        81000
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_20403865_0",
       "osm_relation_id": "20403865",
       "mode": "subway",
       "stops_count": 4,
-      "departures_count": 138,
+      "departures_count": 136,
       "duration_s": 525,
       "window_s": [
-        18000,
-        86400
+        23580,
+        84780
       ],
       "geometry_source": "mapped_native_stops_or_ferry_way",
-      "timetable_source": "modelled_from_provisional_registry"
+      "timetable_source": "published_window_published_headway"
     },
     {
       "route_id": "BASE_MMB_1_0",
@@ -905,13 +570,4103 @@
       "length_m": 17206,
       "geometry_source": "straight_water_line_between_osm_terminals",
       "timetable_source": "directory_window_provisional_headway"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_15car_P57",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_15car_P76",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_15car_P79",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_15car_P81",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_AC_P189",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_AC_P59",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_AC_P69",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_AC_P75",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_P185",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 14,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_P187",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_P191",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_P192",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_P53",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_P55",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_P62",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_P64",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_P68",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_P71",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_P73",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ambarnath_P77",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_asangaon_P101",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_asangaon_P103",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_asangaon_P105",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_asangaon_P106",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_asangaon_P107",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_asangaon_P195",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_asangaon_P197",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_asangaon_P198",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 6,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_asangaon_P96",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_asangaon_P98",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_15car_P48",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_15car_P49",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_AC_P182",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_AC_P39",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_AC_P45",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_P177",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_P179",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_P180",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 8,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_P31",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_P33",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_P35",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_P37",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_P41",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_P46",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_P51",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_badlapur_P52",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P127",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P143",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P150",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P163",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P188",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P2",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P26",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P28",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P30",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P47",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P50",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P58",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P6",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P61",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_15car_P84",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P116",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P125",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P134",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P156",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P160",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P165",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P190",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P206",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P217",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P235",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P240",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 8,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P250",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P40",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P72",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_AC_P83",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P100",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P102",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P104",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P109",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P111",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P113",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P119",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P13",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P130",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P132",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P136",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P137",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P147",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P15",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P152",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P154",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P158",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P17",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P172",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P174",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P178",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 12,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P18",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P186",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 13,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P194",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P196",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 8,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P20",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P201",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 25,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P21",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 7,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P211",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 46,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P229",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 24,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P23",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P238",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 51,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P247",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P249",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 14,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P25",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P29",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P32",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P34",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P36",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P38",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P4",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P43",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P44",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 9,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P54",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P56",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P60",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P63",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P65",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P66",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P7",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P70",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P86",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P88",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P9",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P90",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P91",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P92",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P93",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P95",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P97",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_chhatrapatis_P99",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dadar_15car_P138",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dadar_AC_P139",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dadar_AC_P141",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dadar_AC_P42",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dadar_AC_P80",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dadar_P129",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dadar_P67",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dadar_P74",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dadar_P78",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dadar_P82",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dombivli_15car_P149",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dombivli_AC_P234",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dombivli_P151",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dombivli_P228",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dombivli_P230",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 19,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dombivli_P231",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_dombivli_P233",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 7,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_ghatkopar_P246",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_15car_P126",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_15car_P128",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_15car_P131",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_15car_P135",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_15car_P140",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_AC_P124",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_AC_P133",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_AC_P148",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_AC_P214",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_AC_P222",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_AC_P224",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_P142",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_P144",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_P145",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_P146",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_P210",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 6,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_P212",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 49,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_P213",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 9,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_P216",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 17,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kalyanjuncti_P221",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_karjat_15car_P170",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_karjat_15car_P22",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_karjat_15car_P27",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_karjat_P12",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_karjat_P14",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_karjat_P16",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_karjat_P168",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 7,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_karjat_P173",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_karjat_P175",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_karjat_P19",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_karjat_P24",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kasara_P193",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 6,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kasara_P85",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kasara_P87",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kasara_P89",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kasara_P94",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_khopoli_15car_P11",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_khopoli_15car_P169",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_khopoli_15car_P3",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_khopoli_P1",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_khopoli_P10",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_khopoli_P167",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_khopoli_P171",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_khopoli_P5",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_khopoli_P8",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kurla_AC_P225",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kurla_P220",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kurla_P244",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_kurla_P248",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 26,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_parel_AC_P223",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_parel_AC_P236",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_parel_P183",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_parel_P205",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_parel_P215",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 17,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_parel_P232",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_parel_P243",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 8,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thakurli_AC_P219",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_15car_P159",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_AC_P153",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_AC_P161",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_AC_P162",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_AC_P184",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_AC_P226",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_AC_P242",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 7,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_P155",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_P157",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_P164",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_P166",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_P176",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_P181",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_P199",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_P207",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_P218",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 13,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_P227",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_P237",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 57,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_P239",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_P241",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_thane_P245",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_AC_P117",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_AC_P204",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P108",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P110",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P112",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P114",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P115",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P118",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P120",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P121",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P122",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P123",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P200",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P202",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P203",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 19,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P208",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_central_main_titwala_P209",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_bandra_P281",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 43,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_cbdbelapur_AC_P268",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_cbdbelapur_P263",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_cbdbelapur_P264",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 29,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_cbdbelapur_P266",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 7,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_chembur_P278",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_goregaon_P252",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 45,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_goregaon_P280",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_goregaon_P283",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 9,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_mumbaicsmt_AC_P257",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 9,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_mumbaicsmt_AC_P269",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_mumbaicsmt_AC_P275",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_mumbaicsmt_P251",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 47,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_mumbaicsmt_P255",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 90,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_mumbaicsmt_P265",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 36,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_mumbaicsmt_P271",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 31,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_mumbaicsmt_P277",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_mumbaicsmt_P279",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_mumbaicsmt_P282",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 43,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_nerul_P286",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 37,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_panvel_AC_P256",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_panvel_AC_P260",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 8,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_panvel_P254",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 96,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_panvel_P258",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 23,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_panvel_P284",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 9,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_panvel_P285",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 37,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_tilaknagar_P253",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_vadalaroad_AC_P261",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_vadalaroad_AC_P273",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_vadalaroad_P259",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 22,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_vadalaroad_P267",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_vadalaroad_P274",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_vashi_AC_P276",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_vashi_P262",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_vashi_P270",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 34,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_harbour_vashi_P272",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_port_cbdbelapur_P290",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 13,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_port_nerul_P288",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 12,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_port_uran_P287",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 12,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_port_uran_P289",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 13,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_trans_harbour_nerul_P293",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 34,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_trans_harbour_panvel_P291",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 37,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_trans_harbour_thane_P292",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 37,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_trans_harbour_thane_P294",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 34,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_trans_harbour_thane_P296",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 60,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_trans_harbour_vashi_P295",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 60,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_AC_P458",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_AC_P470",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_AC_P476",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_AC_P486",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_AC_P495",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_P319",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 23,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_P326",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 11,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_P374",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_P388",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_P390",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_P396",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_P399",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_P400",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 6,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_P404",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 10,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_P411",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_andheri_P417",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bandra_AC_P481",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bandra_AC_P482",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bandra_P328",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 19,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bandra_P333",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bandra_P350",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bandra_P360",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bandra_P370",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bandra_P402",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bandra_P410",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bandra_P427",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_AC_P445",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_AC_P461",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_AC_P463",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_AC_P469",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_AC_P471",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_AC_P483",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_AC_P484",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_AC_P494",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_P303",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_P337",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_P338",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 12,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_P347",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_P377",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_P379",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_P382",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_P392",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_P401",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_bhayandar_P412",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_AC_P438",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_AC_P439",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_AC_P441",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 7,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_AC_P451",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_AC_P454",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_AC_P472",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_AC_P485",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P297",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 9,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P305",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P307",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 158,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P312",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 23,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P313",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P324",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 13,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P331",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 11,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P351",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 11,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P366",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P367",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P371",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P376",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P386",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P414",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P416",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_borivali_P421",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P440",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 7,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P442",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P443",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P444",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 7,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P447",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 15,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P448",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 7,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P452",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P456",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P460",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P462",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P465",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P466",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P473",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P474",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P475",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_AC_P479",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P298",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 18,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P300",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 181,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P302",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 8,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P308",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 52,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P309",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P311",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 8,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P315",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 6,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P316",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 47,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P317",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 10,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P321",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P322",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P323",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 15,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P330",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 9,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P334",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P335",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P342",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P346",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P352",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P357",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P358",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P361",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 21,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P362",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 6,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P363",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P365",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P369",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P380",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P389",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P397",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P418",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P420",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P425",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P426",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P429",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P430",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P431",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_churchgate_P433",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_dadar_AC_P487",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_dadar_P348",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_dadar_P356",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 11,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_dadar_P387",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_dadar_P395",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_dadar_P406",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_dadar_P435",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_dahanuroad_P436",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_dahisar_AC_P478",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_dahisar_AC_P492",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_dahisar_AC_P493",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_dahisar_P364",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_dahisar_P372",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 12,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_goregaon_AC_P459",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_goregaon_P314",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 48,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_goregaon_P320",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_goregaon_P327",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_goregaon_P384",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_goregaon_P385",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 50,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_jogeshwari_P408",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_kandivali_P375",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_malad_AC_P491",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_malad_P339",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_malad_P343",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 5,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_mumbaicentra_AC_P464",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_mumbaicentra_P341",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_mumbaicentra_P383",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 56,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_nallasopara_AC_P488",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_nallasopara_P340",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_nallasopara_P344",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_nallasopara_P378",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_nallasopara_P403",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_nallasopara_P405",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_vasairoad_AC_P468",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_vasairoad_AC_P489",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_vasairoad_P306",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 6,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_vasairoad_P325",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_vasairoad_P336",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_vasairoad_P345",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_vasairoad_P354",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_vasairoad_P391",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_vasairoad_P407",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_vasairoad_P413",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_vileparle_P329",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 6,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_AC_P437",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_AC_P446",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_AC_P449",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_AC_P450",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_AC_P453",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 17,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_AC_P455",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_AC_P457",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_AC_P467",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_AC_P477",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_AC_P480",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_AC_P490",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P299",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 6,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P301",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 27,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P304",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 16,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P310",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 46,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P318",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P332",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 21,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P349",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 12,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P353",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P355",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P359",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 28,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P368",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P373",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 11,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P381",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P393",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P394",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 3,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P398",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 4,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P409",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P415",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P419",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P422",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P423",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 2,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P424",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P428",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P432",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
+    },
+    {
+      "route_id": "BASE_TT_western_virar_P434",
+      "mode": "train",
+      "stops_count": null,
+      "departures_count": 1,
+      "geometry_source": "mapped_native_stops",
+      "timetable_source": "printed_timetable_trips"
     }
   ],
-  "skipped": [],
+  "skipped": [
+    {
+      "osm_relation_id": "8130328",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "8414240",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "8418422",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "9622461",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "9623798",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "9953729",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "9953730",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11093105",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11094508",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11094509",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11491270",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11491271",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11511059",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11511060",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11511942",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11511950",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11511951",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11512072",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11512075",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11512076",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11514142",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11514143",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11514202",
+      "reason": "line_served_by_printed_timetable"
+    },
+    {
+      "osm_relation_id": "11514203",
+      "reason": "line_served_by_printed_timetable"
+    }
+  ],
+  "published_weekday_trips_check": {
+    "Line 2A": {
+      "relations": [
+        "13989912",
+        "13989913"
+      ],
+      "generated_departures": 265,
+      "published_weekday_trips": 289,
+      "deviation_pct": -8.3
+    },
+    "Line 7 with Line 9": {
+      "relations": [
+        "13989914",
+        "13989915",
+        "20403864",
+        "20403865"
+      ],
+      "generated_departures": 537,
+      "published_weekday_trips": 552,
+      "deviation_pct": -2.7
+    },
+    "Line 2B phase 1": {
+      "relations": [
+        "20403808",
+        "20403809"
+      ],
+      "generated_departures": 208,
+      "published_weekday_trips": 209,
+      "deviation_pct": -0.5
+    }
+  },
   "generated_route_counts": {
     "subway": 14,
-    "train": 31,
+    "train": 502,
     "ferry": 18
   },
+  "suburban_timetable": "printed_timetables",
+  "printed_timetable_trips": 3289,
   "limitation": "Operating frequencies/times are provisional; historical/current operation and corridor details require later refinement. No ridership targets were used."
 }

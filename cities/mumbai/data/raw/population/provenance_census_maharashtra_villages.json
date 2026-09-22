@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/census_maharashtra_villages_6697776f33d6a08f.xlsx",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/807/download/2880/DH_2011_DCHB_Village_Release_2700.xlsx",
+      "final_url": "https://censusindia.gov.in/nada/index.php/catalog/807/download/2880/DH_2011_DCHB_Village_Release_2700.xlsx",
+      "content_type": "application/octet-stream",
+      "source": "Maharashtra census village directory",
+      "licence": "Publication reuse terms unverified",
+      "retrieved": "2026-09-22T05:03:47.823783+00:00",
+      "sha256": "6697776f33d6a08f6eeaf77c1f7652bf56c32d51f87ea40277f39c2fae1eca67",
+      "bytes": 82163210,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "2011 village facilities and amenities; geographic filtering required.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

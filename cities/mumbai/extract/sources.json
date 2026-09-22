@@ -163,7 +163,8 @@
       "title": "Maharashtra Maritime Board passenger information 2023-24",
       "coverage": "Annual route passenger and vehicle counts; not daily trips.",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: the URL answers an HTML page titled Maharashtra Maritime Board (738 bytes), not the PDF; the publisher has withdrawn or moved it."
     },
     {
       "id": "jnpa_operations",
@@ -339,7 +340,11 @@
       "title": "JNPA administration report 2024-25",
       "coverage": "Primary annual operations report; inspect commodity and mode definitions.",
       "licence": "Publication reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "port cargo and administration statistics: the freight requirement (docs/requirements.json: road_freight, ports) is open for want of a goods OD; these are its evidence, not yet a movement table"
+      }
     },
     {
       "id": "mumbai_suburban_census_summary",
@@ -349,7 +354,11 @@
       "title": "Mumbai Suburban district census summary",
       "coverage": "District-published historical census summary.",
       "licence": "Publication reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a district census summary page; the tables are read from their own downloads"
+      }
     },
     {
       "id": "mumbai_city_census_handbook",
@@ -359,7 +368,11 @@
       "title": "Mumbai City district census download",
       "coverage": "District-published 2011 census document; inspect contents.",
       "licence": "Publication reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "district census handbook narratives; the PCA and HL tables the population reads come from their own downloads"
+      }
     },
     {
       "id": "census_b28_india",
@@ -369,7 +382,11 @@
       "title": "Census B-28 other-worker commuting table India",
       "coverage": "2011 distance and mode; filter geographic universe and distinguish from all-purpose travel.",
       "licence": "Publication reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "the India-level B-28 table; the Maharashtra table (census_b28_maharashtra) is the one the plans read"
+      }
     },
     {
       "id": "central_railway_timetable_root",
@@ -389,7 +406,11 @@
       "title": "Mumbai Metro One train schedule",
       "coverage": "Published first/last departures and variable headways, not a full working timetable.",
       "licence": "Publication reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "Metro One passenger pages: the train schedule page (metro1_metro_train_schedule_20260918) and the performance chart (metro1_performance_chart_20260918) are the ones transcribed; these are their earlier or illustrative twins"
+      }
     },
     {
       "id": "metro1_faq",
@@ -399,7 +420,11 @@
       "title": "Mumbai Metro One passenger information",
       "coverage": "Fare and interchange rules; schedule figures conflict with dedicated schedule page and require reconciliation.",
       "licence": "Publication reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "Metro One passenger pages: the train schedule page (metro1_metro_train_schedule_20260918) and the performance chart (metro1_performance_chart_20260918) are the ones transcribed; these are their earlier or illustrative twins"
+      }
     },
     {
       "id": "metro_timetable_april2026_index",
@@ -429,7 +454,11 @@
       "title": "Basic Port Statistics India 2024-25",
       "coverage": "Primary annual cargo and passenger port series.",
       "licence": "Publication reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "port cargo and administration statistics: the freight requirement (docs/requirements.json: road_freight, ports) is open for want of a goods OD; these are its evidence, not yet a movement table"
+      }
     },
     {
       "id": "maharashtra_infrastructure_2023",
@@ -439,7 +468,8 @@
       "title": "Maharashtra infrastructure statistics 2021-22 and 2022-23",
       "coverage": "Historical multimodal infrastructure and passenger statistics.",
       "licence": "Publication reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: the host presents a name that is not its own (mahaces.maharashtra.gov.in); left unobtained rather than accepted on trust."
     },
     {
       "id": "osm_western_zone_20260915",
@@ -603,7 +633,11 @@
       "url": "https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/No_geom.html",
       "title": "IIT Bombay census features without geometry",
       "licence": "IIT Bombay source reuse terms unverified",
-      "coverage": "Research GIS linked to historical census; boundary completeness, coordinate reference system and permissions require audit."
+      "coverage": "Research GIS linked to historical census; boundary completeness, coordinate reference system and permissions require audit.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "iitb_boundary_mumbai_city",
@@ -702,7 +736,11 @@
       "url": "https://nmmtservice.infinium.management/TransistService.asmx/GetRouteList",
       "title": "NMMT public route list",
       "licence": "Operator publication; reuse terms unverified",
-      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation."
+      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a single-query or pilot response superseded by the harvests of every route (nmmt_route_schedules, nmmt_trip_timetables, nmmt_route_alignments, mbmt_route_details, mbmt_route_stops, mbmt_route_alignments), which the regional feed reads"
+      }
     },
     {
       "id": "nmmt_stops",
@@ -711,7 +749,11 @@
       "url": "https://nmmtservice.infinium.management/TransistService.asmx/GetStationList?StationName=",
       "title": "NMMT public stop list",
       "licence": "Operator publication; reuse terms unverified",
-      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation."
+      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a single-query or pilot response superseded by the harvests of every route (nmmt_route_schedules, nmmt_trip_timetables, nmmt_route_alignments, mbmt_route_details, mbmt_route_stops, mbmt_route_alignments), which the regional feed reads"
+      }
     },
     {
       "id": "mbmt_routes_page",
@@ -747,7 +789,11 @@
       "url": "https://mbmcwebportal.amnex.com/ListofRoutes/getAllStation",
       "title": "MBMT public mapped stops",
       "licence": "Operator publication; reuse terms unverified",
-      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation."
+      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a single-query or pilot response superseded by the harvests of every route (nmmt_route_schedules, nmmt_trip_timetables, nmmt_route_alignments, mbmt_route_details, mbmt_route_stops, mbmt_route_alignments), which the regional feed reads"
+      }
     },
     {
       "id": "mbmt_unique_routes",
@@ -756,7 +802,11 @@
       "url": "https://mbmcwebportal.amnex.com/ListofRoutes/GetUniqueRoutes",
       "title": "MBMT public unique route details",
       "licence": "Operator publication; reuse terms unverified",
-      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation."
+      "coverage": "Public passenger-information service; effective dates, completeness and operator provenance require validation.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a single-query or pilot response superseded by the harvests of every route (nmmt_route_schedules, nmmt_trip_timetables, nmmt_route_alignments, mbmt_route_details, mbmt_route_stops, mbmt_route_alignments), which the regional feed reads"
+      }
     },
     {
       "id": "mbmt_operator_profile",
@@ -814,7 +864,11 @@
       "url": "https://nmmtservice.infinium.management/TransistService.asmx/GetStationsFromRoute?routeid=5577",
       "title": "NMMT public route 5577 GetStationsFromRoute",
       "licence": "Operator publication; reuse terms unverified",
-      "coverage": "Pilot of route-specific public service data; selected from acquired route list."
+      "coverage": "Pilot of route-specific public service data; selected from acquired route list.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a single-query or pilot response superseded by the harvests of every route (nmmt_route_schedules, nmmt_trip_timetables, nmmt_route_alignments, mbmt_route_details, mbmt_route_stops, mbmt_route_alignments), which the regional feed reads"
+      }
     },
     {
       "id": "nmmt_pilot_shape",
@@ -823,7 +877,11 @@
       "url": "https://nmmtservice.infinium.management/TransistService.asmx/GetRoutePoints?RouteId=5577",
       "title": "NMMT public route 5577 GetRoutePoints",
       "licence": "Operator publication; reuse terms unverified",
-      "coverage": "Pilot of route-specific public service data; selected from acquired route list."
+      "coverage": "Pilot of route-specific public service data; selected from acquired route list.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a single-query or pilot response superseded by the harvests of every route (nmmt_route_schedules, nmmt_trip_timetables, nmmt_route_alignments, mbmt_route_details, mbmt_route_stops, mbmt_route_alignments), which the regional feed reads"
+      }
     },
     {
       "id": "mmr_tariff_index_20260918",
@@ -967,7 +1025,11 @@
       "title": "MMRDA metro integration and ridership March 2026",
       "coverage": "Contemporaneous aggregate reported daily Line 2A/7 passengers and ticketing offer. Rounded press figure not a station/hour validation series.",
       "licence": "MMRDA publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "MMRDA's March 2026 integration release: its \"over 3.5 lakh daily passengers on Lines 2A and 7\" is transcribed in published_observations.json"
+      }
     },
     {
       "id": "bmc_yearbook_2025",
@@ -997,7 +1059,11 @@
       "title": "Mumbai Metro Line 3 official passenger booklet",
       "coverage": "Line 3 stations and passenger information; publication vintage must be read.",
       "licence": "Operator or government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "Line 3 passenger information (rules, safety, facilities): the line's stations, journeys and fares are read from the operator's API responses (extract_mmrcl_stations.py, extract_mmrcl_journeys.py, extract_metro3_fares.py)"
+      }
     },
     {
       "id": "mmmocl_fare_products",
@@ -1007,7 +1073,8 @@
       "title": "Maha Mumbai Metro fare products",
       "coverage": "Published single return pass and card products; date and line scope require verification.",
       "licence": "Operator or government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: 404 at the publisher; the Internet Archive copy of 10 June 2025 stands in."
     },
     {
       "id": "cidco_metro_home",
@@ -1037,7 +1104,11 @@
       "title": "BMC public BEST facilities map index",
       "coverage": "Official map entry for stops terminals and depots; inspect embedded public map data.",
       "licence": "Government website publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "mmrcl_public_menu",
@@ -1067,7 +1138,8 @@
       "title": "Line 3 public station directory",
       "coverage": "Public passenger website response; inspect source period and completeness before model use.",
       "licence": "Operator publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: 404 at the publisher (the API endpoint is withdrawn)."
     },
     {
       "id": "mmrcl_all_stations",
@@ -1097,7 +1169,11 @@
       "title": "Line 3 official passenger facilities",
       "coverage": "Public operator passenger information; original fields and source date retained.",
       "licence": "Operator publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "Line 3 passenger information (rules, safety, facilities): the line's stations, journeys and fares are read from the operator's API responses (extract_mmrcl_stations.py, extract_mmrcl_journeys.py, extract_metro3_fares.py)"
+      }
     },
     {
       "id": "mmrcl_station_aryj",
@@ -1377,7 +1453,11 @@
       "title": "Line 3 official FAQ trains",
       "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
       "licence": "Operator publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "Line 3 train FAQ, read for the 8-car formation beside the Alstom specification (metro_fleet_publication_claims.csv)"
+      }
     },
     {
       "id": "mmrcl_faq_stations",
@@ -1387,7 +1467,11 @@
       "title": "Line 3 official FAQ stations",
       "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
       "licence": "Operator publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "Line 3 passenger information (rules, safety, facilities): the line's stations, journeys and fares are read from the operator's API responses (extract_mmrcl_stations.py, extract_mmrcl_journeys.py, extract_metro3_fares.py)"
+      }
     },
     {
       "id": "mmrcl_faq_rules",
@@ -1397,7 +1481,11 @@
       "title": "Line 3 official FAQ rules",
       "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
       "licence": "Operator publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "Line 3 passenger information (rules, safety, facilities): the line's stations, journeys and fares are read from the operator's API responses (extract_mmrcl_stations.py, extract_mmrcl_journeys.py, extract_metro3_fares.py)"
+      }
     },
     {
       "id": "mmrcl_faq_product",
@@ -1417,7 +1505,11 @@
       "title": "Line 3 official FAQ safety",
       "coverage": "Public operator passenger information; preserve original schema, coordinates, facilities and schedule fields with retrieval date.",
       "licence": "Operator publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "Line 3 passenger information (rules, safety, facilities): the line's stations, journeys and fares are read from the operator's API responses (extract_mmrcl_stations.py, extract_mmrcl_journeys.py, extract_metro3_fares.py)"
+      }
     },
     {
       "id": "mmr_plan_sanction_20210420",
@@ -1427,7 +1519,11 @@
       "title": "Notification Dated 20.04.2021",
       "coverage": "Official spatial planning evidence. Proposed land use and future infrastructure are not observed current activity or operating transport.",
       "licence": "MMRDA publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a planning map, notice or future plan: the study extent is derived from the public MMR GIS layers and the 2024 SPA notification (build_mmr_extent.py), and proposed land use is not a base-year input"
+      }
     },
     {
       "id": "mmr_plan_map_index",
@@ -1447,7 +1543,11 @@
       "title": "Proposed Landuse (1:1,00,000)",
       "coverage": "Official spatial planning evidence. Proposed land use and future infrastructure are not observed current activity or operating transport.",
       "licence": "MMRDA publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a planning map, notice or future plan: the study extent is derived from the public MMR GIS layers and the 2024 SPA notification (build_mmr_extent.py), and proposed land use is not a base-year input"
+      }
     },
     {
       "id": "mmr_ref_landuse_overview",
@@ -1457,7 +1557,11 @@
       "title": "Ref Proposed Landuse (1:1,00,000)",
       "coverage": "Official spatial planning evidence. Proposed land use and future infrastructure are not observed current activity or operating transport.",
       "licence": "MMRDA publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a planning map, notice or future plan: the study extent is derived from the public MMR GIS layers and the 2024 SPA notification (build_mmr_extent.py), and proposed land use is not a base-year input"
+      }
     },
     {
       "id": "mmr_ntda_notice_20240304",
@@ -1467,7 +1571,11 @@
       "title": "Notice of the proposed New Town",
       "coverage": "Official spatial planning evidence. Proposed land use and future infrastructure are not observed current activity or operating transport.",
       "licence": "MMRDA publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a planning map, notice or future plan: the study extent is derived from the public MMR GIS layers and the 2024 SPA notification (build_mmr_extent.py), and proposed land use is not a base-year input"
+      }
     },
     {
       "id": "mmr_historical_regional_plan_1996_2011",
@@ -1477,7 +1585,11 @@
       "title": "Mumbai Metropolitan Region (MMR), 1996-2011 (4.5 MB)",
       "coverage": "Official spatial planning evidence. Proposed land use and future infrastructure are not observed current activity or operating transport.",
       "licence": "MMRDA publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a planning map, notice or future plan: the study extent is derived from the public MMR GIS layers and the 2024 SPA notification (build_mmr_extent.py), and proposed land use is not a base-year input"
+      }
     },
     {
       "id": "des_district_mumbai_city",
@@ -1487,7 +1599,8 @@
       "title": "Maharashtra official district statistics index MUMBAI CITY",
       "coverage": "Locate latest socioeconomic review; report year and individual observation reference years differ.",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: www.mahades.maharashtra.gov.in presents a name that is not its own (mahaces.maharashtra.gov.in) and its district.do answers 500; the Internet Archive copies stand in where they exist (Mumbai City has none)."
     },
     {
       "id": "des_district_mumbai_suburban",
@@ -1497,7 +1610,8 @@
       "title": "Maharashtra official district statistics index MUMBAI SUBURBAN",
       "coverage": "Locate latest socioeconomic review; report year and individual observation reference years differ.",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: www.mahades.maharashtra.gov.in presents a name that is not its own (mahaces.maharashtra.gov.in) and its district.do answers 500; the Internet Archive copies stand in where they exist (Mumbai City has none)."
     },
     {
       "id": "des_district_thane",
@@ -1507,7 +1621,8 @@
       "title": "Maharashtra official district statistics index THANE",
       "coverage": "Locate latest socioeconomic review; report year and individual observation reference years differ.",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: www.mahades.maharashtra.gov.in presents a name that is not its own (mahaces.maharashtra.gov.in) and its district.do answers 500; the Internet Archive copies stand in where they exist (Mumbai City has none)."
     },
     {
       "id": "des_district_palghar",
@@ -1517,7 +1632,8 @@
       "title": "Maharashtra official district statistics index PALGHAR",
       "coverage": "Locate latest socioeconomic review; report year and individual observation reference years differ.",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: www.mahades.maharashtra.gov.in presents a name that is not its own (mahaces.maharashtra.gov.in) and its district.do answers 500; the Internet Archive copies stand in where they exist (Mumbai City has none)."
     },
     {
       "id": "des_district_raigad",
@@ -1527,7 +1643,8 @@
       "title": "Maharashtra official district statistics index RAIGAD",
       "coverage": "Locate latest socioeconomic review; report year and individual observation reference years differ.",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: www.mahades.maharashtra.gov.in presents a name that is not its own (mahaces.maharashtra.gov.in) and its district.do answers 500; the Internet Archive copies stand in where they exist (Mumbai City has none)."
     },
     {
       "id": "konkan_statistics_index",
@@ -1547,7 +1664,11 @@
       "title": "MMR extended notified area planning overview",
       "coverage": "Planning authority jurisdiction and village schedules; distinguish planning authority from MMR extent.",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a planning map, notice or future plan: the study extent is derived from the public MMR GIS layers and the 2024 SPA notification (build_mmr_extent.py), and proposed land use is not a base-year input"
+      }
     },
     {
       "id": "mmrena_raigad_notice_20250918",
@@ -1557,7 +1678,11 @@
       "title": "MMR extended notified area Raigad notice September 2025",
       "coverage": "Village schedules for extended notified area; validate relation to 2019 regional boundary.",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a planning map, notice or future plan: the study extent is derived from the public MMR GIS layers and the 2024 SPA notification (build_mmr_extent.py), and proposed land use is not a base-year input"
+      }
     },
     {
       "id": "district_review_2025_thane",
@@ -1643,7 +1768,11 @@
       "format": "pdf",
       "licence": "Public authority publication; reuse terms unverified",
       "coverage": "Source response retained; period and suitability require validation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "the Economic Survey highlights; the transport tables are extracted from the survey itself (extract_economic_survey_transport.py)"
+      }
     },
     {
       "id": "nmmt_pilot_schedule_5577",
@@ -1653,7 +1782,11 @@
       "format": "xml",
       "licence": "Public authority publication; reuse terms unverified",
       "coverage": "Source response retained; period and suitability require validation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a single-query or pilot response superseded by the harvests of every route (nmmt_route_schedules, nmmt_trip_timetables, nmmt_route_alignments, mbmt_route_details, mbmt_route_stops, mbmt_route_alignments), which the regional feed reads"
+      }
     },
     {
       "id": "mmrcl_journey_aryj_cup_20260918",
@@ -1703,7 +1836,11 @@
       "format": "html",
       "licence": "Public authority or operator publication; reuse terms unverified",
       "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "Metro One passenger pages: the train schedule page (metro1_metro_train_schedule_20260918) and the performance chart (metro1_performance_chart_20260918) are the ones transcribed; these are their earlier or illustrative twins"
+      }
     },
     {
       "id": "metro1_metro_faq_20260918",
@@ -1713,7 +1850,11 @@
       "format": "html",
       "licence": "Public authority or operator publication; reuse terms unverified",
       "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "Metro One passenger pages: the train schedule page (metro1_metro_train_schedule_20260918) and the performance chart (metro1_performance_chart_20260918) are the ones transcribed; these are their earlier or illustrative twins"
+      }
     },
     {
       "id": "metro1_ticket_fares_20260918",
@@ -1743,7 +1884,11 @@
       "format": "pdf",
       "licence": "Public authority or operator publication; reuse terms unverified",
       "coverage": "Original publication retained. Project designs and forecasts are not observations or evidence of current operation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "the operator's owner's annual report: Metro One's cumulative 1,101 million passengers to 30 April 2025 is transcribed in published_observations.json; no daily figure is printed"
+      }
     },
     {
       "id": "mmrcl_journey_sepz_midc_20260918",
@@ -2003,7 +2148,11 @@
       "title": "1 Metro Line 1 (Versova-Andheri-Ghatkopar) Download (10.21 MB)",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a detailed project report of a planned or under-construction line: its forecasts are not observations of the base year, and the operating lines take their windows, headways and capacities from their operators (A.baseline_transit.line_windows_s, line_headways_s, A.transit.fleet_profiles)"
+      }
     },
     {
       "id": "mmr_metro_dpr_2_metro_line_2a",
@@ -2013,7 +2162,11 @@
       "title": "2 Metro Line 2A (Dahisar to D. N. Nagar Download (13.39 MB)",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a detailed project report of a planned or under-construction line: its forecasts are not observations of the base year, and the operating lines take their windows, headways and capacities from their operators (A.baseline_transit.line_windows_s, line_headways_s, A.transit.fleet_profiles)"
+      }
     },
     {
       "id": "mmr_metro_dpr_3_metro_line_2b",
@@ -2023,7 +2176,11 @@
       "title": "3 Metro Line 2B (D. N. Nagar to Mandale) Download (31.76 MB)",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a detailed project report of a planned or under-construction line: its forecasts are not observations of the base year, and the operating lines take their windows, headways and capacities from their operators (A.baseline_transit.line_windows_s, line_headways_s, A.transit.fleet_profiles)"
+      }
     },
     {
       "id": "mmr_metro_dpr_4_metro_line_4",
@@ -2033,7 +2190,11 @@
       "title": "4 Metro Line 4 (Wadala to Kasarvadavali) Download (47.99 MB)",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a detailed project report of a planned or under-construction line: its forecasts are not observations of the base year, and the operating lines take their windows, headways and capacities from their operators (A.baseline_transit.line_windows_s, line_headways_s, A.transit.fleet_profiles)"
+      }
     },
     {
       "id": "mmr_metro_dpr_5_metro_line_4_a_extension_of_line_4_from_kasarvadavali_to_gaimukh_download",
@@ -2043,7 +2204,11 @@
       "title": "5 Metro Line 4 A- EXTENSION OF LINE-4 FROM KASARVADAVALI TO GAIMUKH Download (12.7 MB)",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a detailed project report of a planned or under-construction line: its forecasts are not observations of the base year, and the operating lines take their windows, headways and capacities from their operators (A.baseline_transit.line_windows_s, line_headways_s, A.transit.fleet_profiles)"
+      }
     },
     {
       "id": "mmr_metro_dpr_6_metro_line_5",
@@ -2053,7 +2218,11 @@
       "title": "6 Metro Line 5 (Thane - Bhiwandi - Kalyan). Download (15.36 MB)",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a detailed project report of a planned or under-construction line: its forecasts are not observations of the base year, and the operating lines take their windows, headways and capacities from their operators (A.baseline_transit.line_windows_s, line_headways_s, A.transit.fleet_profiles)"
+      }
     },
     {
       "id": "mmr_metro_dpr_7_metro_line_6",
@@ -2063,7 +2232,11 @@
       "title": "7 Metro Line 6 (Swami Samarth Nagar-JVLR-SEEPZ-Kanjurmarg-Vikhroli (EEH)) Download (14.49 MB)",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a detailed project report of a planned or under-construction line: its forecasts are not observations of the base year, and the operating lines take their windows, headways and capacities from their operators (A.baseline_transit.line_windows_s, line_headways_s, A.transit.fleet_profiles)"
+      }
     },
     {
       "id": "mmr_metro_dpr_8_metro_line_7",
@@ -2073,7 +2246,11 @@
       "title": "8 Metro Line 7 (Andheri (E) to Dahisar (E)) Download (11.43 MB)",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a detailed project report of a planned or under-construction line: its forecasts are not observations of the base year, and the operating lines take their windows, headways and capacities from their operators (A.baseline_transit.line_windows_s, line_headways_s, A.transit.fleet_profiles)"
+      }
     },
     {
       "id": "mmr_metro_dpr_9_metro_line_7a_9_andheri",
@@ -2083,7 +2260,11 @@
       "title": "9 Metro Line 7A & 9 Andheri (E) to CSIA & Dahisar to Mira Bhayander Download (15.71 MB)",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a detailed project report of a planned or under-construction line: its forecasts are not observations of the base year, and the operating lines take their windows, headways and capacities from their operators (A.baseline_transit.line_windows_s, line_headways_s, A.transit.fleet_profiles)"
+      }
     },
     {
       "id": "mmr_metro_dpr_10_metro_line_10_gaimukh_to_shivaji_chowk",
@@ -2093,7 +2274,11 @@
       "title": "10 Metro Line 10 - GAIMUKH TO SHIVAJI CHOWK (MIRA ROAD) Download (11.34 MB)",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a detailed project report of a planned or under-construction line: its forecasts are not observations of the base year, and the operating lines take their windows, headways and capacities from their operators (A.baseline_transit.line_windows_s, line_headways_s, A.transit.fleet_profiles)"
+      }
     },
     {
       "id": "mmr_metro_dpr_11_metro_line_11_wadala_to_cstm_download",
@@ -2103,7 +2288,11 @@
       "title": "11 Metro Line 11 - Wadala to CSTM Download (14.4 MB)",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a detailed project report of a planned or under-construction line: its forecasts are not observations of the base year, and the operating lines take their windows, headways and capacities from their operators (A.baseline_transit.line_windows_s, line_headways_s, A.transit.fleet_profiles)"
+      }
     },
     {
       "id": "mmr_metro_dpr_12_metro_line_12_kalyan_to_taloja_download",
@@ -2113,7 +2302,11 @@
       "title": "12 Metro Line 12 Kalyan to Taloja Download (14.07 MB)",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical design and surveyed baseline; forecasts and proposed infrastructure must not be treated as observed or operational.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a detailed project report of a planned or under-construction line: its forecasts are not observations of the base year, and the operating lines take their windows, headways and capacities from their operators (A.baseline_transit.line_windows_s, line_headways_s, A.transit.fleet_profiles)"
+      }
     },
     {
       "id": "wri_mmr_item",
@@ -2122,7 +2315,11 @@
       "url": "https://www.arcgis.com/sharing/rest/content/items/e5f52ba66cb34e5f81b5d2d604ec6901?f=json",
       "title": "Public MMR boundary service item metadata",
       "licence": "Public ArcGIS item; reuse terms unverified",
-      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "layers of the public MMR GIS service the extent derivation does not read (build_mmr_extent.py reads layers 1, 2, 3, 5 and 6: the region, the municipal corporations and councils, the villages); acquired as the service's complete inventory and audited for completeness"
+      }
     },
     {
       "id": "wri_mmr_service",
@@ -2131,7 +2328,11 @@
       "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer?f=pjson",
       "title": "Public MMR boundary service layer directory",
       "licence": "Public ArcGIS item; reuse terms unverified",
-      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "layers of the public MMR GIS service the extent derivation does not read (build_mmr_extent.py reads layers 1, 2, 3, 5 and 6: the region, the municipal corporations and councils, the villages); acquired as the service's complete inventory and audited for completeness"
+      }
     },
     {
       "id": "wri_mmr_layer_0_metadata",
@@ -2140,7 +2341,11 @@
       "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/0?f=pjson",
       "title": "Public MMR layer 0 field and coverage metadata",
       "licence": "Public ArcGIS item; reuse terms unverified",
-      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "layers of the public MMR GIS service the extent derivation does not read (build_mmr_extent.py reads layers 1, 2, 3, 5 and 6: the region, the municipal corporations and councils, the villages); acquired as the service's complete inventory and audited for completeness"
+      }
     },
     {
       "id": "wri_mmr_layer_0_ids",
@@ -2149,7 +2354,11 @@
       "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/0/query?where=1%3D1&returnIdsOnly=true&f=json",
       "title": "Public MMR layer 0 object IDs for completeness audit",
       "licence": "Public ArcGIS item; reuse terms unverified",
-      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "layers of the public MMR GIS service the extent derivation does not read (build_mmr_extent.py reads layers 1, 2, 3, 5 and 6: the region, the municipal corporations and councils, the villages); acquired as the service's complete inventory and audited for completeness"
+      }
     },
     {
       "id": "wri_mmr_layer_0_features",
@@ -2158,7 +2367,11 @@
       "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/0/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json",
       "title": "Public MMR layer 0 attributes and geometry WGS84",
       "licence": "Public ArcGIS item; reuse terms unverified",
-      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "layers of the public MMR GIS service the extent derivation does not read (build_mmr_extent.py reads layers 1, 2, 3, 5 and 6: the region, the municipal corporations and councils, the villages); acquired as the service's complete inventory and audited for completeness"
+      }
     },
     {
       "id": "wri_mmr_layer_1_metadata",
@@ -2248,7 +2461,11 @@
       "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/4?f=pjson",
       "title": "Public MMR layer 4 field and coverage metadata",
       "licence": "Public ArcGIS item; reuse terms unverified",
-      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "layers of the public MMR GIS service the extent derivation does not read (build_mmr_extent.py reads layers 1, 2, 3, 5 and 6: the region, the municipal corporations and councils, the villages); acquired as the service's complete inventory and audited for completeness"
+      }
     },
     {
       "id": "wri_mmr_layer_4_ids",
@@ -2257,7 +2474,11 @@
       "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/4/query?where=1%3D1&returnIdsOnly=true&f=json",
       "title": "Public MMR layer 4 object IDs for completeness audit",
       "licence": "Public ArcGIS item; reuse terms unverified",
-      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "layers of the public MMR GIS service the extent derivation does not read (build_mmr_extent.py reads layers 1, 2, 3, 5 and 6: the region, the municipal corporations and councils, the villages); acquired as the service's complete inventory and audited for completeness"
+      }
     },
     {
       "id": "wri_mmr_layer_4_features",
@@ -2266,7 +2487,11 @@
       "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/4/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json",
       "title": "Public MMR layer 4 attributes and geometry WGS84",
       "licence": "Public ArcGIS item; reuse terms unverified",
-      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "layers of the public MMR GIS service the extent derivation does not read (build_mmr_extent.py reads layers 1, 2, 3, 5 and 6: the region, the municipal corporations and councils, the villages); acquired as the service's complete inventory and audited for completeness"
+      }
     },
     {
       "id": "wri_mmr_layer_5_metadata",
@@ -2329,7 +2554,11 @@
       "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/7?f=pjson",
       "title": "Public MMR layer 7 field and coverage metadata",
       "licence": "Public ArcGIS item; reuse terms unverified",
-      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "layers of the public MMR GIS service the extent derivation does not read (build_mmr_extent.py reads layers 1, 2, 3, 5 and 6: the region, the municipal corporations and councils, the villages); acquired as the service's complete inventory and audited for completeness"
+      }
     },
     {
       "id": "wri_mmr_layer_7_ids",
@@ -2338,7 +2567,11 @@
       "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/7/query?where=1%3D1&returnIdsOnly=true&f=json",
       "title": "Public MMR layer 7 object IDs for completeness audit",
       "licence": "Public ArcGIS item; reuse terms unverified",
-      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "layers of the public MMR GIS service the extent derivation does not read (build_mmr_extent.py reads layers 1, 2, 3, 5 and 6: the region, the municipal corporations and councils, the villages); acquired as the service's complete inventory and audited for completeness"
+      }
     },
     {
       "id": "wri_mmr_layer_7_features",
@@ -2347,7 +2580,11 @@
       "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/7/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json",
       "title": "Public MMR layer 7 attributes and geometry WGS84",
       "licence": "Public ArcGIS item; reuse terms unverified",
-      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "layers of the public MMR GIS service the extent derivation does not read (build_mmr_extent.py reads layers 1, 2, 3, 5 and 6: the region, the municipal corporations and councils, the villages); acquired as the service's complete inventory and audited for completeness"
+      }
     },
     {
       "id": "wri_mmr_layer_8_metadata",
@@ -2356,7 +2593,11 @@
       "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/8?f=pjson",
       "title": "Public MMR layer 8 field and coverage metadata",
       "licence": "Public ArcGIS item; reuse terms unverified",
-      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "layers of the public MMR GIS service the extent derivation does not read (build_mmr_extent.py reads layers 1, 2, 3, 5 and 6: the region, the municipal corporations and councils, the villages); acquired as the service's complete inventory and audited for completeness"
+      }
     },
     {
       "id": "wri_mmr_layer_8_ids",
@@ -2365,7 +2606,11 @@
       "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/8/query?where=1%3D1&returnIdsOnly=true&f=json",
       "title": "Public MMR layer 8 object IDs for completeness audit",
       "licence": "Public ArcGIS item; reuse terms unverified",
-      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "layers of the public MMR GIS service the extent derivation does not read (build_mmr_extent.py reads layers 1, 2, 3, 5 and 6: the region, the municipal corporations and councils, the villages); acquired as the service's complete inventory and audited for completeness"
+      }
     },
     {
       "id": "wri_mmr_layer_8_features",
@@ -2374,7 +2619,11 @@
       "url": "https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/8/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json",
       "title": "Public MMR layer 8 attributes and geometry WGS84",
       "licence": "Public ArcGIS item; reuse terms unverified",
-      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked."
+      "coverage": "WRI-associated account publication, November 2020. Boundary vintage and source authority require reconciliation with legal extent. Query transfer limits must be checked.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "layers of the public MMR GIS service the extent derivation does not read (build_mmr_extent.py reads layers 1, 2, 3, 5 and 6: the region, the municipal corporations and councils, the villages); acquired as the service's complete inventory and audited for completeness"
+      }
     },
     {
       "id": "bmc_cmp_coastal_annexure_2017",
@@ -2384,7 +2633,8 @@
       "category": "planning",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical or current publication; each table needs its own period, universe and definition. Acquisition does not establish validation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: environmentclearance.nic.in does not resolve; the Internet Archive copy stands in."
     },
     {
       "id": "mmr_gis_page",
@@ -2404,7 +2654,11 @@
       "category": "transit",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical or current publication; each table needs its own period, universe and definition. Acquisition does not establish validation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "MRVC's fare and willingness-to-pay study: behavioural evidence for the money term (the Mode-Choice Ledger), not yet a fitted coefficient"
+      }
     },
     {
       "id": "mumbai_traffic_annual_index",
@@ -2434,7 +2688,11 @@
       "category": "transit",
       "licence": "Operator or public authority publication; reuse terms unverified",
       "coverage": "Filename mentions fares, but visual inspection shows route and interchange schematic only. It contains no fare matrix.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "Metro One passenger pages: the train schedule page (metro1_metro_train_schedule_20260918) and the performance chart (metro1_performance_chart_20260918) are the ones transcribed; these are their earlier or illustrative twins"
+      }
     },
     {
       "id": "metro1_performance_chart_20260918",
@@ -2454,7 +2712,11 @@
       "category": "freight",
       "licence": "Operator or public authority publication; reuse terms unverified",
       "coverage": "Published evidence requiring units, effective dates and operational validation; throughput is not a truck or train movement count.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "JNPA throughput and operating profile transcribed in published_observations.json for the port controls"
+      }
     },
     {
       "id": "jnpa_aug_2026_terminal_teus",
@@ -2464,7 +2726,11 @@
       "category": "freight",
       "licence": "Operator or public authority publication; reuse terms unverified",
       "coverage": "Published evidence requiring units, effective dates and operational validation; throughput is not a truck or train movement count.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "port cargo and administration statistics: the freight requirement (docs/requirements.json: road_freight, ports) is open for want of a goods OD; these are its evidence, not yet a movement table"
+      }
     },
     {
       "id": "jnpa_operating_profile_20260918",
@@ -2474,7 +2740,11 @@
       "category": "freight",
       "licence": "Operator or public authority publication; reuse terms unverified",
       "coverage": "Published evidence requiring units, effective dates and operational validation; throughput is not a truck or train movement count.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "JNPA throughput and operating profile transcribed in published_observations.json for the port controls"
+      }
     },
     {
       "id": "mumbai_port_annual_index",
@@ -2504,7 +2774,11 @@
       "category": "boundaries",
       "licence": "Operator or government publication; reuse terms unverified",
       "coverage": "Published document with source period retained; validate observed definitions, current operational relevance and spatial coverage.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a planning map, notice or future plan: the study extent is derived from the public MMR GIS layers and the 2024 SPA notification (build_mmr_extent.py), and proposed land use is not a base-year input"
+      }
     },
     {
       "id": "mumbai_road_safety_2022",
@@ -2514,7 +2788,11 @@
       "category": "roads",
       "licence": "Operator or government publication; reuse terms unverified",
       "coverage": "Published document with source period retained; validate observed definitions, current operational relevance and spatial coverage.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "road-crash statistics: no mode's supply, demand or choice in the twin reads a casualty count; mtp_road_safety_2023 is the same bytes as mumbai_road_safety_2023"
+      }
     },
     {
       "id": "mumbai_road_safety_2021",
@@ -2524,7 +2802,11 @@
       "category": "roads",
       "licence": "Operator or government publication; reuse terms unverified",
       "coverage": "Published document with source period retained; validate observed definitions, current operational relevance and spatial coverage.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "road-crash statistics: no mode's supply, demand or choice in the twin reads a casualty count; mtp_road_safety_2023 is the same bytes as mumbai_road_safety_2023"
+      }
     },
     {
       "id": "mumbai_road_safety_2023",
@@ -2534,7 +2816,11 @@
       "category": "roads",
       "licence": "Operator or government publication; reuse terms unverified",
       "coverage": "Published document with source period retained; validate observed definitions, current operational relevance and spatial coverage.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "road-crash statistics: no mode's supply, demand or choice in the twin reads a casualty count; mtp_road_safety_2023 is the same bytes as mumbai_road_safety_2023"
+      }
     },
     {
       "id": "mumbai_road_safety_2020",
@@ -2544,7 +2830,11 @@
       "category": "roads",
       "licence": "Operator or government publication; reuse terms unverified",
       "coverage": "Published document with source period retained; validate observed definitions, current operational relevance and spatial coverage.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "road-crash statistics: no mode's supply, demand or choice in the twin reads a casualty count; mtp_road_safety_2023 is the same bytes as mumbai_road_safety_2023"
+      }
     },
     {
       "id": "mumbai_port_administration_2024_25",
@@ -2554,7 +2844,11 @@
       "title": "Mumbai Port Administration Report 2024-25",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Port operations, freight and passenger evidence for the stated financial year. Extract units and table definitions before conversion to simulated movements.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "port cargo and administration statistics: the freight requirement (docs/requirements.json: road_freight, ports) is open for want of a goods OD; these are its evidence, not yet a movement table"
+      }
     },
     {
       "id": "nmmt_current_portal",
@@ -2584,7 +2878,8 @@
       "category": "transit",
       "licence": "Authority or vendor publication; reuse terms unverified",
       "coverage": "Published passenger information or planning report. Confirm operator authority, observation dates and live service validity.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: 504 gateway time-out at the publisher."
     },
     {
       "id": "nmmc_final_development_plan",
@@ -2594,7 +2889,8 @@
       "category": "transit",
       "licence": "Authority or vendor publication; reuse terms unverified",
       "coverage": "Published passenger information or planning report. Confirm operator authority, observation dates and live service validity.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: 504 gateway time-out at the publisher."
     },
     {
       "id": "nmmt_timetable_bundle",
@@ -2669,7 +2965,11 @@
       "format": "pdf",
       "licence": "Publication reuse terms unverified",
       "coverage": "Research or historical survey evidence. Published estimates are not current local observations; microdata and source-specific restrictions require separate verification.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "Indo-HCM excerpts on urban road capacity, read beside the arterial capacity literature (extract_arterial_capacity_literature.py); the full manual is not held"
+      }
     },
     {
       "id": "worldbank_mumbai_gender_transport_2021",
@@ -2679,7 +2979,11 @@
       "format": "pdf",
       "licence": "Publication reuse terms unverified",
       "coverage": "Research or historical survey evidence. Published estimates are not current local observations; microdata and source-specific restrictions require separate verification.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "household travel survey findings and a mode-choice study for Mumbai: behavioural literature the Mode-Choice Ledger cites for income and gender effects; no coefficient is adopted from them yet"
+      }
     },
     {
       "id": "worldbank_mumbai_poverty_transport_2005",
@@ -2689,7 +2993,11 @@
       "format": "pdf",
       "licence": "Publication reuse terms unverified",
       "coverage": "Research or historical survey evidence. Published estimates are not current local observations; microdata and source-specific restrictions require separate verification.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "household travel survey findings and a mode-choice study for Mumbai: behavioural literature the Mode-Choice Ledger cites for income and gender effects; no coefficient is adopted from them yet"
+      }
     },
     {
       "id": "suri_cropper_mumbai_2024",
@@ -2699,7 +3007,11 @@
       "format": "pdf",
       "licence": "Publication reuse terms unverified",
       "coverage": "Research or historical survey evidence. Published estimates are not current local observations; microdata and source-specific restrictions require separate verification.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "household travel survey findings and a mode-choice study for Mumbai: behavioural literature the Mode-Choice Ledger cites for income and gender effects; no coefficient is adopted from them yet"
+      }
     },
     {
       "id": "mmrcl_fare_scmu_mnk_20260918",
@@ -2751,7 +3063,11 @@
       "format": "html",
       "licence": "Operator publication; reuse terms unverified",
       "coverage": "Current public passenger information; effective dates and operational coverage require extraction and validation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "the live MMMOCL fare table page (Marathi); the fare stages read into the feed come from the operator's archived English fare products page and the metro fare transcriptions"
+      }
     },
     {
       "id": "mmmocl_ridership_20260918",
@@ -2761,7 +3077,12 @@
       "format": "html",
       "licence": "Operator publication; reuse terms unverified",
       "coverage": "Current public passenger information; effective dates and operational coverage require extraction and validation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "content_review": {
+        "sha256": "0764c7ce4967b12b4fa449d1666289ed0134493651afad484ebd88ab190e9bfc",
+        "status": "acquired_unusable",
+        "reason": "the page as served (22 September 2026, through an Indian VPN endpoint, Marathi) holds the site menu and no ridership figure: the tiles are drawn by a script the capture does not run"
+      }
     },
     {
       "id": "mmmocl_press_73",
@@ -2771,7 +3092,11 @@
       "format": "pdf",
       "licence": "Operator publication; reuse terms unverified",
       "coverage": "Current public passenger information; effective dates and operational coverage require extraction and validation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "the Marathi text of MMRDA's 6 April 2026 timetable release (PRC/PR/20/2026), whose English text (mmr_metro_april_2026_timetable) gives the line headways"
+      }
     },
     {
       "id": "cidco_metro_project",
@@ -2791,7 +3116,11 @@
       "category": "transit",
       "licence": "Public authority publication; reuse terms unverified",
       "coverage": "Dated service evidence; operating changes and attachment completeness require validation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "mmr_metro_april_2026_timetable_index",
@@ -3059,7 +3388,11 @@
       "format": "zip",
       "category": "geospatial",
       "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
-      "coverage": "Spatial-support source. GHSL population is modelled; DSM includes buildings and vegetation and is not surveyed road elevation."
+      "coverage": "Spatial-support source. GHSL population is modelled; DSM includes buildings and vegetation and is not surveyed road elevation.",
+      "use": {
+        "disposition": "reference",
+        "reason": "the tile index each raster acquisition was selected from (register_raster_sources.py)"
+      }
     },
     {
       "id": "ghsl_licence",
@@ -3077,7 +3410,11 @@
       "format": "pdf",
       "category": "geospatial",
       "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
-      "coverage": "Spatial-support source. GHSL population is modelled; DSM includes buildings and vegetation and is not surveyed road elevation."
+      "coverage": "Spatial-support source. GHSL population is modelled; DSM includes buildings and vegetation and is not surveyed road elevation.",
+      "use": {
+        "disposition": "reference",
+        "reason": "the GHSL data package methodology, read for the volume layers' units (m3 per cell) and the ESRI:54009 grid"
+      }
     },
     {
       "id": "cop_dem_readme",
@@ -3095,7 +3432,11 @@
       "format": "txt",
       "category": "geospatial",
       "licence": "Copernicus DEM free licence; prescribed attribution and product terms apply",
-      "coverage": "Spatial-support source. GHSL population is modelled; DSM includes buildings and vegetation and is not surveyed road elevation."
+      "coverage": "Spatial-support source. GHSL population is modelled; DSM includes buildings and vegetation and is not surveyed road elevation.",
+      "use": {
+        "disposition": "reference",
+        "reason": "the tile index each raster acquisition was selected from (register_raster_sources.py)"
+      }
     },
     {
       "id": "cop_dem_product",
@@ -3113,7 +3454,11 @@
       "format": "zip",
       "category": "geospatial",
       "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
-      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary."
+      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "GHSL population grids: the population is synthesised from the census controls (build_population.py) and located by the census polygons, not by a modelled grid"
+      }
     },
     {
       "id": "ghs_pop_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
@@ -3122,7 +3467,11 @@
       "format": "zip",
       "category": "geospatial",
       "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
-      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary."
+      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "GHSL population grids: the population is synthesised from the census controls (build_population.py) and located by the census polygons, not by a modelled grid"
+      }
     },
     {
       "id": "ghs_built_s_e2020_globe_r2023a_54009_100_v1_0_r7_c26",
@@ -3131,7 +3480,11 @@
       "format": "zip",
       "category": "geospatial",
       "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
-      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary."
+      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "the built-up surface and height layers are the factors of the built volume, and the 2020 epoch precedes the 2025 one; build_activity_attraction.py reads the 2025 total and non-residential volume"
+      }
     },
     {
       "id": "ghs_built_s_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
@@ -3140,7 +3493,11 @@
       "format": "zip",
       "category": "geospatial",
       "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
-      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary."
+      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "the built-up surface and height layers are the factors of the built volume, and the 2020 epoch precedes the 2025 one; build_activity_attraction.py reads the 2025 total and non-residential volume"
+      }
     },
     {
       "id": "ghs_built_s_nres_e2020_globe_r2023a_54009_100_v1_0_r7_c26",
@@ -3149,7 +3506,11 @@
       "format": "zip",
       "category": "geospatial",
       "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
-      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary."
+      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "the built-up surface and height layers are the factors of the built volume, and the 2020 epoch precedes the 2025 one; build_activity_attraction.py reads the 2025 total and non-residential volume"
+      }
     },
     {
       "id": "ghs_built_s_nres_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
@@ -3158,7 +3519,11 @@
       "format": "zip",
       "category": "geospatial",
       "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
-      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary."
+      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "the built-up surface and height layers are the factors of the built volume, and the 2020 epoch precedes the 2025 one; build_activity_attraction.py reads the 2025 total and non-residential volume"
+      }
     },
     {
       "id": "ghs_built_v_e2020_globe_r2023a_54009_100_v1_0_r7_c26",
@@ -3167,7 +3532,11 @@
       "format": "zip",
       "category": "geospatial",
       "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
-      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary."
+      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "the built-up surface and height layers are the factors of the built volume, and the 2020 epoch precedes the 2025 one; build_activity_attraction.py reads the 2025 total and non-residential volume"
+      }
     },
     {
       "id": "ghs_built_v_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
@@ -3185,7 +3554,11 @@
       "format": "zip",
       "category": "geospatial",
       "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
-      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary."
+      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "the built-up surface and height layers are the factors of the built volume, and the 2020 epoch precedes the 2025 one; build_activity_attraction.py reads the 2025 total and non-residential volume"
+      }
     },
     {
       "id": "ghs_built_v_nres_e2025_globe_r2023a_54009_100_v1_0_r7_c26",
@@ -3203,7 +3576,11 @@
       "format": "zip",
       "category": "geospatial",
       "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
-      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary."
+      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "the built-up surface and height layers are the factors of the built volume, and the 2020 epoch precedes the 2025 one; build_activity_attraction.py reads the 2025 total and non-residential volume"
+      }
     },
     {
       "id": "ghs_built_h_anbh_e2018_globe_r2023a_54009_100_v1_0_r7_c26",
@@ -3212,7 +3589,11 @@
       "format": "zip",
       "category": "geospatial",
       "licence": "CC-BY 4.0 (GHSL; product and methodological citation required)",
-      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary."
+      "coverage": "Source-derived research envelope; modelled population/building layers, not current direct observations or a legal study boundary.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "the built-up surface and height layers are the factors of the built volume, and the 2020 epoch precedes the 2025 one; build_activity_attraction.py reads the 2025 total and non-residential volume"
+      }
     },
     {
       "id": "copernicus_dsm_cog_10_n17_00_e073_00_dem",
@@ -3345,7 +3726,11 @@
       "category": "demand",
       "licence": "Government publication; reuse terms and microdata access conditions require review",
       "coverage": "Public statistical evidence; survey weights, age and geographic coverage require validation. Catalogue access is not acquisition of unit records.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "the unit-record layout, codes and field instructions of the Time Use Survey 2024 and the NHTS 2025-26: read by the unit-diary extractor once the microdata is acquired from microdata.gov.in (a logged-in download the user makes)"
+      }
     },
     {
       "id": "tus_2024_data_layout",
@@ -3355,7 +3740,11 @@
       "category": "demand",
       "licence": "Government publication; reuse terms and microdata access conditions require review",
       "coverage": "Public statistical evidence; survey weights, age and geographic coverage require validation. Catalogue access is not acquisition of unit records.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "the unit-record layout, codes and field instructions of the Time Use Survey 2024 and the NHTS 2025-26: read by the unit-diary extractor once the microdata is acquired from microdata.gov.in (a logged-in download the user makes)"
+      }
     },
     {
       "id": "tus_2024_instructions",
@@ -3365,7 +3754,11 @@
       "category": "demand",
       "licence": "Government publication; reuse terms and microdata access conditions require review",
       "coverage": "Public statistical evidence; survey weights, age and geographic coverage require validation. Catalogue access is not acquisition of unit records.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "the unit-record layout, codes and field instructions of the Time Use Survey 2024 and the NHTS 2025-26: read by the unit-diary extractor once the microdata is acquired from microdata.gov.in (a logged-in download the user makes)"
+      }
     },
     {
       "id": "tus_2024_user_note",
@@ -3405,7 +3798,11 @@
       "category": "demand",
       "licence": "Government publication; reuse terms and microdata access conditions require review",
       "coverage": "Public statistical evidence; survey weights, age and geographic coverage require validation. Catalogue access is not acquisition of unit records.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "the unit-record layout, codes and field instructions of the Time Use Survey 2024 and the NHTS 2025-26: read by the unit-diary extractor once the microdata is acquired from microdata.gov.in (a logged-in download the user makes)"
+      }
     },
     {
       "id": "tus_2024_nmds",
@@ -3415,7 +3812,11 @@
       "category": "demand",
       "licence": "Government publication; reuse terms and microdata access conditions require review",
       "coverage": "Public statistical evidence; survey weights, age and geographic coverage require validation. Catalogue access is not acquisition of unit records.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "the unit-record layout, codes and field instructions of the Time Use Survey 2024 and the NHTS 2025-26: read by the unit-diary extractor once the microdata is acquired from microdata.gov.in (a logged-in download the user makes)"
+      }
     },
     {
       "id": "tus_2024_metadata",
@@ -3485,7 +3886,11 @@
       "title": "NSO 2025-26 travel survey field instructions",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Candidate companion manual URL derived from official Volume-II filename; validate contents. No observed survey estimates.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "the unit-record layout, codes and field instructions of the Time Use Survey 2024 and the NHTS 2025-26: read by the unit-diary extractor once the microdata is acquired from microdata.gov.in (a logged-in download the user makes)"
+      }
     },
     {
       "id": "mmr_extended_notified_area_index",
@@ -3525,7 +3930,11 @@
       "category": "boundaries",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Legal/planning boundary evidence; no automatic model inclusion or exclusion.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a planning map, notice or future plan: the study extent is derived from the public MMR GIS layers and the 2024 SPA notification (build_mmr_extent.py), and proposed land use is not a base-year input"
+      }
     },
     {
       "id": "mmr_ena_spa_notification_20240709",
@@ -3605,7 +4014,11 @@
       "category": "employment",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Public economic census documentation or aggregate data catalogue; not acquired restricted unit records.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "code lists and provisional results of the Sixth Economic Census; the district totals are read from the final report (ec6_district_controls.csv)"
+      }
     },
     {
       "id": "ec_2013_nic_codes",
@@ -3615,7 +4028,11 @@
       "category": "employment",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Public economic census documentation or aggregate data catalogue; not acquired restricted unit records.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "code lists and provisional results of the Sixth Economic Census; the district totals are read from the final report (ec6_district_controls.csv)"
+      }
     },
     {
       "id": "maharashtra_economic_census_reports",
@@ -3625,7 +4042,11 @@
       "category": "employment",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Public economic census documentation or aggregate data catalogue; not acquired restricted unit records.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "code lists and provisional results of the Sixth Economic Census; the district totals are read from the final report (ec6_district_controls.csv)"
+      }
     },
     {
       "id": "mospi_mcp_catalogue",
@@ -3635,7 +4056,8 @@
       "category": "employment",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Public economic census documentation or aggregate data catalogue; not acquired restricted unit records.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: datainnovation.mospi.gov.in does not resolve; the Internet Archive copy stands in."
     },
     {
       "id": "mospi_client_92a5af0",
@@ -4015,7 +4437,11 @@
       "title": "Sixth Economic Census Maharashtra provisional results December 2014",
       "licence": "Reuse terms unverified",
       "coverage": "Historical establishment and employment counts; source universe and district boundaries require reconciliation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "code lists and provisional results of the Sixth Economic Census; the district totals are read from the final report (ec6_district_controls.csv)"
+      }
     },
     {
       "id": "cr_public_main_down_2024",
@@ -4165,7 +4591,11 @@
       "format": "pdf",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical policy, restrictions or toll evidence; current applicability and later orders require reconciliation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "parts one and two of the taxi and autorickshaw committee report; the tariff part (part three) is the one cited"
+      }
     },
     {
       "id": "maharashtra_taxi_auto_committee_part2",
@@ -4175,7 +4605,11 @@
       "format": "pdf",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical policy, restrictions or toll evidence; current applicability and later orders require reconciliation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "parts one and two of the taxi and autorickshaw committee report; the tariff part (part three) is the one cited"
+      }
     },
     {
       "id": "mtp_notifications_20260918",
@@ -4185,7 +4619,11 @@
       "format": "html",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Official source; dates, restriction extent and superseding orders require inspection.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "the register and the archive of traffic-police road orders, and the port rail-statistics index, read by their audit and register scripts; a road order enters the network only where audit_coastal_access.py or audit_traffic_notices.py resolves it to a way"
+      }
     },
     {
       "id": "mtp_road_safety_2023",
@@ -4195,7 +4633,11 @@
       "format": "pdf",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Official source; dates, restriction extent and superseding orders require inspection.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "road-crash statistics: no mode's supply, demand or choice in the twin reads a casualty count; mtp_road_safety_2023 is the same bytes as mumbai_road_safety_2023"
+      }
     },
     {
       "id": "mtp_notifications_20260101_20260918",
@@ -4210,6 +4652,10 @@
       "request_form": {
         "fDate": "01/01/2026",
         "tDate": "18/09/2026"
+      },
+      "use": {
+        "disposition": "reference",
+        "reason": "the register and the archive of traffic-police road orders, and the port rail-statistics index, read by their audit and register scripts; a road order enters the network only where audit_coastal_access.py or audit_traffic_notices.py resolves it to a way"
       }
     },
     {
@@ -4255,7 +4701,11 @@
       "category": "transit",
       "format": "js",
       "licence": "Operator/vendor publication; reuse terms unverified",
-      "coverage": "Public client documentation for read-only service information. No account actions or embedded credentials are used."
+      "coverage": "Public client documentation for read-only service information. No account actions or embedded credentials are used.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a single-query or pilot response superseded by the harvests of every route (nmmt_route_schedules, nmmt_trip_timetables, nmmt_route_alignments, mbmt_route_details, mbmt_route_stops, mbmt_route_alignments), which the regional feed reads"
+      }
     },
     {
       "id": "nmmt_route_tracking_component",
@@ -4284,7 +4734,11 @@
       "licence": "Operator publication; reuse terms unverified",
       "coverage": "Public anonymous bus directory snapshot; not active fleet, service calendar or vehicle capacity evidence.",
       "method": "POST",
-      "request_json": {}
+      "request_json": {},
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a single-query or pilot response superseded by the harvests of every route (nmmt_route_schedules, nmmt_trip_timetables, nmmt_route_alignments, mbmt_route_details, mbmt_route_stops, mbmt_route_alignments), which the regional feed reads"
+      }
     },
     {
       "id": "maharashtra_bike_taxi_rules_20250704",
@@ -4294,7 +4748,11 @@
       "category": "vehicles",
       "format": "pdf",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "the rules for a bike-taxi service, not a service: no operator, fleet, tariff or trip volume is published for the study area, and bike-taxi is not one of the twelve modes"
+      }
     },
     {
       "id": "maharashtra_bike_taxi_gr_2025",
@@ -4304,7 +4762,11 @@
       "category": "vehicles",
       "format": "pdf",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "the rules for a bike-taxi service, not a service: no operator, fleet, tariff or trip volume is published for the study area, and bike-taxi is not one of the twelve modes"
+      }
     },
     {
       "id": "maharashtra_ev_policy_2025",
@@ -4314,7 +4776,11 @@
       "category": "vehicles",
       "format": "pdf",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a fuel and purchase-incentive policy; the twin does not distinguish vehicles by fuel"
+      }
     },
     {
       "id": "maharashtra_transport_statistics_2016_17",
@@ -4335,7 +4801,11 @@
       "coverage": "Operator annual report; Navi Mumbai, Pune and Nagpur figures must be separated; fiscal-year observations differ from current service and forecasts.",
       "licence": "Government/operator publication; reuse terms unverified",
       "transport": "windows_system_tls",
-      "download_timeout_seconds": 900
+      "download_timeout_seconds": 900,
+      "use": {
+        "disposition": "not_needed",
+        "reason": "Maharashtra Metro Rail Corporation operates Nagpur and Pune, not a Mumbai line; catalogued from the operators' annual-report search and not a Mumbai input"
+      }
     },
     {
       "id": "cidco_press_releases_20260918",
@@ -4345,7 +4815,11 @@
       "format": "html",
       "coverage": "Public announcement/index; publication dates and attachment content require review.",
       "licence": "Government/operator publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "cidco_smart_travel_notice_20260918",
@@ -4355,7 +4829,11 @@
       "format": "html",
       "coverage": "Public announcement/index; publication dates and attachment content require review.",
       "licence": "Government/operator publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "cidco_navi_naina_transport_plan_20250731",
@@ -4365,7 +4843,11 @@
       "category": "transit",
       "format": "pdf",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a planning map, notice or future plan: the study extent is derived from the public MMR GIS layers and the 2024 SPA notification (build_mmr_extent.py), and proposed land use is not a base-year input"
+      }
     },
     {
       "id": "cidco_metro_qr_ticketing_20250617",
@@ -4385,7 +4867,11 @@
       "category": "freight",
       "licence": "Government/operator publication; reuse terms unverified",
       "coverage": "Published freight operations evidence; reporting universe, loaded/empty movement definitions and dates require reconciliation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "use": {
+        "disposition": "reference",
+        "reason": "the register and the archive of traffic-police road orders, and the port rail-statistics index, read by their audit and register scripts; a road order enters the network only where audit_coastal_access.py or audit_traffic_notices.py resolves it to a way"
+      }
     },
     {
       "id": "jnpa_daily_icd_20260317",
@@ -4540,7 +5026,8 @@
       "url": "https://www.mohfw.gov.in/sites/default/files/Population%20Projection%20Report%202011-2036%20-%20upload_compressed_0.pdf",
       "title": "Technical Group population projections for India and states 2011-2036",
       "licence": "Government of India publication; reuse terms unverified",
-      "coverage": "Official demographic projections; state-level total, age, sex and urban/rural estimates. Not observed Mumbai small-area counts."
+      "coverage": "Official demographic projections; state-level total, age, sex and urban/rural estimates. Not observed Mumbai small-area counts.",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: 404 at the publisher; the Internet Archive copy stands in."
     },
     {
       "id": "bmc_civic_diary_2026",
@@ -4576,7 +5063,8 @@
       "url": "https://mcap.mcgm.gov.in/wp-content/uploads/2025/06/English_CB-Report-2025-26_digital.pdf",
       "title": "BMC Climate Budget Report 2025-26 English",
       "licence": "BMC publication; reuse terms unverified",
-      "coverage": "Climate budget with historical actuals, revised estimates and budget forecasts. Keep these measures distinct."
+      "coverage": "Climate budget with historical actuals, revised estimates and budget forecasts. Keep these measures distinct.",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: mcap.mcgm.gov.in presents an out-of-date identity (1 July 2025); left unobtained. The OpenCity copy and the Internet Archive copy stand in."
     },
     {
       "id": "bmc_climate_portal_20260919",
@@ -4585,7 +5073,8 @@
       "url": "https://mcap.mcgm.gov.in/",
       "title": "Mumbai Climate Action Plan public portal",
       "licence": "BMC website; reuse terms unverified",
-      "coverage": "Official report catalogue and climate programme context."
+      "coverage": "Official report catalogue and climate programme context.",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: mcap.mcgm.gov.in presents an out-of-date identity (1 July 2025); left unobtained. The Internet Archive copy stands in."
     },
     {
       "id": "best_transport_20260919",
@@ -4594,7 +5083,11 @@
       "url": "https://www.bestundertaking.com/transport.asp",
       "title": "BEST official transport information and public documents",
       "licence": "BEST website; reuse terms unverified",
-      "coverage": "Operator transport page discovered from the public homepage; inspect dated statistics, timetable and fare publications."
+      "coverage": "Operator transport page discovered from the public homepage; inspect dated statistics, timetable and fare publications.",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "best_landmarks_20260919",
@@ -4604,7 +5097,11 @@
       "title": "BEST official Landmarks",
       "licence": "BEST publication; reuse terms unverified",
       "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification.",
-      "discovered_from": "best_transport_20260919"
+      "discovered_from": "best_transport_20260919",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "best_facilities_20260919",
@@ -4634,7 +5131,11 @@
       "title": "BEST official Disaster Management",
       "licence": "BEST publication; reuse terms unverified",
       "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification.",
-      "discovered_from": "best_transport_20260919"
+      "discovered_from": "best_transport_20260919",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "BEST's disaster management plan; no operating, fleet or ridership table"
+      }
     },
     {
       "id": "best_faq_20260919",
@@ -4644,7 +5145,11 @@
       "title": "BEST official Faq's",
       "licence": "BEST publication; reuse terms unverified",
       "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification.",
-      "discovered_from": "best_transport_20260919"
+      "discovered_from": "best_transport_20260919",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "best_depots_20260919",
@@ -4664,7 +5169,11 @@
       "title": "BEST official MUTP",
       "licence": "BEST publication; reuse terms unverified",
       "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification.",
-      "discovered_from": "best_transport_20260919"
+      "discovered_from": "best_transport_20260919",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "best_schemes_20260919",
@@ -4674,7 +5183,11 @@
       "title": "BEST official Offers and Schemes",
       "licence": "BEST publication; reuse terms unverified",
       "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification.",
-      "discovered_from": "best_transport_20260919"
+      "discovered_from": "best_transport_20260919",
+      "use": {
+        "disposition": "reference",
+        "reason": "BEST fare-scheme and MMR-Connect pages read beside the published fares and passes (best_published_fares.csv, best_published_passes.csv)"
+      }
     },
     {
       "id": "best_mmr_connect_20260919",
@@ -4684,7 +5197,11 @@
       "title": "BEST official MMR-Connect",
       "licence": "BEST publication; reuse terms unverified",
       "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification.",
-      "discovered_from": "best_transport_20260919"
+      "discovered_from": "best_transport_20260919",
+      "use": {
+        "disposition": "reference",
+        "reason": "BEST fare-scheme and MMR-Connect pages read beside the published fares and passes (best_published_fares.csv, best_published_passes.csv)"
+      }
     },
     {
       "id": "best_reservation_20260919",
@@ -4694,7 +5211,11 @@
       "title": "BEST official Reservation of Buses",
       "licence": "BEST publication; reuse terms unverified",
       "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification.",
-      "discovered_from": "best_transport_20260919"
+      "discovered_from": "best_transport_20260919",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "best_route_network_20260919",
@@ -4704,7 +5225,8 @@
       "title": "BEST official Route Network",
       "licence": "BEST publication; reuse terms unverified",
       "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification.",
-      "discovered_from": "best_transport_20260919"
+      "discovered_from": "best_transport_20260919",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: the connection is reset by the host; the Internet Archive copy of 26 January 2025 stands in."
     },
     {
       "id": "best_rti_publication_index_20260919",
@@ -4948,7 +5470,8 @@
       "title": "Gajjar and Mohandas 2016: Critical Assessment of Road Capacities on Urban Roads - A Mumbai Case-study",
       "licence": "Publisher states open access; exact reuse licence unverified",
       "coverage": "Primary field study of selected Mumbai roads. Publication date is not the survey date; design service volumes and observed peak flows must be distinguished.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: the publisher closes the connection; the Internet Archive copy stands in."
     },
     {
       "id": "jvlr_traffic_study_2026",
@@ -4958,7 +5481,8 @@
       "title": "Peak-Hour Traffic Congestion and Level of Service Assessment Along the Jogeshwari-Vikhroli Link Road Corridor, Mumbai, India",
       "licence": "Reuse terms unverified",
       "coverage": "Primary corridor study; source methods, survey date, raw counts and applicability require review.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: the publisher answers Access Denied to the acquisition client."
     },
     {
       "id": "mumbai_road_capacity_study_2016_author_pdf",
@@ -4968,7 +5492,8 @@
       "title": "Gajjar and Mohandas 2016 Mumbai road-capacity study: public author-hosted full text",
       "licence": "CC BY-NC-ND 4.0; authors and Elsevier; verify PDF licence",
       "coverage": "Historical selected-road classified counts and PCU conversions. Survey dates and directions require extraction; not current network-wide capacity.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: 403 at the host."
     },
     {
       "id": "jvlr_traffic_study_conference_2026",
@@ -4978,7 +5503,8 @@
       "title": "JVLR congestion study: authors public IOCUS 2026 conference record",
       "licence": "Publisher and authors; reuse terms unverified",
       "coverage": "Earlier conference version; do not conflate with the August 2026 proceedings paper or current observations.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: the publisher answers Access Denied to the acquisition client."
     },
     {
       "id": "jvlr_conference_poster_2026_response",
@@ -5064,7 +5590,8 @@
       "licence": "Publisher primary publication; reuse terms unverified",
       "coverage": "Operator trial-era description; approximate train capacity and stated standing density need current formation/seating reconciliation.",
       "transport": "windows_system_tls",
-      "download_timeout_seconds": 60
+      "download_timeout_seconds": 60,
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: the URL answers an HTML page, not the PDF."
     },
     {
       "id": "alstom_metro3_opening_2024",
@@ -5601,7 +6128,11 @@
       "coverage": "Sequential public query. Stops and reported vehicles need spatial, timestamp and operating-status validation; not a fleet census.",
       "harvester": "acquire_nmmt_route_stops.py",
       "discovered_from": "nmmt_current_routes",
-      "member_count": 619
+      "member_count": 619,
+      "use": {
+        "disposition": "reference",
+        "reason": "one day's vehicle and stop snapshot, audited for the fleet in service (audit_nmmt_route_stops.py, audit_nmmt_vehicle_details.py); not a timetable"
+      }
     },
     {
       "id": "nmmt_vehicle_snapshot_20260918",
@@ -5615,7 +6146,11 @@
       "coverage": "Public passenger query for each vehicle indicated in a route snapshot; not a complete fleet sample or validated trajectory.",
       "harvester": "acquire_nmmt_vehicle_details.py",
       "discovered_from": "nmmt_route_stop_snapshot_20260918",
-      "member_count": 36
+      "member_count": 36,
+      "use": {
+        "disposition": "reference",
+        "reason": "one day's vehicle and stop snapshot, audited for the fleet in service (audit_nmmt_route_stops.py, audit_nmmt_vehicle_details.py); not a timetable"
+      }
     },
     {
       "id": "mbmt_route_details",
@@ -5685,7 +6220,11 @@
       "coverage": "Official road order attachments; effective dates, geometry and supersession require review.",
       "harvester": "register_traffic_notices.py",
       "discovered_from": "mtp_notifications_20260101_20260918",
-      "member_count": 1855
+      "member_count": 1855,
+      "use": {
+        "disposition": "reference",
+        "reason": "the register and the archive of traffic-police road orders, and the port rail-statistics index, read by their audit and register scripts; a road order enters the network only where audit_coastal_access.py or audit_traffic_notices.py resolves it to a way"
+      }
     },
     {
       "id": "irimee_emu_basics",
@@ -5696,7 +6235,11 @@
       "licence": "Indian Railways training publication; reuse terms unverified",
       "coverage": "Published carrying capacities of Mumbai suburban EMU rakes: 9-car 876 seated + 1,752 standees, 12-car 1,168 + 2,336 (design), the Siemens 12-car rake 4,984 and the Bombardier rake 5,964, and the super-dense crush load; historical and fleet-generation figures, not a per-departure stock assignment.",
       "transport": "windows_system_tls",
-      "download_timeout_seconds": 120
+      "download_timeout_seconds": 120,
+      "use": {
+        "disposition": "reference",
+        "reason": "Indian Railways' EMU primer: the 12-car rake's 1,168 seats and 2,336 standees behind A.transit.rail_capacity_seated (its sweep basis names IRIMEE)"
+      }
     },
     {
       "id": "mmopl_features_page",
@@ -5739,7 +6282,11 @@
       "title": "Technical Group population projections for India and states 2011-2036 (National Health Mission mirror)",
       "licence": "Government of India publication; reuse terms unverified",
       "coverage": "Official demographic projections; state-level total, age, sex and urban/rural estimates. Not observed Mumbai small-area counts. The MoHFW URL returns 404 (21 September 2026); this is the same report hosted by the National Health Mission.",
-      "discovered_from": "mohfw_population_projections_2011_2036"
+      "discovered_from": "mohfw_population_projections_2011_2036",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "the Technical Group's state projections; the IIPS district projections carry the population to the base year"
+      }
     },
     {
       "id": "ogd_metro_2a_7_ridership_daily_2024_2025",
@@ -5810,7 +6357,11 @@
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Wayback Machine snapshot of 20191230180016 of https://www.mahades.maharashtra.gov.in/district.do?districtname=MUMBAI+SUBURBAN (catalogue id des_district_mumbai_suburban), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Locate latest socioeconomic review; report year and individual observation reference years differ.",
       "archived_copy_of": "des_district_mumbai_suburban",
-      "archived_snapshot": "20191230180016"
+      "archived_snapshot": "20191230180016",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "des_district_thane_archived_20260418",
@@ -5821,7 +6372,11 @@
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Wayback Machine snapshot of 20260418192617 of https://www.mahades.maharashtra.gov.in/district.do?districtname=THANE (catalogue id des_district_thane), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Locate latest socioeconomic review; report year and individual observation reference years differ.",
       "archived_copy_of": "des_district_thane",
-      "archived_snapshot": "20260418192617"
+      "archived_snapshot": "20260418192617",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "des_district_palghar_archived_20260418",
@@ -5832,7 +6387,11 @@
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Wayback Machine snapshot of 20260418202526 of https://www.mahades.maharashtra.gov.in/district.do?districtname=PALGHAR (catalogue id des_district_palghar), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Locate latest socioeconomic review; report year and individual observation reference years differ.",
       "archived_copy_of": "des_district_palghar",
-      "archived_snapshot": "20260418202526"
+      "archived_snapshot": "20260418202526",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "bmc_cmp_coastal_annexure_2017_archived_20221010",
@@ -5843,7 +6402,11 @@
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Wayback Machine snapshot of 20221010083009 of https://environmentclearance.nic.in/writereaddata/Online/EDS/07_Sep_2017_123242960LCKCFI1LCompliancetoAdditionalDetailsSoughtbyMemberSecretary.pdf (catalogue id bmc_cmp_coastal_annexure_2017), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Historical or current publication; each table needs its own period, universe and definition. Acquisition does not establish validation.",
       "archived_copy_of": "bmc_cmp_coastal_annexure_2017",
-      "archived_snapshot": "20221010083009"
+      "archived_snapshot": "20221010083009",
+      "use": {
+        "disposition": "reference",
+        "reason": "the CMP coastal annexure as archived; the coastal road counts and travel times are transcribed from the 2016 study (coastal_2016_* transcriptions)"
+      }
     },
     {
       "id": "mmmocl_schedule_20260918_archived_20250917",
@@ -5865,7 +6428,11 @@
       "licence": "Operator publication; reuse terms unverified",
       "coverage": "Wayback Machine snapshot of 20250713072315 of https://www.mmmocl.co.in/fare_table (catalogue id mmmocl_fares_20260918), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Current public passenger information; effective dates and operational coverage require extraction and validation.",
       "archived_copy_of": "mmmocl_fares_20260918",
-      "archived_snapshot": "20250713072315"
+      "archived_snapshot": "20250713072315",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "mospi_mcp_catalogue_archived_20260511",
@@ -5892,7 +6459,11 @@
       "licence": "BMC publication; reuse terms unverified",
       "coverage": "Wayback Machine snapshot of 20250808200251 of https://mcap.mcgm.gov.in/wp-content/uploads/2025/06/English_CB-Report-2025-26_digital.pdf (catalogue id bmc_climate_budget_2025_26), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Climate budget with historical actuals, revised estimates and budget forecasts. Keep these measures distinct.",
       "archived_copy_of": "bmc_climate_budget_2025_26",
-      "archived_snapshot": "20250808200251"
+      "archived_snapshot": "20250808200251",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "bmc_climate_portal_20260919_archived_20260510",
@@ -5930,7 +6501,11 @@
       "licence": "Publisher states open access; exact reuse licence unverified",
       "coverage": "Wayback Machine snapshot of 20220505065244 of https://www.sciencedirect.com/science/article/pii/S2352146516307396 (catalogue id mumbai_road_capacity_study_2016), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Primary field study of selected Mumbai roads. Publication date is not the survey date; design service volumes and observed peak flows must be distinguished.",
       "archived_copy_of": "mumbai_road_capacity_study_2016",
-      "archived_snapshot": "20220505065244"
+      "archived_snapshot": "20220505065244",
+      "use": {
+        "disposition": "reference",
+        "reason": "the abstract page of Gajjar and Mohandas (2016) on Mumbai arterial capacity, as archived; the paper itself refuses this address"
+      }
     },
     {
       "id": "rdso_mrvc3_emu_spec_2017_archived_20240709",
@@ -5954,7 +6529,11 @@
       "coverage": "Wayback Machine snapshot of 20240629045456 of https://cr.indianrailways.gov.in/cris/uploads/files/1561376559029-all_div_merged.pdf (catalogue id cr_system_map_2019), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Historical system maps, line topology, station codes and chainages. Internal edition dates require verification; diagrams are not georeferenced or proof of current track configuration.",
       "archived_copy_of": "cr_system_map_2019",
       "archived_snapshot": "20240629045456",
-      "download_timeout_seconds": 120
+      "download_timeout_seconds": 120,
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "cr_mumbai_signal_telecom_page_archived_20230819",
@@ -5988,7 +6567,11 @@
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Wayback Machine snapshot of 20240819034114 of https://www.mahades.maharashtra.gov.in/district.do?districtname=RAIGAD (catalogue id des_district_raigad), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Locate latest socioeconomic review; report year and individual observation reference years differ.",
       "archived_copy_of": "des_district_raigad",
-      "archived_snapshot": "20240819034114"
+      "archived_snapshot": "20240819034114",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "maharashtra_scheduled_areas_statistical_index_archived_20260414",
@@ -6010,7 +6593,11 @@
       "licence": "MRVC publication; reuse terms unverified",
       "coverage": "Wayback Machine snapshot of 20240525015917 of https://mrvc.indianrailways.gov.in/works/uploads/File/1.Executive%20Summary_Volume%201%281%29.pdf (catalogue id mrvc_trespass_midsection_executive_summary), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Historical observed pedestrian access, crossings and proposed remedies around suburban railway corridors. Internal survey dates and proposed-versus-built facilities must be extracted; recommendations are not current infrastructure.",
       "archived_copy_of": "mrvc_trespass_midsection_executive_summary",
-      "archived_snapshot": "20240525015917"
+      "archived_snapshot": "20240525015917",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "mohfw_population_projections_2011_2036_archived_20251213",
@@ -6021,7 +6608,11 @@
       "licence": "Government of India publication; reuse terms unverified",
       "coverage": "Wayback Machine snapshot of 20251213143513 of https://www.mohfw.gov.in/sites/default/files/Population%20Projection%20Report%202011-2036%20-%20upload_compressed_0.pdf (catalogue id mohfw_population_projections_2011_2036), the original bytes as archived (the id_ flag); acquired because the publisher's host refuses this address (9.207). Official demographic projections; state-level total, age, sex and urban/rural estimates. Not observed Mumbai small-area counts.",
       "archived_copy_of": "mohfw_population_projections_2011_2036",
-      "archived_snapshot": "20251213143513"
+      "archived_snapshot": "20251213143513",
+      "use": {
+        "disposition": "not_needed",
+        "reason": "a landing or index page, or an Internet Archive copy whose original or fuller twin is acquired (the CR system map, the MRVC trespass study, the OpenCity climate budget, the live MMMOCL fares page, the district reviews' PDFs)"
+      }
     },
     {
       "id": "cr_suburban_operations_page_archived_20240424",
@@ -6037,6 +6628,37 @@
         "status": "acquired_unusable",
         "sha256": "54179a39a46989753db0dcf3fcf93162033de8ac85ebccb19363a865b3d1bfe8",
         "reason": "The archived page is the Central Railway site menu (departments and links) with no suburban operations content; the figures sit on sub-pages the capture does not include."
+      }
+    },
+    {
+      "id": "nfhs5_maharashtra_report_2019_21",
+      "url": "https://dhsprogram.com/pubs/pdf/FR374/FR374_Maharashtra.pdf",
+      "title": "National Family Health Survey (NFHS-5) 2019-21, Maharashtra state report",
+      "category": "population",
+      "format": "pdf",
+      "licence": "IIPS / DHS Program publication; reuse terms unverified",
+      "coverage": "Household possessions (motorcycle or scooter, car or truck, bicycle) by urban and rural residence for Maharashtra, 2019-21: a state-level survey observation of vehicle possession eight years after the census, a check on the derived possession projection (derive_vehicle_possession_growth.py), not a district control."
+    },
+    {
+      "id": "nfhs4_maharashtra_report_2015_16",
+      "url": "https://dhsprogram.com/pubs/pdf/FR338/FR338.MH.pdf",
+      "title": "National Family Health Survey (NFHS-4) 2015-16, Maharashtra state report",
+      "category": "population",
+      "format": "pdf",
+      "licence": "IIPS / DHS Program publication; reuse terms unverified",
+      "coverage": "Household possessions (motorcycle or scooter, car or truck, bicycle) by urban and rural residence for Maharashtra, 2015-16: the mid-point survey observation between the 2011 census and the base year."
+    },
+    {
+      "id": "opencity_mumbai_parking_lots_kml",
+      "url": "https://data.opencity.in/dataset/84505f49-7ac8-4fe6-a986-b988713933c0/resource/c99a8c04-4bb3-4065-bd02-434244c3bff2/download/43c7137e-9874-4680-a311-908774a1b2b5.kml",
+      "title": "Mumbai public parking lots (BMC), OpenCity-hosted KML",
+      "category": "planning",
+      "format": "xml",
+      "licence": "Public Domain (OpenCity dataset licence as stated)",
+      "coverage": "95 placemarks of public parking lots provided under development-control concessions (developer-named), locations only; no capacity or tariff. Parking supply evidence for docs/requirements.json: parking, not a priced-parking input.",
+      "use": {
+        "disposition": "reference",
+        "reason": "95 public parking lot locations (developer-provided lots under BMC development control), without capacity or tariff: the parking requirement's supply evidence (docs/requirements.json: parking); no parking price or capacity is modelled for this city yet, so nothing reads it"
       }
     }
   ]

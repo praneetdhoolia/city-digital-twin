@@ -18,13 +18,14 @@
       "residual_passengers": 0
     }
   ],
-  "service_rows": 6,
+  "service_rows": 8,
   "service_totals": {
     "all_services": 3234,
     "ac_subset": 227,
-    "operator_sum_status": "exact"
+    "operator_sum_status": "exact",
+    "march_2026_trains_handled_daily_rounded": 3200
   },
-  "stock_claim_rows": 4,
+  "stock_claim_rows": 5,
   "model_parameters_adopted": false,
   "limitations": [
     "The 2017 capacity statement describes the first BHEL AC rake, not every later rake or an observed passenger load.",

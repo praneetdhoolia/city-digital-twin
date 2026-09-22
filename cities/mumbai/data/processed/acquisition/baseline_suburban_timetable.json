@@ -1,0 +1,200 @@
+{
+  "source": "published_timetable_cells_as_trips",
+  "sheets": {
+    "wr_public_timetable_attachment_1": {
+      "line": "western",
+      "role": "primary",
+      "sheet": "WR pocket time table 79 DN, w.e.f. 1 September 2026",
+      "trains": 694
+    },
+    "wr_public_timetable_attachment_2": {
+      "line": "western",
+      "role": "primary",
+      "sheet": "WR pocket time table 79 UP, w.e.f. 1 September 2026",
+      "trains": 679
+    },
+    "wr_public_timetable_attachment_5": {
+      "line": "western",
+      "role": "primary",
+      "sheet": "WR Dahanu Road services, w.e.f. 1 September 2026",
+      "order": "printed_clock",
+      "trains": 21
+    },
+    "wr_public_timetable_attachment_3": {
+      "line": "western",
+      "role": "supplement",
+      "flag": "AC",
+      "sheet": "WR DN AC trains PTT 79, w.e.f. 1 September 2026",
+      "trains": 0
+    },
+    "wr_public_timetable_attachment_4": {
+      "line": "western",
+      "role": "supplement",
+      "flag": "AC",
+      "sheet": "WR UP AC trains PTT 79, w.e.f. 1 September 2026",
+      "trains": 0
+    },
+    "cr_public_main_down_2024": {
+      "line": "central_main",
+      "role": "primary",
+      "sheet": "CR main line down, 2024",
+      "trains": 453
+    },
+    "cr_public_main_up_2024": {
+      "line": "central_main",
+      "role": "primary",
+      "sheet": "CR main line up, 2024",
+      "trains": 439
+    },
+    "cr_public_main_ac_20250416": {
+      "line": "central_main",
+      "role": "supplement",
+      "flag": "AC",
+      "sheet": "CR main line AC services, 16 April 2025",
+      "trains": 0
+    },
+    "cr_public_main_15_car_20260815": {
+      "line": "central_main",
+      "role": "supplement",
+      "flag": "15car",
+      "sheet": "CR main line 15-car services, 15 August 2026",
+      "trains": 3
+    },
+    "cr_public_harbour_down_20260501": {
+      "line": "harbour",
+      "role": "primary",
+      "sheet": "CR harbour line down, 1 May 2026",
+      "trains": 333
+    },
+    "cr_public_harbour_up_20260501": {
+      "line": "harbour",
+      "role": "primary",
+      "sheet": "CR harbour line up, 1 May 2026",
+      "trains": 337
+    },
+    "cr_public_harbour_ac_20260501": {
+      "line": "harbour",
+      "role": "supplement",
+      "flag": "AC",
+      "sheet": "CR harbour line AC services, 1 May 2026",
+      "trains": 0
+    },
+    "cr_public_trans_harbour_20240113": {
+      "line": "trans_harbour",
+      "role": "primary",
+      "sheet": "CR trans-harbour line, 13 January 2024",
+      "trains": 262
+    },
+    "cr_public_port_line_20251215": {
+      "line": "port",
+      "role": "primary",
+      "sheet": "CR Nerul-Uran port line, 15 December 2025",
+      "trains": 50
+    }
+  },
+  "trains": 3289,
+  "routes": 495,
+  "stops": 144,
+  "stop_times": 54258,
+  "trains_by_line": {
+    "central_main": 895,
+    "harbour": 688,
+    "port": 50,
+    "trans_harbour": 262,
+    "western": 1394
+  },
+  "trains_by_operator": {
+    "CR": 1895,
+    "WR": 1394
+  },
+  "published_daily_services": {
+    "WR": 1414,
+    "CR": 1820,
+    "WR+CR": 3234
+  },
+  "flagged": {
+    "15car": 54,
+    "AC": 255
+  },
+  "refused": [
+    {
+      "sheet": "wr_public_timetable_attachment_1",
+      "train": "91039",
+      "reason": "non_monotonic_times",
+      "cells": 22
+    },
+    {
+      "sheet": "wr_public_timetable_attachment_2",
+      "train": "93006",
+      "reason": "fewer_than_two_resolved_stops"
+    },
+    {
+      "sheet": "wr_public_timetable_attachment_2",
+      "train": "93012",
+      "reason": "fewer_than_two_resolved_stops"
+    },
+    {
+      "sheet": "wr_public_timetable_attachment_2",
+      "train": "93014",
+      "reason": "fewer_than_two_resolved_stops"
+    },
+    {
+      "sheet": "wr_public_timetable_attachment_2",
+      "train": "93016",
+      "reason": "fewer_than_two_resolved_stops"
+    },
+    {
+      "sheet": "wr_public_timetable_attachment_2",
+      "train": "93018",
+      "reason": "fewer_than_two_resolved_stops"
+    },
+    {
+      "sheet": "wr_public_timetable_attachment_2",
+      "train": "93020",
+      "reason": "fewer_than_two_resolved_stops"
+    },
+    {
+      "sheet": "wr_public_timetable_attachment_2",
+      "train": "93030",
+      "reason": "fewer_than_two_resolved_stops"
+    },
+    {
+      "sheet": "wr_public_timetable_attachment_2",
+      "train": "93040",
+      "reason": "fewer_than_two_resolved_stops"
+    },
+    {
+      "sheet": "wr_public_timetable_attachment_2",
+      "train": "93204",
+      "reason": "fewer_than_two_resolved_stops"
+    },
+    {
+      "sheet": "wr_public_timetable_attachment_2",
+      "train": "93206",
+      "reason": "fewer_than_two_resolved_stops"
+    },
+    {
+      "sheet": "wr_public_timetable_attachment_2",
+      "train": "93208",
+      "reason": "fewer_than_two_resolved_stops"
+    }
+  ],
+  "refused_count": 12,
+  "stops_skipped_no_osm_station": {
+    "GAVHAN": {
+      "cells": 50,
+      "reason": "the Nerul-Uran line's Gavhan station is not in the OSM extract of 15 September 2026 (no station or stop node); the train's other stops are kept"
+    },
+    "SHEMATIKHAR": {
+      "cells": 50,
+      "reason": "the Nerul-Uran line's Shemtikhar station is not in the OSM extract of 15 September 2026; the train's other stops are kept"
+    }
+  },
+  "output_sha256": "96b584ad647e8f7d5e53cc160772c97aea9480d6c089f9a5d2bc33b8df0171fe",
+  "limitations": [
+    "The sheets are of different dates: each trip carries its sheet; no calendar exception (Sunday, holiday, block) is applied - every printed train runs on the modelled weekday.",
+    "A printed time is a departure; the arrival is the same clock and the declared dwell is added at intermediate stops.",
+    "A station label resolves to one OSM node; a station with separate platforms per line (Dadar, Kurla) takes the node the line's own relation names.",
+    "The path between two stops is the mapper's (pt2matsim on the rail links), not the harbour-line path evidence."
+  ]
+}

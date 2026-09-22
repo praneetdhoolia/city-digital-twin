@@ -44,6 +44,101 @@
         "file": "data/processed/acquisition/baseline_regional_buses.json",
         "key": "departure_counts.MBMT"
       }
+    },
+    {
+      "id": "package.manifest_files",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "\\| Files in the manifest \\| \\*\\*([\\d,]+)\\*\\*",
+      "truth": {
+        "kind": "manifest_files"
+      }
+    },
+    {
+      "id": "package.registry_fields",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "\\| Input registry \\| \\*\\*([\\d,]+)\\*\\* fields",
+      "truth": {
+        "kind": "registry_fields"
+      }
+    },
+    {
+      "id": "catalogue.unread",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "\\*\\*([\\d,]+) unread\\*\\*",
+      "truth": {
+        "kind": "json_number",
+        "file": "data/processed/acquisition/source_use.json",
+        "key": "counts.unread"
+      }
+    },
+    {
+      "id": "catalogue.consumed",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "`audit_source_use.py`\\): ([\\d,]+) consumed",
+      "truth": {
+        "kind": "json_number",
+        "file": "data/processed/acquisition/source_use.json",
+        "key": "counts.consumed"
+      }
+    },
+    {
+      "id": "catalogue.not_needed",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "([\\d,]+) declared not needed",
+      "truth": {
+        "kind": "json_number",
+        "file": "data/processed/acquisition/source_use.json",
+        "key": "counts.not_needed"
+      }
+    },
+    {
+      "id": "timetable.trains",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "printed WR and CR timetables\\*\\* \\(([\\d,]+) trains",
+      "truth": {
+        "kind": "json_number",
+        "file": "data/processed/acquisition/baseline_suburban_timetable.json",
+        "key": "trains"
+      }
+    },
+    {
+      "id": "timetable.routes",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "trains on ([\\d,]+) stopping patterns",
+      "truth": {
+        "kind": "json_number",
+        "file": "data/processed/acquisition/baseline_suburban_timetable.json",
+        "key": "routes"
+      }
+    },
+    {
+      "id": "network.grade_stamped",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "\\*\\*([\\d,]+) of [\\d,]+ run-network links carry a signed grade\\*\\*",
+      "truth": {
+        "kind": "json_number",
+        "file": "scenarios/matsim/_run_inputs_report.json",
+        "key": "network.gradient.stamped"
+      }
+    },
+    {
+      "id": "network.grade_links",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "\\*\\*[\\d,]+ of ([\\d,]+) run-network links carry a signed grade\\*\\*",
+      "truth": {
+        "kind": "json_number",
+        "file": "scenarios/matsim/_run_inputs_report.json",
+        "key": "network.gradient.links"
+      }
     }
   ]
 }

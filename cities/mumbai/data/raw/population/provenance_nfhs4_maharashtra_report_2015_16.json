@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/nfhs4_maharashtra_report_2015_16_287318f787280797.pdf",
+      "url": "https://dhsprogram.com/pubs/pdf/FR338/FR338.MH.pdf",
+      "final_url": "https://dhsprogram.com/pubs/pdf/FR338/FR338.MH.pdf",
+      "source": "National Family Health Survey (NFHS-4) 2015-16, Maharashtra state report",
+      "licence": "IIPS / DHS Program publication; reuse terms unverified",
+      "retrieved": "2026-09-22T06:40:18.086568+00:00",
+      "sha256": "287318f787280797305fac0a58686efeb405afca489c4a50655aa29b46021358",
+      "bytes": 2981512,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Household possessions (motorcycle or scooter, car or truck, bicycle) by urban and rural residence for Maharashtra, 2015-16: the mid-point survey observation between the 2011 census and the base year."
+    }
+  ]
+}

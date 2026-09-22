@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/wr_public_timetable_attachment_5_4cdbac7d8f275523.pdf",
+      "url": "https://wr.indianrailways.gov.in/cris//uploads/files/1788159851897-DAHANU%20ROAD%20SERVICES%20PTT%20W.E.F.%2001.09.2026.pdf",
+      "final_url": "https://wr.indianrailways.gov.in/cris//uploads/files/1788159851897-DAHANU%20ROAD%20SERVICES%20PTT%20W.E.F.%2001.09.2026.pdf",
+      "content_type": "application/pdf",
+      "source": "Western Railway DAHANU ROAD SERVICES PTT W.E.F. 01.09.2026",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-22T05:04:02.262427+00:00",
+      "sha256": "4cdbac7d8f2755230f6f9bbc7e07bd8138597fb57005505847e75dd44487dedf",
+      "bytes": 557973,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Linked from official index of September 2026. Document effective date and calendar must be parsed individually; AC subsets must not be double counted.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

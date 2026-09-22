@@ -863,7 +863,9 @@
       "url": "https://censusindia.gov.in/nada/index.php/catalog/807/download/2880/DH_2011_DCHB_Village_Release_2700.xlsx",
       "licence": "Publication reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/population/census_maharashtra_villages_6697776f33d6a08f.xlsx"
+      ]
     },
     {
       "name": "Census B-28 mode and distance to work",
@@ -1417,7 +1419,9 @@
       "url": "https://cr.indianrailways.gov.in/view_section.jsp?backgroundColor=LIGHTSTEELBLUE&fontColor=black&id=0,5,2360&lang=0",
       "licence": "Government publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/cr_timetable_20260918_index_22be450202c9fd26.html"
+      ]
     },
     {
       "name": "Official revised metered taxi tariff September 2026",
@@ -1460,7 +1464,9 @@
       "url": "https://wr.indianrailways.gov.in/cris//uploads/files/1788159762760-DN%20AC%20TRAINS%20PTT%2079%20W.E.F.%2001.09.2026.pdf",
       "licence": "Government publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/wr_public_timetable_attachment_3_155dc2bd5fa09795.pdf"
+      ]
     },
     {
       "name": "Western Railway UP AC TRAINS PTT 79 W.E.F. 01.09.2026",
@@ -1476,7 +1482,9 @@
       "url": "https://wr.indianrailways.gov.in/cris//uploads/files/1788159851897-DAHANU%20ROAD%20SERVICES%20PTT%20W.E.F.%2001.09.2026.pdf",
       "licence": "Government publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/wr_public_timetable_attachment_5_4cdbac7d8f275523.pdf"
+      ]
     },
     {
       "name": "Western Railway HARBOUR SERVICES W.E.F 01.10.2022",
@@ -3092,28 +3100,36 @@
       "url": "https://www.mmmocl.co.in/train-time-table",
       "licence": "Operator publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/transit/mmmocl_schedule_20260918_2400d655c8ea1c68.html"
+      ]
     },
     {
       "name": "Current MMMOCL public fare tables",
       "url": "https://www.mmmocl.co.in/fare_table",
       "licence": "Operator publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/transit/mmmocl_fares_20260918_4d5e37fcdb7daad4.html"
+      ]
     },
     {
       "name": "MMMOCL published ridership information",
       "url": "https://www.mmmocl.co.in/ridership-information",
       "licence": "Operator publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/transit/mmmocl_ridership_20260918_0764c7ce4967b12b.html"
+      ]
     },
     {
       "name": "MMMOCL new lines and revised timetable press release",
       "url": "https://www.mmmocl.co.in/uploads/news_pdf/73_mr.Pdf",
       "licence": "Operator publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/transit/mmmocl_press_73_a930f3813fb7dff0.pdf"
+      ]
     },
     {
       "name": "Navi Mumbai Metro official project information",
@@ -3804,7 +3820,9 @@
       "url": "https://trti.maharashtra.gov.in/page/statistical-report",
       "licence": "Government publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/boundaries/maharashtra_scheduled_areas_statistical_index_04b7baed4fe72aa0.html"
+      ]
     },
     {
       "name": "MMRDA extended notified area project document links",
@@ -4511,7 +4529,9 @@
       "url": "https://www.punemetrorail.org/download/MAHA%20METRO_ANNUAL%20REPORT%202024%2025_ENG.pdf",
       "licence": "Government/operator publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/transit/mahametro_annual_2024_25_cf442c24e22db2fa.pdf"
+      ]
     },
     {
       "name": "CIDCO public press release index",
@@ -5220,14 +5240,18 @@
       "url": "https://rdso.indianrailways.gov.in/works/uploads/File/MRVC%20III%20SPEC%20WEB.pdf",
       "licence": "Indian Railways publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/rdso_mrvc3_emu_spec_2017_4417415d139aeeaa.pdf"
+      ]
     },
     {
       "name": "RDSO EMU/MEMU technical specification 0163 revision 3, 2022",
       "url": "https://rdso.indianrailways.gov.in/uploads/1-ii-%20spec%20for%20EMU-MEMU-163.pdf",
       "licence": "Indian Railways publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/rdso_emu_memu_spec_2022_ba9a9cb707c97c4f.pdf"
+      ]
     },
     {
       "name": "Ministry of Railways first Mumbai AC EMU introduction, December 2017",
@@ -5270,7 +5294,9 @@
       "url": "https://cr.indianrailways.gov.in/cris/uploads/files/1561376559029-all_div_merged.pdf",
       "licence": "Indian Railways publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/cr_system_map_2019_aee99cc2586eaee2.pdf"
+      ]
     },
     {
       "name": "Western Railway zonal disaster management plan part II 2025",
@@ -5304,7 +5330,9 @@
       "url": "https://mrvc.indianrailways.gov.in/mrvc/notice/1565425828445_CBTCTOR090918.pdf",
       "licence": "MRVC publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/mrvc_cbtc_terms_reference_2018_f5c3a5d05fd4c044.pdf"
+      ]
     },
     {
       "name": "Railways statement on Mumbai rail capacity projects, 25 March 2026",
@@ -5320,7 +5348,9 @@
       "url": "https://mrvc.indianrailways.gov.in/works/uploads/File/1.Executive%20Summary_Volume%201%281%29.pdf",
       "licence": "MRVC publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/mrvc_trespass_midsection_executive_summary_d1f84b32895441d2.pdf"
+      ]
     },
     {
       "name": "MRVC/TISS study: Engendering Mumbai suburban railway system",
@@ -5336,7 +5366,9 @@
       "url": "https://rdso.indianrailways.gov.in/works/uploads/File/FinalDraftforUploading020414_3PhaseEMUsforHarborLineSpec.pdf",
       "licence": "Indian Railways/MRVC publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/rdso_harbour_emu_draft_spec_2014_eacbff44d7f587a5.pdf"
+      ]
     },
     {
       "name": "MRVC CSTM-Panvel fast corridor detailed project report executive summary, June 2016",
@@ -5370,7 +5402,9 @@
       "url": "https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,287,391,561,1025",
       "licence": "Indian Railways/MRVC publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/cr_suburban_operations_page_cc0083ac73c5d114.html"
+      ]
     },
     {
       "name": "Central Railway signalling assets chart linked from page reviewed 14 May 2026",
@@ -5386,14 +5420,18 @@
       "url": "https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,287,391,562,1092",
       "licence": "Indian Railways publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/cr_line_capacity_page_aad825ddc77bb73d.html"
+      ]
     },
     {
       "name": "Central Railway Mumbai division signalling and telecom page",
       "url": "https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,1191,1192,1211",
       "licence": "Indian Railways publication; reuse terms unverified",
       "share_alike": false,
-      "provides": []
+      "provides": [
+        "data/raw/rail/cr_mumbai_signal_telecom_page_9c4eec92a2f3d99b.html"
+      ]
     },
     {
       "name": "OpenStreetMap access tag semantics",
@@ -5911,6 +5949,33 @@
       "share_alike": false,
       "provides": [
         "data/raw/rail/cr_suburban_operations_page_archived_20240424_54179a39a4698975.html"
+      ]
+    },
+    {
+      "name": "National Family Health Survey (NFHS-5) 2019-21, Maharashtra state report",
+      "url": "https://dhsprogram.com/pubs/pdf/FR374/FR374_Maharashtra.pdf",
+      "licence": "IIPS / DHS Program publication; reuse terms unverified",
+      "share_alike": false,
+      "provides": [
+        "data/raw/population/nfhs5_maharashtra_report_2019_21_982ecbc44ecf1297.pdf"
+      ]
+    },
+    {
+      "name": "National Family Health Survey (NFHS-4) 2015-16, Maharashtra state report",
+      "url": "https://dhsprogram.com/pubs/pdf/FR338/FR338.MH.pdf",
+      "licence": "IIPS / DHS Program publication; reuse terms unverified",
+      "share_alike": false,
+      "provides": [
+        "data/raw/population/nfhs4_maharashtra_report_2015_16_287318f787280797.pdf"
+      ]
+    },
+    {
+      "name": "Mumbai public parking lots (BMC), OpenCity-hosted KML",
+      "url": "https://data.opencity.in/dataset/84505f49-7ac8-4fe6-a986-b988713933c0/resource/c99a8c04-4bb3-4065-bd02-434244c3bff2/download/43c7137e-9874-4680-a311-908774a1b2b5.kml",
+      "licence": "Public Domain (OpenCity dataset licence as stated)",
+      "share_alike": false,
+      "provides": [
+        "data/raw/planning/opencity_mumbai_parking_lots_kml_c49cde1958b883e5.xml"
       ]
     }
   ]

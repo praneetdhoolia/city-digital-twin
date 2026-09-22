@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/cr_suburban_operations_page_cc0083ac73c5d114.html",
+      "url": "https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,287,391,561,1025",
+      "final_url": "https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,287,391,561,1025",
+      "content_type": "text/html;charset=UTF-8",
+      "source": "Central Railway suburban operations page",
+      "licence": "Indian Railways/MRVC publication; reuse terms unverified",
+      "retrieved": "2026-09-22T05:08:28.019107+00:00",
+      "sha256": "cc0083ac73c5d1142a2a7adc1fc18bc244a603d889195963342ca6cf2b7ea6e5",
+      "bytes": 619328,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Published suburban operations and linked records. Distinguish dated counts, timetable service totals, network scope and operating amendments.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

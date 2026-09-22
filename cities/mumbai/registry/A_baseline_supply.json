@@ -728,6 +728,37 @@
       "status": "active",
       "description": "Memory ceiling for network preprocessing on the current workstation; throughput setting, not model supply.",
       "decisions_ref": "9.187"
+    },
+    "A.gradient.grade_clamp_pct": {
+      "value": 20.0,
+      "units": "percent",
+      "source": "assumed",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "sweep": {
+        "interval": [
+          10.0,
+          35.0
+        ],
+        "basis": "Node-elevation differencing of a 30 m DEM over very short links (the converted network's median link is 63 m, 41 % under 50 m) produces grade outliers no street sustains; the clamp bounds the stamped attribute. The assembly report prints the stamped-grade distribution (p99 and maximum) so the clamp can be re-declared on it; the reference city's declaration, adopted with the same sweep."
+      },
+      "sweep_role": "uncertainty",
+      "consumers": [
+        "cities/mumbai/build/build_baseline_run_inputs.py"
+      ],
+      "description": "The largest absolute grade, in percent, stamped on a run-network link from the Copernicus GLO-30 node elevations (A.gradient.representation = link_speed)."
+    },
+    "A.gradient.dem_tiles": {
+      "value": "data/raw/geospatial/copernicus_dsm_*.tif",
+      "units": "city_relative_glob",
+      "source": "definition",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "sweep": null,
+      "consumers": [
+        "cities/mumbai/build/build_baseline_run_inputs.py"
+      ],
+      "description": "The acquired Copernicus GLO-30 DSM tiles (copernicus_dsm_cog_10_N17..N20_00_E072..E073_00_DEM, seven one-degree tiles selected by raster_tile_selection.json) the run-network node elevations are sampled from."
     }
   }
 }

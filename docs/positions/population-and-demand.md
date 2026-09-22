@@ -2,12 +2,14 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 17 September 2026 (fifty-fourth session) · **Record read through:** §9.177 · **Written against family:** `F35`
+**Updated:** 22 September 2026 (sixtieth session) · **Record read through:** §9.209 · **Written against family:** `F35`
 
 ## What is built
 
-- **The four binder passes share one skeleton** (§9.167, #191): the day-file read, the per-person index, the busy-interval test, the resequence (#65) and the bindings writer live once; all 15 B2 tables byte-identical. **The heavy-rail target keeps summing the station publication** (#189): the 26 station-direction means are holdout; `audit_no_holdout` refuses a holdout id.
 - **The TfNSW bespoke-table request is DRAFTED, not sent** (§9.167, #50): `docs/requests/tfnsw_hts_bespoke_tables.md` asks for the four cells the CKAN API lacks; HELD; the four cells searched everywhere public, found nowhere (§9.172).
+
+- **Mumbai's households carry their 2026 vehicles** (§9.209): `derive_vehicle_possession_growth.py` grows each district's 2011 HL-14 two-wheeler and car shares by the registered stock per household (RTO offices 2017 → 2025, the state series 2011 → 2017) through the Poisson at-least-one identity (`B.population.vehicle_possession_projection`): Mumbai Suburban 15.3 → 39.9 % and 12.8 → 31.6 %; the yearly pace (5–9 %) is below NFHS-4/5's state-urban 10.4 % (`_vehicle_possession_growth_report.json`).
+- **Mumbai's workers go where the buildings are** (§9.209): `build_activity_attraction.py` weights every work candidate by the GHSL 2025 built volume within 300 m, non-residential and total mixed by the Economic Census own-account share (`B.activities.work_attraction`); `build_plans.py` draws inside the B-28 band by it.
 
 **B1 — persons and households (`src/build/build_population.py`, seed 20260810, the 1,500 core SA1s only).**
 
@@ -40,7 +42,6 @@
 
 ## The state on disk
 
-- **The synthetic population** holds 612,634 persons in 246,865 households, 53.4% employed, 6.0% of households with no car (`cities/newcastle/demand/population/B1_synthetic_population.csv`, §9.131). **Which family's build is on disk and whether it is consistent are live facts with one home each** — the board's state block and `python tests/check_package.py`. **A run keeps the residents it sampled** (`_residents.csv.gz`, §9.177, #213): a rebuild of this table changes no reading of a run made before it.
 - **The demand is rebuilt and the 30 run-input sets with it** (§9.164): family `F33` opened on it, and F35's arm 0 `20260912T202242_300it_25pct` is the first result since (§9.169). No arm approval stands.
 
 ## What is measured
@@ -59,7 +60,7 @@
 
 ## What is open
 
-- **#86 — the binders bind the observed share and the held passenger's alternative plan loses it; D12 is the rebuild** (§9.177, user decision): 458,886 distinct bound trips are **20.62 %** of core legs (`measure_bound_trips.py`); on the routers pair car-available escort members drove 50.7 % of their bound trips, joint companions 36.3 % (`_bound_trips.json`). The rebuild holds escort members and joint companions to ride in every plan (`heldRideTrips`, the gate refusing car on them); car-less lift and shared passengers keep walk/bike/pt. Opens a family; not done.
+- **#86 — the binders bind the observed share and the held passenger's alternative plan loses it; D12 is the rebuild** (§9.177, user decision): 458,886 distinct bound trips are **20.62 %** of core legs (`measure_bound_trips.py`); on the routers pair car-available escort members drove 50.7 % of their bound trips, joint companions 36.3 % (`_bound_trips.json`). The rebuild holds escort members and joint companions to ride in every plan (`heldRideTrips`, the gate refusing car on them).
 - **#145 — measured on a full arm** (§9.169): 18,767 drivers waited on arm 0's last iteration; the wait distribution and where the self-driven bound trips settle remain unread.
 - **`B.population.household_size_top_band_mean` REACHES NO OUTPUT** (§9.169, #196): `build_population.py` takes the geometric branch for the top band, so the declared 6.6 (sweep 6.0–7.5) is never consumed; the roots rebuild consumes it (the tail parameter derived from the mean, §9.177's lane) and opens a family.
 - **The four HTS cells exist nowhere public** (§9.172, #50): the hub's eleven HTS resources carry mode × area and purpose × area only, none is an API; the Sydney 2012/13 report has mode × age, distance band × mode and occupancy for the Sydney GCCSA at that vintage — shapes, not targets; commute-only cells are derivable from ABS TableBuilder. The request is the only route; sending it is the user's decision (D2).
@@ -79,6 +80,7 @@
 
 ## History
 
+- §9.209 — printed timetables; possession; grades
 - §9.177 — bound trips read; D12 the rebuild
 - §9.176 — intro fixed: which runs are results is the board's
 - §9.172 — the four HTS cells: absent from every channel

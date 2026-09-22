@@ -15,6 +15,10 @@ India 2011 and the IIPS district projections that carry it to the base year:
                                economic activity
   district (IIPS 2012-2031)    the projected population by age band and sex in
                                the base year, against 2011 - the growth factor
+  district (RTO stock)         the growth of registered two-wheelers and cars
+                               per household 2011 -> base year, derived by
+                               derive_vehicle_possession_growth.py from the
+                               2017 and 2025 office stock and the state series
 
 For every core leaf of `data/processed/zones/mmr_extent.csv` (D13) the
 synthesiser draws households whose sizes follow the leaf's HL-14 distribution
@@ -23,7 +27,8 @@ sex from the leaf's ratio, age from the district's single-year distribution in
 two strata (0-6 as the leaf publishes it; 7+), work status by the district's
 age-by-sex rates scaled to the leaf's own worker counts, school attendance by
 the district's age-by-activity rates, and the household's vehicles by the
-leaf's possession shares. Licence holding and income are not published: each
+leaf's 2011 possession shares carried to the base year by the district's stock
+growth (B.population.vehicle_possession_projection). Licence holding and income are not published: each
 is a declared assumption with its sweep, labelled in the report. Everything
 is seeded (B.seed.master) and vectorised per leaf.
 
@@ -39,6 +44,7 @@ citywide plans have been built from this population yet.
 from collections import Counter, defaultdict
 import csv
 import json
+import math
 from pathlib import Path
 import sys
 
@@ -59,12 +65,14 @@ OUTPUT_INPUTS = {
         'data/processed/observed/census_2011_work_status.csv',
         'data/processed/observed/census_2011_school_attendance.csv',
         'data/processed/observed/district_age_population_projections.csv',
+        'data/processed/derived/vehicle_possession_growth.csv',
         'registry/B_population.json', 'registry/B_baseline_demand.json'],
     'demand/population/B1_households.csv': [
         'data/processed/zones/mmr_extent.csv',
         'data/processed/observed/census_2011_leaf_controls.csv',
         'data/processed/observed/census_2011_household_assets.csv',
         'data/processed/observed/district_age_population_projections.csv',
+        'data/processed/derived/vehicle_possession_growth.csv',
         'registry/B_population.json'],
     'demand/population/_population_report.json': [
         'data/processed/zones/mmr_extent.csv',
@@ -74,6 +82,7 @@ OUTPUT_INPUTS = {
         'data/processed/observed/census_2011_work_status.csv',
         'data/processed/observed/census_2011_school_attendance.csv',
         'data/processed/observed/district_age_population_projections.csv',
+        'data/processed/derived/vehicle_possession_growth.csv',
         'registry/B_population.json', 'registry/B_baseline_demand.json'],
 }
 PERSONS = 'demand/population/B1_synthetic_population.csv'
@@ -215,6 +224,24 @@ def household_profiles(cfg):
             for r in hl}
 
 
+def possession_growth(cfg):
+    """(district, category) -> the growth of registered vehicles per household
+    2011 -> base year, at the declared bound; {} when the gate is `none`."""
+    if cfg.get('B.population.vehicle_possession_projection') == 'none':
+        return {}
+    column = 'growth_per_household' + {'central': '', 'low': '_low', 'high': '_high'}[cfg.get('B.population.vehicle_possession_growth_bound')]
+    path = Path(city.path('data/processed/derived/vehicle_possession_growth.csv'))
+    with path.open(encoding='utf-8') as stream:
+        return {(r['district_code'], r['category']): float(r[column]) for r in csv.DictReader(stream)}
+
+
+def projected_share(share_2011_pct, growth):
+    """The share of households owning at least one vehicle after the stock per
+    household grows by `growth`, by the Poisson identity: lambda = -ln(1 - s)."""
+    s = min(max(share_2011_pct / 100.0, 0.0), 0.999999)
+    return 1.0 - math.exp(-growth * -math.log(1.0 - s))
+
+
 def profile_for(profiles, leaf):
     """The leaf's own HL-14 row, else its town's, its subdistrict's, its district's."""
     d, sd, tv, w = leaf['district_code'], leaf['subdistrict_code'], leaf['town_village_code'], leaf['ward_code']
@@ -272,6 +299,7 @@ def main():
     work = worker_rates(districts, top)
     attend = attendance_rates(districts, top)
     profiles = household_profiles(cfg)
+    growth = possession_growth(cfg)
 
     out_persons = Path(city.path(PERSONS))
     out_households = Path(city.path(HOUSEHOLDS))
@@ -343,10 +371,16 @@ def main():
             p_attend[m] = rates[act][age[m]]
         p_attend[(age >= 20) & (age <= 24)] = tertiary
         student = (rng.random(n) < p_attend).astype(int)
-        # household vehicles: the leaf's possession shares, one draw per household
+        # household vehicles: the leaf's 2011 possession shares carried to the
+        # base year by the district's stock growth (B.population.vehicle_possession_projection)
         n_hh = len(sizes)
-        two_w = (rng.random(n_hh) < float(profile['households_with_two_wheeler_pct']) / 100).astype(int)
-        cars = (rng.random(n_hh) < float(profile['households_with_car_jeep_van_pct']) / 100).astype(int)
+        p_two_w = float(profile['households_with_two_wheeler_pct']) / 100
+        p_car = float(profile['households_with_car_jeep_van_pct']) / 100
+        if growth:
+            p_two_w = projected_share(float(profile['households_with_two_wheeler_pct']), growth[(code, 'two_wheeler')])
+            p_car = projected_share(float(profile['households_with_car_jeep_van_pct']), growth[(code, 'car')])
+        two_w = (rng.random(n_hh) < p_two_w).astype(int)
+        cars = (rng.random(n_hh) < p_car).astype(int)
         bikes = (rng.random(n_hh) < float(profile['households_with_bicycle_pct']) / 100).astype(int)
         hh_two_w, hh_cars, hh_bikes = np.repeat(two_w, sizes), np.repeat(cars, sizes), np.repeat(bikes, sizes)
         # licence: an adult in a motorised household, at the declared probability (not published)
@@ -400,6 +434,9 @@ def main():
         t['female_share'] = round(t['female'] / max(t['persons'], 1), 4)
         t['households_two_wheeler_pct'] = round(100.0 * t['households_with_two_wheeler'] / max(t['households'], 1), 2)
         t['households_car_pct'] = round(100.0 * t['households_with_car'] / max(t['households'], 1), 2)
+        if growth:
+            t['vehicle_possession_growth_two_wheeler'] = growth[(code, 'two_wheeler')]
+            t['vehicle_possession_growth_car'] = growth[(code, 'car')]
     grand = Counter()
     for t in by_district.values():
         for k in ('persons', 'households', 'persons_2011', 'households_2011', 'main_workers', 'marginal_workers',
@@ -420,6 +457,10 @@ def main():
                  'tertiary attendance 20-24: B.population.tertiary_attendance_rate_20_24 is unobtained; the sweep floor %g is taken' % tertiary,
                  'household sizes within the 6-8 and 9+ bands: uniform up to B.population.household_size_open_band_max',
                  'two-wheeler, car and bicycle possession drawn independently per household (no joint table published)',
+                 ('vehicle possession: the 2011 HL-14 shares carried to the base year by the district registered stock '
+                  'per household (derive_vehicle_possession_growth.py, bound %s) through the Poisson at-least-one identity'
+                  % cfg.get('B.population.vehicle_possession_growth_bound')) if growth else
+                 'vehicle possession: the 2011 HL-14 shares as published (B.population.vehicle_possession_projection = none)',
                  'the leaf\'s 2011 age-0-6 share and worker counts move with the district\'s projected growth'],
         inputs_sha256={p: fingerprint(Path(city.path(p))) for p in OUTPUT_INPUTS[PERSONS] if Path(city.path(p)).exists()},
         note='No trip, tour or mode: the plans are the activity builder\'s. The external tier is not synthesised.')
@@ -428,7 +469,8 @@ def main():
     print(json.dumps({k: report[k] for k in ('leaves', 'persons', 'households', 'persons_2011', 'households_2011', 'household_profile_levels')}, indent=1))
     for code, t in sorted(by_district.items()):
         print(code, {k: t[k] for k in ('persons', 'households', 'mean_household_size', 'share_0_6', 'share_0_6_2011',
-                                       'households_two_wheeler_pct', 'households_car_pct', 'projection_factor_male')})
+                                       'households_two_wheeler_pct', 'households_car_pct', 'projection_factor_male')
+                     + (('vehicle_possession_growth_two_wheeler', 'vehicle_possession_growth_car') if growth else ())})
     return 0
 
 

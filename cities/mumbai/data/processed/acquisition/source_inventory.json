@@ -343,7 +343,11 @@
       "category": "population",
       "licence": "Publication reuse terms unverified",
       "coverage": "2011 village facilities and amenities; geographic filtering required.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/population/census_maharashtra_villages_6697776f33d6a08f.xlsx",
+      "sha256": "6697776f33d6a08f6eeaf77c1f7652bf56c32d51f87ea40277f39c2fae1eca67",
+      "bytes": 82163210,
+      "retrieved": "2026-09-22T05:03:47.823783+00:00"
     },
     {
       "id": "census_b28_index",
@@ -1141,7 +1145,11 @@
       "category": "rail",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Current public timetable index; linked documents retain individual effective dates.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/cr_timetable_20260918_index_22be450202c9fd26.html",
+      "sha256": "22be450202c9fd2604c7e6eb96656ad1f74fb1df1a1ada81a17f9c3c7bca0e84",
+      "bytes": 484587,
+      "retrieved": "2026-09-22T05:03:53.713448+00:00"
     },
     {
       "id": "mmr_metered_taxi_tariff_20260901",
@@ -1202,7 +1210,11 @@
       "category": "rail",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Linked from official index of September 2026. Document effective date and calendar must be parsed individually; AC subsets must not be double counted.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/wr_public_timetable_attachment_3_155dc2bd5fa09795.pdf",
+      "sha256": "155dc2bd5fa0979517ddab31bab706b52e5521822fd7415e5129754c98ca8f8e",
+      "bytes": 324029,
+      "retrieved": "2026-09-22T05:03:57.693873+00:00"
     },
     {
       "id": "wr_public_timetable_attachment_4",
@@ -1224,7 +1236,11 @@
       "category": "rail",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Linked from official index of September 2026. Document effective date and calendar must be parsed individually; AC subsets must not be double counted.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/wr_public_timetable_attachment_5_4cdbac7d8f275523.pdf",
+      "sha256": "4cdbac7d8f2755230f6f9bbc7e07bd8138597fb57005505847e75dd44487dedf",
+      "bytes": 557973,
+      "retrieved": "2026-09-22T05:04:02.262427+00:00"
     },
     {
       "id": "wr_public_timetable_attachment_6",
@@ -3546,7 +3562,11 @@
       "category": "transit",
       "licence": "Operator publication; reuse terms unverified",
       "coverage": "Current public passenger information; effective dates and operational coverage require extraction and validation.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/transit/mmmocl_schedule_20260918_2400d655c8ea1c68.html",
+      "sha256": "2400d655c8ea1c686a2a7c621be369165e013e5bcaaefa367bc352c19122274f",
+      "bytes": 33326,
+      "retrieved": "2026-09-22T05:06:33.167771+00:00"
     },
     {
       "id": "mmmocl_fares_20260918",
@@ -3555,7 +3575,11 @@
       "category": "transit",
       "licence": "Operator publication; reuse terms unverified",
       "coverage": "Current public passenger information; effective dates and operational coverage require extraction and validation.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/transit/mmmocl_fares_20260918_4d5e37fcdb7daad4.html",
+      "sha256": "4d5e37fcdb7daad42988da90e9e96a291e08e51cf42381379a352071664bd169",
+      "bytes": 43763,
+      "retrieved": "2026-09-22T05:06:35.435823+00:00"
     },
     {
       "id": "mmmocl_ridership_20260918",
@@ -3564,7 +3588,12 @@
       "category": "transit",
       "licence": "Operator publication; reuse terms unverified",
       "coverage": "Current public passenger information; effective dates and operational coverage require extraction and validation.",
-      "status": "unobtained"
+      "status": "acquired_unusable",
+      "path": "data/raw/transit/mmmocl_ridership_20260918_0764c7ce4967b12b.html",
+      "sha256": "0764c7ce4967b12b4fa449d1666289ed0134493651afad484ebd88ab190e9bfc",
+      "bytes": 27651,
+      "retrieved": "2026-09-22T05:06:37.544809+00:00",
+      "content_review_reason": "the page as served (22 September 2026, through an Indian VPN endpoint, Marathi) holds the site menu and no ridership figure: the tiles are drawn by a script the capture does not run"
     },
     {
       "id": "mmmocl_press_73",
@@ -3573,7 +3602,11 @@
       "category": "transit",
       "licence": "Operator publication; reuse terms unverified",
       "coverage": "Current public passenger information; effective dates and operational coverage require extraction and validation.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/transit/mmmocl_press_73_a930f3813fb7dff0.pdf",
+      "sha256": "a930f3813fb7dff04b3aeec3896b5ee73e3048b42881d61e46a90002798022e1",
+      "bytes": 974442,
+      "retrieved": "2026-09-22T05:06:41.080316+00:00"
     },
     {
       "id": "cidco_metro_project",
@@ -4570,7 +4603,11 @@
       "category": "boundaries",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Legal/planning boundary evidence; no automatic model inclusion or exclusion.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/boundaries/maharashtra_scheduled_areas_statistical_index_04b7baed4fe72aa0.html",
+      "sha256": "04b7baed4fe72aa0c95cbaaaee0464a20a631ea21688cd9a430643b3bfca4d63",
+      "bytes": 182771,
+      "retrieved": "2026-09-22T05:06:45.988793+00:00"
     },
     {
       "id": "mmr_extended_notified_area_documents",
@@ -5589,7 +5626,11 @@
       "category": "transit",
       "licence": "Government/operator publication; reuse terms unverified",
       "coverage": "Operator annual report; Navi Mumbai, Pune and Nagpur figures must be separated; fiscal-year observations differ from current service and forecasts.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/transit/mahametro_annual_2024_25_cf442c24e22db2fa.pdf",
+      "sha256": "cf442c24e22db2fac3e92c618e394d3879d96724fa477dcca0489131084c3a2c",
+      "bytes": 95358716,
+      "retrieved": "2026-09-22T05:07:21.551461+00:00"
     },
     {
       "id": "cidco_press_releases_20260918",
@@ -6603,7 +6644,11 @@
       "category": "rail",
       "licence": "Indian Railways publication; reuse terms unverified",
       "coverage": "Design requirements, loading-density definitions, car layouts and traction characteristics. Procurement specification does not establish current fleet or operational service assignments.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/rdso_mrvc3_emu_spec_2017_4417415d139aeeaa.pdf",
+      "sha256": "4417415d139aeeaa31d45ac3a4118250732f15ab835169db15da291183f841f7",
+      "bytes": 5438454,
+      "retrieved": "2026-09-22T05:07:55.014926+00:00"
     },
     {
       "id": "rdso_emu_memu_spec_2022",
@@ -6612,7 +6657,11 @@
       "category": "rail",
       "licence": "Indian Railways publication; reuse terms unverified",
       "coverage": "Technical requirements with Mumbai annexure; distinguish design variants, loading conditions, line-specific constraints and actual supplied stock.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/rdso_emu_memu_spec_2022_ba9a9cb707c97c4f.pdf",
+      "sha256": "ba9a9cb707c97c4f712f30408df838a20328a5d159c3d3a1862c43d014e099cd",
+      "bytes": 13335199,
+      "retrieved": "2026-09-22T05:08:04.788262+00:00"
     },
     {
       "id": "pib_first_ac_emu_2017",
@@ -6673,7 +6722,11 @@
       "category": "rail",
       "licence": "Indian Railways publication; reuse terms unverified",
       "coverage": "Historical system maps, line topology, station codes and chainages. Internal edition dates require verification; diagrams are not georeferenced or proof of current track configuration.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/cr_system_map_2019_aee99cc2586eaee2.pdf",
+      "sha256": "aee99cc2586eaee21cbf42b869ceae7ec8af728b099b0fb867cb5f94f844ba69",
+      "bytes": 501997,
+      "retrieved": "2026-09-22T05:08:08.618999+00:00"
     },
     {
       "id": "wr_disaster_plan_part2_2025",
@@ -6721,7 +6774,11 @@
       "category": "rail",
       "licence": "MRVC publication; reuse terms unverified",
       "coverage": "Historical corridor headway, signalling and train-control reference; document dates and existing versus proposed systems must be distinguished. Not evidence of current commissioning.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/mrvc_cbtc_terms_reference_2018_f5c3a5d05fd4c044.pdf",
+      "sha256": "f5c3a5d05fd4c044bd04020aa94301aa30b5ed87571ef3f1962d54cd64286f70",
+      "bytes": 557767,
+      "retrieved": "2026-09-22T05:08:12.989476+00:00"
     },
     {
       "id": "pib_mumbai_rail_capacity_projects_20260325",
@@ -6743,7 +6800,11 @@
       "category": "rail",
       "licence": "MRVC publication; reuse terms unverified",
       "coverage": "Historical observed pedestrian access, crossings and proposed remedies around suburban railway corridors. Internal survey dates and proposed-versus-built facilities must be extracted; recommendations are not current infrastructure.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/mrvc_trespass_midsection_executive_summary_d1f84b32895441d2.pdf",
+      "sha256": "d1f84b32895441d2dda2719d08d4509bc25810ab9b05597cad66b4cb9dd08df5",
+      "bytes": 3702295,
+      "retrieved": "2026-09-22T05:08:18.010494+00:00"
     },
     {
       "id": "mrvc_gender_tiss_study",
@@ -6765,7 +6826,11 @@
       "category": "rail",
       "licence": "Indian Railways/MRVC publication; reuse terms unverified",
       "coverage": "Historical draft design specification. Separate draft requirements and design loading from as-built geometry, actual fleet capacity, current operating speed and train assignment.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/rdso_harbour_emu_draft_spec_2014_eacbff44d7f587a5.pdf",
+      "sha256": "eacbff44d7f587a5e03960cba52114b9351f4a8793b723da09cd25a6c2441aab",
+      "bytes": 3460651,
+      "retrieved": "2026-09-22T05:08:24.136648+00:00"
     },
     {
       "id": "mrvc_csmt_panvel_fast_dpr_summary_2016",
@@ -6813,7 +6878,11 @@
       "category": "rail",
       "licence": "Indian Railways/MRVC publication; reuse terms unverified",
       "coverage": "Published suburban operations and linked records. Distinguish dated counts, timetable service totals, network scope and operating amendments.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/cr_suburban_operations_page_cc0083ac73c5d114.html",
+      "sha256": "cc0083ac73c5d1142a2a7adc1fc18bc244a603d889195963342ca6cf2b7ea6e5",
+      "bytes": 619328,
+      "retrieved": "2026-09-22T05:08:28.019107+00:00"
     },
     {
       "id": "cr_signalling_assets_chart_20260514",
@@ -6835,7 +6904,11 @@
       "category": "rail",
       "licence": "Indian Railways publication; reuse terms unverified",
       "coverage": "Line-capacity publication links; geographic scope, units and vintage require inspection.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/cr_line_capacity_page_aad825ddc77bb73d.html",
+      "sha256": "aad825ddc77bb73d6fb89b85d08e3ea4833a92b4edc08691b46f9e72ed89be65",
+      "bytes": 481109,
+      "retrieved": "2026-09-22T05:08:31.670895+00:00"
     },
     {
       "id": "cr_mumbai_signal_telecom_page",
@@ -6844,7 +6917,11 @@
       "category": "rail",
       "licence": "Indian Railways publication; reuse terms unverified",
       "coverage": "Mumbai division signalling evidence and linked asset documents; current applicability requires inspection.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/rail/cr_mumbai_signal_telecom_page_9c4eec92a2f3d99b.html",
+      "sha256": "9c4eec92a2f3d99b593dd5b596e4d058f5d0dca895cb874f3deab080ef5840a9",
+      "bytes": 485359,
+      "retrieved": "2026-09-22T05:08:35.212089+00:00"
     },
     {
       "id": "osm_wiki_access_20260919",
@@ -7595,12 +7672,55 @@
       "bytes": 464715,
       "retrieved": "2026-09-21T18:12:52.888735+00:00",
       "content_review_reason": "The archived page is the Central Railway site menu (departments and links) with no suburban operations content; the figures sit on sub-pages the capture does not include."
+    },
+    {
+      "id": "nfhs5_maharashtra_report_2019_21",
+      "title": "National Family Health Survey (NFHS-5) 2019-21, Maharashtra state report",
+      "url": "https://dhsprogram.com/pubs/pdf/FR374/FR374_Maharashtra.pdf",
+      "category": "population",
+      "licence": "IIPS / DHS Program publication; reuse terms unverified",
+      "coverage": "Household possessions (motorcycle or scooter, car or truck, bicycle) by urban and rural residence for Maharashtra, 2019-21: a state-level survey observation of vehicle possession eight years after the census, a check on the derived possession projection (derive_vehicle_possession_growth.py), not a district control.",
+      "status": "acquired_unvalidated",
+      "path": "data/raw/population/nfhs5_maharashtra_report_2019_21_982ecbc44ecf1297.pdf",
+      "sha256": "982ecbc44ecf1297c322489da16869062a0513bd92fb5bc1f4edb9cc3028c794",
+      "bytes": 2084134,
+      "retrieved": "2026-09-22T06:40:13.253311+00:00"
+    },
+    {
+      "id": "nfhs4_maharashtra_report_2015_16",
+      "title": "National Family Health Survey (NFHS-4) 2015-16, Maharashtra state report",
+      "url": "https://dhsprogram.com/pubs/pdf/FR338/FR338.MH.pdf",
+      "category": "population",
+      "licence": "IIPS / DHS Program publication; reuse terms unverified",
+      "coverage": "Household possessions (motorcycle or scooter, car or truck, bicycle) by urban and rural residence for Maharashtra, 2015-16: the mid-point survey observation between the 2011 census and the base year.",
+      "status": "acquired_unvalidated",
+      "path": "data/raw/population/nfhs4_maharashtra_report_2015_16_287318f787280797.pdf",
+      "sha256": "287318f787280797305fac0a58686efeb405afca489c4a50655aa29b46021358",
+      "bytes": 2981512,
+      "retrieved": "2026-09-22T06:40:18.086568+00:00"
+    },
+    {
+      "id": "opencity_mumbai_parking_lots_kml",
+      "title": "Mumbai public parking lots (BMC), OpenCity-hosted KML",
+      "url": "https://data.opencity.in/dataset/84505f49-7ac8-4fe6-a986-b988713933c0/resource/c99a8c04-4bb3-4065-bd02-434244c3bff2/download/43c7137e-9874-4680-a311-908774a1b2b5.kml",
+      "category": "planning",
+      "licence": "Public Domain (OpenCity dataset licence as stated)",
+      "coverage": "95 placemarks of public parking lots provided under development-control concessions (developer-named), locations only; no capacity or tariff. Parking supply evidence for docs/requirements.json: parking, not a priced-parking input.",
+      "status": "acquired_unvalidated",
+      "path": "data/raw/planning/opencity_mumbai_parking_lots_kml_c49cde1958b883e5.xml",
+      "sha256": "c49cde1958b883e5efd9f6b4ae04fdbebf72eb6f4b8c4abe1426ecd039c9eaca",
+      "bytes": 48151,
+      "retrieved": "2026-09-22T06:40:20.037565+00:00"
     }
   ],
   "identical_bytes_groups": [
     [
       "bmc_climate_budget_2025_26_opencity_copy",
       "bmc_climate_budget_2025_26_archived_20250808"
+    ],
+    [
+      "cr_system_map_2019",
+      "cr_system_map_2019_archived_20240629"
     ],
     [
       "mbmt_routes",
@@ -7632,12 +7752,20 @@
       "mospi_udise_filters_3"
     ],
     [
+      "mrvc_trespass_midsection_executive_summary",
+      "mrvc_trespass_midsection_executive_summary_archived_20240525"
+    ],
+    [
       "mumbai_road_safety_2023",
       "mtp_road_safety_2023"
     ],
     [
       "nhm_population_projection_2019",
       "nhm_population_projections_2011_2036"
+    ],
+    [
+      "rdso_mrvc3_emu_spec_2017",
+      "rdso_mrvc3_emu_spec_2017_archived_20240709"
     ],
     [
       "vehicle_stock_2025",

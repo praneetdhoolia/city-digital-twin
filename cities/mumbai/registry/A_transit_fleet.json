@@ -414,6 +414,24 @@
           "directory_routes": [
             "14"
           ]
+        },
+        "rail_emu_12car_ac": {
+          "base_type": "Rail",
+          "seats_field": "A.transit.rail_ac_capacity_seated",
+          "standing_field": "A.transit.rail_ac_capacity_standing",
+          "route_id_contains": "_AC_"
+        },
+        "rail_emu_15car": {
+          "base_type": "Rail",
+          "seats_field": "A.transit.rail_15car_capacity_seated",
+          "standing_field": "A.transit.rail_15car_capacity_standing",
+          "route_id_contains": "_15car_"
+        },
+        "rail_emu_15car_ac": {
+          "base_type": "Rail",
+          "seats_field": "A.transit.rail_ac_capacity_seated",
+          "standing_field": "A.transit.rail_ac_capacity_standing",
+          "route_id_contains": "_15carAC_"
         }
       },
       "units": "profile_table",
@@ -423,7 +441,7 @@
       "consumers": [
         "cities/mumbai/build/build_transit_fleet.py"
       ],
-      "description": "The capacity profiles build_transit_fleet.py assigns to the mapped vehicles (docs/transit_fleet.md): each names the mapper's base type it clones, the two registry fields that carry its seats and standing places, and EITHER the transport mode every line of that mode falls to (rail, bus) OR the OSM route relations it serves, read from the transit line id the feed builder writes as BASE_<relation>_<direction> (build_baseline_transit_feed.py). The relation ids are the identifiers of the mapped lines - Line 1 (3808111, 7684032), Lines 2A/2B/7/9 on BEML 6-car stock, Line 3 (7898597, 17876723), Navi Mumbai Line 1 (16533435, 16533436), the Gateway-Elephanta launch (19764205) and the Vasai-Bhayander creek ferry (16777766) - not values; a line with no profile refuses the build. The mapper typed the Central main-line and the Nerul-Uran patterns as their own base types (C, U) beside Rail; the three rail profiles carry one capacity and differ only in the base type each clones, because an assignment cannot change a vehicle's mapped type. A profile may instead name the Maritime Board directory routes it serves (`directory_routes`): the feed builder writes those lines as BASE_MMB_<directory route>_<direction> (9.207)."
+      "description": "The capacity profiles build_transit_fleet.py assigns to the mapped vehicles (docs/transit_fleet.md): each names the mapper's base type it clones, the two registry fields that carry its seats and standing places, and EITHER the transport mode every line of that mode falls to (rail, bus) OR the OSM route relations it serves, read from the transit line id the feed builder writes as BASE_<relation>_<direction> (build_baseline_transit_feed.py). The relation ids are the identifiers of the mapped lines - Line 1 (3808111, 7684032), Lines 2A/2B/7/9 on BEML 6-car stock, Line 3 (7898597, 17876723), Navi Mumbai Line 1 (16533435, 16533436), the Gateway-Elephanta launch (19764205) and the Vasai-Bhayander creek ferry (16777766) - not values; a line with no profile refuses the build. The mapper typed the Central main-line and the Nerul-Uran patterns as their own base types (C, U) beside Rail; the three rail profiles carry one capacity and differ only in the base type each clones, because an assignment cannot change a vehicle's mapped type. A profile may instead name the Maritime Board directory routes it serves (`directory_routes`): the feed builder writes those lines as BASE_MMB_<directory route>_<direction> (9.207). A profile with route_id_contains claims every timetable line whose id carries the substring (the AC and 15-car trains of the printed timetables, build_suburban_timetable_feed.py), before the transport-mode default."
     },
     "A.transit.ferry_versova_madh_capacity_seated": {
       "value": 60,
@@ -522,6 +540,74 @@
       "status": "active",
       "decisions_ref": "9.207",
       "description": "Passengers one vessel on the m2m-mandwa crossing carries, from the Maritime Board's directory; launches carry seated passengers."
+    },
+    "A.transit.rail_ac_capacity_seated": {
+      "value": 1028,
+      "units": "persons_per_vehicle",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "PIB's release of 24 December 2017 (pib_first_ac_emu_2017; suburban_first_ac_capacity_2017.csv, 'Complete rake'): the 12-car AC EMU rake seats 1,028 with 4,936 standing, 5,964 in all. Applied to every train the AC supplements list (A.baseline_transit.printed_timetables, flag AC). Never varied",
+        "decisions_ref": "9.209",
+        "departure_requires": "a published capacity of a later AC rake formation"
+      },
+      "consumers": [
+        "cities/mumbai/build/build_transit_fleet.py"
+      ],
+      "description": "Seats in one 12-car AC suburban EMU rake, the trains the WR and CR AC timetable supplements list."
+    },
+    "A.transit.rail_ac_capacity_standing": {
+      "value": 4936,
+      "units": "persons_per_vehicle",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "PIB's release of 24 December 2017 (suburban_first_ac_capacity_2017.csv, 'Complete rake'): 4,936 standing places in the 12-car AC rake. Never varied",
+        "decisions_ref": "9.209",
+        "departure_requires": "a published capacity of a later AC rake formation"
+      },
+      "consumers": [
+        "cities/mumbai/build/build_transit_fleet.py"
+      ],
+      "description": "Standing places in one 12-car AC suburban EMU rake."
+    },
+    "A.transit.rail_15car_capacity_seated": {
+      "value": 1460,
+      "units": "persons_per_vehicle",
+      "source": "derived",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "derived_from": {
+        "fields": [
+          "A.transit.rail_capacity_seated"
+        ],
+        "identity": "A.transit.rail_capacity_seated x 15 / 12 = 1168 x 1.25 = 1460: the 15-car rake is the 12-car formation with three more coaches of the same type (cr_public_main_15_car_20260815 lists the 54 services that run it)"
+      },
+      "consumers": [
+        "cities/mumbai/build/build_transit_fleet.py"
+      ],
+      "description": "Seats in one 15-car non-AC suburban EMU rake, the trains the CR 15-car sheet lists."
+    },
+    "A.transit.rail_15car_capacity_standing": {
+      "value": 4770,
+      "units": "persons_per_vehicle",
+      "source": "derived",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "derived_from": {
+        "fields": [
+          "A.transit.rail_capacity_standing"
+        ],
+        "identity": "A.transit.rail_capacity_standing x 15 / 12 = 3816 x 1.25 = 4770"
+      },
+      "consumers": [
+        "cities/mumbai/build/build_transit_fleet.py"
+      ],
+      "description": "Standing places in one 15-car non-AC suburban EMU rake."
     }
   }
 }

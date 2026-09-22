@@ -1,6 +1,6 @@
 {
   "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
-  "updated": "2026-09-22",
+  "updated": "2026-09-22 (sixtieth session)",
   "family": "F35-the-engines-route-what-they-remode",
   "tasks": [
     {
@@ -199,27 +199,28 @@
     },
     {
       "id": "mumbai-ogd-ridership-series",
-      "title": "Acquire the two OGD daily ridership series (Metro Lines 2A and 7 from 1 January 2024, the Monorail from 1 October 2024) with the registered key, extract them into an observed operator series and re-derive the metro target from them",
+      "title": "Import the two OGD daily ridership series (Metro Lines 2A and 7 from 1 January 2024, the Monorail from 1 October 2024) from the user's logged-in browser download, extract them into an observed operator series and re-derive the metro target from them",
       "kind": "data",
       "status": "open",
       "recommended": false,
-      "cost": "minutes once the key is in .env: `acquire_sources.py --id ogd_metro_2a_7_ridership_daily_2024_2025 --id ogd_monorail_ridership_daily_2024_2025`, an extractor, `build_mode_targets.py`; no run",
-      "blocked_on": "D16: the OGD API key (a free registration at data.gov.in) in .env as OGD_API_KEY",
+      "cost": "minutes once the two CSVs are in Downloads/city-twin-captures: an import path for a portal download, an extractor, build_mode_targets.py; no run",
+      "blocked_on": "the user's browser: the OGD platform serves the two resources as datafiles (is_api_available 0) behind a logged-in download form with a captcha; the API answers 502 for them with the registered key (D16 done: OGD_API_KEY is in .env)",
       "opens_family": false,
       "answers_issues": [],
-      "evidence": "9.207: the catalog listing is acquired (ogd_mmrda_ridership_catalog_20260922: two daily CSV resources published by MMRDA on 23 September 2025); the platform sample key answers 429 to everyone"
+      "evidence": "9.209: the key is registered and in .env; api.data.gov.in answers 502 after 62 s for both resource ids at any page size, and the resource listing says is_api_available 0; the two CSVs (13 KB) download only from the logged-in portal; 9.207: the catalog listing is acquired (ogd_mmrda_ridership_catalog_20260922: two daily CSV resources published by MMRDA on 23 September 2025); the platform sample key answers 429 to everyone"
     },
     {
       "id": "mumbai-geoblocked-hosts",
       "title": "Acquire the 17 catalogued sources whose hosts refuse this machine and which the Internet Archive does not hold (the Western Railway attachments, the NMMC plan, MMMOCL ridership, the RDSO 2022 and 2014 specifications, the MRVC CBTC terms, the Maritime Board 2023-24 passenger PDF, the paper hosts, MMRCL station search and train trials, the MahaMetro annual report, the Mumbai City DES page, the census villages download) by a browser capture from a network the hosts admit, imported through import_browser_acquisition.py",
       "kind": "data",
-      "status": "open",
+      "status": "done",
       "recommended": false,
       "cost": "an hour of captures or one scripted pass from the chosen network; no run",
       "blocked_on": "D17 (taken): a browser capture from a network the hosts admit - a scratch Edge on this machine is refused at the address too (ERR_CONNECTION_TIMED_OUT / REFUSED), so the browser needs an Indian VPN endpoint",
       "opens_family": false,
       "answers_issues": [],
-      "evidence": "9.208: 22 of the 41 refusing sources acquired as dated Internet Archive copies (4 of them empty of content, kept unusable); 17 have no capture; 9.207: the hosts refuse this address under Python, Windows TLS and a real browser"
+      "evidence": "9.209: 20 of the 41 refusing sources acquired through an Indian VPN endpoint on 22 September 2026 (the WR AC, Dahanu Road and Harbour sheets, the RDSO 2014, 2017 and 2022 specifications, the MRVC CBTC terms and trespass study, the CR operations, capacity and signalling pages and system map, MMMOCL's schedule, fares, ridership page and press release, the MahaMetro report, the scheduled-areas index, the census villages directory); the 21 still unobtained carry the host's answer in the catalogue (six mahades pages and two mcap files behind certificates that name another host or are out of date, the rest 404, 504, reset or withdrawn); 9.208: 22 of the 41 refusing sources acquired as dated Internet Archive copies (4 of them empty of content, kept unusable); 17 have no capture; 9.207: the hosts refuse this address under Python, Windows TLS and a real browser",
+      "done_ref": "9.209"
     },
     {
       "id": "mumbai-host-probe",
@@ -234,6 +235,42 @@
         239
       ],
       "evidence": "9.207: the pass-through merge measured at 62.7 -> 69.0 m median and not applied (the user keeps the network as converted); 9.206: 1 % gridlocks on the flow identity; the 0.1 % check 20260922T031226_2it_0.1pct ran to its last iteration with the 430 crossing departures"
+    },
+    {
+      "id": "mumbai-tus-unit-diaries",
+      "title": "Import the Time Use Survey 2024 unit records (microdata.gov.in, the user's logged-in download), derive the activity timing and participation of Maharashtra urban persons from them, and replace the declared departure-time and out-of-home assumptions (B.baseline.activity_start_s, B.activities.out_of_home_*) with the derived distributions",
+      "kind": "data",
+      "status": "open",
+      "recommended": false,
+      "cost": "an extractor over the unit files (the layout is tus_2024_data_layout) and a plans rebuild (~2 min); no run",
+      "blocked_on": "the user's browser: the NADA portal login form carries an image captcha; the account exists (MOSPI_MICRODATA_EMAIL in .env)",
+      "opens_family": false,
+      "answers_issues": [],
+      "evidence": "9.209: the layout, codes and instructions are acquired and declared reference; the state aggregate tables are the current basis"
+    },
+    {
+      "id": "mumbai-household-roster",
+      "title": "Switch Mumbai's household vehicle roster to `census` and ride pairing on: the citywide plans carry households and each household's cars since 9.205, so a driver can share the household's car and a passenger can name a driver, as the reference city does",
+      "kind": "model",
+      "status": "open",
+      "recommended": false,
+      "cost": "two gate values (B.population.vehicle_roster, B.ride.pairing_enabled) in adopt_framework_fields.py GATES, a re-assembly and a 0.1 % structural check (8 min); no reading on this host",
+      "blocked_on": "nothing - the gates were set when the plans carried no households; a reading needs the D15 host",
+      "opens_family": false,
+      "answers_issues": [],
+      "evidence": "9.209: the framework files still say \"the baseline population carries no households\"; B1_households.csv and the plans' householdId exist since 9.205"
+    },
+    {
+      "id": "mumbai-line7-line9-through-service",
+      "title": "Run Line 7 and Line 9 as the one through corridor MMRDA operates (Gundavali-Kashigaon) instead of two lines meeting at Dahisar East with a transfer",
+      "kind": "model",
+      "status": "open",
+      "recommended": false,
+      "cost": "a generated relation pair spanning the two OSM relations in build_baseline_transit_feed.py, a feed rebuild and one mapping (~4 min); no run",
+      "blocked_on": "nothing",
+      "opens_family": false,
+      "answers_issues": [],
+      "evidence": "9.209: the press release of 6 April 2026 states the integrated corridor and its 276 weekday trips; the feed generates 537 departures over the two relations against 552 counted twice"
     }
   ],
   "decisions": [

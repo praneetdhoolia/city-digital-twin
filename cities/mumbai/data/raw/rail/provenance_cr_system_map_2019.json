@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/cr_system_map_2019_aee99cc2586eaee2.pdf",
+      "url": "https://cr.indianrailways.gov.in/cris/uploads/files/1561376559029-all_div_merged.pdf",
+      "final_url": "https://cr.indianrailways.gov.in/cris/uploads/files/1561376559029-all_div_merged.pdf",
+      "source": "Central Railway combined divisional system maps hosted June 2019",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "retrieved": "2026-09-22T05:08:08.618999+00:00",
+      "sha256": "aee99cc2586eaee21cbf42b869ceae7ec8af728b099b0fb867cb5f94f844ba69",
+      "bytes": 501997,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical system maps, line topology, station codes and chainages. Internal edition dates require verification; diagrams are not georeferenced or proof of current track configuration."
+    }
+  ]
+}

@@ -1,10 +1,10 @@
 {
  "source": "derived",
  "assignment": "networks/matsim/schedules/baseline_regional/fleet_assignments.json",
- "mapped_vehicles": 115048,
- "assigned_vehicles": 115048,
+ "mapped_vehicles": 116183,
+ "assigned_vehicles": 116183,
  "unassigned_mapped_vehicles": 0,
- "lines": 1860,
+ "lines": 2331,
  "vehicles_by_profile": {
   "bus_city": 109858,
   "ferry_borivali_esselworld": 52,
@@ -16,13 +16,13 @@
   "ferry_marve_manori": 76,
   "ferry_versova_madh": 74,
   "ferry_wharf_mora": 52,
-  "metro_beml_6car": 1052,
+  "metro_beml_6car": 1010,
   "metro_line1_4car": 276,
   "metro_line3_8car": 276,
   "metro_navi_3car": 276,
-  "rail_emu_12car": 1672,
-  "rail_emu_12car_central": 704,
-  "rail_emu_12car_uran": 352
+  "rail_emu_12car": 3596,
+  "rail_emu_12car_ac": 255,
+  "rail_emu_15car": 54
  },
  "capacities_per_vehicle": {
   "rail_emu_12car": {
@@ -126,6 +126,24 @@
    "standing": 0,
    "seats_field": "A.transit.ferry_m2m_mandwa_capacity_seated",
    "standing_field": "A.transit.ferry_capacity_standing"
+  },
+  "rail_emu_12car_ac": {
+   "seats": 1028,
+   "standing": 4936,
+   "seats_field": "A.transit.rail_ac_capacity_seated",
+   "standing_field": "A.transit.rail_ac_capacity_standing"
+  },
+  "rail_emu_15car": {
+   "seats": 1460,
+   "standing": 4770,
+   "seats_field": "A.transit.rail_15car_capacity_seated",
+   "standing_field": "A.transit.rail_15car_capacity_standing"
+  },
+  "rail_emu_15car_ac": {
+   "seats": 1028,
+   "standing": 4936,
+   "seats_field": "A.transit.rail_ac_capacity_seated",
+   "standing_field": "A.transit.rail_ac_capacity_standing"
   }
  },
  "limitations": [

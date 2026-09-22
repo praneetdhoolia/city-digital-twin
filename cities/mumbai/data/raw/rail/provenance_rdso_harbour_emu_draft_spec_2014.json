@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/rdso_harbour_emu_draft_spec_2014_eacbff44d7f587a5.pdf",
+      "url": "https://rdso.indianrailways.gov.in/works/uploads/File/FinalDraftforUploading020414_3PhaseEMUsforHarborLineSpec.pdf",
+      "final_url": "https://rdso.indianrailways.gov.in/works/uploads/File/FinalDraftforUploading020414_3PhaseEMUsforHarborLineSpec.pdf",
+      "content_type": "application/pdf",
+      "source": "RDSO draft technical specification for three-phase Harbour EMUs, March 2014",
+      "licence": "Indian Railways/MRVC publication; reuse terms unverified",
+      "retrieved": "2026-09-22T05:08:24.136648+00:00",
+      "sha256": "eacbff44d7f587a5e03960cba52114b9351f4a8793b723da09cd25a6c2441aab",
+      "bytes": 3460651,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical draft design specification. Separate draft requirements and design loading from as-built geometry, actual fleet capacity, current operating speed and train assignment.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

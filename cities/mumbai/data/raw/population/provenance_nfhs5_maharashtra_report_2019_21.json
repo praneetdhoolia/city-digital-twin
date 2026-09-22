@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/population/nfhs5_maharashtra_report_2019_21_982ecbc44ecf1297.pdf",
+      "url": "https://dhsprogram.com/pubs/pdf/FR374/FR374_Maharashtra.pdf",
+      "final_url": "https://dhsprogram.com/pubs/pdf/FR374/FR374_Maharashtra.pdf",
+      "source": "National Family Health Survey (NFHS-5) 2019-21, Maharashtra state report",
+      "licence": "IIPS / DHS Program publication; reuse terms unverified",
+      "retrieved": "2026-09-22T06:40:13.253311+00:00",
+      "sha256": "982ecbc44ecf1297c322489da16869062a0513bd92fb5bc1f4edb9cc3028c794",
+      "bytes": 2084134,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Household possessions (motorcycle or scooter, car or truck, bicycle) by urban and rural residence for Maharashtra, 2019-21: a state-level survey observation of vehicle possession eight years after the census, a check on the derived possession projection (derive_vehicle_possession_growth.py), not a district control."
+    }
+  ]
+}

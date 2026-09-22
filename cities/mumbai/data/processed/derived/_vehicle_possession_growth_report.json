@@ -1,0 +1,40 @@
+{
+  "source": "derived",
+  "method": "see the module docstring",
+  "rows": 8,
+  "years": {
+    "census": 2011,
+    "office_stock_first": 2017,
+    "office_stock_last": 2025,
+    "base": 2026
+  },
+  "nfhs_check": {
+    "two_wheeler": {
+      "nfhs_urban_share_by_period": {
+        "2015-16": 0.445,
+        "2019-21": 0.601
+      },
+      "nfhs_urban_lambda_growth_per_year": 1.1039,
+      "derived_growth_per_year_by_district": {
+        "519": 1.0885,
+        "518": 1.0786,
+        "517": 1.0654,
+        "520": 1.0806
+      }
+    },
+    "car": {
+      "nfhs_urban_share_by_period": {
+        "2015-16": 0.092,
+        "2019-21": 0.14
+      },
+      "nfhs_urban_lambda_growth_per_year": 1.1043,
+      "derived_growth_per_year_by_district": {
+        "519": 1.0771,
+        "518": 1.0731,
+        "517": 1.0516,
+        "520": 1.0813
+      }
+    }
+  },
+  "reading": "the derived per-household stock growth a year is compared with the growth a year of the Poisson rate of the state urban possession share between the two surveys; a district whose derived rate exceeds the survey rate is projected faster than the state moved"
+}

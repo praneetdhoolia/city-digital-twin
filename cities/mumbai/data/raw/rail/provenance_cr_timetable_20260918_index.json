@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/cr_timetable_20260918_index_22be450202c9fd26.html",
+      "url": "https://cr.indianrailways.gov.in/view_section.jsp?backgroundColor=LIGHTSTEELBLUE&fontColor=black&id=0,5,2360&lang=0",
+      "final_url": "https://cr.indianrailways.gov.in/view_section.jsp?backgroundColor=LIGHTSTEELBLUE&fontColor=black&id=0,5,2360&lang=0",
+      "content_type": "text/html;charset=UTF-8",
+      "source": "Central Railway suburban timetable index",
+      "licence": "Government publication; reuse terms unverified",
+      "retrieved": "2026-09-22T05:03:53.713448+00:00",
+      "sha256": "22be450202c9fd2604c7e6eb96656ad1f74fb1df1a1ada81a17f9c3c7bca0e84",
+      "bytes": 484587,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Current public timetable index; linked documents retain individual effective dates.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}
