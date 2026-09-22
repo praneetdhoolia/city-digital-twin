@@ -635,7 +635,8 @@
       "evidence": "9.206: two 1 % cases (20260921T231313_4it_1pct, 20260922T005949_4it_1pct); the link-length distribution of scenarios/matsim/BASE/network.xml.gz; the live-set heap rule",
       "asked": "2026-09-22",
       "answer": "A larger host (cloud or workstation, 384-512 GB) for a 10 % core, after the merge diagnostic (recommended)",
-      "answered": "2026-09-22"
+      "answered": "2026-09-22",
+      "note": "22 September 2026, later the same day: no host yet (Not yet - hold the Mumbai reading); the merge diagnostic was measured and not applied (9.207)"
     },
     {
       "id": "D16",
@@ -655,7 +656,8 @@
       "evidence": "9.207: ogd_mmrda_ridership_catalog_20260922 (the catalog listing, acquired); the two keyed entries refuse with the reason",
       "asked": "2026-09-22",
       "answer": "Register a free OGD account at data.gov.in and put its key in .env as OGD_API_KEY (recommended)",
-      "answered": "2026-09-22"
+      "answered": "2026-09-22",
+      "note": "22 September 2026, later the same day: the user defers supplying the key (Later - leave the task on the lane)"
     },
     {
       "id": "D17",
