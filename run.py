@@ -475,11 +475,20 @@ def _detach():
     subprocess.check_call(['schtasks', '/run', '/tn', task])
     print('\ndetached launch registered and started as scheduled task %s' % task)
     print('launcher log: %s' % log)
-    print('the run directory will appear under results/ named by the runner.')
+    print('the run directory will appear under results/ as %s_<n>it_<pct>pct, '
+          'minutes from now: the harness subsamples the population before the '
+          'JVM starts.' % stamp)
     print('VERIFY per issue #70: matsim.log must progress past '
           'PersonPrepareForSim into iterations after this shell is closed.')
-    print('  python src/run/verify_launch.py            waits and says took/died')
-    print('  python src/run/verify_launch.py --no-wait  the state right now')
+    # --stamp, not the bare form: until the runner creates the directory the
+    # newest run under raw/ is the PREVIOUS one, and verifying that answers
+    # TOOK about a launch that has written nothing.
+    print('  python src/run/verify_launch.py --stamp %s            waits and '
+          'says took/died' % stamp)
+    print('  python src/run/verify_launch.py --stamp %s --no-wait  the state '
+          'right now' % stamp)
+    print('  python src/run/watch_run.py --run %s_<n>it_<pct>pct --events --read'
+          % stamp)
     return 0
 
 

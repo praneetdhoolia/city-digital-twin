@@ -8,10 +8,19 @@ no error artefact (9.72), which is why the sentence exists - and a sentence a
 person has to act on is a check that is skipped whenever the session moves on
 to something else. This is that sentence, executed.
 
-    python src/run/verify_launch.py                 the newest run, wait for it
+    python src/run/verify_launch.py --stamp <stamp> THE run that launch named
     python src/run/verify_launch.py --run <name>    a named run
+    python src/run/verify_launch.py                 the newest run, wait for it
     python src/run/verify_launch.py --timeout 1800  give up after 30 minutes
     python src/run/verify_launch.py --no-wait       report the state right now
+
+Verify by STAMP after a detached launch. `run.py --detach` returns as soon as
+the Task Scheduler accepts the job, and the harness then subsamples the
+population - minutes at 25 % - before it creates the run directory. In that
+window `newest_run()` returns the PREVIOUS run, which has a completed card and
+a `_run.json`, so the verifier answers TOOK about a launch that has not yet
+written a byte. The launch stamp names the run directory, so it is the only
+identifier that exists at the moment the launch returns.
 
 A launch has TAKEN when the run's own `matsim.log` has left startup and entered
 an iteration. It has DIED when the record says so, or when the log stops
@@ -43,6 +52,37 @@ def newest_run():
     dirs = [(os.path.getmtime(os.path.join(raw, n)), n)
             for n in os.listdir(raw) if os.path.isdir(os.path.join(raw, n))]
     return max(dirs)[1] if dirs else None
+
+
+def run_for_stamp(stamp):
+    """The run directory this launch stamp names, or None until it exists.
+
+    The runner names every run `<launch stamp>_<iterations>it_<pct>pct`, and
+    `CITYSIM_LAUNCH_STAMP` carries that stamp into the detached task, so the
+    prefix identifies the run before the run has written anything at all.
+    """
+    raw = results_store.RAW
+    if not os.path.isdir(raw):
+        return None
+    for name in sorted(os.listdir(raw)):
+        if name.startswith(stamp + '_') and os.path.isdir(os.path.join(raw, name)):
+            return name
+    return None
+
+
+def await_stamp(stamp, timeout, poll, wait, log=print):
+    """Wait for the stamped run directory to appear; None if it never does."""
+    started = time.time()
+    while True:
+        run = run_for_stamp(stamp)
+        if run is not None:
+            return run
+        waited = int(time.time() - started)
+        if not wait or waited >= timeout:
+            return None
+        log('  ... no run directory for stamp %s yet, the harness is still in '
+            'setup (%ds elapsed)' % (stamp, waited))
+        time.sleep(poll)
 
 
 def _tail(path, limit=400_000):
@@ -125,6 +165,11 @@ def verify(run, timeout, poll, wait, log=print):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument('--run', help='run name; default is the newest under raw/')
+    ap.add_argument('--stamp', help='the launch stamp the detached run was '
+                                    'named by (CITYSIM_LAUNCH_STAMP). Waits '
+                                    'for THAT run directory instead of taking '
+                                    'the newest, which during setup is the '
+                                    'PREVIOUS run')
     ap.add_argument('--timeout', type=int, default=1800,
                     help='seconds to wait for the first iteration (default '
                          '1800: startup was measured at 7 min, 9.154)')
@@ -133,7 +178,17 @@ def main(argv=None):
                     help='report the state now and exit')
     a = ap.parse_args(argv)
 
-    run = a.run or newest_run()
+    if a.run:
+        run = a.run
+    elif a.stamp:
+        run = await_stamp(a.stamp, a.timeout, a.poll, a.wait)
+        if run is None:
+            print('no run directory named by stamp %s appeared. The launch is '
+                  'UNVERIFIED: read the launcher log under results/_launch/ '
+                  'before assuming the arm is up.' % a.stamp)
+            return 1
+    else:
+        run = newest_run()
     if run is None:
         print('no run directories under results/raw')
         return 2
