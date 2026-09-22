@@ -48,12 +48,16 @@ OUTPUT_INPUTS = {
         'data/processed/observed/published_mode_splits.csv',
         'data/processed/observed/census_2011_b28_commuting.csv',
         'data/processed/observed/water_annual_passengers.csv',
+        'data/processed/observed/economic_survey_metro_controls.csv',
+        'data/processed/acquisition/ogd_metro_ridership_audit.json',
         'demand/population/B1_synthetic_population.csv',
         'registry/B_targets.json'],
     'data/processed/validation/_mode_targets_audit.json': [
         'data/processed/observed/published_mode_splits.csv',
         'data/processed/observed/census_2011_b28_commuting.csv',
         'data/processed/observed/water_annual_passengers.csv',
+        'data/processed/observed/economic_survey_metro_controls.csv',
+        'data/processed/acquisition/ogd_metro_ridership_audit.json',
         'demand/population/B1_synthetic_population.csv',
         'registry/B_targets.json'],
 }
@@ -117,13 +121,44 @@ def main():
     cts = 'CTS Updation Table 6-8 (%s, %d) motorised share %%s x (1 - active share %s%%%%)' % (area, year, active_pct)
     car_all, car_lo, car_hi = motor('Car')
     out = []
-    for mode, raw in (('bus', 'Bus'), ('heavy_rail', 'Train'), ('metro', 'Metro & Mono'),
+    for mode, raw in (('bus', 'Bus'), ('heavy_rail', 'Train'),
                       ('motorbike', 'Two-Wheeler'), ('taxi', 'Taxi'), ('auto_rickshaw', 'Rickshaw')):
         t, lo, hi = motor(raw)
         out.append(dict(mode=mode, target_pct=t, denominator=DENOM, status='derived', sweep_low=lo, sweep_high=hi,
-                        basis=(cts % (raw + ' ' + str(motorised[raw])))
-                        + ('; metro and monorail read as one target' if mode == 'metro' else ''),
-                        target_mean_km='', mean_km_basis=''))
+                        basis=(cts % (raw + ' ' + str(motorised[raw]))), target_mean_km='', mean_km_basis=''))
+    # metro and monorail: the operators' observed daily passengers, not the
+    # 2017 split (2.2 % of motorised trips when Line 1 and the Monorail were
+    # the network): MMRDA's daily series for Lines 2A/7 and the Monorail (OGD,
+    # the weekday mean of the latest three full months) and the Economic
+    # Survey's average daily passengers for Line 1, Line 3 and Navi Mumbai
+    # Line 1 (2024-25), summed against the CTS's all-mode daily trips. The
+    # sweep spans the Economic Survey's own 2A/7 figure (the 2024-25 average,
+    # below the latest weekday mean) and the CTS share's upper edge.
+    ogd = json.loads(Path(city.path('data/processed/acquisition/ogd_metro_ridership_audit.json')).read_text(encoding='utf-8'))['lines']
+    survey = {r['control_group_id']: float(r['average_passengers_per_day_lakh']) * 100000
+              for r in rows('data/processed/observed/economic_survey_metro_controls.csv')
+              if r['control_group_id'].startswith(('mumbai', 'navi'))}
+    ogd_2a7 = ogd['ogd_metro_2a_7_ridership_daily_2024_2025']['weekday_mean_latest_three_months']
+    ogd_mono = ogd['ogd_monorail_ridership_daily_2024_2025']['weekday_mean_latest_three_months']
+    other = sum(v for k, v in survey.items() if k != 'mumbai_2a_7')
+    daily_metro = ogd_2a7 + ogd_mono + other
+    daily_metro_survey = survey['mumbai_2a_7'] + ogd_mono + other
+    metro_pct = 100.0 * daily_metro / daily_trips_all
+    metro_lo = 100.0 * daily_metro_survey / daily_trips_all
+    peak_2a7 = max(ogd['ogd_metro_2a_7_ridership_daily_2024_2025']['weekday_mean_by_month'].values())
+    metro_hi = 100.0 * (peak_2a7 + ogd_mono + other) / daily_trips_all   # the series' busiest month
+    out.append(dict(mode='metro', target_pct=round(metro_pct, 4), denominator=DENOM, status='derived',
+                    sweep_low=round(min(metro_lo, metro_pct), 4), sweep_high=round(metro_hi, 4),
+                    basis='operators\' daily passengers %d against the CTS all-mode daily trips %d: Lines 2A and 7 %d '
+                          '(MMRDA OGD daily series, weekday mean of %s), Monorail %d (OGD, %s), Line 1 %d, Line 3 %d, '
+                          'Navi Mumbai Line 1 %d (Economic Survey 2025-26 average daily passengers 2024-25); the low '
+                          'bound takes the Survey\'s 2A/7 average %d, the high the series\' busiest weekday month %d; metro and '
+                          'monorail read as one target'
+                          % (round(daily_metro), round(daily_trips_all), ogd_2a7,
+                             '-'.join(ogd['ogd_metro_2a_7_ridership_daily_2024_2025']['latest_full_months']),
+                             ogd_mono, '-'.join(ogd['ogd_monorail_ridership_daily_2024_2025']['latest_full_months']),
+                             survey['mumbai_1'], survey['mumbai_3'], survey['navi_mumbai_1'], survey['mumbai_2a_7'], peak_2a7),
+                    target_mean_km='', mean_km_basis=''))
     out.append(dict(mode='car', target_pct=round(car_all * (1 - passenger_share), 4), denominator=DENOM, status='derived',
                     sweep_low=round(car_lo * (1 - passenger_share), 4), sweep_high=round(car_hi * (1 - passenger_share), 4),
                     basis=(cts % ('Car ' + str(motorised['Car']))) + '; driver share %.4f of persons aged 5+ in car-owning '

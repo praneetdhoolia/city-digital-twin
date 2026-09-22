@@ -195,9 +195,9 @@
    "what": "Hoist the three per-iteration thread pools (RemodeRestore.route x2, routeDetoursInParallel) to one pool per run, keeping one TripRouter per worker so the RNG sequence is unchanged.",
    "repeat_of": "ninth #17 (half)",
    "opens_family": true,
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.210",
+   "updated": "2026-09-22"
   },
   {
    "id": "20260914T152907:19",
@@ -206,9 +206,9 @@
    "what": "Give the taxi fleet its sample fraction from RUN.sample.fraction, not qsim.flowCapFactor.",
    "repeat_of": null,
    "opens_family": true,
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.210",
+   "updated": "2026-09-22"
   },
   {
    "id": "20260914T152907:20",
@@ -385,9 +385,9 @@
    "repeat_of": 2,
    "opens_family": true,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.210",
+   "updated": "2026-09-22"
   },
   {
    "id": "20260916T062246:15",

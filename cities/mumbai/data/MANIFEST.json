@@ -1,29 +1,29 @@
 {
   "project": "An executed broad behavioural development baseline with mapped bus, suburban rail, metro and ferry services and a small representative-person population. No citywide scaling, calibration or complete all-mode coverage claim.",
-  "generated": "2026-09-22T16:44:51",
+  "generated": "2026-09-22T17:43:42",
   "base_year": 2026,
   "crs": "EPSG:32643 (WGS 84 / UTM zone 43N)",
-  "n_files": 1453,
-  "total_bytes": 12271916697,
+  "n_files": 1459,
+  "total_bytes": 12272150070,
   "total_gib": 11.43,
   "by_stage": {
-    "raw": 1153,
-    "processed": 300
+    "raw": 1157,
+    "processed": 302
   },
   "bytes_by_stage": {
-    "raw": 6542027249,
-    "processed": 5729889448
+    "raw": 6542073634,
+    "processed": 5730076436
   },
   "by_lineage_scope": {
-    "raw": 576,
-    "output": 864,
-    "script": 5,
-    "none": 8
+    "raw": 578,
+    "output": 866,
+    "script": 6,
+    "none": 9
   },
   "by_share_alike_ancestor": {
     "yes": 130,
-    "no": 1315,
-    "undetermined": 8
+    "no": 1320,
+    "undetermined": 9
   },
   "files": [
     {
@@ -12823,6 +12823,20 @@
       "share_alike_ancestor": "no"
     },
     {
+      "path": "data/raw/transit/ogd_metro_2a_7_ridership_daily_2024_2025_46e3b6fd316a2ba8.csv",
+      "bytes": 30444,
+      "rows": 628,
+      "sha256": "46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7",
+      "stage": "raw",
+      "produced_by": "cities/mumbai/extract/acquire_sources.py",
+      "source": "OGD: MMRDA daily ridership of Metro Lines 2A and 7, 1 January 2024 to 19 September 2025",
+      "source_url": "https://api.data.gov.in/resource/a1b36307-9207-4672-86e2-ae1421ffac24?format=csv&limit=2000",
+      "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
+      "retrieved": "2026-09-22T07:25:08.393099+00:00",
+      "lineage_scope": "raw",
+      "share_alike_ancestor": "no"
+    },
+    {
       "path": "data/raw/transit/ogd_mmrda_ridership_catalog_20260922_132e188eed033ecd.json",
       "bytes": 5586,
       "rows": null,
@@ -12833,6 +12847,20 @@
       "source_url": "https://www.data.gov.in/backend/dmspublic/v1/resources?filters[catalog_reference]=604084764&offset=0&limit=20",
       "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
       "retrieved": "2026-09-21T17:23:22.985023+00:00",
+      "lineage_scope": "raw",
+      "share_alike_ancestor": "no"
+    },
+    {
+      "path": "data/raw/transit/ogd_monorail_ridership_daily_2024_2025_fbc5f2fad3c16d07.csv",
+      "bytes": 13472,
+      "rows": 356,
+      "sha256": "fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51",
+      "stage": "raw",
+      "produced_by": "cities/mumbai/extract/acquire_sources.py",
+      "source": "OGD: MMRDA daily ridership of the Mumbai Monorail, 1 October 2024 to 21 September 2025",
+      "source_url": "https://api.data.gov.in/resource/c1712e3f-1a3a-4cd1-b146-bf6d89be3031?format=csv&limit=2000",
+      "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
+      "retrieved": "2026-09-22T07:26:20.874511+00:00",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -15665,10 +15693,38 @@
       "share_alike_ancestor": "no"
     },
     {
+      "path": "data/raw/transit/provenance_ogd_metro_2a_7_ridership_daily_2024_2025.json",
+      "bytes": 1244,
+      "rows": null,
+      "sha256": "86837588fa53f1883143b6ee7c8c84dcf03a30ebb88b623df6feff7020a45dc6",
+      "stage": "raw",
+      "produced_by": "cities/mumbai/extract/acquire_sources.py",
+      "source": "Mumbai Metropolitan Region (provisional research extent) - the provenance record the package keeps of itself",
+      "source_url": "",
+      "licence": "CC-BY 4.0 (original package records only; source rights remain separate)",
+      "retrieved": "",
+      "lineage_scope": "output",
+      "share_alike_ancestor": "no"
+    },
+    {
       "path": "data/raw/transit/provenance_ogd_mmrda_ridership_catalog_20260922.json",
       "bytes": 1044,
       "rows": null,
       "sha256": "465d32ed53ccc59c1e2821371bd4584f07ee3049c7f8ff6cbdfb65178ba34702",
+      "stage": "raw",
+      "produced_by": "cities/mumbai/extract/acquire_sources.py",
+      "source": "Mumbai Metropolitan Region (provisional research extent) - the provenance record the package keeps of itself",
+      "source_url": "",
+      "licence": "CC-BY 4.0 (original package records only; source rights remain separate)",
+      "retrieved": "",
+      "lineage_scope": "output",
+      "share_alike_ancestor": "no"
+    },
+    {
+      "path": "data/raw/transit/provenance_ogd_monorail_ridership_daily_2024_2025.json",
+      "bytes": 1225,
+      "rows": null,
+      "sha256": "83cccce26694d2d713217f6f9070bd7d9966647f649979a6039111ec98caa463",
       "stage": "raw",
       "produced_by": "cities/mumbai/extract/acquire_sources.py",
       "source": "Mumbai Metropolitan Region (provisional research extent) - the provenance record the package keeps of itself",
@@ -16869,6 +16925,20 @@
       "share_alike_ancestor": "no"
     },
     {
+      "path": "data/processed/acquisition/ogd_metro_ridership_audit.json",
+      "bytes": 2357,
+      "rows": null,
+      "sha256": "6150aaf52d202754f7ec415f1240f894528327cb8937b847c51e4f89aae672d4",
+      "stage": "processed",
+      "produced_by": "cities/mumbai/extract/audit_gtfs.py",
+      "source": "",
+      "source_url": "",
+      "licence": "CC-BY 4.0 (original package records only; source rights remain separate)",
+      "retrieved": "",
+      "lineage_scope": "script",
+      "share_alike_ancestor": "no"
+    },
+    {
       "path": "data/processed/acquisition/osm_activity_areas_audit.json",
       "bytes": 865,
       "rows": null,
@@ -17136,9 +17206,9 @@
     },
     {
       "path": "data/processed/acquisition/source_inventory.json",
-      "bytes": 455480,
+      "bytes": 456012,
       "rows": null,
-      "sha256": "800109fb2d7cdf5d0c132b3854ced5b51f152569009c6b4f9c980b2cd4db0bd4",
+      "sha256": "ad3ce6bdae9b0ee6664e7e8e4b8bc3d3094779c40d373dfbf7dce7fc0f6f595a",
       "stage": "processed",
       "produced_by": "cities/mumbai/extract/inventory_sources.py",
       "source": "",
@@ -17150,9 +17220,9 @@
     },
     {
       "path": "data/processed/acquisition/source_use.json",
-      "bytes": 371897,
+      "bytes": 372724,
       "rows": null,
-      "sha256": "bc4d5dbbca222c73daf0c1d5a90f1688c788cf9b399ceb98db27d2192386c8f4",
+      "sha256": "ef1afcad42cf5dfa78b75027c1bf9362baf2acdc4ae9ea79b9eceb528c924f9d",
       "stage": "processed",
       "produced_by": "cities/mumbai/extract/audit_gtfs.py",
       "source": "",
@@ -19081,6 +19151,20 @@
       "share_alike_ancestor": "no"
     },
     {
+      "path": "data/processed/observed/ogd_metro_daily_ridership.csv",
+      "bytes": 182635,
+      "rows": 984,
+      "sha256": "3b138284962a6bd50b183ad2798a12665c7d21806af29c70f87ab21c2e857336",
+      "stage": "processed",
+      "produced_by": "",
+      "source": "",
+      "source_url": "",
+      "licence": "CC-BY 4.0 (original package records only; source rights remain separate)",
+      "retrieved": "",
+      "lineage_scope": "none",
+      "share_alike_ancestor": "undetermined"
+    },
+    {
       "path": "data/processed/observed/osm_transport_points.csv",
       "bytes": 3664607,
       "rows": 12009,
@@ -19740,29 +19824,29 @@
     },
     {
       "path": "data/processed/validation/_mode_targets_audit.json",
-      "bytes": 1992,
+      "bytes": 2260,
       "rows": null,
-      "sha256": "3efdb77be54d2f12f66bedfcf87f1185914a7ebd3d64413f1b56279537007c6f",
+      "sha256": "c94efd3857b41463e4c3621c5e2e508af6bb631c08294cddfa222e725976d985",
       "stage": "processed",
       "produced_by": "cities/mumbai/build/build_mode_targets.py",
-      "source": "Greater Mumbai comprehensive mobility plan executive summary + Mumbai Suburban primary census abstract + MMR CTS final report third-party copy + MMB public passenger statistics + IIT Bombay mumbai_city district and taluka boundaries + IIT Bombay mumbai_suburban district and taluka boundaries + IIT Bombay palghar district and taluka boundaries + IIT Bombay thane district and taluka boundaries + IIT Bombay raigad district and taluka boundaries + IIT Bombay mumbaicity census-linked village and ward GIS + IIT Bombay palghar census-linked village and ward GIS + IIT Bombay thane census-linked village and ward GIS + IIT Bombay raigad census-linked village and ward GIS + Maharashtra B28 commuting distance and mode 2011 + Mumbai City primary census abstract 2011 + Thane primary census abstract 2011 including later Palghar + Raigarh Maharashtra primary census abstract 2011 + Public MMR layer 1 field and coverage metadata + Public MMR layer 1 object IDs for completeness audit + Public MMR layer 1 attributes and geometry WGS84 + Public MMR layer 2 field and coverage metadata + Public MMR layer 2 object IDs for completeness audit + Public MMR layer 2 attributes and geometry WGS84 + Public MMR layer 3 field and coverage metadata + Public MMR layer 3 object IDs for completeness audit + Public MMR layer 3 attributes and geometry WGS84 + Public MMR layer 5 field and coverage metadata + Public MMR layer 5 object IDs for completeness audit + Public MMR layer 5 attributes and geometry WGS84 + Public MMR layer 6 field and coverage metadata + Public MMR layer 6 object IDs for completeness audit + Public MMR layer 6 attributes and geometry WGS84 + HL-14 household amenities and assets Mumbai Suburban 2011 + HL-14 household amenities and assets Mumbai City 2011 + HL-14 household amenities and assets thane Maharashtra 2011 + HL-14 household amenities and assets raigad Maharashtra 2011 + Population by five-year age group and sex Maharashtra 2011 catalogue search + School attendance by age and economic activity Maharashtra 2011 catalogue search + Census 2011 Maharashtra single-year age returns + Census 2011 Maharashtra work status, age and sex + MMR extended notified area Special Planning Authority notification + IIPS district-level population projections by quinquennial age group and sex 2012-2031",
-      "source_url": "https://portal.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Roads%20and%20Traffic/Docs/CMP%20for%20Greater%20Mumbai/Executive%20Summary/Executive%20Summary.pdf + https://censusindia.gov.in/nada/index.php/catalog/6709/download/9786/DDW_PCA2722_2011_MDDS%20with%20UI.xlsx + https://infralive.com/web/wp-content/uploads/2022/05/Comprehensive-Transport-Study-for-Mumbai-Metropolitan-Region.pdf + https://maharashtramaritimeboard.com/api/v1/passenger-water-transport/performance-statistics + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/Mumbai_City.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/Mumbai_Suburban.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/palghar.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/thane.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/raigad.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/mumbaicity.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/palghar.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/thane.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/raigad.zip + https://censusindia.gov.in/nada/index.php/catalog/13981/download/17094/DDW-2700B-28.xlsx + https://censusindia.gov.in/nada/index.php/catalog/6710/download/9787/DDW_PCA2723_2011_MDDS%20with%20UI.xlsx + https://censusindia.gov.in/nada/index.php/catalog/6708/download/9785/DDW_PCA2721_2011_MDDS%20with%20UI.xlsx + https://censusindia.gov.in/nada/index.php/catalog/6711/download/9788/DDW_PCA2724_2011_MDDS%20with%20UI.xlsx + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/1?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/1/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/1/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/2?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/2/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/2/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/3?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/3/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/3/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/5?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/5/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/5/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/6?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/6/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/6/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://censusindia.gov.in/nada/index.php/catalog/9816/download/12928/HLPCA-27518-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/9817/download/12929/HLPCA-27519-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/9815/download/12927/HLPCA-27517-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/9818/download/12930/HLPCA-27520-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/1562/download/4639/DDW-2700C-14.xls + https://censusindia.gov.in/nada/index.php/catalog/2658/download/5735/DDW-2700C-12.xls + https://censusindia.gov.in/nada/index.php/catalog/1457/download/4534/DDW-2700C-13.xls + https://censusindia.gov.in/nada/index.php/catalog/12624/download/15737/DDW-2700B-01-Census.xls + https://www.mmrda.maharashtra.gov.in/sites/default/files/2025-07/notification_of_mmr-ena_spa.pdf + https://www.iipsindia.ac.in/sites/default/files/FULL_REPORT_WITH_FINAL_TABLES.pdf",
+      "source": "Greater Mumbai comprehensive mobility plan executive summary + Mumbai Suburban primary census abstract + MMR CTS final report third-party copy + MMB public passenger statistics + IIT Bombay mumbai_city district and taluka boundaries + IIT Bombay mumbai_suburban district and taluka boundaries + IIT Bombay palghar district and taluka boundaries + IIT Bombay thane district and taluka boundaries + IIT Bombay raigad district and taluka boundaries + IIT Bombay mumbaicity census-linked village and ward GIS + IIT Bombay palghar census-linked village and ward GIS + IIT Bombay thane census-linked village and ward GIS + IIT Bombay raigad census-linked village and ward GIS + Maharashtra B28 commuting distance and mode 2011 + Mumbai City primary census abstract 2011 + Thane primary census abstract 2011 including later Palghar + Raigarh Maharashtra primary census abstract 2011 + Public MMR layer 1 field and coverage metadata + Public MMR layer 1 object IDs for completeness audit + Public MMR layer 1 attributes and geometry WGS84 + Public MMR layer 2 field and coverage metadata + Public MMR layer 2 object IDs for completeness audit + Public MMR layer 2 attributes and geometry WGS84 + Public MMR layer 3 field and coverage metadata + Public MMR layer 3 object IDs for completeness audit + Public MMR layer 3 attributes and geometry WGS84 + Public MMR layer 5 field and coverage metadata + Public MMR layer 5 object IDs for completeness audit + Public MMR layer 5 attributes and geometry WGS84 + Public MMR layer 6 field and coverage metadata + Public MMR layer 6 object IDs for completeness audit + Public MMR layer 6 attributes and geometry WGS84 + HL-14 household amenities and assets Mumbai Suburban 2011 + HL-14 household amenities and assets Mumbai City 2011 + HL-14 household amenities and assets thane Maharashtra 2011 + HL-14 household amenities and assets raigad Maharashtra 2011 + Population by five-year age group and sex Maharashtra 2011 catalogue search + School attendance by age and economic activity Maharashtra 2011 catalogue search + Census 2011 Maharashtra single-year age returns + Census 2011 Maharashtra work status, age and sex + MMR extended notified area Special Planning Authority notification + IIPS district-level population projections by quinquennial age group and sex 2012-2031 + Economic Survey of Maharashtra 2025-26 English full report",
+      "source_url": "https://portal.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Roads%20and%20Traffic/Docs/CMP%20for%20Greater%20Mumbai/Executive%20Summary/Executive%20Summary.pdf + https://censusindia.gov.in/nada/index.php/catalog/6709/download/9786/DDW_PCA2722_2011_MDDS%20with%20UI.xlsx + https://infralive.com/web/wp-content/uploads/2022/05/Comprehensive-Transport-Study-for-Mumbai-Metropolitan-Region.pdf + https://maharashtramaritimeboard.com/api/v1/passenger-water-transport/performance-statistics + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/Mumbai_City.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/Mumbai_Suburban.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/palghar.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/thane.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/raigad.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/mumbaicity.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/palghar.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/thane.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/raigad.zip + https://censusindia.gov.in/nada/index.php/catalog/13981/download/17094/DDW-2700B-28.xlsx + https://censusindia.gov.in/nada/index.php/catalog/6710/download/9787/DDW_PCA2723_2011_MDDS%20with%20UI.xlsx + https://censusindia.gov.in/nada/index.php/catalog/6708/download/9785/DDW_PCA2721_2011_MDDS%20with%20UI.xlsx + https://censusindia.gov.in/nada/index.php/catalog/6711/download/9788/DDW_PCA2724_2011_MDDS%20with%20UI.xlsx + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/1?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/1/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/1/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/2?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/2/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/2/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/3?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/3/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/3/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/5?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/5/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/5/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/6?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/6/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/6/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://censusindia.gov.in/nada/index.php/catalog/9816/download/12928/HLPCA-27518-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/9817/download/12929/HLPCA-27519-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/9815/download/12927/HLPCA-27517-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/9818/download/12930/HLPCA-27520-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/1562/download/4639/DDW-2700C-14.xls + https://censusindia.gov.in/nada/index.php/catalog/2658/download/5735/DDW-2700C-12.xls + https://censusindia.gov.in/nada/index.php/catalog/1457/download/4534/DDW-2700C-13.xls + https://censusindia.gov.in/nada/index.php/catalog/12624/download/15737/DDW-2700B-01-Census.xls + https://www.mmrda.maharashtra.gov.in/sites/default/files/2025-07/notification_of_mmr-ena_spa.pdf + https://www.iipsindia.ac.in/sites/default/files/FULL_REPORT_WITH_FINAL_TABLES.pdf + https://mahaces.maharashtra.gov.in/files/EconomicSurvey/esm_2526_e.pdf",
       "licence": "MMRDA / BMC publications, ORGI census, MMB statistics and the synthesised population; reuse terms unverified; the package's own record CC-BY 4.0",
-      "retrieved": "2026-09-18T16:39:22.261460+00:00",
+      "retrieved": "2026-09-18T16:47:21.604554+00:00",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
     {
       "path": "data/processed/validation/mode_targets_by_mode.csv",
-      "bytes": 3012,
+      "bytes": 3335,
       "rows": 13,
-      "sha256": "cb54ca24e7a095df10e7a9fbd3520b836281bb36e3c31643486deb7a2f7ea2cc",
+      "sha256": "a2b57e5c65623e5bd3b87056cb632508de07982ebff5da52c695eeaa37d60187",
       "stage": "processed",
       "produced_by": "cities/mumbai/build/build_mode_targets.py",
-      "source": "Greater Mumbai comprehensive mobility plan executive summary + Mumbai Suburban primary census abstract + MMR CTS final report third-party copy + MMB public passenger statistics + IIT Bombay mumbai_city district and taluka boundaries + IIT Bombay mumbai_suburban district and taluka boundaries + IIT Bombay palghar district and taluka boundaries + IIT Bombay thane district and taluka boundaries + IIT Bombay raigad district and taluka boundaries + IIT Bombay mumbaicity census-linked village and ward GIS + IIT Bombay palghar census-linked village and ward GIS + IIT Bombay thane census-linked village and ward GIS + IIT Bombay raigad census-linked village and ward GIS + Maharashtra B28 commuting distance and mode 2011 + Mumbai City primary census abstract 2011 + Thane primary census abstract 2011 including later Palghar + Raigarh Maharashtra primary census abstract 2011 + Public MMR layer 1 field and coverage metadata + Public MMR layer 1 object IDs for completeness audit + Public MMR layer 1 attributes and geometry WGS84 + Public MMR layer 2 field and coverage metadata + Public MMR layer 2 object IDs for completeness audit + Public MMR layer 2 attributes and geometry WGS84 + Public MMR layer 3 field and coverage metadata + Public MMR layer 3 object IDs for completeness audit + Public MMR layer 3 attributes and geometry WGS84 + Public MMR layer 5 field and coverage metadata + Public MMR layer 5 object IDs for completeness audit + Public MMR layer 5 attributes and geometry WGS84 + Public MMR layer 6 field and coverage metadata + Public MMR layer 6 object IDs for completeness audit + Public MMR layer 6 attributes and geometry WGS84 + HL-14 household amenities and assets Mumbai Suburban 2011 + HL-14 household amenities and assets Mumbai City 2011 + HL-14 household amenities and assets thane Maharashtra 2011 + HL-14 household amenities and assets raigad Maharashtra 2011 + Population by five-year age group and sex Maharashtra 2011 catalogue search + School attendance by age and economic activity Maharashtra 2011 catalogue search + Census 2011 Maharashtra single-year age returns + Census 2011 Maharashtra work status, age and sex + MMR extended notified area Special Planning Authority notification + IIPS district-level population projections by quinquennial age group and sex 2012-2031",
-      "source_url": "https://portal.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Roads%20and%20Traffic/Docs/CMP%20for%20Greater%20Mumbai/Executive%20Summary/Executive%20Summary.pdf + https://censusindia.gov.in/nada/index.php/catalog/6709/download/9786/DDW_PCA2722_2011_MDDS%20with%20UI.xlsx + https://infralive.com/web/wp-content/uploads/2022/05/Comprehensive-Transport-Study-for-Mumbai-Metropolitan-Region.pdf + https://maharashtramaritimeboard.com/api/v1/passenger-water-transport/performance-statistics + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/Mumbai_City.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/Mumbai_Suburban.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/palghar.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/thane.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/raigad.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/mumbaicity.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/palghar.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/thane.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/raigad.zip + https://censusindia.gov.in/nada/index.php/catalog/13981/download/17094/DDW-2700B-28.xlsx + https://censusindia.gov.in/nada/index.php/catalog/6710/download/9787/DDW_PCA2723_2011_MDDS%20with%20UI.xlsx + https://censusindia.gov.in/nada/index.php/catalog/6708/download/9785/DDW_PCA2721_2011_MDDS%20with%20UI.xlsx + https://censusindia.gov.in/nada/index.php/catalog/6711/download/9788/DDW_PCA2724_2011_MDDS%20with%20UI.xlsx + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/1?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/1/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/1/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/2?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/2/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/2/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/3?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/3/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/3/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/5?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/5/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/5/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/6?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/6/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/6/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://censusindia.gov.in/nada/index.php/catalog/9816/download/12928/HLPCA-27518-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/9817/download/12929/HLPCA-27519-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/9815/download/12927/HLPCA-27517-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/9818/download/12930/HLPCA-27520-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/1562/download/4639/DDW-2700C-14.xls + https://censusindia.gov.in/nada/index.php/catalog/2658/download/5735/DDW-2700C-12.xls + https://censusindia.gov.in/nada/index.php/catalog/1457/download/4534/DDW-2700C-13.xls + https://censusindia.gov.in/nada/index.php/catalog/12624/download/15737/DDW-2700B-01-Census.xls + https://www.mmrda.maharashtra.gov.in/sites/default/files/2025-07/notification_of_mmr-ena_spa.pdf + https://www.iipsindia.ac.in/sites/default/files/FULL_REPORT_WITH_FINAL_TABLES.pdf",
+      "source": "Greater Mumbai comprehensive mobility plan executive summary + Mumbai Suburban primary census abstract + MMR CTS final report third-party copy + MMB public passenger statistics + IIT Bombay mumbai_city district and taluka boundaries + IIT Bombay mumbai_suburban district and taluka boundaries + IIT Bombay palghar district and taluka boundaries + IIT Bombay thane district and taluka boundaries + IIT Bombay raigad district and taluka boundaries + IIT Bombay mumbaicity census-linked village and ward GIS + IIT Bombay palghar census-linked village and ward GIS + IIT Bombay thane census-linked village and ward GIS + IIT Bombay raigad census-linked village and ward GIS + Maharashtra B28 commuting distance and mode 2011 + Mumbai City primary census abstract 2011 + Thane primary census abstract 2011 including later Palghar + Raigarh Maharashtra primary census abstract 2011 + Public MMR layer 1 field and coverage metadata + Public MMR layer 1 object IDs for completeness audit + Public MMR layer 1 attributes and geometry WGS84 + Public MMR layer 2 field and coverage metadata + Public MMR layer 2 object IDs for completeness audit + Public MMR layer 2 attributes and geometry WGS84 + Public MMR layer 3 field and coverage metadata + Public MMR layer 3 object IDs for completeness audit + Public MMR layer 3 attributes and geometry WGS84 + Public MMR layer 5 field and coverage metadata + Public MMR layer 5 object IDs for completeness audit + Public MMR layer 5 attributes and geometry WGS84 + Public MMR layer 6 field and coverage metadata + Public MMR layer 6 object IDs for completeness audit + Public MMR layer 6 attributes and geometry WGS84 + HL-14 household amenities and assets Mumbai Suburban 2011 + HL-14 household amenities and assets Mumbai City 2011 + HL-14 household amenities and assets thane Maharashtra 2011 + HL-14 household amenities and assets raigad Maharashtra 2011 + Population by five-year age group and sex Maharashtra 2011 catalogue search + School attendance by age and economic activity Maharashtra 2011 catalogue search + Census 2011 Maharashtra single-year age returns + Census 2011 Maharashtra work status, age and sex + MMR extended notified area Special Planning Authority notification + IIPS district-level population projections by quinquennial age group and sex 2012-2031 + Economic Survey of Maharashtra 2025-26 English full report",
+      "source_url": "https://portal.mcgm.gov.in/irj/go/km/docs/documents/MCGM%20Department%20List/Roads%20and%20Traffic/Docs/CMP%20for%20Greater%20Mumbai/Executive%20Summary/Executive%20Summary.pdf + https://censusindia.gov.in/nada/index.php/catalog/6709/download/9786/DDW_PCA2722_2011_MDDS%20with%20UI.xlsx + https://infralive.com/web/wp-content/uploads/2022/05/Comprehensive-Transport-Study-for-Mumbai-Metropolitan-Region.pdf + https://maharashtramaritimeboard.com/api/v1/passenger-water-transport/performance-statistics + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/Mumbai_City.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/Mumbai_Suburban.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/palghar.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/thane.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.2/Boundary_Shape_File_21July/raigad.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/mumbaicity.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/palghar.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/thane.zip + https://www.cse.iitb.ac.in/~pocra/MahaCensus_shapefile_data1.1/Shape_File_3July/raigad.zip + https://censusindia.gov.in/nada/index.php/catalog/13981/download/17094/DDW-2700B-28.xlsx + https://censusindia.gov.in/nada/index.php/catalog/6710/download/9787/DDW_PCA2723_2011_MDDS%20with%20UI.xlsx + https://censusindia.gov.in/nada/index.php/catalog/6708/download/9785/DDW_PCA2721_2011_MDDS%20with%20UI.xlsx + https://censusindia.gov.in/nada/index.php/catalog/6711/download/9788/DDW_PCA2724_2011_MDDS%20with%20UI.xlsx + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/1?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/1/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/1/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/2?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/2/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/2/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/3?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/3/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/3/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/5?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/5/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/5/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/6?f=pjson + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/6/query?where=1%3D1&returnIdsOnly=true&f=json + https://services.arcgis.com/hBEMHCkbQdfV906F/ArcGIS/rest/services/BoundaryMapMMR_WFL1/FeatureServer/6/query?where=1%3D1&outFields=%2A&returnGeometry=true&outSR=4326&f=json + https://censusindia.gov.in/nada/index.php/catalog/9816/download/12928/HLPCA-27518-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/9817/download/12929/HLPCA-27519-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/9815/download/12927/HLPCA-27517-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/9818/download/12930/HLPCA-27520-2011_H14_census.xlsx + https://censusindia.gov.in/nada/index.php/catalog/1562/download/4639/DDW-2700C-14.xls + https://censusindia.gov.in/nada/index.php/catalog/2658/download/5735/DDW-2700C-12.xls + https://censusindia.gov.in/nada/index.php/catalog/1457/download/4534/DDW-2700C-13.xls + https://censusindia.gov.in/nada/index.php/catalog/12624/download/15737/DDW-2700B-01-Census.xls + https://www.mmrda.maharashtra.gov.in/sites/default/files/2025-07/notification_of_mmr-ena_spa.pdf + https://www.iipsindia.ac.in/sites/default/files/FULL_REPORT_WITH_FINAL_TABLES.pdf + https://mahaces.maharashtra.gov.in/files/EconomicSurvey/esm_2526_e.pdf",
       "licence": "MMRDA / BMC publications, ORGI census, MMB statistics and the synthesised population; reuse terms unverified; the package's own record CC-BY 4.0",
-      "retrieved": "2026-09-18T16:39:22.261460+00:00",
+      "retrieved": "2026-09-18T16:47:21.604554+00:00",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -20132,9 +20216,9 @@
     },
     {
       "path": "scenarios/matsim/BASE/WEEKDAY/config.xml",
-      "bytes": 14521,
+      "bytes": 14567,
       "rows": null,
-      "sha256": "6a1cea93423ba6a94b64f847660bad81e64b6f0954510650e2b23d316773499a",
+      "sha256": "9bfc942d62c31ff7298743df5e3a5a5a84e6eae39ce186ae0b724b1347f3f523",
       "stage": "processed",
       "produced_by": "cities/mumbai/build/build_baseline_run_inputs.py",
       "source": "",

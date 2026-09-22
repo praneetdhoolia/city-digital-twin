@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "url": "https://api.data.gov.in/resource/a1b36307-9207-4672-86e2-ae1421ffac24?format=csv&limit=2000",
+      "final_url": "https://www.data.gov.in/resource/ridership-data-metro-line-2a-and-7-01-01-2024-19-09-2025",
+      "content_type": null,
+      "retrieved": "2026-09-22T07:25:08.393099+00:00",
+      "bytes": 30444,
+      "path": "data/raw/transit/ogd_metro_2a_7_ridership_daily_2024_2025_46e3b6fd316a2ba8.csv",
+      "sha256": "46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7",
+      "source": "OGD: MMRDA daily ridership of Metro Lines 2A and 7, 1 January 2024 to 19 September 2025",
+      "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
+      "coverage": "Daily ridership by payment method, published by MMRDA on data.gov.in 23 September 2025 (catalog nid 604084764, resource nid 604084801); an operator series by line, not station-level.",
+      "producing_script": "extract/import_browser_acquisition.py",
+      "transport": "the user's logged-in browser download from the portal page named as final_url (a download form a script cannot pass); the file's modification time is the retrieval",
+      "validation_status": "acquired_unvalidated"
+    }
+  ]
+}

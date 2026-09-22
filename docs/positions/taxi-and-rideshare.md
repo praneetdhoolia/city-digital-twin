@@ -2,9 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
+**Updated:** 22 September 2026 (sixtieth session) · **Record read through:** §9.210 · **Written against family:** `F35`
 
 ## What is built
+
+- **The fleet scales by the sample, its own emitted field** (§9.210, #215): `TaxiFleetEngine` reads `taxiFleet.sampleFraction` (the harness emits `RUN.sample.fraction`), not `qsim.flowCapacityFactor`; `fleet=8 (declared 800.0 x sample 0.01)` on `20260922T172813_4it_1pct`.
 
 - **A refused request is routed as a walk by the engine itself, and the taxi trip comes back whole** (§9.168, F35): a NULL-route walk leg had `PersonPrepareForSim` re-route the WHOLE plan every iteration (24 % of CPU, `20260912T162831_4it_25pct`). `TaxiFleetEngine.remodeRefused` routes the refused trips on `global.numberOfThreads` workers after the fleet pass (45,573 in 61 s at 25 %, `20260912T185005_4it_25pct`), inserts them in refusal order and restores the original taxi trip after the mobsim. Under `accessEgressModeToLink` the trip is found by routing mode and replaced whole (§9.167, #167).
 - **One mode, `taxi`, standing for taxi and rideshare together**, blended at `B.taxi.rideshare_trip_share` 0.66 (IPART 2025 last-trip split, swept 0.4–0.8, §9.76); no observation splits them (§9.21, §9.42).
@@ -50,6 +52,7 @@
 
 ## History
 
+- §9.210 — the Java fold; the metro target
 - §9.176 — intro fixed: which runs are results is the board's
 - §9.170 — the tenth report re-reads arm 0 unchanged
 - §9.169 — arm 0: taxi +131.4 %, refusals 18 %
@@ -64,4 +67,3 @@
 - §9.139 — F23 gate: band widens to +77 %
 - §9.134 — F21 gate: taxi flat at +67 %
 - §9.126 — F17 held taxi at +52 %
-- §9.121 — seed flood refused, then decays

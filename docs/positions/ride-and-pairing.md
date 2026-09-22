@@ -2,9 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 17 September 2026 (fifty-fourth session) · **Record read through:** §9.177 · **Written against family:** `F35`
+**Updated:** 22 September 2026 (sixtieth session) · **Record read through:** §9.210 · **Written against family:** `F35`
 
 ## What is built
+
+- **The Java fold is landed** (§9.210, #187 #216 #217, D12's gate half #86): `RidePairingEngine` logs `retimed= restoreRetimed= restoreOrphan=` by name every iteration (274/274/0 … 501/501/0 on `20260922T172813_4it_1pct`); a timed-out joint ride is clocked by its leg's travel time, else free-flow over its links, else the beeline, never zero (`timeoutClock(freeflow= beeline=)`); one routing pool per run (`RemodeRestore.routingPool`); `GatedSubtourModeChoice` refuses a `heldRideTrips` passenger off ride - the attribute is the roots rebuild's to write.
 
 - **The engine routes the trip it re-modes and restores the original; the clock override is restored after the mobsim** (§9.168, §9.167, #167, #187): a ride trip under `accessEgressModeToLink` is five legs, replaced whole; `RidePairingEngine.routeRemodes` routes every unpaired leg's trip in its fallback mode on `global.numberOfThreads` workers (**644 in 0.9 s**, `20260912T185005_4it_25pct`), the restore putting the ride trip back (`RemodeRestore.Remode`); a driver's end-time override is restored at AfterMobsim.
 - **The routing workers write no plan** (§9.170, #197): `routeDetour` returns a `Detour` applied by the main thread in driver order; the 1 % smoke `20260914T150700_2it_1pct` ran 2 of 2 on the recompiled controler (0 detours refused).
@@ -35,7 +37,6 @@
 
 ## What is measured
 
-- **Arm 0 pairs 99.6 % of its ride legs, and ride still reads −41.6 %** (§9.169, `20260912T202242_300it_25pct`, `output/ride_pairing.csv` at it.300): **64,578** ride legs, **64,303** paired (**0.9957**), **275** unpaired, every one `miss_declared_absent`; miss_capacity **0**. Car legs **390,968** against 242,016 at it.0 while ride legs fell from 82,662, so `occupancy_from_pairings` reads **0.1645** and the fit's occupancy **0.1871** against 0.3503 is OUTSIDE [0.2493, 0.394].
 - **The engine on the same arm** (§9.169, `matsim.log`): **31,174** declared passengers picked up on **29,287** drivers' detours, mean detour **6 s**, **0** refused; **18,767** drivers waited for a household car (#145). #187's `restoreRetimed` counter is not in the log — UNMEASURED.
 - **The scoreboard reads ride −41.6 %** (§9.169): **12.0233 %** of resident linked trips against 20.60, at a **10.09 km** mean (+3 % on the HTS passenger trip); coverage **19.11 %** from it.27, fixed at the seed; #48 met on the pairing.
 - **Coverage is a share of TRIPS, so ride's 19.11 % IS the bound trips' share, sitting at the target** (§9.177, correcting §9.163's and §9.169's "share of agents"): the binders bind **458,886** distinct (person, tour, direction) trips, **20.62 %** of core legs — the observed passenger share (`python src/analyse/measure_bound_trips.py`); a constant can add nothing past it, and the deficit is what bound trips execute as.
@@ -66,6 +67,8 @@
 
 ## History
 
+- §9.169 — arm 0: 99.6 % paired, ride −41.6 %
+- §9.210 — the Java fold; the metro target
 - §9.177 — coverage is trips; bound trips read
 - §9.170 — engine workers return detours
 - §9.169 — arm 0: pairing holds; seed caps ride
@@ -79,5 +82,3 @@
 - §9.158 — listener stops past the cutoff
 - §9.157 — F31 gate: gap is volume
 - §9.156 — deficit is the small modes' excess
-- §9.153 — F30 it.0: 8,167 paired
-- §9.151 — listener draws in household order

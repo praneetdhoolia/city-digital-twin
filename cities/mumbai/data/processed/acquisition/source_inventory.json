@@ -7359,7 +7359,11 @@
       "category": "transit",
       "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
       "coverage": "Daily ridership by payment method, published by MMRDA on data.gov.in 23 September 2025 (catalog nid 604084764, resource nid 604084801); an operator series by line, not station-level.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/transit/ogd_metro_2a_7_ridership_daily_2024_2025_46e3b6fd316a2ba8.csv",
+      "sha256": "46e3b6fd316a2ba8e33e077bb9c5855d616a4cbf0b47d02fddc4dad6fcea2bb7",
+      "bytes": 30444,
+      "retrieved": "2026-09-22T07:25:08.393099+00:00"
     },
     {
       "id": "ogd_monorail_ridership_daily_2024_2025",
@@ -7368,7 +7372,11 @@
       "category": "transit",
       "licence": "Government Open Data License - India (GODL) per the OGD platform; NDSAP",
       "coverage": "Daily ridership by payment method, published by MMRDA on data.gov.in 23 September 2025 (catalog nid 604084764, resource nid 604084815); the monorail has no line in the feed yet.",
-      "status": "unobtained"
+      "status": "acquired_unvalidated",
+      "path": "data/raw/transit/ogd_monorail_ridership_daily_2024_2025_fbc5f2fad3c16d07.csv",
+      "sha256": "fbc5f2fad3c16d0704f3855add714acf57becf8aa2580102eee9f1fb3aa52a51",
+      "bytes": 13472,
+      "retrieved": "2026-09-22T07:26:20.874511+00:00"
     },
     {
       "id": "ogd_mmrda_ridership_catalog_20260922",
