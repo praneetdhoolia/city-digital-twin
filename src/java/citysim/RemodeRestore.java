@@ -186,6 +186,26 @@ final class RemodeRestore {
      * null-route leg the engines always wrote, and the caller counts it. A
      * worker's own failure is the iteration's failure.
      */
+    /** The one routing pool of the run (#216): built on first use with the
+     *  run's thread count, daemon threads so the JVM exits without a
+     *  shutdown, shared by the ride engine's restore, the taxi fleet's
+     *  restore and the detour routing. Until 22 September 2026 each of the
+     *  three built and tore down a pool every iteration. The routers are
+     *  still one per task, so the RNG sequence and the results are unchanged. */
+    private static volatile ExecutorService routingPool;
+
+    static synchronized ExecutorService routingPool(final int threads) {
+        if (routingPool == null) {
+            final int size = Math.max(1, threads);
+            routingPool = Executors.newFixedThreadPool(size, r -> {
+                final Thread t = new Thread(r, "citysim-routing");
+                t.setDaemon(true);
+                return t;
+            });
+        }
+        return routingPool;
+    }
+
     static void route(final List<Remode> jobs, final Provider<TripRouter> routers,
                       final ActivityFacilities facilities,
                       final TimeInterpretation time, final int threads) {
@@ -194,7 +214,7 @@ final class RemodeRestore {
             return;
         }
         final int workers = Math.max(1, Math.min(n, threads));
-        final ExecutorService pool = Executors.newFixedThreadPool(workers);
+        final ExecutorService pool = routingPool(threads);
         final List<Future<?>> futures = new ArrayList<>(workers);
         for (int w = 0; w < workers; w++) {
             final int from = (int) ((long) w * n / workers);
@@ -217,7 +237,6 @@ final class RemodeRestore {
                 }
             }));
         }
-        pool.shutdown();
         try {
             for (final Future<?> f : futures) {
                 f.get();

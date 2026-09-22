@@ -60,6 +60,20 @@ public final class TaxiFleetConfigGroup extends ReflectiveConfigGroup {
     public double deadheadMinutes = UNSET;
     @Parameter("remodeRefused")
     public boolean remodeRefused = false;
+    /** RUN.sample.fraction, emitted by the harness (#215): the fleet is
+     *  declared at full scale and scaled by the SAMPLE, which is its own
+     *  field - the flow capacity factor merely equals it today. */
+    @Parameter("sampleFraction")
+    public double sampleFraction = UNSET;
+
+    public double getSampleFraction() {
+        if (this.sampleFraction == UNSET) {
+            throw new IllegalStateException(
+                    "taxiFleet.sampleFraction is not set: the harness emits "
+                    + "RUN.sample.fraction here (#215)");
+        }
+        return this.sampleFraction;
+    }
 
     public TaxiFleetConfigGroup() {
         super(NAME);

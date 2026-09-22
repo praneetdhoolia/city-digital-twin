@@ -1833,6 +1833,10 @@ def runtime_mode_entries(rc):
             rc.paths['fraction'] ** rc.cfg.get('RUN.sample.storage_capacity_exponent'),
             'derived', 'storageCapacityFactor = fraction ** '
                        'RUN.sample.storage_capacity_exponent'),
+        # #215: the taxi fleet scales by the SAMPLE, its own emitted field,
+        # not by the flow capacity factor that merely equals it today
+        'taxiFleet.sampleFraction': (
+            rc.paths['fraction'], 'derived', 'taxiFleet.sampleFraction = RUN.sample.fraction (#215)'),
         # Score averaging is a MODE the registry declares and a NUMBER MATSim
         # reads, so the gate cannot bind the parameter directly. At `absent`
         # this writes the literal MATSim writes for its own default, which is

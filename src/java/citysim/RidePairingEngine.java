@@ -1231,8 +1231,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         }
         final int workers = Math.max(1, Math.min(
                 n, scenario.getConfig().global().getNumberOfThreads()));
-        final java.util.concurrent.ExecutorService pool =
-                java.util.concurrent.Executors.newFixedThreadPool(workers);
+        // #216: the run's one routing pool, never built per iteration
+        final java.util.concurrent.ExecutorService pool = RemodeRestore.routingPool(
+                scenario.getConfig().global().getNumberOfThreads());
         final List<java.util.concurrent.Future<?>> futures = new ArrayList<>(workers);
         for (int w = 0; w < workers; w++) {
             final int from = (int) ((long) w * n / workers);
@@ -1245,7 +1246,6 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 }
             }));
         }
-        pool.shutdown();
         try {
             for (final java.util.concurrent.Future<?> f : futures) {
                 f.get();
@@ -1393,6 +1393,11 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                           + "and scored, the passenger's own stays in plan "
                           + "memory (#187)", put, retimedThisMobsim.size(), orphan);
         }
+        // the counters the record reads by name (#187): the retimed count of
+        // this mobsim beside what was put back, every iteration, zeros too
+        org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
+                .info("ridePairing: retimed={} restoreRetimed={} restoreOrphan={}",
+                      retimedThisMobsim.size(), put, orphan);
         retimedThisMobsim.clear();
     }
 

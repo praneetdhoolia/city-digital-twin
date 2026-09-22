@@ -162,6 +162,27 @@ public final class GatedSubtourProbe {
         ok &= boundAccepted;
         json.append(",\"declared_ride_trips_accepted\":").append(boundAccepted);
 
+        // --- 4b. a held passenger stays on ride (D12, #86) ----------------
+        // trip 1 is held: a proposal moving it from ride to car is refused
+        // whole; trip 2, not held, keeps the proposal's mode
+        final int heldBefore = GatedSubtourModeChoice.GatedModule
+                .HELD_RIDE_REFUSALS.get();
+        final Plan held = plan("held",
+                new String[] {"A", "B", "A"}, new String[] {RIDE, RIDE});
+        held.getPerson().getAttributes().putAttribute(
+                GatedSubtourModeChoice.GatedModule.BOUND_RIDE_ATTRIBUTE, "1,2");
+        held.getPerson().getAttributes().putAttribute(
+                GatedSubtourModeChoice.GatedModule.HELD_RIDE_ATTRIBUTE, "1,2");
+        run(held, new String[] {CAR, RIDE}, new String[] {CAR},
+            modes(CAR, RIDE));
+        final boolean heldRefused = modesOf(legs(held))
+                .equals(Arrays.asList(RIDE, RIDE));
+        final int heldRefusals = GatedSubtourModeChoice.GatedModule
+                .HELD_RIDE_REFUSALS.get() - heldBefore;
+        ok &= heldRefused;
+        json.append(",\"held_ride_kept\":").append(heldRefused)
+            .append(",\"held_ride_refusals_counted\":").append(heldRefusals);
+
         // --- 5. the attribute parser --------------------------------------
         final Plan parse = plan("parse",
                 new String[] {"A", "B", "A"}, new String[] {CAR, CAR});
