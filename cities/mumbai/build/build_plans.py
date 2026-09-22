@@ -24,8 +24,12 @@ What a person's day is, from the published data and the declared mechanisms:
                  table B-28, the district's residence-to-work distance bands
                  by residence type); the workplace is a work location
                  candidate (`baseline_activity_locations.csv`, OSM) at a
-                 distance from home in the band B-28 draws, uniform within the
-                 band; timing from `B.baseline.activity_start_s` and
+                 distance from home in the band B-28 draws, drawn within the
+                 band in proportion to the candidate's attraction - the GHSL
+                 built volume around it, non-residential and total mixed by
+                 the district's own-account job share (`B.activities.work_attraction`,
+                 `activity_location_attraction.csv`; uniform when the gate says
+                 so); timing from `B.baseline.activity_start_s` and
                  `B.baseline.activity_duration_s`;
   * education    every student (B1, the C-12 rates) makes a home-education-home
                  tour to an education candidate by the declared gravity
@@ -33,7 +37,9 @@ What a person's day is, from the published data and the declared mechanisms:
                  also a worker;
   * optional     shopping, social and leisure tours by the state time-use
                  participation benchmarks with the declared out-of-home
-                 fractions (`B.activities.*`), as in the development chain;
+                 fractions (`B.activities.*`), as in the development chain, to
+                 a candidate by the declared distance decay times its total
+                 built volume (the same gate);
   * modes        `permittedModes` from the person's own attributes (age,
                  licence, the household's vehicles) as the development chain
                  declares them, one selected plan seeded with one drawn mode -
@@ -72,6 +78,7 @@ OUTPUT_INPUTS = {
         'data/processed/zones/mmr_extent.csv',
         'data/processed/geospatial/census_2011_geographies.gpkg',
         'data/processed/geospatial/baseline_activity_locations.csv',
+        'data/processed/geospatial/activity_location_attraction.csv',
         'data/processed/observed/census_2011_b28_commuting.csv',
         'data/processed/observed/state_time_use_controls.csv',
         'data/raw/boundaries/wri_mmr_layer_2_*.json', 'data/raw/boundaries/wri_mmr_layer_3_*.json',
@@ -82,6 +89,7 @@ OUTPUT_INPUTS = {
         'data/processed/zones/mmr_extent.csv',
         'data/processed/geospatial/census_2011_geographies.gpkg',
         'data/processed/geospatial/baseline_activity_locations.csv',
+        'data/processed/geospatial/activity_location_attraction.csv',
         'data/processed/observed/census_2011_b28_commuting.csv',
         'data/processed/observed/state_time_use_controls.csv',
         'data/raw/boundaries/wri_mmr_layer_2_*.json', 'data/raw/boundaries/wri_mmr_layer_3_*.json',
@@ -230,6 +238,19 @@ def main():
     tus = rows('data/processed/observed/state_time_use_controls.csv')
     locs = pd.read_csv(city.path('data/processed/geospatial/baseline_activity_locations.csv'))
     cand = {p: locs[locs['purpose'] == p][['x_m', 'y_m']].to_numpy() for p in locs['purpose'].unique()}
+    # the attraction of every candidate (build_activity_attraction.py), aligned
+    # with `cand`; ones when the gate draws uniformly
+    attraction_gate = cfg.get('B.activities.work_attraction')
+    attr = {p: np.ones(len(cand[p])) for p in cand}
+    if attraction_gate == 'ghsl_nres_volume':
+        weights_table = pd.read_csv(city.path('data/processed/geospatial/activity_location_attraction.csv'))
+        for p in cand:
+            merged = locs[locs['purpose'] == p][['location_id']].merge(
+                weights_table[weights_table['purpose'] == p][['location_id', 'attraction_weight']],
+                on='location_id', how='left', validate='one_to_one')
+            if merged['attraction_weight'].isna().any():
+                raise SystemExit('activity_location_attraction.csv lacks a weight for a %s candidate' % p)
+            attr[p] = merged['attraction_weight'].to_numpy(dtype=float)
     # the census-zone fallback for optional tours: leaf representative points weighted by persons
     geo = pyogrio.read_dataframe(city.path('data/processed/geospatial/census_2011_geographies.gpkg'),
                                  layer='census_leaves', columns=['geography_id', 'persons_count'])
@@ -247,6 +268,7 @@ def main():
     out = Path(city.path(OUT))
     out.parent.mkdir(parents=True, exist_ok=True)
     tour_counts, mode_counts, band_hits, no_candidate = Counter(), Counter(), Counter(), Counter()
+    zero_attraction = Counter()
     persons_written = 0
     persons = persons.sort_values(['geography_id', 'household_id', 'person_id'])
     with out.open('wb') as raw, gzip.GzipFile(fileobj=raw, mode='wb', filename='', mtime=0) as z:
@@ -269,7 +291,10 @@ def main():
             opt_weights = {}
             for purpose in purposes_tus:
                 d = np.linalg.norm(cand[purpose] - centre, axis=1)
-                w = np.exp(-d / scales[purpose])
+                w = np.exp(-d / scales[purpose]) * attr[purpose]
+                if w.sum() <= 0:                       # every candidate weightless: the decay alone
+                    w = np.exp(-d / scales[purpose])
+                    zero_attraction[purpose] += 1
                 opt_weights[purpose] = w / w.sum()
             d_fb = np.linalg.norm(fallback_xy - centre, axis=1)
             w_fb = fallback_w * np.exp(-d_fb / scales['shopping'])
@@ -303,7 +328,12 @@ def main():
                         members = band_members[k]
                         no_candidate[BANDS[b][0]] += 1
                     band_hits[BANDS[k][0]] += 1
-                    dest = cand['work'][int(rng.choice(members))]
+                    w = attr['work'][members]
+                    if w.sum() > 0:
+                        dest = cand['work'][int(rng.choice(members, p=w / w.sum()))]
+                    else:                              # a band with no attraction at all: uniform, counted
+                        zero_attraction['work'] += 1
+                        dest = cand['work'][int(rng.choice(members))]
                     tours.append(('work', dest, starts['work'] + rng.uniform(-spread, spread), durations['work']))
                 elif r.student and age >= school_min:
                     dest = cand['education'][int(rng.choice(len(w_edu), p=w_edu))]
@@ -364,6 +394,8 @@ def main():
         persons_by_tour_count=dict(sorted(tour_counts.items())),
         initial_mode=dict(mode_counts), work_distance_band_drawn=dict(band_hits),
         work_band_without_candidate_redirected=dict(no_candidate),
+        destination_attraction=attraction_gate,
+        bands_or_leaves_without_attraction_drawn_uniform=dict(zero_attraction),
         freight='none: the port-to-gate proxy is not where goods traffic occurs; requirement open',
         inputs_sha256={p: fingerprint(Path(city.path(p))) for p in OUTPUT_INPUTS[OUT]
                        if '*' not in p and Path(city.path(p)).exists()},

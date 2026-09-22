@@ -1,0 +1,18 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/rdso_emu_memu_spec_2022_ba9a9cb707c97c4f.pdf",
+      "url": "https://rdso.indianrailways.gov.in/uploads/1-ii-%20spec%20for%20EMU-MEMU-163.pdf",
+      "final_url": "https://rdso.indianrailways.gov.in/uploads/1-ii-%20spec%20for%20EMU-MEMU-163.pdf",
+      "source": "RDSO EMU/MEMU technical specification 0163 revision 3, 2022",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "retrieved": "2026-09-22T05:08:04.788262+00:00",
+      "sha256": "ba9a9cb707c97c4f712f30408df838a20328a5d159c3d3a1862c43d014e099cd",
+      "bytes": 13335199,
+      "content_type": "application/pdf",
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Technical requirements with Mumbai annexure; distinguish design variants, loading conditions, line-specific constraints and actual supplied stock."
+    }
+  ]
+}

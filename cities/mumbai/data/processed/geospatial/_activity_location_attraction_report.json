@@ -1,0 +1,71 @@
+{
+  "source": "derived",
+  "radius_m": 300.0,
+  "own_account_job_share": {
+    "519": 0.1156,
+    "518": 0.1841,
+    "517": 0.1849,
+    "520": 0.2955
+  },
+  "layers": {
+    "nres": {
+      "archive": "ghs_built_v_nres_e2025_globe_r2023a_54009_100_v1_0_r7_c26_4588734378fc7305.zip",
+      "member": "GHS_BUILT_V_NRES_E2025_GLOBE_R2023A_54009_100_V1_0_R7_C26.tif",
+      "crs": "ESRI:54009",
+      "cell_m": 100.0
+    },
+    "total": {
+      "archive": "ghs_built_v_e2025_globe_r2023a_54009_100_v1_0_r7_c26_8652e081925b1644.zip",
+      "member": "GHS_BUILT_V_E2025_GLOBE_R2023A_54009_100_V1_0_R7_C26.tif",
+      "crs": "ESRI:54009",
+      "cell_m": 100.0
+    }
+  },
+  "candidates": 34447,
+  "candidates_by_district": {
+    "517": 6284,
+    "518": 13783,
+    "519": 4394,
+    "520": 9986
+  },
+  "education": {
+    "candidates": 1403,
+    "zero_volume": 0,
+    "zero_weight": 0,
+    "median_m3": 1239344.0,
+    "p90_m3": 2162460.1999999997,
+    "max_m3": 4270417.0
+  },
+  "leisure": {
+    "candidates": 8033,
+    "zero_volume": 107,
+    "zero_weight": 107,
+    "median_m3": 1220153.0,
+    "p90_m3": 2261788.0,
+    "max_m3": 5034158.0
+  },
+  "shopping": {
+    "candidates": 6219,
+    "zero_volume": 7,
+    "zero_weight": 7,
+    "median_m3": 1598766.0,
+    "p90_m3": 2324310.0,
+    "max_m3": 5034158.0
+  },
+  "social": {
+    "candidates": 2423,
+    "zero_volume": 113,
+    "zero_weight": 113,
+    "median_m3": 1010389.0,
+    "p90_m3": 2034180.8000000014,
+    "max_m3": 3804367.0
+  },
+  "work": {
+    "candidates": 16369,
+    "zero_volume": 6272,
+    "zero_weight": 13,
+    "median_m3": 14600.0,
+    "p90_m3": 468957.0,
+    "max_m3": 3186732.0
+  }
+}

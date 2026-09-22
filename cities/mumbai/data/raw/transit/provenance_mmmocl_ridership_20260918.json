@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmmocl_ridership_20260918_0764c7ce4967b12b.html",
+      "url": "https://www.mmmocl.co.in/ridership-information",
+      "final_url": "https://www.mmmocl.co.in/ridership-information",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "MMMOCL published ridership information",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-22T05:06:37.544809+00:00",
+      "sha256": "0764c7ce4967b12b4fa449d1666289ed0134493651afad484ebd88ab190e9bfc",
+      "bytes": 27651,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Current public passenger information; effective dates and operational coverage require extraction and validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

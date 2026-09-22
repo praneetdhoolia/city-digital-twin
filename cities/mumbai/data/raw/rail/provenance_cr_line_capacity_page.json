@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/cr_line_capacity_page_aad825ddc77bb73d.html",
+      "url": "https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,287,391,562,1092",
+      "final_url": "https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,287,391,562,1092",
+      "content_type": "text/html;charset=UTF-8",
+      "source": "Central Railway line capacity page",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "retrieved": "2026-09-22T05:08:31.670895+00:00",
+      "sha256": "aad825ddc77bb73d6fb89b85d08e3ea4833a92b4edc08691b46f9e72ed89be65",
+      "bytes": 481109,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Line-capacity publication links; geographic scope, units and vintage require inspection.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmmocl_press_73_a930f3813fb7dff0.pdf",
+      "url": "https://www.mmmocl.co.in/uploads/news_pdf/73_mr.Pdf",
+      "final_url": "https://www.mmmocl.co.in/uploads/news_pdf/73_mr.Pdf",
+      "content_type": "application/pdf",
+      "source": "MMMOCL new lines and revised timetable press release",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-22T05:06:41.080316+00:00",
+      "sha256": "a930f3813fb7dff04b3aeec3896b5ee73e3048b42881d61e46a90002798022e1",
+      "bytes": 974442,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Current public passenger information; effective dates and operational coverage require extraction and validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

@@ -41,7 +41,8 @@ from build.extract_osm_network import fingerprint
 from build.repair_transit_order import repair_schedule
 from build import transit_fleet
 import build_matsim_run_inputs as build_inputs
-from build_matsim_run_inputs import add_nonmotor_reverse_links, strip_unreachable_mode_links
+from build_matsim_run_inputs import (add_nonmotor_reverse_links, node_elevations_from_dem,
+                                     stamp_gradients_body, strip_unreachable_mode_links)
 
 SCENARIO = city.descriptor()['intervention']['base_scenario']
 DAY = city.descriptor()['day_types'][0]
@@ -52,6 +53,7 @@ REPORT = OUT / '_run_inputs_report.json'
 OUTPUT_INPUTS = {
     'scenarios/matsim/BASE/network.xml.gz': [
         'networks/matsim/schedules/baseline_regional/network.xml.gz',
+        'data/raw/geospatial/copernicus_dsm_*.tif',
         'networks/matsim/schedules/baseline_regional/transitVehicles.xml.gz'],
     'scenarios/matsim/BASE/parking_prices.tsv': [],
     'scenarios/matsim/BASE/boarding_fares.csv': ['params/baseline/boarding_fares.csv'],
@@ -161,13 +163,27 @@ def prepare_network(source, destination, cfg, transit_vehicles):
     text = add_nonmotor_reverse_links(text, cfg.get('A.transit.walk_speed_ms'), applied)
     for mode in sorted(set(exclusions) | set(inherited_modes)):
         text = strip_unreachable_mode_links(text, mode, applied)
+    # gradient into link travel time (A.gradient.representation = link_speed,
+    # 9.209): the DEM sampled at every node, a signed grade_pct on every link,
+    # stamped after every other network patch so nothing overwrites it
+    gradient = {}
+    if cfg.get('A.gradient.representation') == 'link_speed':
+        import glob as _glob
+        tiles = sorted(_glob.glob(city.path(cfg.get('A.gradient.dem_tiles'))))
+        if not tiles:
+            raise SystemExit('A.gradient.representation is link_speed but no DEM tile matches A.gradient.dem_tiles')
+        elevations = node_elevations_from_dem(text, tiles, city.descriptor()['crs']['epsg'])
+        text, gradient = stamp_gradients_body(text, float(cfg.get('A.gradient.grade_clamp_pct')), elevations)
+        gradient['nodes_with_elevation'] = len(elevations)
+        gradient['dem_tiles'] = [os.path.basename(t) for t in tiles]
     with open(destination, 'wb') as raw:
         with gzip.GzipFile(fileobj=raw, mode='wb', filename='', mtime=0) as zipped:
             zipped.write(b'<?xml version="1.0" encoding="UTF-8"?>\n')
             zipped.write(text.encode('utf-8'))
     return dict(road_links_receiving_modes=changed, connectivity=dict(applied),
                 road_capacity_changes=dict(road_capacity_changes),
-                dedicated_transit_capacity_changes=dict(transit_capacity_changes))
+                dedicated_transit_capacity_changes=dict(transit_capacity_changes),
+                gradient=gradient)
 
 
 def write_fleet(inputs, repaired_schedule, destination, cfg):

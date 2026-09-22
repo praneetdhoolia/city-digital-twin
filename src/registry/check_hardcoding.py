@@ -414,6 +414,11 @@ STRUCTURAL = {
         'decides how many candidates a nearest-point search examines, never '
         'which point is nearest - the answer is identical at any cell size, '
         'only the speed changes',
+    '<city>/extract/audit_source_use.py:GLOB_FIXED_CHARS_MIN':
+        'the fewest fixed characters a string literal needs before the '
+        'data-use ledger reads it as naming one family of raw files (`*.json` '
+        'names everything and nothing): string-matching structure of an audit '
+        'that reads the package and reaches no build, no run and no target',
     'src/analyse/run_view.py:RAMP_MIN':
         'a display scale: the narrowest and widest a congestion ramp is drawn. '
         'The live view reads the run and never writes to it, so no number here '
@@ -924,8 +929,8 @@ def stale_structural(corpus):
                   if k not in seen and not _live_in_reference_city(k, _decision_keys))
 
 
-def _decision_keys(text, rp):
-    path = os.path.join(_city.REPO, 'cities', _city.DEFAULT_CITY, rp[len('<city>/'):])
+def _decision_keys(text, rp, city_name=None):
+    path = os.path.join(_city.REPO, 'cities', city_name or _city.DEFAULT_CITY, rp[len('<city>/'):])
     return {'%s:%s' % (rp, d['name']) for d in _legacy.scan_decisions(path)}
 
 
@@ -1332,29 +1337,39 @@ def stale_structural_inline(corpus):
                   if k not in live and not _live_in_reference_city(k, _inline_keys))
 
 
-def _inline_keys(text, rp):
+def _inline_keys(text, rp, city_name=None):
     scan = _InlineScan()
     scan.visit(ast.parse(text))
     return {'%s:%s:%s' % (rp, func, ('%g' % value)) for line, func, value in scan.hits}
 
 
 def _live_in_reference_city(key, keys_of):
-    """Whether a `<city>` register entry is live in the reference city's file.
+    """Whether a `<city>` register entry is live in another city's file.
 
-    Only consulted when the active city is not the reference city; `keys_of`
-    turns a file's text into the register keys it makes live.
+    The register is one over every city. Under the reference city an entry
+    for a script only a second city has (its own extract or build adapter)
+    is not stale while that city's file makes it live; under a second city
+    an entry for a reference-city script is judged against the reference
+    city's file (9.207). `keys_of` turns a file's text into the register
+    keys it makes live.
     """
-    if _city.CITY == _city.DEFAULT_CITY or not key.startswith('<city>/'):
+    if not key.startswith('<city>/'):
         return False
     rp = key.rsplit(':', 2)[0]
-    path = os.path.join(_city.REPO, 'cities', _city.DEFAULT_CITY, rp[len('<city>/'):])
-    if not os.path.exists(path):
-        return False
-    try:
-        with open(path, encoding='utf-8') as f:
-            return key in keys_of(f.read(), rp)
-    except (SyntaxError, OSError):
-        return False
+    cities_dir = os.path.join(_city.REPO, 'cities')
+    others = sorted(d for d in os.listdir(cities_dir)
+                    if d != _city.CITY and os.path.isdir(os.path.join(cities_dir, d)))
+    for other in others:
+        path = os.path.join(cities_dir, other, rp[len('<city>/'):])
+        if not os.path.exists(path):
+            continue
+        try:
+            with open(path, encoding='utf-8') as f:
+                if key in keys_of(f.read(), rp, other):
+                    return True
+        except (SyntaxError, OSError):
+            continue
+    return False
 
 
 def audit():

@@ -164,6 +164,21 @@ def api_key_params(entry):
     return {entry.get('api_key_param', 'api-key'): key}
 
 
+def redact_api_keys(entry, text):
+    """The text with the entry's registered key, if any, replaced by its name."""
+    name = entry.get('api_key_env')
+    if not name:
+        return text
+    try:
+        params = api_key_params(entry)
+    except ValueError:
+        return text
+    for value in params.values():
+        if value:
+            text = text.replace(value, '<%s>' % name)
+    return text
+
+
 def without_api_key(url, params):
     """The final URL with the key parameter removed, for the provenance record."""
     if not params:
@@ -304,8 +319,11 @@ def main():
                 print('ACQUIRED', entry['id'], record['bytes'], record['path'], flush=True)
             except (requests.RequestException, ValueError, OSError, KeyError,
                     ET.ParseError, subprocess.TimeoutExpired) as exc:
-                failures.append({'id':entry['id'],'url':entry['url'],'error':str(exc)})
-                print('UNOBTAINED', entry['id'], str(exc), flush=True)
+                # a keyed entry's failure quotes the request URL: the key is
+                # never written into the log or the console
+                error = redact_api_keys(entry, str(exc))
+                failures.append({'id':entry['id'],'url':entry['url'],'error':error})
+                print('UNOBTAINED', entry['id'], error, flush=True)
     log = Path(city.path('data/raw/_acquisition_attempts.json'))
     prior = json.loads(log.read_text(encoding='utf-8')) if log.exists() else []
     prior.append({'retrieved':datetime.now(timezone.utc).isoformat(),'failures':failures})

@@ -48,13 +48,16 @@ TARGET = {'RUN': 'RUN_framework.json', 'CAL': 'CAL_framework.json',
 # Mechanisms switched off for this baseline: the gate value, and why.
 GATES = {
     'A.signals.representation': ('implicit_delay', 'no signal inventory is modelled; the corridor-signal effect stays implicit'),
-    'A.gradient.representation': ('absent', 'no elevation is attached to the mapped network yet'),
+    'A.gradient.representation': ('link_speed', 'the Copernicus GLO-30 elevation is sampled at every node of the run network and a signed grade_pct stamped on every link by build_baseline_run_inputs.py (9.209), so walk and bike speeds follow the ground'),
     'A.crossings.representation': ('absent', 'no boom-gated freight crossing is represented'),
     'A.bike_stress.representation': ('absent', 'no motor-traffic stress classes are attached to the mapped network yet'),
     'C.raptor.mode_cost_representation': ('absent', 'the transit router carries no per-mode constant in the baseline'),
     'B.ride.pairing_enabled': (False, 'the baseline population carries no households, so no ride can name its driver'),
     'B.population.vehicle_roster': ('per_person', 'the baseline population carries no households; car access is a person attribute'),
 }
+# A gate at one of these values switches its mechanism OFF; the fields under
+# it are then declared, adopted and inert. Any other gate value switches it on.
+OFF = {'absent', 'implicit_delay', 'per_person', False}
 # Fields the gates above silence, by key prefix: declared, adopted, inert.
 GATED_BY = {
     'A.signals.': 'A.signals.representation', 'A.gradient.': 'A.gradient.representation',
@@ -178,13 +181,18 @@ def first_sentence(text):
     return text if cut < 0 else text[:cut + 1]
 
 
+def gate_of(key):
+    """The representation gate a field sits under, by its key prefix, or None."""
+    return next((g for p, g in GATED_BY.items() if key.startswith(p)), None)
+
+
 def adopt(key, ref):
     """The reference city's declaration re-labelled as an adoption."""
     out = {k: ref[k] for k in KEEP if k in ref}
     out['units'] = contract_units(key)
     out['value'] = ref.get('value')
-    gate = next((g for p, g in GATED_BY.items() if key.startswith(p)), None)
-    inert = gate is not None and gate in GATES and key != gate
+    gate = gate_of(key)
+    inert = gate is not None and gate in GATES and key != gate and GATES[gate][0] in OFF
     if ref.get('source') in ('measured', 'observed'):
         out['source'] = 'assumed'
         sweep = ref.get('sweep')
@@ -224,7 +232,8 @@ def adopt(key, ref):
         value, why = GATES[key]
         out['value'] = value
         out['status'] = 'active'
-        out['description'] = '%s Switched off for this baseline (%s): %s.' % (lead, json.dumps(value), why)
+        out['description'] = '%s Switched %s for this baseline (%s): %s.' % (
+            lead, 'off' if value in OFF else 'on', json.dumps(value), why)
     elif inert:
         gv = GATES[gate][0]
         out['description'] = ('%s Adopted from the reference city and INERT here: %s = %s switches the mechanism off '
@@ -315,6 +324,11 @@ def main():
             if key in OVERRIDES:
                 field = override(key, reference[key]) if key in reference else dict(field, **OVERRIDES[key])
             elif key in GATES:
+                field = adopt(key, reference[key])
+            elif (key in reference and 'Adopted from the reference city' in field.get('description', '')
+                  and gate_of(key) in GATES):
+                # an adoption under a gate: re-adopted so its inert / active
+                # status follows the gate's current value
                 field = adopt(key, reference[key])
             held[key] = field
     for key in sorted(applicable | set(OVERRIDES)):

@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/transit/mmmocl_fares_20260918_4d5e37fcdb7daad4.html",
+      "url": "https://www.mmmocl.co.in/fare_table",
+      "final_url": "https://www.mmmocl.co.in/fare_table",
+      "content_type": "text/html; charset=UTF-8",
+      "source": "Current MMMOCL public fare tables",
+      "licence": "Operator publication; reuse terms unverified",
+      "retrieved": "2026-09-22T05:06:35.435823+00:00",
+      "sha256": "4d5e37fcdb7daad42988da90e9e96a291e08e51cf42381379a352071664bd169",
+      "bytes": 43763,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Current public passenger information; effective dates and operational coverage require extraction and validation.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

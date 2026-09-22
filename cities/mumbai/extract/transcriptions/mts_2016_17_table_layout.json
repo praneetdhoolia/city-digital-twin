@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "source_id": "maharashtra_transport_statistics_2016_17",
+  "source_sha256": "a75c07e8a5da3fbef9b368d4c2458ad88265c7037cad803f331a1fc2483e98ad",
+  "method": "The printed structure of the tables extract_transport_statistics_2017.py reads: the pages Table 24 spans (its office columns are read from each page's own header), the stock date its title prints, and the years each state series table prints as column headers. Transcribed from the publication; not modelling values.",
+  "table_24": {
+    "title": "Office/ Region/ Categorywise Vehicles On Road As On 31st March, 2017",
+    "pages": 6,
+    "stock_date": "2017-03-31",
+    "header_lines_at_most": 5
+  },
+  "state_tables": {
+    "Table No 15": {
+      "title": "Categorywise vehicles & Their Compounded Annual Growth Rate (CAGR) In Maharashtra State",
+      "years": [
+        1971,
+        1981,
+        1991,
+        2001,
+        2011
+      ]
+    },
+    "Table No 16": {
+      "title": "Categorywise vehicles & Their Compounded Annual Growth Rate (CAGR) In",
+      "years": [
+        1987,
+        1997,
+        2007,
+        2017
+      ]
+    }
+  }
+}

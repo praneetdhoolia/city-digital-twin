@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/mrvc_cbtc_terms_reference_2018_f5c3a5d05fd4c044.pdf",
+      "url": "https://mrvc.indianrailways.gov.in/mrvc/notice/1565425828445_CBTCTOR090918.pdf",
+      "final_url": "https://mrvc.indianrailways.gov.in/mrvc/notice/1565425828445_CBTCTOR090918.pdf",
+      "content_type": "application/pdf",
+      "source": "MRVC terms of reference for CBTC consulting services",
+      "licence": "MRVC publication; reuse terms unverified",
+      "retrieved": "2026-09-22T05:08:12.989476+00:00",
+      "sha256": "f5c3a5d05fd4c044bd04020aa94301aa30b5ed87571ef3f1962d54cd64286f70",
+      "bytes": 557767,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Historical corridor headway, signalling and train-control reference; document dates and existing versus proposed systems must be distinguished. Not evidence of current commissioning.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

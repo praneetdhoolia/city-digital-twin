@@ -163,7 +163,8 @@
       "title": "Maharashtra Maritime Board passenger information 2023-24",
       "coverage": "Annual route passenger and vehicle counts; not daily trips.",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: the URL answers an HTML page titled Maharashtra Maritime Board (738 bytes), not the PDF; the publisher has withdrawn or moved it."
     },
     {
       "id": "jnpa_operations",
@@ -439,7 +440,8 @@
       "title": "Maharashtra infrastructure statistics 2021-22 and 2022-23",
       "coverage": "Historical multimodal infrastructure and passenger statistics.",
       "licence": "Publication reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: the host presents a name that is not its own (mahaces.maharashtra.gov.in); left unobtained rather than accepted on trust."
     },
     {
       "id": "osm_western_zone_20260915",
@@ -1007,7 +1009,8 @@
       "title": "Maha Mumbai Metro fare products",
       "coverage": "Published single return pass and card products; date and line scope require verification.",
       "licence": "Operator or government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: 404 at the publisher; the Internet Archive copy of 10 June 2025 stands in."
     },
     {
       "id": "cidco_metro_home",
@@ -1067,7 +1070,8 @@
       "title": "Line 3 public station directory",
       "coverage": "Public passenger website response; inspect source period and completeness before model use.",
       "licence": "Operator publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: 404 at the publisher (the API endpoint is withdrawn)."
     },
     {
       "id": "mmrcl_all_stations",
@@ -1487,7 +1491,8 @@
       "title": "Maharashtra official district statistics index MUMBAI CITY",
       "coverage": "Locate latest socioeconomic review; report year and individual observation reference years differ.",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: www.mahades.maharashtra.gov.in presents a name that is not its own (mahaces.maharashtra.gov.in) and its district.do answers 500; the Internet Archive copies stand in where they exist (Mumbai City has none)."
     },
     {
       "id": "des_district_mumbai_suburban",
@@ -1497,7 +1502,8 @@
       "title": "Maharashtra official district statistics index MUMBAI SUBURBAN",
       "coverage": "Locate latest socioeconomic review; report year and individual observation reference years differ.",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: www.mahades.maharashtra.gov.in presents a name that is not its own (mahaces.maharashtra.gov.in) and its district.do answers 500; the Internet Archive copies stand in where they exist (Mumbai City has none)."
     },
     {
       "id": "des_district_thane",
@@ -1507,7 +1513,8 @@
       "title": "Maharashtra official district statistics index THANE",
       "coverage": "Locate latest socioeconomic review; report year and individual observation reference years differ.",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: www.mahades.maharashtra.gov.in presents a name that is not its own (mahaces.maharashtra.gov.in) and its district.do answers 500; the Internet Archive copies stand in where they exist (Mumbai City has none)."
     },
     {
       "id": "des_district_palghar",
@@ -1517,7 +1524,8 @@
       "title": "Maharashtra official district statistics index PALGHAR",
       "coverage": "Locate latest socioeconomic review; report year and individual observation reference years differ.",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: www.mahades.maharashtra.gov.in presents a name that is not its own (mahaces.maharashtra.gov.in) and its district.do answers 500; the Internet Archive copies stand in where they exist (Mumbai City has none)."
     },
     {
       "id": "des_district_raigad",
@@ -1527,7 +1535,8 @@
       "title": "Maharashtra official district statistics index RAIGAD",
       "coverage": "Locate latest socioeconomic review; report year and individual observation reference years differ.",
       "licence": "Government publication; reuse terms unverified",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: www.mahades.maharashtra.gov.in presents a name that is not its own (mahaces.maharashtra.gov.in) and its district.do answers 500; the Internet Archive copies stand in where they exist (Mumbai City has none)."
     },
     {
       "id": "konkan_statistics_index",
@@ -2384,7 +2393,8 @@
       "category": "planning",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Historical or current publication; each table needs its own period, universe and definition. Acquisition does not establish validation.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: environmentclearance.nic.in does not resolve; the Internet Archive copy stands in."
     },
     {
       "id": "mmr_gis_page",
@@ -2584,7 +2594,8 @@
       "category": "transit",
       "licence": "Authority or vendor publication; reuse terms unverified",
       "coverage": "Published passenger information or planning report. Confirm operator authority, observation dates and live service validity.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: 504 gateway time-out at the publisher."
     },
     {
       "id": "nmmc_final_development_plan",
@@ -2594,7 +2605,8 @@
       "category": "transit",
       "licence": "Authority or vendor publication; reuse terms unverified",
       "coverage": "Published passenger information or planning report. Confirm operator authority, observation dates and live service validity.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: 504 gateway time-out at the publisher."
     },
     {
       "id": "nmmt_timetable_bundle",
@@ -3635,7 +3647,8 @@
       "category": "employment",
       "licence": "Government publication; reuse terms unverified",
       "coverage": "Public economic census documentation or aggregate data catalogue; not acquired restricted unit records.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: datainnovation.mospi.gov.in does not resolve; the Internet Archive copy stands in."
     },
     {
       "id": "mospi_client_92a5af0",
@@ -4540,7 +4553,8 @@
       "url": "https://www.mohfw.gov.in/sites/default/files/Population%20Projection%20Report%202011-2036%20-%20upload_compressed_0.pdf",
       "title": "Technical Group population projections for India and states 2011-2036",
       "licence": "Government of India publication; reuse terms unverified",
-      "coverage": "Official demographic projections; state-level total, age, sex and urban/rural estimates. Not observed Mumbai small-area counts."
+      "coverage": "Official demographic projections; state-level total, age, sex and urban/rural estimates. Not observed Mumbai small-area counts.",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: 404 at the publisher; the Internet Archive copy stands in."
     },
     {
       "id": "bmc_civic_diary_2026",
@@ -4576,7 +4590,8 @@
       "url": "https://mcap.mcgm.gov.in/wp-content/uploads/2025/06/English_CB-Report-2025-26_digital.pdf",
       "title": "BMC Climate Budget Report 2025-26 English",
       "licence": "BMC publication; reuse terms unverified",
-      "coverage": "Climate budget with historical actuals, revised estimates and budget forecasts. Keep these measures distinct."
+      "coverage": "Climate budget with historical actuals, revised estimates and budget forecasts. Keep these measures distinct.",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: mcap.mcgm.gov.in presents an out-of-date identity (1 July 2025); left unobtained. The OpenCity copy and the Internet Archive copy stand in."
     },
     {
       "id": "bmc_climate_portal_20260919",
@@ -4585,7 +4600,8 @@
       "url": "https://mcap.mcgm.gov.in/",
       "title": "Mumbai Climate Action Plan public portal",
       "licence": "BMC website; reuse terms unverified",
-      "coverage": "Official report catalogue and climate programme context."
+      "coverage": "Official report catalogue and climate programme context.",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: mcap.mcgm.gov.in presents an out-of-date identity (1 July 2025); left unobtained. The Internet Archive copy stands in."
     },
     {
       "id": "best_transport_20260919",
@@ -4704,7 +4720,8 @@
       "title": "BEST official Route Network",
       "licence": "BEST publication; reuse terms unverified",
       "coverage": "Public operator transport information; effective dates, coverage and ongoing operation require verification.",
-      "discovered_from": "best_transport_20260919"
+      "discovered_from": "best_transport_20260919",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: the connection is reset by the host; the Internet Archive copy of 26 January 2025 stands in."
     },
     {
       "id": "best_rti_publication_index_20260919",
@@ -4948,7 +4965,8 @@
       "title": "Gajjar and Mohandas 2016: Critical Assessment of Road Capacities on Urban Roads - A Mumbai Case-study",
       "licence": "Publisher states open access; exact reuse licence unverified",
       "coverage": "Primary field study of selected Mumbai roads. Publication date is not the survey date; design service volumes and observed peak flows must be distinguished.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: the publisher closes the connection; the Internet Archive copy stands in."
     },
     {
       "id": "jvlr_traffic_study_2026",
@@ -4958,7 +4976,8 @@
       "title": "Peak-Hour Traffic Congestion and Level of Service Assessment Along the Jogeshwari-Vikhroli Link Road Corridor, Mumbai, India",
       "licence": "Reuse terms unverified",
       "coverage": "Primary corridor study; source methods, survey date, raw counts and applicability require review.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: the publisher answers Access Denied to the acquisition client."
     },
     {
       "id": "mumbai_road_capacity_study_2016_author_pdf",
@@ -4968,7 +4987,8 @@
       "title": "Gajjar and Mohandas 2016 Mumbai road-capacity study: public author-hosted full text",
       "licence": "CC BY-NC-ND 4.0; authors and Elsevier; verify PDF licence",
       "coverage": "Historical selected-road classified counts and PCU conversions. Survey dates and directions require extraction; not current network-wide capacity.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: 403 at the host."
     },
     {
       "id": "jvlr_traffic_study_conference_2026",
@@ -4978,7 +4998,8 @@
       "title": "JVLR congestion study: authors public IOCUS 2026 conference record",
       "licence": "Publisher and authors; reuse terms unverified",
       "coverage": "Earlier conference version; do not conflate with the August 2026 proceedings paper or current observations.",
-      "transport": "windows_system_tls"
+      "transport": "windows_system_tls",
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: the publisher answers Access Denied to the acquisition client."
     },
     {
       "id": "jvlr_conference_poster_2026_response",
@@ -5064,7 +5085,8 @@
       "licence": "Publisher primary publication; reuse terms unverified",
       "coverage": "Operator trial-era description; approximate train capacity and stated standing density need current formation/seating reconciliation.",
       "transport": "windows_system_tls",
-      "download_timeout_seconds": 60
+      "download_timeout_seconds": 60,
+      "acquisition_note": "22 September 2026, through an Indian VPN endpoint: the URL answers an HTML page, not the PDF."
     },
     {
       "id": "alstom_metro3_opening_2024",

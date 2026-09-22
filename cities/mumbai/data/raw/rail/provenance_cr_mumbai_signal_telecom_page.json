@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "data/raw/rail/cr_mumbai_signal_telecom_page_9c4eec92a2f3d99b.html",
+      "url": "https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,1191,1192,1211",
+      "final_url": "https://cr.indianrailways.gov.in/view_section.jsp?lang=0&id=0,6,1191,1192,1211",
+      "content_type": "text/html;charset=UTF-8",
+      "source": "Central Railway Mumbai division signalling and telecom page",
+      "licence": "Indian Railways publication; reuse terms unverified",
+      "retrieved": "2026-09-22T05:08:35.212089+00:00",
+      "sha256": "9c4eec92a2f3d99b593dd5b596e4d058f5d0dca895cb874f3deab080ef5840a9",
+      "bytes": 485359,
+      "producing_script": "extract/acquire_sources.py",
+      "validation_status": "acquired_unvalidated",
+      "coverage": "Mumbai division signalling evidence and linked asset documents; current applicability requires inspection.",
+      "transport": "Windows system TLS; certificate verification enabled"
+    }
+  ]
+}

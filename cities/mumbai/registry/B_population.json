@@ -68,6 +68,45 @@
         "cities/mumbai/build/build_plans.py"
       ],
       "description": "The share of core households whose plans are written (build_plans.py), by the framework's nested inclusion hash (sample_population.keep on the household id and B.seed.master), so a run at RUN.sample.fraction f at or below it keeps exactly the households a file of everyone would give and the capacity factors stay identities on f. A definition of what the file holds, not a modelling value: the plans report carries it and the launcher refuses a run fraction above the report's. 0.05 of 27.06 M persons is 1.35 M agents, the largest plans file the machine reads at launch in minutes."
+    },
+    "B.population.vehicle_possession_projection": {
+      "value": "poisson_stock_growth",
+      "units": "enum",
+      "source": "assumed",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "sweep": {
+        "categorical": [
+          "none",
+          "poisson_stock_growth"
+        ],
+        "basis": "How the Census 2011 HL-14 household vehicle possession reaches the 2026 base year. none: the 2011 shares as published, fifteen years stale (every case before 22 September 2026). poisson_stock_growth: each leaf's two-wheeler and car shares are carried by its district's growth of registered vehicles per household (data/processed/derived/vehicle_possession_growth.csv - RTO office stock 2017 and 2025, the state category ratio 2011-2017, the census and projected households) through the Poisson identity for owning at least one: lambda_2011 = -ln(1 - share), lambda_2026 = growth x lambda_2011, share_2026 = 1 - exp(-lambda_2026), so owners adding second vehicles do not count as new owning households. The growth table carries its own low and high bounds (the offices' own rate extrapolated back to 2011; the 2024-25 gross registrations without scrappage)."
+      },
+      "sweep_role": "uncertainty",
+      "consumers": [
+        "cities/mumbai/build/build_population.py"
+      ],
+      "description": "The representation gate for projecting household vehicle possession from the 2011 census to the base year. poisson_stock_growth reads data/processed/derived/vehicle_possession_growth.csv (derive_vehicle_possession_growth.py); the population report states the resulting district shares beside the 2011 ones."
+    },
+    "B.population.vehicle_possession_growth_bound": {
+      "value": "central",
+      "units": "enum",
+      "source": "assumed",
+      "status": "active",
+      "decisions_ref": "9.209",
+      "sweep": {
+        "categorical": [
+          "low",
+          "central",
+          "high"
+        ],
+        "basis": "Which column of vehicle_possession_growth.csv the projection reads: central (the state 2011-2017 category ratio, the offices' 2017-2025 ratio, one more year at the offices' rate), low (the offices' own 2017-2025 rate extrapolated over the whole 2011-2026 span, no state leg) or high (the 2024-25 gross registrations added without scrappage). Registration stock counts vehicles on record, not in use; a ratio cancels a constant record inflation only."
+      },
+      "sweep_role": "uncertainty",
+      "consumers": [
+        "cities/mumbai/build/build_population.py"
+      ],
+      "description": "The bound of the derived per-household vehicle stock growth the projection applies; inert while B.population.vehicle_possession_projection = none."
     }
   }
 }

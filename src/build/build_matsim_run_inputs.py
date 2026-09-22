@@ -887,20 +887,73 @@ def stamp_gradients(net_path, clamp_pct):
     return out
 
 
-def stamp_gradients_body(xml, clamp_pct):
-    """stamp_gradients on a decoded network: (body, result)."""
+NODE_RE = re.compile(r'<node[^>]*id="([^"]+)"[^>]*x="([^"]+)"[^>]*y="([^"]+)"')
+
+
+def node_elevations_from_dem(xml, dem_tiles, network_epsg):
+    """node id -> elevation (m), every node of a decoded network sampled from
+    a set of DEM GeoTIFF tiles (one per degree square, as Copernicus GLO-30
+    is published), the network's coordinates transformed to the tiles' CRS.
+
+    A node outside every tile, or on a nodata cell, gets no elevation and its
+    links stay flat to the consumer - counted by stamp_gradients_body, never
+    hidden. City-agnostic: the tiles and the EPSG code are the caller's.
+    """
+    import numpy as np
+    import rasterio
+    from rasterio.warp import transform
+    ids, xs, ys = [], [], []
+    for m in NODE_RE.finditer(xml):
+        ids.append(m.group(1))
+        xs.append(float(m.group(2)))
+        ys.append(float(m.group(3)))
+    if not ids:
+        return {}
+    xs, ys = np.asarray(xs), np.asarray(ys)
     elev = {}
-    for path in (ROAD_EDGES, FOOTWAY_EDGES):
-        with open(path, encoding='utf-8') as fh:
-            for r in csv.DictReader(fh):
-                for node, key in ((r['from_node'], 'elev_start_m'),
-                                  (r['to_node'], 'elev_end_m')):
-                    v = r.get(key)
-                    if v:
-                        try:
-                            elev.setdefault(node, float(v))
-                        except ValueError:
-                            pass
+    with rasterio.open(dem_tiles[0]) as first:
+        lon, lat = transform('EPSG:%d' % int(network_epsg), first.crs, xs.tolist(), ys.tolist())
+    lon, lat = np.asarray(lon), np.asarray(lat)
+    done = np.zeros(len(ids), dtype=bool)
+    for tile in dem_tiles:
+        with rasterio.open(tile) as ds:
+            b = ds.bounds
+            inside = (~done) & (lon >= b.left) & (lon < b.right) & (lat >= b.bottom) & (lat < b.top)
+            if not inside.any():
+                continue
+            band = ds.read(1)
+            cols_f, rows_f = (~ds.transform) * (lon[inside], lat[inside])
+            r = np.clip(np.floor(rows_f).astype(int), 0, band.shape[0] - 1)
+            c = np.clip(np.floor(cols_f).astype(int), 0, band.shape[1] - 1)
+            values = band[r, c].astype(float)
+            ok = np.ones(len(values), dtype=bool) if ds.nodata is None else values != ds.nodata
+            for i, v, good in zip(np.flatnonzero(inside), values, ok):
+                if good:
+                    elev[ids[i]] = float(v)
+            done[inside] = True
+    return elev
+
+
+def stamp_gradients_body(xml, clamp_pct, elevations=None):
+    """stamp_gradients on a decoded network: (body, result).
+
+    The node elevations come from the P2 edge tables (`elev_start_m` /
+    `elev_end_m`, the reference city's layers) unless the caller supplies a
+    node -> elevation map, as a city whose network is converted straight from
+    OSM does from its DEM (node_elevations_from_dem)."""
+    elev = dict(elevations) if elevations is not None else {}
+    if elevations is None:
+        for path in (ROAD_EDGES, FOOTWAY_EDGES):
+            with open(path, encoding='utf-8') as fh:
+                for r in csv.DictReader(fh):
+                    for node, key in ((r['from_node'], 'elev_start_m'),
+                                      (r['to_node'], 'elev_end_m')):
+                        v = r.get(key)
+                        if v:
+                            try:
+                                elev.setdefault(node, float(v))
+                            except ValueError:
+                                pass
     counts = collections.Counter()
 
     def stamp(m):
