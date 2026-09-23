@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 22 September 2026 (fifty-eighth session) · **Record read through:** §9.206 · **Written against family:** `F35`
+**Updated:** 23 September 2026 (sixty-second session) · **Record read through:** §9.212 · **Written against family:** `F36`
 
 ## What is built
 
@@ -12,6 +12,7 @@
 - **PT boardings come from one source** — the legs table first, the experienced plans only where no table exists (`src/analyse/iteration_trips.py`, §9.166); `station_of` matches the station name whole.
 - **A run with no automatic stop is refused before the JVM starts**: `run_matsim.py` refuses when the gate watcher AND `RUN.gate.wall_ceiling_h` are both off (§9.163, #169). **Every watcher lives in the harness**: when the routers pair's harness died at iteration 34 the ceiling, stall and gate watchers, the record writer and the viewer on 8731 died with it and the JVM ran unwatched to 250 (§9.176, #225).
 - **An orphaned run that reached its horizon is closed out as a result** (§9.176, D5): `run.py --close-out <run>` accepts a stale `running` card with dead pids, a log ending in MATSim's clean shutdown and a last ENDED iteration (from the log, never the digest) equal to the horizon; refuses a live, short or unclean run. `run_failure.py --check` is the gate that turns red on the state.
+- **A watcher reads a run's in-progress states as progress, not faults** (§9.212): `watch_run.py` reports a run with no `_meta.json` as `NOT STARTED YET`, fires HARNESS DEAD / JVM GONE only on a recorded pid that is gone, and retries an iteration still being written (`NotWrittenYet`); `tests/unit/test_harness_readers.py`.
 - **The next launch closes out a finished orphan itself** (§9.177): `reconcile_stale()` reads the clean shutdown first and calls the same close-out instead of marking the run `failed`; `iteration_times` walks the log tail when the memo is short, so the pricer and the record see the JVM's iterations.
 - **The harness detaches by default on Windows** (§9.177, D6, #225): `run.py` re-invokes itself detached and returns; `--foreground` opts out; the scheduled child is launched `--foreground`, so the watchers outlive the shell that launched them.
 - **A run carries its own residents** (§9.177, #213): the launcher writes `_residents.csv.gz` at subsample, `extract_metrics.home_lga(run_dir)` prefers it (WARNING and the city's table when absent), the results store mirrors it; `python src/analyse/extract_metrics.py --write-residents <run> NOTE` backfills a run made before it.
@@ -22,7 +23,7 @@
 - **Profiling**: `RUN.machine.jfr_profile` and `RUN.machine.gc_log`, read by `profile_run.py`; observation only (§9.154).
 - **`tests/unit/`** runs on synthetic inputs in CI and `session_gate.py`; six Java probes run on the signals stack (§9.142, #133).
 - **The gate watcher in `run_matsim.py`** reads all twelve modes every `RUN.gate.interval_iterations` = 100 and stops the JVM at `CAL.gate.stop_deviation_pct` (§9.137) from the progress digest, never a log tail (§9.139), keyed on `--gate-json` (§9.141, #112); retry every `RUN.gate.retry_interval_s` = 300 s (#131); `tests/check_gate_watcher.py` in CI.
-- **Every F35 paired arm runs with the gate OFF by overlay** (`interval_iterations` 0 under `allow_outside_sweep`, justified): six modes past the bar would stop the arm at 100, and a control differenced against arm 0 is read at arm 0's horizon — a scoped departure GOAL.md's loop now states (D10, 16 September 2026, #227).
+- **Every F35 paired arm and F36's arm 0 run with the gate OFF by overlay** (`interval_iterations` 0 under `allow_outside_sweep`, justified; `f36_baseline_25pct`, §9.212): a watcher stop at 100 would leave no control for the pairs, and a control differenced against arm 0 is read at arm 0's horizon — a scoped departure GOAL.md's loop now states (D10, 16 September 2026, #227). The ceiling and the stall kill stay armed.
 - **The issue gate** (requirement 10, §9.140, §9.158, §9.160, §9.177): `src/run/issue_gate.py` refuses a launch while an in-lane `awaiting-run` issue lacks a real `AWAITING-RUN: <measurement>` line; `AWAITING-DECISION:` reports without blocking; `--allow-open-issues` needs `--override-reason`, ledgered; it prints `[MEASUREMENT DUE: ...]` when the line names a run, an overlay or a one-field value that has since completed.
 - **The reader** `src/analyse/report_mode_ridership.py` prints twelve rows, never an umbrella `pt` row, submodes through the run's own schedule, and writes nothing (§9.87); `--it N`, `--trend` (`toward` / `AWAY` / `flat`), `--watch SECONDS`, `--truck-stations`.
 - **Any written iteration is readable** (§9.120): trips and legs every `RUN.controler.write_trips_interval` = 10, plans and events every 100; `iteration_trips.py` derives trips from the experienced plans where no table exists.
@@ -45,15 +46,14 @@
 
 ## What is measured
 
-- **The routers pair is a result and reads as arm 0 does** (§9.176, `20260915T000704_250it_25pct`, `ran_to_last_iteration` at 250, 27.39 h): **2 of 12 inside 10 %** — car **+9.0 %**, motorbike **−5.5 %**; **6 past the stop bar** — bike +197.8 %, taxi +142.6 %, light rail −71.0 % (856 vs 2,954), ferry −66.9 %, heavy rail +60.5 % (10,476 vs 6,529), ride −40.8 %; walk −11.9 % and bus −12.3 % over 10 %. Against arm 0 no trip share moved more than 0.35 pp (car); the replication band that would make that a finding is unmeasured (#163).
-- **Arm 0 of F35 is a result** (§9.169, `20260912T202242_300it_25pct`, `ran_to_last_iteration` at 300, 30.35 h): the twelve-mode reading is the board's; 2 of 12 inside, 6 past the bar.
-- **The fit pipeline ran on both results** (§9.169, §9.176, `is_a_result: true`): counts at 31 stations mean +14.2 % / +14.3 %; occupancy 0.1871 / 0.1907 against 0.3503; walk trip-geometry ratio 5.34; 31 targets unscorable, 36 scored on both.
-- **The gate reports what a constant could reach** (§9.163): beside every breaching mode its choice-set coverage, a target ABOVE it marked unreachable — on both results only ride (20.05 % on F32, 19.11 % on arm 0).
+- **F36 has no reading** (§9.212): its arm 0 `20260923T034632_250it_25pct` is running; nothing it prints before its record is cited. The newest result is F35's scoring pair, and its twelve-mode reading is the board's scoreboard.
+- **F35 closed with three results** (§9.169, §9.176, §9.177): 2 of 12 inside 10 % and 6 past the bar on each; the fit pipeline scored 36 of 67 targets with 31 unscorable on each (`_fit.json`); no trip share moved more than 0.35 pp between arm 0 and a pair, and the replication band that would make that a finding is unmeasured (#163).
+- **The gate reports what a constant could reach** (§9.163): beside every breaching mode its choice-set coverage, a target ABOVE it marked unreachable — on every F35 result only ride (19.11 % on arm 0).
 - **The reading point is a CONVERGENCE problem, not a measurement one** (§9.159, #163): the window (`CAL.gate.reading_window_iterations` = 40, sweep [20, 80]) measured worse than the point because the in-run movement is a monotone trend (`results/processed/_reading_window_measurement.json`); arm 0's drift it.250→300 is at most **0.128 pp** against a cutoff snap of **+1.683 pp** (§9.169).
 
 ## What is open
 
-- **Package audit fails** (§9.178): stale document roots (#234) and incomplete run-input report coverage (#235); see `.agents/validation.json`.
+- **Package audit fails** (§9.178, §9.211): stale document roots (#234) and the second city's run cards judged against the reference city's scenario list (#253); the run-input report coverage (#235) is restored.
 - **The light rail's shortfall** is not supply and not the transfer; where its riders are is the open question at the next gate (§9.130, #30).
 - **`--truck-stations` is holdout-bound**: whether to spend holdout on freight is the operator's decision (§9.101, #82).
 - **`fit.py` folds for the SURVEY targets and not for the OBJECTIVE** (§9.87, §9.158): `score_mode_share` the five folded categories as a diagnostic, `score_goal_modes` the twelve modes; distinct by design.
@@ -73,6 +73,7 @@
 
 ## History
 
+- §9.212 — watchers tell setup from death
 - §9.206 — viewer on every run 
 - §9.205 — build-fraction refusal
 - §9.204 — one launch path; readers degrade
@@ -87,4 +88,3 @@
 - §9.170 — the run viewer, live twelve modes
 - §9.169 — arm 0 a result; reader reads own schedule
 - §9.168 — scoreboard skips a failed run
-- §9.167 — the eighth report worked down

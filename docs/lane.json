@@ -1,6 +1,6 @@
 {
   "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
-  "updated": "2026-09-22",
+  "updated": "2026-09-23",
   "family": "F35-the-engines-route-what-they-remode",
   "tasks": [
     {
@@ -280,8 +280,8 @@
       "id": "f36-probe-and-arm-0",
       "title": "Price F36's arm 0 on the rebuilt demand: a 25 % probe of a few iterations for the per-iteration clock and the live-set heap, then the arm at a stated cost - the first run to read the held passengers (#86), bike's distance cost (#107), the derived household tail (#196), the ferry on its disclosed tap-ons (#94) and scaled standing room (#237)",
       "kind": "run",
-      "status": "open",
-      "recommended": true,
+      "status": "done",
+      "recommended": false,
       "cost": "a 25 % probe of 2-4 iterations (about 20-35 min on the scoring pair's clock) for the price, then arm 0 at 250 iterations - quoted 25.1 h, spread 24.5-32.8 h, on the PREVIOUS build's stopwatch, which is not a price for this one (`python src/analyse/arm_cost.py --iterations 250 --fraction 0.25`)",
       "blocked_on": "a stated-cost approval from the user for the arm; the probe itself is short and is what produces the quote",
       "opens_family": false,
@@ -296,7 +296,32 @@
         237
       ],
       "evidence": "9.211: the demand is rebuilt and F36 is open at 20260922T210005; 276,816 held ride trips on 141,633 persons, bike at -0.000192308 utils/m, the drawn top band 6.596 against 6.6, the ferry target 790 boardings/weekday (sweep 234-1,347), the placed short-trip band 17.81 %; no run has executed on these inputs",
-      "detail": "F36 is open at the rebuild, so every F35 reading stops comparing and the family's first act is its own probe: the committed controler differs from the newest priced arm's, so no quote describes this build. The arm then carries five measurements at once - `measure_bound_trips.py` on the held passengers (the held share executed as car should read 0 against 50.4-50.7 % escort and 35.8-36.3 % joint), bike's mean trip and share by car availability against 8.13 km and 2.9 %/14.8 %, the household-size draw against the census, the ferry against a boardings target for the first time, and #237's peak standing occupancy per vehicle type."
+      "detail": "F36 is open at the rebuild, so every F35 reading stops comparing and the family's first act is its own probe: the committed controler differs from the newest priced arm's, so no quote describes this build. The arm then carries five measurements at once - `measure_bound_trips.py` on the held passengers (the held share executed as car should read 0 against 50.4-50.7 % escort and 35.8-36.3 % joint), bike's mean trip and share by car availability against 8.13 km and 2.9 %/14.8 %, the household-size draw against the census, the ferry against a boardings target for the first time, and #237's peak standing occupancy per vehicle type.",
+      "done_ref": "9.212"
+    },
+    {
+      "id": "read-f36-arm-0",
+      "title": "Read F36's arm 0 `20260923T034632_250it_25pct` at its record - all twelve modes with choice-set coverage, and the five measurements the roots rebuild owes: the held passengers (#86, #145), bike's distance cost (#107), the household tail (#196), the ferry on its disclosed tap-ons (#94) and crowding with scaled standing room (#237)",
+      "kind": "reading",
+      "status": "open",
+      "recommended": true,
+      "cost": "no run: `report_mode_ridership.py --run 20260923T034632_250it_25pct --it 250` and `--trend`, `report_choice_set_coverage.py`, `measure_bound_trips.py`, `measure_near_wharf.py`, bike's mean trip by car availability, peak standing occupancy per vehicle type from the it.250 events, the routed short-trip split (#30), the fold's retime counters (#187); then `build_run_index.py` and the board",
+      "blocked_on": "the arm reaching its record - launched 03:46 on 23 September at a 42 h ceiling, ~27-34 h expected; `python src/run/watch_run.py --run 20260923T034632_250it_25pct` says where it is, and `run.py --close-out` applies only if its harness dies while the JVM reaches 250",
+      "opens_family": false,
+      "answers_issues": [
+        30,
+        86,
+        94,
+        107,
+        145,
+        172,
+        174,
+        187,
+        196,
+        237
+      ],
+      "evidence": "9.212: priced by 20260923T022419_4it_25pct at 469.5 s a recurring iteration (+35 %), quote 33.2 h with no milestone; launched at the approved 42 h, mode gate off as the control half (#172); running at handoff, no reading cited",
+      "detail": "The first reading of F36 and the first after the Java fold. Read at the horizon, never a mid-run level (9.108). The expectations the measurements test are 9.211's: the held share executed as car reads 0 against 50.4-50.7 % escort and 35.8-36.3 % joint; bike's mean trip against the observed 5.2 km (F35 ran 8.10-8.13 km); the ferry against 790 boardings a weekday, a basis change, so an error statistic and not a re-reading. Nothing here compares with F35. This arm is the control every pair is differenced against, so the pairs follow it."
     }
   ],
   "decisions": [

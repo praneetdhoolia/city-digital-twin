@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 22 September 2026 (sixty-first session) · **Record read through:** §9.211 · **Written against family:** `F35`
+**Updated:** 23 September 2026 (sixty-second session) · **Record read through:** §9.212 · **Written against family:** `F36`
 
 ## What is built
 
@@ -69,7 +69,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## What is open
 
-- **F36 is open and has NO reading** (§9.211): opened at the demand rebuild `20260922T210005`, not at an arm, so the family's first act is a 25 % probe for its price. Its arm 0 carries five measurements at once — what a roots rebuild costs: `measure_bound_trips.py` on the held passengers, bike's mean trip by car availability, the household-size draw, the ferry on a boardings target, and #237's peak standing occupancy (the first arm ever with standing room scaled).
+- **F36 is open and has NO reading** (§9.211, §9.212): opened at the demand rebuild `20260922T210005`; priced by its own probe; arm 0 `20260923T034632_250it_25pct` is running and reads nothing until its record. It carries five measurements at once: `measure_bound_trips.py` on the held passengers, bike's mean trip by car availability, the household-size draw, the ferry on a boardings target, and #237's peak standing occupancy (the first arm ever with standing room scaled).
 - **F35 is CLOSED with three results** and compares with nothing after `20260922T210005`.
 - **F35's three results are closed history** (§9.168, §9.169, §9.176, §9.177): arm 0 `20260912T202242_300it_25pct`, the routers pair `20260915T000704_250it_25pct` and the scoring pair `20260916T063903_250it_25pct`, each a RESULT, each citable inside F35 and against nothing after it.
 - Whether a separate 25 % confirmation arm is still needed now that the loop runs at 25 % (§9.129) is the user's call at convergence.
@@ -90,6 +90,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## History
 
+- §9.212 — F36 priced; arm 0 running
 - §9.211 — F36 opens at the roots rebuild
 - §9.206 — transit PCE scaled; 1 % gridlock 
 - §9.203 — standing room scaled at last
@@ -104,4 +105,3 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 - §9.160 — F32 opens at the probe; crowding reaches scoring
 - §9.158 — no launch, so no family row; the next arm opens one
 - §9.157 — F31's first arm stopped at its gate at iteration 100
-- §9.156 — F31 opened at the arm; the car router reads only cars
