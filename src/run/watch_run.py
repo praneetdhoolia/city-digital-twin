@@ -167,19 +167,30 @@ def snapshot(run_dir):
     except OSError:
         log_age = None
     progress = _load(os.path.join(run_dir, '_progress.json')) or {}
+    # A run with no `_meta.json` has not STARTED, which is not the same as
+    # having died: the harness subsamples the population before the JVM
+    # exists - minutes at 25 % - and for that window the card, the harness pid
+    # and the JVM pid are all absent. Reading an absent pid as a dead one
+    # reported a healthy probe as `harness DEAD; JVM gone` seconds after its
+    # launch. `None` means NOT RECORDED YET; `False` means recorded and gone.
+    card_present = os.path.exists(os.path.join(run_dir, '_meta.json'))
     harness_pid = meta.get('pid')
+    harness_alive = bool(pid_alive(harness_pid)) if harness_pid else None
     # THIS run's JVM by its recorded pid; any JVM over 2 GB on the host was
     # what this read before (twelfth report), which a second arm or a probe
     # would have satisfied for a dead one
     jvm_pid = meta.get('jvm_pid')
     if jvm_pid:
         jvm = pid_alive(jvm_pid)
-    else:
+    elif card_present:
         jvm = arm_running()
+    else:
+        jvm = None
     rec = _load(os.path.join(run_dir, '_run.json'))
     return dict(name=os.path.basename(run_dir), status=meta.get('status'),
+                card_present=card_present,
                 harness_pid=harness_pid,
-                harness_alive=bool(harness_pid and pid_alive(harness_pid)),
+                harness_alive=harness_alive,
                 jvm_pid=jvm_pid,
                 jvm_alive=(None if jvm is None else bool(jvm)),
                 log_age_s=None if log_age is None else int(log_age),
@@ -216,7 +227,11 @@ def one_line(s):
         land += ' (horizon %s)' % s['horizon']
         parts.append(land)
     parts.append('status %s' % s['status'])
-    parts.append('harness %s' % ('alive' if s['harness_alive'] else 'DEAD'))
+    if not s.get('card_present'):
+        parts.append('NOT STARTED YET (no _meta.json; the harness subsamples '
+                     'before the JVM exists)')
+    parts.append('harness %s' % ('alive' if s['harness_alive'] else
+                                 'unknown' if s['harness_alive'] is None else 'DEAD'))
     parts.append('JVM %s' % ('alive' if s['jvm_alive'] else 'unknown' if s['jvm_alive'] is None else 'gone'))
     if s.get('log_age_s') is not None:
         parts.append('log %d s old' % s['log_age_s'])
@@ -227,11 +242,25 @@ def one_line(s):
     return '; '.join(parts)
 
 
+class NotWrittenYet(Exception):
+    """The iteration's tables exist but MATSim has not finished writing them.
+
+    `readable_iterations` sees a file the moment it appears, and a 25 % arm
+    takes appreciable time to finish writing one: reading `trips.csv.gz` mid
+    write raised `EOFError: Compressed file ended before the end-of-stream
+    marker was reached` and killed the whole watch, which is the failure
+    9.176 exists to prevent - a run left with nobody reporting on it. The
+    iteration is left unseen and read again at the next poll.
+    """
+
+
 def reading_line(run_dir, it):
     """One compact line of the twelve modes at one iteration, from the memo
     where it exists (report_mode_ridership 9.176) and derived otherwise."""
     import contextlib
+    import csv
     import io
+    import zlib
     import report_mode_ridership as rmr
     stamp = rmr._reader_stamp()
     doc = rmr.read_memo(run_dir, it, False, stamp)
@@ -241,6 +270,10 @@ def reading_line(run_dir, it):
                 rmr.report(run_dir, it, False)
         except SystemExit as e:
             return 'reading unavailable: %s' % e
+        except (EOFError, OSError, zlib.error, csv.Error) as e:
+            raise NotWrittenYet('%s: %s' % (type(e).__name__, e))
+        except Exception as e:      # a READING must never take the watch down
+            return 'reading failed: %s: %s' % (type(e).__name__, e)
         doc = rmr.write_memo(run_dir, it, False, stamp)
     bits = []
     for m, v in doc['modelled'].items():
@@ -269,12 +302,16 @@ def events(run_dir, poll, read, heartbeat):
         for it in readable_iterations(run_dir):
             if it in seen:
                 continue
-            seen.add(it)
             line = 'READABLE it.%d landed; %s' % (it, one_line(s))
             if read:
-                line += '\n    ' + reading_line(run_dir, it)
+                try:
+                    line += '\n    ' + reading_line(run_dir, it)
+                except NotWrittenYet:
+                    # still being written; leave it unseen and try next poll
+                    continue
+            seen.add(it)
             print(line, flush=True)
-        if not s['harness_alive'] and s['jvm_alive'] and not said_dead:
+        if s['harness_alive'] is False and s['jvm_alive'] and not said_dead:
             print('HARNESS DEAD %s: pid %s is gone while the JVM writes on (log %s s old): '
                   'no ceiling, stall or gate watcher runs and nothing will write the record. '
                   'run.py --stop now, or run.py --close-out once it reaches its horizon.'
@@ -292,7 +329,7 @@ def events(run_dir, poll, read, heartbeat):
             print('GATE STOP %s: %s' % (s['name'], json.dumps(_load(os.path.join(run_dir, '_gate_stop.json')))[:300]),
                   flush=True)
             said_gate = True
-        if s['jvm_alive'] is False and not s['harness_alive']:
+        if s['jvm_alive'] is False and s['harness_alive'] is False:
             print('JVM GONE %s: no java process and no _run.json (status %s); if the log ends in a clean '
                   'shutdown at the horizon, run.py --close-out; otherwise reconcile records it at the next launch'
                   % (s['name'], s['status']), flush=True)
