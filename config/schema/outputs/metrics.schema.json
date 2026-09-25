@@ -160,6 +160,10 @@
     },
     "note": {
       "type": "string"
+    },
+    "read_at_iteration": {
+      "type": ["integer", "null"],
+      "description": "The iteration whose tables were read: null for a run's final output; for a run that did not reach its horizon, the newest table at or below its reached_iteration. fit.py scores the goal modes here."
     }
   },
   "additionalProperties": true

@@ -45,3 +45,18 @@ def test_only_a_final_output_table_has_a_per_iteration_spelling():
 def test_the_read_point_defaults_to_the_final_output():
     """Module state, so a test that sets it must not leak into the next one."""
     assert em._READ_AT['iteration'] is None
+
+
+def test_a_reached_iteration_between_tables_reads_the_newest_one_below(tmp_path):
+    """F36's arm 0 reached 237 and its tables sit at 230: the reading is 230,
+    never 240 and never a refusal (the close-out raised on 237 until 25
+    September 2026)."""
+    import iteration_reading
+    for n in (200, 210, 220, 230):
+        d = tmp_path / 'output' / 'ITERS' / ('it.%d' % n)
+        d.mkdir(parents=True)
+        (d / ('%d.trips.csv.gz' % n)).write_bytes(b'')
+    (tmp_path / 'output' / 'ITERS' / 'it.237').mkdir()
+    have = iteration_reading.iterations_with(str(tmp_path), 'trips')
+    assert have == [200, 210, 220, 230]
+    assert [n for n in have if n <= 237][-1] == 230

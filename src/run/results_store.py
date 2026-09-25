@@ -24,7 +24,7 @@ import shutil
 import subprocess
 import sys
 import time
-from procs import pid_alive as _pid_alive
+from procs import card_pid_alive
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
@@ -382,7 +382,7 @@ def _is_running(run_dir, recent_s=None):
     # it had ended, its harness pid dead and its JVM writing - a trim keyed on
     # the harness alone would have deleted the run it was writing (eighth
     # report, 11 September 2026).
-    if any(doc.get(k) and _pid_alive(doc[k]) for k in ('pid', 'jvm_pid')):
+    if any(card_pid_alive(doc, k) for k in ('pid', 'jvm_pid')):
         return True
     # A SECOND LOCK, against a reused pid or a `_meta.json` read mid-write: a
     # `matsim.log` written within `recent_s` is a run whatever the pid table

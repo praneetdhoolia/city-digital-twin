@@ -230,3 +230,21 @@ def test_a_stop_that_could_not_be_recorded_extracts_nothing(stopping,
     monkeypatch.setattr(run_matsim, 'close_out', lambda *a, **k: None)
     run_matsim.stop_run(stopping.name, 'stopped')
     assert stopping.seen.extracted == []
+
+
+
+# --------------------------------------------------------- a pid after reboot
+def test_a_host_booted_after_the_run_started_owns_none_of_its_pids(monkeypatch):
+    """After a reboot a card's pids name whatever started since; `--stop`
+    would `taskkill /T` them. F36's arm 0 died in a Windows Update reboot."""
+    import os
+    import procs
+    card = dict(started='2026-09-23T03:46:38', pid=os.getpid(),
+                jvm_pid=os.getpid())
+    started = __import__('time').mktime(
+        __import__('time').strptime(card['started'], '%Y-%m-%dT%H:%M:%S'))
+    monkeypatch.setattr(procs, 'boot_time', lambda: started + 86400)
+    assert procs.card_pid_alive(card, 'pid') is False
+    monkeypatch.setattr(procs, 'boot_time', lambda: started - 86400)
+    assert procs.card_pid_alive(card, 'pid') is True
+    assert procs.card_pid_alive(dict(card, pid=None), 'pid') is False

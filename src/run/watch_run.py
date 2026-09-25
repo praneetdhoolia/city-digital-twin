@@ -37,7 +37,6 @@ own, memoised under the run's `_trend/` as `--trend` is (9.176).
 import argparse
 import csv
 import datetime as dt
-import glob
 import json
 import os
 import statistics
@@ -48,7 +47,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
 
 import results_store                                              # noqa: E402
-from procs import pid_alive, arm_running                          # noqa: E402
+from procs import card_pid_alive, arm_running                          # noqa: E402
 
 for _stream in (sys.stdout, sys.stderr):
     if hasattr(_stream, 'reconfigure'):
@@ -101,17 +100,8 @@ def iteration_seconds(run_dir):
 
 def readable_iterations(run_dir):
     """Iterations whose trips table exists, ascending."""
-    found = []
-    for d in glob.glob(os.path.join(run_dir, 'output', 'ITERS', 'it.*')):
-        try:
-            n = int(os.path.basename(d).split('.', 1)[1])
-        except (IndexError, ValueError):
-            continue
-        for ext in ('.csv.gz', '.csv'):
-            if os.path.exists(os.path.join(d, '%d.trips%s' % (n, ext))):
-                found.append(n)
-                break
-    return sorted(found)
+    import iteration_reading                                  # noqa: PLC0415
+    return iteration_reading.iterations_with(run_dir, 'trips')
 
 
 def projection(per, cfg, meta, now=None):
@@ -175,13 +165,13 @@ def snapshot(run_dir):
     # launch. `None` means NOT RECORDED YET; `False` means recorded and gone.
     card_present = os.path.exists(os.path.join(run_dir, '_meta.json'))
     harness_pid = meta.get('pid')
-    harness_alive = bool(pid_alive(harness_pid)) if harness_pid else None
+    harness_alive = card_pid_alive(meta, 'pid') if harness_pid else None
     # THIS run's JVM by its recorded pid; any JVM over 2 GB on the host was
     # what this read before (twelfth report), which a second arm or a probe
     # would have satisfied for a dead one
     jvm_pid = meta.get('jvm_pid')
     if jvm_pid:
-        jvm = pid_alive(jvm_pid)
+        jvm = card_pid_alive(meta, 'jvm_pid')
     elif card_present:
         jvm = arm_running()
     else:

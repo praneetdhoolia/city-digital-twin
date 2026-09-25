@@ -7,8 +7,8 @@ rest is capped by `tests/check_doc_shape.py`. The current truth per topic is in
 [`positions/`](positions); the history and every rationale in
 [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 23 September 2026 (sixty-second session). F36 is priced on its own build (469.5 s a recurring iteration, +35 %) and **its arm 0 is RUNNING** at the approved 42 h ceiling; the launch watchers no longer read setup or a half-written table as death (§9.212).
-The scoreboard below is F36's arm 0 read MID-RUN - not a result, and nothing in it compares with F35's three results (§9.177). Mumbai waits on the D15 host.
+**Last updated:** 25 September 2026 (sixty-third session). F36's arm 0 was killed at iteration 237 of 250 by a Windows Update reboot of the host and is **closed out as stopped**, citable at 237 and read at its iteration-230 tables; the close-out now reads a stopped arm at its newest table and no stop can kill a recycled pid.
+The scoreboard below is that reading - not a result, and nothing in it compares with F35's three results (§9.177). Mumbai waits on the D15 host.
 
 ## The goal
 
@@ -20,32 +20,32 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 |---|---|---|
 | Twelve modes physically simulated | **Built and measured at 25 %, twice in F35.** Every mode represented; pt access, egress and transfer walks are network legs the qsim executed (27,765 on arm 0, 0 teleported); freight trains remain crossing closures, not mobsim vehicles (§9.70) | [walk-and-bike](positions/walk-and-bike.md), [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md), §9.169, §9.176 |
 | Monitored live, every mode individually | **Met** — every 10th iteration readable, all twelve on their own basis; the run viewer shows them against their targets | [monitoring-and-gates](positions/monitoring-and-gates.md), §9.120, §9.170 |
-| Every mode inside 10 % | **2 of 12** on all three F35 results: car and motorbike, six past the 20 % bar. F36's demand attacks four of the six at their roots (§9.211) and ride's seed-fixed ceiling with it; **unread until F36's arm 0 lands** (running, §9.212) | F35's three results (§9.177, §9.176, §9.169); the scoreboard below is F36's arm 0 mid-run, §9.212 |
+| Every mode inside 10 % | **2 of 12** on all three F35 results: car and motorbike, six past the 20 % bar. F36's demand attacks four of the six at their roots (§9.211) and ride's seed-fixed ceiling with it; **read on F36's arm 0 at iteration 230** (stopped at 237 by a host reboot): still **2 of 12** (car and motorbike), five past the bar; walk runs 6.5× its observed trip length | F35's three results (§9.177, §9.176, §9.169); the scoreboard below is F36's arm 0 at its reached iteration |
 | Convergence in ≤ 250 iterations | **Measured three times, met in the weak sense; the first arm run ON the 250 horizon relaxed** (§9.169, §9.176): the pair drifts 0.14 pp over it.210–250 against 0.5 pp, with a +1.774 pp cutoff snap on car (arm 0: 0.128 pp, +1.683). Convergence still moves car away from target on both (#172) | [seed-and-choice-set](positions/seed-and-choice-set.md), §9.176, §9.169 |
 | Unobtained data derived, not assumed | SCATS as its published algorithm (§9.88); rail, tram and now **ferry** on disclosed boardings (§9.130, §9.211); licence rates from the published count (§9.131); fares from the Opal schedule (§9.135); bike's distance cost and the household tail derived, not assumed (§9.211); still swept: transfer penalty, charging dwell, SCATS offsets | [network-and-inputs](positions/network-and-inputs.md) |
 
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `20260923T034632_250it_25pct` at **iteration 120** (family `F36-the-passenger-is-held-and-bike-pays-for-distance`, status `running`, 25% sample, launched 2026-09-23T03:46:38, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
-Reproduce: `python src/analyse/report_mode_ridership.py --run 20260923T034632_250it_25pct --it 120` (`--trend` for the direction).
+Read from `20260923T034632_250it_25pct` at **iteration 230** (family `F36-the-passenger-is-held-and-bike-pays-for-distance`, status `aborted`, 25% sample, launched 2026-09-23T03:46:38, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
+Reproduce: `python src/analyse/report_mode_ridership.py --run 20260923T034632_250it_25pct --it 230` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 59.0728 | 58.3222 | +1.3% | ok | share of resident linked trips |
-| 2 | ride | 17.5636 | 20.6000 | -14.7% | over 10% | share of resident linked trips |
-| 3 | walk | 12.5293 | 13.4000 | -6.5% | ok | share of resident linked trips |
-| 4 | taxi | 2.1194 | 0.9916 | +113.7% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 5.1490 | 2.2084 | +133.2% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.3527 | 0.3785 | -6.8% | ok | share of resident linked trips |
-| 7 | bus | 2.2016 | 2.3819 | -7.6% | ok | share of resident linked trips |
-| 8 | heavy_rail | 9,812 | 6,529 | +50.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 932 | 2,954 | -68.4% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 1,208 | 790.2850 | +52.9% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 11 | truck | 6.2522 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 60.6552 | 58.3222 | +4.0% | ok | share of resident linked trips |
+| 2 | ride | 17.7837 | 20.6000 | -13.7% | over 10% | share of resident linked trips |
+| 3 | walk | 10.9095 | 13.4000 | -18.6% | over 10% | share of resident linked trips |
+| 4 | taxi | 2.0556 | 0.9916 | +107.3% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 5.1325 | 2.2084 | +132.4% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.3510 | 0.3785 | -7.3% | ok | share of resident linked trips |
+| 7 | bus | 2.0715 | 2.3819 | -13.0% | over 10% | share of resident linked trips |
+| 8 | heavy_rail | 10,268 | 6,529 | +57.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 876 | 2,954 | -70.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 1,216 | 790.2850 | +53.9% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 11 | truck | 6.0836 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 405.0000 | 405.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **car, walk, motorbike, bus**. Past the 20% stop bar: **taxi, bike, heavy_rail, light_rail, ferry**.
+Inside 10%: **car, motorbike**. Past the 20% stop bar: **taxi, bike, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -56,7 +56,7 @@ Inside 10%: **car, walk, motorbike, bus**. Past the 20% stop bar: **taxi, bike, 
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs derived or swept with the reason stated ([network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 12 Sep with the footway harvest as walk/bike links (368,230 links); 15 feeds mapped once, 0 unmapped stops; one build per comparison (§3.5, §9.167) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains and plans of 10 Sep (§9.164); the 30 run-input sets on the 250-iteration horizon (§9.169); `check_package.py` passed |
-| P4 calibration | 🟡 | **The demand is rebuilt at its roots and F36 is open** (§9.211, `20260922T210005`): `heldRideTrips` (#86), bike's derived distance cost (#107), the household tail derived (#196), the ferry target on disclosed tap-ons (#94), standing room scaled (#237). **Priced by its own probe** `20260923T022419_4it_25pct` (§9.212). The newest run on disk is `20260923T034632_250it_25pct`, which is **RUNNING** — F36's arm 0; not a result until its record. Newcastle's newest RESULT stays `20260916T063903_250it_25pct` in the closed F35. No run approval stands. |
+| P4 calibration | 🟡 | **F36 is open** on the roots rebuild (§9.211): held passengers, bike's distance cost, the household tail, the ferry on tap-ons, scaled standing room. The newest run on disk is `20260923T034632_250it_25pct`, which is **STOPPED BY THE OPERATOR** — F36's arm 0, killed at 237 by a host reboot; citable there, not a result. Newcastle's newest RESULT stays `20260916T063903_250it_25pct` in the closed F35. No run approval stands. |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -84,7 +84,7 @@ The separate package audit's run-input report coverage is restored by the rebuil
 <!-- generated:runs start -->
 | run | city | status | family | reached | cause / note |
 |---|---|---|---|---:|---|
-| `20260923T034632_250it_25pct` | newcastle | running | F36-the-passenger-is-held-and-bike-pays-for-distance | live | - |
+| `20260923T034632_250it_25pct` | newcastle | aborted | F36-the-passenger-is-held-and-bike-pays-for-distance | 237 | host rebooted by Windows Update (TrustedInstaller, System event 1074) at 2026-09-24T04:30 +10:00 during iteration 238; the harness and th... |
 | `20260923T022419_4it_25pct` | newcastle | completed | F36-the-passenger-is-held-and-bike-pays-for-distance | 4 | ran_to_last_iteration `_run.json` |
 | `20260922T172813_4it_1pct` | newcastle | completed | F35-the-engines-route-what-they-remode | 4 | ran_to_last_iteration `_run.json` |
 | `20260922T162633_2it_0.1pct` | mumbai | completed | - | 2 | ran_to_last_iteration `_run.json` |

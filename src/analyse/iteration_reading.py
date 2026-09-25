@@ -27,6 +27,7 @@ citable at. `table_path` says which file that is, or None if it is absent,
 so a caller can refuse loudly instead of reading nothing.
 """
 import csv
+import glob
 import gzip
 import io
 import os
@@ -75,6 +76,24 @@ def table_path(run_dir, stem, iteration=None):
         if os.path.exists(base + ext):
             return base + ext
     return None
+
+
+def iterations_with(run_dir, stem='trips'):
+    """Iterations whose per-iteration `stem` table exists, ascending.
+
+    A run writes its trips and legs tables on the interval its config
+    declares (every 10th), so the iteration a stopped arm REACHED usually has
+    none; the newest of these at or below it is where the arm is citable.
+    """
+    found = []
+    for d in glob.glob(os.path.join(run_dir, 'output', 'ITERS', 'it.*')):
+        try:
+            n = int(os.path.basename(d).split('.', 1)[1])
+        except (IndexError, ValueError):
+            continue
+        if table_path(run_dir, stem, n) is not None:
+            found.append(n)
+    return sorted(found)
 
 
 def open_table(path):

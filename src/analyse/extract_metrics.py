@@ -830,10 +830,18 @@ def main():
     # A run that did not reach its last iteration has no final output tables,
     # so every table is read at the iteration it DID reach. Nothing is read
     # past it: that is the whole of the rule (GOAL.md, 9.143).
+    # Tables land on the run's write interval (every 10th), so the reached
+    # iteration of an arm stopped between two of them has none: the reading is
+    # the newest table AT OR BELOW it, never one past it. Asking for the
+    # reached iteration's own table failed every such close-out (F36's arm 0,
+    # reached 237, tables at 230).
+    reached = None
     if rec.get('completion') != 'ran_to_last_iteration':
         reached = rec.get('reached_iteration')
         if isinstance(reached, int):
-            _READ_AT['iteration'] = reached
+            have = [n for n in _reading.iterations_with(run_dir, 'trips')
+                    if n <= reached]
+            _READ_AT['iteration'] = have[-1] if have else reached
 
     # The comparison-time corrections are the city's C3; a city that declares
     # no count comparison carries empty ones, and the counts block says why.
@@ -871,11 +879,12 @@ def main():
     doc['read_from'] = (
         'final output (the run reached its last iteration)'
         if _READ_AT['iteration'] is None else
-        'iteration %d, the iteration this run REACHED - it did not run to its '
-        'last iteration, so it has no final output tables and nothing here is '
-        'citable past iteration %d'
-        % (_READ_AT['iteration'], _READ_AT['iteration']))
+        'iteration %d, the newest table at or below the iteration this run '
+        'REACHED (%s) - it did not run to its last iteration, so it has no '
+        'final output tables and nothing here is citable past iteration %s'
+        % (_READ_AT['iteration'], reached, reached))
     doc['tables_read_at_iteration'] = sorted(_READ_AT['used'])
+    doc['read_at_iteration'] = _READ_AT['iteration']
 
     out = a.out or os.path.join(run_dir, '_metrics.json')
     # through the output contract (config/schema/outputs/metrics.schema.json),

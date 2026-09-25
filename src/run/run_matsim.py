@@ -46,7 +46,7 @@ import build_matsim_run_inputs as build_inputs  # noqa: E402
 import city  # noqa: E402
 import results_store  # noqa: E402
 import run_failure  # noqa: E402
-from procs import pid_alive as _pid_alive  # noqa: E402
+from procs import card_pid_alive  # noqa: E402
 import summarise_run  # noqa: E402
 from registry import outputs, param_config  # noqa: E402
 
@@ -1341,7 +1341,7 @@ def reconcile_stale():
         # a harness killed by the OS while its JVM kept writing had its
         # directory renamed aborted_ under the live JVM (ninth report,
         # finding 18)
-        if any(doc.get(k) and _pid_alive(doc[k]) for k in ('pid', 'jvm_pid')):
+        if any(card_pid_alive(doc, k) for k in ('pid', 'jvm_pid')):
             continue
         # 9.165: THE LOG IS ASKED FIRST. A run whose harness died can still
         # have died on its own account - `20260910T222830_300it_25pct` threw
@@ -2068,8 +2068,12 @@ def stop_run(name, cause):
     # moved. The jvm pid is still killed after, because on POSIX killing the
     # harness alone left the JVM running (#128); on Windows /T takes the tree
     # and the second kill is a no-op.
-    for victim in (meta.get('pid'), meta.get('jvm_pid')):
-        if not victim:
+    # ONLY A PID THAT IS STILL THE CARD'S OWN PROCESS IS KILLED: after a host
+    # reboot the numbers name whatever started since, and `/T` would take its
+    # whole tree (procs.card_pid_alive).
+    for key in ('pid', 'jvm_pid'):
+        victim = meta.get(key)
+        if not card_pid_alive(meta, key):
             continue
         if os.name == 'nt':
             subprocess.run(['taskkill', '/F', '/PID', str(victim), '/T'],
@@ -2147,7 +2151,7 @@ def close_out_orphan(name):
                          'nothing to close out'
                          % (name, (meta or {}).get('status')))
     alive = [k for k in ('pid', 'jvm_pid')
-             if meta.get(k) and _pid_alive(meta[k])]
+             if card_pid_alive(meta, k)]
     if alive:
         raise SystemExit('%s is still running (%s alive); stop it with '
                          '--stop, do not close it out' % (name, ', '.join(alive)))

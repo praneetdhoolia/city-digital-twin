@@ -34,7 +34,8 @@ def _run(tmp_path, name, status='running', pid=999999991, log_age_s=10):
 
 
 def test_a_dead_harness_under_a_fresh_log_is_reported(tmp_path, monkeypatch):
-    monkeypatch.setattr(run_failure, '_pid_alive', lambda pid: False)
+    monkeypatch.setattr(run_failure, 'card_pid_alive',
+                        lambda card, key: False)
     _run(tmp_path, '20260915T000704_250it_25pct', log_age_s=10)
     found = run_failure.orphaned_running(str(tmp_path))
     assert [(n, pid) for n, pid, _ in found] == [
@@ -42,7 +43,8 @@ def test_a_dead_harness_under_a_fresh_log_is_reported(tmp_path, monkeypatch):
 
 
 def test_a_live_harness_is_left_alone(tmp_path, monkeypatch):
-    monkeypatch.setattr(run_failure, '_pid_alive', lambda pid: True)
+    monkeypatch.setattr(run_failure, 'card_pid_alive',
+                        lambda card, key: True)
     _run(tmp_path, '20260915T000704_250it_25pct', log_age_s=10)
     assert run_failure.orphaned_running(str(tmp_path)) == []
 
@@ -50,7 +52,8 @@ def test_a_live_harness_is_left_alone(tmp_path, monkeypatch):
 def test_a_dead_harness_under_a_silent_log_is_the_stale_case_not_this_one(tmp_path, monkeypatch):
     # the JVM stopped writing too: that is `stale_running`'s finding (both
     # dead), settled by reconcile or a close-out, and must not be reported twice
-    monkeypatch.setattr(run_failure, '_pid_alive', lambda pid: False)
+    monkeypatch.setattr(run_failure, 'card_pid_alive',
+                        lambda card, key: False)
     _run(tmp_path, '20260915T000704_250it_25pct',
          log_age_s=run_failure.LOG_FRESH_S + 60)
     assert run_failure.orphaned_running(str(tmp_path)) == []
@@ -59,6 +62,7 @@ def test_a_dead_harness_under_a_silent_log_is_the_stale_case_not_this_one(tmp_pa
 
 
 def test_a_completed_record_is_not_looked_at(tmp_path, monkeypatch):
-    monkeypatch.setattr(run_failure, '_pid_alive', lambda pid: False)
+    monkeypatch.setattr(run_failure, 'card_pid_alive',
+                        lambda card, key: False)
     _run(tmp_path, '20260915T000704_250it_25pct', status='completed')
     assert run_failure.orphaned_running(str(tmp_path)) == []
