@@ -245,37 +245,50 @@ def main():
 
     if a.list:
         return listing()
-
     if a.stop:
-        if not a.cause:
-            raise SystemExit('--stop needs --cause: a dead run must say why '
-                             'it died, in the words of whoever stopped it')
-        # The scheduled task self-deletes when its command tree ends; ending
-        # THIS RUN'S task first is belt and braces.
-        #
-        # ONLY THIS RUN'S. The sweep used to end every task whose name contained
-        # `citysim_run_`, so stopping one arm killed every other detached arm on
-        # the machine. One arm at a time is the standing rule (#66), not a
-        # guarantee - probes and a gate arm have overlapped - and `--stop` is the
-        # one sanctioned manual path, so it may not take anything with it.
-        # A run is named `<stamp>_<n>it_<p>pct`, optionally prefixed `aborted_`
-        # once mark_dead has renamed it, and its task is `citysim_run_<stamp>`.
-        if os.name == 'nt':
-            import subprocess
-            stamp = re.search(r'\d{8}T\d{6}', a.stop)
-            if stamp:
-                want = 'citysim_run_%s' % stamp.group(0)
-                for line in subprocess.run(
-                        ['schtasks', '/query', '/fo', 'csv'],
-                        capture_output=True, text=True).stdout.splitlines():
-                    tn = line.split(',')[0].strip('"').lstrip('\\')
-                    if tn.rsplit('\\', 1)[-1] == want:
-                        subprocess.run(['schtasks', '/end', '/tn', tn],
-                                       capture_output=True)
-        return 0 if run_matsim.stop_run(a.stop, a.cause) else 1
+        return stop(a)
     if a.close_out:
-        return 0 if run_matsim.close_out_orphan(a.close_out) else 1
+        return close_out(a)
+    return launch(a)
 
+
+def close_out(a):
+    """`--close-out`: record an orphaned run that reached its horizon (9.176)."""
+    return 0 if run_matsim.close_out_orphan(a.close_out) else 1
+
+
+def stop(a):
+    """`--stop`: end this run's scheduled task, then stop it through the harness."""
+    if not a.cause:
+        raise SystemExit('--stop needs --cause: a dead run must say why '
+                         'it died, in the words of whoever stopped it')
+    # The scheduled task self-deletes when its command tree ends; ending
+    # THIS RUN'S task first is belt and braces.
+    #
+    # ONLY THIS RUN'S. The sweep used to end every task whose name contained
+    # `citysim_run_`, so stopping one arm killed every other detached arm on
+    # the machine. One arm at a time is the standing rule (#66), not a
+    # guarantee - probes and a gate arm have overlapped - and `--stop` is the
+    # one sanctioned manual path, so it may not take anything with it.
+    # A run is named `<stamp>_<n>it_<p>pct`, optionally prefixed `aborted_`
+    # once mark_dead has renamed it, and its task is `citysim_run_<stamp>`.
+    if os.name == 'nt':
+        import subprocess
+        stamp = re.search(r'\d{8}T\d{6}', a.stop)
+        if stamp:
+            want = 'citysim_run_%s' % stamp.group(0)
+            for line in subprocess.run(
+                    ['schtasks', '/query', '/fo', 'csv'],
+                    capture_output=True, text=True).stdout.splitlines():
+                tn = line.split(',')[0].strip('"').lstrip('\\')
+                if tn.rsplit('\\', 1)[-1] == want:
+                    subprocess.run(['schtasks', '/end', '/tn', tn],
+                                   capture_output=True)
+    return 0 if run_matsim.stop_run(a.stop, a.cause) else 1
+
+
+def launch(a):
+    """Resolve and preflight a launch, then detach it, dry-run it or run it here."""
     # The one defaulting decision this script makes, and it is made loudly.
     run_config = a.run_config
     defaulted = False
@@ -345,20 +358,29 @@ def main():
                          'platform use nohup/setsid instead.')
 
     if a.dry_run:
-        print('scenario %s  day %s  overlay %s'
-              % (a.scenario, a.day, run_config or '(none)'))
-        src_dir = os.path.join(run_matsim.SETS, a.scenario, a.day)
-        print('inputs   %s  %s' % (src_dir, 'OK' if os.path.isdir(src_dir) else 'MISSING'))
-        snap = cfg.snapshot()
-        values, origin = snap['values'], snap['resolved_from']
-        print('\nresolved registry - %d fields, layers %s:'
-              % (snap['registry_fields'], ' -> '.join(snap['layers'])))
-        for key in sorted(values):
-            print('  %-46s %-24s [%s]'
-                  % (key, repr(values[key])[:24], origin.get(key, '?')))
-        print('\ndry run: nothing was executed')
-        return 0
+        return dry_run(a, run_config, cfg)
+    return run_here(a, cfg, raw_overrides, warm, overrides, defaulted)
 
+
+def dry_run(a, run_config, cfg):
+    """`--dry-run`: print the inputs and the resolved registry; execute nothing."""
+    print('scenario %s  day %s  overlay %s'
+          % (a.scenario, a.day, run_config or '(none)'))
+    src_dir = os.path.join(run_matsim.SETS, a.scenario, a.day)
+    print('inputs   %s  %s' % (src_dir, 'OK' if os.path.isdir(src_dir) else 'MISSING'))
+    snap = cfg.snapshot()
+    values, origin = snap['values'], snap['resolved_from']
+    print('\nresolved registry - %d fields, layers %s:'
+          % (snap['registry_fields'], ' -> '.join(snap['layers'])))
+    for key in sorted(values):
+        print('  %-46s %-24s [%s]'
+              % (key, repr(values[key])[:24], origin.get(key, '?')))
+    print('\ndry run: nothing was executed')
+    return 0
+
+
+def run_here(a, cfg, raw_overrides, warm, overrides, defaulted):
+    """Run the arm in this process, then extract its metrics."""
     doc = run_matsim.run(a.scenario, a.day, cfg, raw_overrides,
                          a.force, warm=warm, registry_overrides=overrides)
     rc_ok = doc.get('rc') == 0

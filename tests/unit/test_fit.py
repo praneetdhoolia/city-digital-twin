@@ -409,3 +409,53 @@ def test_the_patronage_level_uses_the_name_its_consumers_read():
     # n=0 is CORRECT here and is not a gap: every patronage target is
     # unscorable against a 2026 base (DECISIONS.md 12.1)
     assert p['n'] == 0
+
+
+# --------------------------------------------------------------------------
+# the same observation in the demand and in the score
+# --------------------------------------------------------------------------
+def _chain_report(tmp_path, stations):
+    path = tmp_path / '_activity_chains_report.json'
+    path.write_text(__import__('json').dumps(dict(through_gates=[
+        dict(road='a fixture road', station=s, volume=1.0) for s in stations])),
+        encoding='utf-8')
+    return str(path)
+
+
+def test_the_counts_block_states_which_stations_seeded_demand(tmp_path):
+    """A gate station seeds the through/freight volumes AND is scored; the
+    block names it and reports the statistic with and without it, while every
+    pre-existing key keeps the value it had over all scorable stations."""
+    targets = [count_target('R1', 'k1', 10000),
+               count_target('R2', 'k2', 10000),
+               count_target('R3', 'k3', 10000)]
+    stations = [station('k1', 9900), station('k2', 8100), station('k3', 4500)]
+    report = _chain_report(tmp_path, ['k3', 'k9'])
+    out = dict(unscorable=[])
+    block = fit.score_counts(targets, dict(counts=dict(stations=stations)),
+                             CORRECTIONS, out, seeding_report=report)
+    assert block['stations_seeding_demand'] == ['k3', 'k9']
+    assert block['stations_seeding_demand_scored'] == ['k3']
+    allst = block['statistic_all_scorable_stations']
+    for k in ('mean_pct_error', 'mean_abs_pct_error', 'rmse',
+              'rmse_pct_of_mean_observed'):
+        assert allst[k] == block[k]
+    assert allst['targets'] == block['targets'] == ['R1', 'R2', 'R3']
+    ind = block['statistic_stations_not_seeding_demand']
+    assert ind['targets'] == ['R1', 'R2'] and ind['n'] == 2
+    assert ind['mean_pct_error'] == 0.0 and ind['mean_abs_pct_error'] == 10.0
+    assert ind['rmse'] == 900.0
+    assert 'same observation' in block['note']
+
+
+def test_an_absent_builder_report_leaves_the_reuse_unknown(tmp_path):
+    targets = [count_target('R1', 'k1', 10000)]
+    out = dict(unscorable=[])
+    block = fit.score_counts(targets,
+                             dict(counts=dict(stations=[station('k1', 9000)])),
+                             CORRECTIONS, out,
+                             seeding_report=str(tmp_path / 'absent.json'))
+    assert block['stations_seeding_demand'] is None
+    assert block['statistic_stations_not_seeding_demand'] is None
+    assert block['statistic_all_scorable_stations']['n'] == 1
+    assert 'UNKNOWN' in block['note']

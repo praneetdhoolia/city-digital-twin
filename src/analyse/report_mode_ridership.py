@@ -1008,7 +1008,6 @@ def main():
 
     # a bare run name resolves through the results store (results/raw first,
     # then legacy results/<name>); a path that exists is used as given
-    import sys as _sys
     import results_store as _store
     resolved = _store.resolve(a.run)
     if resolved is None:
@@ -1018,129 +1017,145 @@ def main():
         raise SystemExit('no readable run at %s%s' % (a.run, hint))
     a.run = resolved
 
-    import iteration_trips as itr
     if a.trend:
-        import contextlib
-        import io as _io
-        have = sorted(set(mim.iterations_with_trips(a.run))
-                      | set(itr.iterations_with_plans(a.run)))
-        if not have:
-            raise SystemExit('%s holds no readable iteration yet' % a.run)
-        rows = []
-        stamp_r = _reader_stamp()
-        memo = None                      # the newest memo, for targets and basis
-        derived = 0
-        for it in have:
-            doc = None if a.no_cache else read_memo(a.run, it, a.truck_stations, stamp_r)
-            if doc is None:
-                try:
-                    with contextlib.redirect_stdout(_io.StringIO()):
-                        report(a.run, it, a.truck_stations)
-                except SystemExit:
-                    continue        # the newest iteration may still be writing
-                doc = write_memo(a.run, it, a.truck_stations, stamp_r)
-                derived += 1
-            rows.append((it, dict(doc['modelled'])))
-            memo = doc
-        if not rows:
-            raise SystemExit('no iteration of %s could be read' % a.run)
-        if not derived:
-            # every iteration came from the memo: LAST was never filled by
-            # report(), so the trend's frame is taken from the newest memo
-            LAST.update(run=memo['run'], iteration=memo['iteration'],
-                        fraction=memo['fraction'], source=memo['source'],
-                        targets=memo['targets'], truck_target=memo.get('truck_target'),
-                        modelled=memo['modelled'],
-                        rows=[dict(mode=m, basis=b) for m, b in memo['basis'].items()])
-        targets = LAST['targets']
-        modes = list(targets)            # all twelve, freight rail included
-        basis = {r['mode']: r['basis'] for r in LAST['rows']}
-        stamp = time.strftime('%Y-%m-%dT%H:%M:%S')
-        print('PER-MODE TREND   %s   run %s   %d readable iteration(s), %d derived now, %d from the memo'
-              % (stamp, _os.path.basename(_os.path.normpath(a.run)), len(rows),
-                 derived, len(rows) - derived))
-        print('modelled %% of resident linked trips unless the basis column '
-              'says otherwise (truck: %s)'
-              % ('heavy share at the classifying stations'
-                 if a.truck_stations else 'network-wide road-vehicle share, NOT its target basis'))
-        print('%-14s %10s' % ('mode', 'target')
-              + ''.join('%10s' % ('it.%d' % it) for it, _ in rows)
-              + '   direction   basis')
-
-        def fmt(v, t):
-            if v is None:
-                return '-'
-            big = (t is not None and abs(t) >= 1000) or abs(v) >= 1000
-            return '%.0f' % v if big else '%.4f' % v
-
-        for m in modes:
-            t = targets.get(m)
-            if m == 'truck' and a.truck_stations and LAST.get('truck_target') is not None:
-                t = LAST['truck_target']
-            vals = [r.get(m) for _, r in rows]
-            line = '%-14s %10s' % (m, fmt(t, t))
-            line += ''.join('%10s' % fmt(v, t) for v in vals)
-            if t is not None and len(vals) >= 2 and vals[0] is not None and vals[-1] is not None:
-                d0, d1 = abs(vals[0] - t), abs(vals[-1] - t)
-                span = rows[-1][0] - rows[0][0]
-                rate = (vals[-1] - vals[0]) / span if span else 0.0
-                if d1 < d0:
-                    verdict = 'toward'
-                    if rate and (t - vals[-1]) * rate > 0:
-                        verdict += ' (~%d more it)' % round((t - vals[-1]) / rate)
-                elif d1 > d0:
-                    verdict = 'AWAY'
-                else:
-                    verdict = 'flat'
-                dev = 100.0 * (vals[-1] - t) / t if t else float('nan')
-                if m == 'freight_train':
-                    line += '   representation'
-                elif m == 'truck' and not a.truck_stations:
-                    line += '   level only (not its target basis)'
-                else:
-                    line += '   %s, %+.1f%% at it.%d' % (verdict, dev, rows[-1][0])
-            line += '   ' + basis.get(m, '')
-            print(line)
-        if a.json:
-            with open(a.json, 'w', encoding='utf-8') as fh:
-                json.dump(dict(run=LAST['run'], iteration=LAST['iteration'],
-                               fraction=LAST['fraction'], source=LAST['source'],
-                               rows=LAST['rows'],
-                               trend={m: [r.get(m) for _, r in rows] for m in modes},
-                               iterations=[it for it, _ in rows]),
-                          fh, indent=1)
-        return
+        return trend(a)
     if a.watch:
-        import time as _time
-        done = set()
-        while True:
-            have = sorted(set(mim.iterations_with_trips(a.run))
-                          | set(itr.iterations_with_plans(a.run)))
-            # the newest iteration may still be being written; report it
-            # only once a later one exists or the run has ended
+        return watch(a)
+    return point_reading(a)
+
+
+def readable_iterations(run_dir):
+    """Every iteration that can be read: trips table OR experienced plans."""
+    import iteration_trips as itr
+    return sorted(set(mim.iterations_with_trips(run_dir))
+                  | set(itr.iterations_with_plans(run_dir)))
+
+
+def trend(a):
+    """`--trend`: one row per readable iteration, every mode, and its direction."""
+    import contextlib
+    import io as _io
+    have = readable_iterations(a.run)
+    if not have:
+        raise SystemExit('%s holds no readable iteration yet' % a.run)
+    rows = []
+    stamp_r = _reader_stamp()
+    memo = None                      # the newest memo, for targets and basis
+    derived = 0
+    for it in have:
+        doc = None if a.no_cache else read_memo(a.run, it, a.truck_stations, stamp_r)
+        if doc is None:
             try:
-                status = json.load(open(_os.path.join(a.run, '_meta.json'),
-                                        encoding='utf-8')).get('status')
-            except (OSError, ValueError):
-                status = None
-            ready = have if status != 'running' else have[:-1]
-            for it in ready:
-                if it in done:
-                    continue
-                try:
+                with contextlib.redirect_stdout(_io.StringIO()):
                     report(a.run, it, a.truck_stations)
-                except SystemExit as ex:
-                    print('iteration %d not readable yet: %s' % (it, ex))
-                    continue
-                print(flush=True)
-                done.add(it)
-            if status != 'running':
-                print('run %s is %s; watch ends' % (a.run, status), flush=True)
-                return
-            _time.sleep(a.watch)
-    # every iteration that can be read: trips table OR experienced plans
-    have = sorted(set(mim.iterations_with_trips(a.run))
-                  | set(itr.iterations_with_plans(a.run)))
+            except SystemExit:
+                continue        # the newest iteration may still be writing
+            doc = write_memo(a.run, it, a.truck_stations, stamp_r)
+            derived += 1
+        rows.append((it, dict(doc['modelled'])))
+        memo = doc
+    if not rows:
+        raise SystemExit('no iteration of %s could be read' % a.run)
+    if not derived:
+        # every iteration came from the memo: LAST was never filled by
+        # report(), so the trend's frame is taken from the newest memo
+        LAST.update(run=memo['run'], iteration=memo['iteration'],
+                    fraction=memo['fraction'], source=memo['source'],
+                    targets=memo['targets'], truck_target=memo.get('truck_target'),
+                    modelled=memo['modelled'],
+                    rows=[dict(mode=m, basis=b) for m, b in memo['basis'].items()])
+    targets = LAST['targets']
+    modes = list(targets)            # all twelve, freight rail included
+    basis = {r['mode']: r['basis'] for r in LAST['rows']}
+    stamp = time.strftime('%Y-%m-%dT%H:%M:%S')
+    print('PER-MODE TREND   %s   run %s   %d readable iteration(s), %d derived now, %d from the memo'
+          % (stamp, _os.path.basename(_os.path.normpath(a.run)), len(rows),
+             derived, len(rows) - derived))
+    print('modelled %% of resident linked trips unless the basis column '
+          'says otherwise (truck: %s)'
+          % ('heavy share at the classifying stations'
+             if a.truck_stations else 'network-wide road-vehicle share, NOT its target basis'))
+    print('%-14s %10s' % ('mode', 'target')
+          + ''.join('%10s' % ('it.%d' % it) for it, _ in rows)
+          + '   direction   basis')
+
+    def fmt(v, t):
+        if v is None:
+            return '-'
+        big = (t is not None and abs(t) >= 1000) or abs(v) >= 1000
+        return '%.0f' % v if big else '%.4f' % v
+
+    for m in modes:
+        t = targets.get(m)
+        if m == 'truck' and a.truck_stations and LAST.get('truck_target') is not None:
+            t = LAST['truck_target']
+        vals = [r.get(m) for _, r in rows]
+        line = '%-14s %10s' % (m, fmt(t, t))
+        line += ''.join('%10s' % fmt(v, t) for v in vals)
+        if t is not None and len(vals) >= 2 and vals[0] is not None and vals[-1] is not None:
+            d0, d1 = abs(vals[0] - t), abs(vals[-1] - t)
+            span = rows[-1][0] - rows[0][0]
+            rate = (vals[-1] - vals[0]) / span if span else 0.0
+            if d1 < d0:
+                verdict = 'toward'
+                if rate and (t - vals[-1]) * rate > 0:
+                    verdict += ' (~%d more it)' % round((t - vals[-1]) / rate)
+            elif d1 > d0:
+                verdict = 'AWAY'
+            else:
+                verdict = 'flat'
+            dev = 100.0 * (vals[-1] - t) / t if t else float('nan')
+            if m == 'freight_train':
+                line += '   representation'
+            elif m == 'truck' and not a.truck_stations:
+                line += '   level only (not its target basis)'
+            else:
+                line += '   %s, %+.1f%% at it.%d' % (verdict, dev, rows[-1][0])
+        line += '   ' + basis.get(m, '')
+        print(line)
+    if a.json:
+        with open(a.json, 'w', encoding='utf-8') as fh:
+            json.dump(dict(run=LAST['run'], iteration=LAST['iteration'],
+                           fraction=LAST['fraction'], source=LAST['source'],
+                           rows=LAST['rows'],
+                           trend={m: [r.get(m) for _, r in rows] for m in modes},
+                           iterations=[it for it, _ in rows]),
+                      fh, indent=1)
+
+
+def watch(a):
+    """`--watch`: report each newly readable iteration until the run leaves `running`."""
+    import time as _time
+    done = set()
+    while True:
+        have = readable_iterations(a.run)
+        # the newest iteration may still be being written; report it
+        # only once a later one exists or the run has ended
+        try:
+            status = json.load(open(_os.path.join(a.run, '_meta.json'),
+                                    encoding='utf-8')).get('status')
+        except (OSError, ValueError):
+            status = None
+        ready = have if status != 'running' else have[:-1]
+        for it in ready:
+            if it in done:
+                continue
+            try:
+                report(a.run, it, a.truck_stations)
+            except SystemExit as ex:
+                print('iteration %d not readable yet: %s' % (it, ex))
+                continue
+            print(flush=True)
+            done.add(it)
+        if status != 'running':
+            print('run %s is %s; watch ends' % (a.run, status), flush=True)
+            return
+        _time.sleep(a.watch)
+
+
+def point_reading(a):
+    """One iteration's table (default the newest readable), or `--all`'s list."""
+    have = readable_iterations(a.run)
     # A run whose record says it did not reach its horizon is citable at its
     # reached_iteration and nowhere past it - the board clamps, and so does
     # this reader, or its default "newest readable" could cite past the record

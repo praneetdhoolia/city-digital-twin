@@ -49,6 +49,12 @@ import os
 TARGETS = _city.path('data/processed/validation/validation_targets.csv')
 C3 = _city.path('params/C3_count_comparison.json')
 C4 = _city.path('params/C4_mode_constraints.json')
+# The demand builder's own record of what it built. Its `through_gates` list
+# names the calibration count station each boundary gate took its volume from
+# (build_activity_chains.through_gates), and that volume - split by the
+# station's heavy share - IS the through and through-freight tiers' demand.
+AADT_TARGETS = _city.path('data/processed/validation/road_aadt_targets.csv')
+CHAIN_REPORT = _city.path('demand/plans/_activity_chains_report.json')
 
 # MATSim mode -> the survey category it is comparable with, in the CITY'S OWN
 # survey labels via its reader-shape adapter (issue #62 A5) - the validation
@@ -314,14 +320,56 @@ def score_patronage(targets, metrics, out):
                 modelled_intervention_weekday_boardings=lr_daily)
 
 
-def score_counts(targets, metrics, corrections, out):
+def stations_seeding_demand(report_path=None):
+    """The count stations whose observed volume SEEDED the through/freight tiers.
+
+    Read from the demand builder's own report (`through_gates[].station`),
+    never typed: the gate-to-station match is a geometric result of the build
+    (boundary crossings, same-named road, corridor distance), so the report is
+    the one place that states which stations it used. Returns a sorted list of
+    station keys, or None when the report is absent or carries no gate list -
+    None means UNKNOWN, never "no station seeded demand".
+    """
+    path = report_path or CHAIN_REPORT
+    if not os.path.exists(path):
+        return None
+    try:
+        doc = json.load(open(path, encoding='utf-8'))
+    except (OSError, ValueError):
+        return None
+    gates = doc.get('through_gates')
+    if not isinstance(gates, list):
+        return None
+    return sorted({str(g['station']) for g in gates
+                   if isinstance(g, dict) and g.get('station') not in (None, '')})
+
+
+def _count_statistic(errs):
+    """The counts aggregates over one set of scored errors (None when empty)."""
+    if not errs:
+        return dict(targets=[], n=0, mean_pct_error=None,
+                    mean_abs_pct_error=None, rmse=None,
+                    rmse_pct_of_mean_observed=None)
+    pe = [e['pct_error'] for e in errs]
+    sq = [(e['modelled'] - e['observed']) ** 2 for e in errs]
+    obs = [e['observed'] for e in errs]
+    mean_obs = sum(obs) / len(obs)
+    return dict(targets=[e['target_id'] for e in errs], n=len(errs),
+                mean_pct_error=round(sum(pe) / len(pe), 2),
+                mean_abs_pct_error=round(sum(abs(x) for x in pe) / len(pe), 2),
+                rmse=round(math.sqrt(sum(sq) / len(sq)), 1),
+                rmse_pct_of_mean_observed=(round(
+                    100.0 * math.sqrt(sum(sq) / len(sq)) / mean_obs, 2)
+                    if mean_obs else None))
+
+
+def score_counts(targets, metrics, corrections, out, seeding_report=None):
     """Two-way weekday vehicles at the permanent count stations."""
     by_station = {s['station_key']: s for s in metrics['counts']['stations']}
     heavy = corrections['heavy_vehicle_share']
     default_heavy = heavy['value']
     obs_heavy = {}
-    with open(_city.path('data/processed/validation/road_aadt_targets.csv'),
-              encoding='utf-8') as f:
+    with open(AADT_TARGETS, encoding='utf-8') as f:
         for r in csv.DictReader(f):
             if r['heavy_share_source'] == 'observed' and r['heavy_share']:
                 obs_heavy[r['station_key']] = float(r['heavy_share'])
@@ -377,6 +425,36 @@ def score_counts(targets, metrics, corrections, out):
     pe = [e['pct_error'] for e in errs]
     sq = [(e['modelled'] - e['observed']) ** 2 for e in errs]
     obs = [e['observed'] for e in errs]
+    # THE SAME OBSERVATION ON BOTH SIDES. The calibration-split AADT stations
+    # that a boundary gate matched seed the through and through-freight tiers'
+    # volumes (build_activity_chains.through_gates) and are then scored here
+    # as count targets, so at those stations the demand was built from the
+    # number it is scored against. Nothing about which stations are scored
+    # changes; the block STATES the reuse and reports the statistic twice.
+    seeding = stations_seeding_demand(seeding_report)
+    seeding_set = set(seeding or ())
+    independent = [e for e in errs if e['station_key'] not in seeding_set]
+    reuse = dict(
+        stations_seeding_demand=seeding,
+        stations_seeding_demand_scored=sorted(
+            e['station_key'] for e in errs if e['station_key'] in seeding_set),
+        statistic_all_scorable_stations=_count_statistic(errs),
+        statistic_stations_not_seeding_demand=(
+            _count_statistic(independent) if seeding is not None else None),
+        note=(
+            'the calibration-split count stations listed in '
+            'stations_seeding_demand gave the through and through-freight '
+            'tiers their gate volumes when the demand was built (%s, '
+            'through_gates), and are scored here as well, so at those stations '
+            'the same observation enters the demand and the score. The '
+            'statistic is therefore reported over all scorable stations and '
+            'over the stations that did not seed demand; the second is the '
+            'independent reading' % os.path.basename(CHAIN_REPORT)
+            if seeding is not None else
+            'the demand builder report (%s) was not found or carries no '
+            'through_gates list, so which scored stations also seeded the '
+            'through/freight demand is UNKNOWN; the statistic over stations '
+            'not seeding demand is not computed' % os.path.basename(CHAIN_REPORT)))
     return dict(targets=used, n=len(used), errors=errs,
                 mean_pct_error=round(sum(pe) / len(pe), 2),
                 mean_abs_pct_error=round(sum(abs(x) for x in pe) / len(pe), 2),
@@ -399,7 +477,8 @@ def score_counts(targets, metrics, corrections, out):
                     % (sum(1 for e in errs if e['heavy_share_source'] == 'assumed'),
                        len(errs), default_heavy)),
                 modelled_zero_stations=[e['target_id'] for e in errs
-                                        if e.get('modelled_zero')])
+                                        if e.get('modelled_zero')],
+                **reuse)
 
 
 def account_for_the_rest(targets, out):
@@ -629,7 +708,17 @@ def main():
                   '-100%%, not dropped (issue 19)'
                   % (len(c['modelled_zero_stations']),
                      ', '.join(c['modelled_zero_stations'])))
-    tg = out.get('trip_geometry_constraint')
+        ind = c.get('statistic_stations_not_seeding_demand')
+        if ind is None:
+            print('  demand-seeding stations UNKNOWN - %s' % c.get('note', ''))
+        elif ind['n']:
+            print('  excluding the %d station(s) that seeded through/freight '
+                  'demand (%s): %d stations, mean abs pct error %.1f%%, '
+                  'RMSE %.0f'
+                  % (len(c['stations_seeding_demand_scored']),
+                     ', '.join(c['stations_seeding_demand_scored']) or '-',
+                     ind['n'], ind['mean_abs_pct_error'], ind['rmse']))
+    tg =out.get('trip_geometry_constraint')
     if tg:
         print('\ntrip geometry, %s (a constraint, never scored):'
               % _city.descriptor()['mode_share_target']['geography'])

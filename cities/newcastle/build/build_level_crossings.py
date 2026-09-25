@@ -42,6 +42,7 @@ JSON beside it), regenerable from the committed inputs.
 # with the city rather than in the framework.
 import city as _city
 import registry as _registry
+from registry.param_config import hhmmss   # one copy
 
 import gzip
 import json
@@ -195,11 +196,6 @@ def seg_dist(px, py, ax, ay, bx, by):
         return math.hypot(px - ax, py - ay)
     t = max(0.0, min(1.0, ((px - ax) * dx + (py - ay) * dy) / L2))
     return math.hypot(px - (ax + t * dx), py - (ay + t * dy))
-
-
-def hhmmss(seconds):
-    s = int(round(seconds))
-    return '%02d:%02d:%02d' % (s // 3600, (s % 3600) // 60, s % 60)
 
 
 def rail_movements(site, rail_links, schedule_text, fac):

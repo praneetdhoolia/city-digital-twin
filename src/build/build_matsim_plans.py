@@ -42,6 +42,7 @@ import pandas as pd
 
 from det_io import gzip_writer
 import registry as _registry
+from registry.param_config import hhmmss
 import subpopulations
 CFG = _registry.load()
 # Whether `ride` is withheld from a person with nobody to drive them. Derived
@@ -371,9 +372,10 @@ TYPICAL_DURATION_SWEEP = CFG.sweep(
 TOP_BAND_FACTOR = CFG.get('C.income.top_band_factor')
 
 
-def hhmmss(s):
-    s = max(0, int(round(s)))
-    return '%02d:%02d:%02d' % (s // 3600, (s % 3600) // 60, s % 60)
+def clock(s):
+    """hh:mm:ss for an activity end time, clamped at midnight: a departure
+    second before 0 is written as 00:00:00, never as a negative clock."""
+    return hhmmss(max(0, s))
 
 
 def esc(v):
@@ -1198,7 +1200,7 @@ def write_person_plans(pc):
         first = pc.rows[0]
         pc.ctx.w.write('\t\t\t<activity type="home" x="%s" y="%s" end_time="%s" />\n'
                 % (first['origin_x'], first['origin_y'],
-                   hhmmss(int(first['dep_time_s']))))
+                   clock(int(first['dep_time_s']))))
         pc.ctx.n_acts += 1
         pc.ctx.act_counts['home'] += 1
 
@@ -1241,7 +1243,7 @@ def write_person_plans(pc):
                 end = int(pc.rows[i + 1]['dep_time_s'])
                 pc.ctx.w.write('\t\t\t<activity type="%s" x="%s" y="%s" '
                         'end_time="%s" />\n'
-                        % (act, r['dest_x'], r['dest_y'], hhmmss(end)))
+                        % (act, r['dest_x'], r['dest_y'], clock(end)))
         pc.ctx.w.write('\t\t</plan>\n')
         if k == 0:
             pc.ctx.n_legs_selected += len(pc.rows)
