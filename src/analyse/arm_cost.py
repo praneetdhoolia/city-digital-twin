@@ -333,7 +333,12 @@ def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
             '(an overlay with RUN.controler.last_iteration = 4 and '
             'RUN.machine.jfr_profile false) and price the arm on that.'
             % fraction))
-    newest = same[0]
+    # The newest run that timed a RECURRING iteration: a run stopped after two
+    # iterations timed only one-offs (warm-up, the plans dump, its own last
+    # write), and pricing on its all-in median quoted F37's relaunch at 39.5 h
+    # against the probe's 32.0 h (26 September 2026). Fall back to the newest
+    # run only when none timed one.
+    newest = next((a for a in same if a.get('plain')), same[0])
     recent = same[:5]
     medians = sorted(a['median_iteration_s'] for a in recent)
     setup_s = newest.get('setup_s') or 0.0

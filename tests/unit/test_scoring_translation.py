@@ -192,3 +192,21 @@ def test_a_whole_population_fleet_scales_with_the_run_fraction(tmp_path):
     fleet.write_text(json.dumps({'vehicles_by_mode': {'taxi': 8}}), encoding='utf-8')
     runtime = bi.config_runtime(cfg, None, 'WEEKDAY', dict(PATHS, hired_fleet=str(fleet), fraction=0.001))
     assert runtime['hiredFleet.vehiclesByMode'][0] == 'taxi:8'
+
+
+def test_the_taxi_wait_is_folded_only_when_no_fleet_executes_it():
+    """Under a finite fleet the wait is executed by the engine, so the constant
+    folds nothing; only `absent` folds C.taxi.wait_min. The first cut compared
+    against 'fleet', a value the registry never uses, and F37's arm 0 priced
+    the wait twice (9.213)."""
+    import registry
+    cfg = registry.load()
+    if 'taxi' not in cfg.get('RUN.mode_choice.modes'):
+        pytest.skip('this city offers no taxi')
+    c1 = json.load(open(os.path.join(os.path.dirname(bi.PARAMS), 'C1_parameters.json'), encoding='utf-8'))
+    ps = bi.hts_purpose_share()
+    fleet = registry.load(set={'A.taxi.fleet_representation': 'finite_fleet'})
+    absent = registry.load(set={'A.taxi.fleet_representation': 'absent'})
+    asc = cfg.get('C.taxi.asc')
+    assert bi.scoring_from_c1(fleet, c1, ps)['modes']['taxi']['constant'] == round(asc, 4)
+    assert bi.scoring_from_c1(absent, c1, ps)['modes']['taxi']['constant'] < round(asc, 4)

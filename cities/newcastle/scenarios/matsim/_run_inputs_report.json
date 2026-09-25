@@ -2092,7 +2092,7 @@
         "marginalUtilityOfTraveling": -10.9608
       },
       "taxi": {
-        "constant": -1.4134,
+        "constant": 0.0,
         "marginalUtilityOfTraveling": -10.9608
       }
     },
