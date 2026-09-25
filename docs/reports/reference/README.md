@@ -44,11 +44,32 @@ on every pass.
 
 ## State
 
-Last pass **16 September 2026**, at `d6f9cdf` (the fifty-third session: the
+Last pass **25 September 2026**, at `35b64421` (the sixty-third session: F36's
+arm 0 killed at iteration 237 by a host restart and read at 230) — the
+fourteenth report, lodged as
+[`20260925T182313_project_report.html`](../20260925T182313_project_report.html).
+Every stored row was inside its horizon, so both lanes spent only on gaps.
+
+| | rows | this pass |
+|---|---:|---|
+| `field-survey.json` projects | **58** | 55 reused, **3 added** (Greater Jakarta 2026, a 10 % MATSim scenario with motorcycle as the majority mode; Okanagan 2026, a bike destination-choice sub-module feeding MATSim; CALM New York, arXiv 2609.22252, read in full: mode constants calibrated on a person-disjoint half of the survey and scored on the other); BEAM and MWCOG narrowed |
+| `field-survey.json` platforms | 12 | 12 reused |
+| excluded · not re-verified · gaps | 77 · 43 · **27 (9 open)** | 3 closed (Okanagan, Jakarta, the BEAM calibration report located at 14.82 MB, over the fetch limit), 1 excluded (Riga Route 22: demand and validation from the same taps), 1 added (the AAAM 2026 rail-crowding model, ScienceDirect-blocked) |
+| `factors.json` rows | **103** | 101 reused, **2 added**: E29 walk trip-length distribution (Yang & Diez-Roux 2012: mean 0.7 mi, median 0.5 mi, 18 % over a mile) and F7 the pt no-route walk fallback (matsim.org routing-mode note). Statuses re-read at `35b64421`: IN 41 / PARTIAL 48 / INERT 1 / ASC 2 / OUT 11 |
+
+Budgets: field lane **23 of 25** calls over 7 rounds; factor lane **8 of 15**.
+The ladder over 58 rows is **7 / 15 / 26 / 10 / 0**; the top rung is still empty
+across the field. The lesson this pass carries: models that fit trip length do
+it as a target of its own (distance-band constants, destination choice by
+purpose), never through a mode constant.
+
+### The pass of 16 September 2026
+
+Pass of **16 September 2026**, at `d6f9cdf` (the fifty-third session: the
 routers pair closed out and read as the third result, the handoff's by-hand
 steps made tools) — the **twelfth** pass of the library, two days after the
 tenth (which ran at `b8f89ff` and is lodged as
-[`20260914T152907_project_report.html`](../20260914T152907_project_report.html)).
+`20260914T152907_project_report.html` (pruned)).
 Field lane 37 of 40 calls over 12 rounds, stopped by the two-barren-rounds rule;
 every stored row was inside its horizon and none was re-searched. Nothing new
 qualified: five candidate sweeps produced six exclusions and no row.
@@ -87,7 +108,7 @@ serve PDFs that read locally at no budget cost).
 ### The previous pass (11 September 2026, at `20ae4e9`)
 
 Lodged as
-[`20260911T210144_project_report.html`](../20260911T210144_project_report.html)
+`20260911T210144_project_report.html` (pruned)
 — the eighth pass: field 50 of 50 rows reused, 6 updated (MATSim-NYC, AToM,
 POLARIS, Munich, SoundCast, Lausitz), 0 added, every row given
 `data_acquired_per_mode` and `physical_fidelity` cells; factors 90 reused,

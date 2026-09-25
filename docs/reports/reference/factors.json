@@ -19,10 +19,10 @@
   "K": "Computation"
  },
  "counts": {
-  "factors": 101,
+  "factors": 103,
   "needs_research": 0,
-  "researched": 101,
-  "literature_half_written": 101
+  "researched": 103,
+  "literature_half_written": 103
  },
  "factors": [
   {
@@ -1895,7 +1895,7 @@
    "last_verified": "2026-09-16",
    "verified_in": "12",
    "added_on": "2026-09-16",
-   "reused": false,
+   "reused": true,
    "query": "The NSW HTS 2020/21-2024/25 share of persons making no trip on the travel day (the data document at transport.nsw.gov.au returned 403; the 2022/23 and 2023/24 data documents on data.nsw.gov.au are the next route)."
   },
   {
@@ -1917,7 +1917,7 @@
    "last_verified": "2026-09-16",
    "verified_in": "12",
    "added_on": "2026-09-16",
-   "reused": false,
+   "reused": true,
    "query": "An access-mode split observed at a Newcastle-line station (Opal tap-on by access mode is not published; a TfNSW station-access survey or the commuter car park occupancy at Cardiff / Cockle Creek / Morisset would settle it)."
   },
   {
@@ -1937,7 +1937,7 @@
    "last_verified": "2026-09-16",
    "verified_in": "12",
    "added_on": "2026-09-16",
-   "reused": false,
+   "reused": true,
    "query": "The distribution of executed pt access-walk lengths on a result run against the Daniels & Mulley quartiles (a reader over the experienced plans; no search)."
   },
   {
@@ -1957,7 +1957,7 @@
    "last_verified": "2026-09-16",
    "verified_in": "12",
    "added_on": "2026-09-16",
-   "reused": false,
+   "reused": true,
    "query": "An observed speed surface for the study area (TfNSW does not publish one; TomTom/HERE probe data is commercial; the Google Distance Matrix at a sample of OD pairs is the derivable fallback)."
   },
   {
@@ -1978,35 +1978,64 @@
    "last_verified": "2026-09-16",
    "verified_in": "12",
    "added_on": "2026-09-16",
-   "reused": false,
+   "reused": true,
    "query": "Whether an Australian LBS OD product (e.g. the ABS/DataSpark or Telstra-derived OD used by TfNSW) is obtainable for the five LGAs, and at what aggregation; the 2021 journey-to-work OD (ABS TableBuilder) is the disclosed fallback."
+  },
+  {
+   "layer": "E",
+   "factor": "Walk: the trip-length distribution and its long tail (how far people actually walk)",
+   "what_research_says": "Walking trips are short and their distribution decays steeply. From the 2009 US National Household Travel Survey, Yang & Diez-Roux (AJPM 2012) report a mean walking trip of 0.7 miles and a median of 0.5 miles (about 1.1 and 0.8 km), a mean duration of 14.9 min and a median of 10 min; about 65 % of walking trips exceed 0.25 mile and only about 18 % exceed 1 mile. Distance and duration vary substantially by purpose (recreational walks are much longer) and by subgroup (lower-income people walk farther for work), and the distribution is summarised by distance-decay functions rather than a cut-off. A simulator whose walk utility is linear in time with no distance term, and whose other alternatives can fail, places mass in a multi-kilometre tail the surveys do not contain.",
+   "source_url": "https://digitalcommons.memphis.edu/facpubs/17034/",
+   "magnitude": "literature: mean 0.7 mi (~1.1 km), median 0.5 mi, mean 14.9 min / median 10 min; ~18 % of walk trips over 1 mile (US NHTS 2009)",
+   "how_leading_simulators_do_it": "The discrete-mode-choice contrib and eqasim ship per-mode availability filters including a maximum distance; ActivitySim/CT-RAMP carry a walk-distance cap in the skims (3 miles, see E28) plus a distance term in the mode utility; MATSim core's SubtourModeChoice offers walk at any distance and scores it linearly in time (see H11).",
+   "evidence_strength": "strong",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-25",
+   "query": "Walk trip-length distribution by purpose in an Australian HTS (Sydney or VISTA) - the shape behind a 0.70 km mean",
+   "reused": false,
+   "id": "E29",
+   "verified_in": "14",
+   "added_on": "2026-09-25"
+  },
+  {
+   "layer": "F",
+   "factor": "PT routing failure: the walk fallback of a pt request and how the trip is then labelled",
+   "what_research_says": "MATSim's routing-mode design (matsim.org news, 2019) gives every leg a routingMode attribute and binds an AnalysisMainModeIdentifier that defaults to routingMode but can be overridden for mode-share analysis; SwissRailRaptor adds a direct walk as a fallback when no pt route is found and it seems plausible. A trip the agent planned as pt but the router answered with walk legs only is therefore a pt choice executed as a walk: counted by leg modes it inflates the walk share and walk's trip length, counted by routingMode it is a pt trip that never boarded. No published benchmark states an acceptable no-route share; the design intent is that the fallback is rare.",
+   "source_url": "https://matsim.org/news/2019/routing-mode-helper-walk-modes/",
+   "magnitude": "none published: a design rule (routingMode is the trip identity; the fallback is a rare plausibility case)",
+   "how_leading_simulators_do_it": "MATSim core keeps routingMode on every leg and lets analysis choose; eqasim and the discrete-mode-choice contrib enumerate pt as an alternative only where a route exists, so a failed route removes the alternative rather than turning it into a walk; ActivitySim marks transit unavailable where the skim has no path.",
+   "evidence_strength": "moderate",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-25",
+   "query": "Published no-route or walk-fallback shares for SwissRailRaptor in a calibrated MATSim scenario (Berlin, Zurich, Kelheim)",
+   "reused": false,
+   "id": "F7",
+   "verified_in": "14",
+   "added_on": "2026-09-25"
   }
  ],
  "last_pass": {
-  "date": "2026-09-16",
-  "head": "d6f9cdf",
-  "rounds": 6,
-  "searches_spent": 20,
-  "budget": 40,
-  "literature_halves_newly_filled": 5,
+  "date": "2026-09-25",
+  "head": "35b64421",
+  "rounds": 1,
+  "searches_spent": 8,
+  "budget": 15,
+  "literature_halves_newly_filled": 2,
   "literature_halves_completed": 0,
-  "factors_added": 5,
-  "addenda_written": 7,
-  "gaps_closed": [
-   "F6 indifference band (Zhu & Levinson 2015 PLOS ONE read in full: 34 % on the shortest-time path, half within 30 s, 90 % within 5 min)"
-  ],
-  "gaps_narrowed": [
-   "A2 (SEMCOG brochure read locally - no tolerance; MWCOG OCR is the last route)",
-   "H12 (Cherchi & Manca abstract elided on S2)"
+  "factors_added": 2,
+  "added": [
+   "E29",
+   "F7"
   ],
   "gaps_dead_route": [
-   "api.semanticscholar.org DOI:10.1016/j.tra.2012.01.003 (404 - Carrion & Levinson)",
-   "rsginc.com SEMCOG brochure (no tolerance)",
-   "transport.nsw.gov.au HTS data document 2020/21-2024/25 (403)",
-   "link.springer.com (not retried; abstracts elided on S2 for 10.1007/s11116-006-9105-5, -011-9338-9, -024-10524-2)"
+   "pubmed.ncbi.nlm.nih.gov 22704740 (captcha)",
+   "pmc.ncbi.nlm.nih.gov PMC8743872 (captcha)",
+   "sciencedirect S0749379712002401 (403)"
   ],
-  "note": "Twelfth pass of the library, at d6f9cdf (the fifty-third session: the routers pair closed out as the third result, 9.176), two days after the tenth. needs_research was 0 and all 96 stored literature halves were inside the 365-day horizon, so ALL 96 WERE REUSED UNCHANGED AND NOT ONE WAS RE-SEARCHED. FIVE ROWS ADDED for cells the layer table names and the library lacked, each from a source read this pass: B7 immobility (Madre, Axhausen & Brog 8-12 % benchmark), E27 station access mode (Meng, Taylor & Scrafton ATRF 2017 read in full from the saved PDF; Daniels & Mulley; TfNSW rail users), E28 walk-access distance to public transport (Daniels & Mulley JTLU 2013 read in full from the saved PDF: Sydney HTS mean 573 m, train 805 m, bus 461 m), I16 travel-time and speed validation (FHWA Traffic Analysis Toolbox III / Wisconsin DOT targets: times within 15 % in > 85 % of cases, GEH < 5), J8 mobile-phone records as a demand observation (Nommon practice note; Bassolas 2019 from the field survey; Matet et al. 2024 by title). One gap closed (F6 indifference band), two narrowed, three dead routes recorded. Seven dated addenda. 20 of 40 calls spent over 6 rounds; two PDFs the fetch tool returned as binary were read locally at no budget cost.",
-  "statuses_note": "0 statuses stored, by design. All 96 carried rows plus the five new ones were re-read at d6f9cdf by a dump of the registry (558 fields), python src/registry/check_hardcoding.py --strict (TOTAL 0; 4 declared-ahead; 3 shipped at the off value), the CitysimControler.java binding lines, targeted greps of src/build, cities/newcastle/build and both Java trees, git diff b8f89ff..d6f9cdf (17 commits: the documents split, the viewer rebuilt on MapLibre, the routers pair launched, run and closed out through run.py --close-out, RunTelemetry measuring per-link delay; the registry changed in consumer annotations only, no value moved), and the routers pair read against arm 0 (9.176). NO CLASS CHANGED on any carried row: IN 46, PARTIAL 36, INERT 3, ASC 1, OUT 10 over the 96; the proofs of F5, E25, E20, E21, E19, I13 and H9 carry the pair (the first paired mechanism arm, which moved nothing outside noise), and those of I3, K2, F1, C2, A1 the commits that moved them. The five new rows read B7 PARTIAL, E27 PARTIAL, E28 IN, I16 PARTIAL, J8 OUT, so the 101-row table is IN 47 / PARTIAL 39 / INERT 3 / ASC 1 / OUT 11. Every would_move reads against the routers pair at it.250 (car +9.0, ride -40.8, walk -11.9, taxi +142.6, bike +197.8, motorbike -5.5, bus -12.3, heavy rail +60.5, light rail -71.0, ferry -66.9)."
+  "note": "Fourteenth pass of the library, at 35b64421. needs_research was 0 and all 101 stored literature halves were inside the 365-day horizon (verified 2026-09-07 to 2026-09-16), so all 101 were REUSED UNCHANGED. Two rows added for the mechanisms behind the current walk deviation that the library had no row for: E29 (the walk trip-length distribution, Yang & Diez-Roux 2012 read on the Memphis repository) and F7 (the pt routing walk fallback and its labelling, the MATSim routing-mode note). 8 of 15 calls spent.",
+  "statuses_note": "0 statuses stored, by design; this pass re-read every row at 35b64421 (writer copy only)."
  },
  "previous_pass": {
   "date": "2026-09-14",
