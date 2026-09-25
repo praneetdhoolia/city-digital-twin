@@ -200,6 +200,10 @@ GATES = [
     ('report recs', [PY, 'src/analyse/report_recs.py', '--check'], False),
     ('city contract', [PY, 'src/registry/check_city.py', '--all'], False),
     ('schema current', [PY, 'src/registry/render_schema.py', '--check'], False),
+    # CI's city-contract job checks the generated reference; the gate only
+    # regenerated it under --fix, so a stale one passed here and failed there
+    # (PR #256)
+    ('config reference', [PY, 'src/registry/render_docs.py', '--check'], False),
     ('city agnostic', [PY, 'tests/check_city_agnostic.py'], False),
     ('dead runs say why', [PY, 'src/run/run_failure.py', '--check'], False),
     ('gate watcher', [PY, 'tests/check_gate_watcher.py'], False),
@@ -256,6 +260,7 @@ FIXES = [
 FIXES_FOR = {
     'board blocks': ('run index', 'board blocks'),
     'schema current': ('schema',),
+    'config reference': ('config reference',),
     'city contract': ('config reference', 'schema'),
     # the portable contract is GENERATED from the registry, so a registry
     # addition makes it stale and it reads as a city-agnosticism failure
