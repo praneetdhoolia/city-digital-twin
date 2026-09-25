@@ -44,7 +44,8 @@ def test_a_store_record_with_a_live_jvm_refuses(monkeypatch, tmp_path):
     d.mkdir()
     (d / '_meta.json').write_text(json.dumps(dict(status='running', pid=1, jvm_pid=2)),
                                   encoding='utf-8')
-    monkeypatch.setattr(run_matsim.results_store, '_pid_alive', lambda pid: pid == 2)
+    monkeypatch.setattr(run_matsim.results_store, 'card_pid_alive',
+                        lambda card, key: (lambda pid: pid == 2)(card.get(key)))
     with pytest.raises(SystemExit) as e:
         run_matsim.refuse_concurrent_arm()
     assert '20260101T000000_4it_25pct' in str(e.value)

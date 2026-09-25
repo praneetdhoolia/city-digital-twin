@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 23 September 2026 (sixty-second session) · **Record read through:** §9.212 · **Written against family:** `F36`
+**Updated:** 25 September 2026 (sixty-third session) · **Record read through:** §9.213 · **Written against family:** `F37`
 
 ## What is built
 
@@ -46,8 +46,7 @@
 
 ## What is measured
 
-- **F36 has no reading** (§9.212): its arm 0 `20260923T034632_250it_25pct` is running; nothing it prints before its record is cited. The newest result is F35's scoring pair, and its twelve-mode reading is the board's scoreboard.
-- **F35 closed with three results** (§9.169, §9.176, §9.177): 2 of 12 inside 10 % and 6 past the bar on each; the fit pipeline scored 36 of 67 targets with 31 unscorable on each (`_fit.json`); no trip share moved more than 0.35 pp between arm 0 and a pair, and the replication band that would make that a finding is unmeasured (#163).
+- **F36 closed with a reading and no result; F37 has none** (§9.213): arm 0 `20260923T034632_250it_25pct` stopped at 237 (host restart), read at its iteration-230 tables. A stopped arm is readable end to end: the extractor and `fit.py` read the newest table at or below `reached_iteration`, the ridership reader clamps to it, and the persons readers fall back to the run's input plans (`iteration_reading.person_attributes`).
 - **The gate reports what a constant could reach** (§9.163): beside every breaching mode its choice-set coverage, a target ABOVE it marked unreachable — on every F35 result only ride (19.11 % on arm 0).
 - **The reading point is a CONVERGENCE problem, not a measurement one** (§9.159, #163): the window (`CAL.gate.reading_window_iterations` = 40, sweep [20, 80]) measured worse than the point because the in-run movement is a monotone trend (`results/processed/_reading_window_measurement.json`); arm 0's drift it.250→300 is at most **0.128 pp** against a cutoff snap of **+1.683 pp** (§9.169).
 
@@ -73,6 +72,7 @@
 
 ## History
 
+- §9.213 — a stopped arm read end to end
 - §9.212 — watchers tell setup from death
 - §9.206 — viewer on every run 
 - §9.205 — build-fraction refusal
@@ -87,4 +87,3 @@
 - §9.172 — viewer in a map-app layout; checks required
 - §9.170 — the run viewer, live twelve modes
 - §9.169 — arm 0 a result; reader reads own schedule
-- §9.168 — scoreboard skips a failed run

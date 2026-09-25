@@ -33,6 +33,7 @@ import pandas as pd
 # or a derived-from identity there. See DECISIONS.md 15.
 import registry as _registry
 CFG = _registry.load()
+MAX_AGE_YEARS = int(CFG.get('B.population.max_age_years'))
 # the household-size, home-placement and age-threshold values the draw uses,
 # declared (#188): each was an inline literal in main() until 12 Sep 2026
 HH_TOP_BAND_MEAN = float(CFG.get('B.population.household_size_top_band_mean'))
@@ -397,7 +398,7 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
                 else:
                     b = int(rng.choice(len(AGE_BANDS), p=p_age))
                 lo, hi = AGE_BANDS[b]
-                age = int(rng.integers(lo, min(hi, 95) + 1))
+                age = int(rng.integers(lo, min(hi, MAX_AGE_YEARS) + 1))
                 sex = 'M' if rng.random() < p_sex_given_age[b] else 'F'
                 if age < LABOUR_FORCE_MIN_AGE:
                     est = 'not_in_labour_force'
@@ -476,7 +477,6 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
 
 if __name__ == '__main__':
     # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
-    import sys as _sys_t, os as _os_t  # noqa: E401
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     ap = argparse.ArgumentParser()

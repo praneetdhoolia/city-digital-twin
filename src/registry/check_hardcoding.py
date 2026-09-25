@@ -522,8 +522,9 @@ STRUCTURAL = {
     'src/build/build_matsim_network.py:--threads':
         'a build-time override for the mapper thread count, which otherwise '
         'comes from RUN.machine.threads',
-    'src/run/run_matsim.py:setp(count)':
-        'how many regex matches to replace. A re.sub argument',
+    'src/build/build_matsim_run_inputs.py:nearest_stop_reach_m(cell_m)':
+        'the bucket size of the nearest-stop search. The ring search is exact '
+        'at any bucket size; this decides only how many stops are compared',
     'src/run/run_matsim.py:_log_tail(nbytes)':
         'how much of a finished run\'s matsim.log is read from its end to '
         'find the newest ITERATION ENDS marker (2 MB against a log that can '
@@ -701,7 +702,7 @@ def template_literals(corpus):
                                      line_no + REGEX_WINDOW])
             if any(fn in window for fn in ('re.sub(', 're.subn(', 're.compile(',
                                            're.search(', 're.match(',
-                                           're.finditer(')):
+                                           're.finditer(', 're.findall(')):
                 continue
             out.append((r, line_no, name, val))
     return out
@@ -719,6 +720,20 @@ _RETRY = ('an ACQUISITION retry/backoff/page size for an HTTP download; the byte
           'retrieved are the same at any value that succeeds')
 STRUCTURAL_INLINE = {
     # ---- solver and arithmetic structure
+    'src/build/shape_tools.py:project_onto:1e-18':
+        'a division guard for a zero-length segment; any value far below a '
+        'squared metre gives the same projection',
+    'src/build/build_gtfs_extras.py:_pairs_within:0.1':
+        'a floor on cos(latitude) so a grid cell never divides by zero near a '
+        'pole; never reached at this latitude (cos 33 deg = 0.84)',
+    'src/build/build_population.py:main:0.0001':
+        'a zone-area floor (km2) under the home jitter radius so a zero-area '
+        'zone does not divide by zero; 100 m2 is below any SA1',
+    '<city>/build/build_licence_rates.py:erp_single_years:99':
+        'the last single year the ABS ERP table publishes (100 and over is '
+        'one open band); the SHAPE of the source table, not a choice',
+    '<city>/extract/overpass.py:_get:120':
+        _RETRY,
     'src/build/build_activity_chains.py:solve:0.5':
         'the MIDPOINT of a bisection over the gravity decay; solver structure',
     'src/build/build_activity_chains.py:solve_short:0.5':
@@ -1205,13 +1220,13 @@ INLINE_STRUCTURAL_CALLS = {
     'timedelta', 'strftime', 'isoformat', 'to_crs', 'set_crs', 'from_epsg', 'Transformer',
     'from_crs', 'writestr', 'open', 'Counter', 'defaultdict', 'seed', 'Random',
     'RandomState', 'default_rng', 'dump', 'dumps', 'loads', 'load', 'isclose',
-    'allclose', 'assertIf', 'ceil', 'floor', 'sqrt', 'pow', 'abs', 'min', 'max', 'sum',
+    'allclose', 'assertIf', 'ceil', 'floor', 'sqrt', 'pow', 'abs', 'sum',
     'len', 'int', 'float', 'str', 'bool', 'sha256', 'md5', 'urlretrieve', 'urlopen',
     'Request', 'run', 'check_call', 'check_output', 'Popen', 'wait', 'Thread', 'fold',
     'wrap', 'truncate', 'quantize', 'ZipFile', 'GzipFile', 'BytesIO', 'StringIO',
     'progress', 'batched', 'chunked', 'nsmallest', 'nlargest', 'query_ball_point',
     'query', 'cKDTree', 'KDTree', 'sjoin_nearest', 'buffer', 'simplify', 'densify',
-    'array', 'asarray', 'clip', 'where', 'searchsorted', 'partition', 'argpartition',
+    'array', 'asarray', 'where', 'searchsorted', 'partition', 'argpartition',
     'std', 'var', 'mean', 'median', 'nanmean', 'nanmedian', 'isfinite', 'iloc', 'loc',
     'rename', 'astype', 'fillna', 'replace', 'startswith', 'endswith', 'strip', 'find'}
 

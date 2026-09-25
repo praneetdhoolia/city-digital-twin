@@ -67,7 +67,8 @@ def orphan(tmp_path, monkeypatch):
         encoding='utf-8')
     monkeypatch.setattr(run_matsim.results_store, 'resolve',
                         lambda name: str(d))
-    monkeypatch.setattr(run_matsim, '_pid_alive', lambda pid: False)
+    monkeypatch.setattr(run_matsim, 'card_pid_alive',
+                        lambda card, key: False)
     monkeypatch.setattr(run_matsim.summarise_run, 'summarise',
                         lambda *a, **k: None)
     monkeypatch.setattr(run_matsim.results_store, 'process',
@@ -116,7 +117,8 @@ def test_a_survivable_throwable_does_not_refuse_a_clean_run(orphan):
 
 
 def test_a_live_run_is_refused(orphan, monkeypatch):
-    monkeypatch.setattr(run_matsim, '_pid_alive', lambda pid: True)
+    monkeypatch.setattr(run_matsim, 'card_pid_alive',
+                        lambda card, key: True)
     with pytest.raises(SystemExit, match='still running'):
         run_matsim.close_out_orphan(orphan.name)
     assert not (orphan / '_run.json').exists()

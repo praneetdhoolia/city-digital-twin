@@ -337,7 +337,8 @@ def main():
     # cannot detach itself again.
     if a.detach and a.foreground:
         raise SystemExit('--detach and --foreground contradict each other')
-    if not a.dry_run and not a.foreground and not a.issue_gate_passed             and (a.detach or os.name == 'nt'):
+    if (not a.dry_run and not a.foreground and not a.issue_gate_passed
+            and (a.detach or os.name == 'nt')):
         return _detach()
     if a.detach:
         raise SystemExit('--detach uses the Windows Task Scheduler; on this '

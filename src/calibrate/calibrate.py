@@ -524,8 +524,9 @@ def _best_run_dir(tag):
 
 
 def plan_search(pc):
-    """One iteration of the loop this replaced in main(); `pc` carries the
-    enclosing scope (8 names). Extracted mechanically, byte-identical outputs."""
+    """Select the free parameters, print the search and its cost, refuse an over-fitted
+    or unresolvable search, and return (free, needs_run_inputs).
+    `pc` supplies cfg, a, n_free_allowed, ppp, max_rounds, comps, reading_drift, pass_band."""
     excluded = []
     free = free_parameters(pc.cfg, excluded)
     if pc.a.only:
@@ -614,8 +615,10 @@ def plan_search(pc):
 
 
 def run_search_and_record(sc):
-    """One iteration of the loop this replaced in main(); `sc` carries the
-    enclosing scope (14 names). Extracted mechanically, byte-identical outputs."""
+    """Run the coordinate-descent search, restore the shipped assembly, and write the C5
+    calibration record (best tag, objective and calibrated values) to OUT; returns None.
+    `sc` supplies free, current, best_obj, best_tag, evaluate, max_rounds, ppp, delta,
+    needs_run_inputs, rebuild_run_inputs, a, comps, history."""
     try:
         for rnd in range(sc.max_rounds):
             print('\nround %d' % (rnd + 1))
@@ -627,7 +630,7 @@ def run_search_and_record(sc):
                     rec = sc.evaluate(candidate_tag(sc.base, p['key'], value), ov)
                     if rec['feasible'] and (sc.best_obj is None
                                             or rec['objective'] < sc.best_obj):
-                        sc.best_obj, best_tag = rec['objective'], rec['tag']
+                        sc.best_obj, sc.best_tag = rec['objective'], rec['tag']
                         sc.current[p['key']] = value
             if start is not None and sc.best_obj is not None and start - sc.best_obj < sc.delta:
                 print('round improved the objective by %.4f < %.4f: stopping'
@@ -645,6 +648,10 @@ def run_search_and_record(sc):
                   % (sc.a.scenario, sc.a.day))
             sc.rebuild_run_inputs({})
 
+    # A search in which NO candidate was feasible still writes its record -
+    # with no best, and the reason - instead of raising on an unbound name
+    # after every arm it paid for had run (fourteenth report).
+    best_tag = sc.best_tag
     result = dict(
         generated=datetime.datetime.now(datetime.timezone.utc)
         .strftime('%Y-%m-%dT%H:%M:%SZ'),
@@ -656,7 +663,10 @@ def run_search_and_record(sc):
         # the runner's directory name for the best run, beside the tag the
         # record carries (#137): the tag is what the run called itself, the
         # directory is what the store calls it
-        best_run=_best_run_dir(best_tag),
+        best_run=_best_run_dir(best_tag) if best_tag else None,
+        no_feasible_candidate=(None if best_tag else
+                               'no candidate met the C4 feasibility conditions; '
+                               'nothing here is calibrated'),
         calibrated=sc.current, history=sc.history,
         note='Calibrated against the CALIBRATION half only. Counts were scored '
              'and reported but not optimised against (DECISIONS.md 9.14). The '
@@ -667,7 +677,10 @@ def run_search_and_record(sc):
     # CI (which checks out the gitattributes-normalised LF bytes) then fails
     # manifest integrity - measured on PR #67.
     json.dump(result, open(OUT, 'w', newline='\n'), indent=2)
-    print('\nbest %s at objective %.4f -> %s' % (best_tag, sc.best_obj, OUT))
+    if best_tag:
+        print('\nbest %s at objective %.4f -> %s' % (best_tag, sc.best_obj, OUT))
+    else:
+        print('\nno feasible candidate; the record says so -> %s' % OUT)
 
 
 
@@ -849,7 +862,7 @@ def main():
         print('   %-58s obj %8.4f %s' % (label, obj, '' if ok else '  INFEASIBLE'))
         return rec
 
-    sc = _types.SimpleNamespace(a=a, base=base, best_obj=best_obj, comps=comps, current=current, delta=delta, evaluate=evaluate, free=free, history=history, max_rounds=max_rounds, n_free_allowed=n_free_allowed, needs_run_inputs=needs_run_inputs, ppp=ppp, rebuild_run_inputs=rebuild_run_inputs)
+    sc = _types.SimpleNamespace(a=a, base=base, best_obj=best_obj, best_tag=best_tag, comps=comps, current=current, delta=delta, evaluate=evaluate, free=free, history=history, max_rounds=max_rounds, n_free_allowed=n_free_allowed, needs_run_inputs=needs_run_inputs, ppp=ppp, rebuild_run_inputs=rebuild_run_inputs)
     run_search_and_record(sc)
     best_obj = sc.best_obj
 

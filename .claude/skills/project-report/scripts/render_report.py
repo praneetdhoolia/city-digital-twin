@@ -243,7 +243,7 @@ def modes_section(mt: dict) -> str:
         r["result"] = f'<span class="dev {dev_class(res.get("dev"))}">{esc(res.get("modelled"))} vs {esc(res.get("target"))} → {esc(res.get("dev"))}{"" if isinstance(res.get("dev"), str) else " %"}</span>'
         r["reading"] = f'<span class="dev {dev_class(rd.get("dev"))}">{esc(rd.get("modelled"))} → {esc(rd.get("dev"))}{"" if isinstance(rd.get("dev"), str) else " %"}</span>'
         rows.append(r)
-    labels = {"result": "newest RESULT (it.300)", "reading": "newest citable reading (not a result)", "target_provenance": "target provenance",
+    labels = {"result": "newest RESULT", "reading": "newest citable reading (not a result)", "target_provenance": "target provenance",
               "simulated": "how it is simulated", "data_has": "data it has", "data_lacks": "data it lacks", "obtainable_from": "obtainable from"}
     # result/reading cells are pre-rendered HTML: bypass render_any escaping
     head = "".join(f"<th>{esc(labels.get(c, c))}</th>" for c in cols)

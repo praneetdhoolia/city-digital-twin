@@ -34,7 +34,6 @@ without `_run.json` is not a result no matter how it scores.
 
 import os as _os
 
-import glob
 import json
 import argparse
 import collections
@@ -47,18 +46,8 @@ TRIPS_STEM = 'ITERS/it.%d/%d.trips'
 
 def iterations_with_trips(run_dir):
     """Iterations whose per-iteration trips table exists, ascending."""
-    found = []
-    pattern = _os.path.join(run_dir, 'output', 'ITERS', 'it.*')
-    for d in glob.glob(pattern):
-        try:
-            n = int(_os.path.basename(d).split('.', 1)[1])
-        except (IndexError, ValueError):
-            continue
-        for ext in ('.csv.gz', '.csv'):
-            if _os.path.exists(_os.path.join(d, '%d.trips%s' % (n, ext))):
-                found.append(n)
-                break
-    return sorted(found)
+    import iteration_reading                                  # noqa: PLC0415
+    return iteration_reading.iterations_with(run_dir, 'trips')
 
 
 def trip_rows(run_dir, iteration):

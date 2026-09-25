@@ -190,6 +190,7 @@ arm runs). Run it at `/onboard` and `/handoff`, and before every commit.
 | `python tests/check_doc_currency.py --strict` | CI + local | committed files |
 | `python tests/check_doc_shape.py --strict` · `python tests/check_doc_links.py --strict` · `python src/analyse/build_status_board.py --check` | CI + local | committed files |
 | `python src/analyse/lane.py --check` · `python src/analyse/report_recs.py --check` | local | committed files |
+| `python tests/check_secrets.py` (and `--staged` from `.githooks/pre-commit`) | local | committed files |
 | `python src/registry/check_city.py --all` · `render_schema.py --check` | CI | nothing |
 | `python tests/check_city_agnostic.py` | CI | nothing |
 | `python -m pytest -q tests/unit` | CI + local | nothing |

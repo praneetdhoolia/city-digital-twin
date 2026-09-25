@@ -190,6 +190,9 @@ GATES = [
     ('doc currency', [PY, 'tests/check_doc_currency.py', '--strict'], False),
     ('doc shape', [PY, 'tests/check_doc_shape.py', '--strict'], False),
     ('doc links', [PY, 'tests/check_doc_links.py', '--strict'], False),
+    # a credential in a tracked file is published by the next push (the
+    # fourteenth report, 25 September 2026)
+    ('no secrets', [PY, 'tests/check_secrets.py'], False),
     ('board blocks', [PY, 'src/analyse/build_status_board.py', '--check'], False),
     # 9.171: the lane ledger is the one home of "what is next"; the board and
     # the brief render it, and a malformed ledger renders nothing
@@ -197,6 +200,10 @@ GATES = [
     ('report recs', [PY, 'src/analyse/report_recs.py', '--check'], False),
     ('city contract', [PY, 'src/registry/check_city.py', '--all'], False),
     ('schema current', [PY, 'src/registry/render_schema.py', '--check'], False),
+    # CI's city-contract job checks the generated reference; the gate only
+    # regenerated it under --fix, so a stale one passed here and failed there
+    # (PR #256)
+    ('config reference', [PY, 'src/registry/render_docs.py', '--check'], False),
     ('city agnostic', [PY, 'tests/check_city_agnostic.py'], False),
     ('dead runs say why', [PY, 'src/run/run_failure.py', '--check'], False),
     ('gate watcher', [PY, 'tests/check_gate_watcher.py'], False),
@@ -215,6 +222,9 @@ GATES = [
     # GOAL.md requirement 10: every open issue closed or awaiting a run
     ('issues gated', [PY, 'src/run/issue_gate.py'], False),
     ('toolchain', [PY, 'src/setup/bootstrap_toolchain.py', '--verify'], True),
+    # the Java engines' probes: two of them died in checkConsistency for a
+    # week because nothing ran them (fourteenth report, 25 September 2026)
+    ('java probes', [PY, 'src/run/run_signal_probes.py'], True),
 ]
 
 
@@ -250,6 +260,7 @@ FIXES = [
 FIXES_FOR = {
     'board blocks': ('run index', 'board blocks'),
     'schema current': ('schema',),
+    'config reference': ('config reference',),
     'city contract': ('config reference', 'schema'),
     # the portable contract is GENERATED from the registry, so a registry
     # addition makes it stale and it reads as a city-agnosticism failure

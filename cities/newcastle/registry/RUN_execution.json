@@ -593,19 +593,17 @@
       ]
     },
     "RUN.transit_router.access_max_radius_m": {
-      "value": 1200.0,
+      "value": 55600.0,
       "units": "metres",
-      "source": "derived",
-      "derived_from": {
-        "fields": [
-          "RUN.transit_router.search_radius_m",
-          "RUN.transit_router.extension_radius_m"
-        ],
-        "identity": "access_max_radius_m = search_radius_m + extension_radius_m = 1000 + 200. The beeline search has no separate hard ceiling: it reaches the search radius, and where no stop lies inside it, out to the nearest stop plus the extension. The furthest that path can ever reach is therefore the sum, and that is the ceiling declared here - the identity that leaves the routed search covering the same ground as the drawn one. The raptor's own default is the sentinel +Infinity, which would let one agent's access search run to the far side of the region."
+      "source": "measured",
+      "held_fixed": {
+        "rule": "THE CEILING MAY NOT CUT THE NEAREST-STOP FALLBACK. SwissRailRaptor's intermodal finder (DefaultRaptorStopFinder.addInitialStopsForParamSet, read from the pinned jar) searches min(initialSearchRadius, maxRadius) and, with fewer than two stops inside, falls back to min(nearest-stop distance + searchExtensionRadius, maxRadius) - so maxRadius only ever CUTS that fallback, and never lets a search run past the nearest stop plus the extension. The ceiling that reproduces the beeline finder's reach is therefore the farthest distance from any activity location to its nearest stop, plus the extension: measured 25 September 2026 over every scenario's own stops and every day type's own activity locations at 32,261 m (weekdays) and 55,362 m (weekends; the far points are boundary and freight origins), + 200 m = 55,562 m, declared 55,600. build_matsim_run_inputs.py re-measures it at every assembly and refuses a ceiling below it. SUPERSEDES the identity 1,000 + 200 = 1,200 m (9.159), which read the beeline path as bounded by the sum: from 12 September (access on the network, 9.167) it refused transit to every trip end beyond 1.2 km of a stop - the share of pt requests with no transit route went from 31-37 % to 66-68 % on every run since, against 38.8-39.4 % re-routed offline without the cap (fourteenth report).",
+        "decisions_ref": "9.159, 9.167",
+        "departure_requires": "a stop layout or activity locations whose re-measured reach exceeds the value - the assembler refuses and names the reach"
       },
       "status": "active",
       "decisions_ref": "9.159, 9.120",
-      "description": "The hard ceiling on how far the raptor will look for an access or egress stop. No beeline counterpart exists, so it is derived as the furthest the beeline path could reach. EMITTED WITH THE PARAMETER SET, NOT BOUND SEPARATELY FROM IT: the set exists only when RUN.transit_router.access_egress_basis is `network`, and a `[*]` binding whose set nothing creates is a fault the emitter refuses outright - correctly, since a radius broadcast onto no set is a value that silently reaches nothing. So all four values are emitted together by build_matsim_run_inputs.py under the `derived` runtime role, or not at all. Emits swissRailRaptor.intermodalAccessEgress[*].maxRadius.",
+      "description": "The hard ceiling on how far the raptor will look for an access or egress stop. No beeline counterpart exists; the value is the measured reach of the beeline finder's nearest-stop fallback (held_fixed.rule), and the assembler refuses a value below it. EMITTED WITH THE PARAMETER SET, NOT BOUND SEPARATELY FROM IT: the set exists only when RUN.transit_router.access_egress_basis is `network`, and a `[*]` binding whose set nothing creates is a fault the emitter refuses outright - correctly, since a radius broadcast onto no set is a value that silently reaches nothing. So all four values are emitted together by build_matsim_run_inputs.py under the `derived` runtime role, or not at all. Emits swissRailRaptor.intermodalAccessEgress[*].maxRadius.",
       "consumers": [
         "src/build/build_matsim_run_inputs.py"
       ]

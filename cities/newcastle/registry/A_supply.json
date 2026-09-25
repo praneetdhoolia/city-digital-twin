@@ -3202,6 +3202,23 @@
         "src/run/run_matsim.py"
       ],
       "description": "Whether pt boardings are charged from a per-route boarding-fare table (citysim.BoardingFareHandler; `table`) assembled beside the scenario network as boarding_fares.csv, or not (`absent`). This city prices pt through the published Opal schedule (A.fare.*, citysim.PtFareChargeHandler, 9.135), so the table is absent; a city whose operators publish flat or stage fares per route declares `table` and the harness refuses a scenario that lost its table (#33)."
+    },
+    "A.gradient.edge_grade_clip_pct": {
+      "value": 25.0,
+      "units": "percent",
+      "source": "assumed",
+      "sweep": [
+        20.0,
+        35.0
+      ],
+      "sweep_basis": "Newcastle's steepest streets run ~20-25 %; node differencing over short edges produces outliers well past that. The lower bound is the run-network clamp A.gradient.grade_clamp_pct (20), the upper the p99 32.5 % measured on the S0 run network (9.84).",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.84",
+      "consumers": [
+        "src/build/attach_gradient.py"
+      ],
+      "description": "Symmetric clip, in percent, on the grade attach_gradient.py stamps onto the A1/A6 edge layers from the DEM. WIDER than the run network's A.gradient.grade_clamp_pct (20): the two clamps disagree and the edge layer keeps grades the run network then clips - stated here rather than silently aligned, because aligning them rewrites the committed edge layers. fourteenth report (25 September 2026): hidden until then inside a min()/max() the hardcoding ledger exempted."
     }
   }
 }

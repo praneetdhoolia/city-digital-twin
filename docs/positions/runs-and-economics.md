@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 23 September 2026 (sixty-second session) · **Record read through:** §9.212 · **Written against family:** `F36`
+**Updated:** 25 September 2026 (sixty-third session) · **Record read through:** §9.213 · **Written against family:** `F37`
 
 ## What is built
 
@@ -17,7 +17,8 @@
 - **Dependencies pinned** at `==`, `tests/check_requirements.py` in CI; **build wall time** in `cities/<city>/data/_build_timing.json`, outside the hashed set (§9.158).
 - **The store refuses to delete a run nobody can reconstruct** (`results_store.trim`, §9.158); `run.py --stop` extracts metrics (§9.158); `--stop` and `--list` need no valid registry (§9.141, #126); `RUN.storage.extract_grace_s` = 3600; `RUN.storage.raw_cap_gb` is gibibytes (§9.155, #132).
 - **A run that ends at a DEFINED BOUNDARY closes itself out** (§9.143): last iteration, gate stop or `--stop` write `_run.json` and the findings; a crash writes none. `completion` is the result gate; only `ran_to_last_iteration` satisfies resume or anchors a base; `reached_iteration` is the last iteration that ENDED.
-- **`arm_cost.py` prices the iteration an arm REPEATS** (§9.154, §9.155, §9.156, §9.177): excludes profiled runs, reads the run's own `output/stopwatch.csv`, warns when the priced run met no milestone, compares `controler_sha256` (§9.160); setup is read from the JVM's stopwatch when the harness memo is short (the orphaned pair had quoted 48.8 h with 22.8 h of setup; 26.6 h after); each family is priced by its own unprofiled probe overlay (F36: `f36_pricing_probe_25pct`, §9.212).
+- **A run the host will restart under is not launched** (§9.213, user decision): `run_matsim.refuse_unsafe_host` refuses while Windows has a restart pending or its update pause ends before the run's `RUN.gate.wall_ceiling_h` (`procs.restart_pending`, `procs.updates_paused_until`); active hours cap at 18 h and an arm runs 25–42 h, so the user pauses updates before a launch. A card's pids are dead once the host booted after its `started` (`procs.card_pid_alive`), so `--stop` never kills a recycled pid.
+- **`arm_cost.py` prices the iteration an arm REPEATS** (§9.154, §9.156, §9.177): excludes profiled runs, reads the run's own `output/stopwatch.csv`, warns when the priced run met no milestone, compares `controler_sha256` (§9.160); setup is launch to the stopwatch's BEGIN of iteration 0 (`launch_to_first_iteration_s`, §9.213); each family is priced by its own probe overlay (F37: `f37_pricing_probe_25pct`).
 - **One front door.** `run.py` resolves a scenario × day-type set through `src/city.py`, applies a `--run-config` overlay and `--set` overrides; `--iterations` has no default (§9.43); runs are named `<launch>_<iterations>it_<pct>pct` (§9.65). **Resume identity**: `find_completed` matches every parameter plus `controler_sha256`, `values_sha256` (§9.104) and `inputs_sha256` (§9.127); no hash, no match.
 - **Three records per run.** `_meta.json`, the status card (§9.66; a refused launch writes a `failed` card under `aborted_`, §9.141, #127, #128); `_progress.json` every `RUN.monitor.progress_interval_s` = 30 s against `RUN.monitor.pace_band_s` = [217, 253] and `RUN.monitor.solo_check_iterations` = [2, 5] (§9.72, #76); `_run.json` at a defined boundary (§9.143).
 - **The results store** (§9.137): `results/raw/<run>` under `RUN.storage.raw_cap_gb` = 500, trimmed oldest-first, never live runs; `results/processed/<run>` keeps the findings forever; nobody edits `results/` by hand. Trim is off the launch path (§9.141, #132, #137).
@@ -28,8 +29,7 @@
 
 ## What is measured — what a run costs
 
-- **F36 is priced on its own build: the recurring iteration is 469.5 s, +35 %** (§9.212, `20260923T022419_4it_25pct`, `ran_to_last_iteration` at 4, wall 4,542 s, controler `cbc97779cea8827a`): iterations 2–3 against 348.5 s on the scoring pair; it.0 776 s (532 before), it.1 625 s (440), setup 29 min (22). 250 iterations quote **33.2 h** with NO milestone in it, ~34 h with the milestones carried at +35 %, spread 24.8–34.0 h (`arm_cost.py`). A four-iteration probe cannot separate the Java fold's in-mobsim work (§9.210) from the rebuilt demand (§9.211).
-- **F36's arm 0 is running at the approved 42 h ceiling** (§9.212, `20260923T034632_250it_25pct`, overlay `f36_baseline_25pct`, 48g): launched 03:46 on 23 September; not a result until its record. Its pace is the board's runs block and `watch_run.py`, not this page.
+- **F36's arm 0 recurred at 349.5 s and died to a host restart, 13 iterations from its record** (§9.213, `20260923T034632_250it_25pct`, `stopped_by_operator` at 237): 24.17 h of iterations, setup 1,598 s; Windows Update restarted the host at 04:30 on 24 September. Priced from its own clock, a 250-iteration arm on that build is **25.6 h** (spread 24.7–34.0 h); the wall-minus-iterations rule had booked the 37 h the dead host sat as setup and quoted 62.9 h.
 - **The scoring pair landed in 25.77 h against a 33.0 h ceiling and a 27.2 h quote** (§9.177, D7; `20260916T063903_250it_25pct`, 48g: wall 92,774.9 s; recurring iteration **348.5 s** over 244 plain iterations; the probe `20260916T053153_4it_25pct` priced it at 383 s/it): iterations ran 400–510 s while that session's rebuilds and test suites shared the CPU and ~264 s in the innovation-off tail (`output/stopwatch.csv`); the it.100/150/200/250 dumps 628–862 s.
 - **The heap is measured on a full arm, and it does not slope** (§9.169, `gc.log`, #66): live heap after a full collection 21.2 GB at 8.9 h, peak 26,863 MB at 22.9 h, 21.4 GB at 30.2 h; GC under 1 % of wall. The rule (`RUN.machine.heap_floor_gib` 15.6 + `RUN.machine.heap_per_fraction_gib` 87 × 0.25 = 37.4 GiB) holds 11 GiB over the peak; the slope is not re-declared on one arm; no stall. F36's probe read 15,585 MB live after its last full collection at iteration 4 (§9.212, `gc.log`) - too short to re-measure the slope.
 - **Wall-time-only controler fields.** `RUN.controler.write_events_interval` / `write_plans_interval` = **100** in the registry (`write_trips_interval` stays at 10; §9.147); `RUN.controler.create_graphs` off for long arms (§9.56, §9.59). `RUN.controler.last_iteration` = **250** since 14 September 2026 (§9.169).
@@ -62,6 +62,7 @@
 
 ## History
 
+- §9.213 — a host restart cannot take an arm
 - §9.212 — F36 priced; arm 0 launched
 - §9.177 — scoring pair launched; detach default
 - §9.176 — the pair lands at 27.4 h; its harness died at it.34

@@ -27,7 +27,7 @@ import sys
 import json
 import glob
 import argparse
-from procs import pid_alive as _pid_alive
+from procs import card_pid_alive
 
 # `Exception in thread "main" pkg.Cls: message` - the JVM's own last word. The
 # thread is captured because a run can also die on a mobsim worker.
@@ -250,8 +250,7 @@ def stale_running(results_dir):
             continue
         # the harness OR the JVM alive is a live run (#128; ninth report,
         # finding 18)
-        if any(_pid_alive(meta.get(k)) for k in ('pid', 'jvm_pid')
-               if meta.get(k)):
+        if any(card_pid_alive(meta, k) for k in ('pid', 'jvm_pid')):
             continue
         out.append((os.path.basename(os.path.dirname(meta_path)),
                     meta.get('pid')))
@@ -288,7 +287,7 @@ def orphaned_running(results_dir):
             continue
         if meta.get('status') != 'running' or not meta.get('pid'):
             continue
-        if _pid_alive(meta['pid']):
+        if card_pid_alive(meta, 'pid'):
             continue
         log = os.path.join(os.path.dirname(meta_path), LOG)
         try:

@@ -57,12 +57,14 @@ def test_a_mobsim_line_in_the_tail_means_the_launch_took(tmp_path, monkeypatch):
 def test_the_watcher_reports_this_runs_jvm(tmp_path, monkeypatch):
     d = _run(tmp_path, dict(status='running', pid=11, jvm_pid=22), 'log\n',
              progress=dict(iteration=3, iteration_seconds={'1': 300.0, '2': 300.0}))
-    monkeypatch.setattr(watch_run, 'pid_alive', lambda pid: pid == 22)
+    monkeypatch.setattr(watch_run, 'card_pid_alive',
+                        lambda card, key: (lambda pid: pid == 22)(card.get(key)))
     # any JVM on the host would have said alive; the pid says otherwise here
     monkeypatch.setattr(watch_run, 'arm_running', lambda *a, **k: ['pid 99 (40000 MB)'])
     snap = watch_run.snapshot(str(d))
     assert snap['jvm_pid'] == 22 and snap['jvm_alive'] is True
-    monkeypatch.setattr(watch_run, 'pid_alive', lambda pid: False)
+    monkeypatch.setattr(watch_run, 'card_pid_alive',
+                        lambda card, key: False)
     snap = watch_run.snapshot(str(d))
     assert snap['jvm_alive'] is False, 'a dead recorded JVM is dead whatever else runs'
 
@@ -72,7 +74,8 @@ def test_a_run_still_in_setup_is_not_a_dead_run(tmp_path, monkeypatch):
     d = tmp_path / '20260101T000000_4it_25pct'
     d.mkdir()          # exactly what the runner leaves during the subsample
     # nothing else on the host may answer for a run that has not started
-    monkeypatch.setattr(watch_run, 'pid_alive', lambda pid: False)
+    monkeypatch.setattr(watch_run, 'card_pid_alive',
+                        lambda card, key: False)
     monkeypatch.setattr(watch_run, 'arm_running', lambda *a, **k: ['pid 99 (40000 MB)'])
     snap = watch_run.snapshot(str(d))
     assert snap['card_present'] is False
@@ -86,7 +89,8 @@ def test_a_run_still_in_setup_is_not_a_dead_run(tmp_path, monkeypatch):
 def test_a_recorded_pid_that_is_gone_is_still_dead(tmp_path, monkeypatch):
     """The setup window must not blind the reader to a real death (9.176)."""
     d = _run(tmp_path, dict(status='running', pid=11, jvm_pid=22), 'log\n')
-    monkeypatch.setattr(watch_run, 'pid_alive', lambda pid: False)
+    monkeypatch.setattr(watch_run, 'card_pid_alive',
+                        lambda card, key: False)
     snap = watch_run.snapshot(str(d))
     assert snap['card_present'] is True
     assert snap['harness_alive'] is False and snap['jvm_alive'] is False

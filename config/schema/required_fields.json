@@ -4,10 +4,10 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. A field that carries a sweep MUST say what the sweep is for (sweep_role: answer, uncertainty or measurement), and an assumed field with a sweep MUST say how the interval was chosen (sweep_basis) - the resolver refuses either omission (#134). Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in cities/<city>/docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. Two narrowings are DERIVED: a field carrying `required_if_mode` is required ONLY of a city that runs that mode (the mode name is in the tool binding), and `required_by` says who reads the field - `run` (every city), a list of framework builders (a city whose manifest names one of them as a producer), or `reference_city` (read only by the reference city's own adapters and builders; required of no other city). A field a switched-off mechanism silences is still `run`: the emitter writes it, so the city declares it.",
-  "n_fields": 575,
+  "n_fields": 579,
   "n_by_layer": {
-    "A": 207,
-    "B": 131,
+    "A": 208,
+    "B": 134,
     "C": 59,
     "CAL": 30,
     "D": 10,
@@ -15,7 +15,7 @@
     "RUN": 112
   },
   "n_by_required_by": {
-    "build": 241,
+    "build": 245,
     "reference_city": 112,
     "run": 222
   },
@@ -934,6 +934,18 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
       "required_by": "run"
+    },
+    "A.gradient.edge_grade_clip_pct": {
+      "layer": "A",
+      "units": "percent",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json",
+      "required_by": [
+        "src/build/attach_gradient.py"
+      ]
     },
     "A.gradient.grade_clamp_pct": {
       "layer": "A",
@@ -2619,6 +2631,18 @@
         "src/build/build_activity_chains.py"
       ]
     },
+    "B.activity.min_duration_s": {
+      "layer": "B",
+      "units": "seconds",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json",
+      "required_by": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
     "B.activity.p_intermediate_stop": {
       "layer": "B",
       "units": "probability",
@@ -2889,6 +2913,18 @@
       "units": "probability",
       "type": "number",
       "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json",
+      "required_by": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.external.min_activity_s": {
+      "layer": "B",
+      "units": "seconds",
+      "type": "number",
+      "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
@@ -3370,6 +3406,18 @@
       "units": "probability",
       "type": "array",
       "source_in_reference_city": "measured",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json",
+      "required_by": [
+        "src/build/build_population.py"
+      ]
+    },
+    "B.population.max_age_years": {
+      "layer": "B",
+      "units": "years",
+      "type": "number",
+      "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
@@ -6134,7 +6182,7 @@
       "layer": "RUN",
       "units": "metres",
       "type": "number",
-      "source_in_reference_city": "derived",
+      "source_in_reference_city": "measured",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",

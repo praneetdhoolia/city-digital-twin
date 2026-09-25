@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 22 September 2026 (sixtieth session) · **Record read through:** §9.209 · **Written against family:** `F35`
+**Updated:** 25 September 2026 (sixty-third session) · **Record read through:** §9.213 · **Written against family:** `F37`
 
 ## What is built
 
@@ -25,7 +25,7 @@
 - **MATSim network and schedules**: one base network (368,230 links, §9.167), E1 patches per scenario by `osm:way:id`; 15 GTFS feeds mapped in ONE pt2matsim build, 0 unmapped stops; day-type and variant schedules filtered, never remapped (§3.5, §11, §9.76, §9.90).
 - **Parking and land use**: `A.parking.price_hr_max` 3.2 AUD/h at the p99 of the job-density ramp, max stay 120 min (§9.31); 7,710 facilities, 4,861 observed capacities (§6); 498 frontage segments, jobs by POI index (§7).
 - **Scenarios**: S0–S6 from `schedules/base2026.zip` by explicit transformation (§3.4, §10); 30 run-input sets by `build_matsim_run_inputs.py`, the config emitted from the registry (§9.38).
-- **Registry**: **575 fields** (`cities/newcastle/docs/reference/CONFIG_REFERENCE.md`; §9.167, §9.179, §9.211, #198); `check_hardcoding.py --strict` at 0; non-observed fields carry a sweep, `held_fixed` or `derived_from`; three unobtained fields `value: null` (§15). A `<city>` register entry is judged against the reference city's file where the active city lacks it (§9.207): Mumbai's ledger reads 225, none a stale excuse.
+- **Registry**: **579 fields** (`cities/newcastle/docs/reference/CONFIG_REFERENCE.md`; §9.167, §9.179, §9.211, §9.213, #198); `check_hardcoding.py --strict` at 0; non-observed fields carry a sweep, `held_fixed` or `derived_from`; three unobtained fields `value: null` (§15). A `<city>` register entry is judged against the reference city's file where the active city lacks it (§9.207): Mumbai's ledger reads 225, none a stale excuse.
 - **Manifest**: 959 files in `data/MANIFEST.csv`, hashed and licensed — **724 CC-BY 4.0, 220 ODbL 1.0 and 15 bespoke** (§9.167) — from declared sources and `derived_licences` globs (§9.141, #117); the resolver refuses a bad `derived_from` or an out-of-sweep value (#124); `check_manifest.py` in CI (§9.79).
 - **The input contract is city-free**: HTS, counts and census read through `reader_shapes.py` against `config/schema/reader_shapes.json`, no ABS column named (§9.140, #62).
 - **Two assumptions measured** (§9.140, #63): `E.s0.heavy_rail_detour_factor` 1.037 (1.0–1.1); `B.external.interaction_rate` 0.0900, derived.
@@ -80,6 +80,7 @@
 
 ## History
 
+- §9.213 — the registry at 579 fields
 - §9.209 — printed timetables; possession; grades
 - §9.208 — archive copies; 2A/7 windows
 - §9.169 — run inputs at 250; the run's own schedule
@@ -94,4 +95,3 @@
 - §9.169 — run inputs at 250
 - §9.167 — footpath rebuild; F34
 - §9.166 — 521 fields
-- §9.164 — no MATSim default unreviewed

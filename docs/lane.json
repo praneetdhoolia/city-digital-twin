@@ -1,7 +1,7 @@
 {
   "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
-  "updated": "2026-09-23",
-  "family": "F35-the-engines-route-what-they-remode",
+  "updated": "2026-09-25",
+  "family": "F37-the-boundary-tier-returns-and-pt-reaches-every-stop",
   "tasks": [
     {
       "id": "routers-pair-reading",
@@ -303,8 +303,8 @@
       "id": "read-f36-arm-0",
       "title": "Read F36's arm 0 `20260923T034632_250it_25pct` at its record - all twelve modes with choice-set coverage, and the five measurements the roots rebuild owes: the held passengers (#86, #145), bike's distance cost (#107), the household tail (#196), the ferry on its disclosed tap-ons (#94) and crowding with scaled standing room (#237)",
       "kind": "reading",
-      "status": "open",
-      "recommended": true,
+      "status": "done",
+      "recommended": false,
       "cost": "no run: `report_mode_ridership.py --run 20260923T034632_250it_25pct --it 250` and `--trend`, `report_choice_set_coverage.py`, `measure_bound_trips.py`, `measure_near_wharf.py`, bike's mean trip by car availability, peak standing occupancy per vehicle type from the it.250 events, the routed short-trip split (#30), the fold's retime counters (#187); then `build_run_index.py` and the board",
       "blocked_on": "the arm reaching its record - launched 03:46 on 23 September at a 42 h ceiling, ~27-34 h expected; `python src/run/watch_run.py --run 20260923T034632_250it_25pct` says where it is, and `run.py --close-out` applies only if its harness dies while the JVM reaches 250",
       "opens_family": false,
@@ -321,7 +321,56 @@
         237
       ],
       "evidence": "9.212: priced by 20260923T022419_4it_25pct at 469.5 s a recurring iteration (+35 %), quote 33.2 h with no milestone; launched at the approved 42 h, mode gate off as the control half (#172); running at handoff, no reading cited",
-      "detail": "The first reading of F36 and the first after the Java fold. Read at the horizon, never a mid-run level (9.108). The expectations the measurements test are 9.211's: the held share executed as car reads 0 against 50.4-50.7 % escort and 35.8-36.3 % joint; bike's mean trip against the observed 5.2 km (F35 ran 8.10-8.13 km); the ferry against 790 boardings a weekday, a basis change, so an error statistic and not a re-reading. Nothing here compares with F35. This arm is the control every pair is differenced against, so the pairs follow it."
+      "detail": "The first reading of F36 and the first after the Java fold. Read at the horizon, never a mid-run level (9.108). The expectations the measurements test are 9.211's: the held share executed as car reads 0 against 50.4-50.7 % escort and 35.8-36.3 % joint; bike's mean trip against the observed 5.2 km (F35 ran 8.10-8.13 km); the ferry against 790 boardings a weekday, a basis change, so an error statistic and not a re-reading. Nothing here compares with F35. This arm is the control every pair is differenced against, so the pairs follow it.",
+      "done_ref": "9.213"
+    },
+    {
+      "id": "read-f37-arm-0",
+      "title": "Read F37's arm 0 at its record: all twelve modes with choice-set coverage; the no-route share of pt requests against 66.3 % on F36 (the `ptDirectWalk` counter); walk's and pt's mean trip; the car-less split; taxi with its wait executed; the external tier's boundary trips",
+      "kind": "reading",
+      "status": "open",
+      "recommended": true,
+      "cost": "no run: `report_mode_ridership.py --run <arm> --it 250` and `--trend`, `report_choice_set_coverage.py`, `mode_by_demographics.py`, `measure_bound_trips.py`, `diagnose_pt_routing.py --sample 3000`; then `build_run_index.py` and the board",
+      "blocked_on": "the arm reaching its record (overlay `f37_baseline_25pct`, 34 h ceiling approved 25 September 2026)",
+      "opens_family": false,
+      "answers_issues": [
+        30,
+        86,
+        94,
+        107,
+        145,
+        162,
+        172,
+        187,
+        237
+      ],
+      "evidence": "9.213"
+    },
+    {
+      "id": "pt-no-route-structure",
+      "title": "Explain the ~39 % of pt trips with no connection even without the access cap: split the no-route requests by trip-end distance band and by transfer-walk radius (300/500/800 m) in `diagnose_pt_routing.py`, read-only on F37 arm 0",
+      "kind": "diagnostic",
+      "status": "open",
+      "recommended": false,
+      "cost": "no run; ~1 h offline re-route of 3,000 trips per radius",
+      "blocked_on": "F37 arm 0 for the plans it reads (F36 arm 0 works today)",
+      "opens_family": false,
+      "answers_issues": [
+        162
+      ],
+      "evidence": "9.213: 78 % of the offline no-routes persist at 15:00"
+    },
+    {
+      "id": "motorbike-choice",
+      "title": "Make motorbike a choice (D22): motorbike availability from the registration stock per household, then chosen like any mode; retire the target-share carve of 9.52",
+      "kind": "build",
+      "status": "open",
+      "recommended": false,
+      "cost": "a build change and a plans rebuild (~1 h), a 1 % smoke; opens F38",
+      "blocked_on": "F37 arm 0 read first (D22)",
+      "opens_family": true,
+      "answers_issues": [],
+      "evidence": "9.213, D22; 9.52"
     }
   ],
   "decisions": [
@@ -771,6 +820,126 @@
       "answer": "Capture them in a browser and import each through import_browser_acquisition.py (recommended)",
       "answered": "2026-09-22",
       "note": "22 September 2026: a scratch Edge on this machine is refused too (MMMOCL ERR_CONNECTION_TIMED_OUT, Central Railway ERR_CONNECTION_REFUSED), so the block is on the address, not the client; the capture must be made from a network the hosts admit (an Indian VPN endpoint in the browser)"
+    },
+    {
+      "id": "D18",
+      "question": "Three root defects sit under F36 (the missing external tier, the misderived 1,200 m pt access ceiling, the unexperienced taxi wait). How should the next arm go?",
+      "options": [
+        {
+          "label": "Open F37 on the fixes (recommended)",
+          "detail": "fix all three, verify on a 1 % smoke and a 4-iteration 25 % probe, launch the 25 % arm at a 34 h ceiling; F36 is not resumed"
+        },
+        {
+          "label": "Finish F36 arm 0 first",
+          "detail": "warm-start its iteration-225 plans for a result on a known-defective demand, then F37"
+        },
+        {
+          "label": "Fix only, no long arm",
+          "detail": "smoke and probe only; the arm waits for a later session"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        86,
+        162,
+        172
+      ],
+      "evidence": "9.213; the fourteenth report (docs/reports/20260925T182313_project_report.html)",
+      "asked": "2026-09-25",
+      "answer": "Open F37 on the fixes (recommended)",
+      "answered": "2026-09-25"
+    },
+    {
+      "id": "D19",
+      "question": "Windows Update restarted the host at 04:30 on 24 September and killed F36 arm 0 at iteration 237. How should the launcher guard the host?",
+      "options": [
+        {
+          "label": "I pause updates; launcher checks (recommended)",
+          "detail": "the user pauses Windows Update before a launch; refuse_unsafe_host refuses a pending restart or a pause shorter than the ceiling"
+        },
+        {
+          "label": "Launcher pauses updates itself",
+          "detail": "writes the pause registry keys; an administrator prompt at every launch"
+        },
+        {
+          "label": "Warn only",
+          "detail": "prints the risk and launches"
+        }
+      ],
+      "recommended": 0,
+      "issues": [],
+      "evidence": "9.213; the fourteenth report (docs/reports/20260925T182313_project_report.html)",
+      "asked": "2026-09-25",
+      "answer": "I pause updates; launcher checks (recommended)",
+      "answered": "2026-09-25"
+    },
+    {
+      "id": "D20",
+      "question": "A tracing API key sat in the tracked .claude/settings.json. What should be done with it?",
+      "options": [
+        {
+          "label": "Move to settings.local.json (recommended)",
+          "detail": "the gitignored local settings keep tracing working; a pre-commit hook refuses a key-shaped secret"
+        },
+        {
+          "label": "Leave it, the user handles it",
+          "detail": "excluded from every commit by hand; the hook only"
+        },
+        {
+          "label": "Remove tracing",
+          "detail": "delete the env block"
+        }
+      ],
+      "recommended": 0,
+      "issues": [],
+      "evidence": "9.213; the fourteenth report (docs/reports/20260925T182313_project_report.html)",
+      "asked": "2026-09-25",
+      "answer": "Move to settings.local.json (recommended)",
+      "answered": "2026-09-25"
+    },
+    {
+      "id": "D21",
+      "question": "The two Java god methods (CitysimControler.assemble, RidePairingEngine.notifyBeforeMobsim) open a family when split. When?",
+      "options": [
+        {
+          "label": "Before the F37 launch (recommended)",
+          "detail": "behaviour-preserving splits land with the taxi fix; F37 opens once"
+        },
+        {
+          "label": "After the arm",
+          "detail": "F38 opens on them"
+        }
+      ],
+      "recommended": 0,
+      "issues": [],
+      "evidence": "9.213; the fourteenth report (docs/reports/20260925T182313_project_report.html)",
+      "asked": "2026-09-25",
+      "answer": "Before the F37 launch (recommended)",
+      "answered": "2026-09-25"
+    },
+    {
+      "id": "D22",
+      "question": "Motorbike riders are assigned by a hash tuned to the target share (9.52), not chosen. When does motorbike become a choice?",
+      "options": [
+        {
+          "label": "In F38, after F37 reads (recommended)",
+          "detail": "F37 isolates the three root fixes; the choice model (availability from registrations) opens F38"
+        },
+        {
+          "label": "Now, inside F37",
+          "detail": "four changes on one arm"
+        },
+        {
+          "label": "Keep the carve",
+          "detail": "a deliberate representation like freight rail"
+        }
+      ],
+      "recommended": 0,
+      "issues": [],
+      "evidence": "9.213; the fourteenth report (docs/reports/20260925T182313_project_report.html)",
+      "asked": "2026-09-25",
+      "answer": "In F38, after F37 reads (recommended)",
+      "answered": "2026-09-25"
     }
   ]
 }

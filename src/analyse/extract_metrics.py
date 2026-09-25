@@ -106,6 +106,24 @@ def open_output(run_dir, stem):
 _READ_AT = {'iteration': None, 'used': set()}
 
 
+def run_value(run_dir, key):
+    """A registry value as THIS run resolved it - its own `_config.json`.
+
+    Reading today's registry made a re-extraction of an old run silently
+    change with every later edit (the short-trip band and the detour factor,
+    fourteenth report). The live registry answers only for a run that
+    predates the snapshot.
+    """
+    try:
+        with open(os.path.join(run_dir, '_config.json'), encoding='utf-8') as fh:
+            values = json.load(fh).get('values') or {}
+    except (OSError, ValueError):
+        values = {}
+    if key in values:
+        return values[key]
+    return _registry.load().get(key)
+
+
 def iteration_stem(stem, iteration):
     """The per-iteration spelling of a final-output table, or None.
 
@@ -350,8 +368,8 @@ def trip_geometry(run_dir, person_lga):
     # factor the demand builder solved its kernels on (B.activity.detour_factor)
     # - the seed's 17.70 % and the run's 11.13 % were the same trips read on
     # the two bases, by hand each time (DECISIONS.md 9.169, 9.177).
-    band_km = float(_registry.load().get('B.activity.short_trip_band_km'))
-    detour = float(_registry.load().get('B.activity.detour_factor'))
+    band_km = float(run_value(run_dir, 'B.activity.short_trip_band_km'))
+    detour = float(run_value(run_dir, 'B.activity.detour_factor'))
     short = dict(resident_trips=0, routed_under_band=0,
                  straight_x_detour_under_band=0, by_mode_routed=collections.Counter(),
                  by_mode_straight=collections.Counter())
@@ -792,7 +810,7 @@ def taxi_volume(run_dir, fraction):
     block says so instead of disappearing."""
     trips = sum(1 for t in rows(run_dir, 'output_trips')
                 if t['main_mode'] == 'taxi')
-    band = _registry.load().get('B.taxi.daily_trips_band')
+    band = run_value(run_dir, 'B.taxi.daily_trips_band')
     scaled = round(trips / fraction) if fraction else None
     return dict(modelled_taxi_trips=trips,
                 scaled_daily_trips=scaled,
@@ -830,10 +848,18 @@ def main():
     # A run that did not reach its last iteration has no final output tables,
     # so every table is read at the iteration it DID reach. Nothing is read
     # past it: that is the whole of the rule (GOAL.md, 9.143).
+    # Tables land on the run's write interval (every 10th), so the reached
+    # iteration of an arm stopped between two of them has none: the reading is
+    # the newest table AT OR BELOW it, never one past it. Asking for the
+    # reached iteration's own table failed every such close-out (F36's arm 0,
+    # reached 237, tables at 230).
+    reached = None
     if rec.get('completion') != 'ran_to_last_iteration':
         reached = rec.get('reached_iteration')
         if isinstance(reached, int):
-            _READ_AT['iteration'] = reached
+            have = [n for n in _reading.iterations_with(run_dir, 'trips')
+                    if n <= reached]
+            _READ_AT['iteration'] = have[-1] if have else reached
 
     # The comparison-time corrections are the city's C3; a city that declares
     # no count comparison carries empty ones, and the counts block says why.
@@ -871,11 +897,12 @@ def main():
     doc['read_from'] = (
         'final output (the run reached its last iteration)'
         if _READ_AT['iteration'] is None else
-        'iteration %d, the iteration this run REACHED - it did not run to its '
-        'last iteration, so it has no final output tables and nothing here is '
-        'citable past iteration %d'
-        % (_READ_AT['iteration'], _READ_AT['iteration']))
+        'iteration %d, the newest table at or below the iteration this run '
+        'REACHED (%s) - it did not run to its last iteration, so it has no '
+        'final output tables and nothing here is citable past iteration %s'
+        % (_READ_AT['iteration'], reached, reached))
     doc['tables_read_at_iteration'] = sorted(_READ_AT['used'])
+    doc['read_at_iteration'] = _READ_AT['iteration']
 
     out = a.out or os.path.join(run_dir, '_metrics.json')
     # through the output contract (config/schema/outputs/metrics.schema.json),

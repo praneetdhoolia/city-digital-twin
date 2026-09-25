@@ -207,3 +207,15 @@ def test_measurement_due_names_the_run_the_line_waited_for(tmp_path, monkeypatch
     assert issue_gate.measurement_due(by_overlay) == '20260916T063903_250it_25pct'
     assert issue_gate.measurement_due(by_field) == '20260916T063903_250it_25pct'
     assert issue_gate.measurement_due(not_yet) is None
+
+
+def test_a_family_arm_is_resolved_through_the_ledger(tmp_path, monkeypatch):
+    """"F36's arm 0" names no run; the gate resolves it to the family's first
+    250+ iteration run with a record (fourteenth report)."""
+    import results_store
+    for name in ('20260923T022419_4it_25pct', '20260923T034632_250it_25pct'):
+        (tmp_path / name).mkdir()
+        (tmp_path / name / '_run.json').write_text('{}')
+    monkeypatch.setattr(results_store, 'RAW', str(tmp_path))
+    assert issue_gate._family_arm('F36', results_store) == '20260923T034632_250it_25pct'
+    assert issue_gate._family_arm('F99', results_store) is None

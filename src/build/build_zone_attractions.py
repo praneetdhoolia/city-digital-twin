@@ -152,7 +152,6 @@ def main(out_dir=None):
 
 if __name__ == '__main__':
     # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
-    import sys as _sys_t, os as _os_t  # noqa: E401
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     import argparse

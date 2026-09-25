@@ -49,7 +49,10 @@ def store(tmp_path, monkeypatch):
     monkeypatch.setattr(results_store, 'PROCESSED', str(processed))
     monkeypatch.setattr(results_store, 'RESULTS', str(tmp_path))
     # trim() mirrors and extracts before deleting; neither is under test here
-    monkeypatch.setattr(results_store, 'process', lambda name, extract=False: None)
+    # process() returns whether the findings are safe in processed/ (its
+    # contract); a stub returning None read as a failed extraction once trim
+    # began honouring it
+    monkeypatch.setattr(results_store, 'process', lambda name, extract=False: True)
     return raw
 
 
@@ -111,7 +114,7 @@ def _unrecorded_dir(root, name, *, age_s):
     return d
 
 
-def test_a_run_that_was_never_closed_out_is_kept_when_nothing_was_extracted(store):
+def test_a_run_that_was_never_closed_out_is_kept_when_nothing_was_extracted(store, monkeypatch):
     """The grace guard reasons about a run that HAS a record: past its window it
     has been closed out and its snapshots are already in processed. A run with
     no record has had none of that happen and is not covered by that guard at
@@ -123,8 +126,18 @@ def test_a_run_that_was_never_closed_out_is_kept_when_nothing_was_extracted(stor
     next launch that found the cap exceeded would have deleted both, and the
     readings with them."""
     _unrecorded_dir(str(store), '20260101T000000_norecord', age_s=7200)
+    # the extraction produced nothing - process() says so
+    monkeypatch.setattr(results_store, 'process', lambda name, extract=False: False)
     deleted = results_store.trim(0, log=lambda *a: None, grace_s=3600)
     assert deleted == [], 'the only copy of a cited reading must not be deleted'
+
+
+def test_a_recorded_run_whose_extraction_fails_is_kept(store, monkeypatch):
+    """The recorded branch honours process() too (fourteenth report): a run
+    whose findings could not be extracted keeps its bulk."""
+    _run_dir(str(store), '20260101T000000_a', metrics=False, age_s=7200)
+    monkeypatch.setattr(results_store, 'process', lambda name, extract=False: False)
+    assert results_store.trim(0.000001, log=lambda *a: None, grace_s=3600) == []
 
 
 def test_it_is_reclaimed_once_its_findings_are_in_processed(store, tmp_path):

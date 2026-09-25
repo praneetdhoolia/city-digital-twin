@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 575 fields are made of
+## What the 579 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 39 | read directly from a raw download |
-| `measured` | 42 | computed from observed data in this package |
-| `derived` | 49 | follows from another registry field by identity |
+| `measured` | 43 | computed from observed data in this package |
+| `derived` | 48 | follows from another registry field by identity |
 | `literature` | 82 | a published value, not specific to this city |
-| `assumed` | 211 | chosen without direct empirical support |
+| `assumed` | 215 | chosen without direct empirical support |
 | `definition` | 152 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 554 | usable point value |
+| `active` | 558 | usable point value |
 | `computed` | 11 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 327 sweeps are for
+### What the 331 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 19 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 284 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 288 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 24 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -90,7 +90,7 @@ The `answer` sweeps - the runs the study owes after the gate:
 | `RUN.routing.access_egress_consistency_check` | `reroute` | `reroute`, `disable`, `abortOnInconsistency` |
 | `RUN.routing.access_egress_type` | `accessEgressModeToLink` | `none`, `accessEgressModeToLink` |
 
-### The 34 fields held fixed
+### The 35 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
@@ -128,10 +128,11 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `RUN.machine.heap_floor_gib` - A LAUNCH REFUSAL'S INTERCEPT, not a model parameter: the fixed part of the heap a run needs whatever its sample (network, schedule, the loaded jars). 9.6 was measured at 9.5 from t
 - `RUN.machine.heap_per_fraction_gib` - A LAUNCH REFUSAL'S SLOPE: the heap a run needs per unit of sample fraction (plan memory grows with persons x plans x legs), measured at 9.5. Paired with RUN.machine.heap_floor_gib;
 - `RUN.monitor.pace_band_s` - A MONITORING REFERENCE, not a model parameter: the closed family's measured 25% x 1000 solo/two-arm pace band (DECISIONS.md 9.64/9.72). The digest flags pace against it and mechani
+- `RUN.transit_router.access_max_radius_m` - THE CEILING MAY NOT CUT THE NEAREST-STOP FALLBACK. SwissRailRaptor's intermodal finder (DefaultRaptorStopFinder.addInitialStopsForParamSet, read from the pinned jar) searches min(i
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 206 fields*
+*`cities/newcastle/registry/A_supply.json` - 207 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -219,6 +220,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.gradient.bike_speed_ceiling_factor` | `1.3` | share | `assumed` | 1 - 1.5 |
 | `A.gradient.bike_speed_floor_factor` | `0.2` | share | `assumed` | 0.1 - 0.3 |
 | `A.gradient.bike_uphill_slowdown_per_pct` | `0.065` | share_of_flat_speed_per_pct | `literature` | 0.03 - 0.1 |
+| `A.gradient.edge_grade_clip_pct` | `25.0` | percent | `assumed` | 20 - 35 |
 | `A.gradient.grade_clamp_pct` | `20.0` | percent | `assumed` | 10 - 35 |
 | `A.gradient.representation` | `link_speed` | enum | `assumed` | `absent`, `link_speed` |
 | `A.gradient.walk_tobler_offset` | `0.05` | gradient_fraction | `literature` | 0.03 - 0.07 |
@@ -923,6 +925,14 @@ Fraction of flat cycling speed lost per percent of uphill grade, applied multipl
 ***literature** · status **active** · DECISIONS.md §9.84 · MATSim `gradient.bikeUphillSlowdownPerPct` · sweep role **uncertainty***
 
 > **Sweep basis.** Parkin & Rotheram 2010 (Ergonomics 53(8), on-road cyclist speeds) measure mean speed falling ~1.4 km/h per 1% of uphill grade against a ~21.6 km/h flat mean, i.e. ~6.5% of flat speed per grade percent; the sweep spans the spread of published grade-speed slopes.
+
+#### `A.gradient.edge_grade_clip_pct`
+
+Symmetric clip, in percent, on the grade attach_gradient.py stamps onto the A1/A6 edge layers from the DEM. WIDER than the run network's A.gradient.grade_clamp_pct (20): the two clamps disagree and the edge layer keeps grades the run network then clips - stated here rather than silently aligned, because aligning them rewrites the committed edge layers. fourteenth report (25 September 2026): hidden until then inside a min()/max() the hardcoding ledger exempted.
+
+***assumed** · status **active** · DECISIONS.md §9.84 · sweep role **uncertainty***
+
+> **Sweep basis.** Newcastle's steepest streets run ~20-25 %; node differencing over short edges produces outliers well past that. The lower bound is the run-network clamp A.gradient.grade_clamp_pct (20), the upper the p99 32.5 % measured on the S0 run network (9.84).
 
 #### `A.gradient.grade_clamp_pct`
 
@@ -1848,7 +1858,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 132 fields*
+*`cities/newcastle/registry/B_demand.json` - 135 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1883,6 +1893,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.activity.intermediate_stop_shop_share` | `0.5` | share | `assumed` | 0.3 - 0.7 |
 | `B.activity.joint_tour_passenger_ratio` | `0.3503` | passenger_trips_per_driver_trip | `derived` | derived: the measured persons-per-vehicle minus one: HTS 2024/25 driver and pas |
 | `B.activity.joint_tour_purposes` | `["HS", "HO"]` | enum_list | `assumed` | `['HO']`, `['HS', 'HO']`, `['HS', 'HO', 'WB']` |
+| `B.activity.min_duration_s` | `300` | seconds | `assumed` | 120 - 900 |
 | `B.activity.p_intermediate_stop` | `{"HW": 0.22, "HE": 0.12, "HS": 0.18, "HO": 0.2, "WB": 0.3, "HX": 0.15}` | probability | `assumed` | 0.1 - 0.35 |
 | `B.activity.p_intermediate_stop_default` | `0.15` | probability | `assumed` | 0.1 - 0.35 |
 | `B.activity.p_mandatory` | `{"WEEKDAY": {"work": 0.78, "education": 0.85}, "SAT": {"work": 0.16, "education": 0.03}, "SUN": {"work": 0....` | probability | `assumed` | 0.6 - 0.95 |
@@ -1907,6 +1918,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.external.cordon_road_classes` | `["motorway", "trunk", "primary", "secondary", "motorway_link", "trunk_link", "primary_link"]` | osm_highway_class | `definition` | - |
 | `B.external.employed_share` | `0.4575` | share_of_persons | `measured` | **held fixed** |
 | `B.external.interaction_rate` | `0.09` | probability | `derived` | derived: interaction_rate = commute_share_to_core x employed_share / purpose_sp |
+| `B.external.min_activity_s` | `1800` | seconds | `assumed` | 900 - 3600 |
 | `B.external.person_id_base` | `900000000` | integer_offset | `definition` | - |
 | `B.external.purpose_split` | `{"HW": 0.7, "HO": 0.3}` | probability | `assumed` | plus/minus 20% |
 | `B.external.through_corridor_match_km` | `30.0` | km | `assumed` | 10 - 50 |
@@ -1948,6 +1960,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.population.labour_force_min_age` | `15` | years | `definition` | - |
 | `B.population.licence_min_age` | `16` | years | `definition` | - |
 | `B.population.licence_rate_by_age_band` | `[0.0, 0.0, 0.0823, 0.7828, 0.9402, 1.0, 0.9786, 0.972, 0.9838, 0.9172, 0.5118]` | probability | `measured` | plus/minus 5% |
+| `B.population.max_age_years` | `95` | years | `assumed` | 90 - 100 |
 | `B.population.mobility_impairment_base_rate` | `0.05` | share | `assumed` | 0.02 - 0.1 |
 | `B.population.mobility_impairment_onset_age` | `70` | years | `assumed` | 60 - 80 |
 | `B.population.mobility_impairment_rise` | `0.25` | share | `assumed` | 0 - 0.45 |
@@ -2217,6 +2230,14 @@ Tour purposes a household companion may join as a joint tour: both the driver to
 
 > **Sweep basis.** No held table records which activities household members attend together, so the shareable-purpose set is declared and swept rather than silently chosen. Joint discretionary travel concentrates in shopping and social/recreation; commute joint travel is rare in the one observed cell (G62 car-as-passenger is 3.35% of journeys to work), so HW and HE stay excluded in every option and the escort mechanism keeps carrying education.
 
+#### `B.activity.min_duration_s`
+
+The shortest activity a resident tour is drawn with. fourteenth report (25 September 2026): hidden until then inside a min()/max() the hardcoding ledger exempted.
+
+***assumed** · status **active** · DECISIONS.md §9.164 · sweep role **uncertainty***
+
+> **Sweep basis.** a floor under the drawn activity duration (mean from the HTS purpose table, +/- the declared CV); from two minutes (a drop-off) to fifteen (MATSim's minimalDuration ceiling, C.scoring.activity_minimal_duration_s).
+
 #### `B.activity.p_intermediate_stop`
 
 Probability a tour carries an intermediate stop, by purpose. WATCH THIS ONE: it decides how many sub-tours exist and therefore how freely MATSim mode choice can vary within a day. It is assumed, and it is the demand-side parameter with the most leverage over mode share. 56.7% of persons have more than one tour at the shipped values. HX (serve passenger) chains at the same rate as a discretionary tour: a driver who drops a passenger may link another stop before returning.
@@ -2408,6 +2429,14 @@ Rate at which external-tier residents interact with the core - the share of the 
 > **Sweep basis.** the commute share's own +-30% vintage band carried through the identity; the purpose split's sweep moves the HO component independently
 
 > **Derived from** `B.external.commute_share_to_core`, `B.external.employed_share`, `B.external.purpose_split`: interaction_rate = commute_share_to_core x employed_share / purpose_split.HW = 0.1377 x 0.4575 / 0.7 = 0.0900: the tier's boundary agents are generated at this rate per resident and split HW/HO by B.external.purpose_split, so the HW component equals the observed commuters per resident exactly and the HO component inherits the declared purpose split (9.140). Assumed 0.08 until 9.140 (DECISIONS.md 13 priority 11 called for the origin-destination table; the 2011 release is the one obtainable without an attended extract).
+
+#### `B.external.min_activity_s`
+
+The shortest activity an external boundary agent is drawn with. fourteenth report (25 September 2026): hidden until then inside a min()/max() the hardcoding ledger exempted.
+
+***assumed** · status **active** · DECISIONS.md §9.164 · sweep role **uncertainty***
+
+> **Sweep basis.** a boundary commuter's stay inside the study area: at least a quarter hour, at most the hour a short errand would take; no observation bears on it.
 
 #### `B.external.person_id_base`
 
@@ -2724,6 +2753,14 @@ The minimum age at which a person can hold a driving licence (NSW learner licenc
 Driver-licence holding rate by age band, aligned to B.population.age_bands - the POOLED value over the core LGAs, written by cities/newcastle/build/build_licence_rates.py from the TfNSW Driver Licence Statistics snapshot (202607: primary licence of any class, non-learner, by age group and customer-address LGA) over the ABS estimated resident population by age and LGA at 30 June 2024, split to single years by the census G04 profile. The population builder draws each person's licence from the PER-LGA rate in data/processed/observed/licence_rates_by_age_lga.csv and falls back to this vector only where an LGA has no row. Before 9.131 this was a literature vector (18-24 0.62, 25-34 0.88, 35-44 0.93, 45-54 0.94, 55-64 0.93, 65-74 0.88, 75-84 0.72, 85+ 0.45) that left 14.2-14.8% of employed persons without a licence; the measured rates are 18-24 0.78, 25-34 0.94, 35-44 1.00 (holders exceed the 2024 ERP - address staleness and two years of growth - and the rate is capped at 1), 45-74 0.97-0.98, 75-84 0.92, 85+ 0.51, and 12-17 0.08 (provisional drivers aged 16-17). Suppressed cells (<=5) are taken at 3. The sweep is the suppression and the denominator vintage.
 
 ***measured** · status **active** · DECISIONS.md §9.1, 9.131 · sweep role **uncertainty***
+
+#### `B.population.max_age_years`
+
+The oldest age a synthetic person in the open top age band is drawn at. fourteenth report (25 September 2026): hidden until then inside a min()/max() the hardcoding ledger exempted.
+
+***assumed** · status **active** · DECISIONS.md §9.131 · sweep role **uncertainty***
+
+> **Sweep basis.** the census's top age band is open (85 and over); a synthetic person in it is drawn uniformly up to this age. Ninety to a hundred spans the ERP's own single years of the oldest cohort.
 
 #### `B.population.mobility_impairment_base_rate`
 
@@ -3688,7 +3725,7 @@ The taxi mode constant net of the derived wait cost. Zero says: beyond fare and 
 
 #### `C.taxi.wait_min`
 
-The booking/wait time a point-to-point trip carries before the vehicle arrives. Folded into the taxi mode constant at emit time (wait_min/60 x trip-weighted VOT x marginalUtilityOfMoney) - the same derivation discipline as utilityOfLineSwitch.
+The booking/wait time a point-to-point trip carries before the vehicle arrives, for a taxi with NO fleet behind it. Folded into the taxi mode constant at emit time (wait_min/60 x trip-weighted VOT x marginalUtilityOfMoney) - the same derivation discipline as utilityOfLineSwitch. Under A.taxi.fleet_representation = fleet it folds nothing: citysim.TaxiFleetEngine executes each served request's own wait, which the mobsim and the score see (fourteenth report, 25 September 2026).
 
 ***assumed** · status **active** · DECISIONS.md §9.76 · sweep role **uncertainty***
 
@@ -4236,7 +4273,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.transit.use_transit` | `true` | boolean | `definition` | - |
 | `RUN.transit_router.access_egress_basis` | `network` | enum | `derived` | derived: access_egress_basis = network only where the routed leg can actually b |
 | `RUN.transit_router.access_initial_search_radius_m` | `1000.0` | metres | `derived` | derived: access_initial_search_radius_m = search_radius_m. The intermodal stop  |
-| `RUN.transit_router.access_max_radius_m` | `1200.0` | metres | `derived` | derived: access_max_radius_m = search_radius_m + extension_radius_m = 1000 + 20 |
+| `RUN.transit_router.access_max_radius_m` | `55600.0` | metres | `measured` | **held fixed** |
 | `RUN.transit_router.access_search_extension_radius_m` | `200.0` | metres | `derived` | derived: access_search_extension_radius_m = extension_radius_m, the same reach- |
 | `RUN.transit_router.additional_transfer_time_s` | `0.0` | s | `assumed` | 0 - 120 |
 | `RUN.transit_router.direct_walk_basis` | `network` | enum | `derived` | derived: direct_walk_basis = network whenever walk is routed and simulated on t |
@@ -4937,11 +4974,13 @@ Radius around a trip end within which the raptor collects candidate access/egres
 
 #### `RUN.transit_router.access_max_radius_m`
 
-The hard ceiling on how far the raptor will look for an access or egress stop. No beeline counterpart exists, so it is derived as the furthest the beeline path could reach. EMITTED WITH THE PARAMETER SET, NOT BOUND SEPARATELY FROM IT: the set exists only when RUN.transit_router.access_egress_basis is `network`, and a `[*]` binding whose set nothing creates is a fault the emitter refuses outright - correctly, since a radius broadcast onto no set is a value that silently reaches nothing. So all four values are emitted together by build_matsim_run_inputs.py under the `derived` runtime role, or not at all. Emits swissRailRaptor.intermodalAccessEgress[*].maxRadius.
+The hard ceiling on how far the raptor will look for an access or egress stop. No beeline counterpart exists; the value is the measured reach of the beeline finder's nearest-stop fallback (held_fixed.rule), and the assembler refuses a value below it. EMITTED WITH THE PARAMETER SET, NOT BOUND SEPARATELY FROM IT: the set exists only when RUN.transit_router.access_egress_basis is `network`, and a `[*]` binding whose set nothing creates is a fault the emitter refuses outright - correctly, since a radius broadcast onto no set is a value that silently reaches nothing. So all four values are emitted together by build_matsim_run_inputs.py under the `derived` runtime role, or not at all. Emits swissRailRaptor.intermodalAccessEgress[*].maxRadius.
 
-***derived** · status **active** · DECISIONS.md §9.159, 9.120*
+***measured** · status **active** · DECISIONS.md §9.159, 9.120*
 
-> **Derived from** `RUN.transit_router.search_radius_m`, `RUN.transit_router.extension_radius_m`: access_max_radius_m = search_radius_m + extension_radius_m = 1000 + 200. The beeline search has no separate hard ceiling: it reaches the search radius, and where no stop lies inside it, out to the nearest stop plus the extension. The furthest that path can ever reach is therefore the sum, and that is the ceiling declared here - the identity that leaves the routed search covering the same ground as the drawn one. The raptor's own default is the sentinel +Infinity, which would let one agent's access search run to the far side of the region.
+> **Held fixed.** THE CEILING MAY NOT CUT THE NEAREST-STOP FALLBACK. SwissRailRaptor's intermodal finder (DefaultRaptorStopFinder.addInitialStopsForParamSet, read from the pinned jar) searches min(initialSearchRadius, maxRadius) and, with fewer than two stops inside, falls back to min(nearest-stop distance + searchExtensionRadius, maxRadius) - so maxRadius only ever CUTS that fallback, and never lets a search run past the nearest stop plus the extension. The ceiling that reproduces the beeline finder's reach is therefore the farthest distance from any activity location to its nearest stop, plus the extension: measured 25 September 2026 over every scenario's own stops and every day type's own activity locations at 32,261 m (weekdays) and 55,362 m (weekends; the far points are boundary and freight origins), + 200 m = 55,562 m, declared 55,600. build_matsim_run_inputs.py re-measures it at every assembly and refuses a ceiling below it. SUPERSEDES the identity 1,000 + 200 = 1,200 m (9.159), which read the beeline path as bounded by the sum: from 12 September (access on the network, 9.167) it refused transit to every trip end beyond 1.2 km of a stop - the share of pt requests with no transit route went from 31-37 % to 66-68 % on every run since, against 38.8-39.4 % re-routed offline without the cap (fourteenth report).
+>
+> *Departure requires: a stop layout or activity locations whose re-measured reach exceeds the value - the assembler refuses and names the reach*
 
 #### `RUN.transit_router.access_search_extension_radius_m`
 

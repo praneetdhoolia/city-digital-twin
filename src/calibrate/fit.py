@@ -554,8 +554,12 @@ def main():
 
     # The GOAL's twelve modes, read at the iteration the run REACHED - never at
     # the one it declared. A stopped arm is citable at its `reached_iteration`
-    # and nowhere past it.
-    read_at = reached if isinstance(reached, int) else metrics['iterations']
+    # and nowhere past it. Tables land every 10th iteration, so the extractor's
+    # `read_at_iteration` (the newest table at or below `reached`) is where the
+    # rest of this fit was read, and the goal modes are read there with it.
+    read_at = metrics.get('read_at_iteration')
+    if not isinstance(read_at, int):
+        read_at = reached if isinstance(reached, int) else metrics['iterations']
     try:
         out['goal_modes'] = score_goal_modes(run_dir, read_at)
     except Exception as exc:                              # noqa: BLE001

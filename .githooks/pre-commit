@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# pre-commit — refuse a commit that would publish a credential.
+#
+# A tracing API key sat in the tracked .claude/settings.json on 25 September
+# 2026; nothing would have stopped a handoff commit from publishing it. Keys
+# live in the gitignored .env or .claude/settings.local.json. Activated with
+# the other hooks through core.hooksPath -> .githooks.
+set -euo pipefail
+exec python "$(git rev-parse --show-toplevel)/tests/check_secrets.py" --staged

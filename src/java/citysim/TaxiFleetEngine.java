@@ -126,6 +126,18 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
      */
     private final List<Refused> refusedThisMobsim = new ArrayList<>();
 
+    /**
+     * Served passengers held at the kerb this mobsim until their vehicle is
+     * free (fourteenth report, 25 September 2026). The fleet computed a wait
+     * for every served request - a mean of 963-977 s on F36's arm 0 - and
+     * until then only LOGGED it: the passenger departed at once and paid the
+     * five minutes folded into the constant, so taxi was sixteen minutes more
+     * attractive than the fleet it rides on. The origin activity now ends
+     * when the vehicle can start, the mobsim executes it, the score sees the
+     * later arrival, and the agent's own end time is put back afterwards.
+     */
+    private final ActivityRetimes waited = new ActivityRetimes();
+
     /** The run's own router, one per worker, for the walk a refused
      *  request makes (F35): the trip is routed HERE, never left with a
      *  null route for PersonPrepareForSim to re-route the whole plan over
@@ -156,6 +168,7 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
     private static final class Request {
         final Id<Person> personId;
         final List<Leg> legs;
+        final Activity origin;
         final Id<Link> from;
         final Id<Link> to;
         final double departure;
@@ -164,11 +177,13 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
         final int index;
 
         Request(final Id<Person> personId, final List<Leg> legs,
+                final Activity origin,
                 final Id<Link> from, final Id<Link> to,
                 final double departure, final double duration,
                 final int index) {
             this.personId = personId;
             this.legs = legs;
+            this.origin = origin;
             this.from = from;
             this.to = to;
             this.departure = departure;
@@ -245,13 +260,17 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
             free.add(first);
             served++;
             waitSum += wait;
+            if (wait > 0.5 && r.origin != null) {
+                this.waited.set(r.personId, r.origin, start);
+            }
         }
         LOG.info("taxiFleet: fleet={} (declared {} x sample {}) requests={} "
-                 + "served={} refused={} ({}%) meanWait={}s",
+                 + "served={} refused={} ({}%) meanWait={}s waitExecuted={}",
                  fleet, this.cfg.getFleetSize(), this.sampleFraction,
                  requests.size(), served, refused,
                  String.format("%.1f", 100.0 * refused / requests.size()),
-                 String.format("%.0f", served == 0 ? 0.0 : waitSum / served));
+                 String.format("%.0f", served == 0 ? 0.0 : waitSum / served),
+                 this.waited.size());
         remodeRefused();
     }
 
@@ -328,7 +347,7 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
                         duration += leg.getTravelTime().seconds();
                     }
                 }
-                out.add(new Request(person.getId(), legs, origin.getLinkId(),
+                out.add(new Request(person.getId(), legs, origin, origin.getLinkId(),
                                     trip.getDestinationActivity().getLinkId(),
                                     departure, Math.max(0.0, duration), index));
             }
@@ -368,6 +387,12 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
      */
     @Override
     public void notifyAfterMobsim(final AfterMobsimEvent event) {
+        if (this.waited.size() > 0) {
+            final int n = this.waited.size();
+            final int[] r = this.waited.restore(this.scenario.getPopulation());
+            LOG.info("taxiFleet: waitRetimed={} restoreWaited={} restoreOrphan={}",
+                     n, r[0], r[1]);
+        }
         if (this.refusedThisMobsim.isEmpty()) {
             return;
         }

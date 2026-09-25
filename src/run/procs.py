@@ -16,6 +16,7 @@ liveness is asked of the kernel handle.
 import os
 import re
 import subprocess
+import time
 
 # An arm is a JVM in the tens of GB; VS Code's language server sits under
 # 1 GB. A classifier for reading a process list, not a model value.
@@ -49,6 +50,105 @@ def pid_alive(pid):
         return True
     except OSError:
         return False
+
+
+def boot_time():
+    """The epoch second the host last booted; None when it cannot be told."""
+    try:
+        if os.name == 'nt':
+            import ctypes                                 # noqa: PLC0415
+            k32 = ctypes.windll.kernel32
+            k32.GetTickCount64.restype = ctypes.c_ulonglong
+            return time.time() - k32.GetTickCount64() / 1000.0
+        with open('/proc/stat', encoding='ascii') as fh:
+            for line in fh:
+                if line.startswith('btime '):
+                    return float(line.split()[1])
+    except (OSError, AttributeError, ValueError):
+        pass
+    return None
+
+
+def card_pid_alive(card, key):
+    """Is the process a run card records under `key` still THAT process?
+
+    A pid outlives nothing: after a reboot the number is handed to whatever
+    starts next. F36's arm 0 died when Windows Update rebooted the host at
+    iteration 238 (24 September 2026); its card's pids then named nothing,
+    but on another boot they could have named anything - and `run.py --stop`
+    runs `taskkill /F /T` on them. A host booted after the card's `started`
+    cannot be running any process the card recorded, so every pid on it is
+    dead whatever the number now names.
+    """
+    pid = (card or {}).get(key)
+    if not pid:
+        return False
+    try:
+        started = time.mktime(time.strptime(card.get('started') or '',
+                                            '%Y-%m-%dT%H:%M:%S'))
+    except (TypeError, ValueError):
+        started = None
+    booted = boot_time()
+    if started is not None and booted is not None and booted > started:
+        return False
+    return pid_alive(pid)
+
+
+_REBOOT_KEYS = (
+    r'SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired',
+    r'SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending')
+_UPDATE_UX = r'SOFTWARE\Microsoft\WindowsUpdate\UX\Settings'
+
+
+def restart_pending():
+    """Has the OS staged a restart it will force? None off Windows."""
+    if os.name != 'nt':
+        return None
+    import winreg                                          # noqa: PLC0415
+    for key in _REBOOT_KEYS:
+        try:
+            winreg.CloseKey(winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key))
+            return True
+        except OSError:
+            continue
+    return False
+
+
+def updates_paused_until():
+    """The epoch second Windows Update's pause expires; 0 when not paused, None off Windows.
+
+    Windows Update restarted this host at 04:30 on 24 September 2026, half an
+    hour after its active hours ended, and killed F36's arm 0 at iteration
+    237 of 250; active hours cannot span more than 18 h and an arm runs
+    25-42 h, so only a pause covers one.
+    """
+    if os.name != 'nt':
+        return None
+    import winreg                                          # noqa: PLC0415
+    try:
+        k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, _UPDATE_UX)
+    except OSError:
+        return 0
+    ends = []
+    try:
+        for name in ('PauseUpdatesExpiryTime', 'PauseQualityUpdatesEndTime'):
+            try:
+                ends.append(winreg.QueryValueEx(k, name)[0])
+            except OSError:
+                continue
+    finally:
+        winreg.CloseKey(k)
+    import calendar                                        # noqa: PLC0415
+    best = 0
+    for v in ends:
+        # stored as UTC ('2026-10-02T11:28:39Z'); timegm reads it as UTC, where
+        # mktime would apply the local daylight-saving rule to it
+        try:
+            t = calendar.timegm(time.strptime(str(v)[:19], '%Y-%m-%dT%H:%M:%S'))
+        except ValueError:
+            continue
+        best = max(best, t)
+    return best
 
 
 def arm_running(threshold_kb=ARM_RSS_KB, timeout=30):

@@ -336,7 +336,11 @@ def main(argv=None):
         bl[sr - 1] = row[:sc] + new + row[ec:]
     new_body = '\n'.join(bl)
     sig = 'def %s(%s):' % (a.new_name, ', '.join(targets + [a.ctx]))
-    doc = '    """One iteration of the loop this replaced in %s(); `%s` carries the\n    enclosing scope (%d names). Extracted mechanically, byte-identical outputs."""\n' % (
+    # A placeholder the author must replace, never a description: the stock
+    # "one iteration of the loop this replaced" line was left on 34 functions
+    # that were not loop bodies and read as documentation for nine days
+    # (fourteenth report). `TODO(docstring)` is what a reviewer greps for.
+    doc = '    """TODO(docstring): say what this does. Split out of %s(); `%s` carries\n    %d of its names."""\n' % (
         a.function, a.ctx, len(via_ctx))
     ret = ('    return ' + ', '.join(produced) + NL) if produced else ''
     new_func = sig + NL + doc + new_body + NL + ret + NL + NL

@@ -21,7 +21,9 @@ tmp="$(mktemp)"
 # Match the URL form (https://claude.ai/code/...) and the trailer label — NOT bare
 # mentions of the string, so prose that discusses this very policy is preserved.
 # `|| true`: grep -v exits 1 when nothing remains; that is not an error here.
-grep -viE 'https?://claude\.ai/code|^[[:space:]]*Claude-Session:[[:space:]]*' "$msg_file" > "$tmp" || true
+# The co-author trailer goes too: .claude/CLAUDE.md promises no attribution, and
+# until 25 September 2026 this hook stripped only the session link.
+grep -viE 'https?://claude\.ai/code|^[[:space:]]*Claude-Session:[[:space:]]*|^[[:space:]]*Co-Authored-By:' "$msg_file" > "$tmp" || true
 
 cat "$tmp" > "$msg_file"
 rm -f "$tmp"

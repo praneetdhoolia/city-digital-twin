@@ -69,8 +69,12 @@ def frozen_links(links):
         frozen.add(lid)
         try:
             by_mode = json.loads(link['attrs'][TURN_RESTRICTION][1])
-        except ValueError:
-            continue
+        except ValueError as e:
+            # A restriction that cannot be read names links nobody can freeze,
+            # and a merge would then remove what it refers to - refused, not
+            # skipped (fourteenth report).
+            raise SystemExit('link %s carries an unreadable %s attribute (%s); '
+                             'fix the network before merging' % (lid, TURN_RESTRICTION, e))
         for sequences in by_mode.values():
             for sequence in sequences:
                 frozen.update(sequence)

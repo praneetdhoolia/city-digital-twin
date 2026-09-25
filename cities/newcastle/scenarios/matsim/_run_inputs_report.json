@@ -80,7 +80,8 @@
           "stop_facilities_kept": 4127,
           "stop_facilities_dropped": 72,
           "transfer_relations_kept": 1306,
-          "transfer_relations_dropped": 28
+          "transfer_relations_dropped": 28,
+          "access_reach_m": 32250.0
         },
         "SAT": {
           "routes_kept": 409,
@@ -128,7 +129,8 @@
           "stop_facilities_kept": 2142,
           "stop_facilities_dropped": 2057,
           "transfer_relations_kept": 272,
-          "transfer_relations_dropped": 1062
+          "transfer_relations_dropped": 1062,
+          "access_reach_m": 55355.4
         },
         "SUN": {
           "routes_kept": 318,
@@ -176,7 +178,8 @@
           "stop_facilities_kept": 2162,
           "stop_facilities_dropped": 2037,
           "transfer_relations_kept": 262,
-          "transfer_relations_dropped": 1072
+          "transfer_relations_dropped": 1072,
+          "access_reach_m": 55339.2
         }
       }
     },
@@ -260,7 +263,8 @@
           "stop_facilities_kept": 4137,
           "stop_facilities_dropped": 72,
           "transfer_relations_kept": 1304,
-          "transfer_relations_dropped": 28
+          "transfer_relations_dropped": 28,
+          "access_reach_m": 32250.0
         },
         "SAT": {
           "routes_kept": 405,
@@ -308,7 +312,8 @@
           "stop_facilities_kept": 2153,
           "stop_facilities_dropped": 2056,
           "transfer_relations_kept": 278,
-          "transfer_relations_dropped": 1054
+          "transfer_relations_dropped": 1054,
+          "access_reach_m": 55355.4
         },
         "SUN": {
           "routes_kept": 314,
@@ -356,7 +361,8 @@
           "stop_facilities_kept": 2173,
           "stop_facilities_dropped": 2036,
           "transfer_relations_kept": 268,
-          "transfer_relations_dropped": 1064
+          "transfer_relations_dropped": 1064,
+          "access_reach_m": 55339.2
         }
       }
     },
@@ -446,7 +452,8 @@
           "stop_facilities_kept": 4134,
           "stop_facilities_dropped": 72,
           "transfer_relations_kept": 1294,
-          "transfer_relations_dropped": 28
+          "transfer_relations_dropped": 28,
+          "access_reach_m": 32250.0
         },
         "SAT": {
           "routes_kept": 405,
@@ -503,7 +510,8 @@
           "stop_facilities_kept": 2150,
           "stop_facilities_dropped": 2056,
           "transfer_relations_kept": 268,
-          "transfer_relations_dropped": 1054
+          "transfer_relations_dropped": 1054,
+          "access_reach_m": 55355.4
         },
         "SUN": {
           "routes_kept": 314,
@@ -560,7 +568,8 @@
           "stop_facilities_kept": 2170,
           "stop_facilities_dropped": 2036,
           "transfer_relations_kept": 258,
-          "transfer_relations_dropped": 1064
+          "transfer_relations_dropped": 1064,
+          "access_reach_m": 55339.2
         }
       }
     },
@@ -650,7 +659,8 @@
           "stop_facilities_kept": 4136,
           "stop_facilities_dropped": 72,
           "transfer_relations_kept": 1304,
-          "transfer_relations_dropped": 28
+          "transfer_relations_dropped": 28,
+          "access_reach_m": 32250.0
         },
         "SAT": {
           "routes_kept": 405,
@@ -707,7 +717,8 @@
           "stop_facilities_kept": 2150,
           "stop_facilities_dropped": 2058,
           "transfer_relations_kept": 268,
-          "transfer_relations_dropped": 1064
+          "transfer_relations_dropped": 1064,
+          "access_reach_m": 55355.4
         },
         "SUN": {
           "routes_kept": 314,
@@ -764,7 +775,8 @@
           "stop_facilities_kept": 2170,
           "stop_facilities_dropped": 2038,
           "transfer_relations_kept": 258,
-          "transfer_relations_dropped": 1074
+          "transfer_relations_dropped": 1074,
+          "access_reach_m": 55339.2
         }
       }
     },
@@ -854,7 +866,8 @@
           "stop_facilities_kept": 4136,
           "stop_facilities_dropped": 72,
           "transfer_relations_kept": 1304,
-          "transfer_relations_dropped": 28
+          "transfer_relations_dropped": 28,
+          "access_reach_m": 32250.0
         },
         "SAT": {
           "routes_kept": 405,
@@ -911,7 +924,8 @@
           "stop_facilities_kept": 2150,
           "stop_facilities_dropped": 2058,
           "transfer_relations_kept": 268,
-          "transfer_relations_dropped": 1064
+          "transfer_relations_dropped": 1064,
+          "access_reach_m": 55355.4
         },
         "SUN": {
           "routes_kept": 314,
@@ -968,7 +982,8 @@
           "stop_facilities_kept": 2170,
           "stop_facilities_dropped": 2038,
           "transfer_relations_kept": 258,
-          "transfer_relations_dropped": 1074
+          "transfer_relations_dropped": 1074,
+          "access_reach_m": 55339.2
         }
       }
     },
@@ -1061,7 +1076,8 @@
           "stop_facilities_kept": 4136,
           "stop_facilities_dropped": 72,
           "transfer_relations_kept": 1304,
-          "transfer_relations_dropped": 28
+          "transfer_relations_dropped": 28,
+          "access_reach_m": 32250.0
         },
         "SAT": {
           "routes_kept": 405,
@@ -1118,7 +1134,8 @@
           "stop_facilities_kept": 2150,
           "stop_facilities_dropped": 2058,
           "transfer_relations_kept": 268,
-          "transfer_relations_dropped": 1064
+          "transfer_relations_dropped": 1064,
+          "access_reach_m": 55355.4
         },
         "SUN": {
           "routes_kept": 314,
@@ -1175,7 +1192,8 @@
           "stop_facilities_kept": 2170,
           "stop_facilities_dropped": 2038,
           "transfer_relations_kept": 258,
-          "transfer_relations_dropped": 1074
+          "transfer_relations_dropped": 1074,
+          "access_reach_m": 55339.2
         }
       }
     },
@@ -1256,7 +1274,8 @@
           "stop_facilities_kept": 4135,
           "stop_facilities_dropped": 72,
           "transfer_relations_kept": 1310,
-          "transfer_relations_dropped": 28
+          "transfer_relations_dropped": 28,
+          "access_reach_m": 32250.0
         },
         "SAT": {
           "routes_kept": 405,
@@ -1304,7 +1323,8 @@
           "stop_facilities_kept": 2149,
           "stop_facilities_dropped": 2058,
           "transfer_relations_kept": 274,
-          "transfer_relations_dropped": 1064
+          "transfer_relations_dropped": 1064,
+          "access_reach_m": 55355.4
         },
         "SUN": {
           "routes_kept": 314,
@@ -1352,7 +1372,8 @@
           "stop_facilities_kept": 2169,
           "stop_facilities_dropped": 2038,
           "transfer_relations_kept": 264,
-          "transfer_relations_dropped": 1074
+          "transfer_relations_dropped": 1074,
+          "access_reach_m": 55339.2
         }
       }
     },
@@ -1444,7 +1465,8 @@
           "stop_facilities_kept": 4137,
           "stop_facilities_dropped": 72,
           "transfer_relations_kept": 1298,
-          "transfer_relations_dropped": 28
+          "transfer_relations_dropped": 28,
+          "access_reach_m": 32250.0
         },
         "SAT": {
           "routes_kept": 406,
@@ -1501,7 +1523,8 @@
           "stop_facilities_kept": 2153,
           "stop_facilities_dropped": 2056,
           "transfer_relations_kept": 270,
-          "transfer_relations_dropped": 1056
+          "transfer_relations_dropped": 1056,
+          "access_reach_m": 55355.4
         },
         "SUN": {
           "routes_kept": 315,
@@ -1558,7 +1581,8 @@
           "stop_facilities_kept": 2173,
           "stop_facilities_dropped": 2036,
           "transfer_relations_kept": 260,
-          "transfer_relations_dropped": 1066
+          "transfer_relations_dropped": 1066,
+          "access_reach_m": 55339.2
         }
       }
     },
@@ -1650,7 +1674,8 @@
           "stop_facilities_kept": 4141,
           "stop_facilities_dropped": 72,
           "transfer_relations_kept": 1302,
-          "transfer_relations_dropped": 28
+          "transfer_relations_dropped": 28,
+          "access_reach_m": 32250.0
         },
         "SAT": {
           "routes_kept": 406,
@@ -1707,7 +1732,8 @@
           "stop_facilities_kept": 2157,
           "stop_facilities_dropped": 2056,
           "transfer_relations_kept": 274,
-          "transfer_relations_dropped": 1056
+          "transfer_relations_dropped": 1056,
+          "access_reach_m": 55355.4
         },
         "SUN": {
           "routes_kept": 315,
@@ -1764,7 +1790,8 @@
           "stop_facilities_kept": 2177,
           "stop_facilities_dropped": 2036,
           "transfer_relations_kept": 264,
-          "transfer_relations_dropped": 1066
+          "transfer_relations_dropped": 1066,
+          "access_reach_m": 55339.2
         }
       }
     },
@@ -1848,7 +1875,8 @@
           "stop_facilities_kept": 4123,
           "stop_facilities_dropped": 72,
           "transfer_relations_kept": 1298,
-          "transfer_relations_dropped": 28
+          "transfer_relations_dropped": 28,
+          "access_reach_m": 32250.0
         },
         "SAT": {
           "routes_kept": 403,
@@ -1896,7 +1924,8 @@
           "stop_facilities_kept": 2138,
           "stop_facilities_dropped": 2057,
           "transfer_relations_kept": 264,
-          "transfer_relations_dropped": 1062
+          "transfer_relations_dropped": 1062,
+          "access_reach_m": 55355.4
         },
         "SUN": {
           "routes_kept": 312,
@@ -1944,7 +1973,8 @@
           "stop_facilities_kept": 2158,
           "stop_facilities_dropped": 2037,
           "transfer_relations_kept": 254,
-          "transfer_relations_dropped": 1072
+          "transfer_relations_dropped": 1072,
+          "access_reach_m": 55339.2
         }
       }
     }

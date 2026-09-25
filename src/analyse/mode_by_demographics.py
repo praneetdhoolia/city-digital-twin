@@ -63,20 +63,22 @@ def load_sex():
 
 
 def load_run_persons(run_dir):
-    """person -> the attributes the run itself carried, from output_persons."""
+    """person -> the attributes the run itself carried: output_persons, or a
+    stopped arm's own input plans (iteration_reading.person_attributes)."""
+    import iteration_reading
     out = {}
-    with gzip.open(run_dir / 'output' / 'output_persons.csv.gz', 'rt',
-                   encoding='utf-8') as fh:
-        for r in csv.DictReader(fh, delimiter=';'):
-            if r.get('subpopulation') not in (None, '', 'person'):
-                continue
-            out[r['person']] = dict(
-                age_band=age_band(r.get('age')),
-                employment=r.get('employment') or 'unknown',
-                licence='1' if (r.get('hasLicense') or '').lower() == 'yes'
-                else '0',
-                car_availability=r.get('carAvail') or 'unknown',
-                household_vehicles=(r.get('householdVehicles') or 'unknown'))
+    for pid, r in iteration_reading.person_attributes(
+            str(run_dir), ('subpopulation', 'age', 'employment', 'hasLicense',
+                           'carAvail', 'householdVehicles')).items():
+        if r.get('subpopulation') not in (None, '', 'person'):
+            continue
+        out[pid] = dict(
+            age_band=age_band(r.get('age')),
+            employment=r.get('employment') or 'unknown',
+            licence='1' if (r.get('hasLicense') or '').lower() == 'yes'
+            else '0',
+            car_availability=r.get('carAvail') or 'unknown',
+            household_vehicles=(r.get('householdVehicles') or 'unknown'))
     return out
 
 
@@ -104,27 +106,32 @@ def main() -> int:
     km = {dim: defaultdict(lambda: defaultdict(float)) for dim in DIMS}
     totals = Counter()
     unmatched = 0
-    with gzip.open(run_dir / 'output' / 'output_trips.csv.gz', 'rt',
-                   encoding='utf-8') as fh:
-        rd = csv.DictReader(fh, delimiter=';')
-        mode_col = ('main_mode' if 'main_mode' in rd.fieldnames
-                    else 'longest_distance_mode')
-        for r in rd:
-            mode = r[mode_col] or 'unknown'
-            attrs = persons.get(r['person'])
-            if attrs is None:
-                unmatched += 1          # external / through / freight tiers
-                continue
-            try:
-                dist_km = float(r.get('traveled_distance') or 0.0) / 1000.0
-            except ValueError:
-                dist_km = 0.0
-            totals[mode] += 1
-            groups = dict(attrs, sex=sex.get(r['person'], 'unknown'))
-            for dim in DIMS:
-                g = groups[dim]
-                tables[dim][g][mode] += 1
-                km[dim][g][mode] += dist_km
+    # the final trips table, or - for a stopped arm - the iteration its
+    # close-out read (`_metrics.json` read_at_iteration)
+    import iteration_reading
+    read_at = None
+    metrics = run_dir / '_metrics.json'
+    if metrics.exists():
+        read_at = json.loads(metrics.read_text(encoding='utf-8')).get('read_at_iteration')
+    rows = iteration_reading.table(str(run_dir), 'trips', read_at)
+    mode_col = ('main_mode' if rows and 'main_mode' in rows[0]
+                else 'longest_distance_mode')
+    for r in rows:
+        mode = r[mode_col] or 'unknown'
+        attrs = persons.get(r['person'])
+        if attrs is None:
+            unmatched += 1          # external / through / freight tiers
+            continue
+        try:
+            dist_km = float(r.get('traveled_distance') or 0.0) / 1000.0
+        except ValueError:
+            dist_km = 0.0
+        totals[mode] += 1
+        groups = dict(attrs, sex=sex.get(r['person'], 'unknown'))
+        for dim in DIMS:
+            g = groups[dim]
+            tables[dim][g][mode] += 1
+            km[dim][g][mode] += dist_km
 
     def shares(counter):
         n = sum(counter.values())
@@ -140,7 +147,8 @@ def main() -> int:
         'trips_tabulated': sum(totals.values()),
         'trips_outside_b1': unmatched,
         'mode_totals': dict(sorted(totals.items())),
-        'persons_source': "the run's own output_persons.csv.gz (#213)",
+        'persons_source': "the run's own persons (output_persons, or its input plans for a stopped arm; #213)",
+        'trips_read_at': 'final output' if read_at is None else 'iteration %d' % read_at,
         'sex_source': sex_source,
         'note': ('modelled table only (issue #50); the observed mode x age '
                  'counterpart is an acquisition item - no observed value '
