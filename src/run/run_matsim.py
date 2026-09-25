@@ -145,9 +145,20 @@ def fwd(p):
     return p.replace(os.sep, '/')
 
 
-def setp(text, name, value, count=1):
-    return re.sub(r'(<param name="%s" value=")[^"]*(")' % re.escape(name),
-                  lambda m: m.group(1) + str(value) + m.group(2), text, count=count)
+def setp(text, name, value):
+    """Set the ONE top-level param `name`; refuse a name that matches none or several.
+
+    A raw override that matched nothing used to be silently ignored while
+    `_run.json` recorded it as applied, and one that matched several params
+    of that name set only the first (fourteenth report).
+    """
+    pat = r'(<param name="%s" value=")[^"]*(")' % re.escape(name)
+    n = len(re.findall(pat, text))
+    if n != 1:
+        raise SystemExit('REFUSED: raw override %r matches %d config params; it '
+                         'must name exactly one, or the run would record a '
+                         'change it did not make' % (name, n))
+    return re.sub(pat, lambda m: m.group(1) + str(value) + m.group(2), text, count=1)
 
 
 def set_mode_param(text, mode, name, value):
@@ -793,6 +804,38 @@ def refuse_concurrent_arm():
             % '\n  '.join(str(b) for b in busy))
 
 
+def refuse_unsafe_host(cfg):
+    """A RUN THE HOST WILL RESTART UNDER IS NOT LAUNCHED (user decision, 25 September 2026).
+
+    Windows Update restarted this host at 04:30 on 24 September, half an hour
+    after its active hours ended, and killed F36's arm 0 at iteration 237 of
+    250 - it had done the same on 16 September. Active hours cap at 18 h and
+    an arm runs 25-42 h, so the guard is a pause that outlasts the run's own
+    cost ceiling, and no staged restart. Off Windows there is nothing to ask.
+    """
+    import procs
+    if procs.restart_pending():
+        raise SystemExit(
+            'REFUSED: Windows has a restart pending, and it will force it under '
+            'the run. Restart the machine first, then pause updates '
+            '(Settings > Windows Update > Pause updates) and relaunch.')
+    until = procs.updates_paused_until()
+    if until is None:
+        return
+    ceiling_h = cfg.get('RUN.gate.wall_ceiling_h') or 0
+    need = time.time() + ceiling_h * 3600
+    if until < need:
+        raise SystemExit(
+            'REFUSED: Windows Update is %s, and this run may take up to its %g h '
+            'ceiling (to %s). A forced update restart killed F36\'s arm 0 13 '
+            'iterations from its record. Pause updates past %s (Settings > '
+            'Windows Update > Pause updates, 1 week) and relaunch.'
+            % ('not paused' if not until else 'paused only until %s'
+               % time.strftime('%Y-%m-%d %H:%M', time.localtime(until)),
+               ceiling_h, time.strftime('%Y-%m-%d %H:%M', time.localtime(need)),
+               time.strftime('%Y-%m-%d %H:%M', time.localtime(need))))
+
+
 def refuse_small_heap(cfg, xmx, fraction):
     """Refuse a launch whose heap the registry's own rule says will die.
 
@@ -1042,6 +1085,7 @@ def preflight(scenario, day, cfg, overrides=None, warm=None, quiet=False,
     # refuse resolving the next one's overlay under it (16 September 2026).
     if not dry_run:
         refuse_concurrent_arm()
+        refuse_unsafe_host(cfg)
     if not quiet:
         announce_heap(cfg, xmx, fraction)
     refuse_unsafe_telemetry(cfg)
@@ -1831,14 +1875,23 @@ def refuse_launch(run_dir, meta, exc):
     return mark_dead(run_dir, 'failed', wall_s=0.0, cause=cause)
 
 
+def _marker(run_dir, name):
+    """A stop marker's JSON, or None when it is absent or unreadable.
+
+    The four stop causes below each opened, parsed and swallowed their own
+    marker the same way (and leaked the handle); one reader now does it.
+    """
+    try:
+        with open(os.path.join(run_dir, name), encoding='utf-8') as fh:
+            return json.load(fh)
+    except (OSError, ValueError):
+        return None
+
+
 def _gate_stop_cause(run_dir):
     """The cause composed from the watcher's verdict file, or None."""
-    path = os.path.join(run_dir, GATE_STOP)
-    if not os.path.exists(path):
-        return None
-    try:
-        doc = json.load(open(path, encoding='utf-8'))
-    except (OSError, ValueError):
+    doc = _marker(run_dir, GATE_STOP)
+    if doc is None:
         return None
     lines = doc.get('gate') or []
     return ('Stopped automatically by the gate watcher at iteration %s under '
@@ -1849,12 +1902,8 @@ def _gate_stop_cause(run_dir):
 
 def _ceiling_stop_cause(run_dir):
     """The cause composed from the ceiling watcher's marker, or None."""
-    path = os.path.join(run_dir, CEILING_STOP)
-    if not os.path.exists(path):
-        return None
-    try:
-        doc = json.load(open(path, encoding='utf-8'))
-    except (OSError, ValueError):
+    doc = _marker(run_dir, CEILING_STOP)
+    if doc is None:
         return None
     return ('Stopped automatically by the ceiling watcher at %.2f h against an '
             'approved ceiling of %s h (RUN.gate.wall_ceiling_h), at iteration '
@@ -1866,12 +1915,8 @@ def _ceiling_stop_cause(run_dir):
 
 def _stall_stop_cause(run_dir):
     """The cause composed from the stall watcher's marker, or None."""
-    path = os.path.join(run_dir, STALL_STOP)
-    if not os.path.exists(path):
-        return None
-    try:
-        doc = json.load(open(path, encoding='utf-8'))
-    except (OSError, ValueError):
+    doc = _marker(run_dir, STALL_STOP)
+    if doc is None:
         return None
     return ('Stopped automatically by the stall watcher: the log was silent for '
             '%s s against RUN.gate.stall_kill_s = %s s, after iteration %s. The '
@@ -1883,14 +1928,8 @@ def _stall_stop_cause(run_dir):
 
 def _operator_stop_cause(run_dir):
     """The cause the operator gave to `--stop`, read from its marker, or None."""
-    path = os.path.join(run_dir, OPERATOR_STOP)
-    if not os.path.exists(path):
-        return None
-    try:
-        doc = json.load(open(path, encoding='utf-8'))
-    except (OSError, ValueError):
-        return None
-    return doc.get('cause') or None
+    doc = _marker(run_dir, OPERATOR_STOP)
+    return (doc or {}).get('cause') or None
 
 
 def _stop_marker(run_dir):
@@ -2258,6 +2297,7 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
     refuse_if_no_automatic_stop(cfg)
     refuse_small_heap(cfg, xmx, fraction)
     refuse_concurrent_arm()
+    refuse_unsafe_host(cfg)
     announce_heap(cfg, xmx, fraction)
 
     warm_key = None

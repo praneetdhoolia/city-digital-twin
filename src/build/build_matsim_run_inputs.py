@@ -36,6 +36,7 @@ import re
 import csv
 import gzip
 import json
+import math
 import argparse
 import collections
 import io
@@ -236,8 +237,10 @@ def day_of_route(route_id):
 
 
 def filter_transit_line(line, fl):
-    """One iteration of the loop this replaced in split_schedule(); `fl` carries the
-    enclosing scope (10 names). Extracted mechanically, byte-identical outputs."""
+    """Filter one transitLine's departures to the day type in place, dropping emptied
+    routes and the line itself if none remain, and tally into `fl`; returns None.
+    `fl` supplies day and root, and accumulates the kept/dropped/mixed counts and the
+    vehicles_used, stops_served and transport_modes sets."""
     for route in list(line.findall('transitRoute')):
         # Filter DEPARTURES, not routes. pt2matsim groups trips into a
         # transitRoute by stop sequence, not by service, so a route is not
@@ -1487,8 +1490,14 @@ def scoring_from_c1(cfg, c1, purpose_share):
     # its per-km fare enters as monetaryDistanceRate in config_runtime. The
     # ASC is swept, never fitted: no taxi target exists, and the realised
     # volume is reported against B.taxi.daily_trips_band as a CONSTRAINT.
+    # Under the finite fleet the wait is EXECUTED (citysim.TaxiFleetEngine
+    # holds a served passenger until a vehicle is free; fourteenth report,
+    # 25 September 2026), so it is not priced a second time here: the folded
+    # wait belongs only to a taxi with no fleet behind it.
     if 'taxi' in cfg.get('RUN.mode_choice.modes'):
-        wait_cost = (cfg.get('C.taxi.wait_min') / 60.0) * vot_avg * mm
+        wait_min = (0.0 if cfg.get('A.taxi.fleet_representation') == 'fleet'
+                    else cfg.get('C.taxi.wait_min'))
+        wait_cost = (wait_min / 60.0) * vot_avg * mm
         modes['taxi'] = dict(
             constant=round(cfg.get('C.taxi.asc') - wait_cost, 4),
             marginalUtilityOfTraveling=traveling(1.0))
@@ -1612,8 +1621,10 @@ def scoring_from_c1(cfg, c1, purpose_share):
 
 
 def runtime_representation_entries(rc):
-    """One iteration of the loop this replaced in config_runtime(); `rc` carries the
-    enclosing scope (4 names). Extracted mechanically, byte-identical outputs."""
+    """Add the representation-gated runtime entries (signals, taxi fleet, stress,
+    crowding, service quality, parking search, boarding fares, hired fleet, income)
+    to `rc.runtime` in place; returns None.
+    `rc` supplies cfg, paths, scoring and runtime."""
     if rc.cfg.get('A.signals.representation') == 'explicit_signals':
         for target, key, note in (
                 ('signalsystems.signalsystems', 'signal_systems',
@@ -1799,9 +1810,9 @@ def runtime_representation_entries(rc):
 
 
 def runtime_mode_entries(rc):
-    """One iteration of the loop this replaced in config_runtime(); `rc` carries the
-    enclosing scope (4 names). Extracted mechanically, byte-identical outputs."""
-    """What the registry cannot hold, each entry carrying the role that justifies it.
+    """Return the base runtime dict of what the registry cannot hold (paths, CRS,
+    capacity factors, parking window, C1 scoring and the taxi fare blend), each
+    entry carrying the role that justifies it; `rc` supplies cfg, day, paths, scoring.
 
     `scoring` is the C1 translation: MATSim scores with a Charypar-Nagel utility
     and C1 is a nested logit, so the mode constants and per-mode time rates are
@@ -1908,6 +1919,92 @@ def runtime_mode_entries(rc):
             'taxi', 'derived', 'the mode FareChargeHandler charges')
     return runtime
 
+
+
+_REACH = {}
+
+
+def nearest_stop_reach_m(schedule_path, trips_csv, cell_m=1000.0):
+    """The farthest any activity location lies from its NEAREST stop, in metres.
+
+    SwissRailRaptor's intermodal stop finder (read from the pinned jar's
+    `DefaultRaptorStopFinder.addInitialStopsForParamSet`) searches
+    min(initialSearchRadius, maxRadius) and, when fewer than two stops are
+    inside, falls back to min(nearest-stop distance + searchExtensionRadius,
+    maxRadius). So `maxRadius` only ever CUTS that fallback, and the ceiling
+    that leaves the routed search reaching every stop the beeline finder
+    reaches is this figure plus the extension. The 1,200 m it replaced cut
+    it for every trip end beyond 1.2 km of a stop and doubled the no-route
+    share (fourteenth report, 25 September 2026).
+
+    Exact: every distinct activity coordinate is searched; stops are bucketed
+    in `cell_m` cells and searched ring by ring until no unseen stop can be
+    nearer.
+    """
+    key = (os.path.abspath(schedule_path), os.path.abspath(trips_csv))
+    if key in _REACH:
+        return _REACH[key]
+    stops = []
+    with gzip.open(schedule_path, 'rt', encoding='utf-8') as fh:
+        for line in fh:
+            if '<stopFacility ' in line:
+                x = re.search(r' x="([-0-9.eE]+)"', line)
+                y = re.search(r' y="([-0-9.eE]+)"', line)
+                if x and y:
+                    stops.append((float(x.group(1)), float(y.group(1))))
+    if not stops:
+        raise SystemExit('no stop facility in %s' % schedule_path)
+    grid = collections.defaultdict(list)
+    for sx, sy in stops:
+        grid[(int(sx // cell_m), int(sy // cell_m))].append((sx, sy))
+    points = set()
+    with open(trips_csv, encoding='utf-8', newline='') as fh:
+        for r in csv.DictReader(fh):
+            for xk, yk in (('origin_x', 'origin_y'), ('dest_x', 'dest_y')):
+                points.add((float(r[xk]), float(r[yk])))
+    reach = 0.0
+    for x, y in points:
+        cx, cy = int(x // cell_m), int(y // cell_m)
+        best = math.inf
+        ring = 0
+        while True:
+            for gx in range(cx - ring, cx + ring + 1):
+                for gy in range(cy - ring, cy + ring + 1):
+                    if max(abs(gx - cx), abs(gy - cy)) != ring:
+                        continue
+                    for sx, sy in grid.get((gx, gy), ()):
+                        d = math.hypot(sx - x, sy - y)
+                        if d < best:
+                            best = d
+            # every stop not yet seen is at least `ring * cell_m` away
+            if best <= ring * cell_m:
+                break
+            ring += 1
+        reach = max(reach, best)
+    _REACH[key] = reach
+    return reach
+
+
+def refuse_access_ceiling_below_reach(cfg, schedule_path, day):
+    """THE CEILING MAY NOT CUT THE NEAREST-STOP FALLBACK. Returns the reach.
+
+    Measured on the scenario's own stops and the day's own activity
+    locations, never typed: a ceiling below the reach turns every trip end
+    beyond it into "no transit route" - 1,200 m did that to 27 points of pt
+    requests from 12 to 25 September 2026 (fourteenth report).
+    """
+    reach = nearest_stop_reach_m(
+        schedule_path, _city.path('demand/plans/B2_activity_trips_%s.csv' % day))
+    ext = cfg.get('RUN.transit_router.access_search_extension_radius_m')
+    ceiling = cfg.get('RUN.transit_router.access_max_radius_m')
+    if ceiling < reach + ext:
+        raise SystemExit(
+            'REFUSED: RUN.transit_router.access_max_radius_m = %g m is below the '
+            'nearest-stop reach of %s (%s): %.0f m from the farthest activity '
+            'location to its nearest stop + the %g m extension = %.0f m. The '
+            'raptor would refuse transit to every trip end beyond it.'
+            % (ceiling, schedule_path, day, reach, ext, reach + ext))
+    return round(reach, 1)
 
 
 def config_runtime(cfg, scoring, day, paths):
@@ -2140,8 +2237,11 @@ def shipped_iterations(cfg):
 
 
 def assemble_scenario(r, ac):
-    """One iteration of the loop this replaced in main(); `ac` carries the
-    enclosing scope (12 names). Extracted mechanically, byte-identical outputs."""
+    """Assemble one E1 scenario row: patch and write its run network and parking prices,
+    then per day type filter the schedule and write vehicles and config; records the
+    entry in `ac.report` and returns None (skips a scenario with no mapped schedule).
+    `ac` supplies base_cfg, by_variant, road_variants, day_types, shipped, c1,
+    purpose_share, explicit_signals, crossings_on, change_events_xml and report."""
     sid = r['scenario_id']
     sched_dir = os.path.join(MATSIM, 'schedules', sid)
     if not os.path.isdir(sched_dir):
@@ -2242,6 +2342,9 @@ def assemble_scenario(r, ac):
         if ac.crossings_on:
             paths['change_events'] = os.path.relpath(
                 ac.change_events_xml, dst).replace('\\', '/')
+        if cfg.get('RUN.transit_router.access_egress_basis') == 'network':
+            counts['access_reach_m'] = refuse_access_ceiling_below_reach(
+                cfg, os.path.join(dst, paths['schedule']), d)
         write_config(os.path.join(dst, 'config.xml'), cfg, scoring, d, paths)
         entry['days'][d] = counts
         ac.report.setdefault('scoring', scoring)

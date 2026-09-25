@@ -111,6 +111,10 @@ def start(script):
     however it ends. Safe to call more than once; the first call wins."""
     if getattr(start, '_started', None) == script_key(script):
         return
+    # a `--help` is not a build: it overwrote the plans builder's entry with
+    # 0.001 s on 25 September 2026
+    if any(a in ('-h', '--help') for a in sys.argv[1:]):
+        return
     start._started = script_key(script)
     t0 = time.time()
 

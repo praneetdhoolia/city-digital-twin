@@ -240,14 +240,14 @@ def boardings(run_dir, iteration, route_mode=None):
     has_legs = _reading.table_path(run_dir, 'legs', iteration) is not None
     path = None if has_legs else plans_path(run_dir, iteration)
     if has_legs:
-        if True:                            # the cached legs table (#182)
-            for r in _reading.table(run_dir, 'legs', iteration):
-                if not r.get('transit_route'):
-                    continue
-                sm = route_mode.get((r.get('transit_line'), r.get('transit_route')))
-                if sm is None:
-                    continue
-                out[(sm, stop_name.get(r.get('access_stop_id'), ''))] += 1
+        # the cached legs table (#182)
+        for r in _reading.table(run_dir, 'legs', iteration):
+            if not r.get('transit_route'):
+                continue
+            sm = route_mode.get((r.get('transit_line'), r.get('transit_route')))
+            if sm is None:
+                continue
+            out[(sm, stop_name.get(r.get('access_stop_id'), ''))] += 1
         return out
     if path is None:
         raise SystemExit('iteration %d wrote neither a legs table nor '

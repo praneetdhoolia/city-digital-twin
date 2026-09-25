@@ -24,6 +24,7 @@ import registry as _registry  # noqa: E402
 _CFG = _registry.load()
 TOBLER_SLOPE = float(_CFG.get('A.gradient.walk_tobler_slope_coeff'))
 TOBLER_OFFSET = float(_CFG.get('A.gradient.walk_tobler_offset'))
+EDGE_GRADE_CLIP = float(_CFG.get('A.gradient.edge_grade_clip_pct'))
 NET = _city.path('data/processed/network')
 
 TILES = [os.path.join(DEM_DIR, f) for f in sorted(os.listdir(DEM_DIR)) if f.endswith('.tif')]
@@ -94,7 +95,7 @@ def process(edges_csv, geom_jsonl, id_field, out_csv):
             stats['nodata'] += 1
             continue
         # rise over the true path length, clipped to a physically plausible band
-        g = max(-25.0, min(25.0, (z1 - z0) / L * 100.0))
+        g = max(-EDGE_GRADE_CLIP, min(EDGE_GRADE_CLIP, (z1 - z0) / L * 100.0))
         # roughness: max absolute segment gradient along the way
         zs = [smp(c[0], c[1]) for c in co]
         zs = [z for z in zs if z is not None]
@@ -126,7 +127,6 @@ def process(edges_csv, geom_jsonl, id_field, out_csv):
 
 if __name__ == '__main__':
     # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
-    import sys as _sys_t, os as _os_t  # noqa: E401
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     print('DEM tiles:', [os.path.basename(t) for t in TILES])

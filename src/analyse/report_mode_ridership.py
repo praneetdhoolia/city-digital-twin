@@ -178,21 +178,21 @@ def pt_submode_trips(run_dir, iteration, person_lga, derived=None):
     else:
         route_mode = em.transit_route_modes(run_dir)
         import iteration_reading as _reading
-        if True:                            # the cached legs table (#182)
-            for l in _reading.table(run_dir, 'legs', iteration):
-                line = (l.get('transit_line') or '').strip()
-                if not line:
-                    continue
-                route = (l.get('transit_route') or '').strip()
-                sm = route_mode.get((line, route))
-                if sm is None:
-                    unknown += 1
-                    continue
-                try:
-                    metres = float(l.get('distance') or 0.0)
-                except ValueError:
-                    metres = 0.0
-                ridden[(l['person'], l['trip_id'])][sm] += metres
+        # the cached legs table (#182)
+        for l in _reading.table(run_dir, 'legs', iteration):
+            line = (l.get('transit_line') or '').strip()
+            if not line:
+                continue
+            route = (l.get('transit_route') or '').strip()
+            sm = route_mode.get((line, route))
+            if sm is None:
+                unknown += 1
+                continue
+            try:
+                metres = float(l.get('distance') or 0.0)
+            except ValueError:
+                metres = 0.0
+            ridden[(l['person'], l['trip_id'])][sm] += metres
         # the cached trips table, read once per (run, iteration) - this was
         # a second full parse beside the cached read above (ninth report,
         # 14 September 2026, finding 9)
@@ -372,8 +372,9 @@ def truck_at_count_stations(run_dir, iteration):
 
 
 def print_footer(fctx):
-    """One iteration of the loop this replaced in print_readings(); `fctx` carries the
-    enclosing scope (2 names). Extracted mechanically, byte-identical outputs."""
+    """Print the footer of the ridership table: totals, truck station scoring, pt
+    diagnostics and the gate verdict; returns None.
+    `fctx` supplies breaches and ctx (lga_tot, road_tot, truck_stn, sub, multi, unknown)."""
     print('-' * 100)
     print('target-LGA linked trips %d   modelled road vehicle trips %d '
           '(all subpopulations)' % (fctx.ctx.lga_tot, fctx.ctx.road_tot))
@@ -412,8 +413,10 @@ def print_footer(fctx):
 
 
 def print_readings(ctx):
-    """One iteration of the loop this replaced in report(); `ctx` carries the
-    enclosing scope (20 names). Extracted mechanically, byte-identical outputs."""
+    """Print one row per target mode against its target, record each row in LAST, print
+    the footer and coverage bound, and return the gate breaches.
+    `ctx` supplies run_dir, iteration, tgt, modelled, trips, boarding_modes, truck_note,
+    truck_target_stn and the km_n / km_sum / pt_n / pt_km geometry counts."""
     stamp = time.strftime('%Y-%m-%dT%H:%M:%S')
     name = _os.path.basename(_os.path.normpath(ctx.run_dir))
     print('=' * 100)
@@ -626,11 +629,11 @@ def report(run_dir, iteration, truck_stations=False):
                 'read from it' % _os.path.basename(run_dir.rstrip('/\\')))
         disclosed = set(disclosed_stations())
         for m in boarding_modes:
-            sm = {'heavy_rail': 'rail', 'light_rail': 'tram', 'bus': 'bus',
-                  'ferry': 'ferry'}.get(m, m)
             n = 0
             for (s, stop), c in counts.items():
-                if s != sm:
+                # the declared map read the other way, never a typed inverse:
+                # every spelling of a submode reaches its one target
+                if SUBMODE_TO_TARGET.get(s, s) != m:
                     continue
                 # the STATION the stop belongs to - the name before "Station"
                 # in "Hamilton Station Platform 1" - compared whole, never a
@@ -638,7 +641,8 @@ def report(run_dir, iteration, truck_stations=False):
                 # name inside an undisclosed stop's name count (eighth
                 # report, 11 September 2026; reproduces 5,305 on the landed
                 # result exactly)
-                if m == 'heavy_rail' and disclosed and                         station_of(stop) not in disclosed:
+                if (m == 'heavy_rail' and disclosed
+                        and station_of(stop) not in disclosed):
                     continue
                 n += c
             boarded[m] = (n, n / frac if frac else float(n))
@@ -1137,6 +1141,23 @@ def main():
     # every iteration that can be read: trips table OR experienced plans
     have = sorted(set(mim.iterations_with_trips(a.run))
                   | set(itr.iterations_with_plans(a.run)))
+    # A run whose record says it did not reach its horizon is citable at its
+    # reached_iteration and nowhere past it - the board clamps, and so does
+    # this reader, or its default "newest readable" could cite past the record
+    # (fourteenth report).
+    try:
+        with open(_os.path.join(a.run, '_run.json'), encoding='utf-8') as fh:
+            record = json.load(fh)
+    except (OSError, ValueError):
+        record = {}
+    reached = record.get('reached_iteration')
+    if record.get('completion') not in (None, 'ran_to_last_iteration') \
+            and isinstance(reached, int):
+        if a.it is not None and a.it > reached:
+            raise SystemExit('iteration %d is past this run\'s reached_iteration '
+                             '%d (%s); it is citable there and nowhere past it'
+                             % (a.it, reached, record.get('completion')))
+        have = [i for i in have if i <= reached]
     if a.all:
         print(' '.join(str(i) for i in have))
         return

@@ -129,6 +129,8 @@ def plain_iteration_pace(run_dir):
         return None
     i_total = last_index('iteration')
     i_dump = last_index('dump all plans')
+    i_begin = head.index('BEGIN iteration') if 'BEGIN iteration' in head else None
+    begin0 = None
     if i_total is None or i_total == 0:
         return None
     seen = {}
@@ -140,6 +142,8 @@ def plain_iteration_pace(run_dir):
             continue
         dump = _hms(r[i_dump]) if i_dump is not None and len(r) > i_dump else None
         seen[int(r[0])] = (total, dump or 0)
+        if int(r[0]) == 0 and i_begin is not None and len(r) > i_begin:
+            begin0 = _hms(r[i_begin])
     if not seen:
         return None
     last_it = max(seen)
@@ -163,7 +167,32 @@ def plain_iteration_pace(run_dir):
                 last_iteration=last_it,
                 # every iteration the run's OWN clock timed, one-off or plain:
                 # what the wall clock spent inside iterations
-                iteration_total_s=float(sum(t for t, _ in seen.values())))
+                iteration_total_s=float(sum(t for t, _ in seen.values())),
+                # the wall-clock stamp (seconds past midnight) iteration 0
+                # began at: launch to here is the run's setup, whatever
+                # happened to the host afterwards
+                first_iteration_begin_clock_s=begin0)
+
+
+def launch_to_first_iteration_s(started, plain):
+    """Seconds from the card's `started` to the stopwatch's BEGIN of iteration 0.
+
+    This IS the setup - reading the network and plans and PersonPrepareForSim -
+    and nothing after it. The other clocks subtract iterations from the wall,
+    and the wall of a run whose host died holds the dead time: F36's arm 0
+    priced the next arm at 62.9 h, 37.8 h of it "setup", against a real setup
+    of 1,598 s (fourteenth report). Both stamps are local wall clock; setup
+    is under a day, so the difference is taken modulo one.
+    """
+    begin = (plain or {}).get('first_iteration_begin_clock_s')
+    if begin is None or not started:
+        return None
+    try:
+        t = started.split('T', 1)[1]
+        h, m, sec = (int(float(x)) for x in t.split(':')[:3])
+    except (IndexError, ValueError):
+        return None
+    return float((begin - (h * 3600 + m * 60 + sec)) % 86400)
 
 
 def setup_seconds(wall, reached, median, recorded, plain):
@@ -252,7 +281,9 @@ def observed_arms(min_iterations: int = 2) -> list:
         plain = plain_iteration_pace(d)
         # The memo covers only the iterations the harness lived to see; an
         # orphan's setup is read from the JVM's own stopwatch instead.
-        setup = setup_seconds(wall, reached, median, secs, plain)
+        setup = launch_to_first_iteration_s(meta.get('started'), plain)
+        if setup is None:
+            setup = setup_seconds(wall, reached, median, secs, plain)
         out.append(dict(
             name=name,
             city=meta.get('city') or city.DEFAULT_CITY,

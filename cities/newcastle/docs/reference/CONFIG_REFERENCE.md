@@ -32,8 +32,8 @@ Three things are refused at every layer:
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 39 | read directly from a raw download |
-| `measured` | 42 | computed from observed data in this package |
-| `derived` | 49 | follows from another registry field by identity |
+| `measured` | 43 | computed from observed data in this package |
+| `derived` | 48 | follows from another registry field by identity |
 | `literature` | 82 | a published value, not specific to this city |
 | `assumed` | 211 | chosen without direct empirical support |
 | `definition` | 152 | fixed by the formulation, not an empirical quantity |
@@ -90,7 +90,7 @@ The `answer` sweeps - the runs the study owes after the gate:
 | `RUN.routing.access_egress_consistency_check` | `reroute` | `reroute`, `disable`, `abortOnInconsistency` |
 | `RUN.routing.access_egress_type` | `accessEgressModeToLink` | `none`, `accessEgressModeToLink` |
 
-### The 34 fields held fixed
+### The 35 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
@@ -128,6 +128,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `RUN.machine.heap_floor_gib` - A LAUNCH REFUSAL'S INTERCEPT, not a model parameter: the fixed part of the heap a run needs whatever its sample (network, schedule, the loaded jars). 9.6 was measured at 9.5 from t
 - `RUN.machine.heap_per_fraction_gib` - A LAUNCH REFUSAL'S SLOPE: the heap a run needs per unit of sample fraction (plan memory grows with persons x plans x legs), measured at 9.5. Paired with RUN.machine.heap_floor_gib;
 - `RUN.monitor.pace_band_s` - A MONITORING REFERENCE, not a model parameter: the closed family's measured 25% x 1000 solo/two-arm pace band (DECISIONS.md 9.64/9.72). The digest flags pace against it and mechani
+- `RUN.transit_router.access_max_radius_m` - THE CEILING MAY NOT CUT THE NEAREST-STOP FALLBACK. SwissRailRaptor's intermodal finder (DefaultRaptorStopFinder.addInitialStopsForParamSet, read from the pinned jar) searches min(i
 
 ## Network supply (A1-A6)
 
@@ -3688,7 +3689,7 @@ The taxi mode constant net of the derived wait cost. Zero says: beyond fare and 
 
 #### `C.taxi.wait_min`
 
-The booking/wait time a point-to-point trip carries before the vehicle arrives. Folded into the taxi mode constant at emit time (wait_min/60 x trip-weighted VOT x marginalUtilityOfMoney) - the same derivation discipline as utilityOfLineSwitch.
+The booking/wait time a point-to-point trip carries before the vehicle arrives, for a taxi with NO fleet behind it. Folded into the taxi mode constant at emit time (wait_min/60 x trip-weighted VOT x marginalUtilityOfMoney) - the same derivation discipline as utilityOfLineSwitch. Under A.taxi.fleet_representation = fleet it folds nothing: citysim.TaxiFleetEngine executes each served request's own wait, which the mobsim and the score see (fourteenth report, 25 September 2026).
 
 ***assumed** · status **active** · DECISIONS.md §9.76 · sweep role **uncertainty***
 
@@ -4236,7 +4237,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.transit.use_transit` | `true` | boolean | `definition` | - |
 | `RUN.transit_router.access_egress_basis` | `network` | enum | `derived` | derived: access_egress_basis = network only where the routed leg can actually b |
 | `RUN.transit_router.access_initial_search_radius_m` | `1000.0` | metres | `derived` | derived: access_initial_search_radius_m = search_radius_m. The intermodal stop  |
-| `RUN.transit_router.access_max_radius_m` | `1200.0` | metres | `derived` | derived: access_max_radius_m = search_radius_m + extension_radius_m = 1000 + 20 |
+| `RUN.transit_router.access_max_radius_m` | `55600.0` | metres | `measured` | **held fixed** |
 | `RUN.transit_router.access_search_extension_radius_m` | `200.0` | metres | `derived` | derived: access_search_extension_radius_m = extension_radius_m, the same reach- |
 | `RUN.transit_router.additional_transfer_time_s` | `0.0` | s | `assumed` | 0 - 120 |
 | `RUN.transit_router.direct_walk_basis` | `network` | enum | `derived` | derived: direct_walk_basis = network whenever walk is routed and simulated on t |
@@ -4937,11 +4938,13 @@ Radius around a trip end within which the raptor collects candidate access/egres
 
 #### `RUN.transit_router.access_max_radius_m`
 
-The hard ceiling on how far the raptor will look for an access or egress stop. No beeline counterpart exists, so it is derived as the furthest the beeline path could reach. EMITTED WITH THE PARAMETER SET, NOT BOUND SEPARATELY FROM IT: the set exists only when RUN.transit_router.access_egress_basis is `network`, and a `[*]` binding whose set nothing creates is a fault the emitter refuses outright - correctly, since a radius broadcast onto no set is a value that silently reaches nothing. So all four values are emitted together by build_matsim_run_inputs.py under the `derived` runtime role, or not at all. Emits swissRailRaptor.intermodalAccessEgress[*].maxRadius.
+The hard ceiling on how far the raptor will look for an access or egress stop. No beeline counterpart exists; the value is the measured reach of the beeline finder's nearest-stop fallback (held_fixed.rule), and the assembler refuses a value below it. EMITTED WITH THE PARAMETER SET, NOT BOUND SEPARATELY FROM IT: the set exists only when RUN.transit_router.access_egress_basis is `network`, and a `[*]` binding whose set nothing creates is a fault the emitter refuses outright - correctly, since a radius broadcast onto no set is a value that silently reaches nothing. So all four values are emitted together by build_matsim_run_inputs.py under the `derived` runtime role, or not at all. Emits swissRailRaptor.intermodalAccessEgress[*].maxRadius.
 
-***derived** · status **active** · DECISIONS.md §9.159, 9.120*
+***measured** · status **active** · DECISIONS.md §9.159, 9.120*
 
-> **Derived from** `RUN.transit_router.search_radius_m`, `RUN.transit_router.extension_radius_m`: access_max_radius_m = search_radius_m + extension_radius_m = 1000 + 200. The beeline search has no separate hard ceiling: it reaches the search radius, and where no stop lies inside it, out to the nearest stop plus the extension. The furthest that path can ever reach is therefore the sum, and that is the ceiling declared here - the identity that leaves the routed search covering the same ground as the drawn one. The raptor's own default is the sentinel +Infinity, which would let one agent's access search run to the far side of the region.
+> **Held fixed.** THE CEILING MAY NOT CUT THE NEAREST-STOP FALLBACK. SwissRailRaptor's intermodal finder (DefaultRaptorStopFinder.addInitialStopsForParamSet, read from the pinned jar) searches min(initialSearchRadius, maxRadius) and, with fewer than two stops inside, falls back to min(nearest-stop distance + searchExtensionRadius, maxRadius) - so maxRadius only ever CUTS that fallback, and never lets a search run past the nearest stop plus the extension. The ceiling that reproduces the beeline finder's reach is therefore the farthest distance from any activity location to its nearest stop, plus the extension: measured 25 September 2026 over every scenario's own stops and every day type's own activity locations at 32,261 m (weekdays) and 55,362 m (weekends; the far points are boundary and freight origins), + 200 m = 55,562 m, declared 55,600. build_matsim_run_inputs.py re-measures it at every assembly and refuses a ceiling below it. SUPERSEDES the identity 1,000 + 200 = 1,200 m (9.159), which read the beeline path as bounded by the sum: from 12 September (access on the network, 9.167) it refused transit to every trip end beyond 1.2 km of a stop - the share of pt requests with no transit route went from 31-37 % to 66-68 % on every run since, against 38.8-39.4 % re-routed offline without the cap (fourteenth report).
+>
+> *Departure requires: a stop layout or activity locations whose re-measured reach exceeds the value - the assembler refuses and names the reach*
 
 #### `RUN.transit_router.access_search_extension_radius_m`
 

@@ -147,134 +147,43 @@ public final class CitysimControler {
     public static Controler assemble(
             final String configPath,
             final java.util.List<org.matsim.core.config.ConfigGroup> extraGroups) {
-        final ParkingConfigGroup parking = new ParkingConfigGroup();
-        final TelemetryConfigGroup telemetry = new TelemetryConfigGroup();
-        final RidePairingConfigGroup ridePairing = new RidePairingConfigGroup();
-        final FareConfigGroup fare = new FareConfigGroup();
-        // Registered on EVERY stack even though only the signals entry point
-        // reads it: the tramPriority module is emitted into every config (its
-        // fields are registry-bound so the reach probe must see them move),
-        // and this MATSim REFUSES an unmaterialised module at the consistency
-        // check - "Unmaterialized config group: tramPriority", measured on
-        // the first detached smoke probe. The group class has no signals
-        // imports, so the base compile stays clean; the CONTROLLER that acts
-        // on it exists only in src/java_signals/.
-        final TramPriorityConfigGroup tramPriority = new TramPriorityConfigGroup();
-        // SCATS adaptive control (DECISIONS.md 9.88, #73), registered on
-        // every stack for exactly the reason above: its fields are
-        // registry-bound, so the `scats` module is emitted into every
-        // config and an unmaterialised group would fail the consistency
-        // check. Only citysim.ScatsSignalController - which lives in
-        // src/java_signals/ - ever acts on it.
-        final ScatsConfigGroup scats = new ScatsConfigGroup();
-        // Taxi as a finite fleet (9.99, #90), registered on every stack
-        // for the same reason as the two above: its fields are
-        // registry-bound, so the `taxiFleet` module is emitted into every
-        // config and an unmaterialised group fails the consistency check.
-        final TaxiFleetConfigGroup taxiFleet = new TaxiFleetConfigGroup();
-        // The swissRailRaptor module (#49 Tier C, DECISIONS.md 9.78) needs its
-        // typed group registered BEFORE the config is parsed, exactly like
-        // tramPriority above: MATSim's UnmaterializedConfigGroupChecker throws
-        // a RuntimeException for any module left as a generic ConfigGroup
-        // (read from the pinned jar), and nothing materialises the raptor
-        // group until the router is first built - after the check. Registered
-        // on every stack, whether or not the emitted config carries the
-        // module: with no module in the file this only installs the group's
-        // own defaults (mode mapping off), and an unrecognised parameter in
-        // an emitted module then fails the run instead of being ignored.
-        final ch.sbb.matsim.config.SwissRailRaptorConfigGroup swissRailRaptor =
-                new ch.sbb.matsim.config.SwissRailRaptorConfigGroup();
-        // Gradient in walk/bike link travel time (DECISIONS.md 9.84, #21) and
-        // the age availability gates (9.84, #49/#50). Registered on every
-        // stack like tramPriority: the modules are emitted into every config
-        // once their registry fields exist, and an unmaterialised module
-        // fails MATSim's consistency check.
-        final GradientConfigGroup gradient = new GradientConfigGroup();
-        final ModeAvailabilityConfigGroup modeAvailability =
-                new ModeAvailabilityConfigGroup();
-        // The PT router's direct-walk basis (DECISIONS.md 9.121, #94):
-        // registered on every stack like the others; absent from the
-        // emitted config it defaults to the stock beeline behaviour.
-        final PtDirectWalkConfigGroup ptDirectWalk = new PtDirectWalkConfigGroup();
-        // The published Opal fare schedule (DECISIONS.md 9.135, #98):
-        // registered on every stack like the others; absent from the emitted
-        // config the group holds only sentinels, isEnabled() is false and
-        // no handler is installed - every ride is then free, which is
-        // exactly the pre-9.135 model.
-        final PtFareConfigGroup ptFare = new PtFareConfigGroup();
-        // Motor-traffic cycling stress (DECISIONS.md 9.138, #107) and
-        // income-dependent money sensitivity (9.138, #108): registered on
-        // every stack like the others; absent from the emitted config each
-        // group holds representation=absent and nothing below installs.
-        final BikeStressConfigGroup bikeStress = new BikeStressConfigGroup();
-        final IncomeScoringConfigGroup incomeScoring =
-                new IncomeScoringConfigGroup();
-        // A household drives the cars the census gives it (DECISIONS.md
-        // 9.146, B.population.vehicle_roster): registered on every stack like
-        // the others; absent from the emitted config the group reads
-        // per_person and nothing below installs.
-        final HouseholdVehiclesConfigGroup householdVehicles =
-                new HouseholdVehiclesConfigGroup();
-        // In-vehicle PT crowding in SCORING: registered on every stack like
-        // the others, because its two multipliers are registry-bound and the
-        // `ptCrowding` module is therefore emitted into every config - an
-        // unmaterialised module fails MATSim's consistency check. Absent from
-        // the emitted config the group holds representation=absent and nothing
-        // below installs, which is the uncrowded model byte for byte.
-        final PtCrowdingConfigGroup ptCrowding = new PtCrowdingConfigGroup();
-        // The PT submode's own scoring constant reaching the ROUTER that picks
-        // the submode (DECISIONS.md 9.160, #49): registered on every stack like
-        // the others, because its gate is registry-bound and the
-        // `raptorModeCost` module is therefore emitted into every config - an
-        // unmaterialised module fails MATSim's consistency check. Absent from
-        // the emitted config the group holds representation=absent and nothing
-        // below installs, which leaves SwissRailRaptorModule's own
-        // DefaultRaptorInVehicleCostCalculator in place.
-        final RaptorModeCostConfigGroup raptorModeCost =
-                new RaptorModeCostConfigGroup();
-        // #49, DECISIONS.md 9.164: whether the PT submodes are alternatives a
-        // PLAN can hold. Materialised for the same reason as every group
-        // above - a config that names an unmaterialised module fails MATSim's
-        // consistency check - and absent from the emitted config it holds
-        // representation=aggregate, under which nothing below installs.
-        final PtSubmodeChoiceConfigGroup ptSubmodeChoice =
-                new PtSubmodeChoiceConfigGroup();
-        // #175, DECISIONS.md 9.164: what a passenger pays for a service's
-        // frequency and its variability - the two declared time weights that
-        // reached a params JSON and stopped there.
-        final ServiceQualityConfigGroup serviceQuality =
-                new ServiceQualityConfigGroup();
-        final ActivityLinksConfigGroup activityLinks = new ActivityLinksConfigGroup();
-        final BoardingFareConfigGroup boardingFare = new BoardingFareConfigGroup();
-        final HiredFleetConfigGroup hiredFleet = new HiredFleetConfigGroup();
-        final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[22 + extraGroups.size()];
-        groups[0] = parking;
-        groups[1] = telemetry;
-        groups[2] = ridePairing;
-        groups[3] = fare;
-        groups[4] = tramPriority;
-        groups[5] = swissRailRaptor;
-        groups[6] = gradient;
-        groups[7] = modeAvailability;
-        groups[8] = scats;
-        groups[9] = taxiFleet;
-        groups[10] = ptDirectWalk;
-        groups[11] = ptFare;
-        groups[12] = bikeStress;
-        groups[13] = incomeScoring;
-        groups[14] = householdVehicles;
-        groups[15] = ptCrowding;
-        groups[16] = raptorModeCost;
-        groups[17] = ptSubmodeChoice;
-        groups[18] = serviceQuality;
-        groups[19] = activityLinks;
-        groups[20] = boardingFare;
-        groups[21] = hiredFleet;
-        for (int i = 0; i < extraGroups.size(); i++) {
-            groups[22 + i] = extraGroups.get(i);
+        final Groups g = new Groups();
+        final Config config = ConfigUtils.loadConfig(configPath, g.array(extraGroups));
+        resolveRelativePaths(configPath, g);
+        final org.matsim.api.core.v01.Scenario scenario =
+                ScenarioUtils.loadScenario(config);
+        AvailabilityModesCalculator.validateExplicitPopulation(scenario);
+        // Apply the declared activity-link policy before constructing the
+        // controller. The original common-link treatment remains available;
+        // mode-specific access retains the activity's location and delegates
+        // each mode's connections to its access/egress router (9.184).
+        ActivityLinkAssigner.run(scenario);
+        final Controler controler = new Controler(scenario);
+        // One plain routing network per distinct link set instead of one
+        // time-variant copy per mode: the footpath network (#183) doubled the
+        // link count and the seven per-mode copies of a TimeVariantLinkImpl
+        // network put a 1 % probe out of heap. Nothing about a route changes.
+        installSingleton(controler, SharedModeNetworks.class, false, true, false);
+        controler.addOverridingModule(routingBindings(config, scenario, g));
+        installChargeHandlers(controler, g);
+        installBeforeMobsimEngines(controler, g);
+        installQSim(controler, config, scenario, g);
+        installScoring(controler, g);
+        installPtExtensions(controler, config, scenario, g);
+        installIncomeScoring(controler, config, g);
+        if (config.getModules().containsKey(TelemetryConfigGroup.NAME)) {
+            // One instance in three roles: it accumulates as an event
+            // handler, flushes live as a mobsim listener, and closes the
+            // iteration as a controler listener.
+            installSingleton(controler, RunTelemetry.class, true, true, true);
         }
-        final Config config = ConfigUtils.loadConfig(configPath, groups);
+        return controler;
+    }
+
+    /** Relative input paths in our own modules, resolved against the config's directory. */
+    private static void resolveRelativePaths(final String configPath, final Groups g) {
+        final ParkingConfigGroup parking = g.parking;
+        final BoardingFareConfigGroup boardingFare = g.boardingFare;
         if (boardingFare.isEnabled() && !new File(boardingFare.tableFile).isAbsolute()) {
             boardingFare.tableFile = new File(new File(configPath).getAbsoluteFile().getParentFile(),
                     boardingFare.tableFile).getPath();
@@ -291,21 +200,15 @@ public final class CitysimControler {
                 parking.priceFile = new File(base, parking.getPriceFile()).getPath();
             }
         }
-        final org.matsim.api.core.v01.Scenario scenario =
-                ScenarioUtils.loadScenario(config);
-        AvailabilityModesCalculator.validateExplicitPopulation(scenario);
-        // Apply the declared activity-link policy before constructing the
-        // controller. The original common-link treatment remains available;
-        // mode-specific access retains the activity's location and delegates
-        // each mode's connections to its access/egress router (9.184).
-        ActivityLinkAssigner.run(scenario);
-        final Controler controler = new Controler(scenario);
-        // One plain routing network per distinct link set instead of one
-        // time-variant copy per mode: the footpath network (#183) doubled the
-        // link count and the seven per-mode copies of a TimeVariantLinkImpl
-        // network put a 1 % probe out of heap. Nothing about a route changes.
-        installSingleton(controler, SharedModeNetworks.class, false, true, false);
-        controler.addOverridingModule(new AbstractModule() {
+    }
+
+    /** The router: mode permissions, the pt direct-walk basis, the analysis main mode, and each network mode's travel time and disutility. */
+    private static AbstractModule routingBindings(final Config config,
+            final org.matsim.api.core.v01.Scenario scenario, final Groups g) {
+        final GradientConfigGroup gradient = g.gradient;
+        final PtDirectWalkConfigGroup ptDirectWalk = g.ptDirectWalk;
+        final BikeStressConfigGroup bikeStress = g.bikeStress;
+        return new AbstractModule() {
             @Override
             public void install() {
                 bind(PermissibleModesCalculator.class)
@@ -425,7 +328,15 @@ public final class CitysimControler {
                     }
                 }
             }
-        });
+        };
+    }
+
+    /** Parking, PT fares, boarding fares and the point-to-point flagfall: each one instance accumulating as a handler and emitting as a listener. */
+    private static void installChargeHandlers(final Controler controler, final Groups g) {
+        final ParkingConfigGroup parking = g.parking;
+        final FareConfigGroup fare = g.fare;
+        final PtFareConfigGroup ptFare = g.ptFare;
+        final BoardingFareConfigGroup boardingFare = g.boardingFare;
         if (!parking.getPriceFile().isEmpty()) {
             // One instance serving both roles: it accumulates as an
             // event handler and emits as a controler listener.
@@ -460,6 +371,13 @@ public final class CitysimControler {
             // module behaves exactly as before.
             installSingleton(controler, FareChargeHandler.class, true, true, false);
         }
+    }
+
+    /** The engines that act at the BeforeMobsim boundary: the taxi fleet, ride pairing and escort coherence, the household vehicle roster. */
+    private static void installBeforeMobsimEngines(final Controler controler, final Groups g) {
+        final RidePairingConfigGroup ridePairing = g.ridePairing;
+        final TaxiFleetConfigGroup taxiFleet = g.taxiFleet;
+        final HouseholdVehiclesConfigGroup householdVehicles = g.householdVehicles;
         // Taxi as a finite fleet (DECISIONS.md 9.99, issue #90). Installed
         // whenever the declared representation asks for it, independently of
         // the ride engine: the two constrain different modes and neither
@@ -500,6 +418,15 @@ public final class CitysimControler {
             // source parks each shared car once.
             installSingleton(controler, HouseholdVehicleRoster.class, false, true, false);
         }
+    }
+
+    /** QSim components in their explicit departure-handler order, and the gradient in the mobsim physics. */
+    private static void installQSim(final Controler controler, final Config config,
+            final org.matsim.api.core.v01.Scenario scenario, final Groups g) {
+        final RidePairingConfigGroup ridePairing = g.ridePairing;
+        final GradientConfigGroup gradient = g.gradient;
+        final HouseholdVehiclesConfigGroup householdVehicles = g.householdVehicles;
+        final HiredFleetConfigGroup hiredFleet = g.hiredFleet;
         final boolean physicalBoarding =
                 ridePairing.isEnabled() && ridePairing.isPhysicalBoarding();
         final boolean networkWalk =
@@ -605,6 +532,12 @@ public final class CitysimControler {
                 }
             });
         }
+    }
+
+    /** Scoring channels that accumulate felt seconds as handlers: bike stress and PT crowding. */
+    private static void installScoring(final Controler controler, final Groups g) {
+        final BikeStressConfigGroup bikeStress = g.bikeStress;
+        final PtCrowdingConfigGroup ptCrowding = g.ptCrowding;
         if (bikeStress.isFeltTime()) {
             // The SCORE half of the bike stress channel (DECISIONS.md
             // 9.138, #107): one instance in both roles, accumulating
@@ -623,6 +556,16 @@ public final class CitysimControler {
             // handler re-enters the manager mid-drain).
             installSingleton(controler, PtCrowdingScoring.class, true, true, false);
         }
+    }
+
+    /** The PT router's extensions: the in-vehicle cost calculator, service quality and submode alternatives. */
+    private static void installPtExtensions(final Controler controler, final Config config,
+            final org.matsim.api.core.v01.Scenario scenario, final Groups g) {
+        final FareConfigGroup fare = g.fare;
+        final RaptorModeCostConfigGroup raptorModeCost = g.raptorModeCost;
+        final PtSubmodeChoiceConfigGroup ptSubmodeChoice = g.ptSubmodeChoice;
+        final ServiceQualityConfigGroup serviceQuality = g.serviceQuality;
+        final BoardingFareConfigGroup boardingFare = g.boardingFare;
         if (boardingFare.routeChoice && !boardingFare.isEnabled()) {
             throw new IllegalArgumentException("Fare route choice requires a boarding fare table");
         }
@@ -702,6 +645,11 @@ public final class CitysimControler {
                 }
             });
         }
+    }
+
+    /** Income-dependent money sensitivity (9.138, #108) on every subpopulation's scoring parameters. */
+    private static void installIncomeScoring(final Controler controler, final Config config, final Groups g) {
+        final IncomeScoringConfigGroup incomeScoring = g.incomeScoring;
         if (incomeScoring.isEnabled()) {
             // Income-dependent money sensitivity (DECISIONS.md 9.138, #108):
             // MATSim core's own IndividualPersonScoringParameters, which
@@ -743,13 +691,146 @@ public final class CitysimControler {
                 }
             });
         }
-        if (config.getModules().containsKey(TelemetryConfigGroup.NAME)) {
-            // One instance in three roles: it accumulates as an event
-            // handler, flushes live as a mobsim listener, and closes the
-            // iteration as a controler listener.
-            installSingleton(controler, RunTelemetry.class, true, true, true);
+    }
+
+    /**
+     * Every config group this project materialises BEFORE the config file is
+     * parsed, so an unrecognised parameter in one of its modules fails the run
+     * instead of being ignored (MATSim's UnmaterializedConfigGroupChecker).
+     */
+    private static final class Groups {
+        final ParkingConfigGroup parking = new ParkingConfigGroup();
+        final TelemetryConfigGroup telemetry = new TelemetryConfigGroup();
+        final RidePairingConfigGroup ridePairing = new RidePairingConfigGroup();
+        final FareConfigGroup fare = new FareConfigGroup();
+        // Registered on EVERY stack even though only the signals entry point
+        // reads it: the tramPriority module is emitted into every config (its
+        // fields are registry-bound so the reach probe must see them move),
+        // and this MATSim REFUSES an unmaterialised module at the consistency
+        // check - "Unmaterialized config group: tramPriority", measured on
+        // the first detached smoke probe. The group class has no signals
+        // imports, so the base compile stays clean; the CONTROLLER that acts
+        // on it exists only in src/java_signals/.
+        final TramPriorityConfigGroup tramPriority = new TramPriorityConfigGroup();
+        // SCATS adaptive control (DECISIONS.md 9.88, #73), registered on
+        // every stack for exactly the reason above: its fields are
+        // registry-bound, so the `scats` module is emitted into every
+        // config and an unmaterialised group would fail the consistency
+        // check. Only citysim.ScatsSignalController - which lives in
+        // src/java_signals/ - ever acts on it.
+        final ScatsConfigGroup scats = new ScatsConfigGroup();
+        // Taxi as a finite fleet (9.99, #90), registered on every stack
+        // for the same reason as the two above: its fields are
+        // registry-bound, so the `taxiFleet` module is emitted into every
+        // config and an unmaterialised group fails the consistency check.
+        final TaxiFleetConfigGroup taxiFleet = new TaxiFleetConfigGroup();
+        // The swissRailRaptor module (#49 Tier C, DECISIONS.md 9.78) needs its
+        // typed group registered BEFORE the config is parsed, exactly like
+        // tramPriority above: MATSim's UnmaterializedConfigGroupChecker throws
+        // a RuntimeException for any module left as a generic ConfigGroup
+        // (read from the pinned jar), and nothing materialises the raptor
+        // group until the router is first built - after the check. Registered
+        // on every stack, whether or not the emitted config carries the
+        // module: with no module in the file this only installs the group's
+        // own defaults (mode mapping off), and an unrecognised parameter in
+        // an emitted module then fails the run instead of being ignored.
+        final ch.sbb.matsim.config.SwissRailRaptorConfigGroup swissRailRaptor =
+                new ch.sbb.matsim.config.SwissRailRaptorConfigGroup();
+        // Gradient in walk/bike link travel time (DECISIONS.md 9.84, #21) and
+        // the age availability gates (9.84, #49/#50). Registered on every
+        // stack like tramPriority: the modules are emitted into every config
+        // once their registry fields exist, and an unmaterialised module
+        // fails MATSim's consistency check.
+        final GradientConfigGroup gradient = new GradientConfigGroup();
+        final ModeAvailabilityConfigGroup modeAvailability =
+                new ModeAvailabilityConfigGroup();
+        // The PT router's direct-walk basis (DECISIONS.md 9.121, #94):
+        // registered on every stack like the others; absent from the
+        // emitted config it defaults to the stock beeline behaviour.
+        final PtDirectWalkConfigGroup ptDirectWalk = new PtDirectWalkConfigGroup();
+        // The published Opal fare schedule (DECISIONS.md 9.135, #98):
+        // registered on every stack like the others; absent from the emitted
+        // config the group holds only sentinels, isEnabled() is false and
+        // no handler is installed - every ride is then free, which is
+        // exactly the pre-9.135 model.
+        final PtFareConfigGroup ptFare = new PtFareConfigGroup();
+        // Motor-traffic cycling stress (DECISIONS.md 9.138, #107) and
+        // income-dependent money sensitivity (9.138, #108): registered on
+        // every stack like the others; absent from the emitted config each
+        // group holds representation=absent and nothing below installs.
+        final BikeStressConfigGroup bikeStress = new BikeStressConfigGroup();
+        final IncomeScoringConfigGroup incomeScoring =
+                new IncomeScoringConfigGroup();
+        // A household drives the cars the census gives it (DECISIONS.md
+        // 9.146, B.population.vehicle_roster): registered on every stack like
+        // the others; absent from the emitted config the group reads
+        // per_person and nothing below installs.
+        final HouseholdVehiclesConfigGroup householdVehicles =
+                new HouseholdVehiclesConfigGroup();
+        // In-vehicle PT crowding in SCORING: registered on every stack like
+        // the others, because its two multipliers are registry-bound and the
+        // `ptCrowding` module is therefore emitted into every config - an
+        // unmaterialised module fails MATSim's consistency check. Absent from
+        // the emitted config the group holds representation=absent and nothing
+        // below installs, which is the uncrowded model byte for byte.
+        final PtCrowdingConfigGroup ptCrowding = new PtCrowdingConfigGroup();
+        // The PT submode's own scoring constant reaching the ROUTER that picks
+        // the submode (DECISIONS.md 9.160, #49): registered on every stack like
+        // the others, because its gate is registry-bound and the
+        // `raptorModeCost` module is therefore emitted into every config - an
+        // unmaterialised module fails MATSim's consistency check. Absent from
+        // the emitted config the group holds representation=absent and nothing
+        // below installs, which leaves SwissRailRaptorModule's own
+        // DefaultRaptorInVehicleCostCalculator in place.
+        final RaptorModeCostConfigGroup raptorModeCost =
+                new RaptorModeCostConfigGroup();
+        // #49, DECISIONS.md 9.164: whether the PT submodes are alternatives a
+        // PLAN can hold. Materialised for the same reason as every group
+        // above - a config that names an unmaterialised module fails MATSim's
+        // consistency check - and absent from the emitted config it holds
+        // representation=aggregate, under which nothing below installs.
+        final PtSubmodeChoiceConfigGroup ptSubmodeChoice =
+                new PtSubmodeChoiceConfigGroup();
+        // #175, DECISIONS.md 9.164: what a passenger pays for a service's
+        // frequency and its variability - the two declared time weights that
+        // reached a params JSON and stopped there.
+        final ServiceQualityConfigGroup serviceQuality =
+                new ServiceQualityConfigGroup();
+        final ActivityLinksConfigGroup activityLinks = new ActivityLinksConfigGroup();
+        final BoardingFareConfigGroup boardingFare = new BoardingFareConfigGroup();
+        final HiredFleetConfigGroup hiredFleet = new HiredFleetConfigGroup();
+
+        org.matsim.core.config.ConfigGroup[] array(
+                final java.util.List<org.matsim.core.config.ConfigGroup> extraGroups) {
+            final org.matsim.core.config.ConfigGroup[] groups =
+                    new org.matsim.core.config.ConfigGroup[22 + extraGroups.size()];
+            groups[0] = parking;
+            groups[1] = telemetry;
+            groups[2] = ridePairing;
+            groups[3] = fare;
+            groups[4] = tramPriority;
+            groups[5] = swissRailRaptor;
+            groups[6] = gradient;
+            groups[7] = modeAvailability;
+            groups[8] = scats;
+            groups[9] = taxiFleet;
+            groups[10] = ptDirectWalk;
+            groups[11] = ptFare;
+            groups[12] = bikeStress;
+            groups[13] = incomeScoring;
+            groups[14] = householdVehicles;
+            groups[15] = ptCrowding;
+            groups[16] = raptorModeCost;
+            groups[17] = ptSubmodeChoice;
+            groups[18] = serviceQuality;
+            groups[19] = activityLinks;
+            groups[20] = boardingFare;
+            groups[21] = hiredFleet;
+            for (int i = 0; i < extraGroups.size(); i++) {
+                groups[22 + i] = extraGroups.get(i);
+            }
+            return groups;
         }
-        return controler;
     }
 
     /**

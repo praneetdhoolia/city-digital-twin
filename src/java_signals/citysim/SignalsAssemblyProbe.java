@@ -398,6 +398,15 @@ public final class SignalsAssemblyProbe {
         taxi.addParam("representation",
                       TaxiFleetConfigGroup.REPRESENTATION_ABSENT);
         config.addModule(taxi);
+        // The second time a required choice outran these probes: the
+        // activity-link assignment refuses an unset value, so both probes
+        // died in checkConsistency until 25 September 2026 - and nothing ran
+        // them, so nothing saw it. They now run in the session gate.
+        final org.matsim.core.config.ConfigGroup links =
+                new org.matsim.core.config.ConfigGroup(
+                        ActivityLinksConfigGroup.NAME);
+        links.addParam("assignment", ActivityLinksConfigGroup.COMMON);
+        config.addModule(links);
         config.routing().setNetworkModes(mainModes);
         config.routing().setAccessEgressType(
                 RoutingConfigGroup.AccessEgressType.none);

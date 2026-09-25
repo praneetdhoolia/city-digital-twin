@@ -1756,133 +1756,132 @@ if _registry is not None:
 # that silently IMPROVED the reported fit, in code the whole suite never touched.
 # These checks drive fit.py's scoring functions on SYNTHETIC metrics, so they need
 # no completed run - `results/` is gitignored and a check may not depend on one.
-if True:
-    try:
-        import fit as _fit
-    except ImportError as _e:
-        check(False, 'src/calibrate/fit.py imports (%s)' % _e)
-        _fit = None
+try:
+    import fit as _fit
+except ImportError as _e:
+    check(False, 'src/calibrate/fit.py imports (%s)' % _e)
+    _fit = None
 
-    if _fit is not None:
-        _tg = _fit.load_targets()
-        check(all(t['split'] == 'calibration' for t in _tg),
-              'fit.py load_targets() returns calibration rows ONLY - the holdout '
-              'is never read into the process, so it cannot reach an intermediate '
-              'or an output (%d rows)' % len(_tg))
+if _fit is not None:
+    _tg = _fit.load_targets()
+    check(all(t['split'] == 'calibration' for t in _tg),
+          'fit.py load_targets() returns calibration rows ONLY - the holdout '
+          'is never read into the process, so it cannot reach an intermediate '
+          'or an output (%d rows)' % len(_tg))
 
-        _all_splits = {r['split'] for r in rows(
-            _city.path('data/processed/validation/validation_targets.csv'))}
-        check(_all_splits == {'calibration', 'holdout'}
-              and len(_tg) == CALIBRATION_N,
-              'the %d/%d pre-registered split is intact and fit.py sees exactly '
-              'the %d (%d of %d rows)'
-              % (CALIBRATION_N, HOLDOUT_N, CALIBRATION_N, len(_tg),
-                 CALIBRATION_N + HOLDOUT_N))
+    _all_splits = {r['split'] for r in rows(
+        _city.path('data/processed/validation/validation_targets.csv'))}
+    check(_all_splits == {'calibration', 'holdout'}
+          and len(_tg) == CALIBRATION_N,
+          'the %d/%d pre-registered split is intact and fit.py sees exactly '
+          'the %d (%d of %d rows)'
+          % (CALIBRATION_N, HOLDOUT_N, CALIBRATION_N, len(_tg),
+             CALIBRATION_N + HOLDOUT_N))
 
-        _road = [t for t in _tg if t['metric'] == 'road_aadt']
-        _key = lambda t: t['note'].split('station_key=')[1].split(';')[0]
-        _corr = json.load(open(_city.path('params/C3_count_comparison.json'), encoding='utf-8'))
+    _road = [t for t in _tg if t['metric'] == 'road_aadt']
+    _key = lambda t: t['note'].split('station_key=')[1].split(';')[0]
+    _corr = json.load(open(_city.path('params/C3_count_comparison.json'), encoding='utf-8'))
 
-        def _fit_counts(station_overrides):
-            """Run score_counts against a synthetic metrics block."""
-            stations = [dict(station_key=_key(t), split='calibration',
-                             road_name='x', links='1', matched_by='name_and_proximity',
-                             max_distance_m=10.0,
-                             modelled_vehicles=station_overrides.get(_key(t), 5000))
-                        for t in _road if _key(t) in station_overrides
-                        or station_overrides.get('_all')]
-            out = dict(unscorable=[])
-            block = _fit.score_counts(_road, dict(counts=dict(stations=stations)),
-                                      _corr, out)
-            return block, out
+    def _fit_counts(station_overrides):
+        """Run score_counts against a synthetic metrics block."""
+        stations = [dict(station_key=_key(t), split='calibration',
+                         road_name='x', links='1', matched_by='name_and_proximity',
+                         max_distance_m=10.0,
+                         modelled_vehicles=station_overrides.get(_key(t), 5000))
+                    for t in _road if _key(t) in station_overrides
+                    or station_overrides.get('_all')]
+        out = dict(unscorable=[])
+        block = _fit.score_counts(_road, dict(counts=dict(stations=stations)),
+                                  _corr, out)
+        return block, out
 
-        # issue 19, regression: a modelled ZERO is a RESULT and must be scored.
-        _zero_key = _key(_road[0])
-        _blk, _out = _fit_counts({'_all': True, _zero_key: 0})
-        _scored_zero = [e for e in _blk['errors'] if e['target_id'] == _road[0]['target_id']]
-        check(bool(_scored_zero) and _scored_zero[0]['pct_error'] == -100.0,
-              'issue 19: a station the model routes ZERO traffic over is SCORED at '
-              '-100%, not dropped - dropping it flattered every aggregate by '
-              'removing the stations where the model fails hardest')
-        check(_road[0]['target_id'] in _blk['modelled_zero_stations'],
-              'issue 19: a modelled zero is NAMED in counts.modelled_zero_stations '
-              'rather than buried inside the aggregate')
-        check(not any(u['target_id'] == _road[0]['target_id']
-                      for u in _out['unscorable']),
-              'issue 19: a modelled zero is no longer reported as unscorable')
+    # issue 19, regression: a modelled ZERO is a RESULT and must be scored.
+    _zero_key = _key(_road[0])
+    _blk, _out = _fit_counts({'_all': True, _zero_key: 0})
+    _scored_zero = [e for e in _blk['errors'] if e['target_id'] == _road[0]['target_id']]
+    check(bool(_scored_zero) and _scored_zero[0]['pct_error'] == -100.0,
+          'issue 19: a station the model routes ZERO traffic over is SCORED at '
+          '-100%, not dropped - dropping it flattered every aggregate by '
+          'removing the stations where the model fails hardest')
+    check(_road[0]['target_id'] in _blk['modelled_zero_stations'],
+          'issue 19: a modelled zero is NAMED in counts.modelled_zero_stations '
+          'rather than buried inside the aggregate')
+    check(not any(u['target_id'] == _road[0]['target_id']
+                  for u in _out['unscorable']),
+          'issue 19: a modelled zero is no longer reported as unscorable')
 
-        # the other branch, which is genuinely unscorable, and its reason must not
-        # claim the zero-volume cause.
-        _blk2, _out2 = _fit_counts({_key(_road[1]): 5000})
-        _missing = [u for u in _out2['unscorable']
-                    if u['target_id'] == _road[0]['target_id']]
-        check(bool(_missing) and 'did not resolve to any link' in _missing[0]['reason'],
-              'issue 19: a station that resolves to NO link is unscorable, and says '
-              'so in its own words - the two causes no longer share one reason string')
+    # the other branch, which is genuinely unscorable, and its reason must not
+    # claim the zero-volume cause.
+    _blk2, _out2 = _fit_counts({_key(_road[1]): 5000})
+    _missing = [u for u in _out2['unscorable']
+                if u['target_id'] == _road[0]['target_id']]
+    check(bool(_missing) and 'did not resolve to any link' in _missing[0]['reason'],
+          'issue 19: a station that resolves to NO link is unscorable, and says '
+          'so in its own words - the two causes no longer share one reason string')
 
-        check(_blk['n'] == len(_blk['targets']) and _blk['targets'],
-              'every fit block names the target ids it was computed over; a '
-              'statistic that does not name its targets is not reportable '
-              '(DECISIONS.md 12.1)')
+    check(_blk['n'] == len(_blk['targets']) and _blk['targets'],
+          'every fit block names the target ids it was computed over; a '
+          'statistic that does not name its targets is not reportable '
+          '(DECISIONS.md 12.1)')
 
-        # the reconciliation fit.py asserts at run time, asserted here too
-        _sc = len(_blk['targets'])
-        check(_sc + len([u for u in _out['unscorable']
-                         if u['metric'] == 'road_aadt']) == len(_road),
-              'scored + unscorable reconciles over the road_aadt block (%d + %d '
-              '= %d), so no target is silently neither' %
-              (_sc, len(_road) - _sc, len(_road)))
+    # the reconciliation fit.py asserts at run time, asserted here too
+    _sc = len(_blk['targets'])
+    check(_sc + len([u for u in _out['unscorable']
+                     if u['metric'] == 'road_aadt']) == len(_road),
+          'scored + unscorable reconciles over the road_aadt block (%d + %d '
+          '= %d), so no target is silently neither' %
+          (_sc, len(_road) - _sc, len(_road)))
 
-        check(_fit.scale_error(0, 100.0) is not None
-              and _fit.scale_error(5.0, 0) is None,
-              'scale_error scores a modelled zero and refuses an OBSERVED zero - '
-              'the asymmetry is deliberate, a zero denominator has no percentage')
+    check(_fit.scale_error(0, 100.0) is not None
+          and _fit.scale_error(5.0, 0) is None,
+          'scale_error scores a modelled zero and refuses an OBSERVED zero - '
+          'the asymmetry is deliberate, a zero denominator has no percentage')
 
-        # DECISIONS.md 9.13: trip length by mode is a CONSTRAINT and must never
-        # become a target. The 67/143 split is pre-registered.
-        _c4 = json.load(open(_city.path('params/C4_mode_constraints.json'), encoding='utf-8'))
-        _tg = (_c4.get('trip_geometry') or {}).get('modes') or {}
-        check(set(_tg) == set(EXP['c4_trip_geometry_modes']),
-              'C4 carries observed trip length and time for the %d survey-'
-              'observable MATSim modes, measured from the HTS '
-              'TRIP_AVG_DISTANCE/TRIP_AVG_TIME columns that nothing used '
-              'before 9.13 (%d modes)'
-              % (len(EXP['c4_trip_geometry_modes']), len(_tg)))
-        check(all(g['avg_distance_sweep'][0] <= g['avg_distance_km']
-                  <= g['avg_distance_sweep'][1]
-                  and g['avg_time_sweep'][0] <= g['avg_time_min']
-                  <= g['avg_time_sweep'][1] and g['years_observed'] >= 3
-                  for g in _tg.values()),
-              'every observed trip length and duration sits inside its own sweep, '
-              'and each sweep is the spread across that mode survey years rather '
-              'than a chosen interval')
-        _drift = [m for m, g in _tg.items()
-                  if (_fields.get('C.constraint.trip_length_km.%s' % m) or {})
-                  .get('value') != g['avg_distance_km']
-                  or (_fields.get('C.constraint.trip_time_min.%s' % m) or {})
-                  .get('value') != g['avg_time_min']]
-        check(not _drift,
-              'the registry trip constraints agree with C4 mode for mode, so the '
-              'declaration and the measurement cannot drift apart%s'
-              % ('' if not _drift else ': ' + ', '.join(_drift)))
-        check(all((_fields.get('C.constraint.trip_length_km.%s' % m) or {})
-                  .get('source') == 'measured'
-                  and (_fields.get('C.constraint.trip_length_km.%s' % m) or {})
-                  .get('sweep') for m in _tg),
-              'every per-mode trip-length constraint is declared measured WITH a '
-              'sweep, so proposal 8.1 holds for it like any other value')
-        _metrics_declared = {t['metric'] for t in _fit.load_targets()}
-        check(not any('trip_length' in x or 'trip_geometry' in x
-                      for x in _metrics_declared),
-              'trip length is NOT among the calibration target metrics - it is a '
-              'constraint reported beside the fit, and the pre-registered 67/143 '
-              'split is untouched by it')
+    # DECISIONS.md 9.13: trip length by mode is a CONSTRAINT and must never
+    # become a target. The 67/143 split is pre-registered.
+    _c4 = json.load(open(_city.path('params/C4_mode_constraints.json'), encoding='utf-8'))
+    _tg = (_c4.get('trip_geometry') or {}).get('modes') or {}
+    check(set(_tg) == set(EXP['c4_trip_geometry_modes']),
+          'C4 carries observed trip length and time for the %d survey-'
+          'observable MATSim modes, measured from the HTS '
+          'TRIP_AVG_DISTANCE/TRIP_AVG_TIME columns that nothing used '
+          'before 9.13 (%d modes)'
+          % (len(EXP['c4_trip_geometry_modes']), len(_tg)))
+    check(all(g['avg_distance_sweep'][0] <= g['avg_distance_km']
+              <= g['avg_distance_sweep'][1]
+              and g['avg_time_sweep'][0] <= g['avg_time_min']
+              <= g['avg_time_sweep'][1] and g['years_observed'] >= 3
+              for g in _tg.values()),
+          'every observed trip length and duration sits inside its own sweep, '
+          'and each sweep is the spread across that mode survey years rather '
+          'than a chosen interval')
+    _drift = [m for m, g in _tg.items()
+              if (_fields.get('C.constraint.trip_length_km.%s' % m) or {})
+              .get('value') != g['avg_distance_km']
+              or (_fields.get('C.constraint.trip_time_min.%s' % m) or {})
+              .get('value') != g['avg_time_min']]
+    check(not _drift,
+          'the registry trip constraints agree with C4 mode for mode, so the '
+          'declaration and the measurement cannot drift apart%s'
+          % ('' if not _drift else ': ' + ', '.join(_drift)))
+    check(all((_fields.get('C.constraint.trip_length_km.%s' % m) or {})
+              .get('source') == 'measured'
+              and (_fields.get('C.constraint.trip_length_km.%s' % m) or {})
+              .get('sweep') for m in _tg),
+          'every per-mode trip-length constraint is declared measured WITH a '
+          'sweep, so proposal 8.1 holds for it like any other value')
+    _metrics_declared = {t['metric'] for t in _fit.load_targets()}
+    check(not any('trip_length' in x or 'trip_geometry' in x
+                  for x in _metrics_declared),
+          'trip length is NOT among the calibration target metrics - it is a '
+          'constraint reported beside the fit, and the pre-registered 67/143 '
+          'split is untouched by it')
 
-        _radius = _fields.get('B.counts.station_match_radius_m')
-        check(_radius is not None and _radius.get('sweep'),
-              'the count-station match radius is a DECLARED registry field with a '
-              'sweep, not a CLI default - it decides which road_aadt targets are '
-              'scorable at all, so it is a lever on the reported fit')
+    _radius = _fields.get('B.counts.station_match_radius_m')
+    check(_radius is not None and _radius.get('sweep'),
+          'the count-station match radius is a DECLARED registry field with a '
+          'sweep, not a CLI default - it decides which road_aadt targets are '
+          'scorable at all, so it is a lever on the reported fit')
 
 # ---- P. the live run view, rebuilt (DECISIONS.md 9.36) ----
 # The replacement for the deleted `run_monitor.py` is `run_view.py` (served by

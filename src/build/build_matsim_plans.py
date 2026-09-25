@@ -556,8 +556,10 @@ def leaf_mixed_tours(rows, plan_modes):
 
 
 def person_availability(pc):
-    """One iteration of the loop this replaced in write_person(); `pc` carries the
-    enclosing scope (5 names). Extracted mechanically, byte-identical outputs."""
+    """Resolve one agent's demographics and mode availability by tier (through/freight,
+    external or resident, with the escort-day ride denial and the motorbike/truck carves);
+    returns (age, bike_av, car_av, emp, escort_denied, hh_id, inc, lic, mob, moto, ride_av,
+    trk). `pc` supplies tier, external, pid, rows and ctx (attrs, lift_hh, driver sets)."""
     # the day-wide escort denial is a resident's; a boundary or freight agent
     # never reads it (the extraction left it unbound for them)
     escort_denied = False
@@ -667,8 +669,10 @@ def person_availability(pc):
 
 
 def person_tours_and_bound_trips(pc):
-    """One iteration of the loop this replaced in write_person(); `pc` carries the
-    enclosing scope (12 names). Extracted mechanically, byte-identical outputs."""
+    """Seed each of one agent's tours with a mode and derive its bound-ride, held-ride and
+    bound-drive trip indices; returns (bound_drive_trips, bound_ride_trips, by_tour,
+    covered_seed_tids, held_ride_trips, held_tours, serve_tours, tour_mode). `pc` supplies
+    rows, pid, tier, external, car_av, ride_av, bike_av, moto, trk, age, escort_denied, ctx."""
     serve_tours = set()
     covered_tours = set()
     covered_seed_tids = set()
@@ -803,8 +807,10 @@ def person_tours_and_bound_trips(pc):
 
 
 def plan_set_bound_variants(pp):
-    """One iteration of the loop this replaced in person_plan_set(); `pp` carries the
-    enclosing scope (6 names). Extracted mechanically, byte-identical outputs."""
+    """Fold duplicate plans under every_plan placement, add the bound-ride and partial-bind
+    variants otherwise, and repair leaf-mixed tours, updating `pp.plan_set` and the
+    counters in `pp.pc.ctx`; returns None. `pp` supplies plan_set, base_modes, bound_every,
+    ride_tours, partial_tours and pc (pid, rows, by_tour, serve_tours, held_tours, car_av)."""
     if pp.bound_every:
         # with every plan carrying the same bound assignment, two
         # bases can collapse onto one plan (a person whose whole
@@ -960,8 +966,10 @@ def plan_set_bound_variants(pp):
 
 
 def person_plan_set(pc):
-    """One iteration of the loop this replaced in write_person(); `pc` carries the
-    enclosing scope (15 names). Extracted mechanically, byte-identical outputs."""
+    """Return one person's seeded plans as (tour modes, per-trip overrides) pairs: the drawn
+    plan, or under full_choice_set one plan per usable base mode plus the bound variants,
+    in a hash-drawn order. `pc` supplies pid, tour_mode, external, moto, trk, car_av,
+    ride_av, bike_av, age, by_tour, serve_tours, bound_ride_trips and covered_seed_tids."""
     plan_set = [(dict(pc.tour_mode), {})]
     if (SEED_METHOD == 'full_choice_set' and not pc.external
             and not pc.moto and not pc.trk):
@@ -1052,8 +1060,10 @@ def person_plan_set(pc):
 
 
 def write_person_attributes(pc):
-    """One iteration of the loop this replaced in write_person(); `pc` carries the
-    enclosing scope (17 names). Extracted mechanically, byte-identical outputs."""
+    """Write one person's opening tag and attributes block (subpopulation, availability,
+    demographics, household, bindings and mode lock) to `pc.ctx.w`; returns None.
+    `pc` supplies pid, tier, external, the availability and demographic values, hh_id, inc,
+    the bound/held trip lists and ctx (w, lift_hh, shared_hh, bound_driver)."""
     pc.ctx.w.write('\t<person id="%d">\n' % pc.pid)
     pc.ctx.w.write('\t\t<attributes>\n')
     pc.ctx.w.write('\t\t\t<attribute name="subpopulation" class="java.lang.String">'
@@ -1176,8 +1186,9 @@ def write_person_attributes(pc):
 
 
 def write_person_plans(pc):
-    """One iteration of the loop this replaced in write_person(); `pc` carries the
-    enclosing scope (4 names). Extracted mechanically, byte-identical outputs."""
+    """Write each of one person's seeded plans (activities and routing-mode legs) to
+    `pc.ctx.w`, the first one selected, and tally legs, activities and modes; returns None.
+    `pc` supplies plan_set, rows, covered_seed_tids and ctx."""
     for k, (plan_modes, trip_modes) in enumerate(pc.plan_set):
         # the first plan is the selected one; under the full choice
         # set MATSim executes every unscored plan once regardless
@@ -1238,13 +1249,19 @@ def write_person_plans(pc):
 
 
 def write_person(pid, rows, ctx):
-    """One iteration of the loop this replaced in write_day(); `ctx` carries the
-    enclosing scope (29 names). Extracted mechanically, byte-identical outputs."""
+    """Write one agent's <person> element (attributes and seeded plans) from its trip rows,
+    skipping a resident B1 does not carry; returns None.
+    `ctx` supplies attrs, the writer w, and the binding lookups and counters it updates."""
     rows.sort(key=lambda r: int(r['trip_seq']))
     tier = rows[0]['agent_tier']
     external = tier in ('external', 'through', 'freight')
-    if tier not in ('through', 'freight') and ctx.attrs.get(pid) is None:
-        return                    # a person B1 does not carry writes nothing
+    # Only a RESIDENT is looked up in B1: every boundary tier (external,
+    # through, freight) is household-less by construction and takes its
+    # profile in person_availability. The staging of 16 September tested
+    # `through`/`freight` only, so all 6,103 external agents returned here
+    # unwritten and the F36 plans ran without them (fourteenth report).
+    if not external and ctx.attrs.get(pid) is None:
+        return                    # a resident B1 does not carry writes nothing
     pc = _types.SimpleNamespace(ctx=ctx, external=external, pid=pid, rows=rows, tier=tier)
     age, bike_av, car_av, emp, escort_denied, hh_id, inc, lic, mob, moto, ride_av, trk = person_availability(pc)
 
@@ -1271,12 +1288,15 @@ def write_person(pid, rows, ctx):
     write_person_plans(pc)
     ctx.w.write('\t</person>\n')
     ctx.n_persons += 1
+    ctx.tiers_out[tier] += 1
 
 
 
 def load_day_bindings(dc):
-    """One iteration of the loop this replaced in write_day(); `dc` carries the
-    enclosing scope (1 names). Extracted mechanically, byte-identical outputs."""
+    """Read the household vehicle counts and the day's lift, shared, escort and joint
+    binding tables into per-person lookups; returns (bound_driver, covered_by_pid,
+    escort_cover, hh_vehicle_count, joint_companion, joint_driver, lift_cover, lift_hh,
+    shared_driver, shared_hh). `dc` supplies day."""
     bound_driver = {}     # passenger pid -> [driver pids, ordered]
 
     def bind(passenger, driver):
@@ -1447,12 +1467,23 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 '"http://www.matsim.org/files/dtd/population_v6.dtd">\n')
         w.write('<population>\n')
         ctx = _types.SimpleNamespace(act_counts=act_counts, attrs=attrs, bound_driver=bound_driver, bound_placement=bound_placement, covered_by_pid=covered_by_pid, covered_ride_legs=covered_ride_legs, escort_cover=escort_cover, escort_ride_denied=escort_ride_denied, hh_vehicle_count=hh_vehicle_count, joint_companion=joint_companion, joint_driver=joint_driver, leaf_mix_repairs=leaf_mix_repairs, lift_cover=lift_cover, lift_hh=lift_hh, modes=modes, n_acts=n_acts, n_legs=n_legs, n_legs_selected=n_legs_selected, n_persons=n_persons, partial_bind=partial_bind, seed_plans_hist=seed_plans_hist, seed_table=seed_table, serve_tours_carless=serve_tours_carless, shared_driver=shared_driver, shared_hh=shared_hh, tours=tours, u=u, unreachable=unreachable, w=w)
+        ctx.tiers_in, ctx.tiers_out = collections.Counter(), collections.Counter()
         for pid, rows in stream_persons(src):
+            ctx.tiers_in[rows[0]['agent_tier']] += 1
             write_person(pid, rows, ctx)
         n_acts, n_legs, n_legs_selected, n_persons, tours = ctx.n_acts, ctx.n_legs, ctx.n_legs_selected, ctx.n_persons, ctx.tours
         w.write('</population>\n')
 
+    # EVERY AGENT THE CHAINS CARRY IS WRITTEN, tier by tier. A tier that
+    # returns early loses its agents silently - the 16 September staging lost
+    # all 6,103 external agents and no check noticed for nine days.
+    lost = {t: (n, ctx.tiers_out.get(t, 0)) for t, n in ctx.tiers_in.items()
+            if ctx.tiers_out.get(t, 0) != n}
+    if lost:
+        raise SystemExit('REFUSED: %s plans lost agents the chains carry, by tier '
+                         '(chains, written): %s' % (day, lost))
     report[day] = dict(persons=n_persons, legs=n_legs, activities=n_acts,
+                       persons_by_tier=dict(sorted(ctx.tiers_out.items())),
                        tours=tours, bytes=os.path.getsize(dst),
                        escort_ride_denied=escort_ride_denied[0],
                        # 9.144 (#142): must be 0 - a serve tour on a person
@@ -1525,8 +1556,9 @@ def write_day(day, attrs, rng, report, seed_table=None):
 
 
 def thin_carve_cells(cc):
-    """One iteration of the loop this replaced in solve_carves(); `cc` carries the
-    enclosing scope (5 names). Extracted mechanically, byte-identical outputs."""
+    """Solve the motorbike carve per home SA1 (SA2 where thin), conserved to each LGA's
+    identity, filling _MOTORBIKE_Q_BY_PID and setting `cc.carve_cells`; returns None.
+    `cc` supplies mc.attrs, trips_by_pid, escorters and total_trips."""
     share_by_sa1, used, g62_drv, g62_moto = motorbike_share_by_cell()
     home = pd.read_csv(os.path.join(POP, 'B1_synthetic_population.csv'),
                        usecols=['person_id', 'home_sa1'], dtype=str)
@@ -1618,8 +1650,9 @@ def thin_carve_cells(cc):
 
 
 def solve_carves(mc):
-    """One iteration of the loop this replaced in main(); `mc` carries the
-    enclosing scope (2 names). Extracted mechanically, byte-identical outputs."""
+    """Solve the motorbike and resident-truck carve probabilities on the first day's
+    eligible, non-bound pool (and per cell under sa1_thinned); returns the per-cell carve
+    report, or None. `mc` supplies day_types and attrs."""
     trips_by_pid = collections.Counter()
     first_day = mc.day_types[0]
     # ONE pass over the first day's trips for both counts below: the file
@@ -1788,7 +1821,6 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
 
 if __name__ == '__main__':
     # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
-    import sys as _sys_t, os as _os_t  # noqa: E401
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     ap = argparse.ArgumentParser()

@@ -1,6 +1,6 @@
 {
   "overlay": "WEEKDAY",
-  "description": "The day type every headline comparison uses. 616,040 persons, 2,331,650 selected-plan legs, 1,095,994 tours (demand/plans/matsim/_plans_report.json).",
+  "description": "The day type every headline comparison uses. 622,143 persons, 2,343,856 selected-plan legs, 1,102,097 tours (demand/plans/matsim/_plans_report.json).",
   "applies_to": {
     "day_type": [
       "WEEKDAY"

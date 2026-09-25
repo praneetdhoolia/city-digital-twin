@@ -225,6 +225,35 @@ OVERLAY_NAME = re.compile(r'\b(f\d+_[a-z0-9_]+_\d+pct)\b')
 FIELD_VALUE = re.compile(r'`([A-Z]+\.[\w.]+)`\s*=\s*`?([\w.]+)`?')
 
 
+FAMILY_ARM = re.compile(r"\b(F\d+)(?:'s)?\s+arm\s+0\b")
+
+
+def _family_arm(family, results_store):
+    """The first run of `family` (e.g. 'F36') declared at 250+ iterations that
+    has a record, or None. Family spans come from docs/run_families.json."""
+    try:
+        with open(os.path.join(REPO, 'docs', 'run_families.json'), encoding='utf-8') as fh:
+            fams = json.load(fh)['families']
+    except (OSError, ValueError, KeyError):
+        return None
+    ordered = sorted(fams.items(), key=lambda kv: kv[1].get('from_launch', ''))
+    span = None
+    for i, (key, fam) in enumerate(ordered):
+        if key.split('-', 1)[0] == family:
+            end = ordered[i + 1][1].get('from_launch') if i + 1 < len(ordered) else None
+            span = (fam.get('from_launch', ''), end)
+    if span is None:
+        return None
+    for d in sorted(glob.glob(os.path.join(results_store.RAW, '*', '_run.json'))):
+        name = os.path.basename(os.path.dirname(d))
+        m = re.search(r'(\d{8}T\d{6})_(\d+)it_', name)
+        if not m or int(m.group(2)) < 250:
+            continue
+        if m.group(1) >= span[0] and (span[1] is None or m.group(1) < span[1]):
+            return name
+    return None
+
+
 def measurement_due(issue):
     """The completed run an awaiting-run issue's own line names, or None.
 
@@ -248,6 +277,15 @@ def measurement_due(issue):
         d = results_store.resolve(m.group(1))
         if d and os.path.exists(os.path.join(d, '_run.json')):
             return m.group(1)
+    # "F36's arm 0": the issues name a family's arm, not a run, so the gate
+    # reported nothing due while F36's arm 0 sat on disk with a record
+    # (fourteenth report). Resolved through the family ledger to the family's
+    # first arm with a record - a stopped arm is citable at its reached
+    # iteration, which is what an awaited measurement reads.
+    for m in FAMILY_ARM.finditer(line):
+        arm = _family_arm(m.group(1), results_store)
+        if arm:
+            return arm
     names = [m.group(1) for m in OVERLAY_NAME.finditer(line)]
     pairs = [(m.group(1), m.group(2)) for m in FIELD_VALUE.finditer(line)]
     if not names and not pairs:

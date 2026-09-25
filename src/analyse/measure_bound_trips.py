@@ -83,15 +83,26 @@ def seed_ride_share(run_dir):
 
 
 def measure(run_dir, iteration=None):
+    if iteration is None:
+        # a stopped arm is read where its close-out read it (_metrics.json)
+        try:
+            with open(os.path.join(run_dir, '_metrics.json'), encoding='utf-8') as fh:
+                iteration = json.load(fh).get('read_at_iteration')
+        except (OSError, ValueError):
+            iteration = None
     if iteration is not None:
         em._READ_AT['iteration'] = iteration
     day = (json.load(open(os.path.join(run_dir, '_meta.json'), encoding='utf-8')) or {}).get('day', 'WEEKDAY')
-    persons = pd.read_csv(os.path.join(run_dir, 'output', 'output_persons.csv.gz'), sep=';',
-                          usecols=['person', 'subpopulation', 'boundRideTrips', 'carAvail'], dtype=str)
-    persons = persons[(persons.subpopulation == 'person')
-                      & persons.boundRideTrips.fillna('').str.strip().ne('')]
-    bound = {p: ({int(x) for x in b.split(',') if x.strip()}, c)
-             for p, b, c in zip(persons.person, persons.boundRideTrips, persons.carAvail)}
+    # the run's own persons, from output_persons or - for a stopped arm,
+    # which writes none - its input plans (iteration_reading.person_attributes)
+    import iteration_reading
+    attrs = iteration_reading.person_attributes(
+        run_dir, ('subpopulation', 'boundRideTrips', 'carAvail'))
+    bound = {p: ({int(x) for x in a['boundRideTrips'].split(',') if x.strip()},
+                 a.get('carAvail'))
+             for p, a in attrs.items()
+             if a.get('subpopulation') == 'person'
+             and a.get('boundRideTrips', '').strip()}
     kind, tour_of = binding_kind(day, set(bound))
     by = collections.defaultdict(collections.Counter)
     total = collections.Counter()

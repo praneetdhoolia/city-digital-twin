@@ -91,3 +91,13 @@ def test_a_complete_memo_is_the_setup_clock():
 def test_no_clock_falls_back_to_the_median():
     assert arm_cost.setup_seconds(2000.0, 4, 300.0, {}, None) == 500.0
     assert arm_cost.setup_seconds(None, 4, 300.0, {}, None) is None
+
+
+def test_setup_is_launch_to_iteration_0_whatever_the_host_did_after():
+    """F36 arm 0 launched 03:46:38 and began iteration 0 at 04:13:16; its host
+    then sat dead for 37 h, which wall-minus-iterations booked as setup."""
+    plain = {'first_iteration_begin_clock_s': 4 * 3600 + 13 * 60 + 16}
+    assert arm_cost.launch_to_first_iteration_s('2026-09-23T03:46:38', plain) == 1598.0
+    assert arm_cost.launch_to_first_iteration_s('2026-09-23T23:50:00', {'first_iteration_begin_clock_s': 600}) == 1200.0
+    assert arm_cost.launch_to_first_iteration_s(None, plain) is None
+    assert arm_cost.launch_to_first_iteration_s('2026-09-23T03:46:38', {}) is None

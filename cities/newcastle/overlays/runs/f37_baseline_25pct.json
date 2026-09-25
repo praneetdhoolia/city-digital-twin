@@ -1,0 +1,30 @@
+{
+  "overlay": "f37_baseline_25pct",
+  "description": "ARM 0 OF FAMILY F37 (9.213, opened 20260925T192302): the first run on the plans and run inputs with the fourteenth report's three root defects removed. Nothing run before 20260925T192302 compares with this arm; F36 closed with no result. WHAT THIS ARM EXISTS TO READ: (1) the share of pt routing requests with no transit route, from the ptDirectWalk counter, against 66.3 % on F36 arm 0 and the 38.8-39.4 % the offline re-route of F36's plans measured without the cap; walk's mean trip against 4.54 km (observed 0.70) and pt's against 12.96 km (observed 23.4); the four pt submodes and car-less agents' mode split (pt 5.1 %, bike 12.2 % with mean 11.9 km on F36). (2) taxi with its wait executed (waitExecuted and meanWait on the taxiFleet line) against +107 % on F36. (3) the external tier's 12,206 weekday trips on the boundary corridors. It is also the CONTROL HALF of every pair the separation design orders (#172), as F36's arm 0 was. COST: priced by f37_pricing_probe_25pct on THIS build; RUN.gate.wall_ceiling_h = 34 is the operator's stated-cost approval of 25 September 2026 for THIS launch (a 25.6 h expectation on the previous build) and nothing carried over. HEAP: 48g as F36. Windows Update is paused to 2 October 21:28 AEST, past the ceiling, which the launcher now checks (refuse_unsafe_host).",
+  "answers_issues": [
+    30,
+    86,
+    94,
+    107,
+    145,
+    172,
+    187,
+    196,
+    237
+  ],
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 250,
+    "RUN.gate.wall_ceiling_h": 34,
+    "RUN.gate.interval_iterations": 0,
+    "RUN.machine.xmx": "48g",
+    "RUN.controler.create_graphs": false,
+    "RUN.controler.write_plans_interval": 25
+  },
+  "allow_outside_sweep": [
+    "RUN.gate.interval_iterations"
+  ],
+  "justification": {
+    "RUN.gate.interval_iterations": "THE MODE GATE IS OFF, and this is the 9.159 scoped departure already taken for `depth_convergence_25pct` and for f35_baseline_25pct, not a new one. GOAL.md's loop says to stop a run when a mode passes 20 %, and on F35's landed reading six modes did. This arm is the CONTROL HALF of five pairs (#172): an arm the watcher stops at iteration 100 cannot be differenced against anything read at 250, so arming the gate would guarantee that none of the five pairs can ever be read. Switching the watcher off does NOT make the arm blind and does not suspend the loop: every 10th iteration stays readable on all twelve modes on their own bases (9.120, 9.170), the run viewer shows them against their targets, and the operator can stop the arm by hand with `run.py --stop` the moment a reading says the rebuild failed. What made the 9.159 arm indefensible was the OTHER half - it declared no ceiling, so it had no automatic stop of any kind and its approved hours were held by a person watching a clock (#169). This arm declares RUN.gate.wall_ceiling_h = 42, the ceiling watcher is PROVEN on a run (`aborted_20260910T205517_20it_1pct`, completion `stopped_at_ceiling`), and RUN.gate.stall_kill_s = 1800 guards a stall separately, so the run has two automatic stops and is never left without one."
+  }
+}

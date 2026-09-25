@@ -106,6 +106,24 @@ def open_output(run_dir, stem):
 _READ_AT = {'iteration': None, 'used': set()}
 
 
+def run_value(run_dir, key):
+    """A registry value as THIS run resolved it - its own `_config.json`.
+
+    Reading today's registry made a re-extraction of an old run silently
+    change with every later edit (the short-trip band and the detour factor,
+    fourteenth report). The live registry answers only for a run that
+    predates the snapshot.
+    """
+    try:
+        with open(os.path.join(run_dir, '_config.json'), encoding='utf-8') as fh:
+            values = json.load(fh).get('values') or {}
+    except (OSError, ValueError):
+        values = {}
+    if key in values:
+        return values[key]
+    return _registry.load().get(key)
+
+
 def iteration_stem(stem, iteration):
     """The per-iteration spelling of a final-output table, or None.
 
@@ -350,8 +368,8 @@ def trip_geometry(run_dir, person_lga):
     # factor the demand builder solved its kernels on (B.activity.detour_factor)
     # - the seed's 17.70 % and the run's 11.13 % were the same trips read on
     # the two bases, by hand each time (DECISIONS.md 9.169, 9.177).
-    band_km = float(_registry.load().get('B.activity.short_trip_band_km'))
-    detour = float(_registry.load().get('B.activity.detour_factor'))
+    band_km = float(run_value(run_dir, 'B.activity.short_trip_band_km'))
+    detour = float(run_value(run_dir, 'B.activity.detour_factor'))
     short = dict(resident_trips=0, routed_under_band=0,
                  straight_x_detour_under_band=0, by_mode_routed=collections.Counter(),
                  by_mode_straight=collections.Counter())
@@ -792,7 +810,7 @@ def taxi_volume(run_dir, fraction):
     block says so instead of disappearing."""
     trips = sum(1 for t in rows(run_dir, 'output_trips')
                 if t['main_mode'] == 'taxi')
-    band = _registry.load().get('B.taxi.daily_trips_band')
+    band = run_value(run_dir, 'B.taxi.daily_trips_band')
     scaled = round(trips / fraction) if fraction else None
     return dict(modelled_taxi_trips=trips,
                 scaled_daily_trips=scaled,

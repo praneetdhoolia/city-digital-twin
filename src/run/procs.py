@@ -94,6 +94,63 @@ def card_pid_alive(card, key):
     return pid_alive(pid)
 
 
+_REBOOT_KEYS = (
+    r'SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired',
+    r'SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending')
+_UPDATE_UX = r'SOFTWARE\Microsoft\WindowsUpdate\UX\Settings'
+
+
+def restart_pending():
+    """Has the OS staged a restart it will force? None off Windows."""
+    if os.name != 'nt':
+        return None
+    import winreg                                          # noqa: PLC0415
+    for key in _REBOOT_KEYS:
+        try:
+            winreg.CloseKey(winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, key))
+            return True
+        except OSError:
+            continue
+    return False
+
+
+def updates_paused_until():
+    """The epoch second Windows Update's pause expires; 0 when not paused, None off Windows.
+
+    Windows Update restarted this host at 04:30 on 24 September 2026, half an
+    hour after its active hours ended, and killed F36's arm 0 at iteration
+    237 of 250; active hours cannot span more than 18 h and an arm runs
+    25-42 h, so only a pause covers one.
+    """
+    if os.name != 'nt':
+        return None
+    import winreg                                          # noqa: PLC0415
+    try:
+        k = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, _UPDATE_UX)
+    except OSError:
+        return 0
+    ends = []
+    try:
+        for name in ('PauseUpdatesExpiryTime', 'PauseQualityUpdatesEndTime'):
+            try:
+                ends.append(winreg.QueryValueEx(k, name)[0])
+            except OSError:
+                continue
+    finally:
+        winreg.CloseKey(k)
+    import calendar                                        # noqa: PLC0415
+    best = 0
+    for v in ends:
+        # stored as UTC ('2026-10-02T11:28:39Z'); timegm reads it as UTC, where
+        # mktime would apply the local daylight-saving rule to it
+        try:
+            t = calendar.timegm(time.strptime(str(v)[:19], '%Y-%m-%dT%H:%M:%S'))
+        except ValueError:
+            continue
+        best = max(best, t)
+    return best
+
+
 def arm_running(threshold_kb=ARM_RSS_KB, timeout=30):
     """Descriptions of every JVM big enough to be an arm; None when it cannot be told.
 

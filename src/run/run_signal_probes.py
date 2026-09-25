@@ -44,7 +44,10 @@ PROBES = ('citysim.SignalsAssemblyProbe', 'citysim.TramPriorityProbe',
           # #133: the mode-choice wrapper's full revert of a refused proposal
           'citysim.GatedSubtourProbe',
           # #133: the PT fare band, the rider class and the daily cap
-          'citysim.PtFareProbe')
+          'citysim.PtFareProbe',
+          # the ride retime (#187) and the taxi fleet's executed wait share
+          # one retime/restore; this proves both halves and the orphan rule
+          'citysim.ActivityRetimesProbe')
 
 
 def java_exe():

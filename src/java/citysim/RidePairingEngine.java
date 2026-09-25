@@ -499,27 +499,40 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             return;
         }
         final long started = System.currentTimeMillis();
-        // The mobsim that is about to run fills `current`; the one that has
-        // finished is what the pairing may read. Swapping here, rather than in
-        // reset(), is what makes the ordering auditable.
-        previous = current;
-        current = new HashMap<>();
-        inFlight.clear();
-        bookings.clear();
-        remodedThisMobsim.clear();
-        remodedAs.clear();
-        remodeOf.clear();
-        missNoCandidate = 0;
-        missWindow = 0;
-        missEndpoints = 0;
-        missCapacity = 0;
-        missDeclaredAbsent = 0;
-        missGapMinutes.clear();
-        pairedDeclared = 0;
-        pairedByIdentity = 0;
-
+        resetForMobsim();
         index();
+        final Pass p = collectLegs();
+        for (final RideLeg ride : p.rides) {
+            pairRide(p, ride);
+        }
+        routeDeferredDetours(p);
+        routeRemodes();
+        write(event.getIteration(), p.rides.size(), p.nPaired, p.paired, p.unpaired,
+              p.carLegs, p.fromRealised, p.fromRouted,
+              p.nPaired == 0 ? 0.0 : p.deltaSum / p.nPaired, p.capacityRefusals,
+              p.driversByHousehold.size(), p.noHousehold,
+              System.currentTimeMillis() - started);
+        if (cfg.isPhysicalBoarding() && cfg.isRemodeUnpaired()) {
+            org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
+                    .info("ridePairing: {} unpaired ride legs re-moded to "
+                          + "network walk (DECISIONS.md 9.55); {} of them "
+                          + "multi-leg trips replaced whole (#167)", p.remoded,
+                          p.remodedWholeTrips);
+        }
+        org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
+                .info("ridePairing: {} declared passengers re-timed to their "
+                      + "driver's departure, mean shift {} s (DECISIONS.md 9.120)",
+                      p.retimed, p.retimed == 0 ? 0.0
+                              : Math.round(p.retimeShiftSum / p.retimed));
+    }
 
+    /**
+     * One pairing pass: the settings it reads once, the legs it collected, and
+     * every tally the log and `ride_pairing.csv` report. notifyBeforeMobsim
+     * was one 566-line method holding all of this as locals until 25
+     * September 2026 (fourteenth report); the phases below share it instead.
+     */
+    private final class Pass {
         final double window = cfg.getWindowMinutes() * 60.0;
         // 9.85: the tolerance for a pair the DEMAND DECLARES. It relaxes
         // IDENTIFICATION only - endpoints, capacity and physical boarding
@@ -542,6 +555,67 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         int carLegs = 0;
         int noHousehold = 0;
 
+        final Map<String, int[]> paired = new HashMap<>();
+        final Map<String, int[]> unpaired = new HashMap<>();
+        int nPaired = 0;
+        int remoded = 0;
+        int remodedWholeTrips = 0;         // multi-leg trips replaced whole (#167)
+        // 9.120: declared passengers whose departure was moved to the
+        // driver's, and by how much in total - the drift the re-timing removed
+        int retimed = 0;
+        double retimeShiftSum = 0.0;
+        int fromRealised = 0;
+        int fromRouted = 0;
+        int capacityRefusals = 0;
+        double deltaSum = 0.0;
+    }
+
+    /** What the search found for one passenger, and which gate closed on a miss. */
+    private static final class Match {
+        DriverLeg best;
+        double bestGap = Double.MAX_VALUE;
+        boolean bestDeclared;
+        boolean refusedForCapacity;
+        // The funnel, so a miss can say WHICH gate closed on it.
+        int sawCandidate;
+        boolean sawInWindow;
+        boolean sawEndpoints;
+        // 9.145: was the driver the demand NAMED among the candidates at
+        // all? Every other gate below is downstream of this one.
+        boolean sawDeclared;
+        // The nearest driver making a geometrically matching trip, whatever
+        // the clock said. This is what decides whether a window miss was a
+        // near miss or a driver who was never going to serve it.
+        double nearestMatchingGap = Double.MAX_VALUE;
+        Set<String> declared;
+    }
+
+    /**
+     * The mobsim that is about to run fills `current`; the one that has
+     * finished is what the pairing may read. Swapping here, rather than in
+     * reset(), is what makes the ordering auditable.
+     */
+    private void resetForMobsim() {
+        previous = current;
+        current = new HashMap<>();
+        inFlight.clear();
+        bookings.clear();
+        remodedThisMobsim.clear();
+        remodedAs.clear();
+        remodeOf.clear();
+        missNoCandidate = 0;
+        missWindow = 0;
+        missEndpoints = 0;
+        missCapacity = 0;
+        missDeclaredAbsent = 0;
+        missGapMinutes.clear();
+        pairedDeclared = 0;
+        pairedByIdentity = 0;
+    }
+
+    /** Every licensed household car leg and every ride leg of the selected plans, sorted. */
+    private Pass collectLegs() {
+        final Pass p = new Pass();
         // Persons in id order, so the pairing does not depend on map iteration
         // order. Determinism is a hard constraint here, not a nicety: the same
         // seed must produce the same run.
@@ -594,9 +668,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                     continue;
                 }
                 if (TransportMode.car.equals(leg.getMode())) {
-                    carLegs++;
+                    p.carLegs++;
                     if (hh != null && Boolean.TRUE.equals(licensed.get(person.getId()))) {
-                        driversByHousehold
+                        p.driversByHousehold
                                 .computeIfAbsent(hh, k -> new ArrayList<>(2))
                                 .add(new DriverLeg(person.getId(),
                                                    route.getStartLinkId(),
@@ -609,360 +683,358 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                         // An external or through boundary agent has no household
                         // by construction, so it can never pair. It keeps
                         // today's behaviour and is counted, not hidden.
-                        noHousehold++;
+                        p.noHousehold++;
                         restore(leg, route);
                         continue;
                     }
-                    rides.add(new RideLeg(person.getId(), leg, route,
-                                          route.getStartLinkId(),
-                                          route.getEndLinkId(), departure,
-                                          direction(previousActivity,
-                                                    nextActivity(elements, i)),
-                                          lastReal, accessBefore, plan, i));
+                    p.rides.add(new RideLeg(person.getId(), leg, route,
+                                            route.getStartLinkId(),
+                                            route.getEndLinkId(), departure,
+                                            direction(previousActivity,
+                                                      nextActivity(elements, i)),
+                                            lastReal, accessBefore, plan, i));
                 }
             }
         }
-
         // Candidate order must be deterministic too. Person id, then departure.
-        for (final List<DriverLeg> legs : driversByHousehold.values()) {
+        for (final List<DriverLeg> legs : p.driversByHousehold.values()) {
             legs.sort(Comparator.<DriverLeg, Id<Person>>comparing(d -> d.person)
                               .thenComparingDouble(d -> d.departure));
         }
-        rides.sort(Comparator.<RideLeg, Id<Person>>comparing(r -> r.person)
-                           .thenComparingDouble(r -> r.departure));
+        p.rides.sort(Comparator.<RideLeg, Id<Person>>comparing(r -> r.person)
+                             .thenComparingDouble(r -> r.departure));
+        return p;
+    }
 
-        final Map<String, int[]> paired = new HashMap<>();
-        final Map<String, int[]> unpaired = new HashMap<>();
-        int nPaired = 0;
-        int remoded = 0;
-        int remodedWholeTrips = 0;         // multi-leg trips replaced whole (#167)
-        // 9.120: declared passengers whose departure was moved to the
-        // driver's, and by how much in total - the drift the re-timing removed
-        int retimed = 0;
-        double retimeShiftSum = 0.0;
-        int fromRealised = 0;
-        int fromRouted = 0;
-        int capacityRefusals = 0;
-        double deltaSum = 0.0;
+    /** Pair one passenger, or execute and count the miss. */
+    private void pairRide(final Pass p, final RideLeg ride) {
+        final Match m = search(p, ride, candidatesFor(p, ride));
+        if (m.best == null) {
+            miss(p, ride, m);
+        } else {
+            accept(p, ride, m);
+        }
+    }
 
-        for (final RideLeg ride : rides) {
-            List<DriverLeg> candidates =
-                    driversByHousehold.getOrDefault(household.get(ride.person),
-                                                    Collections.emptyList());
-            // DECISIONS.md 9.60: a bound lift widens the search to the
-            // driver's household - own household first, so the binding can
-            // never displace an intra-household pairing at equal gap.
-            // Comma-separated since 9.68: a round-trip pair may be served by
-            // drivers from two different households.
-            final String lift = liftHousehold.get(ride.person);
-            if (lift != null) {
-                List<DriverLeg> merged = null;
-                for (final String liftHh : lift.split(",")) {
-                    final List<DriverLeg> liftCandidates = driversByHousehold
-                            .getOrDefault(liftHh.trim(),
-                                          Collections.emptyList());
-                    if (!liftCandidates.isEmpty()) {
-                        if (merged == null) {
-                            merged = new ArrayList<>(candidates);
-                        }
-                        merged.addAll(liftCandidates);
+    /** The household's drivers, widened by a bound lift (9.60, 9.68). */
+    private List<DriverLeg> candidatesFor(final Pass p, final RideLeg ride) {
+        List<DriverLeg> candidates =
+                p.driversByHousehold.getOrDefault(household.get(ride.person),
+                                                  Collections.emptyList());
+        // DECISIONS.md 9.60: a bound lift widens the search to the
+        // driver's household - own household first, so the binding can
+        // never displace an intra-household pairing at equal gap.
+        // Comma-separated since 9.68: a round-trip pair may be served by
+        // drivers from two different households.
+        final String lift = liftHousehold.get(ride.person);
+        if (lift != null) {
+            List<DriverLeg> merged = null;
+            for (final String liftHh : lift.split(",")) {
+                final List<DriverLeg> liftCandidates = p.driversByHousehold
+                        .getOrDefault(liftHh.trim(),
+                                      Collections.emptyList());
+                if (!liftCandidates.isEmpty()) {
+                    if (merged == null) {
+                        merged = new ArrayList<>(candidates);
                     }
-                }
-                if (merged != null) {
-                    candidates = merged;
+                    merged.addAll(liftCandidates);
                 }
             }
-            DriverLeg best = null;
-            double bestGap = Double.MAX_VALUE;
-            boolean bestDeclared = false;
-            boolean refusedForCapacity = false;
-            // The funnel, so a miss can say WHICH gate closed on it.
-            int sawCandidate = 0;
-            boolean sawInWindow = false;
-            boolean sawEndpoints = false;
-            // 9.145: was the driver the demand NAMED among the candidates at
-            // all? Every other gate below is downstream of this one.
-            boolean sawDeclared = false;
-            // The nearest driver making a geometrically matching trip, whatever
-            // the clock said. This is what decides whether a window miss was a
-            // near miss or a driver who was never going to serve it.
-            double nearestMatchingGap = Double.MAX_VALUE;
-            final Set<String> declared = boundDriver.getOrDefault(
-                    ride.person, Collections.emptySet());
-            for (final DriverLeg driver : candidates) {
-                if (driver.person.equals(ride.person)) {
-                    continue;                       // you cannot drive yourself
-                }
-                sawCandidate++;
-                final double gap = Math.abs(driver.departure - ride.departure);
-                // 9.85: for the driver the demand NAMED, identity has
-                // already settled whether this is the same trip, so the
-                // clock only has to cover the drift replanning introduced.
-                final boolean isDeclared = declared.contains(driver.person.toString());
-                if (isDeclared) {
-                    sawDeclared = true;            // 9.145
-                }
-                // 9.120: for the driver the demand NAMED there is no clock
-                // test at all. The two members were generated as ONE trip
-                // and only MATSim's independent time mutation ever moved
-                // them apart - measured on the F14 arm, the declared pair
-                // on the same OD within 15 min fell 57.1% -> 27.5% in 30
-                // iterations while gaps over 45 min rose 1.8% -> 7.5%. The
-                // passenger is RE-TIMED to the driver below, so the gap is
-                // not paid for as waiting: it is removed at its source.
-                if (!isDeclared && gap > window) {
-                    if (endpointsMatch(rule, driver, ride) && gap < nearestMatchingGap) {
-                        nearestMatchingGap = gap;
-                    }
-                    continue;
-                }
-                sawInWindow = true;
-                // 9.128: the driver the demand NAMED is the same trip by
-                // identity; where the links differ the driver will detour
-                // through the passenger's, so geometry is not a gate here.
-                final boolean meets = isDeclared && detour;
-                if (!meets && !endpointsMatch(rule, driver, ride)) {
-                    continue;
-                }
-                sawEndpoints = true;
-                if (driver.carrying >= capacity) {
-                    refusedForCapacity = true;
-                    continue;
-                }
-                // A declared partner outranks a coincidence at equal gap:
-                // preferring the nearer stranger would let the inference
-                // overwrite the binding it exists to approximate.
-                if (best == null
-                        || (isDeclared && !bestDeclared)
-                        || (isDeclared == bestDeclared && gap < bestGap)) {
-                    bestGap = gap;
-                    best = driver;
-                    bestDeclared = isDeclared;
-                }
-            }
-            if (best == null) {
-                if (refusedForCapacity) {
-                    capacityRefusals++;
-                }
-                // GEOMETRY BEFORE TIMING. Asking "was anyone in the window?"
-                // first labelled as a timing miss every passenger whose
-                // household drove somewhere else entirely: measured 1,529 such
-                // legs of which only 112 had an endpoint-matching driver at ANY
-                // hour, median 253.7 minutes away. Widening the window would
-                // have recovered 13. The question that separates a fixable miss
-                // from a hopeless one is whether a matching TRIP exists at all.
-                final boolean matchedEver =
-                        sawEndpoints || nearestMatchingGap < Double.MAX_VALUE;
-                // 9.145: counted BEFORE the four-way funnel and independently
-                // of it. A leg the demand bound to a named driver, unpaired
-                // because that driver brought no car leg, is one defect
-                // whichever of the four buckets the substitute search lands
-                // it in.
-                if (!declared.isEmpty() && !sawDeclared) {
-                    missDeclaredAbsent++;
-                }
-                if (sawCandidate == 0) {
-                    missNoCandidate++;              // no household car leg at all
-                } else if (!matchedEver) {
-                    missEndpoints++;                // the household drove elsewhere
-                } else if (!sawInWindow) {
-                    missWindow++;                   // the right trip, the wrong hour
-                    missGapMinutes.add(nearestMatchingGap / 60.0);
-                } else {
-                    missCapacity++;                 // right trip, right hour, car full
-                }
-                unpaired.computeIfAbsent(ride.direction, k -> new int[1])[0]++;
-                if (cfg.isPhysicalBoarding() && cfg.isRemodeUnpaired()) {
-                    // DECISIONS.md 9.55: a ride trip no household driver can
-                    // physically serve is not a ride trip - it WALKS, on the
-                    // network, THIS ITERATION. A long forced walk scores
-                    // terribly, so co-evolution reassigns the tour, and ride
-                    // becomes emergent: only what the driver supply carries
-                    // survives. No parameter invented; the constraint is the
-                    // price.
-                    //
-                    // The walk is an EXECUTION, not an amputation. The mode is
-                    // given back at AfterMobsim (notifyAfterMobsim), because
-                    // scoring is event-driven: the agent is still charged for
-                    // the walk it actually made, while the plan keeps `ride`
-                    // as an alternative co-evolution can re-select when the
-                    // driver's selected plan serves it again. Mutating the
-                    // plan permanently made pairing failure IRREVERSIBLE while
-                    // pairing success created nothing - a one-way ratchet.
-                    // Measured on 20260825T135734: 87,019 ride legs at
-                    // iteration 0, 61,409 unpaired, and 58,791 of them gone by
-                    // iteration 1 - 95.7% - never to return; paired legs then
-                    // eroded 25,610 -> 7,320 on timing misses alone, an
-                    // exponential decay with a 36-iteration half-life heading
-                    // to the pre-repair 0.0013 occupancy. Whether ride is
-                    // worth choosing is for the score to decide over many
-                    // iterations, not for one missed pairing to settle.
-                    remodedThisMobsim.add(ride);
-                    final String fallback = fallbackMode(ride.person);
-                    remodedAs.put(ride, fallback);
-                    // THE WHOLE TRIP where it has more than one leg (#167):
-                    // under accessEgressModeToLink the ride leg has four
-                    // sibling access/egress legs carrying routingMode ride,
-                    // and re-moding it alone made a mixed trip that
-                    // PersonPrepareForSim refused before iteration 0's
-                    // mobsim on every unpaired passenger. Under `none` the
-                    // trip is this one leg and the in-place re-mode below
-                    // is what it always was.
-                    //
-                    // The trip is ROUTED in the fallback mode by this engine
-                    // after the pass, in parallel, and the trip it replaces
-                    // is kept for the restore (F35): a null route used to
-                    // make PersonPrepareForSim re-route the WHOLE plan, and
-                    // the taxi engine's ~48,000 refusals an iteration made
-                    // that 24 % of the run's CPU (RemodeRestore.Remode).
-                    final org.matsim.core.router.TripStructureUtils.Trip whole =
-                            RemodeRestore.tripOf(ride.plan, ride.leg);
-                    if (whole == null) {
-                        // the leg is not in the plan it was collected from;
-                        // nothing to execute and nothing to restore
-                        remodedThisMobsim.remove(remodedThisMobsim.size() - 1);
-                        remodedAs.remove(ride);
-                        continue;
-                    }
-                    if (whole.getLegsOnly().size() > 1) {
-                        remodedWholeTrips++;
-                    }
-                    remodeOf.put(ride, new RemodeRestore.Remode(
-                            ride.plan, whole, fallback, ride.departure));
-                    remoded++;
-                    continue;
-                }
-                restore(ride.leg, ride.route);
-                continue;
-            }
-            // 9.128: where a declared pair's links differ, the driver
-            // detours through them. The pair is accepted here and its
-            // timing, booking and re-timing are written once the driver's
-            // detour is routed through every passenger it carries.
-            if (bestDeclared && detour && !endpointsMatch(rule, best, ride)) {
-                best.carrying++;
-                detours.computeIfAbsent(best, k -> new ArrayList<>(2)).add(ride);
-                continue;
-            }
-            best.carrying++;
-            nPaired++;
-            if (bestDeclared) {
-                pairedDeclared++;
-                if (bestGap > window) {
-                    // the inference window alone would have refused this
-                    // pair; the demand's own binding is what kept it
-                    pairedByIdentity++;
-                }
-                // 9.120: a declared passenger leaves when the car leaves.
-                // The activity this trip departs from is ended so that the
-                // planned access walk delivers the passenger to the meeting
-                // link exactly at the driver's planned departure - the walk
-                // is PCE 0 at a capped constant speed, so its planned time
-                // is its realised time. Nothing is invented: the two
-                // members' clocks were one clock when the demand generated
-                // the trip. Refused only when the driver leaves before this
-                // activity could start, which is a genuine miss and stays
-                // one. AN EXECUTION-TIME OVERRIDE, RESTORED AFTER THE MOBSIM
-                // (decision, 12 September 2026, #187): the plan keeps the
-                // passenger's OWN declared end time, the engine overrides it
-                // for this iteration's execution and puts it back at
-                // AfterMobsim, exactly as the unpaired re-mode is restored -
-                // replanning stays the only owner of plan memory, and the
-                // experienced plan (what is scored) carries the driver's
-                // clock. Until this decision the write was permanent and
-                // TimeAllocationMutator then mutated the overwritten value.
-                if (ride.origin != null) {
-                    final double target = best.departure - ride.accessTravel;
-                    final OptionalTime start = ride.origin.getStartTime();
-                    if (!start.isDefined() || target > start.seconds()) {
-                        final OptionalTime was = ride.origin.getEndTime();
-                        if (!was.isDefined()
-                                || Math.abs(was.seconds() - target) > 0.5) {
-                            retimedThisMobsim.add(
-                                    new Retime(ride.person, ride.origin, was));
-                            ride.origin.setEndTime(target);
-                            retimed++;
-                            retimeShiftSum += Math.abs(
-                                    (was.isDefined() ? was.seconds() : target)
-                                    - target);
-                        }
-                    }
-                }
-            }
-            paired.computeIfAbsent(ride.direction, k -> new int[1])[0]++;
-
-            final double realised = realisedDuration(best);
-            final double wholeLeg;
-            if (Double.isNaN(realised)) {
-                wholeLeg = best.routedTravelTime;
-                fromRouted++;
-            } else {
-                wholeLeg = realised;
-                fromRealised++;
-            }
-            // The passenger rides the SEGMENT, not the leg. Unity when the
-            // segment is the whole route, so `both_links` is bit-for-bit what
-            // it was and this change is measurable rather than asserted.
-            final double driverTime = wholeLeg * carriedShare(best, ride);
-            final double baseline = definedOr(ride.leg.getTravelTime(),
-                                              definedOr(ride.route.getTravelTime(), 0.0));
-            deltaSum += driverTime - baseline;
-            // ONLY the route's travel time is written. The leg keeps the
-            // router's own estimate, which is what makes an unpaired leg
-            // restorable to exactly today's behaviour.
-            ride.route.setTravelTime(driverTime + dwell);
-            if (cfg.isPhysicalBoarding()) {
-                // The booking JointRideEngine redeems at the qsim's own
-                // departure (DECISIONS.md 9.53). The route time written above
-                // stays: it is exactly what a MISSED boarding falls back to,
-                // so the fallback is Tier 1 verbatim rather than a third
-                // behaviour.
-                bookings.computeIfAbsent(ride.person, k -> new ArrayList<>(2))
-                        .add(new Booking(ride.from, ride.to, ride.departure,
-                                         best.person,
-                                         bestDeclared ? boundWindow : window));
+            if (merged != null) {
+                candidates = merged;
             }
         }
+        return candidates;
+    }
 
-        // 9.128: the deferred detours. Drivers in the order their first
-        // passenger was met (rides are in person-id order, so this is
-        // deterministic); each driver's car leg is routed through its
-        // passengers' origin links in departure order, then their
-        // destination links in the same order, then home to its own
-        // destination.
+    /** The best driver for this passenger, and the funnel a miss is read from. */
+    private Match search(final Pass p, final RideLeg ride, final List<DriverLeg> candidates) {
+        final Match m = new Match();
+        m.declared = boundDriver.getOrDefault(ride.person, Collections.emptySet());
+        for (final DriverLeg driver : candidates) {
+            if (driver.person.equals(ride.person)) {
+                continue;                       // you cannot drive yourself
+            }
+            m.sawCandidate++;
+            final double gap = Math.abs(driver.departure - ride.departure);
+            // 9.85: for the driver the demand NAMED, identity has
+            // already settled whether this is the same trip, so the
+            // clock only has to cover the drift replanning introduced.
+            final boolean isDeclared = m.declared.contains(driver.person.toString());
+            if (isDeclared) {
+                m.sawDeclared = true;            // 9.145
+            }
+            // 9.120: for the driver the demand NAMED there is no clock
+            // test at all. The two members were generated as ONE trip
+            // and only MATSim's independent time mutation ever moved
+            // them apart - measured on the F14 arm, the declared pair
+            // on the same OD within 15 min fell 57.1% -> 27.5% in 30
+            // iterations while gaps over 45 min rose 1.8% -> 7.5%. The
+            // passenger is RE-TIMED to the driver below, so the gap is
+            // not paid for as waiting: it is removed at its source.
+            if (!isDeclared && gap > p.window) {
+                if (endpointsMatch(p.rule, driver, ride) && gap < m.nearestMatchingGap) {
+                    m.nearestMatchingGap = gap;
+                }
+                continue;
+            }
+            m.sawInWindow = true;
+            // 9.128: the driver the demand NAMED is the same trip by
+            // identity; where the links differ the driver will detour
+            // through the passenger's, so geometry is not a gate here.
+            final boolean meets = isDeclared && p.detour;
+            if (!meets && !endpointsMatch(p.rule, driver, ride)) {
+                continue;
+            }
+            m.sawEndpoints = true;
+            if (driver.carrying >= p.capacity) {
+                m.refusedForCapacity = true;
+                continue;
+            }
+            // A declared partner outranks a coincidence at equal gap:
+            // preferring the nearer stranger would let the inference
+            // overwrite the binding it exists to approximate.
+            if (m.best == null
+                    || (isDeclared && !m.bestDeclared)
+                    || (isDeclared == m.bestDeclared && gap < m.bestGap)) {
+                m.bestGap = gap;
+                m.best = driver;
+                m.bestDeclared = isDeclared;
+            }
+        }
+        return m;
+    }
+
+    /** A passenger no driver serves: counted in the funnel, then walked or restored. */
+    private void miss(final Pass p, final RideLeg ride, final Match m) {
+        if (m.refusedForCapacity) {
+            p.capacityRefusals++;
+        }
+        // GEOMETRY BEFORE TIMING. Asking "was anyone in the window?"
+        // first labelled as a timing miss every passenger whose
+        // household drove somewhere else entirely: measured 1,529 such
+        // legs of which only 112 had an endpoint-matching driver at ANY
+        // hour, median 253.7 minutes away. Widening the window would
+        // have recovered 13. The question that separates a fixable miss
+        // from a hopeless one is whether a matching TRIP exists at all.
+        final boolean matchedEver =
+                m.sawEndpoints || m.nearestMatchingGap < Double.MAX_VALUE;
+        // 9.145: counted BEFORE the four-way funnel and independently
+        // of it. A leg the demand bound to a named driver, unpaired
+        // because that driver brought no car leg, is one defect
+        // whichever of the four buckets the substitute search lands
+        // it in.
+        if (!m.declared.isEmpty() && !m.sawDeclared) {
+            missDeclaredAbsent++;
+        }
+        if (m.sawCandidate == 0) {
+            missNoCandidate++;              // no household car leg at all
+        } else if (!matchedEver) {
+            missEndpoints++;                // the household drove elsewhere
+        } else if (!m.sawInWindow) {
+            missWindow++;                   // the right trip, the wrong hour
+            missGapMinutes.add(m.nearestMatchingGap / 60.0);
+        } else {
+            missCapacity++;                 // right trip, right hour, car full
+        }
+        p.unpaired.computeIfAbsent(ride.direction, k -> new int[1])[0]++;
+        if (cfg.isPhysicalBoarding() && cfg.isRemodeUnpaired()) {
+            // DECISIONS.md 9.55: a ride trip no household driver can
+            // physically serve is not a ride trip - it WALKS, on the
+            // network, THIS ITERATION. A long forced walk scores
+            // terribly, so co-evolution reassigns the tour, and ride
+            // becomes emergent: only what the driver supply carries
+            // survives. No parameter invented; the constraint is the
+            // price.
+            //
+            // The walk is an EXECUTION, not an amputation. The mode is
+            // given back at AfterMobsim (notifyAfterMobsim), because
+            // scoring is event-driven: the agent is still charged for
+            // the walk it actually made, while the plan keeps `ride`
+            // as an alternative co-evolution can re-select when the
+            // driver's selected plan serves it again. Mutating the
+            // plan permanently made pairing failure IRREVERSIBLE while
+            // pairing success created nothing - a one-way ratchet.
+            // Measured on 20260825T135734: 87,019 ride legs at
+            // iteration 0, 61,409 unpaired, and 58,791 of them gone by
+            // iteration 1 - 95.7% - never to return; paired legs then
+            // eroded 25,610 -> 7,320 on timing misses alone, an
+            // exponential decay with a 36-iteration half-life heading
+            // to the pre-repair 0.0013 occupancy. Whether ride is
+            // worth choosing is for the score to decide over many
+            // iterations, not for one missed pairing to settle.
+            remodedThisMobsim.add(ride);
+            final String fallback = fallbackMode(ride.person);
+            remodedAs.put(ride, fallback);
+            // THE WHOLE TRIP where it has more than one leg (#167):
+            // under accessEgressModeToLink the ride leg has four
+            // sibling access/egress legs carrying routingMode ride,
+            // and re-moding it alone made a mixed trip that
+            // PersonPrepareForSim refused before iteration 0's
+            // mobsim on every unpaired passenger. Under `none` the
+            // trip is this one leg and the in-place re-mode below
+            // is what it always was.
+            //
+            // The trip is ROUTED in the fallback mode by this engine
+            // after the pass, in parallel, and the trip it replaces
+            // is kept for the restore (F35): a null route used to
+            // make PersonPrepareForSim re-route the WHOLE plan, and
+            // the taxi engine's ~48,000 refusals an iteration made
+            // that 24 % of the run's CPU (RemodeRestore.Remode).
+            final org.matsim.core.router.TripStructureUtils.Trip whole =
+                    RemodeRestore.tripOf(ride.plan, ride.leg);
+            if (whole == null) {
+                // the leg is not in the plan it was collected from;
+                // nothing to execute and nothing to restore
+                remodedThisMobsim.remove(remodedThisMobsim.size() - 1);
+                remodedAs.remove(ride);
+                return;
+            }
+            if (whole.getLegsOnly().size() > 1) {
+                p.remodedWholeTrips++;
+            }
+            remodeOf.put(ride, new RemodeRestore.Remode(
+                    ride.plan, whole, fallback, ride.departure));
+            p.remoded++;
+            return;
+        }
+        restore(ride.leg, ride.route);
+    }
+
+    /** A paired passenger: re-timed if declared, then the ride time and the booking. */
+    private void accept(final Pass p, final RideLeg ride, final Match m) {
+        final DriverLeg best = m.best;
+        // 9.128: where a declared pair's links differ, the driver
+        // detours through them. The pair is accepted here and its
+        // timing, booking and re-timing are written once the driver's
+        // detour is routed through every passenger it carries.
+        if (m.bestDeclared && p.detour && !endpointsMatch(p.rule, best, ride)) {
+            best.carrying++;
+            p.detours.computeIfAbsent(best, k -> new ArrayList<>(2)).add(ride);
+            return;
+        }
+        best.carrying++;
+        p.nPaired++;
+        if (m.bestDeclared) {
+            pairedDeclared++;
+            if (m.bestGap > p.window) {
+                // the inference window alone would have refused this
+                // pair; the demand's own binding is what kept it
+                pairedByIdentity++;
+            }
+            // 9.120: a declared passenger leaves when the car leaves.
+            // The activity this trip departs from is ended so that the
+            // planned access walk delivers the passenger to the meeting
+            // link exactly at the driver's planned departure - the walk
+            // is PCE 0 at a capped constant speed, so its planned time
+            // is its realised time. Nothing is invented: the two
+            // members' clocks were one clock when the demand generated
+            // the trip. Refused only when the driver leaves before this
+            // activity could start, which is a genuine miss and stays
+            // one. AN EXECUTION-TIME OVERRIDE, RESTORED AFTER THE MOBSIM
+            // (decision, 12 September 2026, #187): the plan keeps the
+            // passenger's OWN declared end time, the engine overrides it
+            // for this iteration's execution and puts it back at
+            // AfterMobsim, exactly as the unpaired re-mode is restored -
+            // replanning stays the only owner of plan memory, and the
+            // experienced plan (what is scored) carries the driver's
+            // clock. Until this decision the write was permanent and
+            // TimeAllocationMutator then mutated the overwritten value.
+            retimeTo(p, ride, best.departure - ride.accessTravel);
+        }
+        p.paired.computeIfAbsent(ride.direction, k -> new int[1])[0]++;
+        writeRideTime(p, best, ride);
+        if (cfg.isPhysicalBoarding()) {
+            // The booking JointRideEngine redeems at the qsim's own
+            // departure (DECISIONS.md 9.53). The route time written above
+            // stays: it is exactly what a MISSED boarding falls back to,
+            // so the fallback is Tier 1 verbatim rather than a third
+            // behaviour.
+            bookings.computeIfAbsent(ride.person, k -> new ArrayList<>(2))
+                    .add(new Booking(ride.from, ride.to, ride.departure,
+                                     best.person,
+                                     m.bestDeclared ? p.boundWindow : p.window));
+        }
+    }
+
+    /** End the passenger's origin activity so the access walk meets the car at `target` (9.120, #187). */
+    private void retimeTo(final Pass p, final RideLeg ride, final double target) {
+        if (ride.origin == null) {
+            return;
+        }
+        final OptionalTime start = ride.origin.getStartTime();
+        if (!start.isDefined() || target > start.seconds()) {
+            final OptionalTime was = ride.origin.getEndTime();
+            if (!was.isDefined()
+                    || Math.abs(was.seconds() - target) > 0.5) {
+                retimes.set(ride.person, ride.origin, target);
+                p.retimed++;
+                p.retimeShiftSum += Math.abs(
+                        (was.isDefined() ? was.seconds() : target)
+                        - target);
+            }
+        }
+    }
+
+    /**
+     * The passenger rides the SEGMENT, not the leg: the driver's realised
+     * (else routed) time times the carried share, plus the pickup dwell.
+     */
+    private void writeRideTime(final Pass p, final DriverLeg driver, final RideLeg ride) {
+        final double realised = realisedDuration(driver);
+        final double wholeLeg;
+        if (Double.isNaN(realised)) {
+            wholeLeg = driver.routedTravelTime;
+            p.fromRouted++;
+        } else {
+            wholeLeg = realised;
+            p.fromRealised++;
+        }
+        // Unity when the segment is the whole route, so `both_links` is
+        // bit-for-bit what it was and this change is measurable rather than
+        // asserted.
+        final double driverTime = wholeLeg * carriedShare(driver, ride);
+        final double baseline = definedOr(ride.leg.getTravelTime(),
+                                          definedOr(ride.route.getTravelTime(), 0.0));
+        p.deltaSum += driverTime - baseline;
+        // ONLY the route's travel time is written. The leg keeps the
+        // router's own estimate, which is what makes an unpaired leg
+        // restorable to exactly today's behaviour.
+        ride.route.setTravelTime(driverTime + p.dwell);
+    }
+
+    /**
+     * 9.128: the deferred detours. Drivers in the order their first
+     * passenger was met (rides are in person-id order, so this is
+     * deterministic); each driver's car leg is routed through its
+     * passengers' origin links in departure order, then their
+     * destination links in the same order, then home to its own
+     * destination.
+     *
+     * <p>ONE router per worker for every detour of this iteration.
+     * `Provider<TripRouter>` is UNSCOPED: each get() runs all thirteen
+     * routing-module providers and NetworkRoutingProvider builds a fresh
+     * SpeedyALT LeastCostPathCalculator over the whole 81,060-node network.
+     * Asking per detour SEGMENT built ~51,600 routers per iteration on the
+     * F23 arm and cost 402 s of the 673 s iteration. Obtained inside the
+     * workers so that a run with nothing to detour still constructs NO
+     * router: RandomizingTimeDistanceTravelDisutility draws from
+     * MatsimRandom.getLocalInstance() on construction, so the NUMBER of
+     * routers built is part of the random sequence (9.147).
+     *
+     * <p>9.147: ROUTED IN PARALLEL, APPLIED IN ORDER. routeDetour touches
+     * only its own driver's leg, route and fields, so drivers partition
+     * cleanly across workers; the loop below consumes the results in the
+     * deterministic driver order the map holds, so every counter, passenger
+     * re-timing and booking is made in the order it always was.
+     */
+    private void routeDeferredDetours(final Pass p) {
         int detoured = 0;
         int detourDrivers = 0;
         double detourExtraS = 0.0;
         int detourRefused = 0;
-        // ONE router for every detour of this iteration. `Provider<TripRouter>`
-        // is UNSCOPED: each get() runs all thirteen routing-module providers
-        // and NetworkRoutingProvider builds a fresh SpeedyALT
-        // LeastCostPathCalculator over the whole 81,060-node network. Asking
-        // per detour SEGMENT - what this loop used to do, through
-        // routeDetour's own tripRouter.get() - built ~51,600 routers per
-        // iteration on the F23 arm and cost 402 s of the 673 s iteration
-        // (measured: beforeMobsimListeners 402 s against this class's own
-        // elapsed_ms of 401,955). A TripRouter is reusable, so ONE PER
-        // WORKER is all the parallel pass below needs (9.147).
-        //
-        // Obtained inside the workers rather than at the top of the method
-        // so that a run with nothing to detour still constructs NO router,
-        // exactly as before: RandomizingTimeDistanceTravelDisutility draws
-        // from MatsimRandom.getLocalInstance() on construction, so the
-        // NUMBER of routers built is part of the random sequence - now
-        // exactly one per worker in any iteration that detours anything,
-        // fixed by global.numberOfThreads rather than by the driver count.
-        //
-        // 9.147: ROUTED IN PARALLEL, APPLIED IN ORDER. routeDetour touches
-        // only its own driver's leg, route and fields and reads the shared
-        // network and population, so drivers partition cleanly across
-        // workers; the loop below then consumes the results in the
-        // deterministic driver order the map holds, so every counter,
-        // passenger re-timing and booking is made in the order it always
-        // was. Measured before: ~40 s of a 319 s plain iteration on the F26
-        // arm (ride_pairing.csv elapsed_ms), on one thread of 24.
         final List<Map.Entry<DriverLeg, List<RideLeg>>> order =
-                new ArrayList<>(detours.entrySet());
+                new ArrayList<>(p.detours.entrySet());
         for (final Map.Entry<DriverLeg, List<RideLeg>> e : order) {
             e.getValue().sort(Comparator.<RideLeg>comparingDouble(r -> r.departure)
                                       .thenComparing(r -> r.person));
@@ -988,46 +1060,17 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             final Map<RideLeg, Double> passAt = routed.passAt;
             for (final RideLeg ride : carried) {
                 detoured++;
-                nPaired++;
+                p.nPaired++;
                 pairedDeclared++;
-                paired.computeIfAbsent(ride.direction, k -> new int[1])[0]++;
+                p.paired.computeIfAbsent(ride.direction, k -> new int[1])[0]++;
                 final double pass = passAt.get(ride);
                 // the passenger is at their own link when the car passes it
-                if (ride.origin != null) {
-                    final double target = pass - ride.accessTravel;
-                    final OptionalTime start = ride.origin.getStartTime();
-                    if (!start.isDefined() || target > start.seconds()) {
-                        final OptionalTime was = ride.origin.getEndTime();
-                        if (!was.isDefined()
-                                || Math.abs(was.seconds() - target) > 0.5) {
-                            retimedThisMobsim.add(
-                                    new Retime(ride.person, ride.origin, was));
-                            ride.origin.setEndTime(target);
-                            retimed++;
-                            retimeShiftSum += Math.abs(
-                                    (was.isDefined() ? was.seconds() : target)
-                                    - target);
-                        }
-                    }
-                }
-                final double realised = realisedDuration(driver);
-                final double wholeLeg;
-                if (Double.isNaN(realised)) {
-                    wholeLeg = driver.routedTravelTime;
-                    fromRouted++;
-                } else {
-                    wholeLeg = realised;
-                    fromRealised++;
-                }
-                final double driverTime = wholeLeg * carriedShare(driver, ride);
-                final double baseline = definedOr(ride.leg.getTravelTime(),
-                                                  definedOr(ride.route.getTravelTime(), 0.0));
-                deltaSum += driverTime - baseline;
-                ride.route.setTravelTime(driverTime + dwell);
+                retimeTo(p, ride, pass - ride.accessTravel);
+                writeRideTime(p, driver, ride);
                 if (cfg.isPhysicalBoarding()) {
                     bookings.computeIfAbsent(ride.person, k -> new ArrayList<>(2))
                             .add(new Booking(ride.from, ride.to, pass,
-                                             driver.person, boundWindow));
+                                             driver.person, p.boundWindow));
                 }
             }
             detourExtraS += driver.routedTravelTime - driver.routedBefore;
@@ -1039,26 +1082,6 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                       detoured, detourDrivers,
                       detourDrivers == 0 ? 0 : Math.round(detourExtraS / detourDrivers),
                       detourRefused);
-
-        routeRemodes();
-
-        write(event.getIteration(), rides.size(), nPaired, paired, unpaired,
-              carLegs, fromRealised, fromRouted,
-              nPaired == 0 ? 0.0 : deltaSum / nPaired, capacityRefusals,
-              driversByHousehold.size(), noHousehold,
-              System.currentTimeMillis() - started);
-        if (cfg.isPhysicalBoarding() && cfg.isRemodeUnpaired()) {
-            org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
-                    .info("ridePairing: {} unpaired ride legs re-moded to "
-                          + "network walk (DECISIONS.md 9.55); {} of them "
-                          + "multi-leg trips replaced whole (#167)", remoded,
-                          remodedWholeTrips);
-        }
-        org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
-                .info("ridePairing: {} declared passengers re-timed to their "
-                      + "driver's departure, mean shift {} s (DECISIONS.md 9.120)",
-                      retimed, retimed == 0 ? 0.0
-                              : Math.round(retimeShiftSum / retimed));
     }
 
     // ---- 9.128: the driver's detour through a declared passenger's links ---
@@ -1336,69 +1359,29 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         remodedThisMobsim.clear();
     }
 
-    /** One activity end time the engine overrode for this mobsim (#187). */
-    private static final class Retime {
-        final Id<Person> person;
-        final Activity activity;
-        final OptionalTime was;
-
-        Retime(final Id<Person> person, final Activity activity,
-               final OptionalTime was) {
-            this.person = person;
-            this.activity = activity;
-            this.was = was;
-        }
-    }
-
-    private final List<Retime> retimedThisMobsim = new ArrayList<>();
+    /** The activity end times this mobsim's pairing overrode (#187). */
+    private final ActivityRetimes retimes = new ActivityRetimes();
 
     /** Put back every activity end time this mobsim's pairing overrode, so
-     *  plan memory carries the passenger's own declared time (#187). The
-     *  activity is restored only if it is still an element of the person's
-     *  selected plan - PersonPrepareForSim's PlanRouter keeps the activities
-     *  and replaces the legs between them, but a plan swapped by anything
-     *  else must not be written through a stale reference. */
+     *  plan memory carries the passenger's own declared time (#187). */
     private void restoreRetimed() {
-        int put = 0;
-        int orphan = 0;
-        for (final Retime r : retimedThisMobsim) {
-            final Person person =
-                    scenario.getPopulation().getPersons().get(r.person);
-            final Plan plan = person == null ? null : person.getSelectedPlan();
-            boolean live = false;
-            if (plan != null) {
-                for (final PlanElement pe : plan.getPlanElements()) {
-                    if (pe == r.activity) {
-                        live = true;
-                        break;
-                    }
-                }
-            }
-            if (!live) {
-                orphan++;
-                continue;
-            }
-            if (r.was.isDefined()) {
-                r.activity.setEndTime(r.was.seconds());
-            } else {
-                r.activity.setEndTimeUndefined();
-            }
-            put++;
-        }
-        if (!retimedThisMobsim.isEmpty()) {
+        final int n = retimes.size();
+        final int[] r = retimes.restore(scenario.getPopulation());
+        final int put = r[0];
+        final int orphan = r[1];
+        if (n > 0) {
             org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
                     .info("ridePairing: {} of {} overridden activity end time(s) "
                           + "restored after the mobsim ({} no longer in a "
                           + "selected plan) - the driver's clock was executed "
                           + "and scored, the passenger's own stays in plan "
-                          + "memory (#187)", put, retimedThisMobsim.size(), orphan);
+                          + "memory (#187)", put, n, orphan);
         }
         // the counters the record reads by name (#187): the retimed count of
         // this mobsim beside what was put back, every iteration, zeros too
         org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
                 .info("ridePairing: retimed={} restoreRetimed={} restoreOrphan={}",
-                      retimedThisMobsim.size(), put, orphan);
-        retimedThisMobsim.clear();
+                      n, put, orphan);
     }
 
     /**

@@ -31,6 +31,7 @@ import glob
 import gzip
 import io
 import os
+import re
 
 import collections
 
@@ -96,6 +97,50 @@ def iterations_with(run_dir, stem='trips'):
     return sorted(found)
 
 
+_PERSON_ATTR = re.compile(r'<attribute name="([^"]+)"[^>]*>([^<]*)</attribute>')
+_PERSON_ID = re.compile(r'<person id="([^"]+)"')
+
+
+def person_attributes(run_dir, names):
+    """{person id: {name: value}} for the attributes `names`, as THIS run carried them.
+
+    From `output/output_persons.csv.gz` when the run reached its end; else from
+    the run's own input `plans.xml.gz`, which carries the same person
+    attributes - a stopped arm writes no `output_persons`, and the readers
+    that required it (measure_bound_trips, mode_by_demographics) could not
+    read F36's arm 0 at all (fourteenth report). Values are strings either
+    way; a missing attribute is absent from the person's dict.
+    """
+    names = set(names)
+    out = {}
+    final = os.path.join(run_dir, 'output', 'output_persons.csv.gz')
+    if os.path.exists(final):
+        with gzip.open(final, 'rt', encoding='utf-8', newline='') as fh:
+            for r in csv.DictReader(fh, delimiter=';'):
+                out[r['person']] = {k: r[k] for k in names if r.get(k) not in (None, '')}
+        return out
+    plans = os.path.join(run_dir, 'plans.xml.gz')
+    if not os.path.exists(plans):
+        raise FileNotFoundError('%s has neither output_persons nor its input plans' % run_dir)
+    pid = None
+    in_plan = False
+    with gzip.open(plans, 'rt', encoding='utf-8') as fh:
+        for line in fh:
+            if '<person ' in line:
+                pid = _PERSON_ID.search(line).group(1)
+                out[pid] = {}
+                in_plan = False
+            elif '<plan' in line:
+                in_plan = True           # plan attributes are not person attributes
+            elif '</person>' in line:
+                pid = None
+            elif pid is not None and not in_plan and '<attribute ' in line:
+                m = _PERSON_ATTR.search(line)
+                if m and m.group(1) in names:
+                    out[pid][m.group(1)] = m.group(2)
+    return out
+
+
 def open_table(path):
     """A text handle on a MATSim table, whatever it was compressed with."""
     if path.endswith('.gz'):
@@ -146,8 +191,17 @@ def table(run_dir, stem, iteration=None):
 # report, 16 September 2026). One generator yields every event as
 # (type, attributes); `scan_events` runs any number of handlers over one pass,
 # so the readers that run together at a close-out pay for one decode.
-import re as _re
-from xml.sax.saxutils import unescape as _unescape
+from xml.sax.saxutils import unescape as _sax_unescape
+
+_re = re
+# MATSim escapes a quote inside a value as &quot;; saxutils decodes only
+# &amp; &lt; &gt; unless told the others (fourteenth report)
+_QUOTES = {'&quot;': '"', '&apos;': "'"}
+
+
+def _unescape(value):
+    return _sax_unescape(value, _QUOTES)
+
 
 _EVENT_LINE = _re.compile(r'<event\s')
 _ATTR = _re.compile(r'(\w+)="([^"]*)"')

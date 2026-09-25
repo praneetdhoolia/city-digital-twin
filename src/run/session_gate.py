@@ -218,6 +218,9 @@ GATES = [
     # GOAL.md requirement 10: every open issue closed or awaiting a run
     ('issues gated', [PY, 'src/run/issue_gate.py'], False),
     ('toolchain', [PY, 'src/setup/bootstrap_toolchain.py', '--verify'], True),
+    # the Java engines' probes: two of them died in checkConsistency for a
+    # week because nothing ran them (fourteenth report, 25 September 2026)
+    ('java probes', [PY, 'src/run/run_signal_probes.py'], True),
 ]
 
 

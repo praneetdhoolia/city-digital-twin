@@ -2539,6 +2539,57 @@
       ],
       "matsim_param": "hiredFleet.representation",
       "description": "Whether hired road modes (a taxi, an auto-rickshaw) are served from a pooled queue of finite vehicles by mode (citysim.HiredFleetQueue, 9.199; `pooled_queue`, with the counts by mode in hired_fleet.json beside the scenario network) or not (`absent`). This city represents its taxi supply as a finite fleet through A.taxi.fleet_representation and citysim.TaxiFleetEngine instead, so the pooled queue is absent; the two engines are not run together."
+    },
+    "B.activity.min_duration_s": {
+      "value": 300,
+      "units": "seconds",
+      "source": "assumed",
+      "sweep": [
+        120,
+        900
+      ],
+      "sweep_basis": "a floor under the drawn activity duration (mean from the HTS purpose table, +/- the declared CV); from two minutes (a drop-off) to fifteen (MATSim's minimalDuration ceiling, C.scoring.activity_minimal_duration_s).",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ],
+      "description": "The shortest activity a resident tour is drawn with. fourteenth report (25 September 2026): hidden until then inside a min()/max() the hardcoding ledger exempted."
+    },
+    "B.external.min_activity_s": {
+      "value": 1800,
+      "units": "seconds",
+      "source": "assumed",
+      "sweep": [
+        900,
+        3600
+      ],
+      "sweep_basis": "a boundary commuter's stay inside the study area: at least a quarter hour, at most the hour a short errand would take; no observation bears on it.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ],
+      "description": "The shortest activity an external boundary agent is drawn with. fourteenth report (25 September 2026): hidden until then inside a min()/max() the hardcoding ledger exempted."
+    },
+    "B.population.max_age_years": {
+      "value": 95,
+      "units": "years",
+      "source": "assumed",
+      "sweep": [
+        90,
+        100
+      ],
+      "sweep_basis": "the census's top age band is open (85 and over); a synthetic person in it is drawn uniformly up to this age. Ninety to a hundred spans the ERP's own single years of the oldest cohort.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.131",
+      "consumers": [
+        "src/build/build_population.py"
+      ],
+      "description": "The oldest age a synthetic person in the open top age band is drawn at. fourteenth report (25 September 2026): hidden until then inside a min()/max() the hardcoding ledger exempted."
     }
   }
 }

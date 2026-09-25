@@ -60,6 +60,8 @@ import registry as _registry
 # another (#147, DECISIONS.md 9.151).
 import hts_purpose as _hts_purpose
 CFG = _registry.load()
+MIN_ACTIVITY_S = int(CFG.get('B.activity.min_duration_s'))
+MIN_EXTERNAL_ACTIVITY_S = int(CFG.get('B.external.min_activity_s'))
 
 ZON = _city.path('data/processed/zones')
 LU = _city.path('data/processed/landuse')
@@ -505,8 +507,10 @@ def load_poi_by_zone(zones):
 
 
 def balance_destinations(cd):
-    """One iteration of the loop this replaced in calibrate_decay(); `cd` carries the
-    enclosing scope (7 names). Extracted mechanically, byte-identical outputs."""
+    """Solve each purpose's decay and, under doubly_constrained, balance destinations to
+    their attraction; records the balancing in `cd.diag` and returns the per-purpose
+    cumulative destination weights. `cd` supplies calibrate_one, gap_of, mixed, ATTR,
+    AEFF, beta_of_zone and diag."""
     doubly = DEST_BALANCING == 'doubly_constrained'
     passes = max(1, BALANCE_PASSES) if doubly else 1
     W = {}
@@ -1012,7 +1016,7 @@ def draw_tour_spec(purpose, hz, CUM, store, zone_arr, u, fixed_dest=None,
             base = ACT_DURATION[hint]
         else:
             base = ACT_DURATION['NHB'] if hint == 'HO' else ACT_DURATION[hint]
-        durs.append(int(max(300, base * 60
+        durs.append(int(max(MIN_ACTIVITY_S, base * 60
                             * (1.0 + DURATION_CV * (2.0 * u() - 1.0)))))
     return dict(purpose=purpose, chain=chain, durs=durs)
 
@@ -1055,8 +1059,10 @@ def time_tour(spec, t_start, person, hx, hy, hz, SA1):
 
 
 def place_free_tour(oi, bd):
-    """One iteration of the loop this replaced in build_day(); `bd` carries the
-    enclosing scope (16 names). Extracted mechanically, byte-identical outputs."""
+    """Draw and time the movable tour `order`'s entry `oi`, pushing it past immovable
+    escort intervals; appends it to `bd.placed` or counts it in `bd.dropped`; returns None.
+    `bd` supplies tours, starts, t_now, fixed_intervals, order, person, home (hx, hy, hz),
+    CUM, store, zone_arr, SA1, u, placed and dropped."""
     purpose = bd.tours[oi]
     t_start = bd.starts[oi]
     if bd.t_now is not None and t_start < bd.t_now + COMPANION_BUFFER_S:
@@ -1394,8 +1400,9 @@ def bind_escort_tours(n_hx, candidates, claimed, pending):
 
 
 def lift_candidates_of_person(ixs, person_id, lp):
-    """One iteration of the loop this replaced in bind_nonhousehold_lifts(); `lp` carries the
-    enclosing scope (6 names). Extracted mechanically, byte-identical outputs."""
+    """Classify one person's tour anchors as unbound lift drivers (HX, with licence and
+    car) or lift passenger candidates, appending them to `lp`; returns None.
+    `lp` supplies pctx, rows, round_trip, and the drivers, passengers and out it fills."""
     ctx = lp.pctx.get(person_id)
     if ctx is None:
         return
@@ -1439,8 +1446,9 @@ def lift_candidates_of_person(ixs, person_id, lp):
 
 
 def bind_one_lift(ix, p_pid, p_tid, pri, ret_ix, sa1, lc):
-    """One iteration of the loop this replaced in bind_nonhousehold_lifts(); `lc` carries the
-    enclosing scope (9 names). Extracted mechanically, byte-identical outputs."""
+    """Bind one passenger tour to the first same-zone unbound driver tour that fits (both
+    directions under round_trip) and commit it; returns None, binding nothing if none fits.
+    `lc` supplies rows, zi, by_zone, used, round_trip, fit_serve_tour, as_rows, commit, out."""
     anchor = lc.rows[ix]
     dep_p = int(anchor['dep_time_s'])
     k_o = lc.zi.get(anchor['origin_sa1'])
@@ -1502,8 +1510,9 @@ def bind_one_lift(ix, p_pid, p_tid, pri, ret_ix, sa1, lc):
 
 
 def lift_drivers_and_passengers(ld):
-    """One iteration of the loop this replaced in bind_nonhousehold_lifts(); `ld` carries the
-    enclosing scope (3 names). Extracted mechanically, byte-identical outputs."""
+    """Read the day's trips and collect unbound lift drivers by home zone and passenger
+    candidates; returns (by_zone, passengers, round_trip, rows, rows_of).
+    `ld` supplies path, pctx and out (the counts dict it updates)."""
     rows = read_day(ld.path)
     rows_of = core_rows_of(rows)              # person_id -> row indexes
 
@@ -1678,8 +1687,10 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
 
 
 def bind_one_joint_candidate(c_dep, c_pid, c_tid, hid, k, jc):
-    """One iteration of the loop this replaced in bind_joint_tours(); `jc` carries the
-    enclosing scope (15 names). Extracted mechanically, byte-identical outputs."""
+    """Bind one thinned companion tour to a household driver tour, as timed or by shifting
+    an unloaded one, recording the mirror and binding or the refusal reason; returns None.
+    `jc` supplies draws, p_thin, hh_drivers, rows, pctx, tours_of, intervals_of,
+    effective_rows, and the replaced / driver_load / shifted / bindings / out it updates."""
     if jc.draws[k] >= jc.p_thin:
         return
     if (c_pid, c_tid) in jc.replaced or jc.driver_load[(c_pid, c_tid)] > 0:
@@ -1781,8 +1792,9 @@ def bind_one_joint_candidate(c_dep, c_pid, c_tid, hid, k, jc):
 
 
 def joint_household_candidates(hid, jc):
-    """One iteration of the loop this replaced in bind_joint_tours(); `jc` carries the
-    enclosing scope (10 names). Extracted mechanically, byte-identical outputs."""
+    """Collect one multi-person household's driver tours into `jc.hh_drivers` and its
+    servable companion tours into `jc.candidates`, counting into `jc.out`; returns None.
+    `jc` supplies by_hh, rows, rows_of, pctx, tours_of, eligible_tour and cov_dirs."""
     members = sorted(jc.by_hh[hid], key=int)
     if len(members) < 2:
         return
@@ -1843,8 +1855,10 @@ def joint_household_candidates(hid, jc):
 
 
 def write_joint_bindings(jw):
-    """One iteration of the loop this replaced in bind_joint_tours(); `jw` carries the
-    enclosing scope (12 names). Extracted mechanically, byte-identical outputs."""
+    """Apply the negotiated shifts, party sizes and companion mirrors to the day file,
+    rewrite it, and write the joint bindings CSV; returns None.
+    `jw` supplies rows, replaced, shifted, driver_load, tours_of, path, day, bpath,
+    bind_cols, bindings, refusal and out."""
     jw.out['driver_tours_used'] = len(jw.driver_load)
     if jw.replaced:
         # apply the negotiated shifts to the underlying driver rows FIRST,
@@ -1884,8 +1898,9 @@ def write_joint_bindings(jw):
 
 
 def joint_coverage_and_target(jt):
-    """One iteration of the loop this replaced in bind_joint_tours(); `jt` carries the
-    enclosing scope (3 names). Extracted mechanically, byte-identical outputs."""
+    """Read the day's trips, count ride trips already covered by the escort and lift
+    bindings, and size the joint-travel target; returns
+    (cov_dirs, covered_tours, need, rows, rows_of). `jt` supplies path, day and out."""
     rows = read_day(jt.path)
     rows_of = core_rows_of(rows)              # person_id -> row indexes
     n_core = sum(len(v) for v in rows_of.values())
@@ -2184,8 +2199,10 @@ def _count_core(path):
 
 
 def shared_pass(sp):
-    """One iteration of the loop this replaced in bind_shared_rides(); `sp` carries the
-    enclosing scope (9 names). Extracted mechanically, byte-identical outputs."""
+    """Gather car-less residents' uncovered direct tours, keep the servable ones, and bind
+    them (longest first or by a seeded draw) to seated drivers both ways; returns the
+    binding rows. `sp` supplies tours, pctx, covered, candidates, find, need_trips,
+    seed, day and out."""
     for person_id in sorted(sp.tours, key=int):
         ctx = sp.pctx.get(person_id)
         if ctx is None or ctx['cav']:
@@ -2278,8 +2295,10 @@ def shared_pass(sp):
 
 
 def shared_supply_and_demand(ss):
-    """One iteration of the loop this replaced in bind_shared_rides(); `ss` carries the
-    enclosing scope (4 names). Extracted mechanically, byte-identical outputs."""
+    """Read the day's core trips, collect what earlier passes cover, size the shared-ride
+    need and index eligible drivers by (origin zone, destination zone, time bin); returns
+    (bins, covered, drivers, need_trips, tours, window, zone). `ss` supplies path, day,
+    pctx and out."""
     rows = read_day(ss.path)
     core = [r for r in rows if r['agent_tier'] == 'core']
     n_core = len(core)
@@ -2573,7 +2592,7 @@ def external_agents(zones, core, decay, u, day, seq_base, store, cordon):
             # in-network now, so the same seed-plan speed the core tours use
             tt = int(dist_km / PLAN_SPEED_CAR_KMH * 3600) + PLAN_ACCESS_S
             arr = t0 + tt
-            dur = int(max(1800, ACT_DURATION[purpose] * 60
+            dur = int(max(MIN_EXTERNAL_ACTIVITY_S, ACT_DURATION[purpose] * 60
                           * (1.0 + DURATION_CV * (2.0 * u() - 1.0))))
             back = arr + dur
             if back + tt > DAY_HORIZON_S:
@@ -2978,8 +2997,10 @@ HTS_RATE_PER_PERSON_DAY = CFG.get('B.activity.hts_rate_per_person_day')
 
 
 def generate_household_tours(h, hc):
-    """One iteration of the loop this replaced in build_and_bind_day(); `hc` carries the
-    enclosing scope (13 names). Extracted mechanically, byte-identical outputs."""
+    """Build one household's day: bind escort tours, place each member's tours, and write
+    the legs, accumulating counts and escort bindings into `hc`; returns None.
+    `hc` supplies mc (members, homes, zones, person arrays), counts, rates, d, w, dropped,
+    esc, hh_bindings, by_purpose, tours_hist and the n_legs / n_tours / n_travel totals."""
     members = hc.mc.hh_members[h]
     # Escort binding (DECISIONS.md 9.46): members without an HX draw
     # build first, so an escorter binds to a trip that already exists.
@@ -3106,8 +3127,10 @@ def generate_household_tours(h, hc):
 
 
 def record_day_stats(sc):
-    """One iteration of the loop this replaced in build_and_bind_day(); `sc` carries the
-    enclosing scope (21 names). Extracted mechanically, byte-identical outputs."""
+    """Record one day type's generation and binding statistics in `sc.mc.stats['by_day']`
+    and print its summary line; returns None.
+    `sc` supplies d, mc, the generated and realised leg/tour/traveller counts, the agent
+    tier counts, dropped, by_purpose, esc, hh_bindings, lift, joint and shared."""
     sc.mc.stats['by_day'][sc.d] = dict(
         short_trip_band_share_placed_pct=sc.band_share_placed,
         legs_generated_before_binders=sc.n_legs_gen,
@@ -3188,8 +3211,10 @@ def record_day_stats(sc):
 
 
 def build_and_bind_day(d, mc):
-    """One iteration of the loop this replaced in main(); `mc` carries the
-    enclosing scope (37 names). Extracted mechanically, byte-identical outputs."""
+    """Generate one day type's trips file (core, external, through and freight agents),
+    write its escort bindings, run the lift, joint and shared-ride binders, and record
+    its statistics; returns None. `mc` supplies the population arrays and households,
+    rate inputs, rng and u, zones, store, CUM, gates, freight profile, pctx and seed."""
     path = os.path.join(OUT, 'B2_activity_trips_%s.csv' % d)
     fh = open(path, 'w', newline='', encoding='utf-8')
     w = csv.DictWriter(fh, fieldnames=COLUMNS, extrasaction='ignore',
@@ -3273,8 +3298,9 @@ def build_and_bind_day(d, mc):
 
 
 def load_persons(mc):
-    """One iteration of the loop this replaced in main(); `mc` carries the
-    enclosing scope (4 names). Extracted mechanically, byte-identical outputs."""
+    """Load households and persons, derive the per-person arrays, households, lift context
+    and the day rates; returns them as one tuple (age ... work_first, alphabetical).
+    `mc` supplies max_persons, day_types, zi and day_shape."""
     hh = pd.read_csv(os.path.join(POP, 'B1_households.csv'),
                      usecols=['household_id', 'home_x_mga56', 'home_y_mga56'])
     home = dict(zip(hh.household_id.to_numpy(),
@@ -3361,8 +3387,9 @@ def load_persons(mc):
 
 
 def load_supply_inputs(mc):
-    """One iteration of the loop this replaced in main(); `mc` carries the
-    enclosing scope (0 names). Extracted mechanically, byte-identical outputs."""
+    """Load zones, attractors, cordon and through gates, freight profile and HTS rates, and
+    calibrate the gravity decay; returns them as one tuple (CUM ... zones, alphabetical).
+    `mc` is not read."""
     zones = load_zones()
     core = zones[zones.zone_tier == 'core'].reset_index(drop=True)
     zi = {c: i for i, c in enumerate(core['SA1_CODE21'])}
@@ -3536,7 +3563,6 @@ def main(seed=SEED, max_persons=None, day_types=None):
 
 if __name__ == '__main__':
     # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
-    import sys as _sys_t, os as _os_t  # noqa: E401
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     ap = argparse.ArgumentParser()
