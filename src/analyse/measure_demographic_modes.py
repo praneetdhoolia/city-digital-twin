@@ -50,7 +50,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from city import path as city_path
-from build_run_index import load_families, family_of
+from iteration_reading import run_family
 import registry as _registry
 
 # --- observed side -----------------------------------------------------------
@@ -180,22 +180,11 @@ def print_table(title, t, modes):
               + f'{n:>10}')
 
 
-def main() -> int:
-    if len(sys.argv) != 2:
-        print(__doc__)
-        return 2
-    run_dir = Path(sys.argv[1])
+def observed_mode_by_sex(g62):
+    """Observed G62 mode x sex shares within each sex.
 
-    fams, overrides = load_families()
-    family, fam_note = family_of(run_dir.name, fams, overrides)
-    fam_label = next((f['label'] for k, f in fams if k == family), '')
-
-    pop = load_population(run_dir)
-    g62, g62_ctx, n_sa1 = load_g62()
-    hts = hts_inventory()
-    all_t, com_t, totals, com_totals, unmatched = tabulate_trips(run_dir, pop)
-
-    # --- observed mode x sex shares (within each sex, one-method journeys) --
+    Returns (identified totals per sex, one row per observed mode, PT union).
+    """
     obs_tot = {s: sum(g62[(label, s)] for _, label, _ in G62_MODES)
                for s in ('M', 'F')}
     observed_rows = []
@@ -209,7 +198,12 @@ def main() -> int:
         observed_rows.append(row)
     pt_union = {s: sum(g62[(label, s)] for _, label, m in G62_MODES
                        if m == 'pt') for s in ('M', 'F')}
+    return obs_tot, observed_rows, pt_union
 
+
+def commute_sex_comparison(g62, obs_tot, com_t):
+    """Modelled commute mode x sex shares beside the observed G62 shares,
+    one row per model mode that has an observed counterpart."""
     # --- modelled commute mode x sex, restricted to comparable modes -------
     # Model modes with an observed one-method JTW counterpart. The observed
     # rows without a counterpart (Taxi/Rideshare, Truck, Other) stay in the
@@ -238,120 +232,109 @@ def main() -> int:
             row[f'modelled_n_{s}'] = mn
             row[f'observed_thin_{s}'] = obs_n[s] < THIN_CELL_MIN
         comparison.append(row)
+    return comparison
 
-    report = {
-        'title': 'mode x demographic cells: observed inventory and one '
-                 'run measured against them (issue #50)',
-        'diagnostic_notice': (
-            'DIAGNOSTIC MEASUREMENT OF AN EXISTING RUN - NOT A RESULT ABOUT '
-            'THE LIGHT RAIL. The run measured is an arm of a CLOSED, '
-            'pre-repair comparability family; nothing here is current model '
-            'output and nothing compares scenario against scenario.'),
-        'run': {
-            'dir': run_dir.name,
-            'family': family or 'unattributed',
-            'family_label': fam_label,
-            'family_note': fam_note,
-        },
-        'inventory': {
-            'held': {
-                'jtw_mode_x_sex_sa1': {
-                    'source': 'census2021_G62_SA1.csv (2021 Census G62, '
-                              'one-method journeys to work)',
-                    'geography': f'{n_sa1} core-tier SA1s',
-                    'denominator': 'sum of the twelve identified one-method '
-                                   'mode cells per sex; this sits below the '
-                                   'One_method_Tot column because ABS '
-                                   'perturbs/suppresses small SA1 cells - '
-                                   'shares are mode-conditional on an '
-                                   'identified method',
-                    'identified_one_method_journeys_M': obs_tot['M'],
-                    'identified_one_method_journeys_F': obs_tot['F'],
-                    'thin_cell_min': THIN_CELL_MIN,
-                    'context_journeys': {
-                        f'{stem}_{s}': g62_ctx[(stem, s)]
-                        for stem in G62_CONTEXT for s in ('M', 'F', 'P')},
-                },
-                'population_age_x_employment_sa1': {
-                    'source': 'census2021_G46A/B_SA1.csv - population '
-                              'structure, already consumed by B1; carries '
-                              'no mode dimension',
-                },
-                'occupation_x_age_x_sex_sa1': {
-                    'source': 'census2021_G60A/B_SA1.csv - no mode '
-                              'dimension; unconsumed',
-                },
-                'industry_x_age_x_sex_sa1': {
-                    'source': 'census2021_G54A/B_SA1.csv - no mode '
-                              'dimension; unconsumed',
-                },
+
+def inventory_block(n_sa1, obs_tot, g62_ctx, hts):
+    """The report's inventory: which mode x demographic cells held data
+    observes, which it does not, and the HTS slices checked."""
+    return {
+        'held': {
+            'jtw_mode_x_sex_sa1': {
+                'source': 'census2021_G62_SA1.csv (2021 Census G62, '
+                          'one-method journeys to work)',
+                'geography': f'{n_sa1} core-tier SA1s',
+                'denominator': 'sum of the twelve identified one-method '
+                               'mode cells per sex; this sits below the '
+                               'One_method_Tot column because ABS '
+                               'perturbs/suppresses small SA1 cells - '
+                               'shares are mode-conditional on an '
+                               'identified method',
+                'identified_one_method_journeys_M': obs_tot['M'],
+                'identified_one_method_journeys_F': obs_tot['F'],
+                'thin_cell_min': THIN_CELL_MIN,
+                'context_journeys': {
+                    f'{stem}_{s}': g62_ctx[(stem, s)]
+                    for stem in G62_CONTEXT for s in ('M', 'F', 'P')},
             },
-            'not_held': {
-                'mode_x_age': 'no held table observes it (G62 has no age '
-                              'dimension; held HTS slices carry no '
-                              'demographic column) - an ACQUISITION item '
-                              '(issue #63), not a modelling gap',
-                'mode_x_employment': 'not observed directly; G62 is '
-                                     'implicitly workers-only, which is the '
-                                     'only employment conditioning held',
-                'mode_x_income': 'not observed in held data',
+            'population_age_x_employment_sa1': {
+                'source': 'census2021_G46A/B_SA1.csv - population '
+                          'structure, already consumed by B1; carries '
+                          'no mode dimension',
             },
-            'hts_held_slices': hts,
-            'holdout_untouched': 'data/processed/validation/ (67/143 '
-                                 'holdout) not read by this script',
+            'occupation_x_age_x_sex_sa1': {
+                'source': 'census2021_G60A/B_SA1.csv - no mode '
+                          'dimension; unconsumed',
+            },
+            'industry_x_age_x_sex_sa1': {
+                'source': 'census2021_G54A/B_SA1.csv - no mode '
+                          'dimension; unconsumed',
+            },
         },
-        'observed': {
-            'table': 'G62 one-method journey-to-work mode x sex, core-tier '
-                     'SA1s, shares within each sex',
-            'rows': observed_rows,
-            'pt_union_n': pt_union,
-            'caveats': [
-                '2021 was a COVID census: car share is WFH-inflated and PT '
-                'collapsed; treat these shares as structure, not level '
-                'targets (cities/<city>/docs/archived/design/mode-individualisation.md section 1)',
-                'commute-only: journeys to work, one method; multi-method '
-                'and worked-at-home journeys excluded (counts in '
-                'context_journeys)',
-                'ABS randomly perturbs small SA1 cells; thin cells carry '
-                'perturbation noise on top of sampling noise',
-                'shares are within the sum of identified mode cells, which '
-                'is ~2.5% below the One_method_Tot column (small-cell '
-                'perturbation/suppression) - so these shares differ '
-                'slightly from tables that divide by One_method_Tot',
-            ],
+        'not_held': {
+            'mode_x_age': 'no held table observes it (G62 has no age '
+                          'dimension; held HTS slices carry no '
+                          'demographic column) - an ACQUISITION item '
+                          '(issue #63), not a modelling gap',
+            'mode_x_employment': 'not observed directly; G62 is '
+                                 'implicitly workers-only, which is the '
+                                 'only employment conditioning held',
+            'mode_x_income': 'not observed in held data',
         },
-        'modelled': {
-            'source': 'output_trips.csv.gz main_mode joined to B1 person '
-                      'attributes; trips by persons outside B1 (freight, '
-                      'external tiers) excluded',
-            'trips_tabulated': sum(totals.values()),
-            'trips_outside_b1': unmatched,
-            'sample_note': 'the run is a population sample; counts are '
-                           'sample counts, shares are the comparable '
-                           'quantity',
-            'mode_totals_all_trips': dict(sorted(totals.items())),
-            'mode_totals_commute_trips': dict(sorted(com_totals.items())),
-            'all_trips_by': table_json(all_t),
-            'commute_trips_by': table_json(com_t),
-            'commute_definition': f'trips with end_activity_type == '
-                                  f'{COMMUTE_END_ACTIVITY!r}',
-        },
-        'comparison': {
-            'cell': 'commute mode x sex: modelled work-arriving trip shares '
-                    'vs observed G62 one-method JTW shares, within each sex',
-            'note': 'the model\'s single pt qsim mode is compared against '
-                    'the union of the four observed PT modes (listed per '
-                    'row); observed Taxi/Rideshare, Truck and Other have no '
-                    'modelled counterpart and appear only in the observed '
-                    'table',
-            'rows': comparison,
-        },
+        'hts_held_slices': hts,
+        'holdout_untouched': 'data/processed/validation/ (67/143 '
+                             'holdout) not read by this script',
     }
 
-    out_path = run_dir / '_demographic_modes.json'
-    out_path.write_text(json.dumps(report, indent=1), encoding='utf-8')
 
-    modes = sorted(totals)
+def observed_block(observed_rows, pt_union):
+    """The report's observed side: G62 mode x sex rows and their caveats."""
+    return {
+        'table': 'G62 one-method journey-to-work mode x sex, core-tier '
+                 'SA1s, shares within each sex',
+        'rows': observed_rows,
+        'pt_union_n': pt_union,
+        'caveats': [
+            '2021 was a COVID census: car share is WFH-inflated and PT '
+            'collapsed; treat these shares as structure, not level '
+            'targets (cities/<city>/docs/archived/design/mode-individualisation.md section 1)',
+            'commute-only: journeys to work, one method; multi-method '
+            'and worked-at-home journeys excluded (counts in '
+            'context_journeys)',
+            'ABS randomly perturbs small SA1 cells; thin cells carry '
+            'perturbation noise on top of sampling noise',
+            'shares are within the sum of identified mode cells, which '
+            'is ~2.5% below the One_method_Tot column (small-cell '
+            'perturbation/suppression) - so these shares differ '
+            'slightly from tables that divide by One_method_Tot',
+        ],
+    }
+
+
+def modelled_block(totals, com_totals, unmatched, all_t, com_t):
+    """The report's modelled side: the run's trips tabulated by demographic."""
+    return {
+        'source': 'output_trips.csv.gz main_mode joined to B1 person '
+                  'attributes; trips by persons outside B1 (freight, '
+                  'external tiers) excluded',
+        'trips_tabulated': sum(totals.values()),
+        'trips_outside_b1': unmatched,
+        'sample_note': 'the run is a population sample; counts are '
+                       'sample counts, shares are the comparable '
+                       'quantity',
+        'mode_totals_all_trips': dict(sorted(totals.items())),
+        'mode_totals_commute_trips': dict(sorted(com_totals.items())),
+        'all_trips_by': table_json(all_t),
+        'commute_trips_by': table_json(com_t),
+        'commute_definition': f'trips with end_activity_type == '
+                              f'{COMMUTE_END_ACTIVITY!r}',
+    }
+
+
+def print_report(report, run_dir, family, fam_label, modes, all_t, com_t,
+                 comparison):
+    """Print the notice, the modelled share tables and the commute mode x sex
+    comparison."""
     print(report['diagnostic_notice'])
     print(f"run {run_dir.name}  family {family} ({fam_label})")
     for dim in ('age_band', 'sex', 'employment', 'licence'):
@@ -372,6 +355,59 @@ def main() -> int:
               + f" {row['observed_share_F']:>8.4f}"
               + f" {row['modelled_share_F']:>8.4f}"
               + f" {row['delta_pp_F']:>8.2f}")
+
+
+def main() -> int:
+    if len(sys.argv) != 2:
+        print(__doc__)
+        return 2
+    run_dir = Path(sys.argv[1])
+
+    family, fam_note, fam_label = run_family(run_dir.name)
+
+    pop = load_population(run_dir)
+    g62, g62_ctx, n_sa1 = load_g62()
+    hts = hts_inventory()
+    all_t, com_t, totals, com_totals, unmatched = tabulate_trips(run_dir, pop)
+
+    obs_tot, observed_rows, pt_union = observed_mode_by_sex(g62)
+    comparison = commute_sex_comparison(g62, obs_tot, com_t)
+
+    report = {
+        'title': 'mode x demographic cells: observed inventory and one '
+                 'run measured against them (issue #50)',
+        'diagnostic_notice': (
+            'DIAGNOSTIC MEASUREMENT OF AN EXISTING RUN - NOT A RESULT ABOUT '
+            'THE LIGHT RAIL. The run measured is an arm of a CLOSED, '
+            'pre-repair comparability family; nothing here is current model '
+            'output and nothing compares scenario against scenario.'),
+        'run': {
+            'dir': run_dir.name,
+            'family': family or 'unattributed',
+            'family_label': fam_label,
+            'family_note': fam_note,
+        },
+        'inventory': inventory_block(n_sa1, obs_tot, g62_ctx, hts),
+        'observed': observed_block(observed_rows, pt_union),
+        'modelled': modelled_block(totals, com_totals, unmatched, all_t, com_t),
+        'comparison': {
+            'cell': 'commute mode x sex: modelled work-arriving trip shares '
+                    'vs observed G62 one-method JTW shares, within each sex',
+            'note': 'the model\'s single pt qsim mode is compared against '
+                    'the union of the four observed PT modes (listed per '
+                    'row); observed Taxi/Rideshare, Truck and Other have no '
+                    'modelled counterpart and appear only in the observed '
+                    'table',
+            'rows': comparison,
+        },
+    }
+
+    out_path = run_dir / '_demographic_modes.json'
+    out_path.write_text(json.dumps(report, indent=1), encoding='utf-8')
+
+    modes = sorted(totals)
+    print_report(report, run_dir, family, fam_label, modes, all_t, com_t,
+                 comparison)
     print(f'\nwrote {out_path}')
     return 0
 

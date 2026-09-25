@@ -85,16 +85,8 @@ def fmt_sweep(field):
     return '-'
 
 
-def render(fields, origin):
-    by_file = collections.defaultdict(dict)
-    for key, f in fields.items():
-        by_file[origin[key]][key] = f
-
-    src_counts = collections.Counter(f['source'] for f in fields.values())
-    st_counts = collections.Counter(f['status'] for f in fields.values())
-    unobtained = sorted(k for k, f in fields.items() if f['status'] == 'unobtained')
-    held = sorted(k for k, f in fields.items() if 'held_fixed' in f)
-
+def _intro_lines():
+    """The reference's title, provenance note and how-to-control section."""
     L = []
     A = L.append
     A('# Configuration reference')
@@ -139,6 +131,19 @@ def render(fields, origin):
       'all.** Escaping a range requires `allow_outside_sweep` plus a written justification '
       'in a committed overlay - never a flag typed at a shell.')
     A('')
+    return L
+
+
+def _census_lines(fields):
+    """What the fields are made of: provenance and status counts, the
+    unobtained fields, the sweeps by role and the fields held fixed."""
+    src_counts = collections.Counter(f['source'] for f in fields.values())
+    st_counts = collections.Counter(f['status'] for f in fields.values())
+    unobtained = sorted(k for k, f in fields.items() if f['status'] == 'unobtained')
+    held = sorted(k for k, f in fields.items() if 'held_fixed' in f)
+
+    L = []
+    A = L.append
     A('## What the %d fields are made of' % len(fields))
     A('')
     A('| Provenance | Fields | Meaning |')
@@ -201,60 +206,84 @@ def render(fields, origin):
     for k in held:
         A('- `%s` - %s' % (k, fields[k]['held_fixed']['rule'][:180]))
     A('')
+    return L
 
+
+def _field_lines(key, f):
+    """One field's entry: description, provenance line, and its sweep basis,
+    held-fixed rule or derivation where it has one."""
+    L = []
+    A = L.append
+    A('#### `%s`' % key)
+    A('')
+    A(f['description'])
+    A('')
+    bits = ['**%s**' % f['source'], 'status **%s**' % f['status']]
+    if f.get('decisions_ref'):
+        bits.append('DECISIONS.md §%s' % f['decisions_ref'])
+    if f.get('proposal_ref'):
+        bits.append('proposal §%s' % f['proposal_ref'])
+    if f.get('legacy_symbol'):
+        bits.append('was `%s`' % f['legacy_symbol'])
+    if f.get('matsim_param'):
+        bits.append('MATSim `%s`' % f['matsim_param'])
+    if f.get('sweep_role'):
+        bits.append('sweep role **%s**' % f['sweep_role'])
+    A('*%s*' % ' · '.join(bits))
+    A('')
+    # the basis may sit beside the sweep or inside it; show it wherever
+    # it was written, or the reference hides the one thing an assumed
+    # interval has to say for itself
+    basis = registry.sweep_basis_of(f)
+    if basis:
+        A('> **Sweep basis.** %s' % basis)
+        A('')
+    if 'held_fixed' in f:
+        hf = f['held_fixed']
+        A('> **Held fixed.** %s' % hf['rule'])
+        A('>')
+        A('> *Departure requires: %s*' % hf.get('departure_requires', 'a logged decision'))
+        A('')
+    if 'derived_from' in f:
+        d = f['derived_from']
+        A('> **Derived from** %s: %s'
+          % (', '.join('`%s`' % x for x in d['fields']), d['identity']))
+        A('')
+    return L
+
+
+def _layer_lines(path, doc_fields):
+    """One registry file's section: its title, its summary table, then every
+    field's entry."""
+    L = []
+    A = L.append
+    layer_doc = json.load(io.open(os.path.join(REPO, path), encoding='utf-8'))
+    A('## %s' % layer_doc['title'])
+    A('')
+    A('*`%s` - %d fields*' % (path, len(doc_fields)))
+    A('')
+    A(layer_doc.get('description', ''))
+    A('')
+    A('| Field | Value | Units | Provenance | Sweep |')
+    A('|---|---|---|---|---|')
+    for key in sorted(doc_fields):
+        f = doc_fields[key]
+        A('| `%s` | %s | %s | `%s` | %s |'
+          % (key, fmt_value(f.get('value')), f['units'], f['source'], fmt_sweep(f)))
+    A('')
+    for key in sorted(doc_fields):
+        L.extend(_field_lines(key, doc_fields[key]))
+    return L
+
+
+def render(fields, origin):
+    by_file = collections.defaultdict(dict)
+    for key, f in fields.items():
+        by_file[origin[key]][key] = f
+
+    L = _intro_lines() + _census_lines(fields)
     for path in sorted(by_file):
-        doc_fields = by_file[path]
-        layer_doc = json.load(io.open(os.path.join(REPO, path), encoding='utf-8'))
-        A('## %s' % layer_doc['title'])
-        A('')
-        A('*`%s` - %d fields*' % (path, len(doc_fields)))
-        A('')
-        A(layer_doc.get('description', ''))
-        A('')
-        A('| Field | Value | Units | Provenance | Sweep |')
-        A('|---|---|---|---|---|')
-        for key in sorted(doc_fields):
-            f = doc_fields[key]
-            A('| `%s` | %s | %s | `%s` | %s |'
-              % (key, fmt_value(f.get('value')), f['units'], f['source'], fmt_sweep(f)))
-        A('')
-        for key in sorted(doc_fields):
-            f = doc_fields[key]
-            A('#### `%s`' % key)
-            A('')
-            A(f['description'])
-            A('')
-            bits = ['**%s**' % f['source'], 'status **%s**' % f['status']]
-            if f.get('decisions_ref'):
-                bits.append('DECISIONS.md §%s' % f['decisions_ref'])
-            if f.get('proposal_ref'):
-                bits.append('proposal §%s' % f['proposal_ref'])
-            if f.get('legacy_symbol'):
-                bits.append('was `%s`' % f['legacy_symbol'])
-            if f.get('matsim_param'):
-                bits.append('MATSim `%s`' % f['matsim_param'])
-            if f.get('sweep_role'):
-                bits.append('sweep role **%s**' % f['sweep_role'])
-            A('*%s*' % ' · '.join(bits))
-            A('')
-            # the basis may sit beside the sweep or inside it; show it wherever
-            # it was written, or the reference hides the one thing an assumed
-            # interval has to say for itself
-            basis = registry.sweep_basis_of(f)
-            if basis:
-                A('> **Sweep basis.** %s' % basis)
-                A('')
-            if 'held_fixed' in f:
-                hf = f['held_fixed']
-                A('> **Held fixed.** %s' % hf['rule'])
-                A('>')
-                A('> *Departure requires: %s*' % hf.get('departure_requires', 'a logged decision'))
-                A('')
-            if 'derived_from' in f:
-                d = f['derived_from']
-                A('> **Derived from** %s: %s'
-                  % (', '.join('`%s`' % x for x in d['fields']), d['identity']))
-                A('')
+        L.extend(_layer_lines(path, by_file[path]))
     return '\n'.join(L).rstrip() + '\n'
 
 

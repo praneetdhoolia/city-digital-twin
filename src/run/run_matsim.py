@@ -2263,16 +2263,11 @@ def _last_digest_iteration(run_dir):
         return None
 
 
-def run(scenario, day, cfg, overrides, force=False, warm=None,
-        registry_overrides=None):
-    src_dir = os.path.join(SETS, scenario, day)
-    if not os.path.isdir(src_dir):
-        raise SystemExit('no run inputs at %s' % src_dir)
-    reconcile_stale()
-    # the store maintains itself at every harness start: migrate anything
-    # legacy now; the raw cache is trimmed back under its declared budget on
-    # a daemon thread once the run is launched (#132 - at 671 GiB against a
-    # 500 GB cap the synchronous trim held the launch for the deletion)
+def _migrate_results_store():
+    """Move any legacy run under results/raw at harness start.
+
+    A failure is reported and the launch continues.
+    """
     try:
         moved = results_store.migrate()
         if moved:
@@ -2282,6 +2277,11 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
         print('results store migration failed (continuing): %s' % e,
               flush=True)
 
+
+def _launch_settings(cfg):
+    """Read the run's declared launch values, then announce its cost and heap
+    and apply every pre-launch refusal. Returns
+    (fraction, iterations, threads, xmx, seed, jfr, gc_log)."""
     fraction = cfg.get('RUN.sample.fraction')
     try:
         iterations = cfg.get('RUN.controler.last_iteration')
@@ -2299,7 +2299,14 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
     refuse_concurrent_arm()
     refuse_unsafe_host(cfg)
     announce_heap(cfg, xmx, fraction)
+    return fraction, iterations, threads, xmx, seed, jfr, gc_log
 
+
+def _warm_start_key(warm, scenario, day, fraction, seed, threads, overrides):
+    """Check a warm start against this run and announce it.
+
+    Returns the key the record carries, or None for a cold start.
+    """
     warm_key = None
     if warm is not None:
         check_warm_compatibility(warm, scenario, day, fraction, seed, threads,
@@ -2309,10 +2316,16 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
               '(firstIteration=%d). A warm-started run is NOT bit-identical '
               'to an uninterrupted one - see DECISIONS.md 9.76.'
               % (warm['run'], warm['iteration'], warm['iteration']), flush=True)
+    return warm_key
 
-    controler = controler_sha256()
-    values = values_sha256(cfg)
-    inputs = inputs_sha256(day)
+
+def _resumable_prior(scenario, day, fraction, iterations, seed, overrides,
+                     controler, warm_key, values, inputs, force):
+    """The completed run this launch would repeat, when it can be handed back.
+
+    Returns None - after announcing a re-run if only the controler changed -
+    when the launch must go ahead.
+    """
     prior = find_completed(scenario, day, fraction, iterations, seed, overrides,
                            controler, warm_key, values, inputs)
     if prior is not None and not force:
@@ -2330,7 +2343,11 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
               '  recorded %s\n  current  %s'
               % (prior['name'], (prior.get('controler_sha256') or 'not recorded')[:16],
                  controler[:16]), flush=True)
+    return None
 
+
+def _new_run_name(iterations, fraction):
+    """The directory name the runner gives a new run, unique in the store."""
     # The RUNNER names the directory: launch stamp + iterations + sample
     # percentage. The stamp is a label for humans sorting `results/`; run
     # identity is the parameter set matched above.
@@ -2345,9 +2362,12 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
             or os.path.exists(os.path.join(RESULTS, name)):
         name = '%s_%dit_%spct-%d' % (stamp, iterations, '%g' % (fraction * 100), n)
         n += 1
-    run_dir = results_store.raw_dir(name)
-    record = os.path.join(run_dir, '_run.json')
-    os.makedirs(run_dir, exist_ok=True)
+    return name
+
+
+def _launch_card(scenario, day, fraction, iterations, seed, threads, xmx,
+                 overrides, controler, inputs, warm_key):
+    """The status card as it stands at launch, before the inputs are validated."""
     # The status card, written at LAUNCH and updated at every transition, so a
     # run can be observed - and considered or disregarded - without opening a
     # log. It is not the result gate: `_run.json`, written only on success,
@@ -2362,7 +2382,16 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
         rc=None, pid=os.getpid())
     if warm_key:
         meta['warm_started_from'] = warm_key
+    return meta
 
+
+def _prepare_launch(src_dir, run_dir, scenario, day, fraction, seed,
+                    overrides, cfg, warm, meta):
+    """Emit the config, snapshot the resolved values and choose the JVM stack.
+
+    A refusal is written to the card and re-raised. Returns
+    (config_path, sample, snapshot, classpath, main_class).
+    """
     # THE INPUTS ARE VALIDATED BEFORE THE CARD SAYS `running` (#127): a
     # missing input file, a regime mismatch or an unbuilt run stack refuses
     # the launch here, and the refusal is written to the card as the cause -
@@ -2400,18 +2429,13 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
     except (SystemExit, Exception) as e:                     # noqa: BLE001
         refuse_launch(run_dir, meta, e)
         raise
-    # THE CARD CARRIES EVERYTHING THE RECORD WILL NEED. A run stopped at a gate
-    # is closed out by whichever process survives the stop - this harness for a
-    # gate stop, `--stop`'s own process for an operator stop - and neither can
-    # reach the locals build_config() just produced. Stashing them on the card
-    # at launch is what lets a stopped run state its identity as completely as a
-    # run that reached its horizon, instead of leaving a directory that can only
-    # be re-derived from a log.
-    meta.update(
-        config_snapshot=os.path.relpath(snapshot, run_dir).replace(os.sep, '/'),
-        values_sha256=values, sample=sample)
-    write_meta(run_dir, meta)
-    log = os.path.join(run_dir, 'matsim.log')
+    return config_path, sample, snapshot, classpath, main_class
+
+
+def _jvm_command(cfg, xmx, jfr, gc_log, run_dir, classpath, main_class,
+                 config_path):
+    """The JVM command line: pre-sized heap, collector, observation-only flags
+    and the controler with its config."""
     # -Xms equal to -Xmx: the 9.57 arm grew the heap 7 -> 27 GB across the run
     # with full-GC stalls visible during the it-110 routing pathology; a
     # pre-sized heap removes the growth path. Wall-time only - the JVM heap
@@ -2433,6 +2457,13 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
         cmd.append('-Xlog:gc*:file=%s:time,uptime,level,tags'
                    % os.path.join(run_dir, 'gc.log').replace('\\', '/'))
     cmd += ['-cp', classpath, main_class, config_path]
+    return cmd
+
+
+def _run_jvm(run_dir, cfg, cmd, log):
+    """Announce the live view and digest, start the JVM with its three
+    watchers and wait for it. Returns (rc, wall seconds); an interrupted
+    harness records the abort and re-raises."""
     # The live view, announced before MATSim starts so the url is on screen for
     # the whole run rather than after it. It reads the run directory and never
     # writes to it.
@@ -2469,43 +2500,134 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
                         '(Ctrl+C, or a kill this process still unwound)')
         raise
     wall = time.time() - t0
-    if rc != 0:
-        gate_cause, completion = _stop_marker(run_dir)
-        dead = mark_dead(run_dir, 'aborted' if gate_cause else 'failed',
-                         rc=rc, wall_s=round(wall, 1), cause=gate_cause)
-        print(('%s after %.0fs - %s'
-               % ({STOPPED_AT_GATE: 'GATE-STOPPED',
-                   STOPPED_AT_CEILING: 'CEILING-STOPPED',
-                   STOPPED_AT_STALL: 'STALL-STOPPED'}.get(
-                       completion, 'STOPPED BY THE OPERATOR'),
-                  wall, gate_cause))
-              if gate_cause else
-              ('FAILED rc=%d after %.0fs - see %s'
-               % (rc, wall, os.path.join(dead, 'matsim.log'))), flush=True)
-        if gate_cause:
-            # A GATE STOP IS A BOUNDARY THE LOOP ASKED FOR, so the arm is closed
-            # out with the same materials a run that reached its horizon gets:
-            # its reading at `reached_iteration` is exactly what the gate was
-            # for, and it stops being an orphan the next session must re-derive.
-            # The record says `stopped_at_gate`, so it can never be handed back
-            # as a finished arm.
-            doc = close_out(dead, completion, rc=rc, wall_s=wall,
-                            stop_cause=gate_cause, cfg=cfg)
-            if doc is not None:
-                print('closed out at iteration %s: %s'
-                      % (doc.get('reached_iteration'),
-                         os.path.join(dead, '_run.json')), flush=True)
-                return doc
-        # A CRASH GETS NO RECORD - it has no boundary and no defensible reading.
-        # Its findings are still extracted while its bulk is fresh, and the
-        # cache re-trimmed, both unattended (9.137).
-        try:
-            results_store.process(os.path.basename(dead), extract=True)
-            results_store.trim(cfg.get('RUN.storage.raw_cap_gb'),
+    return rc, wall
+
+
+def _close_out_nonzero(run_dir, cfg, rc, wall):
+    """The terminal path of a JVM that returned non-zero: a stop at a defined
+    boundary is closed out with a record, a crash gets none."""
+    gate_cause, completion = _stop_marker(run_dir)
+    dead = mark_dead(run_dir, 'aborted' if gate_cause else 'failed',
+                     rc=rc, wall_s=round(wall, 1), cause=gate_cause)
+    print(('%s after %.0fs - %s'
+           % ({STOPPED_AT_GATE: 'GATE-STOPPED',
+               STOPPED_AT_CEILING: 'CEILING-STOPPED',
+               STOPPED_AT_STALL: 'STALL-STOPPED'}.get(
+                   completion, 'STOPPED BY THE OPERATOR'),
+              wall, gate_cause))
+          if gate_cause else
+          ('FAILED rc=%d after %.0fs - see %s'
+           % (rc, wall, os.path.join(dead, 'matsim.log'))), flush=True)
+    if gate_cause:
+        # A GATE STOP IS A BOUNDARY THE LOOP ASKED FOR, so the arm is closed
+        # out with the same materials a run that reached its horizon gets:
+        # its reading at `reached_iteration` is exactly what the gate was
+        # for, and it stops being an orphan the next session must re-derive.
+        # The record says `stopped_at_gate`, so it can never be handed back
+        # as a finished arm.
+        doc = close_out(dead, completion, rc=rc, wall_s=wall,
+                        stop_cause=gate_cause, cfg=cfg)
+        if doc is not None:
+            print('closed out at iteration %s: %s'
+                  % (doc.get('reached_iteration'),
+                     os.path.join(dead, '_run.json')), flush=True)
+            return doc
+    # A CRASH GETS NO RECORD - it has no boundary and no defensible reading.
+    # Its findings are still extracted while its bulk is fresh, and the
+    # cache re-trimmed, both unattended (9.137).
+    try:
+        results_store.process(os.path.basename(dead), extract=True)
+        results_store.trim(cfg.get('RUN.storage.raw_cap_gb'),
+                           grace_s=cfg.get('RUN.storage.extract_grace_s'))
+    except Exception as e:                               # noqa: BLE001
+        print('post-run processing failed: %s' % e, flush=True)
+    return dict(name=os.path.basename(dead), rc=rc, wall_s=round(wall, 1))
+
+
+def _finish_completed(run_dir, name, record, doc, wall, cfg):
+    """Write a completed run's record against its contract, then its summary
+    and the store's unattended upkeep."""
+    # The run record must meet its declared contract before it is written; a
+    # completed run without a config snapshot cannot state what produced it.
+    try:
+        outputs.write_checked(record, doc, 'run')
+    except outputs.OutputError as e:
+        raise SystemExit(str(e))
+    print('%s rc=0 wall=%.0fs median iteration %.1fs'
+          % (name, wall, doc['median_iteration_s'] or -1), flush=True)
+    # A finished run should not leave its telemetry, its log and three JSON files
+    # for someone to interpret. Close it out with a summary in both dialects -
+    # `_summary.json` against its declared schema, and `SUMMARY.md` for a person.
+    # It reports the state of the RUN and refuses to report a finding: no mode
+    # share, no fit statistic, no validation target. A failure here is logged and
+    # never raised, because the run itself succeeded and its record is written.
+    try:
+        summarise_run.summarise(run_dir)
+    except Exception as e:                                   # noqa: BLE001
+        print('summary could not be written: %s' % e, flush=True)
+    # findings into processed and the cache back under budget, unattended
+    # (9.137) - a completed run's readings survive any later trim
+    try:
+        results_store.process(name, extract=True)
+        results_store.trim(cfg.get('RUN.storage.raw_cap_gb'),
                                grace_s=cfg.get('RUN.storage.extract_grace_s'))
-        except Exception as e:                               # noqa: BLE001
-            print('post-run processing failed: %s' % e, flush=True)
-        return dict(name=os.path.basename(dead), rc=rc, wall_s=round(wall, 1))
+    except Exception as e:                                   # noqa: BLE001
+        print('post-run processing failed: %s' % e, flush=True)
+
+
+def run(scenario, day, cfg, overrides, force=False, warm=None,
+        registry_overrides=None):
+    src_dir = os.path.join(SETS, scenario, day)
+    if not os.path.isdir(src_dir):
+        raise SystemExit('no run inputs at %s' % src_dir)
+    reconcile_stale()
+    # the store maintains itself at every harness start: migrate anything
+    # legacy now; the raw cache is trimmed back under its declared budget on
+    # a daemon thread once the run is launched (#132 - at 671 GiB against a
+    # 500 GB cap the synchronous trim held the launch for the deletion)
+    _migrate_results_store()
+
+    (fraction, iterations, threads, xmx, seed, jfr,
+     gc_log) = _launch_settings(cfg)
+    warm_key = _warm_start_key(warm, scenario, day, fraction, seed, threads,
+                               overrides)
+
+    controler = controler_sha256()
+    values = values_sha256(cfg)
+    inputs = inputs_sha256(day)
+    prior = _resumable_prior(scenario, day, fraction, iterations, seed,
+                             overrides, controler, warm_key, values, inputs,
+                             force)
+    if prior is not None:
+        return prior
+
+    name = _new_run_name(iterations, fraction)
+    run_dir = results_store.raw_dir(name)
+    record = os.path.join(run_dir, '_run.json')
+    os.makedirs(run_dir, exist_ok=True)
+    meta = _launch_card(scenario, day, fraction, iterations, seed, threads,
+                        xmx, overrides, controler, inputs, warm_key)
+    config_path, sample, snapshot, classpath, main_class = _prepare_launch(
+        src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg, warm,
+        meta)
+    # THE CARD CARRIES EVERYTHING THE RECORD WILL NEED. A run stopped at a gate
+    # is closed out by whichever process survives the stop - this harness for a
+    # gate stop, `--stop`'s own process for an operator stop - and neither can
+    # reach the locals build_config() just produced. Stashing them on the card
+    # at launch is what lets a stopped run state its identity as completely as a
+    # run that reached its horizon, instead of leaving a directory that can only
+    # be re-derived from a log.
+    meta.update(
+        config_snapshot=os.path.relpath(snapshot, run_dir).replace(os.sep, '/'),
+        values_sha256=values, sample=sample)
+    write_meta(run_dir, meta)
+    log = os.path.join(run_dir, 'matsim.log')
+    cmd = _jvm_command(cfg, xmx, jfr, gc_log, run_dir, classpath, main_class,
+                       config_path)
+    rc, wall = _run_jvm(run_dir, cfg, cmd, log)
+    if rc != 0:
+        return _close_out_nonzero(run_dir, cfg, rc, wall)
+
     update_meta(run_dir, status='completed', ended=_now(), rc=0,
                 wall_s=round(wall, 1))
 
@@ -2537,32 +2659,7 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
                **sample)
     if warm_key:
         doc['warm_started_from'] = warm_key
-    # The run record must meet its declared contract before it is written; a
-    # completed run without a config snapshot cannot state what produced it.
-    try:
-        outputs.write_checked(record, doc, 'run')
-    except outputs.OutputError as e:
-        raise SystemExit(str(e))
-    print('%s rc=0 wall=%.0fs median iteration %.1fs'
-          % (name, wall, doc['median_iteration_s'] or -1), flush=True)
-    # A finished run should not leave its telemetry, its log and three JSON files
-    # for someone to interpret. Close it out with a summary in both dialects -
-    # `_summary.json` against its declared schema, and `SUMMARY.md` for a person.
-    # It reports the state of the RUN and refuses to report a finding: no mode
-    # share, no fit statistic, no validation target. A failure here is logged and
-    # never raised, because the run itself succeeded and its record is written.
-    try:
-        summarise_run.summarise(run_dir)
-    except Exception as e:                                   # noqa: BLE001
-        print('summary could not be written: %s' % e, flush=True)
-    # findings into processed and the cache back under budget, unattended
-    # (9.137) - a completed run's readings survive any later trim
-    try:
-        results_store.process(name, extract=True)
-        results_store.trim(cfg.get('RUN.storage.raw_cap_gb'),
-                               grace_s=cfg.get('RUN.storage.extract_grace_s'))
-    except Exception as e:                                   # noqa: BLE001
-        print('post-run processing failed: %s' % e, flush=True)
+    _finish_completed(run_dir, name, record, doc, wall, cfg)
     return doc
 
 

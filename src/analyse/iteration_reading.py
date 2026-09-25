@@ -44,6 +44,16 @@ CACHE_TABLES = 6
 _CACHE = collections.OrderedDict()
 
 
+def run_family(run_name):
+    """(family, note, label) of a run directory name, read from the declared
+    `docs/run_families.json` through build_run_index, never re-derived."""
+    from build_run_index import load_families, family_of    # noqa: PLC0415
+    fams, overrides = load_families()
+    family, fam_note = family_of(run_name, fams, overrides)
+    fam_label = next((f['label'] for k, f in fams if k == family), '')
+    return family, fam_note, fam_label
+
+
 def clear():
     """Forget every cached table (a long-lived process reading many runs)."""
     _CACHE.clear()

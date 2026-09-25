@@ -82,6 +82,7 @@ import sys
 import json
 import argparse
 import datetime
+import functools
 
 import registry as _registry                                    # noqa: E402
 import types as _types
@@ -684,6 +685,158 @@ def run_search_and_record(sc):
 
 
 
+def load_search_settings(a):
+    """Resolve the registry for the chosen scenario, day and run overlay and read
+    the objective and search settings, refusing count-based calibration.
+    Returns (the namespace plan_search takes, the convergence delta)."""
+    cfg = _registry.load(scenario=a.scenario, day=a.day, run=a.run_config)
+    comps = cfg.get('CAL.objective.components')
+    if cfg.get('CAL.objective.include_counts'):
+        raise SystemExit(
+            'CAL.objective.include_counts is true. DECISIONS.md 9.14 forbids '
+            'count-based calibration while boundary through traffic is '
+            'unrepresented. Record a departure there before setting it.')
+    n_free_allowed = int(cfg.get('CAL.objective.independent_targets'))
+    ppp = int(cfg.get('CAL.search.points_per_parameter'))
+    max_rounds = int(cfg.get('CAL.search.max_rounds'))
+    delta = float(cfg.get('CAL.search.convergence_delta'))
+    reading_drift = float(cfg.get('CAL.search.reading_drift_pct'))
+    pass_band = float(cfg.get('CAL.gate.pass_deviation_pct'))
+
+    pc = _types.SimpleNamespace(a=a, cfg=cfg, comps=comps, max_rounds=max_rounds, n_free_allowed=n_free_allowed, pass_band=pass_band, ppp=ppp, reading_drift=reading_drift)
+    return pc, delta
+
+
+def find_run(a, overrides):
+    """The completed run this candidate's overrides produced, if any.
+
+    DELEGATED, and deliberately so. This was a hand-rolled glob matching
+    `_run.json`'s `overrides` - the RAW MATSim `--set` channel - while
+    `evaluate()` sends its candidate through `--config-set`, the REGISTRY
+    channel. A candidate therefore recorded `overrides: {}`, never matched,
+    and the loop raised AFTER paying a full arm's wall clock. The copy also
+    missed `results/processed/`, where the store keeps findings for ever,
+    and accepted any record with `rc == 0`, so an arm stopped at its gate
+    could have become the calibrated base the README is drawn from.
+
+    `run_matsim.find_completed` answers all three and is the function resume
+    already trusts: it searches RAW, PROCESSED and RESULTS, it requires
+    `completion == ran_to_last_iteration` (9.143), and it compares
+    `values_sha256`, the fingerprint of every resolved registry value, which
+    is precisely what distinguishes one `--config-set` candidate from
+    another (9.104). A candidate is still located by what was actually run
+    and never by a name this loop invented - the same rule, now enforced by
+    the code that owns it.
+    """
+    cand = _run_matsim.resolve(a.scenario, a.day, a.run_config, overrides)
+    rec = _run_matsim.find_completed(
+        a.scenario, a.day,
+        cand.get('RUN.sample.fraction'),
+        cand.get('RUN.controler.last_iteration'),
+        cand.get('RUN.machine.seed'),
+        {},                    # this loop sends no raw `--set` overrides
+        # the controler and the run inputs are part of the identity: on
+        # values alone a run from the previous family - before a Java
+        # recompile or a run-input rebuild - matched this candidate, and
+        # the objective would have compared across the boundary 3.5
+        # forbids (ninth report, 14 September 2026, finding 22)
+        controler=_run_matsim.controler_sha256(),
+        inputs=_run_matsim.inputs_sha256(a.day),
+        values=_run_matsim.values_sha256(cand))
+    if not rec:
+        return None
+    # the record names the directory that actually holds it; the store
+    # knows where that is, whether raw or processed
+    return _results_store.resolve(rec['name'])
+
+
+def rebuild_run_inputs(a, overrides):
+    """Re-assemble this scenario x day's run inputs under the candidate.
+
+    A `run_inputs`-stage field (a mode constant, the gradient clamp) is only
+    real once the assembled set carries it: `run_matsim.py` runs a set out
+    of `scenarios/matsim/<S>/<DAY>/`, it does not re-derive one. The loop
+    listed `run_inputs` in STAGES_IMPLEMENTED and then never carried it
+    out, so such a candidate ran the SHIPPED value and the search compared
+    a parameter against itself.
+
+    This re-assembles ONLY the scenario and day under test, and only from
+    the ALREADY-MAPPED schedule - `build_matsim_run_inputs.py` filters
+    `transitRoute` ids off the existing mapping and never re-runs the
+    pt2matsim mapper, which DECISIONS.md 3.5 forbids inside a comparison.
+    Fields whose consumer DOES need the mapper are `forbidden`, not
+    `run_inputs`, and never reach here.
+
+    It writes into the committed, manifest-hashed assembled set, so the
+    caller restores the shipped assembly when the search ends.
+    """
+    import subprocess
+
+    r = subprocess.run(
+        [sys.executable, 'src/build/build_matsim_run_inputs.py',
+         '--scenarios', a.scenario, '--day-types', a.day]
+        + [x for k, v in sorted(overrides.items())
+           for x in ('--set', '%s=%s' % (k, v))])
+    if r.returncode != 0:
+        raise SystemExit('build_matsim_run_inputs.py failed (%d) while '
+                         'assembling a candidate' % r.returncode)
+
+
+def evaluate(a, cfg, comps, needs_run_inputs, history, label, overrides):
+    """One candidate: assemble if needed, run, extract, fit, score.
+
+    Resumable by its overrides.
+    """
+    import subprocess
+
+    # the declared pipeline, invoked exactly as a reader would by hand:
+    # build_matsim_run_inputs.py -> run_matsim.py -> extract_metrics.py -> fit.py
+    run_dir = find_run(a, overrides)
+    if run_dir is None:
+        if needs_run_inputs:
+            rebuild_run_inputs(a, overrides)
+        # `--config-set`, NOT `--set`. They are different channels and the
+        # loop was using the wrong one: `--config-set` takes a REGISTRY key,
+        # validates it against its declared sweep and refuses a held-fixed
+        # field; `--set` takes a RAW MATSim config key and
+        # `build_config` splits it on its first dot, so a registry key
+        # arriving there raised inside `set_mode_param` and the search died
+        # on its first candidate. `--execute` had therefore never completed
+        # one. The correct channel was always 40 lines away in
+        # solve_asc_ride.py, which resolves through the registry.
+        sets = []
+        for k, v in sorted(overrides.items()):
+            sets += ['--config-set', '%s=%s' % (k, v)]
+        r = subprocess.run([sys.executable, 'src/run/run_matsim.py',
+                            '--scenario', a.scenario, '--day', a.day,
+                            '--run-config', a.run_config] + sets)
+        if r.returncode != 0:
+            raise SystemExit('run_matsim.py failed (%d) for candidate %s'
+                             % (r.returncode, label))
+        run_dir = find_run(a, overrides)
+        if run_dir is None:
+            raise SystemExit('candidate %s ran but no completed run record '
+                             'carries its overrides' % label)
+    name = os.path.basename(run_dir)
+    fit_path = os.path.join(run_dir, '_fit.json')
+    if not os.path.exists(fit_path):
+        for step in ('src/analyse/extract_metrics.py', 'src/calibrate/fit.py'):
+            r = subprocess.run([sys.executable, step, '--run', name])
+            if r.returncode != 0:
+                raise SystemExit('%s failed (%d) for candidate %s'
+                                 % (step, r.returncode, label))
+    f = json.load(open(fit_path, encoding='utf-8'))
+    audit_no_holdout(f)
+    obj, parts = objective(f, comps, replication_band(cfg)[0])
+    ok, why = feasible(f)
+    rec = dict(tag=name, candidate=label, overrides=dict(overrides),
+               objective=obj, components=parts, feasible=ok,
+               constraint_violations=why)
+    history.append(rec)
+    print('   %-58s obj %8.4f %s' % (label, obj, '' if ok else '  INFEASIBLE'))
+    return rec
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -712,157 +865,26 @@ def main():
                                a.constrained_base)
         return
 
-    cfg = _registry.load(scenario=a.scenario, day=a.day, run=a.run_config)
-    comps = cfg.get('CAL.objective.components')
-    if cfg.get('CAL.objective.include_counts'):
-        raise SystemExit(
-            'CAL.objective.include_counts is true. DECISIONS.md 9.14 forbids '
-            'count-based calibration while boundary through traffic is '
-            'unrepresented. Record a departure there before setting it.')
-    n_free_allowed = int(cfg.get('CAL.objective.independent_targets'))
-    ppp = int(cfg.get('CAL.search.points_per_parameter'))
-    max_rounds = int(cfg.get('CAL.search.max_rounds'))
-    delta = float(cfg.get('CAL.search.convergence_delta'))
-    reading_drift = float(cfg.get('CAL.search.reading_drift_pct'))
-    pass_band = float(cfg.get('CAL.gate.pass_deviation_pct'))
-
-    pc = _types.SimpleNamespace(a=a, cfg=cfg, comps=comps, max_rounds=max_rounds, n_free_allowed=n_free_allowed, pass_band=pass_band, ppp=ppp, reading_drift=reading_drift)
+    pc, delta = load_search_settings(a)
     free, needs_run_inputs = plan_search(pc)
 
     if a.plan:
         print('\n--plan: nothing was run.')
         return
 
-    import subprocess
-
     history, current = [], {p['key']: p['value'] for p in free}
     best_obj, best_tag = None, None
     base = 'cal_%s_%s_%s' % (a.scenario, a.day, a.run_config)
 
-    def find_run(overrides):
-        """The completed run this candidate's overrides produced, if any.
-
-        DELEGATED, and deliberately so. This was a hand-rolled glob matching
-        `_run.json`'s `overrides` - the RAW MATSim `--set` channel - while
-        `evaluate()` sends its candidate through `--config-set`, the REGISTRY
-        channel. A candidate therefore recorded `overrides: {}`, never matched,
-        and the loop raised AFTER paying a full arm's wall clock. The copy also
-        missed `results/processed/`, where the store keeps findings for ever,
-        and accepted any record with `rc == 0`, so an arm stopped at its gate
-        could have become the calibrated base the README is drawn from.
-
-        `run_matsim.find_completed` answers all three and is the function resume
-        already trusts: it searches RAW, PROCESSED and RESULTS, it requires
-        `completion == ran_to_last_iteration` (9.143), and it compares
-        `values_sha256`, the fingerprint of every resolved registry value, which
-        is precisely what distinguishes one `--config-set` candidate from
-        another (9.104). A candidate is still located by what was actually run
-        and never by a name this loop invented - the same rule, now enforced by
-        the code that owns it.
-        """
-        cand = _run_matsim.resolve(a.scenario, a.day, a.run_config, overrides)
-        rec = _run_matsim.find_completed(
-            a.scenario, a.day,
-            cand.get('RUN.sample.fraction'),
-            cand.get('RUN.controler.last_iteration'),
-            cand.get('RUN.machine.seed'),
-            {},                    # this loop sends no raw `--set` overrides
-            # the controler and the run inputs are part of the identity: on
-            # values alone a run from the previous family - before a Java
-            # recompile or a run-input rebuild - matched this candidate, and
-            # the objective would have compared across the boundary 3.5
-            # forbids (ninth report, 14 September 2026, finding 22)
-            controler=_run_matsim.controler_sha256(),
-            inputs=_run_matsim.inputs_sha256(a.day),
-            values=_run_matsim.values_sha256(cand))
-        if not rec:
-            return None
-        # the record names the directory that actually holds it; the store
-        # knows where that is, whether raw or processed
-        return _results_store.resolve(rec['name'])
-
-    def rebuild_run_inputs(overrides):
-        """Re-assemble this scenario x day's run inputs under the candidate.
-
-        A `run_inputs`-stage field (a mode constant, the gradient clamp) is only
-        real once the assembled set carries it: `run_matsim.py` runs a set out
-        of `scenarios/matsim/<S>/<DAY>/`, it does not re-derive one. The loop
-        listed `run_inputs` in STAGES_IMPLEMENTED and then never carried it
-        out, so such a candidate ran the SHIPPED value and the search compared
-        a parameter against itself.
-
-        This re-assembles ONLY the scenario and day under test, and only from
-        the ALREADY-MAPPED schedule - `build_matsim_run_inputs.py` filters
-        `transitRoute` ids off the existing mapping and never re-runs the
-        pt2matsim mapper, which DECISIONS.md 3.5 forbids inside a comparison.
-        Fields whose consumer DOES need the mapper are `forbidden`, not
-        `run_inputs`, and never reach here.
-
-        It writes into the committed, manifest-hashed assembled set, so the
-        caller restores the shipped assembly when the search ends.
-        """
-        r = subprocess.run(
-            [sys.executable, 'src/build/build_matsim_run_inputs.py',
-             '--scenarios', a.scenario, '--day-types', a.day]
-            + [x for k, v in sorted(overrides.items())
-               for x in ('--set', '%s=%s' % (k, v))])
-        if r.returncode != 0:
-            raise SystemExit('build_matsim_run_inputs.py failed (%d) while '
-                             'assembling a candidate' % r.returncode)
-
-    def evaluate(label, overrides):
-        """One candidate: assemble if needed, run, extract, fit, score.
-
-        Resumable by its overrides.
-        """
-        # the declared pipeline, invoked exactly as a reader would by hand:
-        # build_matsim_run_inputs.py -> run_matsim.py -> extract_metrics.py -> fit.py
-        run_dir = find_run(overrides)
-        if run_dir is None:
-            if needs_run_inputs:
-                rebuild_run_inputs(overrides)
-            # `--config-set`, NOT `--set`. They are different channels and the
-            # loop was using the wrong one: `--config-set` takes a REGISTRY key,
-            # validates it against its declared sweep and refuses a held-fixed
-            # field; `--set` takes a RAW MATSim config key and
-            # `build_config` splits it on its first dot, so a registry key
-            # arriving there raised inside `set_mode_param` and the search died
-            # on its first candidate. `--execute` had therefore never completed
-            # one. The correct channel was always 40 lines away in
-            # solve_asc_ride.py, which resolves through the registry.
-            sets = []
-            for k, v in sorted(overrides.items()):
-                sets += ['--config-set', '%s=%s' % (k, v)]
-            r = subprocess.run([sys.executable, 'src/run/run_matsim.py',
-                                '--scenario', a.scenario, '--day', a.day,
-                                '--run-config', a.run_config] + sets)
-            if r.returncode != 0:
-                raise SystemExit('run_matsim.py failed (%d) for candidate %s'
-                                 % (r.returncode, label))
-            run_dir = find_run(overrides)
-            if run_dir is None:
-                raise SystemExit('candidate %s ran but no completed run record '
-                                 'carries its overrides' % label)
-        name = os.path.basename(run_dir)
-        fit_path = os.path.join(run_dir, '_fit.json')
-        if not os.path.exists(fit_path):
-            for step in ('src/analyse/extract_metrics.py', 'src/calibrate/fit.py'):
-                r = subprocess.run([sys.executable, step, '--run', name])
-                if r.returncode != 0:
-                    raise SystemExit('%s failed (%d) for candidate %s'
-                                     % (step, r.returncode, label))
-        f = json.load(open(fit_path, encoding='utf-8'))
-        audit_no_holdout(f)
-        obj, parts = objective(f, comps, replication_band(cfg)[0])
-        ok, why = feasible(f)
-        rec = dict(tag=name, candidate=label, overrides=dict(overrides),
-                   objective=obj, components=parts, feasible=ok,
-                   constraint_violations=why)
-        history.append(rec)
-        print('   %-58s obj %8.4f %s' % (label, obj, '' if ok else '  INFEASIBLE'))
-        return rec
-
-    sc = _types.SimpleNamespace(a=a, base=base, best_obj=best_obj, best_tag=best_tag, comps=comps, current=current, delta=delta, evaluate=evaluate, free=free, history=history, max_rounds=max_rounds, n_free_allowed=n_free_allowed, needs_run_inputs=needs_run_inputs, ppp=ppp, rebuild_run_inputs=rebuild_run_inputs)
+    sc = _types.SimpleNamespace(
+        a=a, base=base, best_obj=best_obj, best_tag=best_tag, comps=pc.comps,
+        current=current, delta=delta,
+        evaluate=functools.partial(evaluate, a, pc.cfg, pc.comps,
+                                   needs_run_inputs, history),
+        free=free, history=history, max_rounds=pc.max_rounds,
+        n_free_allowed=pc.n_free_allowed, needs_run_inputs=needs_run_inputs,
+        ppp=pc.ppp,
+        rebuild_run_inputs=functools.partial(rebuild_run_inputs, a))
     run_search_and_record(sc)
     best_obj = sc.best_obj
 

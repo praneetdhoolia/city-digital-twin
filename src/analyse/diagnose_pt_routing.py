@@ -75,6 +75,7 @@ import json
 import math
 import random
 import re
+import types as _types
 import xml.etree.ElementTree as ET
 
 import city as _city
@@ -488,13 +489,9 @@ def busiest_hour(conns):
     return hours.most_common(1)[0][0] if hours else 0
 
 
-def diagnose(run_dir, sample_size):
-    config_xml = _os.path.join(run_dir, 'config.xml')
-    if not _os.path.exists(config_xml):
-        raise Missing('%s has no emitted config.xml; the run cannot be '
-                      'diagnosed from anything else' % run_dir)
-    params = _params(config_xml)
-
+def _declared_router_config(params):
+    """The raptor's parameters as the run declared them in its emitted
+    config. Returns (cfg, the pt mode)."""
     scoring = params.get('scoring', {})
     performing = float(scoring['performing'])
     transit_router = params.get('transitRouter', {})
@@ -532,7 +529,12 @@ def diagnose(run_dir, sample_size):
         line_switch=-float(scoring['utilityOfLineSwitch']),
         direct_walk_basis=params.get('ptDirectWalk', {}).get('basis'),
     )
+    return cfg, pt_mode
 
+
+def _request_sample(run_dir, params, pt_mode, sample_size):
+    """The run's schedule and its all-pt trips, sampled in the run's own seed.
+    Returns (schedule, stops, conns, trips, seed, chosen)."""
     schedule = _rehome(params.get('transit', {}).get('transitScheduleFile'))
     if schedule is None:
         raise Missing('the run\'s transit schedule is not on disk')
@@ -559,11 +561,12 @@ def diagnose(run_dir, sample_size):
                       'a measurement anyone can repeat')
     chosen = (trips if len(trips) <= sample_size
               else random.Random(seed).sample(trips, sample_size))
+    return schedule, stops, conns, trips, seed, chosen
 
-    router = Router(stops, conns, cfg)
-    peak_hour = busiest_hour(conns)
-    peak = peak_hour * 3600.0
 
+def _route_sample(router, chosen, cfg, peak):
+    """Route every sampled trip offline and tally no-routes, walk wins,
+    access distances and beeline lengths, by departure hour."""
     by_hour = collections.Counter()
     no_route_hour = collections.Counter()
     walk_won_hour = collections.Counter()
@@ -607,7 +610,27 @@ def diagnose(run_dir, sample_size):
             walk_won_km.append(beeline_km)
         else:
             transit_won_km.append(beeline_km)
+    return _types.SimpleNamespace(
+        by_hour=by_hour, no_route_hour=no_route_hour,
+        walk_won_hour=walk_won_hour, no_route=no_route, walk_won=walk_won,
+        found=found, structural=structural, lower_no_route=lower_no_route,
+        access_m=access_m, beyond_radius=beyond_radius,
+        walk_won_km=walk_won_km, transit_won_km=transit_won_km,
+        no_route_km=no_route_km, sweep=sweep, factors=factors)
 
+
+def _report(run_dir, cfg, schedule, stops, conns, trips, seed, peak_hour,
+            chosen, t):
+    """The diagnosis as one dict: the log's own counters, the declared
+    values, the no-route bracket, walk wins, lengths, access and the
+    per-hour table."""
+    by_hour, no_route_hour = t.by_hour, t.no_route_hour
+    walk_won_hour, no_route = t.walk_won_hour, t.no_route
+    walk_won, found, structural = t.walk_won, t.found, t.structural
+    lower_no_route, access_m = t.lower_no_route, t.access_m
+    beyond_radius, walk_won_km = t.beyond_radius, t.walk_won_km
+    transit_won_km, no_route_km = t.transit_won_km, t.no_route_km
+    sweep, factors = t.sweep, t.factors
     total = len(chosen)
     # Two threshold-free cuts. The first is the group that CANNOT have a
     # route whatever the router does - it asks for a vehicle after the last
@@ -668,6 +691,26 @@ def diagnose(run_dir, sample_size):
                       walk_won_pct=(100.0 * walk_won_hour[h]
                                     / max(1, by_hour[h] - no_route_hour[h])))
                  for h in sorted(by_hour)])
+
+
+def diagnose(run_dir, sample_size):
+    config_xml = _os.path.join(run_dir, 'config.xml')
+    if not _os.path.exists(config_xml):
+        raise Missing('%s has no emitted config.xml; the run cannot be '
+                      'diagnosed from anything else' % run_dir)
+    params = _params(config_xml)
+
+    cfg, pt_mode = _declared_router_config(params)
+    schedule, stops, conns, trips, seed, chosen = _request_sample(
+        run_dir, params, pt_mode, sample_size)
+
+    router = Router(stops, conns, cfg)
+    peak_hour = busiest_hour(conns)
+    peak = peak_hour * 3600.0
+
+    t = _route_sample(router, chosen, cfg, peak)
+    return _report(run_dir, cfg, schedule, stops, conns, trips, seed,
+                   peak_hour, chosen, t)
 
 
 def _print(report):
