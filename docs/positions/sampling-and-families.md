@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 23 September 2026 (sixty-second session) · **Record read through:** §9.212 · **Written against family:** `F36`
+**Updated:** 25 September 2026 (sixty-third session) · **Record read through:** §9.213 · **Written against family:** `F37`
 
 ## What is built
 
@@ -56,7 +56,8 @@ A family boundary is a recorded model, data or network change after which nothin
 | `F33-the-passenger-is-put-on-ride` | 20260910T203622 | demand rebuilt: `B.mode.bound_passenger_placement` = `every_plan`, the placement loop no longer discards a day, `routingMode` on every leg; opened at probe `20260910T203622`; no reading | §9.164 |
 | `F34-walk-has-a-footpath-network` | 20260912T062457 | the footpath network (40,203 ways, 181,892 → 368,230 links), pt access/egress walks executed (#167), crossings with Cobbora freight (#184); CLOSED with no arm | §9.167, §9.168 |
 | `F35-the-engines-route-what-they-remode` | 20260912T184108 | the taxi and ride engines route what they re-mode; opened at the FIX; arm 0 `20260912T202242_300it_25pct` ran to 300 in 30.35 h, a RESULT | §9.168, §9.169 |
-| `F36-the-passenger-is-held-and-bike-pays-for-distance` | 20260922T210005 | the roots rebuild: `heldRideTrips` (D12, #86), bike's derived distance cost (D9, #107), the household tail derived (#196), the ferry target on the disclosed tap-ons (D8, #94), standing room scaled (#237); opened at the REBUILD; no reading | §9.211 |
+| `F36-the-passenger-is-held-and-bike-pays-for-distance` | 20260922T210005 | the roots rebuild: `heldRideTrips` (D12, #86), bike's derived distance cost (D9, #107), the household tail derived (#196), the ferry target on the disclosed tap-ons (D8, #94), standing room scaled (#237); closed with no result - arm 0 stopped at 237 by a host restart, read at 230 | §9.211, §9.213 |
+| `F37-the-boundary-tier-returns-and-pt-reaches-every-stop` | 20260925T192302 | the external tier written again, the pt access ceiling measured (55,600 m, was 1,200), the taxi wait executed; opened at the PLANS REBUILD; no reading | §9.213 |
 
 Overrides in the file: three dead 30 Aug launches are attributed by name (`aborted_20260830T163010_300it_10pct` to F18; `aborted_20260830T170153_300it_10pct` and `aborted_20260830T170743_300it_10pct` to F19); `aborted_20260818T162538_1000it_25pct` is left unattributed because the record cannot settle it.
 
@@ -65,11 +66,10 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 - **"One build per comparison" was broken at the READER, not the mapper** (§9.169): `extract_metrics` read pt submodes through the city's schedule path, overwritten by the F34 rebuild; every reader now opens the run's own `output/output_transitSchedule.xml.gz`.
 - pt2matsim: stop-to-link assignment agrees 100.000 % between builds, route link sequences 81.9–82.3 % (§3.5); one build per comparison.
 - Bucket width costs candidate supply, not bound trips (§9.129: 98,549 → 73,509 servable at 0.05, bound 59,7xx throughout).
-- The last asserted sample was 62,134 of 620,553 persons, 10.01 % (§9.127); the population has since been rebuilt (§9.131) and arm 0 kept 155,233 of 622,318 at 25 % (`20260912T202242_300it_25pct`, §9.169).
 
 ## What is open
 
-- **F36 is open and has NO reading** (§9.211, §9.212): opened at the demand rebuild `20260922T210005`; priced by its own probe; arm 0 `20260923T034632_250it_25pct` is running and reads nothing until its record. It carries five measurements at once: `measure_bound_trips.py` on the held passengers, bike's mean trip by car availability, the household-size draw, the ferry on a boardings target, and #237's peak standing occupancy (the first arm ever with standing room scaled).
+- **F37 is open and has NO reading** (§9.213): opened at the plans rebuild `20260925T192302`; priced by its own probe (`f37_pricing_probe_25pct`); arm 0 (`f37_baseline_25pct`, 34 h ceiling) carries F36's five measurements plus the no-route share, walk's mean trip, taxi with its wait executed and the external tier's boundary trips. #237's peak standing occupancy still has no reader.
 - **F35 is CLOSED with three results** and compares with nothing after `20260922T210005`.
 - **F35's three results are closed history** (§9.168, §9.169, §9.176, §9.177): arm 0 `20260912T202242_300it_25pct`, the routers pair `20260915T000704_250it_25pct` and the scoring pair `20260916T063903_250it_25pct`, each a RESULT, each citable inside F35 and against nothing after it.
 - Whether a separate 25 % confirmation arm is still needed now that the loop runs at 25 % (§9.129) is the user's call at convergence.
@@ -90,6 +90,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## History
 
+- §9.213 — F36 closes, F37 opens
 - §9.212 — F36 priced; arm 0 running
 - §9.211 — F36 opens at the roots rebuild
 - §9.206 — transit PCE scaled; 1 % gridlock 
@@ -104,4 +105,3 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 - §9.164 — F33 opens at the probe; the demand is rebuilt
 - §9.160 — F32 opens at the probe; crowding reaches scoring
 - §9.158 — no launch, so no family row; the next arm opens one
-- §9.157 — F31's first arm stopped at its gate at iteration 100

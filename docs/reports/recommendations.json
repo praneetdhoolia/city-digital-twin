@@ -565,9 +565,9 @@
    "repeat_of": null,
    "opens_family": true,
    "category": "model",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.213",
+   "updated": "2026-09-25"
   },
   {
    "id": "20260925T182313:2",
@@ -577,9 +577,9 @@
    "repeat_of": null,
    "opens_family": true,
    "category": "model",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.213",
+   "updated": "2026-09-25"
   },
   {
    "id": "20260925T182313:3",
@@ -589,9 +589,9 @@
    "repeat_of": 1,
    "opens_family": true,
    "category": "model",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.213",
+   "updated": "2026-09-25"
   },
   {
    "id": "20260925T182313:4",
@@ -625,9 +625,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.213",
+   "updated": "2026-09-25"
   },
   {
    "id": "20260925T182313:7",
@@ -637,9 +637,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.213",
+   "updated": "2026-09-25"
   },
   {
    "id": "20260925T182313:8",
@@ -649,9 +649,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.213",
+   "updated": "2026-09-25"
   },
   {
    "id": "20260925T182313:9",
@@ -685,9 +685,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "process",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.213",
+   "updated": "2026-09-25"
   },
   {
    "id": "20260925T182313:12",
@@ -721,9 +721,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "process",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.213",
+   "updated": "2026-09-25"
   },
   {
    "id": "20260925T182313:15",

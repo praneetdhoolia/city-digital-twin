@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 22 September 2026 (sixty-first session) · **Record read through:** §9.211 · **Written against family:** `F35`
+**Updated:** 25 September 2026 (sixty-third session) · **Record read through:** §9.213 · **Written against family:** `F37`
 
 ## What is built
 
@@ -42,11 +42,10 @@
 
 ## The state on disk
 
-- **The demand is rebuilt at its roots and the 30 run-input sets with it** (§9.211): WEEKDAY **616,040 persons, 2,331,650 selected-plan legs, 1,095,994 tours** (`_plans_report.json`); **612,667** synthetic persons in 247,596 households. Family **F36** opened on it and nothing has run on it.
+- **The plans carry every tier again** (§9.213): WEEKDAY **622,143 persons** (core 510,383, external 6,103, through 16,264, freight 89,393), **2,343,856 selected-plan legs, 1,102,097 tours** (`_plans_report.json` `persons_by_tier`); the F36 plans held 616,040 because the 16 September staging dropped the external tier, and the builder now refuses a plan that loses any tier's agents. **612,667** synthetic persons in 247,596 households (§9.211). Family **F37** opened on it (`20260925T192302`).
 
 ## What is measured
 
-- **Arm 0 — the roster and the occupancy** (§9.169, `20260912T202242_300it_25pct`): **18,767** drivers waited for a household car on the last iteration, from **15,580** on F32 (#145); occupancy **0.1871** against 0.3503, OUTSIDE [0.2493, 0.394]; `occupancy_from_pairings` 0.1645.
 - **The short-trip SUPPLY was unchanged on every F35 result** (§9.169, §9.177, #30): the sub-1 km share read 11.13 % routed and resident walk trips averaged **3.74 km** against **0.70** observed — −12.2 % on the scoreboard, +434 % on geometry. F36's arm 0 re-reads it.
 - **The roster binds harder as the search converges** (§9.163, #145): on `20260909T015217_300it_25pct` **8,550** drivers waited on the first iteration and **15,580** on the last; car jumped +2.211 pp at the innovation cutoff alone.
 - **The modelled mode × demographics table exists** (§9.163, #50; `_mode_by_demographics.json`): no licence — car 0.0 %, ride 50.9 %, walk 27.6 % (74,243 trips); licence — car 82.5 %, ride 6.1 % (467,836). The modelled half only; the observed counterpart is #50's acquisition.
@@ -79,6 +78,7 @@
 
 ## History
 
+- §9.213 — the external tier restored
 - §9.211 — the household tail derived
 - §9.209 — printed timetables; possession; grades
 - §9.177 — bound trips read; D12 the rebuild
@@ -93,4 +93,3 @@
 - §9.146 — a household drives the cars it owns
 - §9.144 — binder driver must own a car
 - §9.143 — per-trip seeded modes
-- §9.142 — demand rebuilt on balanced destinations

@@ -264,7 +264,7 @@ results/                     run outputs (gitignored): raw/ the budgeted cache, 
 
 cities/mumbai/               THE SECOND CITY - its acquisitions, harvests, provisional registry and development case
 cities/newcastle/            THE FIRST CITY - every Newcastle/NSW/Australia-specific input
-  registry/                  the 575 declared values, with units, provenance, sweeps
+  registry/                  the 579 declared values, with units, provenance, sweeps
   overlays/scenarios|day|runs  per-scenario, per-day-type and per-run value overlays
   extract/                   acquisition adapters: ABS, TfNSW Open Data, Overpass
   build/                     builders that encode THIS city's intervention, corridor and geography
