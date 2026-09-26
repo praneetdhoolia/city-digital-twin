@@ -192,12 +192,9 @@ def sec(t):
     return h * 3600 + m * 60 + s
 
 
-def build():
-    stops, st, trips, shapes = read_lr()
-    sname = {s['stop_id']: s['stop_name'].replace(' Light Rail', '') for s in stops}
-    sll = {s['stop_id']: (float(s['stop_lat']), float(s['stop_lon'])) for s in stops}
-    tmap = {t['trip_id']: t for t in trips}
-
+def alignment_lengths(shapes):
+    """The GTFS shape points grouped by shape (sorted by sequence) and each
+    shape's true alignment length in metres; returns (byshape, shp_len)."""
     # true alignment length per direction
     byshape = collections.defaultdict(list)
     for r in shapes:
@@ -207,7 +204,12 @@ def build():
         rows.sort(key=lambda r: int(r['shape_pt_sequence']))
         pts = [(float(r['shape_pt_lat']), float(r['shape_pt_lon'])) for r in rows]
         shp_len[sid] = sum(hav(a, b) for a, b in zip(pts, pts[1:]))
+    return byshape, shp_len
 
+
+def segment_runtimes(st, tmap, sll, sname, shp_len):
+    """Scheduled against kinematic run time for each stop-to-stop segment of one
+    representative trip per direction, spacing scaled to the true shape length."""
     bytrip = collections.defaultdict(list)
     for r in st:
         bytrip[r['trip_id']].append(r)
@@ -242,7 +244,12 @@ def build():
                 line_speed_kmh=VEHICLE['line_speed_kmh'],
                 distance_source='gtfs_shape_scaled',
                 kinematic_source='computed'))
+    return seg_rows
 
+
+def residual_allocation(seg_rows):
+    """Each direction's run-time residual split into dwell and signal-plus-recovery;
+    returns (intermediate stop count, residual per direction, allocation)."""
     # ---- residual allocation across dwell / signals / recovery ----
     # For each direction: total residual = sum over segments. Intermediate stops
     # carry fixed + charging dwell; the rest is attributed to signal delay and
@@ -260,7 +267,11 @@ def build():
                         dwell_total_s=round(dwell_total, 1),
                         signal_and_recovery_s=round(remainder, 1),
                         n_intermediate_stops=n_int)
+    return n_int, per_dir, alloc
 
+
+def stop_dwell_rows():
+    """The A4 stop dwell model: one row per corridor stop."""
     # ---- A4 stop dwell model ----
     dwell_rows = []
     for i, s in enumerate(LR_STOPS_ORDER):
@@ -280,7 +291,12 @@ def build():
             layover_s=180 if terminus else 0,
             source='assumed',
             acquisition_route='field measurement, or GTFS-Realtime dwell inference'))
+    return dwell_rows
 
+
+def corridor_signal_clusters(byshape):
+    """OSM signal nodes near the light rail shape, clustered into intersections
+    west to east, as (distance to alignment, node record, centre)."""
     # ---- A2 corridor signal control (SCATS proxy) ----
     # Signalised intersections along the alignment, taken from the OSM signal
     # inventory filtered to a 60 m buffer of the light rail shape.
@@ -317,6 +333,11 @@ def build():
               'n_approach_nodes': len(c['members'])},
              c['centre']) for c in clusters]
     sigs.sort(key=lambda x: x[2][1])
+    return sigs
+
+
+def corridor_signal_rows(sigs):
+    """The base (S2) A2 signal rows, each matched to the observed SCATS inventory."""
     scats = load_scats_inventory()
     sig_rows = []
     for i, (dmin, r, ll) in enumerate(sigs):
@@ -339,6 +360,11 @@ def build():
             tsp_max_extension_s=0,
             mean_delay_to_tram_s=round(SIG_CYCLE_S * 0.5 * SIG_DELAY_SHARE, 1),
             source='assumed', scenario_variant_ref='S2_base'))
+    return sig_rows
+
+
+def signal_variant_rows(sig_rows):
+    """The S2b, S0, S2c and S3 signal variants derived from the base rows."""
     # S2b variant: full transit signal priority on the corridor
     tsp_rows = []
     for r in sig_rows:
@@ -383,24 +409,24 @@ def build():
                  mean_delay_to_tram_s=round(float(r['mean_delay_to_tram_s']) * TSP_DELAY_FACTOR, 1),
                  source='assumed', scenario_variant_ref='S3_brt_priority')
         brt_rows.append(q)
+    return tsp_rows, no_tram_rows, reserved_rows, brt_rows
 
-    def w(name, rows):
-        if not rows:
-            print('  (empty) %s' % name)
-            return
-        cols = list(dict.fromkeys(k for x in rows for k in x))
-        with open(os.path.join(OUT, name), 'w', newline='', encoding='utf-8') as fh:
-            wr = csv.DictWriter(fh, fieldnames=cols, extrasaction='ignore', lineterminator='\n')
-            wr.writeheader()
-            wr.writerows(rows)
-        print('  wrote %-38s %d rows' % (name, len(rows)))
 
-    w('A4_vehicle_spec.csv', [VEHICLE])
-    w('A4_stop_dwell_model.csv', dwell_rows)
-    w('A4_segment_runtime_decomposition.csv', seg_rows)
-    w('A2_signal_control_corridor.csv',
-      sig_rows + tsp_rows + no_tram_rows + reserved_rows + brt_rows)
+def write_layer(name, rows):
+    """Write one corridor layer CSV under OUT (columns in first-seen order)."""
+    if not rows:
+        print('  (empty) %s' % name)
+        return
+    cols = list(dict.fromkeys(k for x in rows for k in x))
+    with open(os.path.join(OUT, name), 'w', newline='', encoding='utf-8') as fh:
+        wr = csv.DictWriter(fh, fieldnames=cols, extrasaction='ignore', lineterminator='\n')
+        wr.writeheader()
+        wr.writerows(rows)
+    print('  wrote %-38s %d rows' % (name, len(rows)))
 
+
+def corridor_report(shp_len, seg_rows, per_dir, alloc, sig_rows, n_int):
+    """The corridor report: alignment, run-time decomposition and signal summary."""
     rep = dict(alignment_length_m={k: round(v, 1) for k, v in shp_len.items()},
                scheduled_end_to_end_s={d: sum(r['scheduled_runtime_s'] for r in seg_rows
                                               if r['direction_id'] == d) for d in per_dir},
@@ -419,6 +445,34 @@ def build():
                    d: round(DWELL_DEFAULTS['dwell_charging_s'] * n_int /
                             sum(r['scheduled_runtime_s'] for r in seg_rows
                                 if r['direction_id'] == d) * 100, 1) for d in per_dir})
+    return rep
+
+
+def build():
+    stops, st, trips, shapes = read_lr()
+    sname = {s['stop_id']: s['stop_name'].replace(' Light Rail', '') for s in stops}
+    sll = {s['stop_id']: (float(s['stop_lat']), float(s['stop_lon'])) for s in stops}
+    tmap = {t['trip_id']: t for t in trips}
+
+    byshape, shp_len = alignment_lengths(shapes)
+
+    seg_rows = segment_runtimes(st, tmap, sll, sname, shp_len)
+
+    n_int, per_dir, alloc = residual_allocation(seg_rows)
+
+    dwell_rows = stop_dwell_rows()
+
+    sigs = corridor_signal_clusters(byshape)
+    sig_rows = corridor_signal_rows(sigs)
+    tsp_rows, no_tram_rows, reserved_rows, brt_rows = signal_variant_rows(sig_rows)
+
+    write_layer('A4_vehicle_spec.csv', [VEHICLE])
+    write_layer('A4_stop_dwell_model.csv', dwell_rows)
+    write_layer('A4_segment_runtime_decomposition.csv', seg_rows)
+    write_layer('A2_signal_control_corridor.csv',
+                sig_rows + tsp_rows + no_tram_rows + reserved_rows + brt_rows)
+
+    rep = corridor_report(shp_len, seg_rows, per_dir, alloc, sig_rows, n_int)
     json.dump(rep, open(os.path.join(OUT, '_corridor_report.json'), 'w', newline='\n'), indent=2)
     print(json.dumps(rep, indent=2))
 

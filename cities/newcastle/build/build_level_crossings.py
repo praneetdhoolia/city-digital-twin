@@ -287,16 +287,9 @@ def read_rail_links(path):
     return out
 
 
-def main():
-    os.makedirs(OUT_DIR, exist_ok=True)
-    booms = project(boom_crossing_nodes())
-    clusters = cluster(booms, CLUSTER_M)
-    nodes, car_links = read_network(BASE_NETWORK)
-    corridor_pts = corridor_intersections()
-
-    # named-road candidate links, geometry-resolved per link
-    named = [l for l in car_links if l['name'] in set(ROAD_NAMES)]
-
+def match_sites(clusters, named, nodes):
+    """One site per declared road name: the boom cluster nearest a link of
+    that name, and every such link within the match radius of it."""
     sites = []
     for name in ROAD_NAMES:
         cands = [l for l in named if l['name'] == name]
@@ -328,7 +321,12 @@ def main():
                           osm_nodes=[m['osm_node_id'] for m in c['members']],
                           barriers=sorted({m['barrier'] for m in c['members']}),
                           links=site_links))
+    return sites
 
+
+def assert_clear_of_corridor(sites, corridor_pts):
+    """Record each site's nearest corridor intersection; refuse one inside
+    the exclusion distance (the Stewart Avenue rule, 9.75)."""
     # ---- the Stewart Avenue rule (9.75): refuse a closure near the tram ----
     # The light-rail crossing is a T-aspect SIGNAL site (#73's mechanism, never
     # a boom gate). Asserted against the corridor's own A2 intersection set -
@@ -347,47 +345,68 @@ def main():
                 'T-aspect signal site (#73), never a boom-gate closure (9.75).'
                 % (site['road_name'], d_tram, nearest_id, CORRIDOR_EXCLUSION_M))
 
-    # ---- emit the change events ----
-    # Under `schedule_derived` (9.90, the default) a closure is emitted for
-    # every SCHEDULED TRAIN that crosses, at the time the timetable says it
-    # crosses - so the count is per site (110 at Adamstown, 204 at Islington)
-    # and the pattern is peaked where the service is peaked. Non-timetabled
-    # freight is added uniformly on top, and is zero by default because the
-    # coal chain is grade-separated (9.70).
-    #
-    # Under `assumed_uniform` - every arm before 9.90 - closures are spread
-    # EVENLY across the declared window because no closure log is published,
-    # uniform spacing being the least-informative deterministic choice, with
-    # the sites PHASE-OFFSET from each other so one boom is not the other's.
-    w0, w1 = [h * 3600.0 for h in CLOSURE_WINDOW_H]
-    n = int(CLOSURES_PER_DAY)
-    interval = (w1 - w0) / n
-    derived = CLOSURE_SOURCE == 'schedule_derived'
+
+def attach_rail_timetable(sites, nodes):
+    """Give each site its mapped rail links and the scheduled times a train
+    crosses it; refuse a site with no rail link or no movement."""
+    rail = read_rail_links(BASE_NETWORK)
+    text = gzip.open(SCHEDULE, 'rt', encoding='utf-8').read()
+    fac = {m.group(1): (float(m.group(2)), float(m.group(3)))
+           for m in re.finditer(
+               r'<stopFacility id="([^"]+)"[^>]*x="([^"]+)"[^>]*y="([^"]+)"',
+               text)}
+    for site in sites:
+        site['rail_links'] = sorted(rail_links_near(
+            site['x'], site['y'], nodes, rail))
+        if not site['rail_links']:
+            raise SystemExit(
+                'no mapped rail link lies within %g m of the level '
+                'crossing on %r. A crossing with no railway is not a '
+                'crossing - resolve before emitting closures.'
+                % (RAIL_MATCH_M, site['road_name']))
+        site['closure_times_s'] = rail_movements(
+            site, set(site['rail_links']), text, fac)
+        if not site['closure_times_s']:
+            raise SystemExit(
+                'the mapped rail links at the crossing on %r carry NO '
+                'scheduled movement. Either the schedule mapping missed '
+                'the line or the links are the wrong ones; a silent zero '
+                'here would delete the crossing from the model.'
+                % site['road_name'])
+
+
+def closure_spans(site, si, n_sites, derived, w0, w1, n, interval):
+    """The unmerged (start, end) closure spans of one site, in seconds: per
+    scheduled train plus uniform freight, or uniform phase-offset closures."""
+    spans = []
     if derived:
-        rail = read_rail_links(BASE_NETWORK)
-        text = gzip.open(SCHEDULE, 'rt', encoding='utf-8').read()
-        fac = {m.group(1): (float(m.group(2)), float(m.group(3)))
-               for m in re.finditer(
-                   r'<stopFacility id="([^"]+)"[^>]*x="([^"]+)"[^>]*y="([^"]+)"',
-                   text)}
-        for site in sites:
-            site['rail_links'] = sorted(rail_links_near(
-                site['x'], site['y'], nodes, rail))
-            if not site['rail_links']:
-                raise SystemExit(
-                    'no mapped rail link lies within %g m of the level '
-                    'crossing on %r. A crossing with no railway is not a '
-                    'crossing - resolve before emitting closures.'
-                    % (RAIL_MATCH_M, site['road_name']))
-            site['closure_times_s'] = rail_movements(
-                site, set(site['rail_links']), text, fac)
-            if not site['closure_times_s']:
-                raise SystemExit(
-                    'the mapped rail links at the crossing on %r carry NO '
-                    'scheduled movement. Either the schedule mapping missed '
-                    'the line or the links are the wrong ones; a silent zero '
-                    'here would delete the crossing from the model.'
-                    % site['road_name'])
+        # One closure per scheduled train, at the time it crosses, for the
+        # PASSENGER duration - the per-train figure, not the coal-train
+        # one (9.90).
+        for start in site['closure_times_s']:
+            start = min(max(start, w0), w1 - CLOSURE_DURATION_PASSENGER_S)
+            spans.append((start, start + CLOSURE_DURATION_PASSENGER_S))
+        # Non-timetabled freight on top, spread evenly because no movement
+        # log is published - zero by default on 9.70's grade separation -
+        # and at the FREIGHT duration, which is what that 240 s describes.
+        nf = int(FREIGHT_CLOSURES[site['road_name']]
+                 if isinstance(FREIGHT_CLOSURES, dict) else FREIGHT_CLOSURES)
+        for i in range(nf):
+            start = w0 + (i + 0.5) * ((w1 - w0) / max(1, nf))
+            start = min(start, w1 - CLOSURE_DURATION_S)
+            spans.append((start, start + CLOSURE_DURATION_S))
+    else:
+        for i in range(n):
+            start = w0 + (i + 0.5 + si / max(1, n_sites)) * interval
+            if start + CLOSURE_DURATION_S > w1:
+                start = w1 - CLOSURE_DURATION_S
+            spans.append((start, start + CLOSURE_DURATION_S))
+    return spans
+
+
+def change_events_xml(events):
+    """The networkChangeEvents document for time-sorted closures: one close
+    event per span and one restore per link; returns (root, event count)."""
     root = ET.Element('networkChangeEvents',
                       {'xmlns': 'http://www.matsim.org/files/dtd',
                        'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
@@ -395,42 +414,6 @@ def main():
                            'http://www.matsim.org/files/dtd '
                            'http://www.matsim.org/files/dtd/networkChangeEvents.xsd'})
     n_events = 0
-    events = []
-    for si, site in enumerate(sites):
-        spans = []
-        if derived:
-            # One closure per scheduled train, at the time it crosses, for the
-            # PASSENGER duration - the per-train figure, not the coal-train
-            # one (9.90).
-            for start in site['closure_times_s']:
-                start = min(max(start, w0), w1 - CLOSURE_DURATION_PASSENGER_S)
-                spans.append((start, start + CLOSURE_DURATION_PASSENGER_S))
-            # Non-timetabled freight on top, spread evenly because no movement
-            # log is published - zero by default on 9.70's grade separation -
-            # and at the FREIGHT duration, which is what that 240 s describes.
-            nf = int(FREIGHT_CLOSURES[site['road_name']]
-                     if isinstance(FREIGHT_CLOSURES, dict) else FREIGHT_CLOSURES)
-            for i in range(nf):
-                start = w0 + (i + 0.5) * ((w1 - w0) / max(1, nf))
-                start = min(start, w1 - CLOSURE_DURATION_S)
-                spans.append((start, start + CLOSURE_DURATION_S))
-        else:
-            for i in range(n):
-                start = w0 + (i + 0.5 + si / max(1, len(sites))) * interval
-                if start + CLOSURE_DURATION_S > w1:
-                    start = w1 - CLOSURE_DURATION_S
-                spans.append((start, start + CLOSURE_DURATION_S))
-        # A boom that is already down STAYS down. Two trains inside one
-        # closure are one closure, not two, and emitting them separately would
-        # reopen the road between them - and would hand MATSim two change
-        # events on one link at overlapping times, which its time-variant
-        # network refuses outright ("Expected number of change events (408)
-        # differs from the number of events found (375)", measured on the
-        # first derived probe). Merging is both the physical truth and the
-        # thing that makes the accounting close.
-        site['closure_spans_s'] = merge_spans(spans)
-        for start, end in site['closure_spans_s']:
-            events.append((start, end, site))
     for start, end, site in sorted(events, key=lambda t: (t[0], t[1])):
         close = ET.SubElement(root, 'networkChangeEvent',
                               {'startTime': hhmmss(start)})
@@ -459,10 +442,11 @@ def main():
                           {'type': 'absolute',
                            'value': '%g' % sl['link']['freespeed']})
             n_events += 1
+    return root, n_events
 
-    ET.indent(root)
-    ET.ElementTree(root).write(OUT_XML, encoding='UTF-8', xml_declaration=True)
 
+def crossings_report(sites):
+    """The report written beside the change events."""
     report = dict(
         purpose='freight level-crossing closures (issue #68, DECISIONS.md 9.70/9.76)',
         derivation='OSM railway=level_crossing nodes with a boom-barrier tag, '
@@ -511,6 +495,61 @@ def main():
                    'events path are wired at activation, with '
                    'RUN.travel_time.bin_size_s <= 300 s so the router can see '
                    'a closure (issue #68).')
+    return report
+
+
+def main():
+    os.makedirs(OUT_DIR, exist_ok=True)
+    booms = project(boom_crossing_nodes())
+    clusters = cluster(booms, CLUSTER_M)
+    nodes, car_links = read_network(BASE_NETWORK)
+    corridor_pts = corridor_intersections()
+
+    # named-road candidate links, geometry-resolved per link
+    named = [l for l in car_links if l['name'] in set(ROAD_NAMES)]
+
+    sites = match_sites(clusters, named, nodes)
+
+    assert_clear_of_corridor(sites, corridor_pts)
+
+    # ---- emit the change events ----
+    # Under `schedule_derived` (9.90, the default) a closure is emitted for
+    # every SCHEDULED TRAIN that crosses, at the time the timetable says it
+    # crosses - so the count is per site (110 at Adamstown, 204 at Islington)
+    # and the pattern is peaked where the service is peaked. Non-timetabled
+    # freight is added uniformly on top, and is zero by default because the
+    # coal chain is grade-separated (9.70).
+    #
+    # Under `assumed_uniform` - every arm before 9.90 - closures are spread
+    # EVENLY across the declared window because no closure log is published,
+    # uniform spacing being the least-informative deterministic choice, with
+    # the sites PHASE-OFFSET from each other so one boom is not the other's.
+    w0, w1 = [h * 3600.0 for h in CLOSURE_WINDOW_H]
+    n = int(CLOSURES_PER_DAY)
+    interval = (w1 - w0) / n
+    derived = CLOSURE_SOURCE == 'schedule_derived'
+    if derived:
+        attach_rail_timetable(sites, nodes)
+    events = []
+    for si, site in enumerate(sites):
+        spans = closure_spans(site, si, len(sites), derived, w0, w1, n, interval)
+        # A boom that is already down STAYS down. Two trains inside one
+        # closure are one closure, not two, and emitting them separately would
+        # reopen the road between them - and would hand MATSim two change
+        # events on one link at overlapping times, which its time-variant
+        # network refuses outright ("Expected number of change events (408)
+        # differs from the number of events found (375)", measured on the
+        # first derived probe). Merging is both the physical truth and the
+        # thing that makes the accounting close.
+        site['closure_spans_s'] = merge_spans(spans)
+        for start, end in site['closure_spans_s']:
+            events.append((start, end, site))
+    root, n_events = change_events_xml(events)
+
+    ET.indent(root)
+    ET.ElementTree(root).write(OUT_XML, encoding='UTF-8', xml_declaration=True)
+
+    report = crossings_report(sites)
     with open(OUT_REPORT, 'w', encoding='utf-8', newline='\n') as f:
         json.dump(report, f, indent=2, ensure_ascii=False)
         f.write('\n')
