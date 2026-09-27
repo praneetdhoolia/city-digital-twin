@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 579 fields are made of
+## What the 587 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 39 | read directly from a raw download |
 | `measured` | 43 | computed from observed data in this package |
-| `derived` | 48 | follows from another registry field by identity |
+| `derived` | 53 | follows from another registry field by identity |
 | `literature` | 82 | a published value, not specific to this city |
-| `assumed` | 215 | chosen without direct empirical support |
-| `definition` | 152 | fixed by the formulation, not an empirical quantity |
+| `assumed` | 217 | chosen without direct empirical support |
+| `definition` | 153 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 558 | usable point value |
+| `active` | 566 | usable point value |
 | `computed` | 11 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 331 sweeps are for
+### What the 334 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
-| `answer` | 19 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 288 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `answer` | 20 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
+| `uncertainty` | 290 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 24 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -76,6 +76,7 @@ The `answer` sweeps - the runs the study owes after the gate:
 | `A.lightrail.tsp_enabled` | `false` | `False`, `True` |
 | `A.signals.scats_phasing` | *(null - unobtained)* | `proxy_no_priority`, `proxy_partial_priority`, `proxy_full_priority` |
 | `B.mode.bound_passenger_placement` | `every_plan` | `every_plan`, `alternative` |
+| `B.motorbike.representation` | `choice` | `carve`, `choice` |
 | `B.ride.pairing_rule` | `both_links` | `both_links`, `route_contains`, `origin_link`, `dest_link`, `window_only` |
 | `C.time_weights.service_quality_representation` | `absent` | `absent`, `headway`, `headway_and_reliability` |
 | `C.transfer.beta_transfer_penalty_min` | `8.0` | 3 - 15 |
@@ -1858,7 +1859,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 135 fields*
+*`cities/newcastle/registry/B_demand.json` - 142 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1876,6 +1877,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.activity.days_per_week` | `{"WEEKDAY": 5.0, "SAT": 1.0, "SUN": 1.0}` | days | `definition` | - |
 | `B.activity.departure_profile` | `{"HE": [0.0, 0.0, 0.0, 0.0, 0.002, 0.01, 0.06, 0.23, 0.27, 0.09, 0.035, 0.03, 0.035, 0.04, 0.075, 0.06, 0.0...` | probability_by_hour | `assumed` | plus/minus 25% |
 | `B.activity.destination_balancing` | `doubly_constrained` | enum | `definition` | `doubly_constrained`, `singly_constrained` |
+| `B.activity.destination_mobility` | `own_speed` | enum | `definition` | `absent`, `own_speed` |
 | `B.activity.detour_factor` | `1.3276` | ratio | `measured` | 1.247 - 1.419 |
 | `B.activity.distance_decay_target_default_km` | `8.0` | km_network | `assumed` | 4 - 12 |
 | `B.activity.duration_cv` | `0.3` | coefficient_of_variation | `assumed` | 0.2 - 0.45 |
@@ -1888,6 +1890,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.activity.escort_dwell_s` | `300` | seconds | `assumed` | 120 - 600 |
 | `B.activity.escort_excludes_ride` | `true` | boolean | `derived` | derived: an escort trip is a trip made in order to convey another person, so th |
 | `B.activity.escort_exclusion_scope` | `subtour` | enum | `assumed` | `subtour`, `day` |
+| `B.activity.escort_oneway_scope` | `cannot_drive` | enum | `assumed` | `any_member`, `cannot_drive` |
 | `B.activity.escort_requires_licence` | `true` | boolean | `derived` | derived: an escort trip is a trip made in order to convey another person, so th |
 | `B.activity.hts_rate_per_person_day` | `3.473` | trips_per_person_per_day | `measured` | 3.3 - 3.65 |
 | `B.activity.intermediate_stop_shop_share` | `0.5` | share | `assumed` | 0.3 - 0.7 |
@@ -1899,8 +1902,8 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.activity.p_mandatory` | `{"WEEKDAY": {"work": 0.78, "education": 0.85}, "SAT": {"work": 0.16, "education": 0.03}, "SUN": {"work": 0....` | probability | `assumed` | 0.6 - 0.95 |
 | `B.activity.p_second_stop` | `0.25` | probability | `assumed` | 0.12 - 0.4 |
 | `B.activity.plan_access_s` | `240` | seconds | `assumed` | 120 - 480 |
-| `B.activity.plan_speed_car_kmh` | `26.0` | km/h | `assumed` | 20 - 32 |
-| `B.activity.plan_speed_nocar_kmh` | `16.0` | km/h | `assumed` | 10 - 22 |
+| `B.activity.plan_speed_car_kmh` | `26.8` | km/h | `derived` | derived: the survey's own car-driver trip: 10.2 km in 17.2 min is 35.58 km/h do |
+| `B.activity.plan_speed_nocar_kmh` | `21.43` | km/h | `derived` | derived: the survey's trips that need no car of one's own - vehicle passenger,  |
 | `B.activity.short_trip_band_km` | `1.0` | km_network | `literature` | **held fixed** |
 | `B.activity.short_trip_band_share` | `{"HW": 0.059, "WB": 0.09, "HE": 0.158, "HS": 0.277, "HO": 0.255, "HX": 0.157}` | share_of_trips | `literature` | plus/minus 25% |
 | `B.activity.short_trip_mean_km` | `0.7` | km_network | `derived` | derived: the short-trip destination kernel realises the observed mean walk-only |
@@ -1945,6 +1948,9 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.motorbike.carve_resolution` | `sa1_thinned` | enum | `definition` | `sa1_thinned`, `region` |
 | `B.motorbike.length_m` | `2.2` | metres | `literature` | **held fixed** |
 | `B.motorbike.pce` | `0.4` | passenger_car_equivalents | `literature` | 0.3 - 0.75 |
+| `B.motorbike.possession_identity` | `poisson_at_least_one` | enum | `assumed` | `poisson_at_least_one`, `one_per_household` |
+| `B.motorbike.representation` | `choice` | enum | `assumed` | `carve`, `choice` |
+| `B.motorbike.rider_coupling` | `riders_first` | enum | `assumed` | `riders_first`, `independent` |
 | `B.motorbike.trip_share` | `0.0037849` | share_of_trips | `derived` | derived: trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.moto |
 | `B.network_factors.distance_band` | `0.25` | share | `assumed` | 0.1 - 0.5 |
 | `B.network_factors.min_pair_m` | `500.0` | metres | `assumed` | 100 - 2000 |
@@ -1955,6 +1961,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.population.bike_min_age` | `12` | years | `assumed` | 0 - 16 |
 | `B.population.build_sample_share` | `1.0` | share_of_population | `definition` | - |
 | `B.population.home_jitter_radius_factor` | `0.6` | ratio | `assumed` | 0.3 - 1 |
+| `B.population.household_motorcycle_share` | `0.1254` | share_of_households | `derived` | derived: per postal area, lambda = BITRE motorcycles by GARAGING postcode (Road |
 | `B.population.household_size_tail_p` | `0.625` | probability | `derived` | derived: the geometric tail size = 6 + Geometric(p) - 1 has mean 5 + 1/p, so p  |
 | `B.population.household_size_top_band_mean` | `6.6` | persons | `assumed` | 6 - 7.5 |
 | `B.population.labour_force_min_age` | `15` | years | `definition` | - |
@@ -1966,6 +1973,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.population.mobility_impairment_rise` | `0.25` | share | `assumed` | 0 - 0.45 |
 | `B.population.mobility_impairment_rise_span_years` | `30` | years | `assumed` | 20 - 40 |
 | `B.population.ride_requires_household_driver` | `true` | boolean | `derived` | derived: a person may be a car passenger only if their B1 household holds at le |
+| `B.population.rider_licence_rate_by_age_band` | `[0.0, 0.0, 0.0055, 0.053, 0.1023, 0.1557, 0.1838, 0.199, 0.1971, 0.1109, 0.0037]` | probability | `derived` | derived: rate(band) = rider-class licence holders / ABS estimated resident popu |
 | `B.population.school_full_time_max_age` | `18` | years | `assumed` | 17 - 19 |
 | `B.population.vehicle_roster` | `census` | enum | `assumed` | `census`, `per_person` |
 | `B.ride.bound_pairing_window_min` | `60.0` | minutes | `derived` | derived: bound_pairing_window_min = 2 * time_mutation_range_s / 60 |
@@ -2098,6 +2106,14 @@ Whether the destination draw is constrained at the destination end as well as th
 
 > **Sweep basis.** The two states destination choice can take, and the pair is comparable by construction: `singly_constrained` reproduces the pre-9.142 build exactly, so the difference between them is the balancing and nothing else. `singly_constrained` constrains production only - every origin sends the right number of trips at the right observed mean distance, and a destination receives whatever the kernel leaves it. `doubly_constrained` also requires each zone to receive its own attraction share of a purpose's arrivals (Wilson 1967; the Furness/IPF balancing of the classical four-step model). Measured on the committed demand under the singly-constrained rule: the worst zone's share of a purpose's arrivals sat 12.9x (work) and 34.7x (shopping) its own attraction share away from it, the corridor read 0.59x (shopping) and 0.69x (other) of its attraction share (9.136), and the shortfall WIDENED with distance (shopping 5.01% under 1 km to 9.77% beyond 8 km against an 11.38% attraction share, 9.136), which is why no calibration of the decay could close it.
 
+#### `B.activity.destination_mobility`
+
+Whether the destination draw is by the person's own mobility (a car-available and a car-less matrix, one time decay at each segment's planning speed) or one distance kernel for everyone (`absent`).
+
+***definition** · status **active** · DECISIONS.md §9.214 · sweep role **uncertainty***
+
+> **Sweep basis.** The two states destination choice can take with respect to mobility, comparable by construction: `absent` is F37's build exactly - one distance kernel per purpose for everyone, so a person without a car is sent as far as a driver; MEASURED on F37 arm 0 (`20260926T002526_250it_25pct`, iteration 250): the car-less made 17.8 % of residents' trips but 57 % of bike trips (mean 11.8 km), 37 % of taxi trips, 52 % of rail station entries, and walked a mean 6.0 km. `own_speed` makes the long kernel one TIME decay at each segment's own planning speed (B.activity.plan_speed_car_kmh, B.activity.plan_speed_nocar_kmh, both derived from the survey), so the car-less matrix decays their ratio times faster per km; the decay is solved against each origin's car-less share of production so the two segments TOGETHER still realise the survey's mean distance per purpose and home LGA. No new observation or constant enters.
+
 #### `B.activity.detour_factor`
 
 Straight-line to network distance, routed over the observed A1 road graph, re-measured on the CURRENT network 4 Sep 2026 (9.142): 1.3376 over 551 routed pairs became 1.3276 over 595, the extra pairs being zone pairs the pre-16-August network could not route between. Replaces an assumed 1.30. The build script keeps a 1.30 fallback labelled 'assumed - C2 factors file not found'; that fallback is now this field. The build script no longer keeps its own copy: it READS THIS FIELD as the fallback when params/C2_network_factors.json is absent, so the two values that check_legacy_drift.py existed to compare are now one value.
@@ -2192,6 +2208,14 @@ The scope over which B.activity.escort_excludes_ride applies. subtour denies rid
 
 > **Sweep basis.** WHERE the escort identity denies ride. subtour: only on the tours that actually serve an escort - which citysim.GatedSubtourModeChoice already enforces at runtime by refusing a non-car proposal on boundDriveTrips, and which the seed already enforces by holding a serve tour at car, so the denial is carried by two mechanisms without this field's help. day: the whole day plan, by writing rideAvail=never on the person - the pre-9.143 behaviour, kept as a sweep member so that it RECOVERS THAT BUILD EXACTLY and the difference between the two scopes is measurable rather than asserted. The choice is not about whether an escorter drives their own escort trip: both members agree they do. It is about whether the same person may be carried on an unrelated tour later that day. subtour is the value because nothing in the data says they may not, and the day-wide denial costs 33,832 WEEKDAY bound trips (9.143) that the demand had already bound to a named driver.
 
+#### `B.activity.escort_oneway_scope`
+
+Which escorted member tours may stay covered in ONE direction after the household binder has run: any member (F37), or only a member who cannot drive the tour (no licence or no car available). A released binding leaves its serve tour placed but serving no one (`dest_placement` `escort_released`).
+
+***assumed** · status **active** · DECISIONS.md §9.214 · sweep role **uncertainty***
+
+> **Sweep basis.** Nothing observes who drives whom, so which escorted tours may stay covered in one direction is an assumed choice, declared and swept. `any_member` is F37: leftover serve supply binds one way to any member, and since D12 (9.211) the bound direction is HELD to ride, so the car stays home and the other direction has only walk, pt, bike or taxi. MEASURED on F37 arm 0 (`20260926T002526_250it_25pct`, iteration 250): 70,571 weekday member tours covered one way against 24,993 round trip; residents' walk-only trips inside a held-ride tour are 25.0 % of walk trips and 35.6 % of walk km at a mean 11.1 km, and 28 % of taxi trips (mean 16.5 km) are car-available travellers on such tours. `cannot_drive` keeps a one-way binding only for a member without a licence or a car, whose choice set holding does not shrink, and releases it for everyone else; the serve tour stays where it was placed, so the observed Serve-passenger rate is untouched and the released tour is unbound exactly as a tour that found no member is.
+
 #### `B.activity.escort_requires_licence`
 
 Whether a serve-passenger (HX) tour may only be drawn for a licence holder. Consumed where tours are allocated to persons.
@@ -2280,19 +2304,19 @@ Fixed per-leg overhead added to every B2 planned leg time on top of distance/spe
 
 #### `B.activity.plan_speed_car_kmh`
 
-Door-to-door planning speed for a car-available person, used by the B2 chain builder to time tours (straight-line distance at this speed plus B.activity.plan_access_s). Not a routing or scoring quantity.
+Door-to-door planning speed for a car-available person, used by the B2 chain builder to time tours (straight-line distance at this speed plus B.activity.plan_access_s) and, under B.activity.destination_mobility = own_speed, as the car segment's time scale in the destination kernel. Not a routing or scoring quantity.
 
-***assumed** · status **active** · DECISIONS.md §9.61 · sweep role **uncertainty***
+***derived** · status **active** · DECISIONS.md §9.214*
 
-> **Sweep basis.** urban door-to-door average including parking and access; brackets typical metropolitan network speeds. It decides only the B2 chain-timing scaffold (whether tours fit a day, and their planned departure spacing) - the mobsim re-times every leg physically - but a value that decides anything is declared (9.61: it sat as a bare 26.0 inside time_tour's expression, invisible to the ledger's scanner).
+> **Derived from** `C.constraint.trip_length_km.car`, `C.constraint.trip_time_min.car`, `B.activity.detour_factor`: the survey's own car-driver trip: 10.2 km in 17.2 min is 35.58 km/h door to door on the network, divided by the measured detour factor 1.3276 because the chain builder times STRAIGHT-LINE distance: 26.80 km/h. Replaced the assumed 26.0 (swept 20-32) at 9.214, when the planning speeds also became the destination kernel's time scale.
 
 #### `B.activity.plan_speed_nocar_kmh`
 
-Door-to-door planning speed for a person without car availability, used by the B2 chain builder to time tours. Not a routing or scoring quantity.
+Door-to-door planning speed for a person without car availability, used by the B2 chain builder to time tours and, under B.activity.destination_mobility = own_speed, as the car-less segment's time scale in the destination kernel. Not a routing or scoring quantity.
 
-***assumed** · status **active** · DECISIONS.md §9.61 · sweep role **uncertainty***
+***derived** · status **active** · DECISIONS.md §9.214*
 
-> **Sweep basis.** a blend of walk, cycle and bus door-to-door speeds for a person without a car. Same scaffold-only role, same 9.61 declaration rationale, as plan_speed_car_kmh.
+> **Derived from** `C.constraint.trip_length_km.ride`, `C.constraint.trip_time_min.ride`, `C.constraint.trip_length_km.walk`, `C.constraint.trip_time_min.walk`, `C.constraint.trip_length_km.pt`, `C.constraint.trip_time_min.pt`, `C.constraint.trip_length_km.bike`, `C.constraint.trip_time_min.bike`, `B.activity.detour_factor`: the survey's trips that need no car of one's own - vehicle passenger, walk only, public transport and bicycle - taken together at their observed shares (HTS 2024/25: 20.6 %, 13.4 %, 3.8 % and 2.2084 %, `data/processed/validation/mode_targets_by_mode.csv`): total km over total time, sum(s_m L_m) / sum(s_m T_m) = 311.66 km / 657.24 min = 28.45 km/h on the network, divided by the measured detour factor 1.3276: 21.43 km/h. The survey holds no split by car availability, so the non-driver modes' OWN mix is the car-less traveller's; taxi (0.99 %) is left out for want of an observed trip time. Replaced the assumed 16.0 (swept 10-22) at 9.214.
 
 #### `B.activity.short_trip_band_km`
 
@@ -2644,6 +2668,30 @@ Passenger-car equivalents of one modelled motorbike - it consumes LESS road capa
 
 > **Sweep basis.** Austroads and HCM passenger-car-equivalent ranges for motorcycles in urban traffic run from about 0.3 (filtering, uncongested) to 0.75 (no filtering, interrupted flow); no local fleet-mix or filtering observation exists, so the class low-mid value is taken and the published range is swept.
 
+#### `B.motorbike.possession_identity`
+
+The identity that turns registered motorcycles per household into the share of households holding one (src/build/possession.py). Read by cities/newcastle/build/build_motorcycle_possession.py; B.population.household_motorcycle_share is derived through it.
+
+***assumed** · status **active** · DECISIONS.md §9.214 · sweep role **uncertainty***
+
+> **Sweep basis.** How a stock of motorcycles per household becomes a share of households holding at least one. poisson_at_least_one: the motorcycles fall on households independently, P = 1 - exp(-lambda) - the identity 9.209 uses for the Mumbai possession projection. one_per_household: every motorcycle in a different household, P = min(1, lambda), the upper bound. No observation of multi-motorcycle households exists in the package (the census vehicle count excludes motorcycles), so the pair brackets the distribution; clustering of several motorcycles in one household would put the truth BELOW the Poisson value, which the bracket does not reach and which is stated rather than swept.
+
+#### `B.motorbike.representation`
+
+The representation gate for motorbike (D22, #257). Under `choice` the plans builder writes the person attribute motorbikeAvail = always|never on every agent (never for the boundary tiers and the locked truck carve), seeds a motorbike plan for each available resident under the full-choice-set seed, treats motorbike as chain-based in the seed's subtour check, and writes no motorbike lockedMode. citysim.AvailabilityModesCalculator strips motorbike from a person whose motorbikeAvail is never, and citysim.CitysimControler adds motorbike to subtourModeChoice.modes and chainBasedModes at startup WHEN THE POPULATION CARRIES motorbikeAvail - the representation is read from the plans it runs, so the emitted config is unchanged by this field and a `carve` population behaves exactly as before. RUN.mode_choice.modes is not changed: the addition is a derived transformation logged at startup, the pattern RUN.mode_choice.pt_submode_alternatives uses.
+
+***assumed** · status **active** · DECISIONS.md §9.214 · sweep role **answer***
+
+> **Sweep basis.** The two representations the plans builder can write. `carve` is every build before 9.214, recovered byte for byte: a licensed, car-available resident is drawn a motorbike user by a hash against B.motorbike.trip_share (per home SA1 under B.motorbike.carve_resolution) and their day is LOCKED to the mode, which reproduces the census G62 share by construction. `choice` retires the lock and the draw: availability is observed - a rider licence (B.population.rider_licence_rate_by_age_band, per LGA and age band) AND a household motorcycle (B.population.household_motorcycle_share, per postal area) - and motorbike competes in SubtourModeChoice as a chain-based mode, scored by C.asc.motorbike unfitted. WHAT THE SWEEP ANSWERS: how much of the motorbike share is availability and how much is preference - under `choice` the G62 share is a reading, no longer an input.
+
+#### `B.motorbike.rider_coupling`
+
+The coupling between the rider-licence draw (B.population.rider_licence_rate_by_age_band, per person) and the household-motorcycle draw (B.population.household_motorcycle_share, per postal area) in src/build/build_matsim_plans.py under B.motorbike.representation = choice. The plans report carries each (LGA, age band) cell's drawn riders and each postal area's drawn possessing households against their observed totals, and names any postal area whose P(hold | rider) clips at 1 with the possessing households it loses.
+
+***assumed** · status **active** · DECISIONS.md §9.214 · sweep role **uncertainty***
+
+> **Sweep basis.** How the rider licence and the household motorcycle are drawn together. Under both, riders are drawn FIRST and independently per person at the observed LGA x age-band rate, so every cell's riders hold the observed total in expectation exactly. riders_first: a registered motorcycle needs a licensed rider and the household holding it is where one lives, so only a household with a drawn rider may hold one, at P(hold | has a rider) = sum_h P_h / sum_h q_h per postal area, where P_h is the observed postal-area share and q_h = 1 - prod(1 - r_i) the household's closed-form chance of holding a rider - the postal area's expected possessing households equal the observed share x households, clipped at 1 and the lost households reported where the area's riders cannot carry its motorcycles. independent: the motorcycle at the observed share whoever lives there, which puts only the household share (~12 %) of riders in a motorcycle household and understates availability about threefold. No observation links a licence holder to a household's motorcycle; the pair brackets it. A first coupling that forced one rider into every possessing household (at_least_one_rider, 9.214) was retired the same day: it made riders of lone 85+ residents at seven to twenty times their observed rate, because a household's motorcycle, not its members, chose the rider.
+
 #### `B.motorbike.trip_share`
 
 Share of resident person trips made by motorbike, realised as a PERSON-LEVEL carve: a licensed, car-available adult becomes a motorbike user (their whole day locks to the mode - vehicle continuity is chain-based by nature) with the probability that makes carved persons' trips this share of all trips. Carved FROM car-driver demand, which is where the HTS and census place motorcyclists - so the car comparison folds motorbike back in at fit time (fit.py) and the carve never invents a trip.
@@ -2719,6 +2767,14 @@ Home locations are jittered inside their SA1 within a radius of this factor time
 ***assumed** · status **active** · DECISIONS.md §9.167 · sweep role **uncertainty***
 
 > **Sweep basis.** 0.3 keeps homes near the centroid, 1.0 spreads them to the equivalent-circle edge; a placement convention, swept because it moves every home-end walk distance.
+
+#### `B.population.household_motorcycle_share`
+
+Share of households holding at least one motorcycle - the POOLED value over the core SA1s. The per-SA1 value (its postal area's) is in data/processed/observed/motorcycle_possession_by_sa1.csv; under B.motorbike.representation = choice the plans builder draws each B1 household's motorcycle from its seeded stream at its home SA1's value, and at this pooled value where the SA1's postal area lies outside the study set. The census motor-vehicle count excludes motorcycles, so this possession is independent of household_vehicles. The stock includes business, fleet and dealer vehicles: one postal area holds 1,260 garaged against 606 registered motorcycles.
+
+***derived** · status **active** · DECISIONS.md §9.214*
+
+> **Derived from** `B.motorbike.possession_identity`: per postal area, lambda = BITRE motorcycles by GARAGING postcode (Road Vehicles Australia, 31 January 2025, data/raw/bitre/rva-2025-mvs-vehtype-streg-poagar-mtvpwr-rpc.csv, summed over motive power and state of registration - where the vehicle is kept, BITRE falling back to the registered postcode where none is recorded) / census 2021 occupied private dwellings of the SA1s whose largest overlap is that postal area, and the share of households holding at least one = 1 - exp(-lambda) under B.motorbike.possession_identity = poisson_at_least_one (src/build/possession.py); this value is that share averaged over the core SA1s' dwellings, written by cities/newcastle/build/build_motorcycle_possession.py, which asserts it. The postal areas are the geometry-derived study set of data/processed/observed/bitre_registrations_study_area.csv.
 
 #### `B.population.household_size_tail_p`
 
@@ -2801,6 +2857,14 @@ Whether `ride` is withheld from a person with nobody to drive them. MATSim's sta
 ***derived** · status **active** · DECISIONS.md §8.5, 9.10, 15 · proposal §9*
 
 > **Derived from** `B.seed.master`: a person may be a car passenger only if their B1 household holds at least one vehicle AND contains at least one OTHER licence holder who could drive them; computed from B1_synthetic_population.csv household_id, household_vehicles and licence_holder, so it is derived from the synthetic population rather than chosen
+
+#### `B.population.rider_licence_rate_by_age_band`
+
+Motorcycle (rider) licence holding rate by age band, aligned to B.population.age_bands - the POOLED value over the core LGAs, written with the per-LGA table data/processed/observed/rider_licence_rates_by_age_lga.csv by cities/newcastle/build/build_licence_rates.py, which asserts this vector against the derivation. Under B.motorbike.representation = choice the plans builder draws each resident's rider licence at the rate of their home LGA and age band (this vector where the LGA has no row), coupled to the household motorcycle by B.motorbike.rider_coupling; a person may choose motorbike only with a rider licence AND a household motorcycle. Measured: 0.05 at 18-24, 0.10 at 25-34, 0.16-0.20 from 35 to 74, 0.11 at 75-84; Cessnock highest, Newcastle lowest in every adult band.
+
+***derived** · status **active** · DECISIONS.md §9.214*
+
+> **Derived from** `B.population.age_bands`, `B.population.licence_rate_by_age_band`: rate(band) = rider-class licence holders / ABS estimated resident population, by B.population.age_bands, pooled over the core LGAs: the numerator is the TfNSW Driver Licence Statistics snapshot (202607) rows of LICENCE CLASS Rider of EVERY licence type, LEARNER INCLUDED - a NSW learner rider may ride unaccompanied (L plates, no pillion), where a learner driver needs a supervisor beside them, so the car rate keeps excluding learners and the rider rate does not (2,877 of the 72,149 riders are learners) - summed over BOTH primary-licence flags (a customer holds at most one record of a class and exactly one record is primary, so a Rider row flagged FALSE is a rider whose primary licence is car or heavy - 71,065 of 72,149 - and the sum counts each rider once); the denominator is the one B.population.licence_rate_by_age_band is drawn over (ERP 30 June 2024 by age and LGA, split to single years by census G04), computed by the same routine in cities/newcastle/build/build_licence_rates.py. Suppressed cells (<=5) are taken at 3.
 
 #### `B.population.school_full_time_max_age`
 
@@ -3319,7 +3383,7 @@ The earliest classified-count year pooled into the heavy-vehicle share that road
 
 ## Behavioural parameters (C1)
 
-*`cities/newcastle/registry/C_behaviour.json` - 59 fields*
+*`cities/newcastle/registry/C_behaviour.json` - 60 fields*
 
 Proposal 6.2 calls this the layer that decides the answer. It is also the layer with no Newcastle measurement in it: of the twenty distinct parameters, ten are assumed, eight are literature and two are definitional. Everything here is therefore either swept or explicitly held fixed under a stated rule - see the sweep and held_fixed keys. The per-segment C1 table (30 sets = 5 segments x 6 purposes) is generated from these fields by src/build/build_params.py; the registry holds the parameters, the CSV holds their expansion.
 
@@ -3364,6 +3428,7 @@ Proposal 6.2 calls this the layer that decides the answer. It is also the layer 
 | `C.scoring.marginal_utility_of_traveling` | *(null - unobtained)* | utils_per_hour | `derived` | derived: marginalUtilityOfTraveling[m] = performing - trip_weighted_VOT * beta[ |
 | `C.scoring.mode_constant` | *(null - unobtained)* | utils | `derived` | derived: constant[m] = the C1 alternative-specific constant for the mode m maps |
 | `C.scoring.monetary_distance_rate` | `{"car": -0.00018, "ride": -0.00018, "pt": 0.0, "walk": 0.0, "bike": 0.0, "truck": 0.0, "motorbike": 0.0, "n...` | AUD_per_metre | `derived` | -0.00025 - -0.00012 |
+| `C.scoring.motorbike_fuel_ratio` | `0.5350877192982456` | ratio | `derived` | derived: ratio = motor cycles / passenger vehicles average rate of fuel consump |
 | `C.scoring.performing_utils_per_h` | `6.0` | utils_per_hour | `literature` | 4 - 8 |
 | `C.scoring.utility_of_line_switch` | *(null - unobtained)* | utils | `derived` | derived: utilityOfLineSwitch = -(C.transfer.beta_transfer_penalty_min / 60) * t |
 | `C.scoring.waiting_pt` | *(null - unobtained)* | utils_per_hour | `derived` | derived: waitingPt = performing - trip_weighted_VOT * beta_wait * marginalUtili |
@@ -3435,9 +3500,9 @@ Alternative-specific constant relative to car driver = 0. OPENED from held_fixed
 
 #### `C.asc.motorbike`
 
-Motorbike alternative-specific constant relative to car driver = 0. DECLARED rather than typed into src/build/build_matsim_run_inputs.py, where it was a literal 0.0 beside the mode table; the shipped value reproduces that emission exactly, so creating the field is behaviour-neutral. It is a DEFINITION and carries no sweep for the same reason C.asc.car_driver does not: motorbike is a person-level LOCKED carve from car-driver demand (9.52), the rider's day is locked to the mode and motorbike is not a member of RUN.mode_choice.modes, so this constant is a level shift on every plan that person can hold and cannot change any choice they make. A sweep over it would have a sensitivity band of exactly zero BY CONSTRUCTION - the defect class 9.22 retired the walk-decay axis for, where an interval reaching nothing gets reported as insensitivity. It becomes a free parameter, with a sweep and a basis, on the day motorbike joins RUN.mode_choice.modes and the lock is lifted.
+Motorbike alternative-specific constant relative to car driver = 0. DECLARED rather than typed into src/build/build_matsim_run_inputs.py, where it was a literal 0.0 beside the mode table; the shipped value reproduces that emission exactly, so creating the field is behaviour-neutral. Under B.motorbike.representation = carve motorbike is a person-level LOCKED carve from car-driver demand (9.52) and this constant is a level shift on every plan a carved person can hold, so it cannot change any choice. Under `choice` (9.214, D22) motorbike competes in SubtourModeChoice for the persons with a rider licence and a household motorcycle, and this constant DOES reach choices - it is held at the car driver's 0.0 by the user's decision and NEVER FITTED: the census G62 share is what the reading is scored against, and fitting the constant to it would turn the share back into an input. It carries no sweep, so the calibrator's movability contract refuses to step it (tests/unit/test_asc_fixed_point.py); motorbike stays outside RUN.mode_choice.modes, the run adding it at startup from the population. A sweep, with a basis, is owed before any run reads the constant's sensitivity.
 
-***definition** · status **active** · DECISIONS.md §8.5, 9.52*
+***definition** · status **active** · DECISIONS.md §8.5, 9.52, 9.214*
 
 #### `C.asc.rail`
 
@@ -3693,6 +3758,14 @@ Vehicle operating cost per metre AS PERCEIVED BY THE TRAVELLER MAKING THE CHOICE
 
 > **Sweep basis.** applies to the car entry only; ride follows it by the identity that a kilometre in a car costs the same kilometre whether you are in the driver seat or beside it (DECISIONS.md 9.17, superseding the 9.8 identity that set ride to zero - a statement about aggregate cost accounting, where monetaryDistanceRate is the cost perceived by one person weighing one alternative; the 9.13 trip-length constraint falsified the old treatment at a modelled ride:car trip length of 1.372 against an observed 0.961). pt, walk and bike remain zero because no vehicle operating cost is borne by their traveller. Truck is zero because a freight agent's mode is LOCKED (9.49): scoring never compares a truck alternative against anything, so a cost model here would be decoration pretending to be behaviour
 
+#### `C.scoring.motorbike_fuel_ratio`
+
+The motorbike-to-car ratio of observed fuel consumption, scaling the car's perceived running cost onto the motorbike. Applied ONLY under B.motorbike.representation = choice, where src/build/build_matsim_run_inputs.py writes scoring.modeParams[motorbike].monetaryDistanceRate = C.scoring.monetary_distance_rate['car'] x this ratio as a derived runtime value; under `carve` the declared table's motorbike entry (0.0) stands and the config is unchanged - a locked carve rider's running cost changes no choice. The survey's rate is for the whole registered fleet of the state, not an urban cycle.
+
+***derived** · status **active** · DECISIONS.md §9.214*
+
+> **Derived from** `C.scoring.monetary_distance_rate`: ratio = motor cycles / passenger vehicles average rate of fuel consumption (l/100 km), ABS Survey of Motor Vehicle Use, Australia, 12 months ended 30 June 2020 (cat. 9208.0), data cube data/raw/abs/92080DO001_202006.xls Table 6, the city's state of registration (city.json jurisdiction.subdivision: New South Wales), column 'Total fuel' = 6.1 / 11.4, read by label and asserted by cities/newcastle/build/build_vehicle_fuel_ratio.py (data/processed/observed/vehicle_fuel_ratio.json). The motorbike's perceived running cost is then C.scoring.monetary_distance_rate['car'] x ratio = -0.00018 x 0.53509 = -0.0000963 AUD/m. The car rate covers fuel AND tyres; only the FUEL ratio is observed, so tyres are ASSUMED to scale with fuel - a motorcycle has two smaller tyres, so the tyre share is likely overstated, which the car rate's own sweep (-0.00025 to -0.00012) brackets far more widely than the tyre share can move it.
+
 #### `C.scoring.performing_utils_per_h`
 
 Marginal utility of performing an activity. A property of the MATSim scoring formulation, not an observable quantity of Newcastle. The effective cost of travel time is performing plus the absolute marginalUtilityOfTraveling, which is how the 16.96 AUD/h VOT is reproduced: 6.0 + 10.9608.
@@ -3725,7 +3798,7 @@ The taxi mode constant net of the derived wait cost. Zero says: beyond fare and 
 
 #### `C.taxi.wait_min`
 
-The booking/wait time a point-to-point trip carries before the vehicle arrives, for a taxi with NO fleet behind it. Folded into the taxi mode constant at emit time (wait_min/60 x trip-weighted VOT x marginalUtilityOfMoney) - the same derivation discipline as utilityOfLineSwitch. Under A.taxi.fleet_representation = fleet it folds nothing: citysim.TaxiFleetEngine executes each served request's own wait, which the mobsim and the score see (fourteenth report, 25 September 2026).
+The booking/wait time a point-to-point trip carries before the vehicle arrives, for a taxi with NO fleet behind it. Folded into the taxi mode constant at emit time (wait_min/60 x trip-weighted VOT x marginalUtilityOfMoney) - the same derivation discipline as utilityOfLineSwitch. Under A.taxi.fleet_representation = finite_fleet it folds nothing: citysim.TaxiFleetEngine executes each served request's own wait, which the mobsim and the score see (fourteenth report, 25 September 2026).
 
 ***assumed** · status **active** · DECISIONS.md §9.76 · sweep role **uncertainty***
 

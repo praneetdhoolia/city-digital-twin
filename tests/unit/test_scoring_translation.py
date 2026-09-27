@@ -59,6 +59,8 @@ BASE = {
     'A.crossings.representation': 'absent',
     'A.fare.boarding_representation': 'absent',
     'B.hired_fleet.representation': 'absent',
+    # 9.214: the motorbike running cost is written under `choice` only
+    'B.motorbike.representation': 'carve',
 }
 PATHS = dict(output='out', network='n.xml.gz', plans='p.xml.gz', schedule='s.xml.gz',
              vehicles='v.xml.gz', mode_vehicles='veh.xml', parking_prices='pp.tsv',

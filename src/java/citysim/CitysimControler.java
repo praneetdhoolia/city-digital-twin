@@ -152,6 +152,20 @@ public final class CitysimControler {
         resolveRelativePaths(configPath, g);
         final org.matsim.api.core.v01.Scenario scenario =
                 ScenarioUtils.loadScenario(config);
+        // DECISIONS.md 9.214 (D22, #257): a population that carries
+        // motorbikeAvail was built with motorbike as a CHOSEN mode, so the
+        // choice set and the chain-based set gain it - before anything reads
+        // either (the activity linker, the gated strategy). A `carve`
+        // population carries no such attribute and nothing changes.
+        if (AvailabilityModesCalculator.applyMotorbikeChoiceSet(scenario)) {
+            LOG.info("motorbike choice (9.214): the population carries {}, so "
+                     + "subtourModeChoice.modes is now {} and chainBasedModes {} - "
+                     + "derived from RUN.mode_choice.modes and "
+                     + "RUN.mode_choice.chain_based_modes",
+                     AvailabilityModesCalculator.MOTORBIKE_ATTRIBUTE,
+                     java.util.Arrays.toString(config.subtourModeChoice().getModes()),
+                     java.util.Arrays.toString(config.subtourModeChoice().getChainBasedModes()));
+        }
         AvailabilityModesCalculator.validateExplicitPopulation(scenario);
         // Apply the declared activity-link policy before constructing the
         // controller. The original common-link treatment remains available;

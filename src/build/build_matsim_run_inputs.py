@@ -1986,7 +1986,30 @@ def runtime_mode_entries(rc):
             'share x B.taxi.flagfall_rideshare')
         runtime['fare.mode'] = (
             'taxi', 'derived', 'the mode FareChargeHandler charges')
+    # D22, DECISIONS.md 9.214: under B.motorbike.representation = choice the
+    # motorbike is a mode a person CHOOSES against car, and its running cost
+    # is the car's scaled by the observed fuel-consumption ratio
+    # (C.scoring.motorbike_fuel_ratio, ABS SMVU). The declared per-mode table
+    # keeps motorbike at 0.0, which is what a LOCKED carve rider has always
+    # been scored with (a level shift that changes no choice), so under
+    # `carve` nothing is added here and the config is the one it always was;
+    # under `choice` this derived value replaces the table's entry for the
+    # one mode, the way the taxi fare above sets taxi's.
+    runtime.update(motorbike_running_cost(rc.cfg))
     return runtime
+
+
+def motorbike_running_cost(cfg):
+    """{param: runtime entry} for the motorbike's monetaryDistanceRate under
+    B.motorbike.representation = choice, and nothing under `carve` (9.214)."""
+    if cfg.get('B.motorbike.representation') != 'choice':
+        return {}
+    car_rate = cfg.get('C.scoring.monetary_distance_rate')['car']
+    ratio = cfg.get('C.scoring.motorbike_fuel_ratio')
+    return {'scoring.modeParams[motorbike].monetaryDistanceRate': (
+        round(car_rate * ratio, 10), 'derived',
+        "C.scoring.monetary_distance_rate['car'] x C.scoring.motorbike_fuel_ratio, "
+        'AUD per metre (9.214)')}
 
 
 

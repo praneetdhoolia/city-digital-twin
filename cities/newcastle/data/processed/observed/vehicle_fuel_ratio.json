@@ -1,0 +1,9 @@
+{
+  "decisions_ref": "9.214",
+  "source": "ABS 9208.0 Survey of Motor Vehicle Use, 12 months ended 30 June 2020, 92080DO001_202006.xls Table_6, New South Wales, column 'Total fuel'",
+  "units": "l_per_100km",
+  "state": "New South Wales",
+  "passenger_vehicles_l_per_100km": 11.4,
+  "motor_cycles_l_per_100km": 6.1,
+  "motorbike_fuel_ratio": 0.5350877192982456
+}

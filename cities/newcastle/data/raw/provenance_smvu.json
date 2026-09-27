@@ -1,0 +1,11 @@
+[
+ {
+  "path": "abs/92080DO001_202006.xls",
+  "url": "https://www.abs.gov.au/statistics/industry/tourism-and-transport/survey-motor-vehicle-use-australia/12-months-ended-30-june-2020/92080DO001_202006.xls",
+  "description": "ABS Survey of Motor Vehicle Use, Australia, 12 months ended 30 June 2020 (cat. 9208.0, released 21 Dec 2020) - data cube 92080DO001: kilometres travelled, fuel consumed and average rate of fuel consumption by state/territory of registration, type of vehicle and type of fuel (Table 6: litres per 100 km)",
+  "licence": "CC-BY 4.0",
+  "bytes": 1627136,
+  "sha256": "9b85a8335349f74021315621f5ceb396dd33a85326ec4b716608fb2cfaba3f8d",
+  "retrieved": "2026-09-27"
+ }
+]

@@ -899,6 +899,30 @@ Appendix A of the proposal.
 | `hour` | int | 0 | 72/72 |
 | `share` | float | 0.008266 | 72/72 |
 
+### `data/processed/observed/motorcycle_possession_by_postcode.csv`
+
+44 rows, 7 columns
+
+| column | type | example | non-empty in sample |
+|---|---|---|---|
+| `postcode` | int | 2264 | 44/44 |
+| `motorcycles_garaged` | int | 970 | 44/44 |
+| `motorcycles_registered` | int | 972 | 44/44 |
+| `households_census2021` | int | 6285 | 44/44 |
+| `census_area_coverage` | float | 1.0 | 44/44 |
+| `lambda_per_household` | float | 0.15434 | 43/44 |
+| `p_household_holds_motorcycle` | float | 0.14302 | 43/44 |
+
+### `data/processed/observed/motorcycle_possession_by_sa1.csv`
+
+1433 rows, 3 columns
+
+| column | type | example | non-empty in sample |
+|---|---|---|---|
+| `SA1_CODE21` | int | 10601110701 | 401/401 |
+| `postcode` | int | 2334 | 401/401 |
+| `p_household_holds_motorcycle` | float | 0.2107 | 401/401 |
+
 ### `data/processed/observed/opal_bus_newcastle_hunter.csv`
 
 1363 rows, 4 columns
@@ -946,6 +970,18 @@ Appendix A of the proposal.
 | `tap_ons_upper` | int | 980 | 401/401 |
 | `tap_offs_lower` | int | 0 | 401/401 |
 | `tap_offs_upper` | int | 980 | 401/401 |
+
+### `data/processed/observed/rider_licence_rates_by_age_lga.csv`
+
+66 rows, 5 columns
+
+| column | type | example | non-empty in sample |
+|---|---|---|---|
+| `lga` | str | Cessnock | 66/66 |
+| `band` | str | 0-4 | 66/66 |
+| `holders` | int | 0.0 | 66/66 |
+| `erp_2024` | float | 4764.0 | 66/66 |
+| `rate` | float | 0.0 | 66/66 |
 
 ### `data/processed/observed/station_entries_exits_newcastle.csv`
 
@@ -1300,12 +1336,41 @@ Appendix A of the proposal.
 
 ### `demand/plans/B2_activity_trips_SAT.csv`
 
-1901712 rows, 22 columns
+1939239 rows, 22 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `person_id` | int | 2 | 401/401 |
+| `person_id` | int | 1 | 401/401 |
 | `day_type` | str | SAT | 401/401 |
+| `tour_id` | int | 1 | 401/401 |
+| `trip_seq` | int | 1 | 401/401 |
+| `purpose` | str | HX | 401/401 |
+| `tour_purpose` | str | HX | 401/401 |
+| `dest_activity_type` | str | escort | 401/401 |
+| `origin_sa1` | int | 10601110701 | 401/401 |
+| `dest_sa1` | int | 10601110701 | 401/401 |
+| `origin_x` | float | 348659.1 | 401/401 |
+| `origin_y` | float | 6383994.3 | 401/401 |
+| `dest_x` | float | 348497.6 | 401/401 |
+| `dest_y` | float | 6384039.1 | 401/401 |
+| `dep_time_s` | int | 39122 | 401/401 |
+| `arr_time_s` | int | 39384 | 401/401 |
+| `straight_dist_km` | float | 0.168 | 401/401 |
+| `activity_duration_s` | int | 300 | 401/401 |
+| `is_tour_anchor` | int | 1 | 401/401 |
+| `party_size` | int | 1 | 401/401 |
+| `time_flexibility_band` | str | fixed | 401/401 |
+| `dest_placement` | str | lift_pickup | 401/401 |
+| `agent_tier` | str | core | 401/401 |
+
+### `demand/plans/B2_activity_trips_SUN.csv`
+
+1692386 rows, 22 columns
+
+| column | type | example | non-empty in sample |
+|---|---|---|---|
+| `person_id` | int | 4 | 401/401 |
+| `day_type` | str | SUN | 401/401 |
 | `tour_id` | int | 1 | 401/401 |
 | `trip_seq` | int | 1 | 401/401 |
 | `purpose` | str | HS | 401/401 |
@@ -1313,52 +1378,23 @@ Appendix A of the proposal.
 | `dest_activity_type` | str | shopping | 401/401 |
 | `origin_sa1` | int | 10601110701 | 401/401 |
 | `dest_sa1` | int | 10602161611 | 401/401 |
-| `origin_x` | float | 348659.1 | 401/401 |
-| `origin_y` | float | 6383994.3 | 401/401 |
-| `dest_x` | float | 360308.3 | 401/401 |
-| `dest_y` | float | 6379846.9 | 401/401 |
-| `dep_time_s` | int | 53673 | 401/401 |
-| `arr_time_s` | int | 55625 | 401/401 |
-| `straight_dist_km` | float | 12.365 | 401/401 |
-| `activity_duration_s` | int | 2688 | 401/401 |
+| `origin_x` | float | 348546.9 | 401/401 |
+| `origin_y` | float | 6384165.9 | 401/401 |
+| `dest_x` | float | 360602.5 | 401/401 |
+| `dest_y` | float | 6379748.7 | 401/401 |
+| `dep_time_s` | int | 44649 | 401/401 |
+| `arr_time_s` | int | 46613 | 401/401 |
+| `straight_dist_km` | float | 12.839 | 401/401 |
+| `activity_duration_s` | int | 3186 | 401/401 |
 | `is_tour_anchor` | int | 1 | 401/401 |
 | `party_size` | int | 1 | 401/401 |
 | `time_flexibility_band` | str | flexible | 401/401 |
 | `dest_placement` | str | poi | 401/401 |
 | `agent_tier` | str | core | 401/401 |
 
-### `demand/plans/B2_activity_trips_SUN.csv`
-
-1666589 rows, 22 columns
-
-| column | type | example | non-empty in sample |
-|---|---|---|---|
-| `person_id` | int | 1 | 401/401 |
-| `day_type` | str | SUN | 401/401 |
-| `tour_id` | int | 1 | 401/401 |
-| `trip_seq` | int | 1 | 401/401 |
-| `purpose` | str | HO | 401/401 |
-| `tour_purpose` | str | HO | 401/401 |
-| `dest_activity_type` | str | other | 401/401 |
-| `origin_sa1` | int | 10601110701 | 401/401 |
-| `dest_sa1` | int | 10601110701 | 401/401 |
-| `origin_x` | float | 348659.1 | 401/401 |
-| `origin_y` | float | 6383994.3 | 401/401 |
-| `dest_x` | float | 348468.4 | 401/401 |
-| `dest_y` | float | 6383908.1 | 401/401 |
-| `dep_time_s` | int | 55118 | 401/401 |
-| `arr_time_s` | int | 55386 | 401/401 |
-| `straight_dist_km` | float | 0.209 | 401/401 |
-| `activity_duration_s` | int | 5176 | 401/401 |
-| `is_tour_anchor` | int | 1 | 401/401 |
-| `party_size` | int | 2 | 401/401 |
-| `time_flexibility_band` | str | flexible | 401/401 |
-| `dest_placement` | str | joint | 401/401 |
-| `agent_tier` | str | core | 401/401 |
-
 ### `demand/plans/B2_activity_trips_WEEKDAY.csv`
 
-2343400 rows, 22 columns
+2393473 rows, 22 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1370,15 +1406,15 @@ Appendix A of the proposal.
 | `tour_purpose` | str | HW | 401/401 |
 | `dest_activity_type` | str | work | 401/401 |
 | `origin_sa1` | int | 10601110701 | 401/401 |
-| `dest_sa1` | int | 11102121505 | 401/401 |
+| `dest_sa1` | int | 11103122913 | 401/401 |
 | `origin_x` | float | 348659.1 | 401/401 |
 | `origin_y` | float | 6383994.3 | 401/401 |
-| `dest_x` | float | 370817.9 | 401/401 |
-| `dest_y` | float | 6349650.8 | 401/401 |
+| `dest_x` | float | 386837.9 | 401/401 |
+| `dest_y` | float | 6356190.4 | 401/401 |
 | `dep_time_s` | int | 45533 | 401/401 |
-| `arr_time_s` | int | 51432 | 401/401 |
-| `straight_dist_km` | float | 40.872 | 401/401 |
-| `activity_duration_s` | int | 28222 | 401/401 |
+| `arr_time_s` | int | 52117 | 401/401 |
+| `straight_dist_km` | float | 47.23 | 401/401 |
+| `activity_duration_s` | int | 23138 | 401/401 |
 | `is_tour_anchor` | int | 1 | 401/401 |
 | `party_size` | int | 1 | 401/401 |
 | `time_flexibility_band` | str | fixed | 401/401 |
@@ -1387,29 +1423,18 @@ Appendix A of the proposal.
 
 ### `demand/plans/B2_escort_bindings_SAT.csv`
 
-65903 rows, 4 columns
+30207 rows, 4 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `member_person_id` | int | 8 | 401/401 |
+| `member_person_id` | int | 54 | 401/401 |
 | `member_tour_id` | int | 1 | 401/401 |
 | `direction` | str | drop | 401/401 |
-| `driver_person_id` | int | 7 | 401/401 |
+| `driver_person_id` | int | 57 | 401/401 |
 
 ### `demand/plans/B2_escort_bindings_SUN.csv`
 
-46232 rows, 4 columns
-
-| column | type | example | non-empty in sample |
-|---|---|---|---|
-| `member_person_id` | int | 7 | 401/401 |
-| `member_tour_id` | int | 1 | 401/401 |
-| `direction` | str | drop | 401/401 |
-| `driver_person_id` | int | 12 | 401/401 |
-
-### `demand/plans/B2_escort_bindings_WEEKDAY.csv`
-
-121008 rows, 4 columns
+19355 rows, 4 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1418,150 +1443,161 @@ Appendix A of the proposal.
 | `direction` | str | drop | 401/401 |
 | `driver_person_id` | int | 5 | 401/401 |
 
-### `demand/plans/B2_joint_bindings_SAT.csv`
+### `demand/plans/B2_escort_bindings_WEEKDAY.csv`
 
-110361 rows, 6 columns
+70461 rows, 4 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `companion_person_id` | int | 8 | 401/401 |
+| `member_person_id` | int | 11 | 401/401 |
+| `member_tour_id` | int | 2 | 401/401 |
+| `direction` | str | drop | 401/401 |
+| `driver_person_id` | int | 9 | 401/401 |
+
+### `demand/plans/B2_joint_bindings_SAT.csv`
+
+103650 rows, 6 columns
+
+| column | type | example | non-empty in sample |
+|---|---|---|---|
+| `companion_person_id` | int | 2 | 401/401 |
 | `companion_tour_id` | int | 2 | 401/401 |
-| `driver_person_id` | int | 10 | 401/401 |
-| `driver_tour_id` | int | 1 | 401/401 |
-| `driver_household_id` | int | 5 | 401/401 |
-| `dep_s` | int | 56885 | 401/401 |
+| `driver_person_id` | int | 1 | 401/401 |
+| `driver_tour_id` | int | 3 | 401/401 |
+| `driver_household_id` | int | 1 | 401/401 |
+| `dep_s` | int | 77206 | 401/401 |
 
 ### `demand/plans/B2_joint_bindings_SUN.csv`
 
-100790 rows, 6 columns
+95267 rows, 6 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `companion_person_id` | int | 1 | 401/401 |
+| `companion_person_id` | int | 7 | 401/401 |
 | `companion_tour_id` | int | 1 | 401/401 |
-| `driver_person_id` | int | 2 | 401/401 |
-| `driver_tour_id` | int | 3 | 401/401 |
-| `driver_household_id` | int | 1 | 401/401 |
-| `dep_s` | int | 55118 | 401/401 |
+| `driver_person_id` | int | 12 | 401/401 |
+| `driver_tour_id` | int | 2 | 401/401 |
+| `driver_household_id` | int | 5 | 401/401 |
+| `dep_s` | int | 28566 | 401/401 |
 
 ### `demand/plans/B2_joint_bindings_WEEKDAY.csv`
 
-83331 rows, 6 columns
+82172 rows, 6 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
 | `companion_person_id` | int | 7 | 401/401 |
 | `companion_tour_id` | int | 2 | 401/401 |
-| `driver_person_id` | int | 12 | 401/401 |
-| `driver_tour_id` | int | 2 | 401/401 |
+| `driver_person_id` | int | 9 | 401/401 |
+| `driver_tour_id` | int | 3 | 401/401 |
 | `driver_household_id` | int | 5 | 401/401 |
-| `dep_s` | int | 55822 | 401/401 |
+| `dep_s` | int | 82047 | 401/401 |
 
 ### `demand/plans/B2_lift_bindings_SAT.csv`
 
-25236 rows, 12 columns
+60716 rows, 12 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `passenger_person_id` | int | 3 | 401/401 |
-| `passenger_tour_id` | int | 2 | 401/401 |
-| `passenger_dep_s` | int | 47627 | 401/401 |
+| `passenger_person_id` | int | 5 | 401/401 |
+| `passenger_tour_id` | int | 1 | 401/401 |
+| `passenger_dep_s` | int | 42289 | 401/401 |
 | `priority` | int | 3 | 401/401 |
 | `direction` | str | drop | 401/401 |
-| `origin_x` | float | 348415.0 | 401/401 |
-| `origin_y` | float | 6383957.4 | 401/401 |
-| `dest_x` | float | 344883.7 | 401/401 |
-| `dest_y` | float | 6382944.4 | 401/401 |
-| `driver_person_id` | int | 36 | 401/401 |
-| `driver_household_id` | int | 16 | 401/401 |
+| `origin_x` | float | 348539.0 | 401/401 |
+| `origin_y` | float | 6383928.3 | 401/401 |
+| `dest_x` | float | 362347.0 | 401/401 |
+| `dest_y` | float | 6380423.8 | 401/401 |
+| `driver_person_id` | int | 40 | 401/401 |
+| `driver_household_id` | int | 18 | 401/401 |
 | `driver_tour_id` | int | 1 | 401/401 |
 
 ### `demand/plans/B2_lift_bindings_SUN.csv`
 
-18416 rows, 12 columns
+45290 rows, 12 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `passenger_person_id` | int | 3 | 401/401 |
+| `passenger_person_id` | int | 5 | 401/401 |
 | `passenger_tour_id` | int | 1 | 401/401 |
-| `passenger_dep_s` | int | 58132 | 401/401 |
+| `passenger_dep_s` | int | 37879 | 401/401 |
 | `priority` | int | 3 | 401/401 |
 | `direction` | str | drop | 401/401 |
-| `origin_x` | float | 348415.0 | 401/401 |
-| `origin_y` | float | 6383957.4 | 401/401 |
-| `dest_x` | float | 348615.5 | 401/401 |
-| `dest_y` | float | 6383939.2 | 401/401 |
-| `driver_person_id` | int | 18 | 401/401 |
-| `driver_household_id` | int | 9 | 401/401 |
+| `origin_x` | float | 348539.0 | 401/401 |
+| `origin_y` | float | 6383928.3 | 401/401 |
+| `dest_x` | float | 360428.6 | 401/401 |
+| `dest_y` | float | 6379866.0 | 401/401 |
+| `driver_person_id` | int | 12 | 401/401 |
+| `driver_household_id` | int | 5 | 401/401 |
 | `driver_tour_id` | int | 1 | 401/401 |
 
 ### `demand/plans/B2_lift_bindings_WEEKDAY.csv`
 
-44258 rows, 12 columns
+93318 rows, 12 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `passenger_person_id` | int | 3 | 401/401 |
-| `passenger_tour_id` | int | 1 | 401/401 |
-| `passenger_dep_s` | int | 21554 | 401/401 |
+| `passenger_person_id` | int | 4 | 401/401 |
+| `passenger_tour_id` | int | 2 | 401/401 |
+| `passenger_dep_s` | int | 71976 | 401/401 |
 | `priority` | int | 3 | 401/401 |
 | `direction` | str | drop | 401/401 |
-| `origin_x` | float | 348415.0 | 401/401 |
-| `origin_y` | float | 6383957.4 | 401/401 |
-| `dest_x` | float | 367645.1 | 401/401 |
-| `dest_y` | float | 6349581.0 | 401/401 |
-| `driver_person_id` | int | 19 | 401/401 |
-| `driver_household_id` | int | 10 | 401/401 |
+| `origin_x` | float | 348546.9 | 401/401 |
+| `origin_y` | float | 6384165.9 | 401/401 |
+| `dest_x` | float | 345564.5 | 401/401 |
+| `dest_y` | float | 6385674.7 | 401/401 |
+| `driver_person_id` | int | 16 | 401/401 |
+| `driver_household_id` | int | 8 | 401/401 |
 | `driver_tour_id` | int | 1 | 401/401 |
 
 ### `demand/plans/B2_shared_bindings_SAT.csv`
 
-70598 rows, 8 columns
+82454 rows, 8 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `passenger_person_id` | int | 461810 | 401/401 |
-| `passenger_tour_id` | int | 2 | 401/401 |
+| `passenger_person_id` | int | 586137 | 401/401 |
+| `passenger_tour_id` | int | 1 | 401/401 |
 | `direction` | str | drop | 401/401 |
-| `passenger_dep_s` | int | 53956 | 401/401 |
-| `driver_person_id` | int | 39265 | 401/401 |
+| `passenger_dep_s` | int | 54598 | 401/401 |
+| `driver_person_id` | int | 39659 | 401/401 |
 | `driver_tour_id` | int | 1 | 401/401 |
-| `driver_household_id` | int | 15072 | 401/401 |
-| `driver_dep_s` | int | 53809 | 401/401 |
+| `driver_household_id` | int | 15241 | 401/401 |
+| `driver_dep_s` | int | 54323 | 401/401 |
 
 ### `demand/plans/B2_shared_bindings_SUN.csv`
 
-67442 rows, 8 columns
+76478 rows, 8 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `passenger_person_id` | int | 542846 | 401/401 |
+| `passenger_person_id` | int | 518617 | 401/401 |
 | `passenger_tour_id` | int | 2 | 401/401 |
 | `direction` | str | drop | 401/401 |
-| `passenger_dep_s` | int | 34290 | 401/401 |
-| `driver_person_id` | int | 38566 | 401/401 |
-| `driver_tour_id` | int | 1 | 401/401 |
-| `driver_household_id` | int | 14819 | 401/401 |
-| `driver_dep_s` | int | 35101 | 401/401 |
+| `passenger_dep_s` | int | 70301 | 401/401 |
+| `driver_person_id` | int | 515718 | 401/401 |
+| `driver_tour_id` | int | 3 | 401/401 |
+| `driver_household_id` | int | 205040 | 401/401 |
+| `driver_dep_s` | int | 70995 | 401/401 |
 
 ### `demand/plans/B2_shared_bindings_WEEKDAY.csv`
 
-126958 rows, 8 columns
+132530 rows, 8 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `passenger_person_id` | int | 508356 | 401/401 |
-| `passenger_tour_id` | int | 2 | 401/401 |
+| `passenger_person_id` | int | 441610 | 401/401 |
+| `passenger_tour_id` | int | 3 | 401/401 |
 | `direction` | str | drop | 401/401 |
-| `passenger_dep_s` | int | 49380 | 401/401 |
-| `driver_person_id` | int | 35190 | 401/401 |
-| `driver_tour_id` | int | 1 | 401/401 |
-| `driver_household_id` | int | 13645 | 401/401 |
-| `driver_dep_s` | int | 49399 | 401/401 |
+| `passenger_dep_s` | int | 65230 | 401/401 |
+| `driver_person_id` | int | 36018 | 401/401 |
+| `driver_tour_id` | int | 2 | 401/401 |
+| `driver_household_id` | int | 13983 | 401/401 |
+| `driver_dep_s` | int | 65099 | 401/401 |
 
 ### `demand/population/B1_households.csv`
 
-246865 rows, 10 columns
+247596 rows, 10 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1578,7 +1614,7 @@ Appendix A of the proposal.
 
 ### `demand/population/B1_synthetic_population.csv`
 
-612634 rows, 17 columns
+612667 rows, 17 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|

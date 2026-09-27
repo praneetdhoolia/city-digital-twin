@@ -849,6 +849,7 @@ data/raw/provenance_licences.json
 data/raw/provenance_opal_patronage.json
 data/raw/provenance_open_data.json
 data/raw/provenance_osm.json
+data/raw/provenance_smvu.json
 data/raw/speedzones/provenance_speed_zones.json
 schedules/raw/provenance.json
 '''),

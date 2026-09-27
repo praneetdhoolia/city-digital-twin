@@ -877,7 +877,9 @@ STRUCTURAL_INLINE = {
     '<city>/build/build_licence_rates.py:erp_single_years:120':
         'the upper age of an open-ended "85 and over" band when it is expanded to '
         'single years; nobody in the ERP is older',
-    '<city>/build/build_licence_rates.py:main:5e-05':
+    '<city>/build/build_licence_rates.py:assert_declared:5e-05':
+        _TOL,
+    '<city>/build/build_motorcycle_possession.py:main:5e-05':
         _TOL,
     '<city>/build/build_mode_targets.py:road_person_targets:5e-05':
         _TOL,

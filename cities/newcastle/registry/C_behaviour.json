@@ -498,8 +498,26 @@
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "8.5, 9.52",
-      "description": "Motorbike alternative-specific constant relative to car driver = 0. DECLARED rather than typed into src/build/build_matsim_run_inputs.py, where it was a literal 0.0 beside the mode table; the shipped value reproduces that emission exactly, so creating the field is behaviour-neutral. It is a DEFINITION and carries no sweep for the same reason C.asc.car_driver does not: motorbike is a person-level LOCKED carve from car-driver demand (9.52), the rider's day is locked to the mode and motorbike is not a member of RUN.mode_choice.modes, so this constant is a level shift on every plan that person can hold and cannot change any choice they make. A sweep over it would have a sensitivity band of exactly zero BY CONSTRUCTION - the defect class 9.22 retired the walk-decay axis for, where an interval reaching nothing gets reported as insensitivity. It becomes a free parameter, with a sweep and a basis, on the day motorbike joins RUN.mode_choice.modes and the lock is lifted."
+      "decisions_ref": "8.5, 9.52, 9.214",
+      "description": "Motorbike alternative-specific constant relative to car driver = 0. DECLARED rather than typed into src/build/build_matsim_run_inputs.py, where it was a literal 0.0 beside the mode table; the shipped value reproduces that emission exactly, so creating the field is behaviour-neutral. Under B.motorbike.representation = carve motorbike is a person-level LOCKED carve from car-driver demand (9.52) and this constant is a level shift on every plan a carved person can hold, so it cannot change any choice. Under `choice` (9.214, D22) motorbike competes in SubtourModeChoice for the persons with a rider licence and a household motorcycle, and this constant DOES reach choices - it is held at the car driver's 0.0 by the user's decision and NEVER FITTED: the census G62 share is what the reading is scored against, and fitting the constant to it would turn the share back into an input. It carries no sweep, so the calibrator's movability contract refuses to step it (tests/unit/test_asc_fixed_point.py); motorbike stays outside RUN.mode_choice.modes, the run adding it at startup from the population. A sweep, with a basis, is owed before any run reads the constant's sensitivity."
+    },
+    "C.scoring.motorbike_fuel_ratio": {
+      "value": 0.5350877192982456,
+      "units": "ratio",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "C.scoring.monetary_distance_rate"
+        ],
+        "identity": "ratio = motor cycles / passenger vehicles average rate of fuel consumption (l/100 km), ABS Survey of Motor Vehicle Use, Australia, 12 months ended 30 June 2020 (cat. 9208.0), data cube data/raw/abs/92080DO001_202006.xls Table 6, the city's state of registration (city.json jurisdiction.subdivision: New South Wales), column 'Total fuel' = 6.1 / 11.4, read by label and asserted by cities/newcastle/build/build_vehicle_fuel_ratio.py (data/processed/observed/vehicle_fuel_ratio.json). The motorbike's perceived running cost is then C.scoring.monetary_distance_rate['car'] x ratio = -0.00018 x 0.53509 = -0.0000963 AUD/m. The car rate covers fuel AND tyres; only the FUEL ratio is observed, so tyres are ASSUMED to scale with fuel - a motorcycle has two smaller tyres, so the tyre share is likely overstated, which the car rate's own sweep (-0.00025 to -0.00012) brackets far more widely than the tyre share can move it."
+      },
+      "status": "active",
+      "decisions_ref": "9.214",
+      "description": "The motorbike-to-car ratio of observed fuel consumption, scaling the car's perceived running cost onto the motorbike. Applied ONLY under B.motorbike.representation = choice, where src/build/build_matsim_run_inputs.py writes scoring.modeParams[motorbike].monetaryDistanceRate = C.scoring.monetary_distance_rate['car'] x this ratio as a derived runtime value; under `carve` the declared table's motorbike entry (0.0) stands and the config is unchanged - a locked carve rider's running cost changes no choice. The survey's rate is for the whole registered fleet of the state, not an urban cycle.",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py",
+        "cities/newcastle/build/build_vehicle_fuel_ratio.py"
+      ]
     },
     "C.asc.ferry": {
       "value": -1.05,

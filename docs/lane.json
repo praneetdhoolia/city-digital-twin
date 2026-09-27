@@ -1,6 +1,6 @@
 {
   "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
-  "updated": "2026-09-25",
+  "updated": "2026-09-27",
   "family": "F37-the-boundary-tier-returns-and-pt-reaches-every-stop",
   "tasks": [
     {
@@ -940,6 +940,41 @@
       "asked": "2026-09-25",
       "answer": "In F38, after F37 reads (recommended)",
       "answered": "2026-09-25"
+    },
+    {
+      "id": "D23",
+      "question": "F37's arm 0 traced walk's long trips, the rail excess and the car-less excess to two demand structures. What does F38 contain?",
+      "options": [
+        {
+          "label": "All three, then the arm (Recommended)",
+          "detail": "escort round trips for anyone who could drive, destinations by the person's own mobility, motorbike chosen (D22); verified offline, smoke, probe, then a 25 % arm at a 34 h ceiling (this approves that cost)"
+        },
+        {
+          "label": "All three, no arm yet",
+          "detail": "build and verify, ask again before 34 h"
+        },
+        {
+          "label": "Escort and motorbike only",
+          "detail": "the destination kernel in a later family"
+        },
+        {
+          "label": "Measure more first",
+          "detail": "access-walk weight and Hamilton transfers before building"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        30,
+        86,
+        107,
+        162,
+        257
+      ],
+      "evidence": "9.214; F37 arm 0 20260926T002526_250it_25pct at iteration 250",
+      "asked": "2026-09-27",
+      "answer": "All three, then the arm (Recommended)",
+      "answered": "2026-09-27",
+      "note": "approves one 25 % F38 arm at a 34 h ceiling, spent on that launch"
     }
   ]
 }

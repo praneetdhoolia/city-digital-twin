@@ -101,36 +101,97 @@
         "cities/newcastle/build/build_licence_rates.py"
       ]
     },
-    "B.activity.plan_speed_car_kmh": {
-      "value": 26.0,
-      "units": "km/h",
-      "source": "assumed",
-      "sweep": [
-        20.0,
-        32.0
+    "B.population.rider_licence_rate_by_age_band": {
+      "value": [
+        0.0,
+        0.0,
+        0.0055,
+        0.053,
+        0.1023,
+        0.1557,
+        0.1838,
+        0.199,
+        0.1971,
+        0.1109,
+        0.0037
       ],
-      "sweep_basis": "urban door-to-door average including parking and access; brackets typical metropolitan network speeds. It decides only the B2 chain-timing scaffold (whether tours fit a day, and their planned departure spacing) - the mobsim re-times every leg physically - but a value that decides anything is declared (9.61: it sat as a bare 26.0 inside time_tour's expression, invisible to the ledger's scanner).",
-      "sweep_role": "uncertainty",
+      "units": "probability",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "B.population.age_bands",
+          "B.population.licence_rate_by_age_band"
+        ],
+        "identity": "rate(band) = rider-class licence holders / ABS estimated resident population, by B.population.age_bands, pooled over the core LGAs: the numerator is the TfNSW Driver Licence Statistics snapshot (202607) rows of LICENCE CLASS Rider of EVERY licence type, LEARNER INCLUDED - a NSW learner rider may ride unaccompanied (L plates, no pillion), where a learner driver needs a supervisor beside them, so the car rate keeps excluding learners and the rider rate does not (2,877 of the 72,149 riders are learners) - summed over BOTH primary-licence flags (a customer holds at most one record of a class and exactly one record is primary, so a Rider row flagged FALSE is a rider whose primary licence is car or heavy - 71,065 of 72,149 - and the sum counts each rider once); the denominator is the one B.population.licence_rate_by_age_band is drawn over (ERP 30 June 2024 by age and LGA, split to single years by census G04), computed by the same routine in cities/newcastle/build/build_licence_rates.py. Suppressed cells (<=5) are taken at 3."
+      },
       "status": "active",
-      "decisions_ref": "9.61",
-      "description": "Door-to-door planning speed for a car-available person, used by the B2 chain builder to time tours (straight-line distance at this speed plus B.activity.plan_access_s). Not a routing or scoring quantity.",
+      "decisions_ref": "9.214",
+      "description": "Motorcycle (rider) licence holding rate by age band, aligned to B.population.age_bands - the POOLED value over the core LGAs, written with the per-LGA table data/processed/observed/rider_licence_rates_by_age_lga.csv by cities/newcastle/build/build_licence_rates.py, which asserts this vector against the derivation. Under B.motorbike.representation = choice the plans builder draws each resident's rider licence at the rate of their home LGA and age band (this vector where the LGA has no row), coupled to the household motorcycle by B.motorbike.rider_coupling; a person may choose motorbike only with a rider licence AND a household motorcycle. Measured: 0.05 at 18-24, 0.10 at 25-34, 0.16-0.20 from 35 to 74, 0.11 at 75-84; Cessnock highest, Newcastle lowest in every adult band.",
+      "consumers": [
+        "src/build/build_matsim_plans.py",
+        "cities/newcastle/build/build_licence_rates.py"
+      ]
+    },
+    "B.population.household_motorcycle_share": {
+      "value": 0.1254,
+      "units": "share_of_households",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "B.motorbike.possession_identity"
+        ],
+        "identity": "per postal area, lambda = BITRE motorcycles by GARAGING postcode (Road Vehicles Australia, 31 January 2025, data/raw/bitre/rva-2025-mvs-vehtype-streg-poagar-mtvpwr-rpc.csv, summed over motive power and state of registration - where the vehicle is kept, BITRE falling back to the registered postcode where none is recorded) / census 2021 occupied private dwellings of the SA1s whose largest overlap is that postal area, and the share of households holding at least one = 1 - exp(-lambda) under B.motorbike.possession_identity = poisson_at_least_one (src/build/possession.py); this value is that share averaged over the core SA1s' dwellings, written by cities/newcastle/build/build_motorcycle_possession.py, which asserts it. The postal areas are the geometry-derived study set of data/processed/observed/bitre_registrations_study_area.csv."
+      },
+      "status": "active",
+      "decisions_ref": "9.214",
+      "description": "Share of households holding at least one motorcycle - the POOLED value over the core SA1s. The per-SA1 value (its postal area's) is in data/processed/observed/motorcycle_possession_by_sa1.csv; under B.motorbike.representation = choice the plans builder draws each B1 household's motorcycle from its seeded stream at its home SA1's value, and at this pooled value where the SA1's postal area lies outside the study set. The census motor-vehicle count excludes motorcycles, so this possession is independent of household_vehicles. The stock includes business, fleet and dealer vehicles: one postal area holds 1,260 garaged against 606 registered motorcycles.",
+      "consumers": [
+        "src/build/build_matsim_plans.py",
+        "cities/newcastle/build/build_motorcycle_possession.py"
+      ]
+    },
+    "B.activity.plan_speed_car_kmh": {
+      "value": 26.8,
+      "units": "km/h",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "C.constraint.trip_length_km.car",
+          "C.constraint.trip_time_min.car",
+          "B.activity.detour_factor"
+        ],
+        "identity": "the survey's own car-driver trip: 10.2 km in 17.2 min is 35.58 km/h door to door on the network, divided by the measured detour factor 1.3276 because the chain builder times STRAIGHT-LINE distance: 26.80 km/h. Replaced the assumed 26.0 (swept 20-32) at 9.214, when the planning speeds also became the destination kernel's time scale."
+      },
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.214",
+      "description": "Door-to-door planning speed for a car-available person, used by the B2 chain builder to time tours (straight-line distance at this speed plus B.activity.plan_access_s) and, under B.activity.destination_mobility = own_speed, as the car segment's time scale in the destination kernel. Not a routing or scoring quantity.",
       "consumers": [
         "src/build/build_activity_chains.py"
       ]
     },
     "B.activity.plan_speed_nocar_kmh": {
-      "value": 16.0,
+      "value": 21.43,
       "units": "km/h",
-      "source": "assumed",
-      "sweep": [
-        10.0,
-        22.0
-      ],
-      "sweep_basis": "a blend of walk, cycle and bus door-to-door speeds for a person without a car. Same scaffold-only role, same 9.61 declaration rationale, as plan_speed_car_kmh.",
-      "sweep_role": "uncertainty",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "C.constraint.trip_length_km.ride",
+          "C.constraint.trip_time_min.ride",
+          "C.constraint.trip_length_km.walk",
+          "C.constraint.trip_time_min.walk",
+          "C.constraint.trip_length_km.pt",
+          "C.constraint.trip_time_min.pt",
+          "C.constraint.trip_length_km.bike",
+          "C.constraint.trip_time_min.bike",
+          "B.activity.detour_factor"
+        ],
+        "identity": "the survey's trips that need no car of one's own - vehicle passenger, walk only, public transport and bicycle - taken together at their observed shares (HTS 2024/25: 20.6 %, 13.4 %, 3.8 % and 2.2084 %, `data/processed/validation/mode_targets_by_mode.csv`): total km over total time, sum(s_m L_m) / sum(s_m T_m) = 311.66 km / 657.24 min = 28.45 km/h on the network, divided by the measured detour factor 1.3276: 21.43 km/h. The survey holds no split by car availability, so the non-driver modes' OWN mix is the car-less traveller's; taxi (0.99 %) is left out for want of an observed trip time. Replaced the assumed 16.0 (swept 10-22) at 9.214."
+      },
+      "sweep": null,
       "status": "active",
-      "decisions_ref": "9.61",
-      "description": "Door-to-door planning speed for a person without car availability, used by the B2 chain builder to time tours. Not a routing or scoring quantity.",
+      "decisions_ref": "9.214",
+      "description": "Door-to-door planning speed for a person without car availability, used by the B2 chain builder to time tours and, under B.activity.destination_mobility = own_speed, as the car-less segment's time scale in the destination kernel. Not a routing or scoring quantity.",
       "consumers": [
         "src/build/build_activity_chains.py"
       ]
@@ -217,6 +278,25 @@
       "status": "active",
       "decisions_ref": "9.142",
       "description": "Whether the destination draw is constrained at the destination end as well as the origin end (issue #30). The attraction vector states what share of a purpose's trip ends each zone should receive; under `singly_constrained` the draw was free to ignore it, and the measured consequence was a corridor receiving two thirds of the arrivals its own observed attraction states, which read as a light-rail and heavy-rail defect for three families. Under `doubly_constrained` a destination multiplier is solved so the production-weighted arrival shares equal the attraction shares while each purpose still realises its own observed mean distance per home LGA. This introduces NO new observation and no new tunable: the multiplier is the Lagrange multiplier of a constraint the attraction vector had already declared. Reported in the build report under `decay._destination_balancing`.",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.activity.destination_mobility": {
+      "value": "own_speed",
+      "units": "enum",
+      "source": "definition",
+      "sweep": {
+        "categorical": [
+          "absent",
+          "own_speed"
+        ],
+        "basis": "The two states destination choice can take with respect to mobility, comparable by construction: `absent` is F37's build exactly - one distance kernel per purpose for everyone, so a person without a car is sent as far as a driver; MEASURED on F37 arm 0 (`20260926T002526_250it_25pct`, iteration 250): the car-less made 17.8 % of residents' trips but 57 % of bike trips (mean 11.8 km), 37 % of taxi trips, 52 % of rail station entries, and walked a mean 6.0 km. `own_speed` makes the long kernel one TIME decay at each segment's own planning speed (B.activity.plan_speed_car_kmh, B.activity.plan_speed_nocar_kmh, both derived from the survey), so the car-less matrix decays their ratio times faster per km; the decay is solved against each origin's car-less share of production so the two segments TOGETHER still realise the survey's mean distance per purpose and home LGA. No new observation or constant enters."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.214",
+      "description": "Whether the destination draw is by the person's own mobility (a car-available and a car-less matrix, one time decay at each segment's planning speed) or one distance kernel for everyone (`absent`).",
       "consumers": [
         "src/build/build_activity_chains.py"
       ]
@@ -341,6 +421,25 @@
       "status": "active",
       "decisions_ref": "9.68",
       "description": "How bound serve tours distribute over escorted passenger tours: one serving tour per passenger outward trip, or a drop-off and pick-up pair covering the passenger's whole 2-leg tour. Applies to both the 9.46 household binder and the 9.60 non-household re-targeting pass.",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.activity.escort_oneway_scope": {
+      "value": "cannot_drive",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "any_member",
+          "cannot_drive"
+        ],
+        "basis": "Nothing observes who drives whom, so which escorted tours may stay covered in one direction is an assumed choice, declared and swept. `any_member` is F37: leftover serve supply binds one way to any member, and since D12 (9.211) the bound direction is HELD to ride, so the car stays home and the other direction has only walk, pt, bike or taxi. MEASURED on F37 arm 0 (`20260926T002526_250it_25pct`, iteration 250): 70,571 weekday member tours covered one way against 24,993 round trip; residents' walk-only trips inside a held-ride tour are 25.0 % of walk trips and 35.6 % of walk km at a mean 11.1 km, and 28 % of taxi trips (mean 16.5 km) are car-available travellers on such tours. `cannot_drive` keeps a one-way binding only for a member without a licence or a car, whose choice set holding does not shrink, and releases it for everyone else; the serve tour stays where it was placed, so the observed Serve-passenger rate is untouched and the released tour is unbound exactly as a tour that found no member is."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.214",
+      "description": "Which escorted member tours may stay covered in ONE direction after the household binder has run: any member (F37), or only a member who cannot drive the tour (no licence or no car available). A released binding leaves its serve tour placed but serving no one (`dest_placement` `escort_released`).",
       "consumers": [
         "src/build/build_activity_chains.py"
       ]
@@ -2021,6 +2120,63 @@
         "src/build/build_matsim_plans.py"
       ],
       "description": "The spatial resolution of the motorbike carve. Measured motivation (9.122, #93 fact 2): census G62 puts the motorbike share of driver journeys between 0 and 1.13% across SA2s against a flat 0.41% region value, and the flat carve delivered 0.06% of target-LGA resident trips against the 0.24% target on the F16 and F17 arms - the carve put motorcyclists where car ownership is, not where the census sees them. Per cell the probability is solved on that cell's eligible persons' own trips; the trip-weighted mean of the cell shares is reported beside the declared region share in _plans_report.json so the identity can be checked, never asserted."
+    },
+    "B.motorbike.representation": {
+      "value": "choice",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "carve",
+          "choice"
+        ],
+        "basis": "The two representations the plans builder can write. `carve` is every build before 9.214, recovered byte for byte: a licensed, car-available resident is drawn a motorbike user by a hash against B.motorbike.trip_share (per home SA1 under B.motorbike.carve_resolution) and their day is LOCKED to the mode, which reproduces the census G62 share by construction. `choice` retires the lock and the draw: availability is observed - a rider licence (B.population.rider_licence_rate_by_age_band, per LGA and age band) AND a household motorcycle (B.population.household_motorcycle_share, per postal area) - and motorbike competes in SubtourModeChoice as a chain-based mode, scored by C.asc.motorbike unfitted. WHAT THE SWEEP ANSWERS: how much of the motorbike share is availability and how much is preference - under `choice` the G62 share is a reading, no longer an input."
+      },
+      "sweep_role": "answer",
+      "status": "active",
+      "decisions_ref": "9.214",
+      "description": "The representation gate for motorbike (D22, #257). Under `choice` the plans builder writes the person attribute motorbikeAvail = always|never on every agent (never for the boundary tiers and the locked truck carve), seeds a motorbike plan for each available resident under the full-choice-set seed, treats motorbike as chain-based in the seed's subtour check, and writes no motorbike lockedMode. citysim.AvailabilityModesCalculator strips motorbike from a person whose motorbikeAvail is never, and citysim.CitysimControler adds motorbike to subtourModeChoice.modes and chainBasedModes at startup WHEN THE POPULATION CARRIES motorbikeAvail - the representation is read from the plans it runs, so the emitted config is unchanged by this field and a `carve` population behaves exactly as before. RUN.mode_choice.modes is not changed: the addition is a derived transformation logged at startup, the pattern RUN.mode_choice.pt_submode_alternatives uses.",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ]
+    },
+    "B.motorbike.possession_identity": {
+      "value": "poisson_at_least_one",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "poisson_at_least_one",
+          "one_per_household"
+        ],
+        "basis": "How a stock of motorcycles per household becomes a share of households holding at least one. poisson_at_least_one: the motorcycles fall on households independently, P = 1 - exp(-lambda) - the identity 9.209 uses for the Mumbai possession projection. one_per_household: every motorcycle in a different household, P = min(1, lambda), the upper bound. No observation of multi-motorcycle households exists in the package (the census vehicle count excludes motorcycles), so the pair brackets the distribution; clustering of several motorcycles in one household would put the truth BELOW the Poisson value, which the bracket does not reach and which is stated rather than swept."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.214",
+      "description": "The identity that turns registered motorcycles per household into the share of households holding one (src/build/possession.py). Read by cities/newcastle/build/build_motorcycle_possession.py; B.population.household_motorcycle_share is derived through it.",
+      "consumers": [
+        "cities/newcastle/build/build_motorcycle_possession.py"
+      ]
+    },
+    "B.motorbike.rider_coupling": {
+      "value": "riders_first",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "riders_first",
+          "independent"
+        ],
+        "basis": "How the rider licence and the household motorcycle are drawn together. Under both, riders are drawn FIRST and independently per person at the observed LGA x age-band rate, so every cell's riders hold the observed total in expectation exactly. riders_first: a registered motorcycle needs a licensed rider and the household holding it is where one lives, so only a household with a drawn rider may hold one, at P(hold | has a rider) = sum_h P_h / sum_h q_h per postal area, where P_h is the observed postal-area share and q_h = 1 - prod(1 - r_i) the household's closed-form chance of holding a rider - the postal area's expected possessing households equal the observed share x households, clipped at 1 and the lost households reported where the area's riders cannot carry its motorcycles. independent: the motorcycle at the observed share whoever lives there, which puts only the household share (~12 %) of riders in a motorcycle household and understates availability about threefold. No observation links a licence holder to a household's motorcycle; the pair brackets it. A first coupling that forced one rider into every possessing household (at_least_one_rider, 9.214) was retired the same day: it made riders of lone 85+ residents at seven to twenty times their observed rate, because a household's motorcycle, not its members, chose the rider."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.214",
+      "description": "The coupling between the rider-licence draw (B.population.rider_licence_rate_by_age_band, per person) and the household-motorcycle draw (B.population.household_motorcycle_share, per postal area) in src/build/build_matsim_plans.py under B.motorbike.representation = choice. The plans report carries each (LGA, age band) cell's drawn riders and each postal area's drawn possessing households against their observed totals, and names any postal area whose P(hold | rider) clips at 1 with the possessing households it loses.",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ]
     },
     "B.truck.resident_trip_share": {
       "value": 0.002993,

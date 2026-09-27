@@ -34,6 +34,13 @@ import org.matsim.core.router.TripStructureUtils;
  * against car in the choice set itself, undeclared anywhere (issue #29,
  * DECISIONS.md 9.39).
  *
+ * <p><b>`motorbikeAvail`</b> (DECISIONS.md 9.214, D22, #257): a rider licence
+ * drawn at the TfNSW per-LGA, per-age-band rate AND a household motorcycle
+ * drawn at the BITRE postal area's rate. Present only under
+ * {@code B.motorbike.representation = choice}, where motorbike is a mode the
+ * person chooses rather than a lock; `never` strips it exactly as `bikeAvail`
+ * strips bike. See {@link #applyMotorbikeChoiceSet}.
+ *
  * <p><b>`lockedMode`</b> (declared per agent tier): an agent whose demand is
  * anchored on an observed quantity of a specific mode — a through-traffic
  * vehicle seeded from a cordon road count (issue #20, DECISIONS.md 9.41) — must
@@ -61,6 +68,11 @@ public final class AvailabilityModesCalculator implements PermissibleModesCalcul
     /** Person attributes written by build_matsim_plans.py. */
     public static final String RIDE_ATTRIBUTE = "rideAvail";
     public static final String BIKE_ATTRIBUTE = "bikeAvail";
+    /** DECISIONS.md 9.214 (D22, #257): a rider licence AND a household
+     * motorcycle, written by build_matsim_plans.py under
+     * {@code B.motorbike.representation = choice} and absent under
+     * {@code carve}. */
+    public static final String MOTORBIKE_ATTRIBUTE = "motorbikeAvail";
     public static final String LOCKED_ATTRIBUTE = "lockedMode";
     public static final String AGE_ATTRIBUTE = "age";
     /** Optional complete, comma-separated person-level choice set. This is
@@ -71,6 +83,7 @@ public final class AvailabilityModesCalculator implements PermissibleModesCalcul
     public static final String RIDE = "ride";
     public static final String BIKE = "bike";
     public static final String TAXI = "taxi";
+    public static final String MOTORBIKE = "motorbike";
 
     private final PermissibleModesCalculator delegate;
     private final int taxiMinAge;
@@ -164,6 +177,52 @@ public final class AvailabilityModesCalculator implements PermissibleModesCalcul
         }
     }
 
+    /**
+     * Put {@code motorbike} into the plan-level choice set, as a chain-based
+     * mode, when the population says motorbike is chosen (DECISIONS.md 9.214,
+     * D22, #257).
+     *
+     * <p>The representation is read from the plans the run is given, not
+     * from a config parameter: build_matsim_plans.py writes
+     * {@code motorbikeAvail} on every agent under
+     * {@code B.motorbike.representation = choice} and on none under
+     * {@code carve}. So the emitted config is identical under both, a
+     * {@code carve} population finds no attribute and nothing here runs, and
+     * a config can never offer motorbike to a population whose availability
+     * was not drawn. {@code subtourModeChoice.modes} already has one declared
+     * writer ({@code RUN.mode_choice.modes}) and the emitter refuses a second,
+     * so the addition is a derived transformation logged at startup - the
+     * shape {@link PtSubmodeChoiceConfigGroup#applyChoiceSet} uses. A
+     * motorbike, like a car, must come home: it joins
+     * {@code chainBasedModes} too.
+     *
+     * @return true when the choice set was widened
+     */
+    public static boolean applyMotorbikeChoiceSet(final Scenario scenario) {
+        boolean carried = false;
+        for (Person person : scenario.getPopulation().getPersons().values()) {
+            if (person.getAttributes().getAttribute(MOTORBIKE_ATTRIBUTE) != null) {
+                carried = true;
+                break;
+            }
+        }
+        if (!carried) {
+            return false;
+        }
+        final Config config = scenario.getConfig();
+        config.subtourModeChoice().setModes(withMode(config.subtourModeChoice().getModes()));
+        config.subtourModeChoice().setChainBasedModes(
+                withMode(config.subtourModeChoice().getChainBasedModes()));
+        return true;
+    }
+
+    private static String[] withMode(final String[] declared) {
+        final Set<String> out = new LinkedHashSet<>(
+                Arrays.asList(declared == null ? new String[0] : declared));
+        out.add(MOTORBIKE);
+        return out.toArray(new String[0]);
+    }
+
     @Override
     public Collection<String> getPermissibleModes(final Plan plan) {
         final Collection<String> modes = this.delegate.getPermissibleModes(plan);
@@ -189,14 +248,16 @@ public final class AvailabilityModesCalculator implements PermissibleModesCalcul
         final boolean noBike = never(person, BIKE_ATTRIBUTE)
                 || years < this.bikeMinAge;
         final boolean noTaxi = years < this.taxiMinAge;
-        if (!noRide && !noBike && !noTaxi && explicit == null) {
+        final boolean noMotorbike = never(person, MOTORBIKE_ATTRIBUTE);
+        if (!noRide && !noBike && !noTaxi && !noMotorbike && explicit == null) {
             return modes;
         }
         final Collection<String> out = new ArrayList<>(modes.size());
         for (final String mode : modes) {
             if (explicit != null && !explicit.contains(mode)) continue;
             if ((noRide && RIDE.equals(mode)) || (noBike && BIKE.equals(mode))
-                    || (noTaxi && TAXI.equals(mode))) {
+                    || (noTaxi && TAXI.equals(mode))
+                    || (noMotorbike && MOTORBIKE.equals(mode))) {
                 continue;
             }
             out.add(mode);

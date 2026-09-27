@@ -229,6 +229,23 @@ ESCORT_NONHH_SCOPE = CFG.get('B.activity.escort_binding_nonhh_scope')
 # unpairable leg. 'round_trip' allocates the same observed-rate serve tours
 # as drop-off + pick-up pairs per 2-leg passenger tour. Assumed and swept.
 ESCORT_DIRECTIONS = CFG.get('B.activity.escort_binding_directions')
+# DECISIONS.md 9.214: who may be escorted ONE WAY. A one-way binding holds one
+# direction of the member's tour to ride, so the car stays home for the whole
+# tour and the other direction has only walk, pt, bike or taxi - measured on
+# F37 arm 0 as 35.6 % of residents' walk km at a mean 11.1 km and 28 % of taxi
+# trips. 'cannot_drive' keeps a one-way binding only for a member without a
+# licence or a car, whose choice set it does not shrink, and RELEASES it for
+# anyone else: the serve tour still runs (the observed rate is untouched),
+# unbound like the tours that found no member. 'any_member' is F37.
+ESCORT_ONEWAY_SCOPE = CFG.get('B.activity.escort_oneway_scope')
+# DECISIONS.md 9.214: whether destinations are drawn by the person's own
+# mobility - one time decay at the car and car-less planning speeds - or by
+# one distance kernel for everyone (`absent`, F37 exactly).
+DESTINATION_MOBILITY = CFG.get('B.activity.destination_mobility')
+# The placements of an HX tour that serves nobody: drawn from the distribution
+# (`poi`, `jitter`) or released by 9.214's one-way rule. The 9.60 pass offers
+# every one of them to a non-household passenger, as an unbound tour is.
+UNBOUND_SERVE_PLACEMENTS = ('poi', 'jitter', 'escort_released')
 # DECISIONS.md 9.68: a BOUND serve tour suppresses the intermediate-stop
 # draw - under both_links pairing an intermediate stop replaces the serving
 # leg with two legs matching neither endpoint of the passenger's leg.
@@ -553,7 +570,12 @@ def balance_destinations(cd):
               'singly_constrained nothing is balanced and the two are equal.'))
     CUM = {}
     for p in PURPOSES:
-        CUM[p] = np.cumsum(W[p], axis=1).astype(np.float32)
+        if cd.segments is None:
+            CUM[p] = np.cumsum(W[p], axis=1).astype(np.float32)
+            continue
+        # 9.214: one matrix per mobility segment, drawn by the person's own
+        for key, w in cd.segments(p).items():
+            CUM[key] = np.cumsum(w, axis=1).astype(np.float32)
     return CUM
 
 
@@ -563,14 +585,27 @@ def _row_normalised(mat):
     return np.divide(mat, np.where(s > 0, s, 1.0))
 
 
-def _solve_decay(aeff, dkm, w_origin, target):
+def _row_mean_km(aeff, dkm, beta):
+    """Each origin's mean straight-line km under the kernel at `beta`."""
+    w = aeff[None, :] * np.exp(-beta * dkm)
+    s = w.sum(axis=1, keepdims=True)
+    w = np.divide(w, np.where(s > 0, s, 1.0))
+    return (w * dkm).sum(axis=1)
+
+
+def _solve_decay(aeff, dkm, w_origin, target, seg=None):
     """Bisect the long-kernel beta so the `w_origin`-weighted realised mean
-    straight-line distance hits `target`; returns (beta, realised mean km)."""
+    straight-line distance hits `target`; returns (beta, realised mean km).
+
+    `seg` = (car-less share by origin, ratio): 9.214's two-segment kernel, in
+    which a person without a car decays `ratio` times faster per km - one
+    time-decay at each segment's own planning speed - and the target is met by
+    the two segments together, as the survey's mean describes both."""
     def realised(beta):
-        w = aeff[None, :] * np.exp(-beta * dkm)
-        s = w.sum(axis=1, keepdims=True)
-        w = np.divide(w, np.where(s > 0, s, 1.0))
-        return float((w_origin * (w * dkm).sum(axis=1)).sum())
+        m = _row_mean_km(aeff, dkm, beta)
+        if seg is not None:
+            m = (1.0 - seg[0]) * m + seg[0] * _row_mean_km(aeff, dkm, seg[1] * beta)
+        return float((w_origin * m).sum())
 
     lo, hi = 0.005, 4.0
     r_lo, r_hi = realised(lo), realised(hi)
@@ -704,7 +739,8 @@ def _arrival_gap(pw, w, attr):
     return float(np.abs(rel).max()), a, held
 
 
-def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None):
+def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None,
+                    mobility=None):
     """Solve the gravity decay so realised mean distance matches the HTS.
 
     P1 set beta = 1/mean-distance directly, which left education and shopping
@@ -746,7 +782,19 @@ def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None
     had already stated and the draw had been free to ignore.
     `B.activity.destination_balancing` = `singly_constrained` restores the
     previous behaviour exactly.
+
+    Mobility, not only distance (9.214). One kernel per purpose sent a person
+    without a car exactly as far as a driver: on F37's arm 0 the car-less made
+    17.8 % of residents' trips and 57 % of bike trips, 52 % of rail entries and
+    walked a mean 6.0 km. With `mobility` = (each origin's car-less share of
+    production, the car planning speed over the car-less one) the
+    long kernel is one TIME decay at each segment's own speed: the car-less
+    matrix decays `ratio` times faster per km, and each decay is solved so the
+    two segments TOGETHER realise the survey's mean. Returns the car matrices
+    under each purpose and the car-less ones under (purpose, 'nocar').
     """
+    seg = (None if mobility is None
+           else (np.asarray(mobility[0], dtype=float), float(mobility[1])))
     DX = X[None, :] - X[:, None]
     DY = Y[None, :] - Y[:, None]
     DKM = np.hypot(DX, DY) / 1000.0
@@ -762,7 +810,7 @@ def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None
     def solve(p, target, rows=None):
         """Bisect beta so the realised mean over `rows` origins hits target."""
         w_origin = pw if rows is None else norm(np.where(rows, pw, 0.0))
-        return _solve_decay(AEFF[p], DKM, w_origin, target)
+        return _solve_decay(AEFF[p], DKM, w_origin, target, seg=seg)
 
     # ---- 9.69: the short-trip kernel, one per purpose over the same
     # attractors. Its mean is the observed walk-only trip length (derived,
@@ -772,8 +820,28 @@ def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None
     band_straight = SHORT_BAND_KM / DETOUR_FACTOR
     in_band = DKM <= band_straight
 
-    def kernel(p, beta_vec):
+    def kernel_at(p, beta_vec):
         return _row_normalised(AEFF[p][None, :] * np.exp(-beta_vec[:, None] * DKM))
+
+    def kernel(p, beta_vec):
+        """The long kernel the POPULATION draws: under 9.214's segments each
+        origin row mixes the car and car-less matrices by its car-less share."""
+        if seg is None:
+            return kernel_at(p, beta_vec)
+        s = seg[0][:, None]
+        return (1.0 - s) * kernel_at(p, beta_vec) + s * kernel_at(p, seg[1] * beta_vec)
+
+    def segments(p):
+        """The draw matrices per segment at the solved decays (9.214)."""
+        zb = beta_of_zone[p]
+        m = mix_of.get(p, 0.0)
+        out_ = {}
+        for key, bvec in ((p, zb), ((p, 'nocar'), seg[1] * zb)):
+            w = kernel_at(p, bvec)
+            if m > 0.0:
+                w = (1.0 - m) * w + m * kernel_at(p, np.full(X.size, short_beta[p]))
+            out_[key] = w
+        return out_
 
     def band_of(w):
         return float((pw * np.where(in_band, w, 0.0).sum(axis=1)).sum())
@@ -839,8 +907,21 @@ def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None
     # pass repeated B.activity.balancing_passes times. Pass 1 before any
     # balancing IS the origin-constrained solve exactly as it stood, which is
     # what `singly_constrained` returns.
-    cd = _types.SimpleNamespace(AEFF=AEFF, ATTR=ATTR, beta_of_zone=beta_of_zone, calibrate_one=calibrate_one, diag=diag, gap_of=gap_of, mixed=mixed)
+    cd = _types.SimpleNamespace(AEFF=AEFF, ATTR=ATTR, beta_of_zone=beta_of_zone, calibrate_one=calibrate_one, diag=diag, gap_of=gap_of, mixed=mixed,
+                                segments=None if seg is None else segments)
     CUM = balance_destinations(cd)
+    if seg is not None:
+        # what each segment realises, production-weighted (straight km x detour)
+        for p in PURPOSES:
+            for key, name in ((p, 'car'), ((p, 'nocar'), 'nocar')):
+                c = np.diff(CUM[key], axis=1, prepend=0.0)
+                w_seg = pw * ((1.0 - seg[0]) if name == 'car' else seg[0])
+                w_seg = w_seg / w_seg.sum() if w_seg.sum() > 0 else w_seg
+                diag[p]['realised_network_km_' + name] = round(float(
+                    (w_seg * (c * DKM).sum(axis=1)).sum()) * DETOUR_FACTOR, 3)
+        diag['_mobility_segments'] = dict(
+            ratio=round(seg[1], 4),
+            nocar_production_share=round(float((pw * seg[0]).sum()), 4))
     del DKM
     return CUM, diag
 
@@ -1454,7 +1535,7 @@ def lift_candidates_of_person(ixs, person_id, lp):
         if r['is_tour_anchor'] != '1':
             continue
         if (r['tour_purpose'] == 'HX'
-                and r['dest_placement'] in ('poi', 'jitter')
+                and r['dest_placement'] in UNBOUND_SERVE_PLACEMENTS
                 and ctx['licence'] and ctx['cav']):
             # A lift is a car trip, so the driver's household must own a
             # vehicle - the same identity the joint and shared passes
@@ -1465,7 +1546,7 @@ def lift_candidates_of_person(ixs, person_id, lp):
             # issue #142).
             lp.drivers.append((ctx['sa1'], person_id, r['tour_id']))
         elif (r['tour_purpose'] == 'HX'
-                and r['dest_placement'] in ('poi', 'jitter')
+                and r['dest_placement'] in UNBOUND_SERVE_PLACEMENTS
                 and ctx['licence']):
             lp.out['drivers_refused_no_vehicle'] += 1
         elif (r['tour_purpose'] != 'HX' and not ctx['has_other_driver']):
@@ -3039,6 +3120,58 @@ COLUMNS = ['person_id', 'day_type', 'tour_id', 'trip_seq', 'purpose',
 HTS_RATE_PER_PERSON_DAY = CFG.get('B.activity.hts_rate_per_person_day')
 
 
+def release_oneway_drivers(members, first_binding, legs_of, hc):
+    """Drop this household's one-way bindings on members who could have driven
+    the tour, and relabel the serving tour `escort_released`; returns None.
+
+    A member covered in ONE direction only is held to ride that way, and a car
+    left at home is out of reach for the whole tour (9.214). The serve tour is
+    kept where it was placed - the escort rate is observed - but serves no one,
+    so neither the plans builder nor the lift pass reads it as a serving tour.
+    """
+    rows = hc.hh_bindings[first_binding:]
+    dirs = collections.defaultdict(set)
+    for b in rows:
+        dirs[(b['member_person_id'], b['member_tour_id'])].add(b['direction'])
+    index = {int(hc.mc.pid[i]): i for i in members}
+    released = set()
+    for key, d in dirs.items():
+        i = index.get(key[0])
+        if i is None or len(d) != 1:
+            continue
+        if bool(hc.mc.lic[i]) and bool(hc.mc.cav[i]):
+            released.add(key)
+    if not released:
+        return
+    # the member tour's destination is where its serve tour's anchor went
+    dest = {}
+    for key in released:
+        i = index[key[0]]
+        for leg in legs_of.get(i, ()):
+            if leg['tour_id'] == key[1] and leg['is_tour_anchor'] == 1:
+                dest[key] = (leg['dest_x'], leg['dest_y'])
+    keep = []
+    for b in rows:
+        key = (b['member_person_id'], b['member_tour_id'])
+        if key not in released:
+            keep.append(b)
+            continue
+        hc.esc['released_oneway_' + b['direction']] += 1
+        at = dest.get(key)
+        d = index.get(b['driver_person_id'])
+        if at is None or d is None:
+            continue
+        legs = legs_of.get(d, ())
+        tours = {leg['tour_id'] for leg in legs
+                 if leg['tour_purpose'] == 'HX' and leg['is_tour_anchor'] == 1
+                 and leg['dest_placement'] == 'escorted'
+                 and (leg['dest_x'], leg['dest_y']) == at}
+        for leg in legs:
+            if leg['tour_id'] in tours and leg['dest_placement'] == 'escorted':
+                leg['dest_placement'] = 'escort_released'
+    hc.hh_bindings[first_binding:] = keep
+
+
 def generate_household_tours(h, hc):
     """Build one household's day: bind escort tours, place each member's tours, and write
     the legs, accumulating counts and escort bindings into `hc`; returns None.
@@ -3057,6 +3190,7 @@ def generate_household_tours(h, hc):
     candidates = []
     claimed = set()
     pending = []   # 9.68: pick-ups owed, served by later escort slots
+    first_binding = len(hc.hh_bindings)   # this household's rows start here
     legs_of = {}
     for i in pass1 + pass2:
         hxy = hc.mc.home.get(hc.mc.hid[i])
@@ -3104,7 +3238,9 @@ def generate_household_tours(h, hc):
             for f in fixed:
                 hc.esc['by_priority'][f['priority']] += 1
         placed_bindings = []
-        legs, tour_anchors = build_day(person, hc.d, hc.rates, hc.mc.CUM, hc.mc.store,
+        legs, tour_anchors = build_day(person, hc.d, hc.rates,
+                                       hc.mc.CUM if person['cav'] else hc.mc.CUM_NOCAR,
+                                       hc.mc.store,
                                        hc.mc.zone_arr, hc.mc.u, pre, hc.dropped,
                                        fixed_tours=fixed,
                                        bound_log=placed_bindings)
@@ -3136,6 +3272,8 @@ def generate_household_tours(h, hc):
     # 9.68: pick-ups no escort slot in this household could serve -
     # their member tours stay one-way covered, counted not hidden
     hc.esc['pickups_unserved'] += len(pending)
+    if ESCORT_ONEWAY_SCOPE == 'cannot_drive':
+        release_oneway_drivers(members, first_binding, legs_of, hc)
     for i in sorted(legs_of):
         legs = legs_of[i]
         hc.n_travel += 1
@@ -3223,6 +3361,10 @@ def record_day_stats(sc):
             # 9.68: serve tours allocated per passenger tour, by direction.
             directions=ESCORT_DIRECTIONS,
             pickups_unserved=sc.esc['pickups_unserved'],
+            # 9.214: one-way bindings released on members who could drive
+            oneway_scope=ESCORT_ONEWAY_SCOPE,
+            released_oneway_drop=sc.esc['released_oneway_drop'],
+            released_oneway_pickup=sc.esc['released_oneway_pickup'],
             member_tours_covered_round_trip=sum(
                 1 for c in collections.Counter(
                     (b['member_person_id'], b['member_tour_id'])
@@ -3280,7 +3422,8 @@ def build_and_bind_day(d, mc):
     esc = dict(requested=0, bound=0, unbound=0, refused_no_vehicle=0,
                by_priority=collections.Counter(),
                bound_km=0.0, bound_n=0, unbound_km=0.0, unbound_n=0,
-               pickups_unserved=0)
+               pickups_unserved=0, released_oneway_drop=0,
+               released_oneway_pickup=0)
     hh_bindings = []   # 9.68: placed household serve-tour coverage rows
     hc = _types.SimpleNamespace(by_purpose=by_purpose, counts=counts, d=d, dropped=dropped, esc=esc, hh_bindings=hh_bindings, mc=mc, n_legs=n_legs, n_tours=n_tours, n_travel=n_travel, rates=rates, tours_hist=tours_hist, w=w)
     for h in mc.hh_order:
@@ -3429,6 +3572,25 @@ def load_persons(mc):
 
 
 
+def mobility_segments(zi, n_zones):
+    """Each core zone's car-less share of residents and the kernel ratio
+    (9.214) as one pair; returns None when `B.activity.destination_mobility` is
+    `absent`, which is F37's single kernel exactly."""
+    if DESTINATION_MOBILITY == 'absent':
+        return None
+    pop = pd.read_csv(os.path.join(POP, 'B1_synthetic_population.csv'),
+                      dtype={'home_sa1': str}, usecols=['home_sa1', 'car_available'])
+    idx = pop.home_sa1.map(zi)
+    ok = idx.notna().to_numpy()
+    idx = idx[ok].astype(int).to_numpy()
+    nocar = (pop.car_available.to_numpy()[ok] != 1)
+    n = np.bincount(idx, minlength=n_zones).astype(float)
+    nc = np.bincount(idx[nocar], minlength=n_zones).astype(float)
+    share = np.divide(nc, np.where(n > 0, n, 1.0))
+    # one decay in TIME: a km costs the car-less car_speed / nocar_speed times
+    return share, PLAN_SPEED_CAR_KMH / PLAN_SPEED_NOCAR_KMH
+
+
 def load_supply_inputs(mc):
     """Load zones, attractors, cordon and through gates, freight profile and HTS rates, and
     calibrate the gravity decay; returns them as one tuple (CUM ... zones, alphabetical).
@@ -3499,7 +3661,8 @@ def load_supply_inputs(mc):
           'per purpose x home LGA ...', flush=True)
     CUM, decay = calibrate_decay(X, Y, ATTR, meandist,
                                  core['population'].to_numpy(dtype=float),
-                                 zone_lga=zone_lga, meandist_lga=meandist_lga)
+                                 zone_lga=zone_lga, meandist_lga=meandist_lga,
+                                 mobility=mobility_segments(zi, X.size))
     for p in PURPOSES:
         d = decay[p]
         print('   %-4s aggregate beta=%.4f  realised %5.2f km vs HTS %5.2f km'
@@ -3584,7 +3747,9 @@ def main(seed=SEED, max_persons=None, day_types=None):
                  placement=collections.Counter(),
                  tours_dropped_over_horizon=0)
 
-    mc = _types.SimpleNamespace(CUM=CUM, age=age, car_share=car_share, cav=cav, child_frac=child_frac, cordon=cordon, core=core, day_rate=day_rate, day_shape=day_shape, decay=decay, edu_first=edu_first, employed_frac=employed_frac, freight_factor=freight_factor, freight_profile=freight_profile, gates=gates, hh_members=hh_members, hh_order=hh_order, hid=hid, home=home, hsa=hsa, lic=lic, licence_frac=licence_frac, meandist=meandist, n_persons=n_persons, pctx=pctx, pid=pid, rng=rng, seed=seed, share=share, stats=stats, store=store, student_frac=student_frac, u=u, work_first=work_first, zi=zi, zone_arr=zone_arr, zones=zones)
+    # 9.214: the car-less draw from their own matrices (the car ones when absent)
+    CUM_NOCAR = {p: CUM.get((p, 'nocar'), CUM[p]) for p in PURPOSES}
+    mc = _types.SimpleNamespace(CUM=CUM, CUM_NOCAR=CUM_NOCAR, age=age, car_share=car_share, cav=cav, child_frac=child_frac, cordon=cordon, core=core, day_rate=day_rate, day_shape=day_shape, decay=decay, edu_first=edu_first, employed_frac=employed_frac, freight_factor=freight_factor, freight_profile=freight_profile, gates=gates, hh_members=hh_members, hh_order=hh_order, hid=hid, home=home, hsa=hsa, lic=lic, licence_frac=licence_frac, meandist=meandist, n_persons=n_persons, pctx=pctx, pid=pid, rng=rng, seed=seed, share=share, stats=stats, store=store, student_frac=student_frac, u=u, work_first=work_first, zi=zi, zone_arr=zone_arr, zones=zones)
     for d in day_types:
         build_and_bind_day(d, mc)
 

@@ -85,6 +85,24 @@ VEHICLE_DRIVER_LEVEL = CFG.get('CAL.mode_split.vehicle_driver_level')
 THIN_CELL_MIN = CFG.get('B.census.thin_cell_min_journeys')
 _MOTORBIKE_Q = {'q': 0.0}   # solved in main() from the eligible share
 _MOTORBIKE_Q_BY_PID = {}    # 9.122: per-person q under `sa1_thinned`
+# D22, DECISIONS.md 9.214 (#257): motorbike becomes a CHOSEN mode. The carve
+# above reproduces the G62 share by construction - the share is an input
+# wearing the costume of a result. Under `choice` the draw and the lock are
+# retired and what is drawn is AVAILABILITY, from two observations: a rider
+# licence (TfNSW snapshot, per LGA and age band) and a motorcycle in the
+# household (BITRE registrations per postal area over census dwellings,
+# through the Poisson at-least-one identity). A person may choose motorbike
+# only with both; SubtourModeChoice decides whether they do, under the
+# unfitted C.asc.motorbike. `carve` recovers every earlier build byte for byte.
+MOTORBIKE = 'motorbike'
+MOTORBIKE_CHOICE = CFG.get('B.motorbike.representation') == 'choice'
+RIDER_RATE = CFG.get('B.population.rider_licence_rate_by_age_band')
+# 9.214: whether the household motorcycle is drawn independently of the rider
+# licence or only in a household the rider draw has already given a rider
+RIDER_COUPLING = CFG.get('B.motorbike.rider_coupling')
+HOUSEHOLD_MOTORCYCLE_SHARE = CFG.get('B.population.household_motorcycle_share')
+AGE_BANDS = CFG.get('B.population.age_bands')
+_MOTO_AVAIL = {}            # 9.214: person id -> 1/0, filled in main() under `choice`
 # DECISIONS.md 9.125: residents who drive a truck for a living - census G62
 # one-method Truck journeys to work, 223 of 43,959 driver journeys in the
 # target LGA, carried to all-purpose trips by the survey's driver level
@@ -229,7 +247,9 @@ OUTPUT_INPUTS = {
         'demand/population/B1_synthetic_population.csv',
         'data/processed/census/census2021_G62_SA1.csv',
         'data/processed/zones/zones_SA1.csv',
-        'data/processed/zones/sa1_to_lga.csv'],
+        'data/processed/zones/sa1_to_lga.csv',
+        'data/processed/observed/rider_licence_rates_by_age_lga.csv',
+        'data/processed/observed/motorcycle_possession_by_sa1.csv'],
 }
 
 SEED = CFG.get('B.seed.master')
@@ -469,6 +489,229 @@ def income_band_midpoint(band):
     return round((lo + float(parts[1])) / 2.0, 1)
 
 
+def seeded_stream(seed, name):
+    """A generator of its own, keyed by the master seed and a NAME.
+
+    The motorbike availability draws (9.214) must shift no other draw, so each
+    takes a dedicated stream the way `bikeAvail` does ([seed, 1]); keying by
+    the name's bytes rather than by a next integer means no stream index is a
+    number anyone chose, and no two names can collide with the bike stream."""
+    return np.random.default_rng([seed] + list(name.encode('ascii')))
+
+
+def age_band_index(age, bands):
+    """The index of B.population.age_bands holding `age`, or None."""
+    for i, (lo, hi) in enumerate(bands):
+        if int(lo) <= age <= int(hi):
+            return i
+    return None
+
+
+def riders_first_hold_rate(persons, households, rider_rate_of, household_share_of,
+                           group_of):
+    """P(hold a motorcycle | the household has a rider), per postal area, in
+    closed form (9.214, B.motorbike.rider_coupling = riders_first).
+
+    A household holds a motorcycle only if at least one member is a rider;
+    member i is one at their own rate r_i, independently, so the household has
+    a rider with probability q_h = 1 - prod(1 - r_i). For the postal area's
+    expected possessing households to equal the observed share x households,
+        sum_h P_h = c_k x sum_h q_h   =>   c_k = sum_h P_h / sum_h q_h,
+    over the households h of group k (P_h is the household's observed share,
+    constant within a postal area, so the numerator is P_k x N_k). A group
+    where c_k would exceed 1 cannot hold its observed possession from its own
+    riders: c_k clips to 1 and the expected possessing households lost,
+    sum P_h - sum q_h, are returned in `clipped` - reported, never hidden.
+
+    Returns ({group: c_k}, {group: dict(households, observed, with_rider)},
+    [clipped groups])."""
+    q_miss = collections.defaultdict(lambda: 1.0)
+    for _, h, sa1, age in persons:
+        q_miss[h] *= 1.0 - rider_rate_of(sa1, age)
+    obs, with_rider, n = collections.Counter(), collections.Counter(), collections.Counter()
+    for h, sa1 in households:
+        k = group_of(sa1)
+        obs[k] += household_share_of(sa1)
+        with_rider[k] += 1.0 - q_miss[h]
+        n[k] += 1
+    rate, report, clipped = {}, {}, []
+    for k in n:
+        raw = obs[k] / with_rider[k] if with_rider[k] > 0 else 0.0
+        rate[k] = min(1.0, raw)
+        if raw > 1.0:
+            clipped.append(k)
+        report[k] = dict(households=n[k], observed=obs[k], with_rider=with_rider[k],
+                         hold_given_rider=rate[k],
+                         lost=max(0.0, obs[k] - with_rider[k]))
+    return rate, report, clipped
+
+
+def draw_motorbike_availability(persons, households, rider_rate_of, household_share_of,
+                                seed, coupling='independent', group_of=None, diag=None):
+    """{person id: (rider licence, household motorcycle)} from seeded draws.
+
+    `persons` is [(person id, household id, home SA1, age)] and `households`
+    [(household id, home SA1)], each in the B1 file's own order.
+    `rider_rate_of(sa1, age)` and `household_share_of(sa1)` return the observed
+    probabilities. The licence is drawn PER PERSON at the observed LGA x
+    age-band rate on the `rider_licence` stream, under both couplings, so each
+    cell's riders hold their observed total in expectation exactly; the
+    motorcycle PER HOUSEHOLD on the `household_motorcycle` stream, so every
+    member sees the same motorcycle. A person may choose motorbike only when
+    both hold.
+
+    `independent`: the motorcycle at the household's observed share, whoever
+    lives there. `riders_first` (B.motorbike.rider_coupling): a registered
+    motorcycle needs a licensed rider and the household holding it is where one
+    lives, so only a household with a drawn rider may hold one, at
+    riders_first_hold_rate()'s P(hold | rider) for its `group_of` group (the
+    postal area) - the group's expected possessing households stay at the
+    observed share x households. `diag`, a dict, receives that report."""
+    u = seeded_stream(seed, 'rider_licence').random(len(persons))
+    v = seeded_stream(seed, 'household_motorcycle').random(len(households))
+    rider = [bool(u[i] < rider_rate_of(sa1, age))
+             for i, (_, _, sa1, age) in enumerate(persons)]
+    if coupling == 'independent':
+        held = {h: bool(v[i] < household_share_of(sa1))
+                for i, (h, sa1) in enumerate(households)}
+    elif coupling == 'riders_first':
+        rate, report, clipped = riders_first_hold_rate(
+            persons, households, rider_rate_of, household_share_of, group_of)
+        has_rider = set(h for i, (_, h, _, _) in enumerate(persons) if rider[i])
+        held = {h: (h in has_rider and bool(v[i] < rate[group_of(sa1)]))
+                for i, (h, sa1) in enumerate(households)}
+        if diag is not None:
+            diag.update(group_report=report, clipped=clipped)
+    else:
+        raise ValueError('unknown rider coupling %r' % coupling)
+    return {pid: (rider[i], held.get(h, False))
+            for i, (pid, h, sa1, age) in enumerate(persons)}
+
+
+def motorbike_rate_lookups():
+    """(rider_rate_of, household_share_of, cell_of, group_of, ...) from the
+    observed tables, each falling back to its pooled registry value where a
+    row is absent (9.214)."""
+    lga_of, rider = {}, {}
+    rider_table = _city.path('data/processed/observed/rider_licence_rates_by_age_lga.csv')
+    if os.path.exists(rider_table):
+        with open(_city.path('data/processed/zones/sa1_to_lga.csv'), newline='',
+                  encoding='utf-8') as fh:
+            for r in csv.DictReader(fh):
+                lga_of[r['SA1_CODE21']] = r['lga_name']
+        with open(rider_table, newline='', encoding='utf-8') as fh:
+            for r in csv.DictReader(fh):
+                lo, hi = (int(x) for x in r['band'].split('-'))
+                b = age_band_index(lo, AGE_BANDS)
+                if b is not None and int(AGE_BANDS[b][1]) == hi:
+                    rider[(r['lga'], b)] = float(r['rate'])
+    share, postcode = {}, {}
+    share_table = _city.path('data/processed/observed/motorcycle_possession_by_sa1.csv')
+    if os.path.exists(share_table):
+        with open(share_table, newline='', encoding='utf-8') as fh:
+            for r in csv.DictReader(fh):
+                share[r['SA1_CODE21']] = float(r['p_household_holds_motorcycle'])
+                postcode[r['SA1_CODE21']] = r['postcode']
+
+    def rider_rate_of(sa1, age):
+        b = age_band_index(age, AGE_BANDS)
+        if b is None:
+            return 0.0
+        return rider.get((lga_of.get(str(sa1)), b), RIDER_RATE[b])
+
+    def household_share_of(sa1):
+        return share.get(str(sa1), HOUSEHOLD_MOTORCYCLE_SHARE)
+
+    def cell_of(sa1, age):
+        """The cell the rider rate is observed in: (LGA, age band)."""
+        return (lga_of.get(str(sa1)), age_band_index(age, AGE_BANDS))
+
+    def group_of(sa1):
+        """The group the possession share is observed in: the postal area,
+        or None for the SA1s that take the pooled share."""
+        return postcode.get(str(sa1))
+
+    return rider_rate_of, household_share_of, cell_of, group_of, len(rider), len(share)
+
+
+def load_motorbike_availability(seed):
+    """Fill _MOTO_AVAIL for every B1 person and return the summary the plans
+    report carries: riders, persons in a motorcycle household, and the
+    persons for whom motorbike is available, by age band (9.214)."""
+    p = pd.read_csv(os.path.join(POP, 'B1_synthetic_population.csv'),
+                    usecols=['person_id', 'household_id', 'home_sa1', 'age'],
+                    dtype={'home_sa1': str})
+    hh = pd.read_csv(os.path.join(POP, 'B1_households.csv'),
+                     usecols=['household_id', 'home_sa1'], dtype={'home_sa1': str})
+    rider_rate_of, household_share_of, cell_of, group_of, n_rider_cells, n_share_cells = \
+        motorbike_rate_lookups()
+    persons = [(int(r.person_id), int(r.household_id), r.home_sa1, int(r.age))
+               for r in p.itertuples()]
+    households = [(int(r.household_id), r.home_sa1) for r in hh.itertuples()]
+    diag = {}
+    drawn = draw_motorbike_availability(
+        persons, households, rider_rate_of, household_share_of, seed, RIDER_COUPLING,
+        group_of, diag)
+    # each (LGA, age band) cell's drawn riders against its observed total
+    observed, realised = collections.Counter(), collections.Counter()
+    for pid, h, sa1, age in persons:
+        c = cell_of(sa1, age)
+        observed[c] += rider_rate_of(sa1, age)
+        realised[c] += int(drawn[pid][0])
+    worst = max(observed, key=lambda c: (abs(realised[c] - observed[c]), str(c))) \
+        if observed else None
+    # each postal area's possessing households against observed share x households
+    held_by_group, obs_by_group = collections.Counter(), collections.Counter()
+    held_of = {h: held for pid, h, _, _ in persons for held in [drawn[pid][1]]}
+    for h, sa1 in households:
+        held_by_group[group_of(sa1)] += int(held_of.get(h, False))
+        obs_by_group[group_of(sa1)] += household_share_of(sa1)
+    worst_g = max(obs_by_group, key=lambda k: (abs(held_by_group[k] - obs_by_group[k]),
+                                                str(k))) if obs_by_group else None
+    _MOTO_AVAIL.clear()
+    by_band = collections.defaultdict(collections.Counter)
+    age_of = dict(zip(p['person_id'].astype(int), p['age'].astype(int)))
+    for pid, (rider, held) in drawn.items():
+        _MOTO_AVAIL[pid] = int(rider and held)
+        b = age_band_index(age_of[pid], AGE_BANDS)
+        label = '%d-%d' % tuple(AGE_BANDS[b]) if b is not None else 'none'
+        by_band[label]['persons'] += 1
+        by_band[label]['riders'] += int(rider)
+        by_band[label]['available'] += int(rider and held)
+    report = diag.get('group_report', {})
+    summary = dict(
+        persons=len(drawn),
+        riders=sum(1 for r, _ in drawn.values() if r),
+        persons_in_motorcycle_households=sum(1 for _, h in drawn.values() if h),
+        available=sum(_MOTO_AVAIL.values()),
+        rider_rate_cells=n_rider_cells, household_share_sa1=n_share_cells,
+        rider_coupling=RIDER_COUPLING,
+        riders_observed_total=round(sum(observed.values()), 1),
+        riders_drawn_total=sum(realised.values()),
+        rider_cells_max_abs_deviation=dict(
+            cell='%s / %s' % worst if worst else None,
+            drawn=realised[worst] if worst else None,
+            observed=round(observed[worst], 1) if worst else None),
+        possessing_households_observed=round(sum(obs_by_group.values()), 1),
+        possessing_households_drawn=sum(held_by_group.values()),
+        possession_groups_max_abs_deviation=dict(
+            group=worst_g, drawn=held_by_group[worst_g] if obs_by_group else None,
+            observed=round(obs_by_group[worst_g], 1) if obs_by_group else None),
+        possession_groups_clipped=[
+            dict(group=k, households=report[k]['households'],
+                 observed=round(report[k]['observed'], 1),
+                 with_rider=round(report[k]['with_rider'], 1),
+                 lost=round(report[k]['lost'], 1))
+            for k in sorted(diag.get('clipped', []), key=str)],
+        by_age_band={k: dict(v) for k, v in sorted(by_band.items(), key=lambda kv: (
+            int(kv[0].split('-')[0]) if kv[0] != 'none' else -1))})
+    print('motorbike availability (9.214, %s): %d riders, %d persons in a motorcycle '
+          'household, %d available of %d persons'
+          % (RIDER_COUPLING, summary['riders'], summary['persons_in_motorcycle_households'],
+             summary['available'], summary['persons']), flush=True)
+    return summary
+
+
 def pick_mode(car_available, u, table_by_avail=None, ride_available=True,
               bike_available=True):
     """Draw a seed mode from the modes this person may actually use.
@@ -515,6 +758,11 @@ def stream_persons(path):
 # is tested exactly as MATSim will decompose it.
 COORD_DISTANCE_M = float(CFG.get('RUN.mode_choice.coord_distance_m'))
 CHAIN_BASED_MODES = frozenset(CFG.get('RUN.mode_choice.chain_based_modes'))
+# 9.214: under `choice` a motorbike, like a car, must come home - the run adds
+# it to chainBasedModes at startup (citysim.CitysimControler) when the
+# population carries motorbikeAvail, so the seed tests the same set
+if MOTORBIKE_CHOICE:
+    CHAIN_BASED_MODES = CHAIN_BASED_MODES | frozenset([MOTORBIKE])
 
 
 def leaf_mixed_tours(rows, plan_modes):
@@ -553,6 +801,13 @@ def leaf_mixed_tours(rows, plan_modes):
                             any(m not in CHAIN_BASED_MODES for m in modes):
                         bad.update(tids[i] for i in sub
                                    if plan_modes[tids[i]] not in CHAIN_BASED_MODES)
+                    elif (MOTORBIKE_CHOICE and MOTORBIKE in modes
+                          and len(modes & CHAIN_BASED_MODES) > 1):
+                        # 9.214: a held car serve tour and a motorbike tour
+                        # in one leaf - two vehicles, one excursion; the
+                        # motorbike tours are the ones repaired
+                        bad.update(tids[i] for i in sub
+                                   if plan_modes[tids[i]] == MOTORBIKE)
                 break
     return bad
 
@@ -561,7 +816,7 @@ def person_availability(pc):
     """Resolve one agent's demographics and mode availability by tier (through/freight,
     external or resident, with the escort-day ride denial and the motorbike/truck carves);
     returns (age, bike_av, car_av, emp, escort_denied, hh_id, inc, lic, mob, moto, ride_av,
-    trk). `pc` supplies tier, external, pid, rows and ctx (attrs, lift_hh, driver sets)."""
+    trk, moto_av) - moto_av the 9.214 motorbike availability, 0 under `carve`. `pc` supplies tier, external, pid, rows and ctx (attrs, lift_hh, driver sets)."""
     # the day-wide escort denial is a resident's; a boundary or freight agent
     # never reads it (the extraction left it unbound for them)
     escort_denied = False
@@ -582,6 +837,7 @@ def person_availability(pc):
         inc = None               # a volume, not a budget (9.138)
         moto = False
         trk = False
+        moto_av = 0
     elif pc.external:
         # An external boundary agent has no B1 household, so its
         # attributes are definitional placeholders (B.external
@@ -610,6 +866,8 @@ def person_availability(pc):
         inc = None               # household-less, no G17 band (9.138)
         moto = False
         trk = False
+        # 9.214: a boundary agent has no household to hold a motorcycle
+        moto_av = 0
     else:
         a = pc.ctx.attrs.get(pc.pid)
         car_av, age, lic, emp, stu, mob, ride_av, bike_av, hh_id, inc = a
@@ -654,7 +912,9 @@ def person_availability(pc):
         # persons held bound trips, 571 of which were selected as the
         # lock's mode. Excluded BEFORE the draw, as 9.122 requires.
         is_passenger = pc.pid in pc.ctx.bound_driver
-        moto = (bool(car_av) and bool(lic) and not names_driver
+        # 9.214: under `choice` there is no carve to draw - never a lock
+        moto = (not MOTORBIKE_CHOICE
+                and bool(car_av) and bool(lic) and not names_driver
                 and not is_passenger
                 and motorbike_user(pc.pid)
                 and not any(r['dest_activity_type'] == 'escort'
@@ -666,7 +926,12 @@ def person_availability(pc):
                and truck_user(pc.pid)
                and not any(r['dest_activity_type'] == 'escort'
                            for r in pc.rows))
-    return age, bike_av, car_av, emp, escort_denied, hh_id, inc, lic, mob, moto, ride_av, trk
+        # 9.214: a rider licence AND a household motorcycle; a person the
+        # truck carve locks holds one mode by definition
+        moto_av = int(MOTORBIKE_CHOICE and not trk
+                      and bool(_MOTO_AVAIL.get(pc.pid, 0)))
+    return (age, bike_av, car_av, emp, escort_denied, hh_id, inc, lic, mob, moto, ride_av, trk,
+            moto_av)
 
 
 
@@ -943,8 +1208,14 @@ def plan_set_bound_variants(pp):
     # state ChooseRandomLegModeForSubtour refuses (9.119). The
     # offending free tour is driven in that variant instead: the
     # person keeps every other tour on the variant's mode.
-    if pp.pc.car_av:
+    # 9.214: a car-less person with motorbike available repairs their
+    # MOTORBIKE plans onto the motorbike, the one vehicle they hold; under
+    # `carve` moto_av is 0 and this is the car-only repair it always was
+    fix = 'car' if pp.pc.car_av else (MOTORBIKE if pp.pc.moto_av else None)
+    if fix is not None:
         for p, over in pp.plan_set:
+            if fix == MOTORBIKE and MOTORBIKE not in p.values():
+                continue
             for _ in range(4):
                 bad = leaf_mixed_tours(pp.pc.rows, p)
                 if not bad:
@@ -952,7 +1223,7 @@ def plan_set_bound_variants(pp):
                 for tid in bad:
                     if p[tid] == 'ride':
                         pp.pc.ctx.leaf_mix_repairs['ride_tours_driven'] += 1
-                    p[tid] = 'car'
+                    p[tid] = fix
                     # 9.143: a tour driven to repair a mix must
                     # lose its per-trip ride with it - leaving the
                     # override would put ride on one leg of a car
@@ -984,6 +1255,9 @@ def person_plan_set(pc):
         base_modes.append('pt')
         if TAXI_MIN_AGE <= 0 or pc.age >= TAXI_MIN_AGE:
             base_modes.append('taxi')
+        if pc.moto_av:
+            # 9.214: one plan per usable mode, and motorbike is one
+            base_modes.append(MOTORBIKE)
         # 9.143 (#86): a tour is FULLY bound when every trip of it is
         # served, and PARTLY bound when only some are - a drop-off
         # binds the tour's first trip and a pick-up its last (9.120),
@@ -1098,6 +1372,14 @@ def write_person_attributes(pc):
             '%s</attribute>\n' % ('always' if pc.ride_av else 'never'))
     pc.ctx.w.write('\t\t\t<attribute name="bikeAvail" class="java.lang.String">'
             '%s</attribute>\n' % ('always' if pc.bike_av else 'never'))
+    if MOTORBIKE_CHOICE:
+        # 9.214: a rider licence AND a household motorcycle. Written on
+        # EVERY agent under `choice` - its presence is how the run knows the
+        # representation (citysim.CitysimControler), and absent means
+        # available to citysim.AvailabilityModesCalculator, so a boundary
+        # agent must say never rather than say nothing
+        pc.ctx.w.write('\t\t\t<attribute name="motorbikeAvail" class="java.lang.String">'
+                '%s</attribute>\n' % ('always' if pc.moto_av else 'never'))
     if pc.hh_id is not None:
         # B1 household membership, consumed by
         # src/java/citysim/RidePairingEngine and by
@@ -1265,7 +1547,8 @@ def write_person(pid, rows, ctx):
     if not external and ctx.attrs.get(pid) is None:
         return                    # a resident B1 does not carry writes nothing
     pc = _types.SimpleNamespace(ctx=ctx, external=external, pid=pid, rows=rows, tier=tier)
-    age, bike_av, car_av, emp, escort_denied, hh_id, inc, lic, mob, moto, ride_av, trk = person_availability(pc)
+    age, bike_av, car_av, emp, escort_denied, hh_id, inc, lic, mob, moto, ride_av, trk, moto_av = \
+        person_availability(pc)
 
     # one mode per tour keeps chain-based modes conserved from the start
     pc = _types.SimpleNamespace(age=age, bike_av=bike_av, car_av=car_av, ctx=ctx, escort_denied=escort_denied, external=external, moto=moto, pid=pid, ride_av=ride_av, rows=rows, tier=tier, trk=trk)
@@ -1281,10 +1564,10 @@ def write_person(pid, rows, ctx):
     # override is empty for every plan but the partial-bind variant,
     # so `uniform_draw` and every base-mode plan behave exactly as
     # before.
-    pc = _types.SimpleNamespace(age=age, bike_av=bike_av, bound_ride_trips=bound_ride_trips, held_ride_trips=held_ride_trips, held_tours=held_tours, by_tour=by_tour, car_av=car_av, covered_seed_tids=covered_seed_tids, ctx=ctx, external=external, moto=moto, pid=pid, ride_av=ride_av, rows=rows, serve_tours=serve_tours, tour_mode=tour_mode, trk=trk)
+    pc = _types.SimpleNamespace(age=age, bike_av=bike_av, bound_ride_trips=bound_ride_trips, held_ride_trips=held_ride_trips, held_tours=held_tours, by_tour=by_tour, car_av=car_av, covered_seed_tids=covered_seed_tids, ctx=ctx, external=external, moto=moto, moto_av=moto_av, pid=pid, ride_av=ride_av, rows=rows, serve_tours=serve_tours, tour_mode=tour_mode, trk=trk)
     plan_set = person_plan_set(pc)
 
-    pc = _types.SimpleNamespace(age=age, bike_av=bike_av, bound_drive_trips=bound_drive_trips, bound_ride_trips=bound_ride_trips, held_ride_trips=held_ride_trips, held_tours=held_tours, car_av=car_av, ctx=ctx, emp=emp, external=external, hh_id=hh_id, inc=inc, lic=lic, mob=mob, moto=moto, pid=pid, ride_av=ride_av, tier=tier, trk=trk)
+    pc = _types.SimpleNamespace(age=age, bike_av=bike_av, bound_drive_trips=bound_drive_trips, bound_ride_trips=bound_ride_trips, held_ride_trips=held_ride_trips, held_tours=held_tours, car_av=car_av, ctx=ctx, emp=emp, external=external, hh_id=hh_id, inc=inc, lic=lic, mob=mob, moto=moto, moto_av=moto_av, pid=pid, ride_av=ride_av, tier=tier, trk=trk)
     write_person_attributes(pc)
     pc = _types.SimpleNamespace(covered_seed_tids=covered_seed_tids, ctx=ctx, plan_set=plan_set, rows=rows)
     write_person_plans(pc)
@@ -1711,12 +1994,14 @@ def solve_carves(mc):
     eligible_trips = sum(trips_by_pid[p] for p, a in mc.attrs.items()
                          if a[0] and a[2] and p not in escorters)
     q = (MOTORBIKE_SHARE * total_trips / eligible_trips) if eligible_trips else 0.0
-    _MOTORBIKE_Q['q'] = min(1.0, q)
-    print('motorbike carve: trip share %.5f -> q=%.5f over %d eligible '
-          'persons (of %d; escorters and named drivers excluded, 9.129) '
-          'making %d of %d %s trips'
-          % (MOTORBIKE_SHARE, _MOTORBIKE_Q['q'], eligible, len(mc.attrs),
-             eligible_trips, total_trips, first_day), flush=True)
+    # 9.214: under `choice` nobody is carved - the probability stays 0
+    _MOTORBIKE_Q['q'] = 0.0 if MOTORBIKE_CHOICE else min(1.0, q)
+    if not MOTORBIKE_CHOICE:
+        print('motorbike carve: trip share %.5f -> q=%.5f over %d eligible '
+              'persons (of %d; escorters and named drivers excluded, 9.129) '
+              'making %d of %d %s trips'
+              % (MOTORBIKE_SHARE, _MOTORBIKE_Q['q'], eligible, len(mc.attrs),
+                 eligible_trips, total_trips, first_day), flush=True)
     # 9.125: the resident truck carve on the same pool, the same arithmetic
     qt = (TRUCK_RESIDENT_SHARE * total_trips / eligible_trips) if eligible_trips else 0.0
     _TRUCK_Q['q'] = min(1.0, qt)
@@ -1724,7 +2009,7 @@ def solve_carves(mc):
           'non-escorting eligible pool' % (TRUCK_RESIDENT_SHARE, _TRUCK_Q['q']),
           flush=True)
     carve_cells = None
-    if MOTORBIKE_CARVE_RESOLUTION == 'sa1_thinned':
+    if MOTORBIKE_CARVE_RESOLUTION == 'sa1_thinned' and not MOTORBIKE_CHOICE:
         # 9.122: the same identity per home SA1 (its SA2 where thin), each
         # cell's probability solved on ITS eligible persons' own trips
         cc = _types.SimpleNamespace(carve_cells=carve_cells, escorters=escorters, mc=mc, total_trips=total_trips, trips_by_pid=trips_by_pid)
@@ -1767,6 +2052,9 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
     # the carve delivered 55% of its declared share). Trips are counted on
     # the first day type built - the share is a share of all trips and the
     # carve is one draw per person across day types.
+    # 9.214: under `choice`, each person's motorbike availability from its two
+    # dedicated streams (neither shifts the bike or the mode-seed draws)
+    moto_summary = load_motorbike_availability(seed) if MOTORBIKE_CHOICE else None
     mc = _types.SimpleNamespace(attrs=attrs, day_types=day_types)
     carve_cells = solve_carves(mc)
     report = {}
@@ -1818,6 +2106,14 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
                      'reach rather than one it is handed (DECISIONS.md 9.6). '
                      'Run with --seed-mode informed to reproduce the P3 seed.',
                 by_day=report)
+    if MOTORBIKE_CHOICE:
+        # 9.214: the carve is retired; what the report carries instead is
+        # the availability the choice is offered over. Added only under
+        # `choice`, so a `carve` report is the one it always was.
+        meta['motorbike_carve'] = dict(
+            retired_by='B.motorbike.representation = choice (9.214)',
+            declared_region_share=MOTORBIKE_SHARE)
+        meta['motorbike_availability'] = moto_summary
     json.dump(meta, open(os.path.join(OUT, '_plans_report.json'), 'w', newline='\n'), indent=2)
 
 
