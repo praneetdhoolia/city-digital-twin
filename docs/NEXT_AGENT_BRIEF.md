@@ -40,23 +40,25 @@ they are needed again, codify them in `iteration_reading.py` rather than re-writ
 
 ## §2 Traps — newest first, at most ten, each with what it cost
 
-1. **A demand rebuild moves the measured access reach** (§9.214): the assembler refused the F38 run
+1. **An arm launched `--foreground` from a session dies with the session** (§9.215): F38's arm 0
+   was killed at iteration 79, 13 h in, when the Claude Code process that owned its shell ended.
+   Never pass `--foreground` (or `--issue-gate-passed`) by hand; the launcher now refuses an
+   arm-length run in the foreground, and `run.py --stop` records a run found dead as `died`,
+   which `--warm-start` resumes.
+2. **A demand rebuild moves the measured access reach** (§9.214): the assembler refused the F38 run
    inputs because a Saturday activity sat 55,668 m from its nearest stop; re-measure over every
    scenario and day and re-declare `RUN.transit_router.access_max_radius_m` (reach + 200).
-2. **The chains build doubles under the mobility kernel** (§9.214): ~85 min, not ~90 s; a `timeout`
+3. **The chains build doubles under the mobility kernel** (§9.214): ~85 min, not ~90 s; a `timeout`
    wrapper killed it after the weekday and left SAT and SUN stale. Never wrap a build in `timeout`.
-3. **A shell that reads stdin hangs for its full timeout** (§9.213, again §9.214): no heredoc, no
+4. **A shell that reads stdin hangs for its full timeout** (§9.213, again §9.214): no heredoc, no
    `python -`, `< /dev/null` on every python call; payloads through the Write tool or the Edit tool.
-4. **A module can redefine a name further down** (§9.213): grep the module for a name before adding one.
-5. **A JSON writer at the wrong indent rewrites the whole file** (§9.213): read the file's own indent.
-6. **A refactor is proven by a run, and only the integers are exact** (§9.213, §9.211): diff
+5. **A module can redefine a name further down** (§9.213): grep the module for a name before adding one.
+6. **A JSON writer at the wrong indent rewrites the whole file** (§9.213): read the file's own indent.
+7. **A refactor is proven by a run, and only the integers are exact** (§9.213, §9.211): diff
    counters and bytes, never floats, and say so.
-7. **A probe prices high, not low** (§9.212, §9.213): set the ceiling on the quote plus milestones.
-8. **A patch prepared on an issue must be re-anchored before it is applied** (§9.211).
-9. **A keyed failure quotes its URL** (§9.209): never print a request URL.
-10. **`render_schema.py` writes the contract from the ACTIVE city** (§9.209): run it under
-    `CITYSIM_CITY=newcastle`.
-
+8. **A probe prices high, not low** (§9.212, §9.213): set the ceiling on the quote plus milestones.
+9. **A patch prepared on an issue must be re-anchored before it is applied** (§9.211).
+10. **A keyed failure quotes its URL** (§9.209): never print a request URL.
 Retired by checks this session: a host restart under an arm (`refuse_unsafe_host`), a stop that kills
 a recycled pid (`procs.card_pid_alive`), a close-out that cannot read a stopped arm
 (`iterations_with`), a price inflated by a dead host (`launch_to_first_iteration_s`), a credential in

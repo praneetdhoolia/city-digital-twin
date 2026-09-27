@@ -124,6 +124,10 @@
         "iteration": {
           "type": "integer",
           "minimum": 0
+        },
+        "death": {
+          "type": "string",
+          "description": "Why the parent may be resumed: `recorded as died` for a parent whose record says `died`, or the operator's --stopped-was-death reason for an older record that closed out a death as `stopped_by_operator` (9.215). Absent on a warm start from a parent with no record."
         }
       },
       "additionalProperties": false

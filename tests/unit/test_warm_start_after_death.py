@@ -92,6 +92,17 @@ def test_stop_records_a_live_run_as_stopped_by_the_operator(monkeypatch, tmp_pat
     assert seen['completion'] == rm.STOPPED_BY_OPERATOR
 
 
+def test_the_death_reason_meets_both_record_contracts():
+    """The first warm start of 9.215 was refused by the meta contract: the
+    code wrote `warm_started_from.death` and the schema did not allow it."""
+    from registry import outputs
+    key = dict(run='aborted_x', iteration=75, death='recorded as died')
+    for kind in ('meta', 'run'):
+        schema = outputs._schema(kind)
+        props = schema['properties']['warm_started_from']['properties']
+        assert set(key) <= set(props), kind
+
+
 class _Cfg(dict):
     get = dict.get
 
