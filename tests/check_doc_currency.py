@@ -4,6 +4,7 @@
     python tests/check_doc_currency.py            report
     python tests/check_doc_currency.py --strict   exit 1 if anything drifted
     python tests/check_doc_currency.py --json OUT machine-readable ledger
+    python tests/check_doc_currency.py --fix      rewrite drifted numbers / run names
 
 This repository already refuses a number decided in a script
 (`src/registry/check_hardcoding.py`). This is the same refusal pointed at prose:
@@ -424,6 +425,118 @@ def check_absent(doc_text: str, doc_name: str, claim: dict) -> list[dict]:
     return problems
 
 
+# ------------------------------------------------------------------------ fixing
+#
+# `--fix` moves a drifted live-state cell to its artefact's value, and nothing
+# else: only a DRIFTED number claim (or a text claim naming a run), only the
+# claim's own capture group on the line the check reported, written in the
+# format the document already used - thousands separators if it had them, its
+# own minus sign, its own number of decimal places.
+
+_NUMBER_CORE = re.compile(r"[-−]?\d[\d,]*(?:\.\d+)?")
+_RUN_NAME = re.compile(r"^\d{8}T\d{6}_\S+$")
+
+
+def format_like(stated_raw: str, expected: Decimal, places: int | None) -> str | None:
+    """`expected` written the way `stated_raw` wrote its number, or None when
+    that cannot be done exactly (no number in it, or a precision it lacks)."""
+    core = _NUMBER_CORE.search(stated_raw)
+    if core is None:
+        return None
+    text = core.group(0)
+    if places is None:
+        places = len(text.split(".", 1)[1]) if "." in text else 0
+    q = expected.quantize(Decimal(1).scaleb(-places), rounding=ROUND_HALF_UP)
+    if q != expected:
+        return None           # the stated precision cannot carry the value
+    body = f"{abs(q):,.{places}f}" if "," in text else f"{abs(q):.{places}f}"
+    if q < 0:
+        body = ("−" if "−" in text else "-") + body
+    return stated_raw[: core.start()] + body + stated_raw[core.end():]
+
+
+def fix_document(text: str, claims: list[tuple[dict, str, object]]) -> tuple[str, list[str], list[str]]:
+    """Rewrite each drifted claim's capture group in `text`.
+
+    `claims` is [(claim, kind, truth)] with kind 'number' or 'text'. Returns
+    (new text, changes made, refusals). A capture spanning a line break, an
+    unparseable number, a text claim that is not a run name, or two claims
+    disagreeing about one span is refused and left as it is.
+    """
+    edits: dict[tuple[int, int], tuple[str, str, int, str]] = {}
+    refused: list[str] = []
+    for claim, kind, truth in claims:
+        for match in re.compile(claim["pattern"]).finditer(text):
+            raw = match.group(1)
+            start, end = match.span(1)
+            line = text[:start].count("\n") + 1
+            if kind == "number":
+                expected = _expected(truth, claim)
+                stated = _as_number(raw)
+                if stated is not None and stated == expected:
+                    continue
+                places = claim.get("decimals")
+                new = format_like(raw, expected, None if places is None else int(places))
+            else:
+                if raw.strip() == truth:
+                    continue
+                new = (raw.replace(raw.strip(), truth)
+                       if _RUN_NAME.match(raw.strip()) and _RUN_NAME.match(truth) else None)
+            where = f"{claim['doc']}:{line} {claim['id']}"
+            if new is None or "\n" in raw:
+                refused.append(f"{where}: {raw!r} not rewritable to the artefact's value")
+                continue
+            prior = edits.get((start, end))
+            if prior is not None and prior[0] != new:
+                refused.append(f"{where}: two claims disagree ({prior[0]!r} vs {new!r})")
+                edits[(start, end)] = (None, raw, line, where)
+                continue
+            edits[(start, end)] = (new, raw, line, where)
+    changes = []
+    for (start, end), (new, raw, line, where) in sorted(edits.items(), reverse=True):
+        if new is None:
+            continue
+        text = text[:start] + new + text[end:]
+        changes.append(f"{where}: {raw} -> {new}")
+    return text, sorted(changes), refused
+
+
+def fix(problems: list[dict]) -> tuple[list[str], list[str]]:
+    """Apply `fix_document` to every document holding a DRIFTED claim; the
+    line endings and encoding the file had are kept."""
+    import city as city_module  # noqa: PLC0415
+    city_root = Path(city_module.CITY_DIR)
+    spec = json.loads((city_root / "tests" / "doc_currency.json").read_text(encoding="utf-8"))
+    by_id = {c["id"]: c for c in spec["claims"]}
+    wanted: dict[str, list[tuple[dict, str, object]]] = {}
+    refused: list[str] = []
+    for p in problems:
+        claim = by_id.get(p["claim"])
+        if p["kind"] != "DRIFTED" or claim is None:
+            continue
+        if claim["kind"] == "number":
+            truth = RESOLVERS[claim["truth"]["kind"]](city_root, claim["truth"])
+        elif claim["kind"] == "text":
+            truth = TEXT_RESOLVERS[claim["truth"]["kind"]](city_root, claim["truth"])
+        else:
+            continue
+        entry = (claim, claim["kind"], truth)
+        bucket = wanted.setdefault(claim["doc"], [])
+        if entry not in bucket:
+            bucket.append(entry)
+    changes: list[str] = []
+    for doc, claims in sorted(wanted.items()):
+        path = artefact(city_root, doc)
+        raw = path.read_bytes().decode("utf-8")
+        crlf = "\r\n" in raw
+        new, made, no = fix_document(raw.replace("\r\n", "\n"), claims)
+        refused += no
+        if made:
+            path.write_bytes((new.replace("\n", "\r\n") if crlf else new).encode("utf-8"))
+            changes += made
+    return changes, refused
+
+
 def run() -> tuple[list[dict], list[dict], int]:
     # `city` reads CITYSIM_CITY at import and exposes CITY_DIR - the framework's
     # one module that knows where a city lives. `--city` sets the variable before
@@ -495,6 +608,10 @@ def main() -> int:
     ap.add_argument("--json", metavar="OUT", help="write the ledger as JSON")
     ap.add_argument("--city", default=None,
                     help="city key (default: CITYSIM_CITY, else the framework default)")
+    ap.add_argument("--fix", action="store_true",
+                    help="rewrite each DRIFTED number (or run-name) claim to its "
+                         "artefact's value on the line it was found, in the "
+                         "document's own format, print what changed, then check again")
     args = ap.parse_args()
 
     import os
@@ -502,6 +619,23 @@ def main() -> int:
         os.environ["CITYSIM_CITY"] = args.city
 
     problems, skipped, checked = run()
+
+    if args.fix:
+        # whatever the console's code page, a document's own characters (a
+        # typographic minus, an em dash) must not stop the report of a fix
+        for stream in (sys.stdout, sys.stderr):
+            try:
+                stream.reconfigure(errors="backslashreplace")
+            except (AttributeError, ValueError):
+                pass
+        changes, refused = fix(problems)
+        for c in changes:
+            print(f"FIXED   {c}")
+        for r in refused:
+            print(f"REFUSED {r}")
+        print(f"{len(changes)} value(s) rewritten, {len(refused)} refused; checking again")
+        print()
+        problems, skipped, checked = run()
 
     print(f"DOCUMENT CURRENCY - {checked} live claim(s) checked against the artefacts")
     print()

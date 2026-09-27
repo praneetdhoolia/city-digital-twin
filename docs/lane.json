@@ -1,7 +1,7 @@
 {
   "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
   "updated": "2026-09-27",
-  "family": "F37-the-boundary-tier-returns-and-pt-reaches-every-stop",
+  "family": "F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen",
   "tasks": [
     {
       "id": "routers-pair-reading",
@@ -328,8 +328,8 @@
       "id": "read-f37-arm-0",
       "title": "Read F37's arm 0 at its record: all twelve modes with choice-set coverage; the no-route share of pt requests against 66.3 % on F36 (the `ptDirectWalk` counter); walk's and pt's mean trip; the car-less split; taxi with its wait executed; the external tier's boundary trips",
       "kind": "reading",
-      "status": "open",
-      "recommended": true,
+      "status": "done",
+      "recommended": false,
       "cost": "no run: `report_mode_ridership.py --run <arm> --it 250` and `--trend`, `report_choice_set_coverage.py`, `mode_by_demographics.py`, `measure_bound_trips.py`, `diagnose_pt_routing.py --sample 3000`; then `build_run_index.py` and the board",
       "blocked_on": "the arm reaching its record (overlay `f37_baseline_25pct`, 34 h ceiling approved 25 September 2026)",
       "opens_family": false,
@@ -344,13 +344,14 @@
         187,
         237
       ],
-      "evidence": "9.213"
+      "evidence": "9.213",
+      "done_ref": "9.214"
     },
     {
       "id": "pt-no-route-structure",
       "title": "Explain the ~39 % of pt trips with no connection even without the access cap: split the no-route requests by trip-end distance band and by transfer-walk radius (300/500/800 m) in `diagnose_pt_routing.py`, read-only on F37 arm 0",
       "kind": "diagnostic",
-      "status": "open",
+      "status": "done",
       "recommended": false,
       "cost": "no run; ~1 h offline re-route of 3,000 trips per radius",
       "blocked_on": "F37 arm 0 for the plans it reads (F36 arm 0 works today)",
@@ -358,19 +359,42 @@
       "answers_issues": [
         162
       ],
-      "evidence": "9.213: 78 % of the offline no-routes persist at 15:00"
+      "evidence": "9.213: 78 % of the offline no-routes persist at 15:00",
+      "done_ref": "9.214"
     },
     {
       "id": "motorbike-choice",
       "title": "Make motorbike a choice (D22): motorbike availability from the registration stock per household, then chosen like any mode; retire the target-share carve of 9.52",
       "kind": "build",
-      "status": "open",
+      "status": "done",
       "recommended": false,
       "cost": "a build change and a plans rebuild (~1 h), a 1 % smoke; opens F38",
       "blocked_on": "F37 arm 0 read first (D22)",
       "opens_family": true,
       "answers_issues": [],
-      "evidence": "9.213, D22; 9.52"
+      "evidence": "9.213, D22; 9.52",
+      "done_ref": "9.214"
+    },
+    {
+      "id": "read-f38-arm-0",
+      "title": "Read F38's arm 0 at its record: all twelve modes with choice-set coverage against F37's result as a direction; walk's mean trip against 4.08 km and walk km inside held-ride tours against 35.6 %; the car-less split and trip lengths (bike 11.8 km, walk 6.0 km); heavy-rail station entries against 17,016 and access walks over 2 km against 19.5 %; motorbike CHOSEN against 0.3785 %; ride with the doubled lifts against -13.5 %; taxi against +129.6 %; the no-route share against 52.1 %",
+      "kind": "reading",
+      "status": "open",
+      "recommended": true,
+      "cost": "no run: `report_mode_ridership.py --run 20260927T145839_250it_25pct --it 250` and `--trend`, `report_choice_set_coverage.py --against-targets`, `mode_by_demographics.py`, `measure_bound_trips.py`, `diagnose_pt_routing.py --sample 3000`, `fit.py`; then `build_run_index.py`, the board and a fresh /project-report",
+      "blocked_on": "the arm reaching its record (overlay `f38_baseline_25pct`, 34 h ceiling approved 27 September 2026, D23)",
+      "opens_family": false,
+      "answers_issues": [
+        30,
+        86,
+        94,
+        98,
+        107,
+        145,
+        162,
+        257
+      ],
+      "evidence": "9.214"
     }
   ],
   "decisions": [

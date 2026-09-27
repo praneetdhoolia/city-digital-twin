@@ -601,9 +601,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "model",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.214: the offline re-route of F37 arm 0 (diagnose_pt_routing --sample 3000) finds 39.2-39.8 % no route, 78.1 % unconnected at 15:00 too, nearest stop p90 6.8 km, 31 % of origins with no stop inside 1 km - rural trip ends, walked because the car-less had nothing else; destinations by mobility in F38",
+   "updated": "2026-09-27"
   },
   {
    "id": "20260925T182313:5",
@@ -661,9 +661,9 @@
    "repeat_of": null,
    "opens_family": true,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.213/9.214: RidePairingEngine, CitysimControler, EscortCoherenceListener, GatedSubtourModeChoice, SubtourChainScan, ActivityLinkAssigner, HouseholdVehicleRoster and the Python mains (run.py, run_matsim.run, calibrate.main, readers, build_population, build_activity_chains) split with identical output; F38 opened the family",
+   "updated": "2026-09-27"
   },
   {
    "id": "20260925T182313:10",
@@ -709,9 +709,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "model",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.214: walk's mean trip read on F37 arm 0 (4.08 km against 0.70); long walks traced to one-way escort holds (35.6 % of walk km) and mobility-blind destinations, both changed in F38; no walk distance cost added",
+   "updated": "2026-09-27"
   },
   {
    "id": "20260925T182313:14",

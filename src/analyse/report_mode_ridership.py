@@ -23,6 +23,7 @@ denominator they do have, never silently mixed in:
     python src/analyse/report_mode_ridership.py --run <run dir>
     python src/analyse/report_mode_ridership.py --run <run dir> --it 100
     python src/analyse/report_mode_ridership.py --run <run dir> --watch 300
+    python src/analyse/report_mode_ridership.py --run <run dir> --it 100 --stations
 
 Any iteration the run has written can be read (DECISIONS.md 9.120): the
 trips table where one exists, else the same linked trips derived from that
@@ -145,6 +146,199 @@ def disclosed_stations():
     for s in (doc.get('heavy_rail') or {}).get('stations', {}):
         names.append(re.sub(r'\s+station$', '', s.strip().lower()).strip())
     return names
+
+
+# ------------------------------------------------- heavy rail, station by station
+#
+# The disclosed stations' counts are ENTRIES - a traveller through a gate - and
+# the model's boardings include every rail-to-rail change of train on top. A
+# station read against its disclosed count is therefore split into the two, and
+# each entry is labelled by how its traveller reached the platform: the walk
+# they did before it, banded, or the bus or tram they came off.
+
+WALK_LEG_MODES = ('walk', 'non_network_walk', 'transit_walk')
+
+
+def disclosed_station_counts():
+    """{station (the `station_of` form): (per_day, per_weekday)} from the
+    city's `pt_boardings_targets.json` heavy-rail block; per_weekday is the
+    per-day count times the file's own `weekday_factor`, the same factor its
+    heavy-rail total carries."""
+    import json as _json
+    path = _city.path('data/processed/validation/pt_boardings_targets.json')
+    if not _os.path.exists(path):
+        return {}
+    with open(path, encoding='utf-8') as fh:
+        doc = _json.load(fh)
+    factor = doc.get('weekday_factor')
+    out = {}
+    for name, v in ((doc.get('heavy_rail') or {}).get('stations') or {}).items():
+        v = float(v)
+        out[station_of(name)] = (v, v * float(factor) if factor else None)
+    return out
+
+
+def access_band(km):
+    """The walk before a station entry, banded: <1, 1-2, 2-5, >=5 km."""
+    if km < 1:
+        return 'walk <1 km'
+    if km < 2:
+        return 'walk 1-2 km'
+    if km < 5:
+        return 'walk 2-5 km'
+    return 'walk >=5 km'
+
+
+def station_entries(run_dir, iteration, fraction=None, targets=None,
+                    route_mode=None, stop_name=None, persons=None):
+    """Heavy-rail boardings at every station, split into ENTRIES (a trip's
+    first rail leg) and rail-to-rail TRANSFERS, from the iteration's legs table.
+
+    Each entry is labelled three ways: by its ACCESS - the walk legs of the
+    trip before it, banded (`access_band`), or `from <target mode>` when the
+    previous boarding was a bus or tram, or `from <mode>` for any other leg -
+    by the traveller's `carAvail`, and by their `subpopulation`. Every count is
+    scaled to a full day by the run's sample fraction, as the gate's boardings
+    are. The remaining arguments are the readers' own answers, passed in by a
+    test; by default they come from the run (schedule, persons) and the city
+    (disclosed counts).
+    """
+    import iteration_reading as _reading
+    frac = fraction if fraction is not None else sample_fraction(run_dir)
+    if not frac:
+        raise SystemExit(
+            'REFUSED: %s carries no RUN.sample.fraction in _meta.json or '
+            '_run.json, so its station boardings cannot be scaled to a day'
+            % _os.path.basename(run_dir.rstrip('/\\')))
+    if targets is None:
+        targets = disclosed_station_counts()
+    if route_mode is None:
+        route_mode = em.transit_route_modes(run_dir)
+    if stop_name is None:
+        stop_name = em.transit_stop_names(run_dir)
+    if persons is None:
+        persons = _reading.person_attributes(run_dir, ('subpopulation', 'carAvail'))
+    try:
+        legs = _reading.table(run_dir, 'legs', iteration)
+    except FileNotFoundError:
+        raise SystemExit('iteration %s wrote no legs table under %s; --stations '
+                         'reads boardings leg by leg' % (iteration, run_dir))
+    # legs in file order, grouped by trip: MATSim writes a trip's legs in order
+    by_trip = collections.OrderedDict()
+    for leg in legs:
+        by_trip.setdefault(leg['trip_id'], []).append(leg)
+
+    entries = collections.Counter()
+    transfers = collections.Counter()
+    access = collections.defaultdict(collections.Counter)
+    car = collections.defaultdict(collections.Counter)
+    subpop = collections.defaultdict(collections.Counter)
+    for trip in by_trip.values():
+        prev = None           # the last boarded submode's target, or a leg mode
+        walked = 0.0
+        for leg in trip:
+            line = (leg.get('transit_line') or '').strip()
+            sm = (route_mode.get((line, (leg.get('transit_route') or '').strip()))
+                  if line else None)
+            if sm is None:
+                mode = leg.get('mode') or ''
+                if mode in WALK_LEG_MODES:
+                    try:
+                        walked += float(leg.get('distance') or 0.0)
+                    except ValueError:
+                        pass
+                else:
+                    prev = mode
+                continue
+            target = SUBMODE_TO_TARGET.get(sm, sm)
+            if target == 'heavy_rail':
+                st = station_of(stop_name.get(leg.get('access_stop_id'), ''))
+                if prev == 'heavy_rail':
+                    transfers[st] += 1
+                else:
+                    entries[st] += 1
+                    how = access_band(walked / 1000.0) if prev is None else 'from ' + prev
+                    who = persons.get(leg['person'], {})
+                    access[st][how] += 1
+                    car[st][who.get('carAvail') or '(none)'] += 1
+                    subpop[st][who.get('subpopulation') or '(none)'] += 1
+            prev = target
+            walked = 0.0
+
+    def scaled(c):
+        return {k: round(v / frac, 1) for k, v in c.most_common()}
+
+    rows = []
+    for st in sorted(set(entries) | set(transfers) | set(targets),
+                     key=lambda s: (-(entries[s] + transfers[s]), s)):
+        per_day, per_weekday = targets.get(st, (None, None))
+        e, x = entries[st] / frac, transfers[st] / frac
+        rows.append(dict(
+            station=st, disclosed=st in targets,
+            target_per_day=per_day, target_per_weekday=per_weekday,
+            entries=round(e, 1), transfers=round(x, 1),
+            boardings=round(e + x, 1),
+            entries_to_target=(round(e / per_weekday, 3) if per_weekday else
+                               round(e / per_day, 3) if per_day else None),
+            access=scaled(access[st]), car_availability=scaled(car[st]),
+            subpopulation=scaled(subpop[st])))
+
+    def total(which):
+        sel = [r for r in rows if which is None or r['disclosed'] == which]
+        acc, ca, sp = (collections.Counter() for _ in range(3))
+        for r in sel:
+            acc.update(r['access'])
+            ca.update(r['car_availability'])
+            sp.update(r['subpopulation'])
+        tpd = sum(r['target_per_day'] or 0.0 for r in sel)
+        tpw = sum(r['target_per_weekday'] or 0.0 for r in sel)
+        e = sum(r['entries'] for r in sel)
+        return dict(stations=len(sel), target_per_day=round(tpd, 1),
+                    target_per_weekday=round(tpw, 1), entries=round(e, 1),
+                    transfers=round(sum(r['transfers'] for r in sel), 1),
+                    entries_to_target=(round(e / tpw, 3) if tpw else
+                                       round(e / tpd, 3) if tpd else None),
+                    access={k: round(v, 1) for k, v in acc.most_common()},
+                    car_availability={k: round(v, 1) for k, v in ca.most_common()},
+                    subpopulation={k: round(v, 1) for k, v in sp.most_common()})
+    return dict(run=_os.path.basename(_os.path.normpath(run_dir)),
+                iteration=iteration, fraction=frac, stations=rows,
+                totals=dict(disclosed=total(True), undisclosed=total(False),
+                            all=total(None)),
+                note='heavy-rail boardings per day (x1/fraction), all travellers: '
+                     'ENTRIES are a trip\'s first rail leg, TRANSFERS a rail leg '
+                     'after another; a disclosed count is gate entries, so it is '
+                     'read against entries. Nothing here is a target.')
+
+
+def _shares(counter, n):
+    return ', '.join('%s %.0f%%' % (k, 100.0 * v / n) for k, v in counter.items()) if n else '-'
+
+
+def print_station_entries(doc):
+    """The station table `--stations` prints."""
+    print('HEAVY RAIL BY STATION  %s  it.%s  (x1/%.3g = per day, all travellers)'
+          % (doc['run'], doc['iteration'], doc['fraction']))
+    print('%-24s %8s %8s %8s %6s  %s' % ('station', 'target/wd', 'entries',
+                                         'xfers', 'e/t', 'entries reached by'))
+    for r in doc['stations']:
+        t = r['target_per_weekday'] or r['target_per_day']
+        print('%-24s %8s %8.0f %8.0f %6s  %s' % (
+            r['station'][:24], '%.0f' % t if t else '-', r['entries'],
+            r['transfers'],
+            '%.2f' % r['entries_to_target'] if r['entries_to_target'] is not None else '-',
+            _shares(r['access'], r['entries'])))
+    for label, key in (('disclosed', 'disclosed'), ('undisclosed', 'undisclosed'),
+                       ('all stations', 'all')):
+        t = doc['totals'][key]
+        print('TOTAL %-12s target/wd %.0f  entries %.0f  transfers %.0f  e/t %s'
+              % (label, t['target_per_weekday'], t['entries'], t['transfers'],
+                 '%.2f' % t['entries_to_target'] if t['entries_to_target'] is not None else '-'))
+        if t['entries']:
+            print('   reached by   %s' % _shares(t['access'], t['entries']))
+            print('   carAvail     %s' % _shares(t['car_availability'], t['entries']))
+            print('   subpop       %s' % _shares(t['subpopulation'], t['entries']))
+    print(doc['note'])
 
 
 def pt_submode_trips(run_dir, iteration, person_lga, derived=None):
@@ -999,6 +1193,14 @@ def main():
                     help='also write the last table as JSON - one row per mode '
                          'with its basis and gate flag - for the generated '
                          'board (src/analyse/build_status_board.py)')
+    ap.add_argument('--stations', action='store_true',
+                    help='instead of the mode table: heavy-rail boardings at '
+                         'every station split into ENTRIES (a trip\'s first '
+                         'rail leg) and rail-to-rail TRANSFERS against the '
+                         'disclosed count, each entry by its access (walk '
+                         'band, or the bus/tram it came off), car '
+                         'availability and subpopulation, per day; --json '
+                         'writes the table (station_entries)')
     ap.add_argument('--gate-json', metavar='OUT',
                     help='write the gate VERDICT as JSON - passed, or the '
                          'breaching modes - for the runner\'s gate watcher '
@@ -1184,6 +1386,13 @@ def point_reading(a):
         raise SystemExit('iteration %d wrote neither a trips table nor '
                          'experienced plans; this run holds %s'
                          % (it, ' '.join(str(i) for i in have)))
+    if getattr(a, 'stations', False):
+        doc = station_entries(a.run, it)
+        print_station_entries(doc)
+        if a.json:
+            with open(a.json, 'w', encoding='utf-8') as fh:
+                json.dump(doc, fh, indent=1)
+        return
     breaches = report(a.run, it, a.truck_stations)
     if a.json:
         with open(a.json, 'w', encoding='utf-8') as fh:

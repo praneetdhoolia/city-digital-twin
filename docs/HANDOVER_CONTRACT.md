@@ -148,6 +148,11 @@ same every time are scripts, so a session spends its reading on the prose
 | the measurements an `awaiting-run` issue named, once its run has run | `python src/run/issue_gate.py` reports `MEASUREMENT DUE` · `python src/analyse/mode_by_demographics.py <run>` (mode x age, sex, employment, licence, car availability, with mean km) · `python src/analyse/measure_near_wharf.py --run <run> --it N` (the ferry's cross-harbour market) · the short-trip share on both bases in `_metrics.json` `trip_geometry.short_trips` |
 | a run's own residents map, for a run launched before the launcher wrote one | `python src/analyse/extract_metrics.py --run <run> --write-residents "<why the city's table is still this run's>"` |
 | cut a long function into named stages, byte-identically | `python src/setup/split_stages.py <file> <func> <stage>=<a>:<b> ...` · `python src/setup/extract_loop_body.py <file> <func> <for-line or a:b> <name> [--ctx x] [--in-body LINE]`, then rebuild the artefact against the manifest |
+| a refactored builder's outputs byte-identical to the manifest's, restored on any difference | `python src/build/build_manifest.py --verify-producer <script>` · `--against-committed --env CITYSIM_<FIELD>=<value>` when the builder refuses under the current config (HEAD's copy vs the working copy) |
+| drifted live-state numbers and run names moved to their artefacts, in the document's own format | `python tests/check_doc_currency.py --fix` (prints each rewrite; refuses anything else) |
+| heavy rail station by station: entries vs rail-to-rail transfers against the disclosed count, each entry by access walk band or feeder, car availability and subpopulation | `python src/analyse/report_mode_ridership.py --run <run> --it N --stations` |
+| where a held ride trip's constraint spills: the other trips of its tour by main and routing mode (a pt request answered with a walk), beside ride and no-ride tours | `python src/analyse/measure_bound_trips.py --run <run> --it N` → `held_tour_spill` in `_bound_trips.json` |
+| the value the pt access ceiling must be declared at, from every assembled scenario x day's nearest-stop reach | `python src/build/build_matsim_run_inputs.py --measure-reach` (assembles nothing) |
 
 The cheap checks run after every edit (`tests/check_doc_shape.py --strict`,
 `tests/check_doc_currency.py --strict`, `src/analyse/build_status_board.py

@@ -915,5 +915,171 @@ def main():
         print('  %10.1f MB  %s' % (f['bytes'] / 1e6, f['path']))
 
 
+# ------------------------------------------------ a builder's bytes, re-proved
+#
+# A refactor of a builder (splitting its main into phases, extracting a loop
+# body) must leave its outputs byte-identical, and the manifest already knows
+# which rows each script produces. `--verify-producer` backs those rows up,
+# re-runs the script and compares bytes; anything that differs is reported and
+# every backed-up output is put back. `--against-committed` is the case where
+# the builder refuses under the current configuration (the schedules builder
+# under explicit signals): the committed script and the working copy both run
+# under the same `--env` override and their outputs are compared with each
+# other, and the package's outputs and the working copy are restored after.
+
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
+
+
+def producer_rows(script, rows):
+    """Manifest rows whose `produced_by` names `script` (repo-relative)."""
+    want = script.replace('\\', '/').strip()
+    out = []
+    for r in rows:
+        tokens = [re.sub(r'\s*\(.*\)$', '', t).strip()
+                  for t in (r.get('produced_by') or '').split(' + ')]
+        if want in tokens:
+            out.append(r)
+    return out
+
+
+def _snapshot(paths):
+    """{path: sha256 or None when absent}."""
+    return {p: (sha256(p) if os.path.exists(p) else None) for p in paths}
+
+
+def _run_script(script_path, repo_root, env, log_path):
+    import subprocess  # noqa: PLC0415
+    import sys  # noqa: PLC0415
+    with open(log_path, 'w', encoding='utf-8') as log:
+        return subprocess.call([sys.executable, script_path], cwd=repo_root,
+                               env=env, stdout=log, stderr=subprocess.STDOUT)
+
+
+def verify_producer(script, rows, city_root=None, repo_root=None, env=None,
+                    against_committed=False, backup_dir=None):
+    """Re-run `script` and compare the bytes of every manifest row it produces.
+
+    Plain: back each output up, run the script, compare each output with its
+    backup; on a non-zero exit or any difference, restore every backup (and
+    remove an output that did not exist before). `against_committed`: run
+    `git show HEAD:<script>` and then the working copy, both under `env`, and
+    compare the two runs' outputs; the working copy and every backed-up output
+    are ALWAYS restored. Returns dict(identical, differing, rc, logs, backup).
+    """
+    import shutil  # noqa: PLC0415
+    import subprocess  # noqa: PLC0415
+    import tempfile  # noqa: PLC0415
+    city_root = city_root or ROOT
+    repo_root = repo_root or REPO_ROOT
+    outs = producer_rows(script, rows)
+    if not outs:
+        raise SystemExit('the manifest lists no output produced by %s' % script)
+    paths = [os.path.join(city_root, r['path'].replace('/', os.sep)) for r in outs]
+    backup_dir = backup_dir or tempfile.mkdtemp(prefix='verify_producer_')
+    saved = {}
+    for p, r in zip(paths, outs):
+        if os.path.exists(p):
+            dst = os.path.join(backup_dir, 'pkg', r['path'].replace('/', os.sep))
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            shutil.copy2(p, dst)
+            saved[p] = dst
+    run_env = dict(os.environ)
+    run_env.update(env or {})
+    script_path = os.path.join(repo_root, script.replace('/', os.sep))
+    logs = {}
+
+    def restore():
+        for p in paths:
+            if p in saved:
+                shutil.copy2(saved[p], p)
+            elif os.path.exists(p):
+                os.remove(p)
+
+    if not against_committed:
+        before = _snapshot(paths)
+        logs['run'] = os.path.join(backup_dir, 'run.log')
+        rc = _run_script(script_path, repo_root, run_env, logs['run'])
+        after = _snapshot(paths)
+        differing = sorted(os.path.relpath(p, city_root).replace(os.sep, '/')
+                           for p in paths if before[p] != after[p])
+        identical = rc == 0 and not differing
+        for rel in differing:            # kept beside the logs for inspection
+            src = os.path.join(city_root, rel.replace('/', os.sep))
+            if os.path.exists(src):
+                dst = os.path.join(backup_dir, 'new', rel.replace('/', os.sep))
+                os.makedirs(os.path.dirname(dst), exist_ok=True)
+                shutil.copy2(src, dst)
+        if not identical:
+            restore()
+        shutil.rmtree(os.path.join(backup_dir, 'pkg'), ignore_errors=True)
+        return dict(identical=identical, differing=differing, rc=rc,
+                    logs=logs, backup=backup_dir)
+
+    committed = subprocess.check_output(
+        ['git', 'show', 'HEAD:' + script.replace('\\', '/')], cwd=repo_root)
+    working = os.path.join(backup_dir, 'working_copy.py')
+    shutil.copy2(script_path, working)
+    hashes, rcs = {}, {}
+    try:
+        for label, body in (('committed', committed),
+                            ('working', open(working, 'rb').read())):
+            with open(script_path, 'wb') as fh:
+                fh.write(body)
+            logs[label] = os.path.join(backup_dir, '%s.log' % label)
+            rcs[label] = _run_script(script_path, repo_root, run_env, logs[label])
+            hashes[label] = _snapshot(paths)
+    finally:
+        shutil.copy2(working, script_path)
+        restore()
+        shutil.rmtree(os.path.join(backup_dir, 'pkg'), ignore_errors=True)
+    differing = sorted(os.path.relpath(p, city_root).replace(os.sep, '/')
+                       for p in paths
+                       if hashes.get('committed', {}).get(p) != hashes.get('working', {}).get(p))
+    identical = (not differing and rcs.get('committed') == 0
+                 and rcs.get('working') == 0)
+    return dict(identical=identical, differing=differing, rc=rcs,
+                logs=logs, backup=backup_dir)
+
+
+def _cli():
+    import argparse  # noqa: PLC0415
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument('--verify-producer', metavar='SCRIPT',
+                    help='re-run SCRIPT (repo-relative) and compare the bytes of '
+                         'every manifest row it produces; restore them on any '
+                         'difference. Writes no manifest')
+    ap.add_argument('--against-committed', action='store_true',
+                    help='with --verify-producer: run HEAD\'s copy of SCRIPT and '
+                         'the working copy under the same --env and compare '
+                         'their outputs; restores the package and the script')
+    ap.add_argument('--env', action='append', default=[], metavar='KEY=VALUE',
+                    help='environment for the verified runs, e.g. '
+                         'CITYSIM_A_SIGNALS_REPRESENTATION=implicit_delay')
+    a = ap.parse_args()
+    if not a.verify_producer:
+        if a.against_committed or a.env:
+            ap.error('--against-committed and --env need --verify-producer')
+        return main()
+    env = {}
+    for kv in a.env:
+        k, sep, v = kv.partition('=')
+        if not sep or not k:
+            ap.error('--env wants KEY=VALUE, got %r' % kv)
+        env[k] = v
+    with open(os.path.join(ROOT, 'data', 'MANIFEST.csv'), encoding='utf-8', newline='') as fh:
+        from manifest_io import manifest_reader
+        rows = list(manifest_reader(fh))
+    res = verify_producer(a.verify_producer, rows, env=env,
+                          against_committed=a.against_committed)
+    print('%s: rc %s, %d output(s) differing%s' % (
+        a.verify_producer, res['rc'], len(res['differing']),
+        '' if not res['differing'] else ' - restored'))
+    for p in res['differing']:
+        print('   differs: %s' % p)
+    print('logs: %s' % ', '.join('%s %s' % kv for kv in sorted(res['logs'].items())))
+    print('IDENTICAL' if res['identical'] else 'NOT IDENTICAL')
+    raise SystemExit(0 if res['identical'] else 1)
+
+
 if __name__ == '__main__':
-    main()
+    _cli()

@@ -2099,6 +2099,50 @@ def refuse_access_ceiling_below_reach(cfg, schedule_path, day):
     return round(reach, 1)
 
 
+def reach_table(out_dir, day_types, scenarios=None, trips_csv_of=None):
+    """[(scenario, day, reach m)] for every ASSEMBLED scenario x day type -
+    `nearest_stop_reach_m` on the schedule already under `out_dir`. Assembles
+    nothing; a scenario x day with no assembled schedule is left out."""
+    if trips_csv_of is None:
+        def trips_csv_of(day):
+            return _city.path('demand/plans/B2_activity_trips_%s.csv' % day)
+    out = []
+    for sid in sorted(os.listdir(out_dir)):
+        if scenarios and sid not in scenarios:
+            continue
+        for day in day_types:
+            sched = os.path.join(out_dir, sid, day, 'transitSchedule.xml.gz')
+            trips = trips_csv_of(day)
+            if os.path.exists(sched) and os.path.exists(trips):
+                out.append((sid, day, nearest_stop_reach_m(sched, trips)))
+    return out
+
+
+def measure_reach(day_types=None, scenarios=None, out_dir=None, extension_m=None,
+                  trips_csv_of=None):
+    """`--measure-reach`: print every assembled scenario x day type's reach,
+    the maximum, and the value `RUN.transit_router.access_max_radius_m` must
+    be declared at - that maximum plus the (resolved, per scenario and day)
+    `access_search_extension_radius_m`. Writes nothing. Returns the rows and
+    the required ceiling."""
+    rows = reach_table(out_dir or OUT, day_types or DAY_TYPES, scenarios, trips_csv_of)
+    if not rows:
+        raise SystemExit('no assembled transitSchedule.xml.gz under %s' % (out_dir or OUT))
+    need = 0.0
+    print('%-6s %-8s %10s %10s %10s' % ('scen', 'day', 'reach m', 'ext m', 'need m'))
+    for sid, day, reach in rows:
+        ext = (extension_m if extension_m is not None else
+               _registry.load(scenario=sid, day=day).get(
+                   'RUN.transit_router.access_search_extension_radius_m'))
+        need = max(need, reach + ext)
+        print('%-6s %-8s %10.1f %10g %10.1f' % (sid, day, reach, ext, reach + ext))
+    worst = max(rows, key=lambda r: r[2])
+    print('MAX reach %.1f m (%s %s)' % (worst[2], worst[0], worst[1]))
+    print('RUN.transit_router.access_max_radius_m must be declared at >= %.1f m '
+          '(reach + extension)' % need)
+    return rows, need
+
+
 def config_runtime(cfg, scoring, day, paths):
     """Return the runtime entries of one scenario x day-type config: every
     parameter the registry cannot hold, each with the role that justifies it."""
@@ -2550,7 +2594,16 @@ if __name__ == '__main__':
     ap.add_argument('--set', action='append', default=[], metavar='KEY=VALUE',
                     help='registry override, e.g. RUN.machine.threads=8. Checked '
                          'against the declared sweep like any other layer')
+    ap.add_argument('--measure-reach', action='store_true',
+                    help='assemble nothing: print the nearest-stop reach of every '
+                         'assembled scenario x day type, the maximum, and the '
+                         'value RUN.transit_router.access_max_radius_m must be '
+                         'declared at (reach + the search extension)')
     a = ap.parse_args()
+    if a.measure_reach:
+        measure_reach([d for d in a.day_types.split(',') if d],
+                      [s for s in a.scenarios.split(',') if s] or None)
+        raise SystemExit(0)
     main([d for d in a.day_types.split(',') if d],
          [s for s in a.scenarios.split(',') if s] or None,
          _registry.parse_set(a.set))
