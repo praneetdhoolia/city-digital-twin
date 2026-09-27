@@ -173,8 +173,13 @@ def set_mode_param(text, mode, name, value):
     return new
 
 
-def resolve_warm_start(source):
+def resolve_warm_start(source, stopped_was_death=None):
     """The newest written plans checkpoint of a dead run, for `--warm-start`.
+
+    A record whose completion is `died` is crash recovery's by definition.
+    A `stopped_by_operator` record is not, unless `stopped_was_death` states
+    why that stop closed out a run that was already dead (a record written
+    before `died` existed, 9.215); the reason is carried into the new run.
 
     A crashed 1000-iteration arm used to cost the whole arm: plans are written
     every `RUN.controler.write_plans_interval` iterations but the harness never
@@ -209,12 +214,18 @@ def resolve_warm_start(source):
     # is the opposite of GOAL.md step 3 - the cause is fixed and the arm
     # relaunched, never continued.
     rec_path = os.path.join(source, '_run.json')
+    death = None
     if os.path.exists(rec_path):
         try:
             done = json.load(open(rec_path, encoding='utf-8')).get(
                 'completion', RAN_TO_LAST)
         except (OSError, ValueError):
             done = RAN_TO_LAST
+        if done == DIED:
+            death = 'recorded as died'
+        elif done == STOPPED_BY_OPERATOR and stopped_was_death:
+            death = stopped_was_death
+    if os.path.exists(rec_path) and death is None:
         if done == RAN_TO_LAST:
             raise SystemExit(
                 '%s ran to its last iteration (its _run.json says %s). Warm '
@@ -224,7 +235,10 @@ def resolve_warm_start(source):
             '%s was stopped deliberately, not crashed (its _run.json says %s) '
             'and is already closed out. Warm restart is crash recovery: fix '
             'what the stop found and launch a fresh arm - resuming past a gate '
-            'carries the deviation it fired on into every iteration after it.'
+            'carries the deviation it fired on into every iteration after it. '
+            'If an operator stop closed out a run that had already DIED (a '
+            'record from before `died` existed), say so with '
+            '--stopped-was-death TEXT.'
             % (source, done))
     candidates = []
     for d in glob.glob(os.path.join(source, 'output', 'ITERS', 'it.*')):
@@ -242,7 +256,7 @@ def resolve_warm_start(source):
             'start loses nothing.' % source)
     n, plans = max(candidates)
     return dict(run=os.path.basename(source), iteration=n, plans=plans,
-                meta=meta)
+                meta=meta, death=death)
 
 
 def check_warm_compatibility(warm, scenario, day, fraction, seed, threads,
@@ -1215,6 +1229,12 @@ STOPPED_AT_CEILING = 'stopped_at_ceiling'
 # at 05:13 and killed by nobody.
 STOPPED_AT_STALL = 'stopped_at_stall'
 STOPPED_BY_OPERATOR = 'stopped_by_operator'
+# A run whose harness and JVM were ALREADY dead when --stop closed it out:
+# nothing stopped it, something killed it - a host restart, a session that
+# took its child processes with it (9.215). Its reading to `reached_iteration`
+# is citable like any stopped arm's, and unlike a deliberate stop it is crash
+# recovery's to resume (fourteenth report, recommendation 5).
+DIED = 'died'
 
 
 def find_completed(scenario, day, fraction, iterations, seed, overrides,
@@ -2107,6 +2127,9 @@ def stop_run(name, cause):
     # moved. The jvm pid is still killed after, because on POSIX killing the
     # harness alone left the JVM running (#128); on Windows /T takes the tree
     # and the second kill is a no-op.
+    # A run nothing is left of was not stopped - it died, and its record says
+    # so, because only a death may be warm-started (9.215).
+    already_dead = not any(card_pid_alive(meta, key) for key in ('pid', 'jvm_pid'))
     # ONLY A PID THAT IS STILL THE CARD'S OWN PROCESS IS KILLED: after a host
     # reboot the numbers name whatever started since, and `/T` would take its
     # whole tree (procs.card_pid_alive).
@@ -2130,10 +2153,11 @@ def stop_run(name, cause):
     # the harness's own pid as well as the JVM, so the harness never unwinds to
     # write anything. The reading up to `reached_iteration` is real; the record
     # says `stopped_by_operator`, so nothing can mistake it for a finished arm.
-    doc = close_out(dead, STOPPED_BY_OPERATOR, rc=None,
-                    wall_s=meta.get('wall_s'), stop_cause=cause)
-    print('stopped and recorded: %s%s'
-          % (os.path.basename(dead),
+    doc = close_out(dead, DIED if already_dead else STOPPED_BY_OPERATOR,
+                    rc=None, wall_s=meta.get('wall_s'), stop_cause=cause)
+    print('%s and recorded: %s%s'
+          % ('found dead' if already_dead else 'stopped',
+             os.path.basename(dead),
              (' (closed out at iteration %s)' % doc.get('reached_iteration'))
              if doc else ''), flush=True)
     # AND THEN THE SAME MATERIALS THE HARNESS PATH PRODUCES. A stop is a
@@ -2312,6 +2336,9 @@ def _warm_start_key(warm, scenario, day, fraction, seed, threads, overrides):
         check_warm_compatibility(warm, scenario, day, fraction, seed, threads,
                                  overrides)
         warm_key = dict(run=warm['run'], iteration=warm['iteration'])
+        if warm.get('death'):
+            # why a run the record calls stopped may be resumed (9.215)
+            warm_key['death'] = warm['death']
         print('warm start: continuing %s from its iteration-%d plans '
               '(firstIteration=%d). A warm-started run is NOT bit-identical '
               'to an uninterrupted one - see DECISIONS.md 9.76.'
@@ -2512,7 +2539,8 @@ def _close_out_nonzero(run_dir, cfg, rc, wall):
     print(('%s after %.0fs - %s'
            % ({STOPPED_AT_GATE: 'GATE-STOPPED',
                STOPPED_AT_CEILING: 'CEILING-STOPPED',
-               STOPPED_AT_STALL: 'STALL-STOPPED'}.get(
+               STOPPED_AT_STALL: 'STALL-STOPPED',
+               DIED: 'DIED'}.get(
                    completion, 'STOPPED BY THE OPERATOR'),
               wall, gate_cause))
           if gate_cause else

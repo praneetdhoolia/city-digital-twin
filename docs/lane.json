@@ -1,6 +1,6 @@
 {
   "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
-  "updated": "2026-09-27",
+  "updated": "2026-09-28",
   "family": "F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen",
   "tasks": [
     {
@@ -1013,6 +1013,55 @@
       "answer": "All three, then the arm (Recommended)",
       "answered": "2026-09-27",
       "note": "approves one 25 % F38 arm at a 34 h ceiling, spent on that launch"
+    },
+    {
+      "id": "D24",
+      "question": "F38's arm 0 shares the CPU with other work (100 % CPU; about 1 h behind F37's pace at iteration 19); at that load it would reach its 34 h ceiling near iteration 247. What should happen?",
+      "options": [
+        {
+          "label": "I'll keep heavy apps closed (Recommended)",
+          "detail": "at F37's pace it finishes in about 32.5 h"
+        },
+        {
+          "label": "Keep using the PC; accept the risk",
+          "detail": "a ceiling stop closes out as stopped_at_ceiling: citable at its reached iteration, not a result"
+        },
+        {
+          "label": "Approve a 40 h ceiling instead",
+          "detail": "stop and relaunch under 40 h, losing the first 4 h"
+        }
+      ],
+      "recommended": 0,
+      "issues": [],
+      "evidence": "20260927T145839_250it_25pct stopwatch: iteration 0 to 19 in 3.18 h against F37's 2.11 h",
+      "asked": "2026-09-27",
+      "answer": "Keep using the PC; accept the risk",
+      "answered": "2026-09-27"
+    },
+    {
+      "id": "D25",
+      "question": "F38's arm 0 died at iteration 79 (13.2 h in) because it was launched attached to the Claude session; the launcher now refuses that. How should F38's arm continue?",
+      "options": [
+        {
+          "label": "Warm start at 75, 34 h cap (Recommended)",
+          "detail": "continue from the iteration-75 plans with the cutoff kept at 200, detached; ~23 h idle, up to ~34 h under load; a warm-completed arm is a result (9.167)"
+        },
+        {
+          "label": "Warm start at 75, 26 h cap",
+          "detail": "finishes only if the machine stays mostly free"
+        },
+        {
+          "label": "Fresh relaunch, 40 h cap",
+          "detail": "discard the 75 iterations; ~32 h idle"
+        }
+      ],
+      "recommended": 0,
+      "issues": [],
+      "evidence": "9.215; aborted_20260927T145839_250it_25pct (reached 79); F37's iterations 76-250 took 22.82 h",
+      "asked": "2026-09-28",
+      "answer": "Warm start at 75, 34 h cap (Recommended)",
+      "answered": "2026-09-28",
+      "note": "approves up to 34 h, spent on the warm-started launch"
     }
   ]
 }

@@ -202,7 +202,16 @@ def main():
                          'scheduler. The harness, its watchers, its record '
                          'writer and its viewer then die with the shell that '
                          'launched them; use it for a smoke probe you will '
-                         'sit and watch, never for an arm')
+                         'sit and watch, never for an arm - an arm-length run '
+                         '(RUN.controler.last_iteration inside its declared '
+                         'sweep) is REFUSED in the foreground (9.215)')
+    ap.add_argument('--scheduled-child', action='store_true',
+                    help=argparse.SUPPRESS)   # set by --detach's wrapper only
+    ap.add_argument('--stopped-was-death', metavar='TEXT',
+                    help='with --warm-start: the parent\'s record says '
+                         'stopped_by_operator, but the stop closed out a run '
+                         'that had already died (a record from before `died` '
+                         'existed); why, recorded in warm_started_from')
     ap.add_argument('--config-set', action='append', default=[], metavar='KEY=VALUE',
                     help='registry override, checked against the declared sweep')
     ap.add_argument('--set', action='append', default=[], metavar='KEY=VALUE',
@@ -327,7 +336,8 @@ def launch(a):
 
     warm = None
     if a.warm_start:
-        warm = run_matsim.resolve_warm_start(a.warm_start)
+        warm = run_matsim.resolve_warm_start(
+            a.warm_start, stopped_was_death=a.stopped_was_death)
         # firstIteration AND the innovation fraction, so the cutoff iteration
         # is the parent's (#192)
         overrides = run_matsim.warm_start_overrides(warm, overrides, a.scenario,
@@ -356,10 +366,37 @@ def launch(a):
     if a.detach:
         raise SystemExit('--detach uses the Windows Task Scheduler; on this '
                          'platform use nohup/setsid instead.')
+    if not a.dry_run:
+        refuse_foreground_arm(a, cfg)
 
     if a.dry_run:
         return dry_run(a, run_config, cfg)
     return run_here(a, cfg, raw_overrides, warm, overrides, defaulted)
+
+
+def refuse_foreground_arm(a, cfg):
+    """An arm must outlive the shell that launched it (D6, #70; 9.215).
+
+    F38's arm 0 was launched with --foreground from a Claude Code session's
+    background shell and died with that session at iteration 79 of 250, 13 h
+    in - the failure --detach was made the default to prevent, re-created by
+    copying the scheduled child's own flags. Only the scheduler's wrapper may
+    run an arm-length run in the foreground: any run whose
+    RUN.controler.last_iteration lies inside the field's declared sweep, which
+    is what makes it a modelling run rather than a smoke or a probe.
+    """
+    if not a.foreground or a.scheduled_child:
+        return
+    fields, _ = registry.load_registry()
+    lo = registry._sweep_interval(fields['RUN.controler.last_iteration'].get('sweep'))
+    last = int(cfg.get('RUN.controler.last_iteration'))
+    if lo is not None and last >= lo[0]:
+        raise SystemExit(
+            'REFUSED: a %d-iteration run is an arm (RUN.controler.last_iteration '
+            'declares %g-%g), and an arm launched with --foreground dies with '
+            'the shell that launched it (9.215: F38 arm 0 at iteration 79). '
+            'Launch without --foreground; the default detaches it under the '
+            'Windows Task Scheduler (D6).' % (last, lo[0], lo[1]))
 
 
 def dry_run(a, run_config, cfg):
@@ -464,7 +501,7 @@ def _detach():
     wrapper = os.path.join(launch_dir, '%s.cmd' % task)
 
     args = ([x for x in sys.argv[1:] if x != '--detach']
-            + ['--issue-gate-passed', '--foreground'])
+            + ['--issue-gate-passed', '--foreground', '--scheduled-child'])
     # Quoted the way CreateProcess parses it (embedded quotes and
     # backslashes escaped), then `%` doubled because the command lives in
     # a batch file: the old `"%s"`-if-space rule passed `--cause "he said
