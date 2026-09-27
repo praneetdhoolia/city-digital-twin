@@ -103,6 +103,54 @@ public final class HouseholdVehicleRoster implements IterationStartsListener {
         }
         final Map<String, List<Person>> byHousehold = new HashMap<>();
         final Map<String, Integer> vehiclesOf = new HashMap<>();
+        collectDrivers(byHousehold, vehiclesOf);
+        final Pass p = new Pass(event.getIteration(), first, carType);
+        for (final Map.Entry<String, List<Person>> e : byHousehold.entrySet()) {
+            final int n = vehiclesOf.getOrDefault(e.getKey(), 0);
+            if (n <= 0) {
+                continue;                          // car_available already denies
+            }
+            rosterHousehold(p, e.getKey(), e.getValue(), n);
+        }
+        if (first) {
+            LOG.info("householdVehicles: roster=census - {} households, {} drivers "
+                     + "mapped to {} shared cars; {} households hold fewer cars than "
+                     + "drivers and will share (B.population.vehicle_roster, 9.146)",
+                     p.households, p.drivers, p.created, p.sharing);
+        } else if (p.restored > 0) {
+            LOG.info("householdVehicles: iteration {} - {} of {} driver mappings "
+                     + "had been put back to a person-owned car and were restored "
+                     + "(9.148)", event.getIteration(), p.restored, p.drivers);
+        }
+    }
+
+    /**
+     * One roster pass: what it needs from the event and the tallies its log
+     * line reports. notifyIterationStarts held these as locals in one
+     * 112-line method until 27 September 2026 (fourteenth report,
+     * recommendation 9).
+     */
+    private static final class Pass {
+        final int iteration;
+        final boolean first;
+        final VehicleType carType;
+        int households = 0;
+        int drivers = 0;
+        int sharing = 0;                           // households with drivers > cars
+        int created = 0;
+        int restored = 0;                          // 9.148: mappings put back
+
+        Pass(final int iteration, final boolean first, final VehicleType carType) {
+            this.iteration = iteration;
+            this.first = first;
+            this.carType = carType;
+        }
+    }
+
+    /** Every licensed, car-available household member, by household, and the
+     *  vehicles the census gives that household. */
+    private void collectDrivers(final Map<String, List<Person>> byHousehold,
+                                final Map<String, Integer> vehiclesOf) {
         for (final Person person : scenario.getPopulation().getPersons().values()) {
             final Object hh = person.getAttributes()
                     .getAttribute(RidePairingEngine.HOUSEHOLD_ATTRIBUTE);
@@ -121,64 +169,48 @@ public final class HouseholdVehicleRoster implements IterationStartsListener {
                     .add(person);
             vehiclesOf.put(hh.toString(), Integer.parseInt(n.toString()));
         }
-        int households = 0;
-        int drivers = 0;
-        int sharing = 0;                           // households with drivers > cars
-        int created = 0;
-        int restored = 0;                          // 9.148: mappings put back
-        for (final Map.Entry<String, List<Person>> e : byHousehold.entrySet()) {
-            final int n = vehiclesOf.getOrDefault(e.getKey(), 0);
-            if (n <= 0) {
-                continue;                          // car_available already denies
-            }
-            final List<Person> members = e.getValue();
-            Collections.sort(members, (a, b) -> a.getId().compareTo(b.getId()));
-            households++;
-            if (members.size() > n) {
-                sharing++;
-            }
-            for (int i = 0; i < members.size(); i++) {
-                final Person driver = members.get(i);
-                final Id<Vehicle> vid = Id.createVehicleId(
-                        VEHICLE_ID_PREFIX + e.getKey() + "_car" + (i % n + 1));
-                if (!scenario.getVehicles().getVehicles().containsKey(vid)) {
-                    scenario.getVehicles().addVehicle(
-                            VehicleUtils.createVehicle(vid, carType));
-                    created++;
-                }
-                Map<String, Id<Vehicle>> map;
-                try {
-                    map = new HashMap<>(VehicleUtils.getVehicleIds(driver));
-                } catch (final RuntimeException none) {
-                    map = new HashMap<>();
-                }
-                if (!vid.equals(map.get(TransportMode.car))) {
-                    if (restored == 0 && !first) {
-                        LOG.warn("householdVehicles: iteration {} - person {} "
-                                 + "carried car vehicle {} instead of the roster's "
-                                 + "{}; SOMETHING REWROTE THE MAPPING BETWEEN "
-                                 + "ITERATIONS (9.148 - measured 0 times over "
-                                 + "398 iterations to 12 Sep 2026; PrepareForSim "
-                                 + "is the only writer in the pinned jar)",
-                                 event.getIteration(), driver.getId(),
-                                 map.get(TransportMode.car), vid);
-                    }
-                    restored++;
-                }
-                map.put(TransportMode.car, vid);
-                VehicleUtils.insertVehicleIdsIntoPersonAttributes(driver, map);
-                drivers++;
-            }
+    }
+
+    /** Map one household's drivers, in person-id order, round-robin onto its
+     *  `n` shared cars, creating any car the vehicles container lacks. */
+    private void rosterHousehold(final Pass p, final String household,
+                                 final List<Person> members, final int n) {
+        Collections.sort(members, (a, b) -> a.getId().compareTo(b.getId()));
+        p.households++;
+        if (members.size() > n) {
+            p.sharing++;
         }
-        if (first) {
-            LOG.info("householdVehicles: roster=census - {} households, {} drivers "
-                     + "mapped to {} shared cars; {} households hold fewer cars than "
-                     + "drivers and will share (B.population.vehicle_roster, 9.146)",
-                     households, drivers, created, sharing);
-        } else if (restored > 0) {
-            LOG.info("householdVehicles: iteration {} - {} of {} driver mappings "
-                     + "had been put back to a person-owned car and were restored "
-                     + "(9.148)", event.getIteration(), restored, drivers);
+        for (int i = 0; i < members.size(); i++) {
+            final Person driver = members.get(i);
+            final Id<Vehicle> vid = Id.createVehicleId(
+                    VEHICLE_ID_PREFIX + household + "_car" + (i % n + 1));
+            if (!scenario.getVehicles().getVehicles().containsKey(vid)) {
+                scenario.getVehicles().addVehicle(
+                        VehicleUtils.createVehicle(vid, p.carType));
+                p.created++;
+            }
+            Map<String, Id<Vehicle>> map;
+            try {
+                map = new HashMap<>(VehicleUtils.getVehicleIds(driver));
+            } catch (final RuntimeException none) {
+                map = new HashMap<>();
+            }
+            if (!vid.equals(map.get(TransportMode.car))) {
+                if (p.restored == 0 && !p.first) {
+                    LOG.warn("householdVehicles: iteration {} - person {} "
+                             + "carried car vehicle {} instead of the roster's "
+                             + "{}; SOMETHING REWROTE THE MAPPING BETWEEN "
+                             + "ITERATIONS (9.148 - measured 0 times over "
+                             + "398 iterations to 12 Sep 2026; PrepareForSim "
+                             + "is the only writer in the pinned jar)",
+                             p.iteration, driver.getId(),
+                             map.get(TransportMode.car), vid);
+                }
+                p.restored++;
+            }
+            map.put(TransportMode.car, vid);
+            VehicleUtils.insertVehicleIdsIntoPersonAttributes(driver, map);
+            p.drivers++;
         }
     }
 }

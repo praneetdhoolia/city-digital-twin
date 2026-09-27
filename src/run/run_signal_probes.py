@@ -24,8 +24,11 @@ class that decides correctness is exercised without a scenario, and the pinned
 toolchain carries no test framework - adding one would be a toolchain change
 (DECISIONS.md 14). `GatedSubtourProbe` proves the mode-choice wrapper reverts
 an impermissible proposal in full; `PtFareProbe` proves the Opal fare lookup
-reads the band, the rider class and the daily cap the schedule declares. Both
-run in seconds on a plan and a schedule built in memory.
+reads the band, the rider class and the daily cap the schedule declares, and
+refuses a boarded submode with no declared fare. Both run in seconds on a plan
+and a schedule built in memory. `EscortCoherenceProbe` proves the escort and
+joint coherence listener proposes both sides of a pair, honours the declared
+scope and proposes nothing past the innovation cutoff.
 """
 import glob
 import os
@@ -47,7 +50,11 @@ PROBES = ('citysim.SignalsAssemblyProbe', 'citysim.TramPriorityProbe',
           'citysim.PtFareProbe',
           # the ride retime (#187) and the taxi fleet's executed wait share
           # one retime/restore; this proves both halves and the orphan rule
-          'citysim.ActivityRetimesProbe')
+          'citysim.ActivityRetimesProbe',
+          # the escort/joint coherence listener: both sides re-proposable,
+          # the declared scope, the silent tail, and a fingerprint of its
+          # proposals for comparing a refactor before and after
+          'citysim.EscortCoherenceProbe')
 
 
 def java_exe():

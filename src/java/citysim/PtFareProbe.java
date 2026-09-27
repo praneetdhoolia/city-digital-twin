@@ -58,7 +58,10 @@ import org.matsim.vehicles.Vehicle;
  *     {@code childMinAge} nothing is charged, a child pays the child column;</li>
  * <li>daily cap arithmetic: a journey is charged only up to what is left of
  *     the person's cap, the cap is never exceeded, and once it is reached no
- *     further money event is emitted at all.</li>
+ *     further money event is emitted at all;</li>
+ * <li>a boarding of a submode the schedule declares no fare for is refused,
+ *     and the refusal names the submode - it is not priced on the bus
+ *     table.</li>
  * </ul>
  *
  * <p><b>The boxed-type check, and why it is asserted.</b> This probe found the
@@ -88,6 +91,10 @@ public final class PtFareProbe {
 
     private static final String BUS = "bus";
     private static final Id<Vehicle> VEHICLE = Id.create("v1", Vehicle.class);
+    /** A submode with no fare table: boarding it must be refused. */
+    private static final String UNFARED = "subway";
+    private static final Id<Vehicle> UNFARED_VEHICLE =
+            Id.create("v_unfared", Vehicle.class);
 
     /** Stop -> its position on the straight line, in metres from the origin. */
     private static final int[] STOP_M = {0, 3000, 5000, 7000, 12000};
@@ -179,6 +186,14 @@ public final class PtFareProbe {
             .append(",\"cap_total_equals_daily_cap\":").append(capTotal)
             .append(",\"no_event_once_capped\":").append(amounts.size() == 3);
 
+        // --- 5. a submode with no declared fare is refused ----------------
+        // Until 27 September 2026 it was silently charged the bus table.
+        final Fixture unfared = new Fixture();
+        final String refusal = unfared.boardUnfared();
+        final boolean refused = refusal != null && refusal.contains(UNFARED);
+        ok &= refused;
+        json.append(",\"unfared_submode_refused_by_name\":").append(refused);
+
         json.append(",\"ok\":").append(ok).append('}');
         System.out.println(json);
         System.exit(ok ? 0 : 1);
@@ -254,6 +269,32 @@ public final class PtFareProbe {
             route.addDeparture(departure);
             line.addRoute(route);
             schedule.addTransitLine(line);
+            // a submode the fare schedule declares nothing for
+            final TransitLine unfared = f.createTransitLine(
+                    Id.create("line_unfared", TransitLine.class));
+            final TransitRoute unfaredRoute = f.createTransitRoute(
+                    Id.create("route_unfared", TransitRoute.class), null,
+                    Collections.<TransitRouteStop>emptyList(), UNFARED);
+            final Departure unfaredDeparture = f.createDeparture(
+                    Id.create("dep_unfared", Departure.class), 0.0);
+            unfaredDeparture.setVehicleId(UNFARED_VEHICLE);
+            unfaredRoute.addDeparture(unfaredDeparture);
+            unfared.addRoute(unfaredRoute);
+            schedule.addTransitLine(unfared);
+        }
+
+        /** Board the unfared submode; the refusal's message, or null. */
+        private String boardUnfared() {
+            final Person p = person("p_unfared", 25);
+            this.handler.handleEvent(new VehicleArrivesAtFacilityEvent(
+                    OFF_PEAK_H * 3600.0 - 10.0, UNFARED_VEHICLE, stopId(0), 0.0));
+            try {
+                this.handler.handleEvent(new PersonEntersVehicleEvent(
+                        OFF_PEAK_H * 3600.0, p.getId(), UNFARED_VEHICLE));
+            } catch (final IllegalStateException refused) {
+                return refused.getMessage();
+            }
+            return null;
         }
 
         private static Id<TransitStopFacility> stopId(final int i) {
