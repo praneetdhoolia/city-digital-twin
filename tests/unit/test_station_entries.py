@@ -97,6 +97,29 @@ def test_a_run_without_a_fraction_is_refused(tmp_path):
                             stop_name={}, persons={})
 
 
+def test_rail_legs_read_distance_shapes_and_pairs(doc):
+    r = doc['rail_legs']
+    # rail legs of 9, 5, 2 and 8 km; the lower nearest rank of each percent
+    assert (r['legs'], r['legs_per_day']) == (4, 16.0)
+    assert r['in_vehicle_km'] == {'p10': 2.0, 'p25': 5.0, 'p50': 8.0, 'p75': 9.0, 'p90': 9.0}
+    assert (r['share_under_3_km_pct'], r['share_under_5_km_pct']) == (25.0, 25.0)
+    # the bus-only trip has no shape; each rail trip's boarded submodes in order
+    assert {s['shape']: s['trips'] for s in r['trip_shapes']} == {
+        'rail': 1, 'bus > rail': 1, 'rail > rail': 1}
+    pairs = {(p['board'], p['alight']): p['per_day'] for p in r['top_station_pairs']}
+    assert pairs == {('hamilton', 'newcastle interchange'): 4.0,
+                     ('broadmeadow', 'newcastle interchange'): 4.0,
+                     ('hamilton', 'broadmeadow'): 4.0,
+                     ('broadmeadow', 'maitland'): 4.0}
+
+
+def test_the_rail_legs_print(doc, capsys):
+    rmr.print_station_entries(doc)
+    out = capsys.readouterr().out
+    assert 'RAIL LEGS  4 (16 per day)' in out and 'bus > rail' in out
+    assert 'hamilton -> broadmeadow' in out
+
+
 def test_access_bands():
     assert [rmr.access_band(k) for k in (0.2, 1.0, 4.99, 5.0)] == [
         'walk <1 km', 'walk 1-2 km', 'walk 2-5 km', 'walk >=5 km']

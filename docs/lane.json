@@ -395,6 +395,20 @@
         257
       ],
       "evidence": "9.214"
+    },
+    {
+      "id": "access-link-capacity",
+      "title": "Attach trip ends to links that can carry them: on F37's arm 0, 29 links (28 service lanes, one living street) carry 23,161 sampled road-vehicle trip ends needing up to 38 hours of their own sampled capacity, and the 2.7 % of road trips touching them average 72.6 min at 13.4 km/h against 25.5 min elsewhere; 73 % of the run's excess vehicle-hours sit on residential and service links carrying ~13 % of traversals. Design a capacity-aware citysim.ActivityLinkAssigner rule (no link receives more trip ends than it can move in the modelled day, excess moved to the next-nearest eligible links), derived, behind a representation gate, and measure the car time tail against the HTS 17.2 min",
+      "kind": "model",
+      "status": "open",
+      "recommended": false,
+      "cost": "no run to design: the trip-end load per link and the car time by load band from any finished arm's trips table and output network (scratch access_load.py and delay_links.py, to be folded into an existing reader); the Java change compiles only on an idle machine and opens a family",
+      "blocked_on": "F38's arm 0 reading (the car time tail on the new demand), then a user decision on the next family's contents",
+      "opens_family": true,
+      "answers_issues": [
+        145
+      ],
+      "evidence": "9.214 (F37 arm 0: car mean 25.0 min for 11.88 km against the HTS 17.2 min for 10.2 km; median 12.6 min; 9.8 % of car trips under 15 km/h carry 32.4 % of car time, spread over the whole day)"
     }
   ],
   "decisions": [

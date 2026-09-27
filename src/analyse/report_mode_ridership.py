@@ -75,10 +75,9 @@ SUBMODE_TO_TARGET = {
 PT_SUBMODES = ('pt',) + tuple(sorted(set(SUBMODE_TO_TARGET)))
 PT_TARGET_MODES = frozenset(SUBMODE_TO_TARGET.values())
 
-# Road vehicles, for the freight denominator. A ride passenger is NOT a
-# vehicle - they travel in a car that is already counted - so ride is absent
-# here by construction, not by oversight.
-ROAD_VEHICLE_MODES = ('car', 'truck', 'motorbike', 'taxi')
+# Road vehicles, for the freight denominator - declared once in
+# extract_metrics (ride is absent by construction: a passenger is no vehicle).
+ROAD_VEHICLE_MODES = em.ROAD_VEHICLE_MODES
 # What the last report() computed - modelled level, count and target per mode -
 # so `--trend` can line iterations up without re-implementing the table
 LAST = {}
@@ -233,13 +232,23 @@ def station_entries(run_dir, iteration, fraction=None, targets=None,
     access = collections.defaultdict(collections.Counter)
     car = collections.defaultdict(collections.Counter)
     subpop = collections.defaultdict(collections.Counter)
+    rail_km = []                          # in-vehicle km of every heavy-rail leg
+    pairs = collections.Counter()         # (boarding station, alighting station)
+    shapes = collections.Counter()        # a rail trip's boarded submodes, in order
     for trip in by_trip.values():
         prev = None           # the last boarded submode's target, or a leg mode
         walked = 0.0
+        boarded = []
         for leg in trip:
             line = (leg.get('transit_line') or '').strip()
             sm = (route_mode.get((line, (leg.get('transit_route') or '').strip()))
                   if line else None)
+            if sm is not None:
+                boarded.append(sm)
+                if SUBMODE_TO_TARGET.get(sm, sm) == 'heavy_rail':
+                    rail_km.append(float(leg.get('distance') or 0.0) / 1000.0)
+                    pairs[(station_of(stop_name.get(leg.get('access_stop_id'), '')),
+                           station_of(stop_name.get(leg.get('egress_stop_id'), '')))] += 1
             if sm is None:
                 mode = leg.get('mode') or ''
                 if mode in WALK_LEG_MODES:
@@ -264,6 +273,8 @@ def station_entries(run_dir, iteration, fraction=None, targets=None,
                     subpop[st][who.get('subpopulation') or '(none)'] += 1
             prev = target
             walked = 0.0
+        if any(SUBMODE_TO_TARGET.get(s, s) == 'heavy_rail' for s in boarded):
+            shapes[' > '.join(boarded)] += 1
 
     def scaled(c):
         return {k: round(v / frac, 1) for k, v in c.most_common()}
@@ -305,10 +316,45 @@ def station_entries(run_dir, iteration, fraction=None, targets=None,
                 iteration=iteration, fraction=frac, stations=rows,
                 totals=dict(disclosed=total(True), undisclosed=total(False),
                             all=total(None)),
+                rail_legs=rail_leg_reading(rail_km, shapes, pairs, frac),
                 note='heavy-rail boardings per day (x1/fraction), all travellers: '
                      'ENTRIES are a trip\'s first rail leg, TRANSFERS a rail leg '
                      'after another; a disclosed count is gate entries, so it is '
                      'read against entries. Nothing here is a target.')
+
+
+def rail_leg_reading(rail_km, shapes, pairs, frac):
+    """What the heavy-rail legs of one iteration look like: how far each rides
+    (in-vehicle km at the lower nearest rank, and the share under 3 and 5 km),
+    the trip shapes they sit in (every boarded submode in order), and the
+    busiest boarding -> alighting station pairs per day (x1/fraction). The
+    km bands and the list lengths are reporting choices, not model values."""
+    n = len(rail_km)
+    return dict(
+        legs=n, legs_per_day=round(n / frac, 1),
+        in_vehicle_km={k: round(v, 2) for k, v in
+                       em.rank_percentiles(rail_km, (10, 25, 50, 75, 90)).items()},
+        share_under_3_km_pct=round(100.0 * sum(k < 3 for k in rail_km) / n, 2) if n else None,
+        share_under_5_km_pct=round(100.0 * sum(k < 5 for k in rail_km) / n, 2) if n else None,
+        trip_shapes=[dict(shape=s, trips=v, per_day=round(v / frac, 1))
+                     for s, v in shapes.most_common(8)],
+        top_station_pairs=[dict(board=a, alight=b, legs=v, per_day=round(v / frac, 1))
+                           for (a, b), v in pairs.most_common(15)])
+
+
+def print_rail_legs(r):
+    """The rail-leg lines `--stations` prints under the station table."""
+    km = r['in_vehicle_km']
+    print('RAIL LEGS  %d (%.0f per day)  in-vehicle km %s  under 3 km %s %%  under 5 km %s %%'
+          % (r['legs'], r['legs_per_day'],
+             ' '.join('%s %.1f' % (k, v) for k, v in km.items()) or '-',
+             r['share_under_3_km_pct'], r['share_under_5_km_pct']))
+    print('   trip shapes (boarded submodes in order):')
+    for s in r['trip_shapes']:
+        print('   %8d  %s' % (s['trips'], s['shape']))
+    print('   top station pairs, per day:')
+    for p in r['top_station_pairs']:
+        print('   %8.0f  %s -> %s' % (p['per_day'], p['board'], p['alight']))
 
 
 def _shares(counter, n):
@@ -338,6 +384,8 @@ def print_station_entries(doc):
             print('   reached by   %s' % _shares(t['access'], t['entries']))
             print('   carAvail     %s' % _shares(t['car_availability'], t['entries']))
             print('   subpop       %s' % _shares(t['subpopulation'], t['entries']))
+    if doc.get('rail_legs'):
+        print_rail_legs(doc['rail_legs'])
     print(doc['note'])
 
 
@@ -1199,8 +1247,11 @@ def main():
                          'rail leg) and rail-to-rail TRANSFERS against the '
                          'disclosed count, each entry by its access (walk '
                          'band, or the bus/tram it came off), car '
-                         'availability and subpopulation, per day; --json '
-                         'writes the table (station_entries)')
+                         'availability and subpopulation, per day; then the '
+                         'rail legs\' in-vehicle km percentiles, the trip '
+                         'shapes they sit in and the top station pairs '
+                         '(rail_leg_reading); --json writes the table '
+                         '(station_entries)')
     ap.add_argument('--gate-json', metavar='OUT',
                     help='write the gate VERDICT as JSON - passed, or the '
                          'breaching modes - for the runner\'s gate watcher '

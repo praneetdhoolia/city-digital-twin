@@ -69,6 +69,109 @@ POP = _city.path('demand/population/B1_synthetic_population.csv')
 SA1_LGA = _city.path('data/processed/zones/sa1_to_lga.csv')
 TARGET_LGA = _city.target_lga()
 
+# Road vehicles: the modes that put a vehicle on a link. A ride passenger is
+# NOT a vehicle - they travel in a car that is already counted - so ride is
+# absent by construction. One home; report_mode_ridership reads it from here.
+ROAD_VEHICLE_MODES = ('car', 'truck', 'motorbike', 'taxi')
+
+
+def rank_percentiles(values, pcts):
+    """{'p<k>': value} at the lower nearest rank of each integer percent `k`
+    (index n*k//100 of the sorted values) - the rank the by-hand diagnostics
+    quoted, so a codified reading reproduces them. Empty -> {}."""
+    v = sorted(values)
+    n = len(v)
+    return {'p%d' % k: v[n * k // 100] for k in pcts} if n else {}
+
+
+def trip_seconds(hms):
+    """'HH:MM:SS' (hours may pass 24) -> seconds."""
+    h, m, s = hms.split(':')
+    return int(h) * 3600 + int(m) * 60 + int(s)
+
+
+def slow_band(kmh):
+    """The REPORTING band a trip's door-to-door speed falls in: under 10,
+    10-15, or at least 15 km/h. A reading, not a model value."""
+    if kmh < 10:
+        return 'under_10_kmh'
+    if kmh < 15:
+        return '10_to_15_kmh'
+    return 'at_least_15_kmh'
+
+
+def leg_histogram_stuck(run_dir, iteration):
+    """{mode: agents stuck over the day} from the iteration's legHistogram,
+    or None when the iteration wrote none."""
+    path = os.path.join(run_dir, 'output', 'ITERS', 'it.%d' % int(iteration),
+                        '%d.legHistogram.txt' % int(iteration))
+    if not os.path.exists(path):
+        return None
+    with open(path, encoding='utf-8') as fh:
+        lines = [ln.rstrip('\n').split('\t') for ln in fh if ln.strip()]
+    if not lines:
+        return None
+    hdr, body = lines[0], lines[1:]
+    out = {}
+    for i, col in enumerate(hdr):
+        if col.startswith('stuck_'):
+            out[col[len('stuck_'):]] = sum(int(r[i]) for r in body if i < len(r))
+    return out
+
+
+class RoadSpeed:
+    """Door-to-door speed of every road-vehicle trip, all travellers: rank
+    percentiles, the share of trips and of the mode's travel time in the slow
+    bands, and the slow trips by departure hour. Fed one trips row at a time so
+    `trip_geometry` reads its table once."""
+
+    def __init__(self):
+        self.trips = collections.defaultdict(list)     # mode -> [(kmh, s, dep_hour)]
+
+    def add(self, t):
+        mode = t['main_mode']
+        if mode not in ROAD_VEHICLE_MODES:
+            return
+        s = trip_seconds(t['trav_time'])
+        d = float(t['traveled_distance'] or 0)
+        if s <= 0 or d <= 0:
+            return
+        self.trips[mode].append((d / s * 3.6, s, trip_seconds(t['dep_time']) // 3600))
+
+    def result(self, stuck=None):
+        by_mode = {}
+        for mode, v in sorted(self.trips.items()):
+            n = len(v)
+            time_all = sum(s for _, s, _ in v)
+            count, time_in = collections.Counter(), collections.Counter()
+            slow_hours = collections.Counter()
+            for kmh, s, hour in v:
+                b = slow_band(kmh)
+                count[b] += 1
+                time_in[b] += s
+                if b != 'at_least_15_kmh':
+                    slow_hours[hour] += 1
+            under_15 = count['under_10_kmh'] + count['10_to_15_kmh']
+            fast = n - under_15
+            by_mode[mode] = dict(
+                trips=n,
+                speed_kmh={k: round(x, 2) for k, x in rank_percentiles(
+                    [kmh for kmh, _, _ in v], (5, 10, 25, 50, 75, 90)).items()},
+                share_under_10_kmh_pct=round(100.0 * count['under_10_kmh'] / n, 2),
+                share_under_15_kmh_pct=round(100.0 * under_15 / n, 2),
+                time_share_under_15_kmh_pct=round(100.0 * (
+                    time_in['under_10_kmh'] + time_in['10_to_15_kmh']) / time_all, 2),
+                mean_time_min=round(time_all / n / 60.0, 2),
+                mean_time_min_at_least_15_kmh=(round(time_in['at_least_15_kmh'] / fast / 60.0, 2)
+                                               if fast else None),
+                under_15_kmh_by_departure_hour={str(h): c for h, c in sorted(slow_hours.items())})
+        return dict(basis='every traveller\'s road-vehicle trips (not residents alone), '
+                          'traveled_distance over trav_time; trips of zero time or '
+                          'distance excluded; percentiles at the lower nearest rank',
+                    by_mode=by_mode, stuck_by_mode=stuck,
+                    note='a reading of the executed trips, not a target; the 10 and '
+                         '15 km/h bands are reporting bands')
+
 
 def open_output(run_dir, stem):
     """Open a MATSim output table, whatever it was compressed with.
@@ -352,8 +455,13 @@ def mode_share(run_dir, person_lga):
                 persons_without_home_lga=seen_unknown)
 
 
-def trip_geometry(run_dir, person_lga):
+def trip_geometry(run_dir, person_lga, histogram_iteration=None):
     """Modelled trip length and duration per mode, Newcastle residents.
+
+    `road_speed` (the one block read on every traveller, not residents) is the
+    road-vehicle speed tail - `RoadSpeed` - with the day's stuck agents per mode
+    from the legHistogram of `histogram_iteration` when that is given and the
+    iteration wrote one.
 
     The counterpart of the observed `trip_geometry` block in C4, and the
     observable that says whether a mode is used over the right RANGE rather than
@@ -373,7 +481,9 @@ def trip_geometry(run_dir, person_lga):
     short = dict(resident_trips=0, routed_under_band=0,
                  straight_x_detour_under_band=0, by_mode_routed=collections.Counter(),
                  by_mode_straight=collections.Counter())
+    speed = RoadSpeed()
     for t in rows(run_dir, 'output_trips'):
+        speed.add(t)
         if person_lga.get(t['person']) != TARGET_LGA:
             continue
         km = float(t['traveled_distance'] or 0) / 1000.0
@@ -422,8 +532,11 @@ def trip_geometry(run_dir, person_lga):
              'ROUTED network distance (what the run executed) and straight-line '
              'x the detour factor the demand builder solved on; the seed is '
              'read on the second, a run on the first (#30)')
+    stuck = (leg_histogram_stuck(run_dir, histogram_iteration)
+             if histogram_iteration is not None else None)
     return dict(geography='%s LGA' % TARGET_LGA, by_mode=out,
                 short_trips=short_out,
+                road_speed=speed.result(stuck),
                 note='Modelled only. The observed counterpart and its sweep live '
                      'in params/C4_mode_constraints.json; the comparison is a '
                      'CONSTRAINT reported by fit.py and never scored into it.')
@@ -882,7 +995,13 @@ def main():
                overrides=rec.get('overrides', {}),
                mode_share=ms,
                pt_split=pt_submode_split(run_dir, person_lga, ms),
-               trip_geometry=trip_geometry(run_dir, person_lga),
+               # the stuck tally is the legHistogram of the iteration the trips
+               # table was read at: the reached one, or the last for a finished run
+               trip_geometry=trip_geometry(
+                   run_dir, person_lga,
+                   histogram_iteration=(_READ_AT['iteration']
+                                        if _READ_AT['iteration'] is not None
+                                        else rec.get('reached_iteration'))),
                pt=pt_boardings(run_dir, fraction),
                taxi=taxi_volume(run_dir, fraction),
                counts=link_volumes(run_dir, fraction),
@@ -928,6 +1047,16 @@ def main():
         print('  trip geometry %-5s mean %6.2f km / %6.2f min  (median %5.2f km)'
               % (m, g['mean_distance_km'], g['mean_time_min'],
                  g['median_distance_km']))
+    rs = doc['trip_geometry']['road_speed']
+    for m, g in rs['by_mode'].items():
+        print('  road speed %-9s %7d trips  median %5.1f km/h  under 10 %4.1f %%  '
+              'under 15 %4.1f %% (%4.1f %% of its time)'
+              % (m, g['trips'], g['speed_kmh'].get('p50', 0.0),
+                 g['share_under_10_kmh_pct'], g['share_under_15_kmh_pct'],
+                 g['time_share_under_15_kmh_pct']))
+    if rs['stuck_by_mode']:
+        print('  stuck over the day: %s'
+              % {k: v for k, v in rs['stuck_by_mode'].items() if v})
     print('  count stations with a modelled volume: %d'
           % sum(1 for s in doc['counts']['stations'] if s['modelled_vehicles']))
     print('  -> %s' % out)

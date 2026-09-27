@@ -27,25 +27,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `20260926T002526_250it_25pct` at **iteration 250** (family `F37-the-boundary-tier-returns-and-pt-reaches-every-stop`, status `completed`, 25% sample, launched 2026-09-26T00:25:33, trips table). **A RESULT** - its `_run.json` says `ran_to_last_iteration` at iteration 250, the only completion that means the run executed the horizon it declared.
-Reproduce: `python src/analyse/report_mode_ridership.py --run 20260926T002526_250it_25pct --it 250` (`--trend` for the direction).
+Read from `20260927T145839_250it_25pct` at **iteration 1** (family `F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen`, status `running`, 25% sample, launched 2026-09-27T14:58:39, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
+Reproduce: `python src/analyse/report_mode_ridership.py --run 20260927T145839_250it_25pct --it 1` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 60.4836 | 58.3222 | +3.7% | ok | share of resident linked trips |
-| 2 | ride | 17.8204 | 20.6000 | -13.5% | over 10% | share of resident linked trips |
-| 3 | walk | 10.5882 | 13.4000 | -21.0% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 2.2767 | 0.9916 | +129.6% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 5.1040 | 2.2084 | +131.1% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.3512 | 0.3785 | -7.2% | ok | share of resident linked trips |
-| 7 | bus | 2.1143 | 2.3819 | -11.2% | over 10% | share of resident linked trips |
-| 8 | heavy_rail | 18,788 | 6,529 | +187.8% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,252 | 2,954 | -57.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 1,732 | 790.2850 | +119.2% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 11 | truck | 6.0712 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 43.8233 | 58.3222 | -24.9% | **STOP** >=20% | share of resident linked trips |
+| 2 | ride | 15.6356 | 20.6000 | -24.1% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 28.7526 | 13.4000 | +114.6% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 1.6949 | 0.9916 | +70.9% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 4.7923 | 2.2084 | +117.0% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.4877 | 0.3785 | +28.9% | **STOP** >=20% | share of resident linked trips |
+| 7 | bus | 3.4802 | 2.3819 | +46.1% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 23,424 | 6,529 | +258.8% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,604 | 2,954 | -45.7% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 1,520 | 790.2850 | +92.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 11 | truck | 8.2770 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 405.0000 | 405.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **car, motorbike**. Past the 20% stop bar: **walk, taxi, bike, heavy_rail, light_rail, ferry**.
+Inside 10%: **none**. Past the 20% stop bar: **car, ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -68,7 +68,7 @@ Inside 10%: **car, motorbike**. Past the 20% stop bar: **walk, taxi, bike, heavy
 | Input registry | **587 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **967 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (22 September 2026 (sixty-first session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (25 September 2026 (sixty-third session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (16 September 2026 (fifty-third session)) · [network-and-inputs](positions/network-and-inputs.md) (25 September 2026 (sixty-third session)) · [population-and-demand](positions/population-and-demand.md) (25 September 2026 (sixty-third session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (25 September 2026 (sixty-third session)) · [ride-and-pairing](positions/ride-and-pairing.md) (22 September 2026 (sixty-first session)) · [runs-and-economics](positions/runs-and-economics.md) (25 September 2026 (sixty-third session)) · [sampling-and-families](positions/sampling-and-families.md) (25 September 2026 (sixty-third session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (17 September 2026 (fifty-fourth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (16 September 2026 (fifty-third session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (25 September 2026 (sixty-third session)) · [walk-and-bike](positions/walk-and-bike.md) (25 September 2026 (sixty-third session)) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (22 September 2026 (sixty-first session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (25 September 2026 (sixty-third session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (27 September 2026 (sixty-fourth session)) · [network-and-inputs](positions/network-and-inputs.md) (25 September 2026 (sixty-third session)) · [population-and-demand](positions/population-and-demand.md) (27 September 2026 (sixty-fourth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (27 September 2026 (sixty-fourth session)) · [ride-and-pairing](positions/ride-and-pairing.md) (27 September 2026 (sixty-fourth session)) · [runs-and-economics](positions/runs-and-economics.md) (27 September 2026 (sixty-fourth session)) · [sampling-and-families](positions/sampling-and-families.md) (27 September 2026 (sixty-fourth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (17 September 2026 (fifty-fourth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (16 September 2026 (fifty-third session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (27 September 2026 (sixty-fourth session)) · [walk-and-bike](positions/walk-and-bike.md) (27 September 2026 (sixty-fourth session)) |
 <!-- generated:state end -->
 
 F36 is open at the demand rebuild `20260922T210005` and has NO reading until arm 0 lands; F35 closes with three
@@ -84,7 +84,7 @@ The separate package audit's run-input report coverage is restored by the rebuil
 <!-- generated:runs start -->
 | run | city | status | family | reached | cause / note |
 |---|---|---|---|---:|---|
-| `20260927T145839_250it_25pct` | newcastle | ? | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | - | - |
+| `20260927T145839_250it_25pct` | newcastle | running | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | live | - |
 | `20260927T133754_4it_25pct` | newcastle | completed | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | 4 | ran_to_last_iteration `_run.json` |
 | `20260927T133104_2it_1pct` | newcastle | completed | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | 2 | ran_to_last_iteration `_run.json` |
 | `20260926T002526_250it_25pct` | newcastle | completed | F37-the-boundary-tier-returns-and-pt-reaches-every-stop | 250 | ran_to_last_iteration `_run.json` |
@@ -102,7 +102,8 @@ The separate package audit's run-input report coverage is restored by the rebuil
 3. **Import the Time Use Survey 2024 unit records (microdata.gov.in, the user's logged-in download), derive the activity timing and participation of Maharashtra urban persons from them, and replace the declared departure-time and out-of-home assumptions (B.baseline.activity_start_s, B.activities.out_of_home_*) with the derived distributions** - an extractor over the unit files (the layout is tus_2024_data_layout) and a plans rebuild (~2 min); no run; no family boundary; blocked on: the user's browser: the first download (22 September 2026) carried the documentation only (layout, codes, instructions, README, sample design, Vol II - all already acquired); the unit data files under the Data block of the Get Microdata tab are still to download (9.209: the layout, codes and instructions are acquired and declared reference; the state aggregate tables are the current basis;)
 4. **Switch Mumbai's household vehicle roster to `census` and ride pairing on: the citywide plans carry households and each household's cars since 9.205, so a driver can share the household's car and a passenger can name a driver, as the reference city does** - two gate values (B.population.vehicle_roster, B.ride.pairing_enabled) in adopt_framework_fields.py GATES, a re-assembly and a 0.1 % structural check (8 min); no reading on this host; no family boundary; blocked on: nothing - the gates were set when the plans carried no households; a reading needs the D15 host (9.209: the framework files still say "the baseline population carries no households"; B1_households.csv and the plans' householdId exist since 9.205;)
 5. **Run Line 7 and Line 9 as the one through corridor MMRDA operates (Gundavali-Kashigaon) instead of two lines meeting at Dahisar East with a transfer** - a generated relation pair spanning the two OSM relations in build_baseline_transit_feed.py, a feed rebuild and one mapping (~4 min); no run; no family boundary; blocked on: nothing (9.209: the press release of 6 April 2026 states the integrated corridor and its 276 weekday trips; the feed generates 537 departures over the two relations against 552 counted twice;)
-6. **The ASC contraction test for bike alone** - HELD - ~15 h, no family; no family boundary; blocked on: D7 - the first pair has run (§9.176); the user's hold (§9.159) is lifted by that event, not by this session (§9.163: 20.46 pp of headroom on bike; #107)
+6. **Attach trip ends to links that can carry them: on F37's arm 0, 29 links (28 service lanes, one living street) carry 23,161 sampled road-vehicle trip ends needing up to 38 hours of their own sampled capacity, and the 2.7 % of road trips touching them average 72.6 min at 13.4 km/h against 25.5 min elsewhere; 73 % of the run's excess vehicle-hours sit on residential and service links carrying ~13 % of traversals. Design a capacity-aware citysim.ActivityLinkAssigner rule (no link receives more trip ends than it can move in the modelled day, excess moved to the next-nearest eligible links), derived, behind a representation gate, and measure the car time tail against the HTS 17.2 min** - no run to design: the trip-end load per link and the car time by load band from any finished arm's trips table and output network (scratch access_load.py and delay_links.py, to be folded into an existing reader); the Java change compiles only on an idle machine and opens a family; opens a family; blocked on: F38's arm 0 reading (the car time tail on the new demand), then a user decision on the next family's contents (9.214 (F37 arm 0: car mean 25.0 min for 11.88 km against the HTS 17.2 min for 10.2 km; median 12.6 min; 9.8 % of car trips under 15 km/h carry 32.4 % of car time, spread over the whole day); #145)
+7. **The ASC contraction test for bike alone** - HELD - ~15 h, no family; no family boundary; blocked on: D7 - the first pair has run (§9.176); the user's hold (§9.159) is lifted by that event, not by this session (§9.163: 20.46 pp of headroom on bike; #107)
 
 Decided: D19 = I pause updates; launcher checks (recommended) (2026-09-25) · D20 = Move to settings.local.json (recommended) (2026-09-25) · D21 = Before the F37 launch (recommended) (2026-09-25) · D22 = In F38, after F37 reads (recommended) (2026-09-25) · D23 = All three, then the arm (Recommended) (2026-09-27)
 <!-- generated:lane end -->
