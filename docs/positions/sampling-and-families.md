@@ -70,7 +70,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## What is open
 
-- **F38 is open and has NO reading** (§9.214): opened at the chains and plans rebuild `20260927T125424`; priced by its own probe (`20260927T133754_4it_25pct`, 454.0 s recurring, 32.0 h); arm 0 `20260927T145839_250it_25pct` (`f38_baseline_25pct`, 34 h ceiling, D23) is running. F37 closed with ONE result, its arm 0 (`ran_to_last_iteration` at 250, 31.4 h). #237's peak standing occupancy still has no reader.
+- **F38 is open and has NO reading** (§9.214): opened at the rebuild `20260927T125424`; its probe `20260927T133754_4it_25pct` recurred at 454.0 s (32.0 h); arm 0 died at iteration 79 with its launching session (§9.215) and runs warm from iteration 75 as `20260928T042107_250it_25pct` (`f38_baseline_25pct`, 34 h ceiling, D25). F37 closed with ONE result, its arm 0. #237's peak standing occupancy still has no reader.
 - **F35 is CLOSED with three results** (§9.168, §9.169, §9.176, §9.177), each citable inside F35 and against nothing after `20260922T210005`.
 - Whether a separate 25 % confirmation arm is still needed now that the loop runs at 25 % (§9.129) is the user's call at convergence.
 - The design-effect penalty of household cluster sampling is unestimated and no seed-variance measurement exists; `n_replications` stays 30 (§9.45). The threshold between 10 % and 25 % is unmeasured (§9.12).

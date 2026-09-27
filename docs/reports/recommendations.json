@@ -613,9 +613,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.213 (refuse_unsafe_host: restart pending or updates not paused past the ceiling) and 9.215 (a run found dead is recorded as died; --warm-start resumes it, with --stopped-was-death for an older record; F38 arm 0 warm-started from iteration 75)",
+   "updated": "2026-09-28"
   },
   {
    "id": "20260925T182313:6",

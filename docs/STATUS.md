@@ -27,25 +27,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `20260927T145839_250it_25pct` at **iteration 1** (family `F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen`, status `running`, 25% sample, launched 2026-09-27T14:58:39, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
-Reproduce: `python src/analyse/report_mode_ridership.py --run 20260927T145839_250it_25pct --it 1` (`--trend` for the direction).
+Read from `aborted_20260927T145839_250it_25pct` at **iteration 75** (family `F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen`, status `aborted`, 25% sample, launched 2026-09-27T14:58:39, experienced plans (derived; validated against the trips table)). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
+Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260927T145839_250it_25pct --it 75` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 43.8233 | 58.3222 | -24.9% | **STOP** >=20% | share of resident linked trips |
-| 2 | ride | 15.6356 | 20.6000 | -24.1% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 28.7526 | 13.4000 | +114.6% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 1.6949 | 0.9916 | +70.9% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 4.7923 | 2.2084 | +117.0% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.4877 | 0.3785 | +28.9% | **STOP** >=20% | share of resident linked trips |
-| 7 | bus | 3.4802 | 2.3819 | +46.1% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 23,424 | 6,529 | +258.8% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,604 | 2,954 | -45.7% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 1,520 | 790.2850 | +92.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 11 | truck | 8.2770 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 58.6273 | 58.3222 | +0.5% | ok | share of resident linked trips |
+| 2 | ride | 15.6085 | 20.6000 | -24.2% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 13.0719 | 13.4000 | -2.4% | ok | share of resident linked trips |
+| 4 | taxi | 2.3436 | 0.9916 | +136.3% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 5.6388 | 2.2084 | +155.3% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 1.6171 | 0.3785 | +327.2% | **STOP** >=20% | share of resident linked trips |
+| 7 | bus | 1.9923 | 2.3819 | -16.4% | over 10% | share of resident linked trips |
+| 8 | heavy_rail | 16,768 | 6,529 | +156.8% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,096 | 2,954 | -62.9% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 1,628 | 790.2850 | +106.0% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 11 | truck | 5.8103 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 405.0000 | 405.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **none**. Past the 20% stop bar: **car, ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry**.
+Inside 10%: **car, walk**. Past the 20% stop bar: **ride, taxi, bike, motorbike, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -56,7 +56,7 @@ Inside 10%: **none**. Past the 20% stop bar: **car, ride, walk, taxi, bike, moto
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs derived or swept with the reason stated ([network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 12 Sep with the footway harvest as walk/bike links (368,230 links); 15 feeds mapped once, 0 unmapped stops; one build per comparison (§3.5, §9.167) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains and plans of 10 Sep (§9.164); the 30 run-input sets on the 250-iteration horizon (§9.169); `check_package.py` passed |
-| P4 calibration | 🟡 | **F38 is open** (§9.214): destinations by each person's own mobility, one-way escorts released into round-trip lifts, motorbike chosen. The newest run on disk is `20260927T145839_250it_25pct`, which is **RUNNING** — F38's arm 0, 34 h ceiling (SPENT, D23); not a result until its record. The newest RESULT is `20260926T002526_250it_25pct`, F37's arm 0 (2 of 12 inside 10 %). |
+| P4 calibration | 🟡 | **F38 is open** (§9.214): destinations by each person's own mobility, one-way escorts released into round-trip lifts, motorbike chosen. The newest run on disk is `20260928T042107_250it_25pct`, which is **RUNNING** — F38's arm 0 warm-started from iteration 75 after the first launch died with its session at 79 (§9.215), 34 h ceiling (SPENT, D25); not a result until its record. The newest RESULT is `20260926T002526_250it_25pct`, F37's arm 0 (2 of 12 inside 10 %). |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -84,14 +84,14 @@ The separate package audit's run-input report coverage is restored by the rebuil
 <!-- generated:runs start -->
 | run | city | status | family | reached | cause / note |
 |---|---|---|---|---:|---|
-| `20260927T145839_250it_25pct` | newcastle | running | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | live | - |
+| `20260928T042107_250it_25pct` | newcastle | running | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | live | - |
+| `20260928T041917_250it_25pct` | newcastle | ? | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | - | - |
+| `aborted_20260927T145839_250it_25pct` | newcastle | aborted | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | 79 | killed at iteration 79 (04:07:47 on 28 September 2026) with its harness: the arm was launched with --foreground inside a Claude Code sess... |
 | `20260927T133754_4it_25pct` | newcastle | completed | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | 4 | ran_to_last_iteration `_run.json` |
 | `20260927T133104_2it_1pct` | newcastle | completed | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | 2 | ran_to_last_iteration `_run.json` |
 | `20260926T002526_250it_25pct` | newcastle | completed | F37-the-boundary-tier-returns-and-pt-reaches-every-stop | 250 | ran_to_last_iteration `_run.json` |
-| `aborted_20260925T230246_250it_25pct` | newcastle | aborted | F37-the-boundary-tier-returns-and-pt-reaches-every-stop | 2 | stopped by the operator at iteration 2 (user decision, 26 September 2026): the taxi constant still folded the priced 5-minute wait (A.tax... |
-| `20260925T214314_4it_25pct` | newcastle | completed | F37-the-boundary-tier-returns-and-pt-reaches-every-stop | 4 | ran_to_last_iteration `_run.json` |
 
-240 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+242 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
@@ -105,7 +105,7 @@ The separate package audit's run-input report coverage is restored by the rebuil
 6. **Attach trip ends to links that can carry them: on F37's arm 0, 29 links (28 service lanes, one living street) carry 23,161 sampled road-vehicle trip ends needing up to 38 hours of their own sampled capacity, and the 2.7 % of road trips touching them average 72.6 min at 13.4 km/h against 25.5 min elsewhere; 73 % of the run's excess vehicle-hours sit on residential and service links carrying ~13 % of traversals. Design a capacity-aware citysim.ActivityLinkAssigner rule (no link receives more trip ends than it can move in the modelled day, excess moved to the next-nearest eligible links), derived, behind a representation gate, and measure the car time tail against the HTS 17.2 min** - no run to design: the trip-end load per link and the car time by load band from any finished arm's trips table and output network (scratch access_load.py and delay_links.py, to be folded into an existing reader); the Java change compiles only on an idle machine and opens a family; opens a family; blocked on: F38's arm 0 reading (the car time tail on the new demand), then a user decision on the next family's contents (9.214 (F37 arm 0: car mean 25.0 min for 11.88 km against the HTS 17.2 min for 10.2 km; median 12.6 min; 9.8 % of car trips under 15 km/h carry 32.4 % of car time, spread over the whole day); #145)
 7. **The ASC contraction test for bike alone** - HELD - ~15 h, no family; no family boundary; blocked on: D7 - the first pair has run (§9.176); the user's hold (§9.159) is lifted by that event, not by this session (§9.163: 20.46 pp of headroom on bike; #107)
 
-Decided: D19 = I pause updates; launcher checks (recommended) (2026-09-25) · D20 = Move to settings.local.json (recommended) (2026-09-25) · D21 = Before the F37 launch (recommended) (2026-09-25) · D22 = In F38, after F37 reads (recommended) (2026-09-25) · D23 = All three, then the arm (Recommended) (2026-09-27)
+Decided: D21 = Before the F37 launch (recommended) (2026-09-25) · D22 = In F38, after F37 reads (recommended) (2026-09-25) · D23 = All three, then the arm (Recommended) (2026-09-27) · D24 = Keep using the PC; accept the risk (2026-09-27) · D25 = Warm start at 75, 34 h cap (Recommended) (2026-09-28)
 <!-- generated:lane end -->
 
 ## Open work
