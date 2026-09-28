@@ -54,10 +54,11 @@ GATES = {
     'C.raptor.mode_cost_representation': ('absent', 'the transit router carries no per-mode constant in the baseline'),
     'B.ride.pairing_enabled': (False, 'the baseline population carries no households, so no ride can name its driver'),
     'B.population.vehicle_roster': ('per_person', 'the baseline population carries no households; car access is a person attribute'),
+    'B.motorbike.representation': ('carve', 'the reference city\'s rider-licence and household-motorcycle choice (9.214) is not applied: this baseline puts motorbike in each person\'s permittedModes (9.186), writes no motorbikeAvail, and prices no motorbike running cost - `carve` is the value that leaves that path exactly as it ran'),
 }
 # A gate at one of these values switches its mechanism OFF; the fields under
 # it are then declared, adopted and inert. Any other gate value switches it on.
-OFF = {'absent', 'implicit_delay', 'per_person', False}
+OFF = {'absent', 'implicit_delay', 'per_person', 'carve', False}
 # Fields the gates above silence, by key prefix: declared, adopted, inert.
 GATED_BY = {
     'A.signals.': 'A.signals.representation', 'A.gradient.': 'A.gradient.representation',

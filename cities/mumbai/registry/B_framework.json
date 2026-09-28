@@ -81,6 +81,25 @@
       "decisions_ref": "9.202",
       "matsim_param": "modeAvailability.walkFeasibleKm"
     },
+    "B.motorbike.representation": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "carve",
+          "choice"
+        ],
+        "basis": "adopted from the reference city: The two representations the plans builder can write. `carve` is every build before 9.214, recovered byte for byte: a licensed, car-available resident is drawn a motorbike user by a hash against B.motorbike.trip_share (per home SA1 under B.motorbike.carve_resolution) and their day is LOCKED to the mode, which reproduces the census G62 share by construction. `choice` retires the lock and the draw: availability is observed - a rider licence (B.population.rider_licence_rate_by_age_band, per LGA and age band) AND a household motorcycle (B.population.household_motorcycle_share, per postal area) - and motorbike competes in SubtourModeChoice as a chain-based mode, scored by C.asc.motorbike unfitted. WHAT THE SWEEP ANSWERS: how much of the motorbike share is availability and how much is preference - under `choice` the G62 share is a reading, no longer an input."
+      },
+      "sweep_role": "answer",
+      "status": "active",
+      "value": "carve",
+      "description": "The representation gate for motorbike (D22, #257). Switched off for this baseline (\"carve\"): the reference city's rider-licence and household-motorcycle choice (9.214) is not applied: this baseline puts motorbike in each person's permittedModes (9.186), writes no motorbikeAvail, and prices no motorbike running cost - `carve` is the value that leaves that path exactly as it ran.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ]
+    },
     "B.population.age_bands": {
       "units": "years",
       "source": "definition",
