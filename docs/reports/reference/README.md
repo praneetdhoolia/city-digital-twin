@@ -254,3 +254,8 @@ The field library retains 55 project rows: 55 reused, 0 refreshed, 0 added. Exis
 The factor library retains 101 literature rows: 101 reused, 0 refreshed, 0 added. Existing gaps remain open.
 Three delegated reviewers stopped on workspace credit errors. The coordinator continued locally.
 The report explicitly marks unfinished semantic and factor reviews. Source verification dates were not advanced.
+
+## The fifteenth report, 20260929T045645 (29 September 2026, HEAD `6bc18487`)
+
+The field library holds **58 project rows and 12 platform rows: all reused** (every row inside both horizons), 0 facts updated, 0 rows added, 5 liveness notes (the MATSim User Meeting 2026 programme: Greater Jakarta, Dhaka BRT, Berlin, MATSim, eqasim); 4 exclusions added (AAAM, AgiMo, the Toulouse generative-agent paper, the TfNSW Activity-Based Model Program); 2 `not_reverified` added. Gaps: 2 closed, 2 added, **29 in the array, 9 open**. 24 of 40 calls over 5 rounds, 6 recorded as wasted.
+The factor library holds **106 rows** (103 reused inside the 365-day horizon, **3 added**: A8 motorcycle ownership versus use, C5 destination choice by mobility, F8 the frequency penalty; 4 addenda to E18, E12, E21); `needs_research` 0; **4 gaps added** (Friedrich et al. 2021, the ITF 2013-16 paper and the TAC Motorcycle Monitor unreachable (403); no Western motorcycle mode constant found). 19 of 40 calls. Statuses re-read at `6bc18487`: **IN 48 · PARTIAL 39 · INERT 3 · ASC 2 · OUT 14**.
