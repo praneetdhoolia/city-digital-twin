@@ -29,6 +29,7 @@ import argparse
 import glob
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -1055,13 +1056,25 @@ def warm_start_overrides(warm, overrides, scenario, day, run_config):
     if last <= n:
         raise SystemExit('warm start: the checkpoint iteration %d is not below '
                          'RUN.controler.last_iteration = %d' % (n, last))
-    derived = (cutoff - n) / float(last - n)
     out = dict(overrides)
+    if first == n:
+        # a resume overlay already carries the checkpoint and the fraction
+        # that keeps the parent's cutoff (the route for a fraction outside
+        # its sweep, which the set layer refuses by design, 9.215): nothing
+        # to re-derive, and re-emitting it would put it in the set layer
+        print('warm start: the overlay already starts at iteration %d; '
+              'innovation cutoff at iteration %.0f' % (n, cutoff), flush=True)
+        return out
+    # ROUNDED UP, never to nearest: the jar truncates first + f x (last -
+    # first) to an int (d2i, StrategyManager), so a fraction rounded down by
+    # a millionth moves the cutoff one iteration early (9.215: resumed at 175,
+    # 0.333333 gives 199.99998 -> 199)
+    derived = math.ceil((cutoff - n) / float(last - n) * 1e6) / 1e6
     out['RUN.controler.first_iteration'] = n
-    out['RUN.replanning.fraction_to_disable_innovation'] = round(derived, 6)
+    out['RUN.replanning.fraction_to_disable_innovation'] = derived
     print('warm start: innovation cutoff kept at iteration %.0f - '
           'fraction_to_disable_innovation %g -> %g for firstIteration %d'
-          % (cutoff, f, round(derived, 6), n), flush=True)
+          % (cutoff, f, derived, n), flush=True)
     return out
 
 

@@ -103,6 +103,33 @@ def test_the_death_reason_meets_both_record_contracts():
         assert set(key) <= set(props), kind
 
 
+def test_the_resumed_cutoff_survives_the_jars_truncation(monkeypatch):
+    """The jar computes the cutoff as int(first + f x (last - first)) (d2i);
+    a fraction rounded to nearest put a resume at 175 on iteration 199."""
+    class Base(dict):
+        def get(self, k):
+            return self[k]
+    base = Base({'RUN.controler.first_iteration': 0,
+                 'RUN.controler.last_iteration': 250,
+                 'RUN.replanning.fraction_to_disable_innovation': 0.8})
+    monkeypatch.setattr(rm.registry, 'load', lambda **kw: base)
+    for n in range(1, 200):
+        out = rm.warm_start_overrides({'iteration': n, 'run': 'dead'}, {}, 'S2', 'WEEKDAY', None)
+        f = out['RUN.replanning.fraction_to_disable_innovation']
+        assert int(n + f * (250 - n)) == 200, n
+
+
+def test_a_resume_overlay_is_not_re_derived(monkeypatch):
+    class Base(dict):
+        def get(self, k):
+            return self[k]
+    base = Base({'RUN.controler.first_iteration': 175,
+                 'RUN.controler.last_iteration': 250,
+                 'RUN.replanning.fraction_to_disable_innovation': 0.333334})
+    monkeypatch.setattr(rm.registry, 'load', lambda **kw: base)
+    assert rm.warm_start_overrides({'iteration': 175, 'run': 'dead'}, {}, 'S2', 'WEEKDAY', None) == {}
+
+
 class _Cfg(dict):
     get = dict.get
 
