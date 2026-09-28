@@ -306,7 +306,23 @@ def truth_path_count(city_root: Path, spec: dict) -> int:
     return len(matches)
 
 
+def truth_doc_list_count(city_root: Path, spec: dict) -> int:
+    """How many items a GENERATED line lists: the count a hand-written cell
+    restates. The board's goal row said "2 of 12" under a generated scoreboard
+    listing one mode (fifteenth report): the count is pinned to the list the
+    board generates, never to a number typed beside it. `none` counts 0."""
+    doc = artefact(city_root, spec["doc"])
+    if not doc.exists():
+        raise Skip(f"{spec['doc']} absent")
+    m = re.search(spec["pattern"], doc.read_text(encoding="utf-8"))
+    if not m:
+        raise SystemExit(f"doc_list_count: pattern not found in {spec['doc']}")
+    items = [x.strip() for x in m.group(1).split(",") if x.strip()]
+    return 0 if items == ["none"] else len(items)
+
+
 RESOLVERS = {
+    "doc_list_count": truth_doc_list_count,
     "manifest_files": truth_manifest_files,
     "manifest_artefact_rows": truth_manifest_artefact_rows,
     "registry_fields": truth_registry_fields,

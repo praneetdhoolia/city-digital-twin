@@ -401,7 +401,7 @@
       "id": "access-link-capacity",
       "title": "Attach trip ends to links that can carry them: on F37's arm 0, 29 links (28 service lanes, one living street) carry 23,161 sampled road-vehicle trip ends needing up to 38 hours of their own sampled capacity, and the 2.7 % of road trips touching them average 72.6 min at 13.4 km/h against 25.5 min elsewhere; 73 % of the run's excess vehicle-hours sit on residential and service links carrying ~13 % of traversals. Design a capacity-aware citysim.ActivityLinkAssigner rule (no link receives more trip ends than it can move in the modelled day, excess moved to the next-nearest eligible links), derived, behind a representation gate, and measure the car time tail against the HTS 17.2 min",
       "kind": "model",
-      "status": "open",
+      "status": "done",
       "recommended": false,
       "cost": "no run to design: the trip-end load per link and the car time by load band from any finished arm's trips table and output network (scratch access_load.py and delay_links.py, to be folded into an existing reader); the Java change compiles only on an idle machine and opens a family",
       "blocked_on": "F38's arm 0 reading (the car time tail on the new demand), then a user decision on the next family's contents",
@@ -409,7 +409,30 @@
       "answers_issues": [
         145
       ],
-      "evidence": "9.214 (F37 arm 0: car mean 25.0 min for 11.88 km against the HTS 17.2 min for 10.2 km; median 12.6 min; 9.8 % of car trips under 15 km/h carry 32.4 % of car time, spread over the whole day)"
+      "evidence": "9.214 (F37 arm 0: car mean 25.0 min for 11.88 km against the HTS 17.2 min for 10.2 km; median 12.6 min; 9.8 % of car trips under 15 km/h carry 32.4 % of car time, spread over the whole day)",
+      "done_ref": "9.217"
+    },
+    {
+      "id": "f39-pair",
+      "title": "Build F39 and run it as a PAIR (D28): the control arm carries four corrections - motorcycle possession scaled to daily use from ABS SMVU (#258), a motorcycle in the household vehicle roster, trip ends attached to links that can carry them (#145), the pt no-route walk bounded to walking's reach (#162, #30) - and the treatment arm adds C.time_weights.service_quality_representation = headway (#175); read each against the other inside the family and both against F38 as a direction",
+      "kind": "run",
+      "status": "open",
+      "recommended": true,
+      "cost": "the rebuild (chains unchanged; plans ~3 min; run inputs ~18 min), a 1 % smoke, a 25 % probe per arm, then two 25 % arms of ~27-32 h each at a 34 h ceiling (approved by D28), one after the other",
+      "blocked_on": "the four corrections built, compiled and probed; a full gate green; each arm priced on its own probe",
+      "opens_family": true,
+      "answers_issues": [
+        30,
+        86,
+        94,
+        98,
+        107,
+        145,
+        162,
+        175,
+        258
+      ],
+      "evidence": "the fifteenth report (docs/reports/20260929T045645_project_report.html), recommendations 1, 2, 8, 9, 14; 9.217"
     }
   ],
   "decisions": [
@@ -1113,6 +1136,37 @@
       "answer": "Resume at 225, 4 h cap (Recommended)",
       "answered": "2026-09-29",
       "note": "approves up to 4 h, spent on the third resume"
+    },
+    {
+      "id": "D28",
+      "question": "The fifteenth report's model fixes open family F39: four corrections of measured defects (motorcycle possession scaled to daily use from ABS SMVU; a motorcycle in the household roster; trip ends attached to links that can carry them; the pt no-route walk bounded to walking's reach) and one hypothesis (the headway charge). How should F39 run?",
+      "options": [
+        {
+          "label": "Pair: fixes vs fixes+headway (Recommended)",
+          "detail": "control = F38 + the four corrections; treatment = the same + the headway charge; ~2 x 30 h, both arms approved at a 34 h ceiling each, run one after the other"
+        },
+        {
+          "label": "One arm, all five changes",
+          "detail": "fastest, unattributable"
+        },
+        {
+          "label": "Corrections arm only, headway later",
+          "detail": "one arm"
+        },
+        {
+          "label": "No arm yet: no-run fixes first",
+          "detail": "ask again with probe prices"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        257
+      ],
+      "evidence": "the fifteenth report (docs/reports/20260929T045645_project_report.html), recommendations 1-3, 8, 9, 14",
+      "asked": "2026-09-29",
+      "answer": "Pair: fixes vs fixes+headway (Recommended)",
+      "answered": "2026-09-29",
+      "note": "approves two 25 % arms at a 34 h ceiling each (control, then treatment), each priced on its own probe first"
     }
   ]
 }

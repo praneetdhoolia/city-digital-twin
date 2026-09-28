@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 27 September 2026 (sixty-fourth session) · **Record read through:** §9.214 · **Written against family:** `F38`
+**Updated:** 29 September 2026 (sixty-fourth session) · **Record read through:** §9.217 · **Written against family:** `F38`
 
 ## What is built
 
@@ -47,14 +47,14 @@ Bases from `data/processed/validation/mode_targets_by_mode.csv`; the PT rows are
 
 ## What is measured
 
-Latest twelve-mode reading: F37's arm 0 `20260926T002526_250it_25pct` at iteration 250, `ran_to_last_iteration` (§9.214); reproduce with `python src/analyse/report_mode_ridership.py --run 20260926T002526_250it_25pct --it 250`; F35's arm 0 beside it (§9.169) as a direction, never a comparison (§3.5).
+Latest twelve-mode reading: F38's arm 0 `20260929T012258_250it_25pct` at iteration 250, `ran_to_last_iteration` across warm-start joins (§9.217); reproduce with `python src/analyse/report_mode_ridership.py --run 20260929T012258_250it_25pct --it 250`; F37's arm 0 beside it (§9.214) as a direction, never a comparison (§3.5).
 
-| mode | F37 arm 0 it.250 | F35 arm 0 it.300 | target | deviation (F37) | source |
+| mode | F38 arm 0 it.250 | F37 arm 0 it.250 | target | deviation (F38) | source |
 |---|---:|---:|---:|---:|---|
-| bus | 2.1143% | 2.0045% | 2.3819% | −11.2% | §9.214, §9.169, #99 |
-| heavy_rail | 18,788 bdg | 10,092 bdg | 6,529 bdg | +187.8% | §9.214, §9.169, #98 |
-| light_rail | 1,252 bdg | 772 bdg | 2,954 bdg | −57.6% | §9.214, §9.169, §9.130 |
-| ferry | 1,732 bdg | trip basis | 790 bdg | +119.2% | §9.214, §9.211, #94 |
+| bus | 1.6621% | 2.1143% | 2.3819% | −30.2% | §9.217, §9.214, #99 |
+| heavy_rail | 14,236 bdg | 18,788 bdg | 6,529 bdg | +118.1% | §9.217, §9.214, #98 |
+| light_rail | 812 bdg | 1,252 bdg | 2,954 bdg | −72.5% | §9.217, §9.214, §9.130 |
+| ferry | 1,704 bdg | 1,732 bdg | 790 bdg | +115.6% | §9.217, §9.214, #94 |
 
 - **Pt coverage 19.09 %** at iteration 250 against a 3.07 % share (`report_choice_set_coverage.py`); pt is ONE alternative in `RUN.mode_choice.modes`, so every submode shares that bound (§9.160).
 - **Rail-to-rail transfers are not the rail excess** (§9.214, item 1): of 18,788 boardings at the 24 disclosed stations, **1,772** are rail-to-rail transfers (1,620 at Hamilton); station ENTRIES alone are **17,016** against 6,529. The external tier boards 140 of 21,436 rail boardings.
