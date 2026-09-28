@@ -15,9 +15,9 @@
     "RUN": 112
   },
   "n_by_required_by": {
-    "build": 252,
+    "build": 251,
     "reference_city": 113,
-    "run": 222
+    "run": 223
   },
   "fields": {
     "A.active.footway_width_default": {
@@ -3280,10 +3280,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
-      "required_by": [
-        "src/build/build_matsim_plans.py",
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "B.motorbike.rider_coupling": {
       "layer": "B",
