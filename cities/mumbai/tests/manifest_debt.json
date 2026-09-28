@@ -1,0 +1,71 @@
+{
+  "description": "Mumbai's recorded manifest debt - the CITY-OWNED half of tests/check_manifest.py. Each rule's paths are the exact rows that fail it; `ceiling` is their count and may only FALL. Adding a path fails unless the ceiling is raised in the same change with a new ceiling_log entry carrying the date and the reason; a listed path that no longer fails must be deleted and the ceiling lowered. A city with no file carries no debt.",
+  "rules": {
+    "raw_without_retrieved": {
+      "ceiling": 1,
+      "reason": "A raw file that is not a provenance record and carries no retrieval date of its own. Measured 25 September 2026 when the rule was introduced; provenance_*.json records were exempted by rule on 29 September 2026 (each carries its own dated retrieval key, which check_manifest.py now verifies), which removed them from this list.",
+      "ceiling_log": [
+        {
+          "date": "2026-09-25",
+          "ceiling": 579,
+          "reason": "measured against the committed manifest when the rule was introduced"
+        },
+        {
+          "date": "2026-09-29",
+          "ceiling": 1,
+          "reason": "provenance_*.json exempt by rule: a provenance record IS the retrieval record, and its own dated retrieval key is now verified instead"
+        }
+      ],
+      "paths": [
+        "data/raw/_acquisition_attempts.json"
+      ]
+    },
+    "lineage_scope_none": {
+      "ceiling": 9,
+      "reason": "A row whose producing script declares no lineage at any scope, so its licence claim rests on nothing. Measured 25 September 2026 when the rule was introduced.",
+      "ceiling_log": [
+        {
+          "date": "2026-09-25",
+          "ceiling": 9,
+          "reason": "measured against the committed manifest when the rule was introduced"
+        }
+      ],
+      "paths": [
+        "data/processed/derived/_vehicle_possession_growth_report.json",
+        "data/processed/derived/vehicle_possession_growth.csv",
+        "data/processed/geospatial/_activity_location_attraction_report.json",
+        "data/processed/geospatial/activity_location_attraction.csv",
+        "data/processed/observed/mts_2017_office_category_stock.csv",
+        "data/processed/observed/mts_state_category_stock_series.csv",
+        "data/processed/observed/nfhs_household_vehicle_possession.csv",
+        "data/processed/observed/ogd_metro_daily_ridership.csv",
+        "schedules/baseline_suburban_timetable.zip"
+      ]
+    },
+    "sha256_drift": {
+      "ceiling": 11,
+      "issue": 252,
+      "reason": "Gitignored built bytes on this workstation that differ from the committed manifest. Written 22 September 2026 18:07-18:14 (after the manifest commit 15ce0bb5 at 17:51) by a local branch deleted unmerged; they are half-applied lane tasks 4 and 5, NOT the reproducible truth, so the manifest is not regenerated over them. Settled by a one-sitting rebuild of the Mumbai chain (GitHub #252, awaiting the user's decision on tasks 4 and 5). A listed file that is absent from the checkout (CI) is not judged.",
+      "ceiling_log": [
+        {
+          "date": "2026-09-29",
+          "ceiling": 11,
+          "reason": "measured: CITYSIM_CITY=mumbai tests/check_manifest.py reports these 11 when the gate first ran it for every city (GitHub #252)"
+        }
+      ],
+      "paths": [
+        "demand/plans/matsim/population_WEEKDAY.xml.gz",
+        "networks/matsim/schedules/baseline_regional/fleet_assignments.json",
+        "networks/matsim/schedules/baseline_regional/network.xml.gz",
+        "networks/matsim/schedules/baseline_regional/transitSchedule.xml.gz",
+        "networks/matsim/schedules/baseline_regional/transitVehicles.xml.gz",
+        "scenarios/matsim/BASE/WEEKDAY/config.xml",
+        "scenarios/matsim/BASE/WEEKDAY/transitSchedule.xml.gz",
+        "scenarios/matsim/BASE/WEEKDAY/transitVehicles.xml.gz",
+        "scenarios/matsim/BASE/network.xml.gz",
+        "schedules/baseline_multimodal.zip",
+        "schedules/baseline_regional.zip"
+      ]
+    }
+  }
+}

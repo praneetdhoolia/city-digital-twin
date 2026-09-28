@@ -925,7 +925,8 @@ def main():
 # the builder refuses under the current configuration (the schedules builder
 # under explicit signals): the committed script and the working copy both run
 # under the same `--env` override and their outputs are compared with each
-# other, and the package's outputs and the working copy are restored after.
+# other (HEAD's from a temp copy, so the tracked script is never written),
+# and the package's outputs are restored after.
 
 REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 
@@ -947,12 +948,42 @@ def _snapshot(paths):
     return {p: (sha256(p) if os.path.exists(p) else None) for p in paths}
 
 
-def _run_script(script_path, repo_root, env, log_path):
+def _run_script(script_path, repo_root, env, log_path, argv=None):
     import subprocess  # noqa: PLC0415
     import sys  # noqa: PLC0415
     with open(log_path, 'w', encoding='utf-8') as log:
-        return subprocess.call([sys.executable, script_path], cwd=repo_root,
-                               env=env, stdout=log, stderr=subprocess.STDOUT)
+        return subprocess.call([sys.executable, script_path] + list(argv or ()),
+                               cwd=repo_root, env=env, stdout=log,
+                               stderr=subprocess.STDOUT)
+
+
+# Runs a builder's SOURCE from a temp copy as if it were the script at its real
+# path: `__file__`, `sys.argv[0]` and `sys.path[0]` are the real script's, so
+# every `__file__`-relative path and same-directory import resolves exactly as
+# `python <real>` would, and any output that names its own producer names the
+# real one. The tracked script is never written. (A builder that spawns
+# multiprocessing workers re-imports `__main__.__file__` in each worker, i.e.
+# the working copy - the one case this cannot isolate.)
+_COMMITTED_RUNNER = '''import os
+import sys
+
+
+def _run():
+    real, src = sys.argv[1], sys.argv[2]
+    sys.argv[:] = [real] + sys.argv[3:]
+    sys.path[0] = os.path.dirname(real)
+    import __main__
+    ns = __main__.__dict__
+    for key in [k for k in ns if not k.startswith('__')]:
+        del ns[key]
+    ns.update(__file__=real, __cached__=None)
+    with open(src, 'rb') as fh:
+        code = compile(fh.read(), real, 'exec')
+    exec(code, ns)
+
+
+_run()
+'''
 
 
 def verify_producer(script, rows, city_root=None, repo_root=None, env=None,
@@ -962,9 +993,10 @@ def verify_producer(script, rows, city_root=None, repo_root=None, env=None,
     Plain: back each output up, run the script, compare each output with its
     backup; on a non-zero exit or any difference, restore every backup (and
     remove an output that did not exist before). `against_committed`: run
-    `git show HEAD:<script>` and then the working copy, both under `env`, and
-    compare the two runs' outputs; the working copy and every backed-up output
-    are ALWAYS restored. Returns dict(identical, differing, rc, logs, backup).
+    `git show HEAD:<script>` from a temp copy (as if at the script's own path)
+    and then the working copy, both under `env`, and compare the two runs'
+    outputs; every backed-up output is ALWAYS restored, and the tracked script
+    is never written. Returns dict(identical, differing, rc, logs, backup).
     """
     import shutil  # noqa: PLC0415
     import subprocess  # noqa: PLC0415
@@ -1015,21 +1047,28 @@ def verify_producer(script, rows, city_root=None, repo_root=None, env=None,
         return dict(identical=identical, differing=differing, rc=rc,
                     logs=logs, backup=backup_dir)
 
+    # HEAD's script runs from a temp copy through _COMMITTED_RUNNER, and the
+    # working copy runs in place. Until 29 September 2026 HEAD's bytes were
+    # written OVER the tracked script and put back in a `finally` - so a crash
+    # (or a kill) between the two reverted an in-flight edit. Nothing here
+    # writes the tracked script now.
     committed = subprocess.check_output(
         ['git', 'show', 'HEAD:' + script.replace('\\', '/')], cwd=repo_root)
-    working = os.path.join(backup_dir, 'working_copy.py')
-    shutil.copy2(script_path, working)
+    committed_copy = os.path.join(backup_dir, 'committed_copy.py')
+    with open(committed_copy, 'wb') as fh:
+        fh.write(committed)
+    runner = os.path.join(backup_dir, '_committed_runner.py')
+    with open(runner, 'w', encoding='utf-8', newline='\n') as fh:
+        fh.write(_COMMITTED_RUNNER)
     hashes, rcs = {}, {}
     try:
-        for label, body in (('committed', committed),
-                            ('working', open(working, 'rb').read())):
-            with open(script_path, 'wb') as fh:
-                fh.write(body)
+        for label, run_path, argv in (
+                ('committed', runner, [os.path.abspath(script_path), committed_copy]),
+                ('working', script_path, [])):
             logs[label] = os.path.join(backup_dir, '%s.log' % label)
-            rcs[label] = _run_script(script_path, repo_root, run_env, logs[label])
+            rcs[label] = _run_script(run_path, repo_root, run_env, logs[label], argv)
             hashes[label] = _snapshot(paths)
     finally:
-        shutil.copy2(working, script_path)
         restore()
         shutil.rmtree(os.path.join(backup_dir, 'pkg'), ignore_errors=True)
     differing = sorted(os.path.relpath(p, city_root).replace(os.sep, '/')
@@ -1051,7 +1090,7 @@ def _cli():
     ap.add_argument('--against-committed', action='store_true',
                     help='with --verify-producer: run HEAD\'s copy of SCRIPT and '
                          'the working copy under the same --env and compare '
-                         'their outputs; restores the package and the script')
+                         'their outputs; restores the package and never writes the script')
     ap.add_argument('--env', action='append', default=[], metavar='KEY=VALUE',
                     help='environment for the verified runs, e.g. '
                          'CITYSIM_A_SIGNALS_REPRESENTATION=implicit_delay')

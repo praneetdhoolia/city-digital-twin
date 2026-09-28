@@ -184,7 +184,9 @@ def lane_lines():
 GATES = [
     # (label, command, needs_toolchain)
     ('import roots', [PY, 'src/setup/install_paths.py', '--check'], False),
-    ('manifest', [PY, 'tests/check_manifest.py'], False),
+    # every city under cities/, not the active one alone: a second city's
+    # built bytes drifted from its manifest for a week unseen (#252)
+    ('manifest', [PY, 'tests/check_manifest.py', '--all-cities'], False),
     ('compile', [PY, '-m', 'compileall', '-q', 'src', 'tests', 'cities', 'run.py'], False),
     ('hardcoding', [PY, 'src/registry/check_hardcoding.py', '--strict'], False),
     ('doc currency', [PY, 'tests/check_doc_currency.py', '--strict'], False),

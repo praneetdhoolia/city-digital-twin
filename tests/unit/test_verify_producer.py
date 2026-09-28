@@ -93,3 +93,31 @@ def test_against_committed_compares_head_with_the_working_copy(tmp_path, working
         assert fh.read() == working                      # the working copy is back
     with open(os.path.join(city, 'data', 'two.csv'), encoding='utf-8') as fh:
         assert fh.read() == 'y\na\n'                     # and so is the package
+
+
+@pytest.mark.skipif(shutil.which('git') is None, reason='git not on PATH')
+def test_against_committed_never_writes_the_tracked_script(tmp_path):
+    """HEAD's copy runs from a temp file AS IF at the script's own path: while
+    it runs, the tracked file on disk is still the working copy (so a crash
+    mid-run cannot revert an in-flight edit), and its `__file__` is the real
+    path (so `__file__`-relative outputs land where the working copy's do)."""
+    probe = PRODUCER + (
+        "on_disk = open(os.path.abspath(__file__), encoding='utf-8').read()\n"
+        "open(os.path.join(city, 'two.csv'), 'w').write(\n"
+        "    'y\\n%s\\n' % ('working-on-disk' if '# WORKING' in on_disk else 'overwritten'))\n")
+    repo, city = _repo(tmp_path, body=probe)
+    git = ['git', '-c', 'user.name=t', '-c', 'user.email=t@t', '-c', 'commit.gpgsign=false',
+           '-c', 'core.hooksPath=' + str(tmp_path / 'no-hooks')]
+    subprocess.check_call(['git', 'init', '-q'], cwd=repo)
+    subprocess.check_call(git + ['add', 'build/fake.py'], cwd=repo)
+    subprocess.check_call(git + ['commit', '-q', '-m', 'fake'], cwd=repo)
+    script = os.path.join(repo, 'build', 'fake.py')
+    with open(script, 'w', encoding='utf-8') as fh:
+        fh.write(probe + '# WORKING\n')
+    before = os.stat(script).st_mtime_ns
+    res = _run(tmp_path, repo, city, against_committed=True)
+    assert res['rc'] == {'committed': 0, 'working': 0}
+    assert res['identical'], res          # both runs saw the working copy on disk
+    assert os.stat(script).st_mtime_ns == before
+    with open(script, encoding='utf-8') as fh:
+        assert fh.read().endswith('# WORKING\n')

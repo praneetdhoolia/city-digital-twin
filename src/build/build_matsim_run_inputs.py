@@ -2604,6 +2604,9 @@ if __name__ == '__main__':
         measure_reach([d for d in a.day_types.split(',') if d],
                       [s for s in a.scenarios.split(',') if s] or None)
         raise SystemExit(0)
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main([d for d in a.day_types.split(',') if d],
          [s for s in a.scenarios.split(',') if s] or None,
          _registry.parse_set(a.set))
