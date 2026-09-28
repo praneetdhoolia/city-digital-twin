@@ -1,6 +1,6 @@
 {
   "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
-  "updated": "2026-09-28",
+  "updated": "2026-09-29",
   "family": "F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen",
   "tasks": [
     {
@@ -1087,6 +1087,31 @@
       "answer": "Warm start at 175, 18 h cap (Recommended)",
       "answered": "2026-09-28",
       "note": "approves up to 18 h, spent on the second warm start"
+    },
+    {
+      "id": "D27",
+      "question": "F38's arm stopped at iteration 229 of 250 because the PC was shut down from the Start menu at 23:29 on 28 September (a shutdown or sign-out ends the scheduled run). Finish the last 25 iterations from the intact iteration-225 plans?",
+      "options": [
+        {
+          "label": "Resume at 225, 4 h cap (Recommended)",
+          "detail": "about 2-3 h including setup; innovation is already off at 225, so this is the settling tail"
+        },
+        {
+          "label": "Resume at 225, 3 h cap",
+          "detail": "enough only if the machine stays mostly free"
+        },
+        {
+          "label": "Read it at 225 as it stands",
+          "detail": "cite the stopped reading, not a result"
+        }
+      ],
+      "recommended": 0,
+      "issues": [],
+      "evidence": "9.216; aborted_20260928T163345_250it_25pct (died, reached 229); F37's iterations 226-250 took 1.94 h",
+      "asked": "2026-09-29",
+      "answer": "Resume at 225, 4 h cap (Recommended)",
+      "answered": "2026-09-29",
+      "note": "approves up to 4 h, spent on the third resume"
     }
   ]
 }

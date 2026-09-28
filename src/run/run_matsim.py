@@ -1069,7 +1069,11 @@ def warm_start_overrides(warm, overrides, scenario, day, run_config):
     # first) to an int (d2i, StrategyManager), so a fraction rounded down by
     # a millionth moves the cutoff one iteration early (9.215: resumed at 175,
     # 0.333333 gives 199.99998 -> 199)
-    derived = math.ceil((cutoff - n) / float(last - n) * 1e6) / 1e6
+    # A checkpoint past the cutoff resumes with innovation already off: 0.0
+    # puts the jar's cutoff at `first`, which is what the parent was doing
+    # there; the formula below would go negative (9.216).
+    derived = (0.0 if n >= cutoff
+               else math.ceil((cutoff - n) / float(last - n) * 1e6) / 1e6)
     out['RUN.controler.first_iteration'] = n
     out['RUN.replanning.fraction_to_disable_innovation'] = derived
     print('warm start: innovation cutoff kept at iteration %.0f - '

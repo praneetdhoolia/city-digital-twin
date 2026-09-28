@@ -119,6 +119,19 @@ def test_the_resumed_cutoff_survives_the_jars_truncation(monkeypatch):
         assert int(n + f * (250 - n)) == 200, n
 
 
+def test_a_resume_past_the_cutoff_keeps_innovation_off(monkeypatch):
+    class Base(dict):
+        def get(self, k):
+            return self[k]
+    base = Base({'RUN.controler.first_iteration': 0,
+                 'RUN.controler.last_iteration': 250,
+                 'RUN.replanning.fraction_to_disable_innovation': 0.8})
+    monkeypatch.setattr(rm.registry, 'load', lambda **kw: base)
+    for n in (200, 225, 249):
+        out = rm.warm_start_overrides({'iteration': n, 'run': 'dead'}, {}, 'S2', 'WEEKDAY', None)
+        assert out['RUN.replanning.fraction_to_disable_innovation'] == 0.0
+
+
 def test_a_resume_overlay_is_not_re_derived(monkeypatch):
     class Base(dict):
         def get(self, k):
