@@ -379,8 +379,8 @@
       "id": "read-f38-arm-0",
       "title": "Read F38's arm 0 at its record: all twelve modes with choice-set coverage against F37's result as a direction; walk's mean trip against 4.08 km and walk km inside held-ride tours against 35.6 %; the car-less split and trip lengths (bike 11.8 km, walk 6.0 km); heavy-rail station entries against 17,016 and access walks over 2 km against 19.5 %; motorbike CHOSEN against 0.3785 %; ride with the doubled lifts against -13.5 %; taxi against +129.6 %; the no-route share against 52.1 %",
       "kind": "reading",
-      "status": "open",
-      "recommended": true,
+      "status": "done",
+      "recommended": false,
       "cost": "no run: `report_mode_ridership.py --run 20260927T145839_250it_25pct --it 250` and `--trend`, `report_choice_set_coverage.py --against-targets`, `mode_by_demographics.py`, `measure_bound_trips.py`, `diagnose_pt_routing.py --sample 3000`, `fit.py`; then `build_run_index.py`, the board and a fresh /project-report",
       "blocked_on": "the arm reaching its record (overlay `f38_baseline_25pct`, 34 h ceiling approved 27 September 2026, D23)",
       "opens_family": false,
@@ -394,7 +394,8 @@
         162,
         257
       ],
-      "evidence": "9.214"
+      "evidence": "9.214",
+      "done_ref": "9.217"
     },
     {
       "id": "access-link-capacity",

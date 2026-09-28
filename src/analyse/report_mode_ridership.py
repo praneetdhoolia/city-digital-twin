@@ -957,6 +957,15 @@ def _print_coverage_bound(run_dir, iteration, breaches):
         return
     at = iteration if iteration in table else max(table)
     row = table[at]
+    warm = _cov.warm_start_iteration(run_dir)
+    if warm:
+        # MATSim counts coverage from the run's own first iteration: on a run
+        # resumed at N it bounds nothing (9.217)
+        print('\nCHOICE-SET BOUND not read: the run was warm-started at '
+              'iteration %d and MATSim counts coverage from there; read the '
+              'coverage of the run it resumed.' % warm)
+        return
+    locked_set = _cov.locked_modes(run_dir)
 
     targets = load_targets()
     print('\nCHOICE-SET BOUND at iteration %d%s - the share of TRIPS that have '
@@ -969,7 +978,7 @@ def _print_coverage_bound(run_dir, iteration, breaches):
         if key is None or key not in row:
             continue
         c = row[key] * 100.0
-        if key in _cov.LOCKED_MODES:
+        if key in locked_set:
             print('   %-14s coverage n/a - %s is a locked carve, not a '
                   'choice-set member' % (mode, key))
             continue
