@@ -349,9 +349,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "docs",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "7a69e654: the frozen dossiers' banner links re-aimed and check_doc_links.py walks cities/<city>/docs/archived (0 broken)",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260916T062246:12",
@@ -433,9 +433,9 @@
    "repeat_of": 4,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "e0d2ddea: collect_performance reads every _build_timing.json; build_matsim_run_inputs is timed",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260916T062246:19",
@@ -769,9 +769,9 @@
    "repeat_of": null,
    "opens_family": true,
    "category": "model",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "8eaf015a: B.motorbike.daily_use = use_ratio 0.1801 from ABS SMVU NSW Table 4; 35,416 -> 6,368 persons available; 9.218",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:3",
@@ -793,9 +793,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "fe419200: run.py requires a per-launch scheduler nonce and a running citysim_run_<stamp> task; --scheduled-child grants nothing; tests/unit/test_warm_start_after_death.py",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:5",
@@ -805,9 +805,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "fe419200: run_matsim.jar_cutoff and refuse_cutoff_mismatch against the parent's _config.json; 9.217",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:6",
@@ -829,9 +829,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "process",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "e60b0255: board hand lines, five position pages, doc_currency status.goal-inside-10 pinned to the scoreboard",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:8",
@@ -841,9 +841,9 @@
    "repeat_of": null,
    "opens_family": true,
    "category": "model",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "8eaf015a: RUN.transit_router.no_route_walk = refused_beyond_reach at 3,223.6 m (NetworkDirectWalkPtRouter, PtUnservedScoring, PtNoRouteWalkProbe); in F39's control arm 20260929T072135_250it_25pct",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:9",
@@ -853,9 +853,9 @@
    "repeat_of": null,
    "opens_family": true,
    "category": "model",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "8eaf015a: RUN.routing.activity_link_capacity = capacity_bounded (ActivityLinkCapacity, ActivityLinkCapacityProbe); in F39's control arm",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:10",
@@ -865,9 +865,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "e0d2ddea: tests/check_manifest.py --all-cities in the gate and CI; cities/<city>/tests/manifest_debt.json ceilings that may only fall",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:11",
@@ -877,9 +877,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "fe419200: procs.pid_state alive/dead/unknown; stop_run records died only when log_confirms_death; died wall_s stops at the log's last line",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:12",
@@ -889,9 +889,9 @@
    "repeat_of": 5,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "fe419200 arm_cost.price(first_iteration) for a warm start; e0d2ddea collect_performance reads every _build_timing.json",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:13",
@@ -901,9 +901,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "e0d2ddea: collect_metrics default_ref() walks origin/main",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:14",
@@ -913,9 +913,9 @@
    "repeat_of": null,
    "opens_family": true,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "8eaf015a: RUN.qsim.motorcycle_roster = household (HouseholdVehicleRoster, HouseholdMotorcycleProbe); 60 shared motorcycles in the F39 smoke",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:15",
@@ -925,9 +925,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "8eaf015a: a choice build refuses a missing rider or possession table",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:16",
@@ -937,9 +937,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "process",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "#257 closed on 9.217, #258 filed, six measurements posted and re-aimed at F39's control arm",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:17",
@@ -961,9 +961,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "e0d2ddea: verify_producer --against-committed runs HEAD's script from a temp copy",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:19",
@@ -973,9 +973,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "process",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "e0d2ddea: .claude/hooks/block-stdin-trap.sh registered in .claude/settings.json; refused a heredoc this session",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260929T045645:20",
