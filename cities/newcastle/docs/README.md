@@ -33,7 +33,7 @@ to it. The simulator and its results are at [`docs/`](../../../docs/README.md); 
 
 | | |
 |---|---|
-| Files in the manifest | **967** ([`data/MANIFEST.csv`](../data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
+| Files in the manifest | **968** ([`data/MANIFEST.csv`](../data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
 | Package on disk | 6.67 GiB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` — mostly gitignored and regenerable |
 | Study area | Newcastle, Lake Macquarie, Maitland, Cessnock, Port Stephens — 4,086 km² |
 | Zones | 1,500 core SA1 + 201 external SA1, 222 core DZN |

@@ -56,7 +56,7 @@ Inside 10%: **car**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike,
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs derived or swept with the reason stated ([network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 12 Sep with the footway harvest as walk/bike links (368,230 links); 15 feeds mapped once, 0 unmapped stops; one build per comparison (§3.5, §9.167) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains and plans of 10 Sep (§9.164); the 30 run-input sets on the 250-iteration horizon (§9.169); `check_package.py` passed |
-| P4 calibration | 🟡 | **F38 is open and has its result** (§9.214, §9.217): destinations by each person's own mobility, one-way escorts released into round-trip lifts, motorbike chosen. The newest run on disk is `20260929T012258_250it_25pct`, which **RAN TO ITS LAST ITERATION** — F38's arm 0, completed across warm-start joins at 75, 175 and 225 (§9.215-§9.217). 1 of 12 inside 10 % (car); motorbike chosen at a zero constant +466 %; heavy rail +118 % (F37 +188 %). |
+| P4 calibration | 🟡 | **F39 is open and runs as a pair** (§9.218, D28): motorcycles by daily use, a household motorcycle, trip ends on links that carry them, a bounded no-route walk; the treatment adds the headway charge. The newest run on disk is `20260929T072135_250it_25pct`, which is **RUNNING** — F39's control arm, priced 27.7 h, stopping itself at 34 h. F38's result (1 of 12 inside 10 %, §9.217) is its direction only. |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -64,15 +64,15 @@ Inside 10%: **car**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike,
 <!-- generated:state start -->
 | | |
 |---|---|
-| Open comparability family | `F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen` (opened `20260927T125424`, §9.214) - nothing run before it compares with anything after it |
+| Open comparability family | `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk` (opened `20260929T053207`, §9.218) - nothing run before it compares with anything after it |
 | Input registry | **594 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
-| Data package | **967 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
+| Data package | **968 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (22 September 2026 (sixty-first session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (29 September 2026 (sixty-fourth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (27 September 2026 (sixty-fourth session)) · [network-and-inputs](positions/network-and-inputs.md) (25 September 2026 (sixty-third session)) · [population-and-demand](positions/population-and-demand.md) (27 September 2026 (sixty-fourth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (29 September 2026 (sixty-fourth session)) · [ride-and-pairing](positions/ride-and-pairing.md) (27 September 2026 (sixty-fourth session)) · [runs-and-economics](positions/runs-and-economics.md) (27 September 2026 (sixty-fourth session)) · [sampling-and-families](positions/sampling-and-families.md) (29 September 2026 (sixty-fourth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (17 September 2026 (fifty-fourth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (16 September 2026 (fifty-third session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (27 September 2026 (sixty-fourth session)) · [walk-and-bike](positions/walk-and-bike.md) (27 September 2026 (sixty-fourth session)) |
 <!-- generated:state end -->
 
 F38 is open at the chains and plans rebuild `20260927T125424` and has its result: arm 0 ran to 250 across warm-start joins at 75 (a session-owned launch), 175 (a host crash after an NVMe controller error) and 225 (a Start-menu shutdown), §9.215-§9.217. F39 opens at its rebuild: the four corrections of D28 and, on the treatment arm only, `C.time_weights.service_quality_representation` = `headway`. The network is still F34's footpath rebuild. The manifest holds
-**732 CC-BY / 220 ODbL** plus 15 bespoke files, every one hashed. The heap rule reads 37.4 GiB at
+**733 CC-BY / 220 ODbL** plus 15 bespoke files, every one hashed. The heap rule reads 37.4 GiB at
 25 % against a measured live peak of 30.0 GiB (fifteenth report).
 
 The separate package audit still fails on stale document paths (#234) and on Mumbai run cards judged against the reference city's scenario vocabulary (#253).
@@ -82,14 +82,14 @@ The separate package audit still fails on stale document paths (#234) and on Mum
 <!-- generated:runs start -->
 | run | city | status | family | reached | cause / note |
 |---|---|---|---|---:|---|
+| `20260929T072135_250it_25pct` | newcastle | running | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | live | - |
+| `20260929T060320_4it_25pct` | newcastle | completed | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | 4 | ran_to_last_iteration `_run.json` |
+| `20260929T055640_2it_1pct` | newcastle | completed | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | 2 | ran_to_last_iteration `_run.json` |
 | `20260929T012258_250it_25pct` | newcastle | completed | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | 250 | ran_to_last_iteration `_run.json` |
 | `aborted_20260928T163345_250it_25pct` | newcastle | aborted | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | 229 | died at iteration 229 when the user shut the host down from the Start menu at 23:29 on 28 September 2026 (System event 1074, StartMenuExp... |
 | `aborted_20260928T042107_250it_25pct` | newcastle | aborted | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | 188 | died at iteration 188 when the host crashed: Windows bugcheck 0x13A (kernel-mode heap corruption) at about 16:18 on 28 September 2026 aft... |
-| `20260928T041917_250it_25pct` | newcastle | ? | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | - | - |
-| `aborted_20260927T145839_250it_25pct` | newcastle | aborted | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | 79 | killed at iteration 79 (04:07:47 on 28 September 2026) with its harness: the arm was launched with --foreground inside a Claude Code sess... |
-| `20260927T133754_4it_25pct` | newcastle | completed | F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen | 4 | ran_to_last_iteration `_run.json` |
 
-244 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+247 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next

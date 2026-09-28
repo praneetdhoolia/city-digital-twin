@@ -195,6 +195,9 @@ GATES = [
     # a credential in a tracked file is published by the next push (the
     # fourteenth report, 25 September 2026)
     ('no secrets', [PY, 'tests/check_secrets.py'], False),
+    # CI ran it and the gate did not, so psutil went unpinned through a green
+    # gate (9.219); test_gate_covers_ci keeps the two lists together
+    ('requirements', [PY, 'tests/check_requirements.py', '--strict'], False),
     ('board blocks', [PY, 'src/analyse/build_status_board.py', '--check'], False),
     # 9.171: the lane ledger is the one home of "what is next"; the board and
     # the brief render it, and a malformed ledger renders nothing

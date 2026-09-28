@@ -58,7 +58,8 @@ A family boundary is a recorded model, data or network change after which nothin
 | `F35-the-engines-route-what-they-remode` | 20260912T184108 | the taxi and ride engines route what they re-mode; opened at the FIX; arm 0 `20260912T202242_300it_25pct` ran to 300 in 30.35 h, a RESULT | §9.168, §9.169 |
 | `F36-the-passenger-is-held-and-bike-pays-for-distance` | 20260922T210005 | the roots rebuild: `heldRideTrips` (D12, #86), bike's derived distance cost (D9, #107), the household tail derived (#196), the ferry target on the disclosed tap-ons (D8, #94), standing room scaled (#237); closed with no result - arm 0 stopped at 237 by a host restart, read at 230 | §9.211, §9.213 |
 | `F37-the-boundary-tier-returns-and-pt-reaches-every-stop` | 20260925T192302 | the external tier written again, the pt access ceiling measured (55,600 m, was 1,200), the taxi wait executed; one result, arm 0 `20260926T002526_250it_25pct` | §9.213, §9.214 |
-| `F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen` | 20260927T125424 | destinations by each person's own mobility, one-way escorts on members who could drive released into lifts, motorbike chosen; access ceiling re-measured (55,900 m); opened at the CHAINS AND PLANS REBUILD; no reading | §9.214 |
+| `F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen` | 20260927T125424 | destinations by each person's own mobility, one-way escorts on members who could drive released into lifts, motorbike chosen; access ceiling re-measured (55,900 m); opened at the CHAINS AND PLANS REBUILD; one result, arm 0 `20260929T012258_250it_25pct` | §9.214, §9.217 |
+| `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk` | 20260929T053207 | motorcycles by daily use (SMVU 0.1801), a household motorcycle, trip ends on links that carry them, a bounded no-route walk; a PAIR (D28), the treatment adds the headway charge | §9.218 |
 
 Overrides in the file: three dead 30 Aug launches are attributed by name (`aborted_20260830T163010_300it_10pct` to F18; `aborted_20260830T170153_300it_10pct` and `aborted_20260830T170743_300it_10pct` to F19); `aborted_20260818T162538_1000it_25pct` is left unattributed because the record cannot settle it.
 
@@ -70,7 +71,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## What is open
 
-- **F38 has its result** (§9.217): opened at the rebuild `20260927T125424`; its probe recurred at 454.0 s (32.0 h); arm 0 died at 79 (a session-owned launch, §9.215), 188 (a host crash, §9.216) and 229 (a shutdown) and completed from 225 as `20260929T012258_250it_25pct`. F39 is decided as a pair (D28). F37 closed with ONE result, its arm 0. #237's standing peak has no reader.
+- **F39 runs its control arm** `20260929T072135_250it_25pct` (probe 390.0 s recurring, 27.7 h; §9.218); the headway treatment follows its record. F38 closed with ONE result, completed across warm starts at 75, 175 and 225 (§9.215-§9.217). #237's standing peak has no reader.
 - **F35 is CLOSED with three results** (§9.168, §9.169, §9.176, §9.177), each citable inside F35 and against nothing after `20260922T210005`.
 - Whether a separate 25 % confirmation arm is still needed now that the loop runs at 25 % (§9.129) is the user's call at convergence.
 - The design-effect penalty of household cluster sampling is unestimated and no seed-variance measurement exists; `n_replications` stays 30 (§9.45). The threshold between 10 % and 25 % is unmeasured (§9.12).
@@ -89,6 +90,8 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## History
 
+- §9.218 — F39 opens as a pair
+- §9.217 — F38 closes with a result
 - §9.214 — F37 closes with a result; F38 opens
 - §9.213 — F36 closes, F37 opens
 - §9.212 — F36 priced; arm 0 running
@@ -96,11 +99,6 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 - §9.206 — transit PCE scaled; 1 % gridlock 
 - §9.203 — standing room scaled at last
 - §9.176 — intro fixed: which runs are results is the board's
-- §9.170 — no family opened; a 1 % smoke on the recompiled controler
 - §9.169 — F35's arm 0 is a result
 - §9.168 — F35 opens at the engines' routed re-mode; arm 0 launched
 - §9.167 — F34 opens at the footpath-network rebuild
-- §9.166 — the families table rejoined; F33 still has no reading
-- §9.165 — F33's arm 0 dies on heap; the family has no reading
-- §9.164 — F33 opens at the probe; the demand is rebuilt
-- §9.160 — F32 opens at the probe; crowding reaches scoring

@@ -1,17 +1,18 @@
 # Brief for the next agent
 
-**Written:** 29 September 2026 (sixty-fourth session) · **Open family:** `F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen` · **Commit:** this handoff's
+**Written:** 29 September 2026 (sixty-fourth session) · **Open family:** `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk` · **Commit:** this handoff's
 *A pointer, not a source: [GOAL.md](GOAL.md), the [board](STATUS.md) and the [position pages](positions/) win.*
 
 ## §0 Verify first — facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **F38's arm 0 is a RESULT**: `20260929T012258_250it_25pct` `ran_to_last_iteration` at 250, completed across warm-start joins at 75 (session), 175 (host crash) and 225 (Start-menu shutdown); read in §9.217 - 1 of 12 inside 10 %, motorbike chosen at a zero constant +466 %. No arm runs and no approval stands. | `python src/analyse/report_mode_ridership.py --run 20260929T012258_250it_25pct --it 250` |
+| **F39's control arm `20260929T072135_250it_25pct` RUNS** (launched detached 07:21 on 29 September; priced 27.7 h on its probe; stops itself at 34 h, D28). Its treatment `f39_headway_25pct` launches only after the control's record, priced on `f39_headway_probe_25pct` first. | `python src/run/watch_run.py --run 20260929T072135_250it_25pct` |
+| **F38's arm 0 is a RESULT**: `20260929T012258_250it_25pct` `ran_to_last_iteration` at 250 across warm-start joins; read in §9.217 - 1 of 12 inside 10 %, motorbike +466 %. F39 compares with it as a direction only. | `python src/analyse/report_mode_ridership.py --run 20260929T012258_250it_25pct --it 250` |
 | **F37's arm 0 `20260926T002526_250it_25pct` is a RESULT** (`ran_to_last_iteration` at 250): 2 of 12 inside 10 %, read in §9.214 and on the board. | `python src/analyse/report_mode_ridership.py --run 20260926T002526_250it_25pct --it 250` |
 | Windows Update is paused until **2 October 2026 21:28 AEST** (the user's pause, D19); the launcher refuses any launch whose ceiling outlasts it. | `python -c "import sys; sys.path.insert(0,'src/run'); import procs,time; print(time.ctime(procs.updates_paused_until()))"` |
-| The F38 probe `20260927T133754_4it_25pct` (454.0 s recurring) and smoke `20260927T133104_2it_1pct` are citable for clock, heap and plumbing only. | `python src/analyse/arm_cost.py --run-config f38_baseline_25pct` |
-| Registry **594** fields for Newcastle; manifest **967** files (**732 CC-BY / 220 ODbL** + 15 bespoke), verifying. Mumbai's manifest still does not verify (#252). | `python src/run/session_gate.py` · `python src/registry/render_schema.py --check` |
+| The F39 control probe `20260929T060320_4it_25pct` (390.0 s recurring) and smoke `20260929T055640_2it_1pct` (all four corrections logged: 726 activities moved, 60 shared motorcycles, ~420 unserved plans charged an iteration at 1 %) are citable for clock, heap and plumbing only. | `python src/analyse/arm_cost.py --run-config f39_control_25pct` |
+| Registry **594** fields for Newcastle; manifest **968** files (**733 CC-BY / 220 ODbL** + 15 bespoke), verifying. Mumbai's manifest still does not verify (#252). | `python src/run/session_gate.py` · `python src/registry/render_schema.py --check` |
 | This session's one PR (`praneetdhoolia/f37-quality-to-four`): open, or merged and the branch deleted. | `gh pr list --state all --head praneetdhoolia/f37-quality-to-four` |
 | 31 open issues (#257 closed on §9.217, #258 filed); the six F38 measurements are posted and re-aimed at F39's control arm (#30 #86 #94 #107 #145 #162). | `gh issue list --state open --limit 100` · `python src/run/issue_gate.py` |
 | No lane decision unanswered (D23-D28 answered this session; D28 = F39 as a pair, both arms approved at 34 h each); the recommended task is `f39-pair`. | `python src/analyse/lane.py --ask` |
@@ -31,7 +32,7 @@ Then: `python src/run/session_gate.py` (it skips the toolchain compile and the J
 Decided: D24 = Keep using the PC; accept the risk (2026-09-27) · D25 = Warm start at 75, 34 h cap (Recommended) (2026-09-28) · D26 = Warm start at 175, 18 h cap (Recommended) (2026-09-28) · D27 = Resume at 225, 4 h cap (Recommended) (2026-09-29) · D28 = Pair: fixes vs fixes+headway (Recommended) (2026-09-29)
 <!-- generated:lane end -->
 
-F38's arm 0 has read (§9.217). The next step is a fresh `/project-report` on that reading, then the fixes it ranks; the road, rail, held-tour and trip-end diagnostics that traced F37 and F38 are modes of existing tools (`report_mode_ridership.py --stations`, `measure_bound_trips.py`, `transit_link_delays.py --road --access --top N`, `extract_metrics` road speed).
+The fifteenth report ranked F38's reading (§9.218); F39's control arm runs its four corrections, then the treatment adds the headway charge. At the control's record read all twelve modes, `--stations`, the bound trips and the unserved-walk count against F38 as a direction; after both, `compare_runs.py <control> <treatment> --modes`, then a fresh `/project-report`. The road, rail, held-tour and trip-end diagnostics that traced F37 and F38 are modes of existing tools (`report_mode_ridership.py --stations`, `measure_bound_trips.py`, `transit_link_delays.py --road --access --top N`, `extract_metrics` road speed).
 
 ## §2 Traps — newest first, at most ten, each with what it cost
 
@@ -62,8 +63,9 @@ a tracked file (`tests/check_secrets.py`, `.githooks/pre-commit`), Java probes n
 
 ## §3 Standing directives and approvals
 
-- **No run approval stands.** The 34 h of 27 September (D23) is SPENT on the dead launch; D25's 34 h on the run the host crash killed; D26's 18 h on the run a shutdown killed; D27's 4 h is SPENT on `20260929T012258_250it_25pct`.
-  The next arm needs its own stated-cost approval, quoted by `arm_cost.py` from this arm's stopwatch.
+- **D28 approves two 25 % arms at 34 h each**: the control's is SPENT on `20260929T072135_250it_25pct`; the
+  treatment's STANDS for `f39_headway_25pct` alone, after the control's record and its own probe. A warm
+  start of either needs a fresh approval. D23, D25, D26 and D27 are spent.
 - **25 % arms only** for Newcastle; a structural smoke may use 1 %. One arm at a time.
 - **The user pauses Windows Update before a launch** (D19); never change the update settings yourself.
 - **The user's goal (25 September 2026):** the simulator tuned as close as possible to a real-life
