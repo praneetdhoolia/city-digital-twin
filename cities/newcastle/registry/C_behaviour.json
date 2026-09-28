@@ -495,11 +495,18 @@
     "C.asc.motorbike": {
       "value": 0.0,
       "units": "utils",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "8.5, 9.52, 9.214",
-      "description": "Motorbike alternative-specific constant relative to car driver = 0. DECLARED rather than typed into src/build/build_matsim_run_inputs.py, where it was a literal 0.0 beside the mode table; the shipped value reproduces that emission exactly, so creating the field is behaviour-neutral. Under B.motorbike.representation = carve motorbike is a person-level LOCKED carve from car-driver demand (9.52) and this constant is a level shift on every plan a carved person can hold, so it cannot change any choice. Under `choice` (9.214, D22) motorbike competes in SubtourModeChoice for the persons with a rider licence and a household motorcycle, and this constant DOES reach choices - it is held at the car driver's 0.0 by the user's decision and NEVER FITTED: the census G62 share is what the reading is scored against, and fitting the constant to it would turn the share back into an input. It carries no sweep, so the calibrator's movability contract refuses to step it (tests/unit/test_asc_fixed_point.py); motorbike stays outside RUN.mode_choice.modes, the run adding it at startup from the population. A sweep, with a basis, is owed before any run reads the constant's sensitivity."
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          -2.0,
+          0.0
+        ],
+        "basis": "A SENSITIVITY BRACKET, NOT A FIT RANGE. No observation bears on a mode constant, which is by construction the net effect of what the utility omits; for motorbike that is named at 9.217 - recreational registrations, weather, safety, carrying capacity. The WIDTH is the 2.0 utils this registry already accepts for a mode constant (C.taxi.asc at 9.76, the one-util half-width of C.asc.bus, C.asc.light_rail and C.asc.ferry), which at this model's scale is 2 x 3.54 = 7.1 minutes of in-vehicle time. The bracket is placed ONE-SIDED BELOW the shipped 0.0 rather than centred on it because the only reading of the constant, F38's arm 0 (9.217), found motorbike over-chosen five-fold (+465.7 %) at 0.0 with availability taken as possession; a constant above the car driver's has no reading behind it. The top is the shipped value, so the bracket contains what every run so far has read."
+      },
+      "sweep_role": "uncertainty",
+      "status": "placeholder",
+      "decisions_ref": "8.5, 9.52, 9.214, 9.217",
+      "description": "Motorbike alternative-specific constant relative to car driver = 0. Motorbike is a CHOSEN mode under B.motorbike.representation = choice (9.214, D22): it competes in SubtourModeChoice for the persons with a rider licence and a household motorcycle (on the day, under B.motorbike.daily_use = use_ratio), so this constant reaches choices. It is NOT FITTED in F39 (D28): the census G62 share is what the reading is scored against, and fitting the constant to it would turn the share back into an input before the availability correction has been read. The shipped 0.0 reproduces every earlier emission exactly. Status is placeholder because the one reading of it (F38's arm 0, 9.217) found motorbike over-chosen at this value, and `placeholder` keeps it out of calibrate.free_parameters; the sweep is the bracket a sensitivity reading is taken across, not a licence to step it. Under `carve` (9.52) motorbike is a person-level locked carve and this constant is a level shift that changes no choice."
     },
     "C.scoring.motorbike_fuel_ratio": {
       "value": 0.5350877192982456,

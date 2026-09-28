@@ -54,7 +54,16 @@ PROBES = ('citysim.SignalsAssemblyProbe', 'citysim.TramPriorityProbe',
           # the escort/joint coherence listener: both sides re-proposable,
           # the declared scope, the silent tail, and a fingerprint of its
           # proposals for comparing a refactor before and after
-          'citysim.EscortCoherenceProbe')
+          'citysim.EscortCoherenceProbe',
+          # D28 (F39): a pt request no transit serves and no one would walk
+          # is stamped and scored as an unexecutable plan; off is F38
+          'citysim.PtNoRouteWalkProbe',
+          # D28 (F39): no link receives more car-capable trip ends than it
+          # can move in the modelled day; `nearest` is F38
+          'citysim.ActivityLinkCapacityProbe',
+          # D28 (F39): a household's riders share its one motorcycle and the
+          # second waits for it, through the real assembly; off is F38
+          'citysim.HouseholdMotorcycleProbe')
 
 
 def java_exe():

@@ -2178,6 +2178,43 @@
         "src/build/build_matsim_plans.py"
       ]
     },
+    "B.motorbike.daily_use": {
+      "value": "use_ratio",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "use_ratio",
+          "possession"
+        ],
+        "basis": "What a household motorcycle offers its rider on the simulated day. `possession` is F38 exactly (9.214): a rider licence in a household holding a motorcycle is DAILY availability, and F38's arm 0 read motorbike at 2.14 % of trips against the 0.3785 % target with 35,416 persons available (9.217) - possession taken as use. `use_ratio` (D28, F39): a person available by possession is available on the day with probability B.motorbike.daily_use_ratio, drawn per person on a seeded stream of its own (`motorbike_daily_use`), so the rider-licence and household-motorcycle draws, the bike draw and every mode-seed draw are unchanged and `possession` reproduces F38's availability person for person. The pair brackets the day: `possession` is the upper bound (every held motorcycle usable every day); `use_ratio` scales it by how much a motorcycle is used against a car."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.214, 9.217",
+      "description": "The daily-availability gate for motorbike under B.motorbike.representation = choice (D28, one of F39's four corrections). The plans builder (src/build/build_matsim_plans.py) draws a rider licence and a household motorcycle as before; under `use_ratio` a person holding both is written motorbikeAvail = always only if their draw on the `motorbike_daily_use` stream falls under B.motorbike.daily_use_ratio, and never otherwise. The stream is drawn for every B1 person in file order whatever their other draws, so its position depends on nothing else. One draw per person holds for every day type the builder writes. The plans report carries the persons available by possession and the persons available on the day. Under `carve` the field is not read.",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ]
+    },
+    "B.motorbike.daily_use_ratio": {
+      "value": 0.1801371876116879,
+      "units": "ratio",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "B.motorbike.daily_use"
+        ],
+        "identity": "ratio = motor cycles km per vehicle / passenger vehicles km per vehicle, each = total kilometres travelled / number of vehicles, ABS Survey of Motor Vehicle Use, Australia, 12 months ended 30 June 2020 (cat. 9208.0), data cube data/raw/abs/92080DO001_202006.xls Table 4 'Motor vehicle use, by state/territory of registration by type of vehicle', the city's state of registration (city.json jurisdiction.subdivision: New South Wales - the convention C.scoring.motorbike_fuel_ratio reads Table 6 by) = (492 million km / 254,486 motor cycles) / (46,915 million km / 4,371,333 passenger vehicles) = 1,933 / 10,732 km = 0.18014, read by label and asserted by cities/newcastle/build/build_vehicle_fuel_ratio.py (data/processed/observed/vehicle_use_ratio.json). Computed from the two totals because the table's 'Average kilometres travelled' column is rounded to 0.1 thousand km (1.9 and 10.7, a ratio of 0.1776); the Australian totals of Table 1 (1.9 and 11.1 thousand km) give 0.1702. The identity: a vehicle driven on a fraction of the days a car is driven offers itself as a trip option on that fraction of days, and a car is taken as available on every day its household holds it, as the plans builder already treats carAvail."
+      },
+      "status": "active",
+      "decisions_ref": "9.217",
+      "description": "The probability that a household motorcycle is a working trip option for its rider on the simulated day, applied under B.motorbike.daily_use = use_ratio (D28) to every person the rider-licence and household-motorcycle draws make available by possession. LIMITS, stated rather than hidden: (1) it is a ratio of ANNUAL FLEET-AVERAGE DISTANCE, not of days in use - the day ratio equals it only if a motorcycle covers as many kilometres on a day it is ridden as a car does on a day it is driven, and no observation in the package says which way that differs; (2) recreational riding is included in the numerator (the survey's 'personal and other' use), so the weekday utility use it stands for is, if anything, overstated; (3) it is the whole registered fleet of New South Wales, business, dealer and idle registrations included - the same basis as the BITRE stock behind B.population.household_motorcycle_share - not Newcastle's; (4) the survey year ran to June 2020 and so includes the first COVID-19 restrictions, which fall on both vehicle types; (5) sampling error: the motor-cycle kilometre total carries a relative standard error of 15.9 % and the vehicle count 3.51 % (passenger vehicles 6.24 % and 1.51 %).",
+      "consumers": [
+        "src/build/build_matsim_plans.py",
+        "cities/newcastle/build/build_vehicle_fuel_ratio.py"
+      ]
+    },
     "B.truck.resident_trip_share": {
       "value": 0.002993,
       "units": "share_of_trips",

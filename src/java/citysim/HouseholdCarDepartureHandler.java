@@ -59,18 +59,30 @@ public final class HouseholdCarDepartureHandler implements DepartureHandler,
     public static final String COMPONENT = "citysimHouseholdCarDeparture";
 
     private final QNetsimEngineI netsim;
+    /** The household car under the census roster; the household motorcycle
+     *  too under RUN.qsim.motorcycle_roster = household (D28, F39). */
+    private final boolean cars;
+    private final boolean motorcycles;
     private int waited = 0;
+    private int waitedMoto = 0;
 
     @Inject
-    HouseholdCarDepartureHandler(final QNetsimEngineI netsim) {
+    HouseholdCarDepartureHandler(final QNetsimEngineI netsim,
+                                 final org.matsim.core.config.Config config) {
         this.netsim = netsim;
+        final HouseholdVehiclesConfigGroup cfg = (HouseholdVehiclesConfigGroup)
+                config.getModules().get(HouseholdVehiclesConfigGroup.NAME);
+        this.cars = cfg != null && cfg.isCensusRoster();
+        this.motorcycles = cfg != null && cfg.isHouseholdMotorcycle();
     }
 
     @Override
     public boolean handleDeparture(final double now, final MobsimAgent agent,
                                    final Id<Link> linkId) {
-        if (!TransportMode.car.equals(agent.getMode())
-                || !(agent instanceof MobsimDriverAgent)) {
+        final boolean car = this.cars && TransportMode.car.equals(agent.getMode());
+        final boolean moto = this.motorcycles
+                && AvailabilityModesCalculator.MOTORBIKE.equals(agent.getMode());
+        if ((!car && !moto) || !(agent instanceof MobsimDriverAgent)) {
             return false;
         }
         final MobsimDriverAgent driver = (MobsimDriverAgent) agent;
@@ -90,18 +102,30 @@ public final class HouseholdCarDepartureHandler implements DepartureHandler,
         // The household car is out. Wait for it, at this link; the link
         // departs the driver when the car is parked back here.
         link.registerDriverAgentWaitingForCar(driver);
-        waited++;
+        if (car) {
+            waited++;
+        } else {
+            waitedMoto++;
+        }
         return true;
     }
 
     @Override
     public void notifyMobsimInitialized(final MobsimInitializedEvent e) {
         waited = 0;
+        waitedMoto = 0;
     }
 
     @Override
     public void notifyMobsimBeforeCleanup(final MobsimBeforeCleanupEvent e) {
-        LOG.info("householdCar: {} driver(s) waited for a household car that "
-                 + "was out (B.population.vehicle_roster, 9.148)", waited);
+        if (this.cars) {
+            LOG.info("householdCar: {} driver(s) waited for a household car that "
+                     + "was out (B.population.vehicle_roster, 9.148)", waited);
+        }
+        if (this.motorcycles) {
+            LOG.info("householdMotorcycle: {} rider(s) waited for the household "
+                     + "motorcycle that was out (RUN.qsim.motorcycle_roster, D28)",
+                     waitedMoto);
+        }
     }
 }

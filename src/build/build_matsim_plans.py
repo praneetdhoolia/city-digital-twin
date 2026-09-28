@@ -93,7 +93,9 @@ _MOTORBIKE_Q_BY_PID = {}    # 9.122: per-person q under `sa1_thinned`
 # household (BITRE registrations per postal area over census dwellings,
 # through the Poisson at-least-one identity). A person may choose motorbike
 # only with both; SubtourModeChoice decides whether they do, under the
-# unfitted C.asc.motorbike. `carve` recovers every earlier build byte for byte.
+# unfitted C.asc.motorbike. D28 (F39): under B.motorbike.daily_use = use_ratio the
+# held motorcycle is the option on the day at the SMVU use ratio. `carve`
+# recovers every earlier build byte for byte.
 MOTORBIKE = 'motorbike'
 MOTORBIKE_CHOICE = CFG.get('B.motorbike.representation') == 'choice'
 RIDER_RATE = CFG.get('B.population.rider_licence_rate_by_age_band')
@@ -101,6 +103,11 @@ RIDER_RATE = CFG.get('B.population.rider_licence_rate_by_age_band')
 # licence or only in a household the rider draw has already given a rider
 RIDER_COUPLING = CFG.get('B.motorbike.rider_coupling')
 HOUSEHOLD_MOTORCYCLE_SHARE = CFG.get('B.population.household_motorcycle_share')
+# D28 (F39): whether a held motorcycle is its rider's option EVERY day
+# (`possession`, F38 exactly) or on the fraction of days the survey's use ratio
+# gives (`use_ratio`), drawn on a stream of its own
+MOTORBIKE_DAILY_USE = CFG.get('B.motorbike.daily_use')
+MOTORBIKE_DAILY_USE_RATIO = CFG.get('B.motorbike.daily_use_ratio')
 AGE_BANDS = CFG.get('B.population.age_bands')
 _MOTO_AVAIL = {}            # 9.214: person id -> 1/0, filled in main() under `choice`
 # DECISIONS.md 9.125: residents who drive a truck for a living - census G62
@@ -588,30 +595,85 @@ def draw_motorbike_availability(persons, households, rider_rate_of, household_sh
             for i, (pid, h, sa1, age) in enumerate(persons)}
 
 
+DAILY_USE_MODES = ('possession', 'use_ratio')
+
+
+def draw_motorbike_daily_use(persons, seed, daily_use, ratio):
+    """{person id: whether a held motorcycle is the person's option on the
+    simulated day} (D28, B.motorbike.daily_use).
+
+    `possession` (F38 exactly): every day, so every person is True and no
+    stream is drawn. `use_ratio`: True with probability `ratio`
+    (B.motorbike.daily_use_ratio), one draw per person in the B1 file's order
+    on the `motorbike_daily_use` stream - drawn for EVERY person whatever their
+    licence and motorcycle draws, so its position depends on nothing else and
+    no other stream moves. `persons` is [(person id, ...)] as for
+    draw_motorbike_availability."""
+    if daily_use == 'possession':
+        return {p[0]: True for p in persons}
+    if daily_use != 'use_ratio':
+        raise ValueError('unknown motorbike daily use %r' % daily_use)
+    if not 0.0 <= float(ratio) <= 1.0:
+        raise ValueError('a daily use ratio is a probability, not %r' % ratio)
+    w = seeded_stream(seed, 'motorbike_daily_use').random(len(persons))
+    return {p[0]: bool(w[i] < ratio) for i, p in enumerate(persons)}
+
+
+# the observed tables a `choice` build draws availability from, and the
+# builder that writes each (9.214; the fifteenth report found a silent pooled
+# fallback where a table was missing)
+MOTORBIKE_TABLES = (
+    ('data/processed/observed/rider_licence_rates_by_age_lga.csv',
+     'build/build_licence_rates.py'),
+    ('data/processed/observed/motorcycle_possession_by_sa1.csv',
+     'build/build_motorcycle_possession.py'),
+)
+
+
+def require_motorbike_tables(path_of=None):
+    """Refuse a `choice` build that lacks an observed availability table.
+
+    Without the table every person would take the POOLED registry value -
+    a different model that would run and read like the observed one. The
+    pooled value remains the fallback for a ROW absent from a present table
+    (an SA1 outside the study postal areas, an LGA without a snapshot row),
+    which the plans report counts."""
+    path_of = path_of or _city.path
+    missing = [(rel, builder) for rel, builder in MOTORBIKE_TABLES
+               if not os.path.exists(path_of(rel))]
+    if missing:
+        raise SystemExit(
+            'B.motorbike.representation = choice draws availability from observed '
+            'tables, and %s: %s. Run the builder named for each, or set the '
+            'representation to `carve`; the pooled registry value is a fallback for '
+            'a missing row, never for a missing table.'
+            % ('this one is missing' if len(missing) == 1 else 'these are missing',
+               '; '.join("%s (written by the city's %s)" % m for m in missing)))
+
+
 def motorbike_rate_lookups():
     """(rider_rate_of, household_share_of, cell_of, group_of, ...) from the
-    observed tables, each falling back to its pooled registry value where a
-    row is absent (9.214)."""
+    observed tables - both required (require_motorbike_tables) - each falling
+    back to its pooled registry value where a ROW is absent (9.214)."""
+    require_motorbike_tables()
     lga_of, rider = {}, {}
     rider_table = _city.path('data/processed/observed/rider_licence_rates_by_age_lga.csv')
-    if os.path.exists(rider_table):
-        with open(_city.path('data/processed/zones/sa1_to_lga.csv'), newline='',
-                  encoding='utf-8') as fh:
-            for r in csv.DictReader(fh):
-                lga_of[r['SA1_CODE21']] = r['lga_name']
-        with open(rider_table, newline='', encoding='utf-8') as fh:
-            for r in csv.DictReader(fh):
-                lo, hi = (int(x) for x in r['band'].split('-'))
-                b = age_band_index(lo, AGE_BANDS)
-                if b is not None and int(AGE_BANDS[b][1]) == hi:
-                    rider[(r['lga'], b)] = float(r['rate'])
+    with open(_city.path('data/processed/zones/sa1_to_lga.csv'), newline='',
+              encoding='utf-8') as fh:
+        for r in csv.DictReader(fh):
+            lga_of[r['SA1_CODE21']] = r['lga_name']
+    with open(rider_table, newline='', encoding='utf-8') as fh:
+        for r in csv.DictReader(fh):
+            lo, hi = (int(x) for x in r['band'].split('-'))
+            b = age_band_index(lo, AGE_BANDS)
+            if b is not None and int(AGE_BANDS[b][1]) == hi:
+                rider[(r['lga'], b)] = float(r['rate'])
     share, postcode = {}, {}
     share_table = _city.path('data/processed/observed/motorcycle_possession_by_sa1.csv')
-    if os.path.exists(share_table):
-        with open(share_table, newline='', encoding='utf-8') as fh:
-            for r in csv.DictReader(fh):
-                share[r['SA1_CODE21']] = float(r['p_household_holds_motorcycle'])
-                postcode[r['SA1_CODE21']] = r['postcode']
+    with open(share_table, newline='', encoding='utf-8') as fh:
+        for r in csv.DictReader(fh):
+            share[r['SA1_CODE21']] = float(r['p_household_holds_motorcycle'])
+            postcode[r['SA1_CODE21']] = r['postcode']
 
     def rider_rate_of(sa1, age):
         b = age_band_index(age, AGE_BANDS)
@@ -668,21 +730,29 @@ def load_motorbike_availability(seed):
         obs_by_group[group_of(sa1)] += household_share_of(sa1)
     worst_g = max(obs_by_group, key=lambda k: (abs(held_by_group[k] - obs_by_group[k]),
                                                 str(k))) if obs_by_group else None
+    # D28: a held motorcycle is the rider's option on the day (B.motorbike.daily_use)
+    on_day = draw_motorbike_daily_use(persons, seed, MOTORBIKE_DAILY_USE,
+                                      MOTORBIKE_DAILY_USE_RATIO)
     _MOTO_AVAIL.clear()
     by_band = collections.defaultdict(collections.Counter)
     age_of = dict(zip(p['person_id'].astype(int), p['age'].astype(int)))
     for pid, (rider, held) in drawn.items():
-        _MOTO_AVAIL[pid] = int(rider and held)
+        _MOTO_AVAIL[pid] = int(rider and held and on_day[pid])
         b = age_band_index(age_of[pid], AGE_BANDS)
         label = '%d-%d' % tuple(AGE_BANDS[b]) if b is not None else 'none'
         by_band[label]['persons'] += 1
         by_band[label]['riders'] += int(rider)
-        by_band[label]['available'] += int(rider and held)
+        by_band[label]['available_by_possession'] += int(rider and held)
+        by_band[label]['available'] += _MOTO_AVAIL[pid]
     report = diag.get('group_report', {})
     summary = dict(
         persons=len(drawn),
         riders=sum(1 for r, _ in drawn.values() if r),
         persons_in_motorcycle_households=sum(1 for _, h in drawn.values() if h),
+        daily_use=MOTORBIKE_DAILY_USE,
+        daily_use_ratio=(MOTORBIKE_DAILY_USE_RATIO if MOTORBIKE_DAILY_USE == 'use_ratio'
+                         else None),
+        available_by_possession=sum(1 for r, h in drawn.values() if r and h),
         available=sum(_MOTO_AVAIL.values()),
         rider_rate_cells=n_rider_cells, household_share_sa1=n_share_cells,
         rider_coupling=RIDER_COUPLING,
@@ -705,9 +775,10 @@ def load_motorbike_availability(seed):
             for k in sorted(diag.get('clipped', []), key=str)],
         by_age_band={k: dict(v) for k, v in sorted(by_band.items(), key=lambda kv: (
             int(kv[0].split('-')[0]) if kv[0] != 'none' else -1))})
-    print('motorbike availability (9.214, %s): %d riders, %d persons in a motorcycle '
-          'household, %d available of %d persons'
-          % (RIDER_COUPLING, summary['riders'], summary['persons_in_motorcycle_households'],
+    print('motorbike availability (9.214, %s, daily use %s): %d riders, %d persons in a '
+          'motorcycle household, %d available by possession, %d on the day, of %d persons'
+          % (RIDER_COUPLING, MOTORBIKE_DAILY_USE, summary['riders'],
+             summary['persons_in_motorcycle_households'], summary['available_by_possession'],
              summary['available'], summary['persons']), flush=True)
     return summary
 
@@ -926,7 +997,7 @@ def person_availability(pc):
                and truck_user(pc.pid)
                and not any(r['dest_activity_type'] == 'escort'
                            for r in pc.rows))
-        # 9.214: a rider licence AND a household motorcycle; a person the
+        # 9.214: a rider licence AND a household motorcycle (on the day, D28); a person the
         # truck carve locks holds one mode by definition
         moto_av = int(MOTORBIKE_CHOICE and not trk
                       and bool(_MOTO_AVAIL.get(pc.pid, 0)))
@@ -1373,7 +1444,7 @@ def write_person_attributes(pc):
     pc.ctx.w.write('\t\t\t<attribute name="bikeAvail" class="java.lang.String">'
             '%s</attribute>\n' % ('always' if pc.bike_av else 'never'))
     if MOTORBIKE_CHOICE:
-        # 9.214: a rider licence AND a household motorcycle. Written on
+        # 9.214: a rider licence AND a household motorcycle (on the day, D28). Written on
         # EVERY agent under `choice` - its presence is how the run knows the
         # representation (citysim.CitysimControler), and absent means
         # available to citysim.AvailabilityModesCalculator, so a boundary

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +34,11 @@ import org.matsim.core.population.PopulationUtils;
  * links. A common link would otherwise move activities towards the overlap
  * of geographically restricted mode networks (DECISIONS.md 9.184).
  *
- * <p>{@code common_modes} retains the original rule below (9.58).
+ * <p>{@code common_modes} retains the original rule below (9.58). Under
+ * {@code activityLinks.capacityRule = capacity_bounded} (D28, F39;
+ * RUN.routing.activity_link_capacity) the nearest rule's answer is then
+ * bounded by each link's own capacity over the modelled day
+ * ({@link ActivityLinkCapacity}); under {@code nearest} it is final (F38).
  *
  * <p>MATSim assigns an activity's link by nearest distance over the whole
  * network, and the router silently starts a leg's route at the nearest link of
@@ -87,6 +92,11 @@ final class ActivityLinkAssigner {
         final Modes modes = new Modes(config);
         final Map<Set<String>, Network> subnetOf = new HashMap<>();
         final Tally tally = new Tally();
+        // D28 (F39): the persons and their needed modes, kept only when the
+        // capacity bound will read them; under `nearest` nothing is kept and
+        // the pass below is F38's exactly
+        final boolean bounded = assignment.isCapacityBounded();
+        final Map<Person, Set<String>> neededOf = new LinkedHashMap<>();
         for (final Person person
                 : scenario.getPopulation().getPersons().values()) {
             final Set<String> needed = neededModes(modes, person);
@@ -97,11 +107,18 @@ final class ActivityLinkAssigner {
                     new HashSet<>(needed),
                     m -> subnetwork(scenario.getNetwork(), m));
             linkActivities(scenario, person, needed, subnet, tally);
+            if (bounded) {
+                neededOf.put(person, new HashSet<>(needed));
+            }
         }
         LOG.info("activityLinkAssigner: {} kept, {} newly assigned, {} moved "
                  + "off a link missing a usable mode, {} without coordinates "
                  + "left untouched (DECISIONS.md 9.58)",
                  tally.kept, tally.assigned, tally.reassigned, tally.coordless);
+        if (bounded) {
+            ActivityLinkCapacity.apply(scenario, neededOf, subnetOf,
+                    modes.innovating, assignment.serviceHours);
+        }
     }
 
     /** The mode sets the rule reads from the run's own config, once. run()

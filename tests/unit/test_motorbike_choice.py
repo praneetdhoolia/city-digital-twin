@@ -16,7 +16,11 @@ The pieces that decide what the choice is offered over, on synthetic inputs:
   motorbike lock; `carve` writes neither the attribute nor the plan;
 * the running cost: the SMVU Table 6 reader finds its rows and column by
   label, and the motorbike monetaryDistanceRate = car rate x fuel ratio is
-  written under `choice` only.
+  written under `choice` only;
+* the daily use (D28, B.motorbike.daily_use): `use_ratio` draws the day on a
+  stream of its own at the SMVU Table 4 km-per-vehicle ratio, read by label;
+  `possession` reproduces F38's availability exactly;
+* a `choice` build refuses a missing observed table instead of pooling.
 """
 import collections
 import importlib.util
@@ -394,3 +398,159 @@ def test_the_runtime_entry_replaces_the_table_value_in_the_emitted_set():
     assert float(mp['car']['monetaryDistanceRate'][0]) == pytest.approx(car)
     _, _, sets0, _ = param_config.collect('matsim', cfg, {}, fields)
     assert float(sets0['scoring']['modeParams']['motorbike']['monetaryDistanceRate'][0]) == 0.0
+
+
+# -- the daily use (D28, B.motorbike.daily_use) -------------------------------
+def _available(drawn, on_day):
+    """The composition load_motorbike_availability applies per person."""
+    return {pid: bool(r and h and on_day[pid]) for pid, (r, h) in drawn.items()}
+
+
+def test_the_daily_draw_is_deterministic_and_on_its_own_named_stream():
+    a = bmp.draw_motorbike_daily_use(PERS2, SEED, 'use_ratio', 0.18)
+    assert a == bmp.draw_motorbike_daily_use(PERS2, SEED, 'use_ratio', 0.18)
+    assert a != bmp.draw_motorbike_daily_use(PERS2, SEED + 1, 'use_ratio', 0.18)
+    w = np.random.default_rng([SEED] + list(b'motorbike_daily_use')).random(len(PERS2))
+    assert a == {p[0]: bool(w[i] < 0.18) for i, p in enumerate(PERS2)}
+    assert sum(a.values()) / len(a) == pytest.approx(0.18, abs=0.02)
+    others = [np.random.default_rng([SEED, 1]).random(5),
+              bmp.seeded_stream(SEED, 'rider_licence').random(5),
+              bmp.seeded_stream(SEED, 'household_motorcycle').random(5)]
+    mine = bmp.seeded_stream(SEED, 'motorbike_daily_use').random(5)
+    assert not any(np.allclose(mine, o) for o in others)
+
+
+def test_the_daily_draw_shifts_no_other_draw_and_no_other_draw_shifts_it():
+    """The licence and motorcycle draws are the same whether or not the day is
+    drawn, and the day is the same whatever the rates behind the other two."""
+    before = _riders_first()
+    bmp.draw_motorbike_daily_use(PERS2, SEED, 'use_ratio', 0.18)
+    assert _riders_first() == before
+    day = bmp.draw_motorbike_daily_use(PERS2, SEED, 'use_ratio', 0.18)
+    bmp.draw_motorbike_availability(PERS2, HH2, lambda s, a: 0.9, lambda s: 0.7, SEED)
+    assert bmp.draw_motorbike_daily_use(PERS2, SEED, 'use_ratio', 0.18) == day
+
+
+def test_possession_reproduces_the_f38_availability_exactly():
+    drawn = _riders_first()
+    day = bmp.draw_motorbike_daily_use(PERS2, SEED, 'possession',
+                                       bmp.MOTORBIKE_DAILY_USE_RATIO)
+    assert all(day.values())
+    assert _available(drawn, day) == {pid: bool(r and h) for pid, (r, h) in drawn.items()}
+
+
+def test_use_ratio_thins_only_the_available_by_possession():
+    drawn = _riders_first()
+    by_possession = {p for p, (r, h) in drawn.items() if r and h}
+    avail = _available(drawn, bmp.draw_motorbike_daily_use(PERS2, SEED, 'use_ratio', 0.18))
+    on = {p for p, v in avail.items() if v}
+    assert on <= by_possession and 0 < len(on) < len(by_possession)
+    assert not any(_available(drawn, bmp.draw_motorbike_daily_use(
+        PERS2, SEED, 'use_ratio', 0.0)).values())
+    assert {p for p, v in _available(drawn, bmp.draw_motorbike_daily_use(
+        PERS2, SEED, 'use_ratio', 1.0)).items() if v} == by_possession
+
+
+def test_an_unknown_daily_use_or_a_ratio_outside_a_probability_is_refused():
+    with pytest.raises(ValueError):
+        bmp.draw_motorbike_daily_use(PERS2, SEED, 'made_up', 0.18)
+    with pytest.raises(ValueError):
+        bmp.draw_motorbike_daily_use(PERS2, SEED, 'use_ratio', 1.2)
+
+
+def test_the_registry_ships_the_gate_and_a_probability():
+    assert bmp.MOTORBIKE_DAILY_USE in bmp.DAILY_USE_MODES
+    assert 0.0 < bmp.MOTORBIKE_DAILY_USE_RATIO < 1.0
+    f = bmp.CFG.field('B.motorbike.daily_use_ratio')
+    assert f['source'] == 'derived' and 'B.motorbike.daily_use' in f['derived_from']['fields']
+
+
+def test_the_motorbike_constant_is_swept_for_sensitivity_and_not_free():
+    """C.asc.motorbike is assumed with a bracket containing its shipped value,
+    and `placeholder` keeps it out of the calibrator's free parameters."""
+    import calibrate
+    f = bmp.CFG.field('C.asc.motorbike')
+    lo, hi = calibrate.sweep_interval(f)
+    assert f['source'] == 'assumed' and lo <= f['value'] <= hi
+    assert 'C.asc.motorbike' not in {p['key'] for p in calibrate.free_parameters(bmp.CFG)}
+
+
+# -- a `choice` build refuses a missing observed table ------------------------
+def test_a_missing_observed_table_is_refused_by_name(tmp_path):
+    present = {bmp.MOTORBIKE_TABLES[1][0]}
+    for rel in present:
+        (tmp_path / rel).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / rel).write_text('x\n', encoding='utf-8')
+    with pytest.raises(SystemExit) as e:
+        bmp.require_motorbike_tables(lambda rel: str(tmp_path / rel))
+    msg = str(e.value)
+    assert bmp.MOTORBIKE_TABLES[0][0] in msg and bmp.MOTORBIKE_TABLES[0][1] in msg
+    assert bmp.MOTORBIKE_TABLES[1][0] not in msg
+
+
+def test_both_tables_missing_names_both_and_both_present_passes(tmp_path):
+    with pytest.raises(SystemExit) as e:
+        bmp.require_motorbike_tables(lambda rel: str(tmp_path / rel))
+    assert all(rel in str(e.value) and builder in str(e.value)
+               for rel, builder in bmp.MOTORBIKE_TABLES)
+    for rel, _ in bmp.MOTORBIKE_TABLES:
+        (tmp_path / rel).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / rel).write_text('x\n', encoding='utf-8')
+    bmp.require_motorbike_tables(lambda rel: str(tmp_path / rel))
+
+
+def test_the_lookups_refuse_before_reading_anything(monkeypatch, tmp_path):
+    """motorbike_rate_lookups() is the `choice` path's only reader, and it
+    asks for the tables first - no pooled fallback for a missing file."""
+    import city as _c
+    monkeypatch.setattr(_c, 'path', lambda *parts: str(tmp_path.joinpath(*parts)))
+    with pytest.raises(SystemExit):
+        bmp.motorbike_rate_lookups()
+
+
+# -- the SMVU use ratio (B.motorbike.daily_use_ratio) --------------------------
+def _table4():
+    """Table 4's shape: totals, vehicle counts and a rounded average per state."""
+    pd = pytest.importorskip('pandas')
+    nan = float('nan')
+    rows = [[nan] * 7,
+            ['Table 4 Motor vehicle use, by state/territory of registration', nan, nan,
+             nan, nan, nan, nan],
+            [nan, fuel.KM_COLUMN, fuel.KM_COLUMN + ' - RSE', fuel.VEHICLES_COLUMN,
+             fuel.VEHICLES_COLUMN + ' - RSE', fuel.AVERAGE_COLUMN,
+             fuel.AVERAGE_COLUMN + ' - RSE'],
+            [nan, 'million', '%', 'no.', '%', "'000", '%'],
+            ['State A', nan, nan, nan, nan, nan, nan],
+            [fuel.CAR_ROW, 1000.0, 5.0, 100000.0, 1.0, 10.0, 5.0],
+            [fuel.MOTORCYCLE_ROW, 20.0, 15.0, 10000.0, 3.0, 2.0, 15.0],
+            ['State B', nan, nan, nan, nan, nan, nan],
+            [fuel.MOTORCYCLE_ROW, 30.0, 15.0, 12000.0, 3.0, 2.5, 15.0],
+            [fuel.CAR_ROW, 1200.0, 5.0, 110000.0, 1.0, 10.9, 5.0],
+            ['State C', nan, nan, nan, nan, nan, nan],
+            [fuel.CAR_ROW, 1200.0, 5.0, 110000.0, 1.0, 10.9, 5.0]]
+    return pd.DataFrame(rows)
+
+
+def test_the_use_reader_takes_totals_by_label_within_the_state():
+    b = fuel.read_use(_table4(), 'State B')
+    # km per vehicle from the TOTALS, not the rounded average column
+    assert b['daily_use_ratio'] == (30.0 / 12000.0) / (1200.0 / 110000.0)
+    assert b['motor_cycles_published_average_km_thousand'] == 2.5
+    a = fuel.read_use(_table4(), 'State A')                 # the block ends at B
+    assert a['daily_use_ratio'] == (20.0 / 10000.0) / (1000.0 / 100000.0)
+    with pytest.raises(SystemExit):
+        fuel.read_use(_table4(), 'State C')                 # no motor cycles row
+    with pytest.raises(SystemExit):
+        fuel.read_use(_table4(), 'State D')
+
+
+def test_the_packaged_survey_gives_the_declared_use_ratio():
+    """Against the acquired cube, where the package holds it."""
+    pd = pytest.importorskip('pandas')
+    path = REPO / 'cities/newcastle/data/raw/abs/92080DO001_202006.xls'
+    if not path.exists():
+        pytest.skip('SMVU cube not on this checkout')
+    import city
+    state = city.descriptor()['jurisdiction']['subdivision']
+    u = fuel.read_use(pd.read_excel(path, sheet_name=fuel.USE_SHEET, header=None), state)
+    assert u['daily_use_ratio'] == bmp.CFG.get('B.motorbike.daily_use_ratio')
