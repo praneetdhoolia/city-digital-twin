@@ -29,7 +29,7 @@
 
 ## What is measured — what a run costs
 
-- **F38's probe recurred at 454.0 s and quoted 32.0 h** (§9.214, `20260927T133754_4it_25pct`, iterations 2-3). Arm 0 died at 79 (§9.215; iterations 1-75 took 11.96 h on a shared host against F37's 7.98 h) and continues warm from 75 as `20260928T042107_250it_25pct` under a new 34 h ceiling (D25); F37 ran those 175 in 22.82 h.
+- **F38's probe recurred at 454.0 s and quoted 32.0 h** (§9.214, `20260927T133754_4it_25pct`, iterations 2-3). Arm 0 died at 79 (§9.215; iterations 1-75 took 11.96 h on a shared host against F37's 7.98 h) and resumed from 75, died at 188 in a host crash (§9.216) and runs from 175 as `20260928T163345_250it_25pct` (18 h, D26).
 - **F37's arm 0 landed in 31.4 h against a 34 h ceiling and a 32.0 h quote** (§9.214, §9.213, `20260926T002526_250it_25pct`): wall 113,153 s, median **356.9 s** an iteration; iterations 175-178 took 18-28 min while an unrelated render and inference server shared the host. Its probe `20260925T214314_4it_25pct` recurred at 451.5 s, setup 31 min (§9.213).
 - **F36's arm 0 died to a host restart at iteration 237** (§9.213, `20260923T034632_250it_25pct`): recurring 349.5 s; priced from its own clock **25.6 h**, where the wall-minus-iterations rule had quoted 62.9 h.
 - **The scoring pair landed in 25.77 h against a 33.0 h ceiling** (§9.177, `20260916T063903_250it_25pct`): recurring **348.5 s**; iterations ran 400–510 s while that session's rebuilds and test suites shared the CPU.

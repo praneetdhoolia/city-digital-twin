@@ -7,7 +7,7 @@
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **F38's arm 0 `20260928T042107_250it_25pct` is RUNNING, warm-started** from the iteration-75 plans of `aborted_20260927T145839_250it_25pct` (killed at 79 with the session that launched it, §9.215), detached under the Task Scheduler, overlay `f38_baseline_25pct`, cutoff kept at iteration 200, a new 34 h ceiling approved by D25 and SPENT on it; F37 ran the same 175 iterations in 22.8 h on an idle host. NOT a result until `_run.json` says `ran_to_last_iteration`. Do not recompile `.tools/classes`, launch nothing, and keep heavy work at below-normal priority while it runs. | `python src/run/watch_run.py --run 20260928T042107_250it_25pct` · `python src/run/session_gate.py --digest` |
+| **F38's arm 0 `20260928T163345_250it_25pct` is RUNNING, resumed a second time** from the iteration-175 plans of `aborted_20260928T042107_250it_25pct` (completion `died` at 188: the host crashed, bugcheck 0x13A after an NVMe controller error; §9.216), overlay `f38_baseline_resume175_25pct`, cutoff at iteration 200, 18 h ceiling approved by D26 and SPENT on it; F37 ran iterations 176-250 in 12.27 h. The first launch died with its session at 79 (§9.215). NOT a result until `_run.json` says `ran_to_last_iteration`. Do not recompile `.tools/classes` or launch anything while it runs. | `python src/run/watch_run.py --run 20260928T163345_250it_25pct` |
 | **F37's arm 0 `20260926T002526_250it_25pct` is a RESULT** (`ran_to_last_iteration` at 250): 2 of 12 inside 10 %, read in §9.214 and on the board. | `python src/analyse/report_mode_ridership.py --run 20260926T002526_250it_25pct --it 250` |
 | Windows Update is paused until **2 October 2026 21:28 AEST** (the user's pause, D19); the launcher refuses any launch whose ceiling outlasts it. | `python -c "import sys; sys.path.insert(0,'src/run'); import procs,time; print(time.ctime(procs.updates_paused_until()))"` |
 | The F38 probe `20260927T133754_4it_25pct` (454.0 s recurring) and smoke `20260927T133104_2it_1pct` are citable for clock, heap and plumbing only. | `python src/analyse/arm_cost.py --run-config f38_baseline_25pct` |
@@ -29,10 +29,10 @@ Then: `python src/run/session_gate.py` (it skips the toolchain compile and the J
 6. **Attach trip ends to links that can carry them: on F37's arm 0, 29 links (28 service lanes, one living street) carry 23,161 sampled road-vehicle trip ends needing up to 38 hours of their own sampled capacity, and the 2.7 % of road trips touching them average 72.6 min at 13.4 km/h against 25.5 min elsewhere; 73 % of the run's excess vehicle-hours sit on residential and service links carrying ~13 % of traversals. Design a capacity-aware citysim.ActivityLinkAssigner rule (no link receives more trip ends than it can move in the modelled day, excess moved to the next-nearest eligible links), derived, behind a representation gate, and measure the car time tail against the HTS 17.2 min** - no run to design: the trip-end load per link and the car time by load band from any finished arm's trips table and output network (scratch access_load.py and delay_links.py, to be folded into an existing reader); the Java change compiles only on an idle machine and opens a family; opens a family; blocked on: F38's arm 0 reading (the car time tail on the new demand), then a user decision on the next family's contents (9.214 (F37 arm 0: car mean 25.0 min for 11.88 km against the HTS 17.2 min for 10.2 km; median 12.6 min; 9.8 % of car trips under 15 km/h carry 32.4 % of car time, spread over the whole day); #145)
 7. **The ASC contraction test for bike alone** - HELD - ~15 h, no family; no family boundary; blocked on: D7 - the first pair has run (§9.176); the user's hold (§9.159) is lifted by that event, not by this session (§9.163: 20.46 pp of headroom on bike; #107)
 
-Decided: D21 = Before the F37 launch (recommended) (2026-09-25) · D22 = In F38, after F37 reads (recommended) (2026-09-25) · D23 = All three, then the arm (Recommended) (2026-09-27) · D24 = Keep using the PC; accept the risk (2026-09-27) · D25 = Warm start at 75, 34 h cap (Recommended) (2026-09-28)
+Decided: D22 = In F38, after F37 reads (recommended) (2026-09-25) · D23 = All three, then the arm (Recommended) (2026-09-27) · D24 = Keep using the PC; accept the risk (2026-09-27) · D25 = Warm start at 75, 34 h cap (Recommended) (2026-09-28) · D26 = Warm start at 175, 18 h cap (Recommended) (2026-09-28)
 <!-- generated:lane end -->
 
-Watch the arm with ONE monitor on `python src/run/watch_run.py --run 20260928T042107_250it_25pct
+Watch the arm with ONE monitor on `python src/run/watch_run.py --run 20260928T163345_250it_25pct
 --events --read`, re-armed at its 30-minute expiry. When `_run.json` lands, `read-f38-arm-0` is the
 session, then a fresh `/project-report` on that reading. The scratch diagnostics that traced F37
 (walk trips by tour context, rail entries by car access and access-walk band) are in §9.214; if
@@ -67,7 +67,7 @@ a tracked file (`tests/check_secrets.py`, `.githooks/pre-commit`), Java probes n
 
 ## §3 Standing directives and approvals
 
-- **No run approval stands.** The 34 h of 27 September (D23) is SPENT on the dead launch; D25's new 34 h is SPENT on `20260928T042107_250it_25pct`.
+- **No run approval stands.** The 34 h of 27 September (D23) is SPENT on the dead launch; D25's 34 h on the run the host crash killed; D26's 18 h is SPENT on `20260928T163345_250it_25pct`.
   The next arm needs its own stated-cost approval, quoted by `arm_cost.py` from this arm's stopwatch.
 - **25 % arms only** for Newcastle; a structural smoke may use 1 %. One arm at a time.
 - **The user pauses Windows Update before a launch** (D19); never change the update settings yourself.
