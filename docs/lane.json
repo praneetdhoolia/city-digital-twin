@@ -1062,6 +1062,31 @@
       "answer": "Warm start at 75, 34 h cap (Recommended)",
       "answered": "2026-09-28",
       "note": "approves up to 34 h, spent on the warm-started launch"
+    },
+    {
+      "id": "D26",
+      "question": "F38's warm-started arm died at iteration 188 of 250 when Windows crashed (bugcheck 0x13A after an NVMe controller error); the repository and all 967 data files check out intact. Continue from the iteration-175 plans?",
+      "options": [
+        {
+          "label": "Warm start at 175, 18 h cap (Recommended)",
+          "detail": "resume detached, cutoff kept at 200; ~13 h idle (F37's iterations 176-250 took 12.27 h); approves up to 18 h"
+        },
+        {
+          "label": "Warm start at 175, 14 h cap",
+          "detail": "finishes only if the machine stays mostly free"
+        },
+        {
+          "label": "Hold until I check the SSD",
+          "detail": "launch nothing until the drive is checked"
+        }
+      ],
+      "recommended": 0,
+      "issues": [],
+      "evidence": "9.215; aborted_20260928T042107_250it_25pct (completion died, reached 188); System events 11 (stornvme), 41, 1001 (bugcheck 0x13A)",
+      "asked": "2026-09-28",
+      "answer": "Warm start at 175, 18 h cap (Recommended)",
+      "answered": "2026-09-28",
+      "note": "approves up to 18 h, spent on the second warm start"
     }
   ]
 }
