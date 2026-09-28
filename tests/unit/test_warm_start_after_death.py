@@ -66,13 +66,16 @@ def _stub_stop(monkeypatch, tmp_path, alive):
                                   encoding='utf-8')
     seen = {}
     monkeypatch.setattr(rm.results_store, 'resolve', lambda name: str(d))
-    monkeypatch.setattr(rm, 'card_pid_alive', lambda meta, key: alive)
+    state = alive if isinstance(alive, str) else (rm.ALIVE if alive else rm.DEAD)
+    monkeypatch.setattr(rm, 'card_pid_state', lambda meta, key: state)
     monkeypatch.setattr(rm.subprocess, 'run', lambda *a, **k: None)
     monkeypatch.setattr(rm.time, 'sleep', lambda s: None)
-    monkeypatch.setattr(rm, 'mark_dead', lambda run_dir, status, cause=None: run_dir)
+    monkeypatch.setattr(rm, 'mark_dead',
+                        lambda run_dir, status, cause=None, wall_s=None: run_dir)
 
     def close_out(dead, completion, **kw):
         seen['completion'] = completion
+        seen['wall_s'] = kw.get('wall_s')
         return None
     monkeypatch.setattr(rm, 'close_out', close_out)
     monkeypatch.setattr(rm.registry, 'load', lambda: {})
@@ -132,15 +135,80 @@ def test_a_resume_past_the_cutoff_keeps_innovation_off(monkeypatch):
         assert out['RUN.replanning.fraction_to_disable_innovation'] == 0.0
 
 
-def test_a_resume_overlay_is_not_re_derived(monkeypatch):
+PARENT = {'RUN.controler.first_iteration': 0,
+          'RUN.controler.last_iteration': 250,
+          'RUN.replanning.fraction_to_disable_innovation': 0.8}
+
+
+def _resume_overlay(monkeypatch, first, f):
     class Base(dict):
         def get(self, k):
             return self[k]
-    base = Base({'RUN.controler.first_iteration': 175,
+    base = Base({'RUN.controler.first_iteration': first,
                  'RUN.controler.last_iteration': 250,
-                 'RUN.replanning.fraction_to_disable_innovation': 0.333334})
+                 'RUN.replanning.fraction_to_disable_innovation': f})
     monkeypatch.setattr(rm.registry, 'load', lambda **kw: base)
-    assert rm.warm_start_overrides({'iteration': 175, 'run': 'dead'}, {}, 'S2', 'WEEKDAY', None) == {}
+
+
+def test_a_resume_overlay_is_not_re_derived(monkeypatch):
+    _resume_overlay(monkeypatch, 175, 0.333334)
+    assert rm.warm_start_overrides({'iteration': 175, 'run': 'dead',
+                                    'values': PARENT},
+                                   {}, 'S2', 'WEEKDAY', None) == {}
+
+
+def test_a_resume_overlay_that_moves_the_cutoff_is_refused(monkeypatch):
+    """0.333333 at 175 of 250: int(199.999975) = 199, not the parent's 200."""
+    _resume_overlay(monkeypatch, 175, 0.333333)
+    with pytest.raises(SystemExit, match='iteration 199'):
+        rm.warm_start_overrides({'iteration': 175, 'run': 'dead',
+                                 'values': PARENT}, {}, 'S2', 'WEEKDAY', None)
+
+
+def test_a_resume_overlay_past_the_cutoff_with_innovation_off_is_accepted(monkeypatch):
+    _resume_overlay(monkeypatch, 225, 0.0)
+    assert rm.warm_start_overrides({'iteration': 225, 'run': 'dead',
+                                    'values': PARENT},
+                                   {}, 'S2', 'WEEKDAY', None) == {}
+
+
+def test_a_resume_overlay_past_the_cutoff_still_innovating_is_refused(monkeypatch):
+    _resume_overlay(monkeypatch, 225, 0.5)
+    with pytest.raises(SystemExit, match='warm start refused'):
+        rm.warm_start_overrides({'iteration': 225, 'run': 'dead',
+                                 'values': PARENT}, {}, 'S2', 'WEEKDAY', None)
+
+
+def test_a_resume_overlay_is_checked_against_a_resumed_parent(monkeypatch):
+    """A parent that was itself a resume ran first 75 and a derived fraction."""
+    parent = {'RUN.controler.first_iteration': 75,
+              'RUN.controler.last_iteration': 250,
+              'RUN.replanning.fraction_to_disable_innovation': 0.714286}
+    assert rm.jar_cutoff(75, 250, 0.714286) == 200
+    _resume_overlay(monkeypatch, 175, 0.333334)
+    assert rm.warm_start_overrides({'iteration': 175, 'run': 'dead',
+                                    'values': parent},
+                                   {}, 'S2', 'WEEKDAY', None) == {}
+
+
+def test_a_resume_overlay_with_no_parent_snapshot_is_refused(monkeypatch):
+    _resume_overlay(monkeypatch, 175, 0.333334)
+    with pytest.raises(SystemExit, match='no config snapshot'):
+        rm.warm_start_overrides({'iteration': 175, 'run': 'dead'}, {},
+                                'S2', 'WEEKDAY', None)
+
+
+def test_the_jar_cutoff_truncates():
+    assert rm.jar_cutoff(175, 250, 0.333333) == 199
+    assert rm.jar_cutoff(175, 250, 0.333334) == 200
+    assert rm.jar_cutoff(225, 250, 0.0) == 225
+
+
+def test_the_warm_start_carries_the_parents_snapshot(tmp_path):
+    d = _dead_run(tmp_path, rm.DIED)
+    with open(os.path.join(d, '_config.json'), 'w', encoding='utf-8') as fh:
+        json.dump(dict(values=PARENT), fh)
+    assert rm.resolve_warm_start(d)['values'] == PARENT
 
 
 class _Cfg(dict):
@@ -157,16 +225,34 @@ def _run_py():
     return mod
 
 
+def _not_launched():
+    return False, 'no scheduler stamp'
+
+
 def test_an_arm_is_refused_in_the_foreground():
     run_py = _run_py()
     a = types.SimpleNamespace(foreground=True, scheduled_child=False)
     with pytest.raises(SystemExit, match='REFUSED'):
-        run_py.refuse_foreground_arm(a, _Cfg({'RUN.controler.last_iteration': 250}))
+        run_py.refuse_foreground_arm(a, _Cfg({'RUN.controler.last_iteration': 250}),
+                                     launched=_not_launched)
+
+
+def test_a_copied_scheduled_child_flag_grants_nothing():
+    """The fifteenth report's bypass: the flag sat in the copyable argv."""
+    run_py = _run_py()
+    a = types.SimpleNamespace(foreground=True, scheduled_child=True)
+    with pytest.raises(SystemExit, match='REFUSED'):
+        run_py.refuse_foreground_arm(a, _Cfg({'RUN.controler.last_iteration': 250}),
+                                     launched=_not_launched)
 
 
 def test_a_probe_and_the_schedulers_child_may_run_in_the_foreground():
     run_py = _run_py()
+    asked = []
     probe = types.SimpleNamespace(foreground=True, scheduled_child=False)
-    run_py.refuse_foreground_arm(probe, _Cfg({'RUN.controler.last_iteration': 4}))
-    child = types.SimpleNamespace(foreground=True, scheduled_child=True)
-    run_py.refuse_foreground_arm(child, _Cfg({'RUN.controler.last_iteration': 250}))
+    run_py.refuse_foreground_arm(probe, _Cfg({'RUN.controler.last_iteration': 4}),
+                                 launched=lambda: asked.append(1) or (False, 'x'))
+    assert not asked, 'a smoke or probe is never asked for the proof'
+    child = types.SimpleNamespace(foreground=True, scheduled_child=False)
+    run_py.refuse_foreground_arm(child, _Cfg({'RUN.controler.last_iteration': 250}),
+                                 launched=lambda: (True, ''))

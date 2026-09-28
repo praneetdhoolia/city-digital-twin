@@ -47,7 +47,7 @@ import build_matsim_run_inputs as build_inputs  # noqa: E402
 import city  # noqa: E402
 import results_store  # noqa: E402
 import run_failure  # noqa: E402
-from procs import card_pid_alive  # noqa: E402
+from procs import card_pid_alive, card_pid_state, ALIVE, DEAD  # noqa: E402
 import summarise_run  # noqa: E402
 from registry import outputs, param_config  # noqa: E402
 
@@ -256,8 +256,21 @@ def resolve_warm_start(source, stopped_was_death=None):
             'N.plans.xml.gz). It died before the first plans write, so a cold '
             'start loses nothing.' % source)
     n, plans = max(candidates)
+    # The parent's own resolved horizon and fraction, so the resume's cutoff
+    # is checked against the cutoff the parent RAN, not today's registry
+    # (a parent that was itself a resume ran first > 0; fifteenth report)
+    snap = _read_json(os.path.join(source, meta.get('config_snapshot')
+                                   or '_config.json')) or {}
     return dict(run=os.path.basename(source), iteration=n, plans=plans,
-                meta=meta, death=death)
+                meta=meta, death=death, values=snap.get('values') or {})
+
+
+def _read_json(path):
+    try:
+        with open(path, encoding='utf-8') as fh:
+            return json.load(fh)
+    except (OSError, ValueError, TypeError):
+        return None
 
 
 def check_warm_compatibility(warm, scenario, day, fraction, seed, threads,
@@ -647,6 +660,27 @@ def _log_tail(log, nbytes=2_000_000):
         return ''
 
 
+_TS_LINE_RE = re.compile(TS_RE.pattern, re.M)
+
+
+def log_last_timestamp(log, nbytes=None):
+    """Epoch seconds of the newest timestamped line in the log's TAIL, or None.
+
+    Tail-read only (`_log_tail`'s window unless `nbytes` narrows it): an arm's
+    log runs to tens of GB (9.142), and the question - when did this run last
+    write - is answered by its last lines.
+    """
+    tail = _log_tail(log, nbytes) if nbytes else _log_tail(log)
+    stamps = _TS_LINE_RE.findall(tail)
+    if not stamps:
+        return None
+    day, ms = stamps[-1]
+    try:
+        return time.mktime(time.strptime(day, '%Y-%m-%dT%H:%M:%S')) + int(ms) / 1000.0
+    except (ValueError, OverflowError):
+        return None
+
+
 def _last_ended_in_tail(log):
     """The newest `### ITERATION n ENDS` in the log's tail, or None."""
     ended = [int(m.group(1)) for m in ITER_RE.finditer(_log_tail(log))
@@ -710,9 +744,16 @@ def announce_cost(iterations, fraction, cfg):
     """
     try:
         from analyse import arm_cost
+        # a warm start (overlay or --warm-start) runs last - first iterations
+        # from its checkpoint, and is priced so (fifteenth report)
+        try:
+            first = int(cfg.get('RUN.controler.first_iteration') or 0)
+        except Exception:                                    # noqa: BLE001
+            first = 0
         quote = arm_cost.price(int(iterations), fraction,
                                arm_cost.observed_arms(),
-                               cfg.get('RUN.gate.interval_iterations'))
+                               cfg.get('RUN.gate.interval_iterations'),
+                               first_iteration=first)
     except Exception as e:                                   # noqa: BLE001
         print('cost: not priced (%s)' % e, flush=True)
         return
@@ -720,16 +761,19 @@ def announce_cost(iterations, fraction, cfg):
         print('cost: %s' % quote['error'], flush=True)
         return
     on = quote['priced_on']
-    line = ('cost: ~%s for %d iterations plus %s of setup, priced on %s at '
+    line = ('cost: ~%s for %d iterations%s plus %s of setup, priced on %s at '
             '%.1f s an iteration (%s); the last arms at this fraction span '
             '%s to %s'
             % (quote['quote'], quote['iterations'],
+               (' (resumed at %d of %d)' % (quote['first_iteration'],
+                                            quote['last_iteration']))
+               if quote.get('first_iteration') else '',
                arm_cost._fmt_hours(quote['setup_s']), on['name'],
                on['median_iteration_s'], on['completion'] or 'status unknown',
                quote['band'][0], quote['band'][1]))
     if quote.get('first_gate_s'):
         line += '; first gate at iteration %d after ~%s' % (
-            quote['gate_every'],
+            quote['first_gate_iteration'],
             arm_cost._fmt_hours(quote['first_gate_s']))
     print(line, flush=True)
     for key in ('stall_warning', 'milestone_warning', 'stale_warning',
@@ -1052,19 +1096,42 @@ def warm_start_overrides(warm, overrides, scenario, day, run_config):
     last = int(base.get('RUN.controler.last_iteration'))
     f = float(base.get('RUN.replanning.fraction_to_disable_innovation'))
     n = int(warm['iteration'])
-    cutoff = first + f * (last - first)
     if last <= n:
         raise SystemExit('warm start: the checkpoint iteration %d is not below '
                          'RUN.controler.last_iteration = %d' % (n, last))
+    # THE CUTOFF THE PARENT RAN, from its own snapshot when it has one: a
+    # parent that was itself a resume ran first > 0 and a derived fraction
+    parent = warm.get('values') or {}
+    try:
+        p_first = int(parent['RUN.controler.first_iteration'])
+        p_last = int(parent['RUN.controler.last_iteration'])
+        p_f = float(parent['RUN.replanning.fraction_to_disable_innovation'])
+    except (KeyError, TypeError, ValueError):
+        p_first, p_last, p_f = (None, None, None)
     out = dict(overrides)
     if first == n:
         # a resume overlay already carries the checkpoint and the fraction
         # that keeps the parent's cutoff (the route for a fraction outside
-        # its sweep, which the set layer refuses by design, 9.215): nothing
-        # to re-derive, and re-emitting it would put it in the set layer
+        # its sweep, which the set layer refuses by design, 9.215). It is
+        # nothing to re-derive - re-emitting it would put it in the set
+        # layer - but it is CHECKED: F38's resume overlay was trusted, and
+        # 0.333333 would have moved its cutoff to 199 (9.216, fifteenth
+        # report). Only the parent's snapshot can say what the parent ran.
+        if p_first is None:
+            raise SystemExit(
+                'warm start refused: the overlay starts at iteration %d with '
+                'fraction_to_disable_innovation %g, and %s carries no config '
+                'snapshot to check that against the cutoff the parent ran'
+                % (n, f, warm.get('run')))
+        parent_cutoff = jar_cutoff(p_first, p_last, p_f)
+        refuse_cutoff_mismatch(parent_cutoff, n, jar_cutoff(first, last, f), f)
         print('warm start: the overlay already starts at iteration %d; '
-              'innovation cutoff at iteration %.0f' % (n, cutoff), flush=True)
+              'innovation cutoff at iteration %d, the parent\'s'
+              % (n, max(parent_cutoff, n)), flush=True)
         return out
+    # the INTEGER the jar compares against, never the real it truncates
+    cutoff = (jar_cutoff(first, last, f) if p_first is None
+              else jar_cutoff(p_first, p_last, p_f))
     # ROUNDED UP, never to nearest: the jar truncates first + f x (last -
     # first) to an int (d2i, StrategyManager), so a fraction rounded down by
     # a millionth moves the cutoff one iteration early (9.215: resumed at 175,
@@ -1074,12 +1141,44 @@ def warm_start_overrides(warm, overrides, scenario, day, run_config):
     # there; the formula below would go negative (9.216).
     derived = (0.0 if n >= cutoff
                else math.ceil((cutoff - n) / float(last - n) * 1e6) / 1e6)
+    refuse_cutoff_mismatch(cutoff, n, jar_cutoff(n, last, derived), derived)
     out['RUN.controler.first_iteration'] = n
     out['RUN.replanning.fraction_to_disable_innovation'] = derived
-    print('warm start: innovation cutoff kept at iteration %.0f - '
+    print('warm start: innovation cutoff kept at iteration %d - '
           'fraction_to_disable_innovation %g -> %g for firstIteration %d'
-          % (cutoff, f, derived, n), flush=True)
+          % (max(cutoff, n), f, derived, n), flush=True)
     return out
+
+
+def jar_cutoff(first, last, fraction):
+    """The iteration the pinned jar switches innovation off at.
+
+    `(int) (first + f x (last - first))` - a d2i truncation, read from
+    StrategyManager.class with javap (9.216). The harness computes it the
+    same way or it is computing a different run.
+    """
+    return int(first + float(fraction) * (last - first))
+
+
+def refuse_cutoff_mismatch(parent_cutoff, n, resume_cutoff, fraction):
+    """Refuse a resume whose jar cutoff is not the one its parent ran.
+
+    A checkpoint at or past the parent's cutoff must resume with innovation
+    already off - a resume cutoff at or before its first iteration `n` - and
+    any such cutoff is the same run; below the parent's cutoff the two
+    integers must be equal.
+    """
+    if n >= parent_cutoff and resume_cutoff <= n:
+        return
+    if resume_cutoff == parent_cutoff:
+        return
+    raise SystemExit(
+        'warm start refused: the parent switched innovation off at iteration '
+        '%d, and this resume (firstIteration %d, fraction_to_disable_innovation '
+        '%r) switches it off at iteration %d - the jar truncates first + f x '
+        '(last - first) to an int (9.216). Declare a fraction that lands on '
+        '%d.' % (parent_cutoff, n, fraction, resume_cutoff,
+                 max(parent_cutoff, n)))
 
 
 def preflight(scenario, day, cfg, overrides=None, warm=None, quiet=False,
@@ -2114,6 +2213,47 @@ def _elapsed_since(started):
     return max(0.0, time.time() - t0)
 
 
+def log_confirms_death(log, states, size_before, last_write, now=None):
+    """(True, why) when a run's own log says it stopped writing (fifteenth report).
+
+    `states` is {card key: procs state} read BEFORE any kill. No pid may be
+    alive. Then the log decides:
+
+    * every pid DEAD by the kernel's own word and the log no bigger than it
+      was before the stop's wait - nothing is writing it;
+    * otherwise (a pid the kernel would not describe) the log's last line
+      must be older than the longest iteration this run ever recorded - a
+      silence no healthy iteration of it produced. Its own pace, never a
+      typed constant; a run with no recorded iteration cannot be told, and
+      is not recorded as dead.
+    """
+    if ALIVE in states.values():
+        return False, 'a recorded process is alive'
+    try:
+        size_after = os.path.getsize(log)
+    except OSError:
+        size_after = None
+    if size_before is not None and size_after is not None \
+            and size_after != size_before:
+        return False, 'its log grew during the stop'
+    if all(s == DEAD for s in states.values()):
+        return True, 'no recorded process exists and its log is not growing'
+    if last_write is None:
+        return False, ('the kernel would not describe a recorded pid and the '
+                       'log carries no timestamp to date the silence')
+    longest = max(_recorded_iteration_times(log).values(), default=None)
+    if not longest:
+        return False, ('the kernel would not describe a recorded pid and the '
+                       'run recorded no iteration to measure a silence against')
+    silent = (time.time() if now is None else now) - last_write
+    if silent > longest:
+        return True, ('its log has been silent %.0f s, longer than its longest '
+                      'iteration (%.0f s)' % (silent, longest))
+    return False, ('the kernel would not describe a recorded pid and its log '
+                   'wrote %.0f s ago, inside its longest iteration (%.0f s)'
+                   % (silent, longest))
+
+
 def stop_run(name, cause):
     """Stop a running arm through the harness - never by hand (9.137).
 
@@ -2145,14 +2285,25 @@ def stop_run(name, cause):
     # harness alone left the JVM running (#128); on Windows /T takes the tree
     # and the second kill is a no-op.
     # A run nothing is left of was not stopped - it died, and its record says
-    # so, because only a death may be warm-started (9.215).
-    already_dead = not any(card_pid_alive(meta, key) for key in ('pid', 'jvm_pid'))
+    # so, because only a death may be warm-started (9.215). THE PIDS ALONE DO
+    # NOT SAY IT: a handle the kernel refused used to read as dead (fifteenth
+    # report), so no pid may be ALIVE and the run's own log must confirm it
+    # stopped writing (fifteenth report).
+    states = {key: card_pid_state(meta, key) for key in ('pid', 'jvm_pid')}
+    log = os.path.join(run_dir, 'matsim.log')
+    try:
+        size_before = os.path.getsize(log)
+    except OSError:
+        size_before = None
+    last_write = log_last_timestamp(log)
     # ONLY A PID THAT IS STILL THE CARD'S OWN PROCESS IS KILLED: after a host
     # reboot the numbers name whatever started since, and `/T` would take its
-    # whole tree (procs.card_pid_alive).
+    # whole tree (procs.card_pid_state). A pid the kernel would not describe
+    # is tried: a process of another account refuses the kill as it refused
+    # the handle.
     for key in ('pid', 'jvm_pid'):
         victim = meta.get(key)
-        if not card_pid_alive(meta, key):
+        if states[key] == DEAD:
             continue
         if os.name == 'nt':
             subprocess.run(['taskkill', '/F', '/PID', str(victim), '/T'],
@@ -2160,18 +2311,40 @@ def stop_run(name, cause):
         else:
             subprocess.run(['kill', '-9', str(victim)], capture_output=True)
     time.sleep(3)
+    already_dead, why = log_confirms_death(log, states, size_before,
+                                           last_write)
+    if ALIVE not in states.values() and not already_dead:
+        print('not recorded as died: %s. If it had died, a warm start takes '
+              '--stopped-was-death.' % why, flush=True)
+    # A DEATH COSTS WHAT RAN BEFORE IT, NOT THE WAIT FOR A CLOSE-OUT: the
+    # 9.216 resume carried 1.8 h past its death on its record (fifteenth
+    # report). Its wall clock stops at its log's last line.
+    died_wall_s = None
+    if already_dead and last_write is not None:
+        try:
+            t0 = time.mktime(time.strptime(meta.get('started') or '',
+                                           '%Y-%m-%dT%H:%M:%S'))
+            died_wall_s = round(max(0.0, last_write - t0), 1)
+        except (TypeError, ValueError):
+            pass
     # The harness may have written the terminal record and renamed the
     # directory before it died; re-resolve so this close-out targets the run
     # where it actually is.
     run_dir = results_store.resolve(name) or run_dir
-    dead = mark_dead(run_dir, 'aborted', cause=cause)
+    if died_wall_s is not None:
+        dead = mark_dead(run_dir, 'aborted', wall_s=died_wall_s, cause=cause)
+    else:
+        dead = mark_dead(run_dir, 'aborted', cause=cause)
     # THE STOP IS A BOUNDARY, NOT A DEATH, so the run is closed out here rather
     # than left as a directory. It has to happen in THIS process: --stop kills
     # the harness's own pid as well as the JVM, so the harness never unwinds to
     # write anything. The reading up to `reached_iteration` is real; the record
     # says `stopped_by_operator`, so nothing can mistake it for a finished arm.
     doc = close_out(dead, DIED if already_dead else STOPPED_BY_OPERATOR,
-                    rc=None, wall_s=meta.get('wall_s'), stop_cause=cause)
+                    rc=None,
+                    wall_s=(died_wall_s if died_wall_s is not None
+                            else meta.get('wall_s')),
+                    stop_cause=cause)
     print('%s and recorded: %s%s'
           % ('found dead' if already_dead else 'stopped',
              os.path.basename(dead),
