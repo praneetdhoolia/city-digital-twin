@@ -234,6 +234,13 @@
       "from_launch": "20260927T125424",
       "readings": null,
       "note": "Opened at the CHAINS AND PLANS REBUILD of 27 September 2026 (D23, D22). F37's arm 0 20260926T002526_250it_25pct is F37's RESULT and the control this family is read against across the boundary as a direction only. FOUR things move a result across it: (1) B.activity.destination_mobility = own_speed - one time decay at each segment's derived planning speed (26.80 / 21.43 km/h, ratio 1.2506), both segments together on the survey's mean distance; (2) B.activity.escort_oneway_scope = cannot_drive - 50,011 weekday one-way drops released, lifts bound 44,632 -> 93,318; (3) B.motorbike.representation = choice with riders_first coupling and a derived running cost (SMVU fuel ratio 0.5351); (4) the Java split into named phases (behaviour-identical, probed) and PtFareChargeHandler refusing an undeclared submode. The week trip rate moved 3.398 -> 3.470 (survey 3.473)."
+    },
+    "F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk": {
+      "label": "F38's demand and network with the fifteenth report's four corrections, run as a PAIR (D28): the control with the corrections, the treatment adding the headway charge",
+      "decisions_ref": "9.218",
+      "from_launch": "20260929T053207",
+      "readings": null,
+      "note": "Opened at the PLANS AND RUN-INPUTS REBUILD of 29 September 2026 (the chains are F38's). FOUR things move a result across it: (1) B.motorbike.daily_use = use_ratio - a household motorcycle is a working option on the day with the ABS SMVU use ratio 0.1801 (NSW Table 4: 1,933 km a motorcycle against 10,732 a passenger vehicle), 35,416 -> 6,368 persons available; (2) RUN.qsim.motorcycle_roster = household - one household motorcycle, one rider at a time; (3) RUN.routing.activity_link_capacity = capacity_bounded - no link receives more car-capable trip ends than it moves in the modelled 30 h; (4) RUN.transit_router.no_route_walk = refused_beyond_reach - a pt request with no transit route answered by a walk over 3,223.6 m is scored as an unexecutable plan. The treatment arm adds C.time_weights.service_quality_representation = headway. The two arms compare with each other inside F39; F38's arm 0 is a direction only."
     }
   },
   "overrides": {

@@ -1,0 +1,25 @@
+{
+  "overlay": "f39_headway_25pct",
+  "description": "ARM OF FAMILY F39's TREATMENT (D28): f39_control_25pct exactly, plus C.time_weights.service_quality_representation = headway: each boarding charged beta_headway 0.5 x the boarded route's service interval (citysim.ServiceQualityScoring, built 9.164, never run; PDFH frequency penalty 0.45-1.0 x headway by band; the F38 pattern of infrequent rail and ferry over, frequent bus and tram under). WHAT IT READS: the four pt submodes against the control arm (heavy rail, ferry down; bus, light rail up is the hypothesis), pt's share, and every other mode for spill-over. COST: priced by f39_headway_probe_25pct; RUN.gate.wall_ceiling_h = 34 is D28's approval for THIS arm, launched after the control arm reaches its record.",
+  "answers_issues": [
+    94,
+    98,
+    175
+  ],
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 250,
+    "RUN.gate.wall_ceiling_h": 34,
+    "RUN.gate.interval_iterations": 0,
+    "RUN.machine.xmx": "48g",
+    "RUN.controler.create_graphs": false,
+    "RUN.controler.write_plans_interval": 25,
+    "C.time_weights.service_quality_representation": "headway"
+  },
+  "allow_outside_sweep": [
+    "RUN.gate.interval_iterations"
+  ],
+  "justification": {
+    "RUN.gate.interval_iterations": "THE MODE GATE IS OFF, and this is the 9.159 scoped departure already taken for `depth_convergence_25pct` and for f35_baseline_25pct, not a new one. GOAL.md's loop says to stop a run when a mode passes 20 %, and on F35's landed reading six modes did. This arm is the CONTROL HALF of five pairs (#172): an arm the watcher stops at iteration 100 cannot be differenced against anything read at 250, so arming the gate would guarantee that none of the five pairs can ever be read. Switching the watcher off does NOT make the arm blind and does not suspend the loop: every 10th iteration stays readable on all twelve modes on their own bases (9.120, 9.170), the run viewer shows them against their targets, and the operator can stop the arm by hand with `run.py --stop` the moment a reading says the rebuild failed. What made the 9.159 arm indefensible was the OTHER half - it declared no ceiling, so it had no automatic stop of any kind and its approved hours were held by a person watching a clock (#169). This arm declares RUN.gate.wall_ceiling_h = 34, the ceiling watcher is PROVEN on a run (`aborted_20260910T205517_20it_1pct`, completion `stopped_at_ceiling`), and RUN.gate.stall_kill_s = 1800 guards a stall separately, so the run has two automatic stops and is never left without one."
+  }
+}
