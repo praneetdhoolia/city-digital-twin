@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 29 September 2026 (sixty-fourth session) · **Record read through:** §9.217 · **Written against family:** `F38`
+**Updated:** 30 September 2026 (sixty-fourth session) · **Record read through:** §9.219 · **Written against family:** `F39`
 
 ## What is built
 
@@ -71,7 +71,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## What is open
 
-- **F39 runs its control arm** `20260929T072135_250it_25pct` (probe 390.0 s recurring, 27.7 h; §9.218); the headway treatment follows its record. F38 closed with ONE result, completed across warm starts at 75, 175 and 225 (§9.215-§9.217). #237's standing peak has no reader.
+- **F39's control arm is a RESULT** `20260929T072135_250it_25pct` (27.9 h against a 27.7 h quote; §9.219); the headway treatment (`atap_m1` since §9.219) is unrun and needs its probe and an approval. The controler build moved in §9.219 inside `ServiceQualityScoring` alone, which the control never binds, so the pair stays comparable. F38 closed with ONE result, completed across warm starts at 75, 175 and 225 (§9.215-§9.217). #237's standing peak has no reader.
 - **F35 is CLOSED with three results** (§9.168, §9.169, §9.176, §9.177), each citable inside F35 and against nothing after `20260922T210005`.
 - Whether a separate 25 % confirmation arm is still needed now that the loop runs at 25 % (§9.129) is the user's call at convergence.
 - The design-effect penalty of household cluster sampling is unestimated and no seed-variance measurement exists; `n_replications` stays 30 (§9.45). The threshold between 10 % and 25 % is unmeasured (§9.12).
@@ -90,6 +90,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## History
 
+- §9.219 — F39's control is a result
 - §9.218 — F39 opens as a pair
 - §9.217 — F38 closes with a result
 - §9.214 — F37 closes with a result; F38 opens
@@ -97,8 +98,4 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 - §9.212 — F36 priced; arm 0 running
 - §9.211 — F36 opens at the roots rebuild
 - §9.206 — transit PCE scaled; 1 % gridlock 
-- §9.203 — standing room scaled at last
-- §9.176 — intro fixed: which runs are results is the board's
 - §9.169 — F35's arm 0 is a result
-- §9.168 — F35 opens at the engines' routed re-mode; arm 0 launched
-- §9.167 — F34 opens at the footpath-network rebuild

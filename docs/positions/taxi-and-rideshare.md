@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 27 September 2026 (sixty-fourth session) · **Record read through:** §9.214 · **Written against family:** `F38`
+**Updated:** 30 September 2026 (sixty-fourth session) · **Record read through:** §9.219 · **Written against family:** `F39`
 
 ## What is built
 
@@ -34,7 +34,7 @@
 
 ## What is open
 
-- **F38's arm 0 reads taxi on the two demand changes** (§9.214, #49): one-way escorts on members who could drive are released into lifts (one-way tours 70,591 → 20,365) and the car-less travel to destinations at their own planning speed; taxi against **+129.6 %**, the held-ride-tour share against **28 %** and the car-less share against **37 %**. If an excess remains, `B.taxi.vehicle_trips_per_day` (the sweep §9.99 named) and a run at `absent` are what is left, the fare still not a lever (§9.91).
+- **Taxi carries the car-less long trip on F39's control** (§9.219, #49, `20260929T072135_250it_25pct` it.250): taxi **2.5892 % against 0.9916 % (+161.1 %)** on 4,159 trips at 8.82 km (+70 % on the survey); the car-less take taxi on **5.6 %** of their trips against 0.9 % for the car-available (`_mode_by_demographics.json`) — a trip no driver is bound to and no transit serves has walk, bike or taxi only ([walk-and-bike](walk-and-bike.md)).
 - **The refused-request fallback is still walk**, costing 1.3 s an iteration at 18 % refusal on arm 0 (§9.169), down from ~60 s at 81 % on the F34 probe (§9.168, §9.105). Whether taxi should take `B.ride.unpaired_fallback`'s member is undecided.
 - **Two stated simplifications**: empty running loads no link, and there is no spatial dispatch; `B.taxi.deadhead_min` stands in for both (§9.99). A full demand-responsive fleet would add the routed empty legs (§9.86, §9.99).
 - **The IPART user incidence is consumed outside the package** to build `B.taxi.daily_trips_band`; `data/raw/p2p/` holds the Fares Order only (§9.94). Acquiring the incidence is the honest route to person-level availability.
@@ -54,6 +54,7 @@
 
 ## History
 
+- §9.219 — taxi carries the car-less trip
 - §9.214 — wait executed, excess stays
 - §9.213 — the fleet wait is executed
 - §9.210 — the Java fold; the metro target
@@ -68,4 +69,3 @@
 - §9.158 — the loop reaches taxi's supply and price; reading point drifts
 - §9.157 — F31 gate: taxi +178.4 %
 - §9.141 — refused trip restored by endpoints
-- §9.139 — F23 gate: band widens to +77 %

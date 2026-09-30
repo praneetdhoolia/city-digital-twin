@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 27 September 2026 (sixty-fourth session) · **Record read through:** §9.214 · **Written against family:** `F38`
+**Updated:** 30 September 2026 (sixty-fourth session) · **Record read through:** §9.219 · **Written against family:** `F39`
 
 ## What is built
 
@@ -38,6 +38,7 @@
 
 ## What is measured
 
+- **Motorbike reaches its target on F39's control, a RESULT at iteration 250** (§9.219, `report_mode_ridership.py --run 20260929T072135_250it_25pct --it 250`): **0.3629 % against 0.3785 %, −4.1 %** on 583 trips at a mean 12.38 km (+21 % against the observation), chosen at `C.asc.motorbike` 0.0 with availability by daily use (`B.motorbike.daily_use_ratio` 0.1801, ABS SMVU NSW Table 4; 6,368 persons, §9.218) and one household motorcycle (`RUN.qsim.motorcycle_roster`, 60 shared in the smoke). F38's +465.7 % on possession (§9.217) is the direction; truck **5.4694 %** network-wide, level only.
 - **All three on F37's arm 0, a RESULT at iteration 250** (§9.214, `report_mode_ridership.py --run 20260926T002526_250it_25pct --it 250`): motorbike **0.3512 % against 0.3785 %, −7.2 %** on 532 trips at a mean 9.75 km, still the carve (coverage 0.23 %, a locked carve's riders holding no alternative); truck **6.0712 %** network-wide road-vehicle share, level only (24,025 departures; the target's basis is the count stations, `--truck-stations`, §9.101); freight rail **405 against 405**. Against F35's motorbike −5.6 % (§9.169) a direction, never a comparison (§3.5).
 - **The carve delivers what it solves for** (§9.129, §9.140): the trip-weighted cell share conserves each LGA's own identity; the carve's reading moves by sampling alone, a −50 % at 10 % being a sampling statement, not a defect (§9.122).
 - The reader counts the scheduled 313 PLUS the freight closures THE RUN carried (its own `_config.json`), 266 merged closure spans (§9.169).
@@ -46,7 +47,7 @@
 
 ## What is open
 
-- **F38's arm 0 reads motorbike CHOSEN** (§9.214, #257): against the 0.3785 % target under a 6.05 % availability ceiling, with no constant of its own; the carve's −7.2 % on F37 is the direction to read it beside.
+- **`C.asc.motorbike` stays at 0.0, a placeholder never fitted** (§9.218, #258): the target is met with no constant; the open quantity is the trip length (12.38 km against the survey's, §9.219), which the next calibrated base reads, not a constant.
 - **The truck yardstick is holdout-bound** (§9.101): scoring at the classifying stations spends holdout stations, and whether to open them for freight is the operator's decision. Counts themselves remain unfitted (#82).
 - **The crossings' closure effect has never been measured** (§9.77, §9.90): every result carries the closures ON and no paired arm has carried them off.
 - The target CSV's `freight_train` basis text says each closure is 240 s, while the registry closes a passenger train for 160 s and a freight movement for 277 s (§9.167) — the registry wins; the CSV text should be regenerated.
@@ -64,6 +65,7 @@
 
 ## History
 
+- §9.219 — motorbike at its target
 - §9.214 — motorbike chosen in F38
 - §9.176 — intro fixed: which runs are results is the board's
 - §9.170 — tenth report re-reads arm 0 unchanged
@@ -78,4 +80,3 @@
 - §9.131 — licence rate rebuilt, carves await rebuild
 - §9.129 — carves solved on drawn pool
 - §9.126 — F18 built both carves
-- §9.125 — resident truck-driver carve built

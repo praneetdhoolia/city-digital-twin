@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 27 September 2026 (sixty-fourth session) · **Record read through:** §9.214 · **Written against family:** `F38`
+**Updated:** 30 September 2026 (sixty-fourth session) · **Record read through:** §9.219 · **Written against family:** `F39`
 
 ## What is built
 
@@ -43,7 +43,7 @@
 
 ## What is open
 
-- **F38's arm 0 reads ride with the one-way escorts released into lifts** (§9.214, #86): ride against 17.82 % and coverage against 18.99 %, and what the doubled lift volume executes as (`measure_bound_trips.py`) against F37's lift rows.
+- **Ride stays volume-bound on F39's control** (§9.219, #86, `20260929T072135_250it_25pct` it.250): **15.4418 % against 20.60 (−25.0 %)** on 24,804 trips at 8.91 km (9.8 observed), coverage **19.02 %** — the target unreachable by any constant; occupancy 0.2426 passengers per driver against 0.3503 (outside [0.2493, 0.394], `_fit.json`). The car-less walk 14–24 % of their 5–20+ km trips where no driver is bound ([walk-and-bike](walk-and-bike.md)): ride's missing volume and walk's long trips are one gap.
 - **`C.asc.car_passenger` STAYS FROZEN** (§9.158): ride's deficit is VOLUME, not utility — on F37's arm 0 the trip is 9.45 km against 9.8 at −13.5 % with 1.17 pp of headroom (§9.214); the constant is CONSTRAINED by §9.8 to the observed 0.3503 ride:car ratio, and `src/calibrate/asc_fixed_point.py` refuses it.
 - Whether a suburb is the right carpool precision is the sweep's question (§9.124); #145's wait distribution is unread (§9.169).
 
@@ -61,6 +61,7 @@
 
 ## History
 
+- §9.219 — ride volume-bound on F39
 - §9.214 — bound trips ride; escorts released
 - §9.211 — D12 built: the held passenger
 - §9.169 — arm 0: 99.6 % paired, ride −41.6 %
@@ -75,4 +76,3 @@
 - §9.163 — target above choice set
 - §9.162 — first result: ride converged
 - §9.160 — ride CONVERGED; it is supply
-- §9.158 — listener stops past the cutoff

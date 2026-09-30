@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 27 September 2026 (sixty-fourth session) · **Record read through:** §9.214 · **Written against family:** `F38`
+**Updated:** 30 September 2026 (sixty-fourth session) · **Record read through:** §9.219 · **Written against family:** `F39`
 
 ## What is built
 
@@ -29,8 +29,7 @@
 
 ## What is measured — what a run costs
 
-- **F38's probe recurred at 454.0 s and quoted 32.0 h** (§9.214, `20260927T133754_4it_25pct`, iterations 2-3). Arm 0 died at 79 (§9.215; iterations 1-75 took 11.96 h on a shared host against F37's 7.98 h) and resumed from 75, died at 188 in a host crash (§9.216) and runs from 175 as `20260928T163345_250it_25pct` (18 h, D26).
-- **F37's arm 0 landed in 31.4 h against a 34 h ceiling and a 32.0 h quote** (§9.214, §9.213, `20260926T002526_250it_25pct`): wall 113,153 s, median **356.9 s** an iteration; iterations 175-178 took 18-28 min while an unrelated render and inference server shared the host. Its probe `20260925T214314_4it_25pct` recurred at 451.5 s, setup 31 min (§9.213).
+- **F39's control landed in 27.9 h against a 27.7 h quote** (§9.219, `20260929T072135_250it_25pct`, probe `20260929T060320_4it_25pct` at 390.0 s): median settled near 347 s. The treatment's three daytime probes quoted **27.7 / 37.0 / 50.5 h** at 392 / 526 / 721 s (`20260930T111836`, `T123858`, `T140500` `_4it_25pct`) with replanning, before-mobsim and mobsim slowing TOGETHER (1:26 to 5:45 replanning) and the idle host at 24 % CPU: a probe prices the host's hour, and the control's own wall is the better quote for its pair.
 - **F36's arm 0 died to a host restart at iteration 237** (§9.213, `20260923T034632_250it_25pct`): recurring 349.5 s; priced from its own clock **25.6 h**, where the wall-minus-iterations rule had quoted 62.9 h.
 - **The scoring pair landed in 25.77 h against a 33.0 h ceiling** (§9.177, `20260916T063903_250it_25pct`): recurring **348.5 s**; iterations ran 400–510 s while that session's rebuilds and test suites shared the CPU.
 - **The heap is measured on a full arm, and it does not slope** (§9.169, `gc.log`, #66): live heap after a full collection 21.2 GB at 8.9 h, peak 26,863 MB at 22.9 h, 21.4 GB at 30.2 h; GC under 1 % of wall. The rule (`RUN.machine.heap_floor_gib` 15.6 + `RUN.machine.heap_per_fraction_gib` 87 × 0.25 = 37.4 GiB) holds 11 GiB over the peak; the slope is not re-declared on one arm; no stall. F36's probe read 15,585 MB live after its last full collection at iteration 4 (§9.212, `gc.log`) - too short to re-measure the slope.
@@ -64,6 +63,7 @@
 
 ## History
 
+- §9.219 — a probe prices the host
 - §9.214 — F37 lands; F38 priced
 - §9.213 — a host restart cannot take an arm
 - §9.212 — F36 priced; arm 0 launched

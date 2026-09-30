@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 27 September 2026 (sixty-fourth session) · **Record read through:** §9.214 · **Written against family:** `F38`
+**Updated:** 30 September 2026 (sixty-fourth session) · **Record read through:** §9.219 · **Written against family:** `F39`
 
 ## What is built
 
@@ -59,7 +59,7 @@
 
 ## What is open
 
-- **F38's arm 0 reads the two demand changes** (§9.214): walk km inside held-ride tours against 35.6 %, the car-less split and trip lengths against F37's; see [walk-and-bike](walk-and-bike.md) and [ride-and-pairing](ride-and-pairing.md).
+- **The two demand changes worked; the car-less still lack an alternative** (§9.217, §9.219): on F39's control the car-less split their trips ride 45.7 %, walk 30.8 %, bike 11.8 %, pt 5.8 %, taxi 5.6 % (`_mode_by_demographics.json`), walking 14–24 % of their 10–20+ km trips; see [walk-and-bike](walk-and-bike.md) and [ride-and-pairing](ride-and-pairing.md).
 - **#86 — the held passenger** (§9.211, §9.214): bound escort and joint trips executed as ride on 100 % of F37's; see [ride-and-pairing](ride-and-pairing.md).
 - **#145 — measured on a full arm** (§9.169): the wait distribution and where the self-driven bound trips settle remain unread.
 - **The four HTS cells exist nowhere public** (§9.172, #50): the request is the only route; sending it is the user's decision (D2).
@@ -79,6 +79,7 @@
 
 ## History
 
+- §9.219 — car-less lack an alternative
 - §9.214 — destinations by mobility; escorts released
 - §9.213 — the external tier restored
 - §9.211 — the household tail derived
@@ -93,4 +94,3 @@
 - §9.151 — an escort priced as an escort
 - §9.149 — shared pass binds longest first
 - §9.146 — a household drives the cars it owns
-- §9.144 — binder driver must own a car

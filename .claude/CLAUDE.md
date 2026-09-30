@@ -183,7 +183,8 @@ arm runs). Run it at `/onboard` and `/handoff`, and before every commit.
 
 | Check | Where | Needs |
 |---|---|---|
-| `python tests/check_manifest.py` | CI + local | committed files |
+| `python tests/check_manifest.py --all-cities` · `python src/registry/render_docs.py --check --all-cities` | CI + local | committed files |
+| `python tests/check_requirements.py --strict` | CI + local | committed files |
 | `python -m compileall -q src tests` | CI | nothing |
 | JSON validity of provenance, scenario and params files | CI | nothing |
 | `python src/registry/check_hardcoding.py --strict` | CI + local | committed files |

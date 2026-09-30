@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 29 September 2026 (sixty-fourth session) · **Record read through:** §9.217 · **Written against family:** `F37`
+**Updated:** 30 September 2026 (sixty-fourth session) · **Record read through:** §9.219 · **Written against family:** `F39`
 
 ## What is built
 
@@ -21,7 +21,7 @@
 - **The reading point cannot score a candidate**: `CAL.search.reading_drift_pct` = 24.88 (`measured`, sweep [15.72, 24.88]), `CAL.search.convergence_delta` derived from it; `calibrate.py --execute` refuses while the drift exceeds `CAL.gate.pass_deviation_pct` (§9.158, `measure_reading_stability.py`).
 - **The search can run**: `calibrate.py --config-set`; any field with a `matsim_param` binding is movable (5 → 21, §9.158).
 - **Profiling**: `RUN.machine.jfr_profile` and `RUN.machine.gc_log`, read by `profile_run.py`; observation only (§9.154).
-- **`tests/unit/`** runs on synthetic inputs in CI and `session_gate.py`; six Java probes run on the signals stack (§9.142, #133).
+- **The local gate runs every check CI runs** (§9.219, `tests/unit/test_gate_covers_ci.py`; psutil went unpinned through a green gate), each every-city check through `city.run_per_city` (manifest, generated reference), no tracked text file may hold a NUL byte (`test_sources_are_text.py`), and 12 Java probes run on the signals stack (§9.142, #133).
 - **The gate watcher in `run_matsim.py`** reads all twelve modes every `RUN.gate.interval_iterations` = 100 and stops the JVM at `CAL.gate.stop_deviation_pct` (§9.137) from the progress digest, never a log tail (§9.139), keyed on `--gate-json` (§9.141, #112); retry every `RUN.gate.retry_interval_s` = 300 s (#131); `tests/check_gate_watcher.py` in CI.
 - **Every F35 paired arm and F36's arm 0 run with the gate OFF by overlay** (`interval_iterations` 0 under `allow_outside_sweep`, justified; `f36_baseline_25pct`, §9.212): a watcher stop at 100 would leave no control for the pairs, and a control differenced against arm 0 is read at arm 0's horizon — a scoped departure GOAL.md's loop now states (D10, 16 September 2026, #227). The ceiling and the stall kill stay armed.
 - **The issue gate** (requirement 10, §9.140, §9.158, §9.160, §9.177): `src/run/issue_gate.py` refuses a launch while an in-lane `awaiting-run` issue lacks a real `AWAITING-RUN: <measurement>` line; `AWAITING-DECISION:` reports without blocking; `--allow-open-issues` needs `--override-reason`, ledgered; it prints `[MEASUREMENT DUE: ...]` when the line names a run, an overlay or a one-field value that has since completed.
@@ -72,6 +72,7 @@
 
 ## History
 
+- §9.219 — the gate covers CI
 - §9.213 — a stopped arm read end to end
 - §9.212 — watchers tell setup from death
 - §9.206 — viewer on every run 
@@ -82,8 +83,3 @@
 - §9.177 — detach by default; residents per run
 - §9.176 — the pair a result; orphan close-out; watchers die with the harness
 - §9.175 — congestion measured as a map app does; viewer fixes
-- §9.174 — viewer: glass, simulator light, Overture, 200× faster polls
-- §9.173 — viewer on MapLibre GL; 3D and globe
-- §9.172 — viewer in a map-app layout; checks required
-- §9.170 — the run viewer, live twelve modes
-- §9.169 — arm 0 a result; reader reads own schedule
