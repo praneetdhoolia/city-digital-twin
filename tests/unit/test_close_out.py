@@ -236,6 +236,11 @@ def stoppable(run_dir, monkeypatch):
     monkeypatch.setattr(run_matsim.subprocess, 'run',
                         lambda cmd, **k: killed.append(cmd))
     monkeypatch.setattr(run_matsim.time, 'sleep', lambda s: None)
+    # both recorded processes are live, as for a running arm: the fixture's
+    # pids are made up, and whether the host's own process table holds them
+    # decided the kill count (Windows read one as unknown, Linux as dead)
+    monkeypatch.setattr(run_matsim, 'card_pid_state',
+                        lambda meta, key: run_matsim.ALIVE)
     return SimpleNamespace(dir=run_dir, killed=killed,
                            name='20260904T100000_300it_25pct')
 
