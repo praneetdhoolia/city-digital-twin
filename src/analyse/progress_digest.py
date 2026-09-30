@@ -61,7 +61,33 @@ def _iteration_durations(log):
     return out
 
 
-def digest(run_dir, band=None, solo_iters=None):
+def _run_pids(run_dir):
+    """The harness and JVM pids the run's card records, for excluding them."""
+    try:
+        meta = json.load(open(os.path.join(run_dir, '_meta.json'),
+                              encoding='utf-8'))
+    except (OSError, ValueError):
+        return ()
+    return tuple(meta.get(k) for k in ('pid', 'jvm_pid') if meta.get(k))
+
+
+def host_reading(run_dir, prev=None):
+    """(the host's load for this write, the sample the next write reads against).
+
+    A slow iteration could not be attributed: nothing recorded what else the
+    host was doing (fifteenth report). Every write now carries the host's CPU
+    busy % since the previous write, its free RAM and, where cheap, the other
+    process that used most CPU. It records; nothing refuses on it.
+    Instrumentation: a failure is a None, never an exception.
+    """
+    try:
+        import procs                                       # noqa: PLC0415
+        return procs.host_load(prev, exclude_pids=_run_pids(run_dir))
+    except Exception as e:                                 # noqa: BLE001
+        return dict(error=str(e)[:200]), prev
+
+
+def digest(run_dir, band=None, solo_iters=None, host=None):
     """The one-file status of a run: scan() plus the declared pace band."""
     solo_iters = solo_iters or solo_check_iterations()
     scan = run_view.scan(run_dir)
@@ -127,6 +153,9 @@ def digest(run_dir, band=None, solo_iters=None):
                 os.path.join(run_dir, 'matsim.log')).items())},
         'warm_started_from': (meta or {}).get('warm_started_from'),
         'rc': scan.get('rc'),
+        # the host's CPU %, free RAM and top other process at this write, so
+        # a slow iteration can be attributed (fifteenth report)
+        'host': host if host is not None else host_reading(run_dir)[0],
     }
 
 
@@ -152,7 +181,11 @@ def write_once(run_dir, band=None, solo_iters=None):
     """One digest write. Validated against its declared contract; a document
     that fails the contract is a defect and IS raised here (the CLI path).
     The harness loop below never lets that reach the run."""
-    doc = digest(run_dir, band=band, solo_iters=solo_iters)
+    # one write has no previous sample to take a CPU rate against, so it
+    # takes its own across the digest's own reading of the run
+    _, first = host_reading(run_dir)
+    doc = digest(run_dir, band=band, solo_iters=solo_iters, host={})
+    doc['host'], _ = host_reading(run_dir, first)
     problems = outputs.validate_doc('progress', doc)
     if problems:
         raise outputs.OutputError('digest does not meet its contract:\n  %s'
@@ -223,9 +256,13 @@ def serve(run_dir, interval_s, band=None, solo_iters=None, background=True):
     def loop():
         last_healthy_wall = time.time()
         was_stalled = False
+        # the host's CPU is read as a rate across the digest's own interval
+        _, host_prev = host_reading(run_dir)
         while True:
             try:
-                doc = digest(run_dir, band=band, solo_iters=solo_iters)
+                host, host_prev = host_reading(run_dir, host_prev)
+                doc = digest(run_dir, band=band, solo_iters=solo_iters,
+                             host=host)
                 if failures['n']:
                     doc['write_failures'] = dict(failures)
                 # issue #66: on the transition INTO a stall, capture the

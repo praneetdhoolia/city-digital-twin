@@ -19,10 +19,10 @@
   "K": "Computation"
  },
  "counts": {
-  "factors": 103,
+  "factors": 106,
   "needs_research": 0,
-  "researched": 103,
-  "literature_half_written": 103
+  "researched": 106,
+  "literature_half_written": 106
  },
  "factors": [
   {
@@ -542,9 +542,9 @@
    "evidence_strength": "strong",
    "relevance": "medium",
    "needs_research": false,
-   "last_verified": "2026-09-07",
+   "last_verified": "2026-09-29",
    "query": "E Reliability and headway: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true,
+   "reused": false,
    "id": "E12",
    "addenda": [
     {
@@ -552,8 +552,20 @@
      "pass": "tenth",
      "head": "b8f89ff",
      "text": "the road-side reliability ratio is now its own row F6; Carrion & Levinson's Minneapolis panel puts it at 0.39-1.60 depending on whether times are GPS-measured or self-reported."
+    },
+    {
+     "date": "2026-09-29",
+     "pass": "fifteenth",
+     "head": "6bc18487",
+     "text": "The headway term for INFREQUENT rail is not the half-headway wait. PDFH (as summarised by Wheat and Wardman 2017, TR-A 95) converts the service interval into equivalent journey time with a frequency penalty that equals 1.0 x headway at high frequency (random arrival, wait = half headway valued at 2 x IVT) and falls for planned arrivals: displacement valued at 0.2-0.4 plus a 15-minute planning penalty, so 0.70-0.90 x headway at 30 minutes and 0.45-0.65 x headway at 60 minutes. Re-estimated on GB ticket sales the PDFH headway weight held (1.001, t = 10.7); long-run headway elasticities -0.21 (inter-urban, this paper) and -0.50 urban / -0.27 inter-urban (Wardman 2012 meta-analysis). The transition from random to timed arrival lies near a 10-12 minute headway (Manchester 10, Leeds 12).",
+     "source_url": "https://eprints.whiterose.ac.uk/id/eprint/107059/8/TRA_2016_351_Revision%201_V0.pdf",
+     "additional_sources": [
+      "https://www.sciencedirect.com/science/article/abs/pii/S0967070X25000216"
+     ],
+     "magnitude": "literature: frequency penalty 1.0 x headway (<=10 min), 0.70-0.90 x (30 min), 0.45-0.65 x (60 min) in IVT minutes; LR headway elasticity -0.50 urban, -0.21 to -0.27 inter-urban"
     }
-   ]
+   ],
+   "verified_in": "fifteenth pass (6bc18487)"
   },
   {
    "layer": "E",
@@ -662,17 +674,36 @@
    "evidence_strength": "strong",
    "relevance": "medium",
    "needs_research": false,
-   "last_verified": "2026-09-07",
+   "last_verified": "2026-09-29",
    "query": "E Motorbike: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true,
+   "reused": false,
    "id": "E18",
    "addenda": [
     {
      "date": "2026-09-11",
      "text": "Australian evidence read this pass: powered-two-wheeler commuters are concentrated in city-centre commutes and skew to high-income males in professional occupations; free parking is the most important stated factor for commuting by PTW into the city (Rose and Delbosc ATRF 2013; Journal of Transport Geography 2016). Income's sign on ownership is mixed across the literature.",
      "source_url": "https://australasiantransportresearchforum.org.au/wp-content/uploads/2022/03/2013_rose_delbosc.pdf"
+    },
+    {
+     "date": "2026-09-29",
+     "pass": "fifteenth",
+     "head": "6bc18487",
+     "text": "Ownership is not use. ABS Survey of Motor Vehicle Use, 12 months ended 30 June 2020: a motorcycle travelled on average 1.9 thousand km against 11.1 thousand km for a passenger vehicle (about 17 % of a car's annual use), 1,683 million km in all. A 2024 survey of 1,003 Australian motorcycle owners (Budget Direct, commercial, published June 2025) found 65 % always and 26 % sometimes ride socially and only 9 % use the motorcycle solely for transport. Both say a household motorcycle is mostly a recreational second vehicle: possession gives a person the OPTION on a given weekday far less often than it gives a car.",
+     "source_url": "https://www.abs.gov.au/statistics/industry/tourism-and-transport/survey-motor-vehicle-use-australia/latest-release",
+     "additional_sources": [
+      "https://www.budgetdirect.com.au/motorcycle-insurance/guides/motorcycle-owners-survey-statistics.html"
+     ],
+     "magnitude": "literature/measured (ABS): motorcycle 1.9k km/yr vs passenger vehicle 11.1k km/yr (ratio ~0.17); survey (commercial, weak): 9 % transport-only riders"
+    },
+    {
+     "date": "2026-09-29",
+     "pass": "fifteenth",
+     "head": "6bc18487",
+     "text": "No published Western (Australian, European or North American) urban mode-choice estimate of a motorcycle alternative-specific constant was found in four searches this pass; the estimates in print are Asian and motorcycle-dependent (Indonesia: the motorcycle parameter small and insignificant at 90 %; Hanoi, Taipei, Malaysia), and are not transferable. The constant therefore remains a calibration quantity against the observed motorbike share, not a literature value.",
+     "source_url": "https://doi.org/10.3390/su11030788"
     }
-   ]
+   ],
+   "verified_in": "fifteenth pass (6bc18487)"
   },
   {
    "layer": "E",
@@ -714,9 +745,9 @@
    "evidence_strength": "strong",
    "relevance": "high",
    "needs_research": false,
-   "last_verified": "2026-09-07",
+   "last_verified": "2026-09-29",
    "query": "E Heavy rail: capacity, fare, station access: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true,
+   "reused": false,
    "id": "E21",
    "addenda": [
     {
@@ -729,8 +760,16 @@
      "pass": 12,
      "note": "2026-09-16 (twelfth pass): station access mode is its own row now (E27): walk about half of Sydney home-to-train trips, park-and-ride 11-36 % and kiss-and-ride 7-17 % at outer stations (ATRF 2017 Adelaide observations; Ku-ring-gai 35 % car-driver access).",
      "source_url": "https://australasiantransportresearchforum.org.au/wp-content/uploads/2022/03/ATRF2017_114.pdf"
+    },
+    {
+     "date": "2026-09-29",
+     "pass": "fifteenth",
+     "head": "6bc18487",
+     "text": "Frequency for infrequent heavy rail is now its own row F8: a timetable-aware router plus a departure-time mutator lets agents catch an hourly train with almost no wait and no displacement cost, while the PDFH convention charges 0.45-0.65 x the headway.",
+     "source_url": "https://www.strc.ch/2018/Metrailler_Lieberherr.pdf"
     }
-   ]
+   ],
+   "verified_in": "fifteenth pass (6bc18487)"
   },
   {
    "layer": "E",
@@ -1993,7 +2032,7 @@
    "needs_research": false,
    "last_verified": "2026-09-25",
    "query": "Walk trip-length distribution by purpose in an Australian HTS (Sydney or VISTA) - the shape behind a 0.70 km mean",
-   "reused": false,
+   "reused": true,
    "id": "E29",
    "verified_in": "14",
    "added_on": "2026-09-25"
@@ -2010,13 +2049,100 @@
    "needs_research": false,
    "last_verified": "2026-09-25",
    "query": "Published no-route or walk-fallback shares for SwissRailRaptor in a calibrated MATSim scenario (Berlin, Zurich, Kelheim)",
-   "reused": false,
+   "reused": true,
    "id": "F7",
    "verified_in": "14",
    "added_on": "2026-09-25"
+  },
+  {
+   "layer": "A",
+   "factor": "Motorcycle ownership and rider licence (possession versus daily use)",
+   "what_research_says": "Motorcycle possession and motorcycle use diverge more than for any other private vehicle. In Australia a motorcycle travels on average 1.9 thousand km a year against 11.1 thousand km for a passenger vehicle (ABS SMVU 2020), and most owners ride socially (65 % always, 26 % sometimes; 9 % transport-only, 2024 owner survey). The rider licence is a separate, much rarer licence class than the car licence. A model that makes the motorcycle available to every licensed member of a motorcycle-holding household on every day therefore supplies the option far more often than it is exercised; the gap is a daily-availability or use-frequency question, not a taste constant.",
+   "source_url": "https://www.abs.gov.au/statistics/industry/tourism-and-transport/survey-motor-vehicle-use-australia/latest-release",
+   "additional_sources": [
+    "https://www.budgetdirect.com.au/motorcycle-insurance/guides/motorcycle-owners-survey-statistics.html",
+    "https://australasiantransportresearchforum.org.au/wp-content/uploads/2022/03/2013_rose_delbosc.pdf"
+   ],
+   "magnitude": "literature/measured (ABS SMVU 2020): motorcycle annual km ~0.17 of a passenger vehicle's; survey (commercial): 9 % of owners transport-only",
+   "how_leading_simulators_do_it": "Western ABMs (ActivitySim, CT-RAMP, eqasim, MATSim open scenarios) do not model motorcycle ownership; Asian models treat the motorcycle as the household's primary vehicle, where possession and use coincide.",
+   "evidence_strength": "moderate",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-29",
+   "query": "Motorcycle use frequency per motorcycle-holding household in an Australian HTS (VISTA or NSW HTS bespoke): share of weekdays on which a motorcycle is ridden",
+   "reused": false,
+   "id": "A8",
+   "added_on": "2026-09-29",
+   "verified_in": "fifteenth pass (6bc18487)"
+  },
+  {
+   "layer": "C",
+   "factor": "Destination choice conditioned on the traveller's own mobility (car-available versus car-less)",
+   "what_research_says": "Practice makes destination choice sensitive to the person's own level of service: the mode-choice logsum is the preferred impedance where multimodal sensitivity is wanted, and an approximate logsum that ignores socio-demographics keeps exactly one of them - car availability, often by car-sufficiency segment. Including the logsum lengthens average tours where accessibility is high. A time-based decay at segment-specific speeds is a simplification of that logsum.",
+   "source_url": "https://www.fhwa.dot.gov/planning/tmip/publications/other_reports/model_destination_choice/index.cfm",
+   "additional_sources": [
+    "https://tfresource.org/topics/Destination_Choice_Mathematical_Formulation.html",
+    "https://tfresource.org/topics/Accessibility.html"
+   ],
+   "magnitude": "literature: structural (logsum impedance; car-sufficiency segmentation), no transferable coefficient",
+   "how_leading_simulators_do_it": "ActivitySim and CT-RAMP use a mode-choice logsum in location choice, segmented by auto sufficiency; MATSim scenarios inherit destinations from the demand builder.",
+   "evidence_strength": "strong",
+   "relevance": "medium",
+   "needs_research": false,
+   "last_verified": "2026-09-29",
+   "query": "Observed trip-length difference between car-available and car-less persons in the NSW HTS",
+   "reused": false,
+   "id": "C5",
+   "added_on": "2026-09-29",
+   "verified_in": "fifteenth pass (6bc18487)"
+  },
+  {
+   "layer": "F",
+   "factor": "Frequency penalty for infrequent services: timetable-aware routing and departure-time adaptation",
+   "what_research_says": "Passengers stop arriving at random once headways pass about 10-12 minutes and time their arrival to the timetable; what an infrequent service then costs is displacement from the preferred departure time, not wait. The rail industry prices it as a frequency penalty of 0.70-0.90 x headway at 30 minutes and 0.45-0.65 x headway at 60 minutes (PDFH; displacement valued 0.2-0.4 plus a 15-minute planning penalty), which a GB ticket-sales re-estimation left unchanged. In MATSim the router answers a fixed departure time; SBB note that for an hourly service the agent would wait up to 50 minutes and that the adaptation is left to the random time-allocation mutator, with a range-query router available only outside replanning. Once the mutator has aligned the agent with the train, the agent pays neither wait nor displacement: an infrequent line is priced as if it were frequent.",
+   "source_url": "https://www.strc.ch/2018/Metrailler_Lieberherr.pdf",
+   "additional_sources": [
+    "https://eprints.whiterose.ac.uk/id/eprint/107059/8/TRA_2016_351_Revision%201_V0.pdf",
+    "https://www.sciencedirect.com/science/article/abs/pii/S0967070X25000216",
+    "https://journals.sagepub.com/doi/10.1177/03611981211033858"
+   ],
+   "magnitude": "literature: frequency penalty 0.45-0.65 x headway at 60 min, 0.70-0.90 x at 30 min (IVT minutes); random-to-timed arrival threshold ~10-12 min headway",
+   "how_leading_simulators_do_it": "Visum and Emme schedule-based assignment carry an adaptation-time (early/late departure) term (Friedrich et al. 2021); PDFH-based rail models carry the frequency penalty in generalised journey time; MATSim/SwissRailRaptor carry actual wait only, and a headway term only where a project adds one.",
+   "evidence_strength": "strong",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-29",
+   "query": "Adaptation-time weight relative to in-vehicle time in schedule-based assignment (Friedrich, Schmaus, Sauer, Zuendorf 2021 TRR; publisher 403 this pass)",
+   "reused": false,
+   "id": "F8",
+   "added_on": "2026-09-29",
+   "verified_in": "fifteenth pass (6bc18487)"
   }
  ],
  "last_pass": {
+  "date": "2026-09-29",
+  "head": "6bc18487",
+  "rounds": 2,
+  "searches_spent": 19,
+  "budget": 40,
+  "literature_halves_newly_filled": 3,
+  "literature_halves_completed": 0,
+  "factors_added": 3,
+  "added": [
+   "A8",
+   "C5",
+   "F8"
+  ],
+  "addenda_written": 4,
+  "gaps_dead_route": [
+   "journals.sagepub.com 10.1177/03611981211033858 (403)",
+   "www.itf-oecd.org dp201316.pdf (403)",
+   "www.tac.vic.gov.au TAC Motorcycle Monitor 2021 (403)"
+  ],
+  "note": "Fifteenth pass of the library, at 6bc18487. needs_research was 0 and all 103 stored literature halves were inside the 365-day horizon (oldest 2026-09-07), so all were reused; the budget went to the two live questions the brief named. Added A8 (motorcycle possession versus use), C5 (destinations by own mobility) and F8 (the frequency penalty for infrequent services); addenda on E18 (x2), E12 and E21. 19 of 40 calls spent; four residuals written back as gaps.",
+  "statuses_note": "0 statuses stored, by design; this pass re-read every row at 6bc18487 (writer copy only)."
+ },
+ "previous_pass": {
   "date": "2026-09-25",
   "head": "35b64421",
   "rounds": 1,
@@ -2036,40 +2162,6 @@
   ],
   "note": "Fourteenth pass of the library, at 35b64421. needs_research was 0 and all 101 stored literature halves were inside the 365-day horizon (verified 2026-09-07 to 2026-09-16), so all 101 were REUSED UNCHANGED. Two rows added for the mechanisms behind the current walk deviation that the library had no row for: E29 (the walk trip-length distribution, Yang & Diez-Roux 2012 read on the Memphis repository) and F7 (the pt routing walk fallback and its labelling, the MATSim routing-mode note). 8 of 15 calls spent.",
   "statuses_note": "0 statuses stored, by design; this pass re-read every row at 35b64421 (writer copy only)."
- },
- "previous_pass": {
-  "date": "2026-09-14",
-  "head": "b8f89ff",
-  "rounds": 9,
-  "searches_spent": 35,
-  "budget": 40,
-  "literature_halves_newly_filled": 2,
-  "literature_halves_completed": 0,
-  "factors_added": 2,
-  "addenda_written": 11,
-  "gaps_closed": [
-   "I7 (Berlin v6.3 full text)",
-   "H12 layer gap",
-   "F6 layer gap"
-  ],
-  "gaps_narrowed": [
-   "H6",
-   "I8",
-   "G5",
-   "A2"
-  ],
-  "gaps_dead_route": [
-   "BO4Mob (OD estimation)",
-   "H9 (nothing new)",
-   "I13 (nothing aggregate-only)",
-   "files01.core.ac.uk 403",
-   "conservancy.umn.edu 403",
-   "pubsonline.informs.org 403",
-   "traffic2.fpz.hr hang-up",
-   "ui.adsabs.harvard.edu 405"
-  ],
-  "note": "Tenth pass of the library, at b8f89ff, the same day as the ninth (780c4c2). needs_research was 0 and all 94 stored literature halves were inside the 365-day horizon, so ALL 94 WERE REUSED UNCHANGED AND NOT ONE WAS RE-SEARCHED. TWO ROWS ADDED for cells the layer table names and the library lacked: H12 (habit, inertia and satisficing - three meta-analyses via the Javaid et al. 2020 review of reviews, Cherchi & Manca 2011, Cantillo et al. 2007, Zhu & Levinson 2016, Di & Liu 2016) and F6 (travel-time reliability and the indifference band in ROUTE choice - Carrion & Levinson 2012 and their 2019 Findings panel). The gaps came first: I7 CLOSED by reading the Berlin v6.3 EWGT paper in full (undamped log-ratio ASC update over whole runs, MAE < 0.5 pp; a 6.4 MB PDF the fetch tool returned as binary, read locally with pypdf at no budget cost); H6, I8, G5 and A2 NARROWED; BO4Mob ruled out for I7 (OD estimation). Ten dated addenda. Five of the 40 calls unspent.",
-  "statuses_note": "0 statuses stored, by design. All 94 carried rows plus the two new ones were re-read at b8f89ff by a dump of the registry (558 fields), `python src/registry/check_hardcoding.py` (TOTAL 0; 4 declared-ahead; 3 shipped at the off value), the CitysimControler.java binding lines, targeted greps of src/build, cities/newcastle/build and both Java trees, and `git diff 780c4c2..b8f89ff` (12 commits: the documents moved to docs/, five typed defaults declared as fields, the ride engine's worker-thread plan writes removed, dict-valued registry leaves range-checked, the reader resolving through the run's own schedule, the horizon declared 250, the run viewer rebuilt). NO CLASS CHANGED on any carried row: IN 46, PARTIAL 34, INERT 3, ASC 1, OUT 10 over the 94, identical to the ninth pass; 14 proofs moved to the commit that moved them (B1, C2, G1, F2, E4 - ba64aa0; E16, F4 - 10bda11; I5 - c10d43a; K3, K2, I3, H9, J3, I1 - 95604ee and the ninth report's findings; J1 - #196, the phantom consumer of B.population.household_size_top_band_mean at build_population.py:358). The two new rows are PARTIAL (habit as selection machinery with no term and no validated switching rate; mean-time route choice with declared randomness and no reliability term), so the 96-row table reads IN 46 / PARTIAL 36 / INERT 3 / ASC 1 / OUT 10. Every would_move now reads against arm 0 of F35 at it.300 (car +9.6, ride -41.6, walk -12.2, taxi +131.4, bike +201.6, motorbike -5.6, bus -15.8, heavy rail +54.6, light rail -73.9, ferry -63.3)."
  },
  "per_mode_data": {
   "written": "2026-09-11",
@@ -2358,6 +2450,22 @@
   {
    "lane": "J8 mobile-phone OD (new row, residual)",
    "query": "Whether an LBS/mobile OD product covering the five LGAs is obtainable and at what aggregation (TfNSW has used DataSpark/Telstra-derived OD for Greater Sydney); the 2021 ABS journey-to-work OD via TableBuilder is the disclosed fallback the package does not yet hold (2011 vintage in use)."
+  },
+  {
+   "lane": "E18 motorcycle constant (added 2026-09-29 fifteenth)",
+   "query": "A Western urban mode-choice estimate of a motorcycle ASC relative to car driver (Australian STM / VITM, UK NTM, a European city model). Four searches this pass found only Asian estimates."
+  },
+  {
+   "lane": "F8 adaptation time (added 2026-09-29 fifteenth)",
+   "query": "Friedrich et al. 2021 TRR 03611981211033858 (Sage 403): the adaptation-time weight. Next route: an author copy on the University of Stuttgart ISV site or Transportation Research Record open preprint."
+  },
+  {
+   "lane": "E12 headway valuation by headway band (added 2026-09-29 fifteenth)",
+   "query": "ITF discussion paper 2013-16 (Wardman, Measuring and Valuing Convenience and Service Quality) returned 403; its headway-valuation table would give an urban, non-rail frequency penalty curve."
+  },
+  {
+   "lane": "E17 taxi constant (added 2026-09-29 fifteenth)",
+   "query": "A revealed-preference taxi / ride-hail ASC relative to car driver in an Australian or comparable city model; one search this pass returned SP and air-taxi studies only."
   }
  ],
  "review_attempt": {

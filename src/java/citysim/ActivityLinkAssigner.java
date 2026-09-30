@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +34,11 @@ import org.matsim.core.population.PopulationUtils;
  * links. A common link would otherwise move activities towards the overlap
  * of geographically restricted mode networks (DECISIONS.md 9.184).
  *
- * <p>{@code common_modes} retains the original rule below (9.58).
+ * <p>{@code common_modes} retains the original rule below (9.58). Under
+ * {@code activityLinks.capacityRule = capacity_bounded} (D28, F39;
+ * RUN.routing.activity_link_capacity) the nearest rule's answer is then
+ * bounded by each link's own capacity over the modelled day
+ * ({@link ActivityLinkCapacity}); under {@code nearest} it is final (F38).
  *
  * <p>MATSim assigns an activity's link by nearest distance over the whole
  * network, and the router silently starts a leg's route at the nearest link of
@@ -84,103 +89,151 @@ final class ActivityLinkAssigner {
                     + "each mode connects through its configured access/egress router");
             return;
         }
-        final Set<String> networkModes =
-                new HashSet<>(config.routing().getNetworkModes());
-        final Set<String> choiceModes = new HashSet<>(
-                Arrays.asList(config.subtourModeChoice().getModes()));
-        choiceModes.retainAll(networkModes);
-        final Set<String> innovating = new HashSet<>();
-        for (final StrategySettings s
-                : config.replanning().getStrategySettings()) {
-            if ("SubtourModeChoice".equals(s.getStrategyName())) {
-                innovating.add(s.getSubpopulation());
-            }
-        }
-        final Set<String> transitModes =
-                new HashSet<>(config.transit().getTransitModes());
-
+        final Modes modes = new Modes(config);
         final Map<Set<String>, Network> subnetOf = new HashMap<>();
-        long kept = 0;
-        long reassigned = 0;
-        long assigned = 0;
-        long coordless = 0;
+        final Tally tally = new Tally();
+        // D28 (F39): the persons and their needed modes, kept only when the
+        // capacity bound will read them; under `nearest` nothing is kept and
+        // the pass below is F38's exactly
+        final boolean bounded = assignment.isCapacityBounded();
+        final Map<Person, Set<String>> neededOf = new LinkedHashMap<>();
         for (final Person person
                 : scenario.getPopulation().getPersons().values()) {
-            final Set<String> needed = new TreeSet<>();
-            for (final Plan plan : person.getPlans()) {
-                for (final PlanElement e : plan.getPlanElements()) {
-                    if (e instanceof Leg) {
-                        final String mode = ((Leg) e).getMode();
-                        if (networkModes.contains(mode)) {
-                            needed.add(mode);
-                        } else if (transitModes.contains(mode)
-                                && networkModes.contains(
-                                        org.matsim.api.core.v01
-                                                .TransportMode.walk)) {
-                            // A transit trip the raptor cannot serve falls
-                            // back to a NETWORK walk leg from this activity
-                            // (measured: three external pt commuters at
-                            // motorway gate links wedged exactly here), so a
-                            // person with transit legs can always be handed
-                            // walk.
-                            needed.add(org.matsim.api.core.v01
-                                    .TransportMode.walk);
-                        }
-                    }
-                }
-            }
-            if (innovating.contains(PopulationUtils.getSubpopulation(person))) {
-                needed.addAll(choiceModes);
-            }
+            final Set<String> needed = neededModes(modes, person);
             if (needed.isEmpty()) {
                 continue;
             }
             final Network subnet = subnetOf.computeIfAbsent(
                     new HashSet<>(needed),
-                    modes -> subnetwork(scenario.getNetwork(), modes));
-            for (final Plan plan : person.getPlans()) {
-                for (final PlanElement e : plan.getPlanElements()) {
-                    if (!(e instanceof Activity)) {
-                        continue;
-                    }
-                    final Activity act = (Activity) e;
-                    if (act.getLinkId() != null) {
-                        final Link current = scenario.getNetwork().getLinks()
-                                .get(act.getLinkId());
-                        if (current != null
-                                && current.getAllowedModes().containsAll(needed)) {
-                            kept++;
-                            continue;
-                        }
-                    }
-                    final Coord coord = act.getCoord();
-                    if (coord == null) {
-                        coordless++;
-                        continue;
-                    }
-                    final Link nearest = NetworkUtils.getNearestLink(subnet, coord);
-                    if (nearest == null) {
-                        throw new IllegalStateException(
-                                "no link carries all of " + needed
-                                + " - the network cannot host person "
-                                + person.getId());
-                    }
-                    if (nearest.getId().equals(act.getLinkId())) {
-                        kept++;
-                    } else if (act.getLinkId() == null) {
-                        assigned++;
-                        act.setLinkId(nearest.getId());
-                    } else {
-                        reassigned++;
-                        act.setLinkId(nearest.getId());
-                    }
-                }
+                    m -> subnetwork(scenario.getNetwork(), m));
+            linkActivities(scenario, person, needed, subnet, tally);
+            if (bounded) {
+                neededOf.put(person, new HashSet<>(needed));
             }
         }
         LOG.info("activityLinkAssigner: {} kept, {} newly assigned, {} moved "
                  + "off a link missing a usable mode, {} without coordinates "
                  + "left untouched (DECISIONS.md 9.58)",
-                 kept, assigned, reassigned, coordless);
+                 tally.kept, tally.assigned, tally.reassigned, tally.coordless);
+        if (bounded) {
+            ActivityLinkCapacity.apply(scenario, neededOf, subnetOf,
+                    modes.innovating, assignment.serviceHours);
+        }
+    }
+
+    /** The mode sets the rule reads from the run's own config, once. run()
+     *  held these and the tallies as locals in one 114-line method until 27
+     *  September 2026 (fourteenth report, recommendation 9). */
+    private static final class Modes {
+        final Set<String> networkModes;
+        final Set<String> choiceModes;
+        final Set<String> innovating = new HashSet<>();
+        final Set<String> transitModes;
+
+        Modes(final Config config) {
+            this.networkModes =
+                    new HashSet<>(config.routing().getNetworkModes());
+            this.choiceModes = new HashSet<>(
+                    Arrays.asList(config.subtourModeChoice().getModes()));
+            this.choiceModes.retainAll(this.networkModes);
+            for (final StrategySettings s
+                    : config.replanning().getStrategySettings()) {
+                if ("SubtourModeChoice".equals(s.getStrategyName())) {
+                    this.innovating.add(s.getSubpopulation());
+                }
+            }
+            this.transitModes =
+                    new HashSet<>(config.transit().getTransitModes());
+        }
+    }
+
+    /** What the pass did to the activities it saw. */
+    private static final class Tally {
+        long kept = 0;
+        long reassigned = 0;
+        long assigned = 0;
+        long coordless = 0;
+    }
+
+    /** Every network mode this person can put on a leg adjacent to one of
+     *  their activities: their own leg modes, plus mode innovation's. */
+    private static Set<String> neededModes(final Modes modes,
+                                           final Person person) {
+        final Set<String> needed = new TreeSet<>();
+        for (final Plan plan : person.getPlans()) {
+            for (final PlanElement e : plan.getPlanElements()) {
+                if (!(e instanceof Leg)) {
+                    continue;
+                }
+                final String mode = ((Leg) e).getMode();
+                if (modes.networkModes.contains(mode)) {
+                    needed.add(mode);
+                } else if (modes.transitModes.contains(mode)
+                        && modes.networkModes.contains(
+                                org.matsim.api.core.v01
+                                        .TransportMode.walk)) {
+                    // A transit trip the raptor cannot serve falls
+                    // back to a NETWORK walk leg from this activity
+                    // (measured: three external pt commuters at
+                    // motorway gate links wedged exactly here), so a
+                    // person with transit legs can always be handed
+                    // walk.
+                    needed.add(org.matsim.api.core.v01
+                            .TransportMode.walk);
+                }
+            }
+        }
+        if (modes.innovating.contains(PopulationUtils.getSubpopulation(person))) {
+            needed.addAll(modes.choiceModes);
+        }
+        return needed;
+    }
+
+    /** Keep each activity's link if it carries every needed mode, else move
+     *  it to the nearest link of the subnetwork that does. */
+    private static void linkActivities(final Scenario scenario,
+                                       final Person person,
+                                       final Set<String> needed,
+                                       final Network subnet,
+                                       final Tally tally) {
+        for (final Plan plan : person.getPlans()) {
+            for (final PlanElement e : plan.getPlanElements()) {
+                if (!(e instanceof Activity)) {
+                    continue;
+                }
+                final Activity act = (Activity) e;
+                if (act.getLinkId() != null) {
+                    final Link current = scenario.getNetwork().getLinks()
+                            .get(act.getLinkId());
+                    if (current != null
+                            && current.getAllowedModes().containsAll(needed)) {
+                        tally.kept++;
+                        continue;
+                    }
+                }
+                final Coord coord = act.getCoord();
+                if (coord == null) {
+                    tally.coordless++;
+                    continue;
+                }
+                final Link nearest = NetworkUtils.getNearestLink(subnet, coord);
+                if (nearest == null) {
+                    throw new IllegalStateException(
+                            "no link carries all of " + needed
+                            + " - the network cannot host person "
+                            + person.getId());
+                }
+                if (nearest.getId().equals(act.getLinkId())) {
+                    tally.kept++;
+                } else if (act.getLinkId() == null) {
+                    tally.assigned++;
+                    act.setLinkId(nearest.getId());
+                } else {
+                    tally.reassigned++;
+                    act.setLinkId(nearest.getId());
+                }
+            }
+        }
     }
 
     /** Links carrying ALL of {@code modes}, with their nodes, in file order. */

@@ -86,6 +86,33 @@ SHARE_DENOMINATOR = 'resident person trips'
 LOCKED_MODES = ('motorbike', 'truck')
 
 
+def _run_value(run_dir, key):
+    """One resolved registry value from the run's own `_config.json`."""
+    import json as _json
+    try:
+        with open(_os.path.join(run_dir, '_config.json'), encoding='utf-8') as fh:
+            return _json.load(fh).get('values', {}).get(key)
+    except (OSError, ValueError):
+        return None
+
+
+def locked_modes(run_dir):
+    """The carves THIS run ran: motorbike is chosen, not locked, under
+    `B.motorbike.representation` = `choice` (9.214), so it is bounded like
+    any member of the choice set there (9.217)."""
+    if _run_value(run_dir, 'B.motorbike.representation') == 'choice':
+        return tuple(m for m in LOCKED_MODES if m != 'motorbike')
+    return LOCKED_MODES
+
+
+def warm_start_iteration(run_dir):
+    """The first iteration of a warm-started run, else None. MATSim's
+    coverage table counts from the run's OWN first iteration, so on a run
+    resumed at N it describes N..last only and bounds nothing (9.217)."""
+    first = _run_value(run_dir, 'RUN.controler.first_iteration')
+    return first if first else None
+
+
 def coverage_path(run_dir, depth):
     return _os.path.join(run_dir, 'output', 'modeChoiceCoverage%s.txt' % depth)
 
@@ -164,6 +191,11 @@ def report(run_dir, iteration=None, depth=BOUNDING_DEPTH, against_targets=False)
     row = cov[iteration]
     shares, share_it = read_shares(run_dir, iteration)
     targets = load_targets() if against_targets else {}
+    locked_set = locked_modes(run_dir)
+    warm = warm_start_iteration(run_dir)
+    if warm:
+        # counted from the run's own first iteration: no bound (9.217)
+        targets = {}
 
     print('choice-set coverage at iteration %d, memory depth %s (%s)'
           % (iteration, depth, DEPTHS[depth]))
@@ -185,7 +217,7 @@ def report(run_dir, iteration=None, depth=BOUNDING_DEPTH, against_targets=False)
     result = {}
     for mode in sorted(row):
         c = row[mode] * 100.0
-        locked = mode in LOCKED_MODES
+        locked = mode in locked_set
         line = '%-12s %9.2f%%' % (mode, c)
         entry = {'coverage_pct': round(c, 4), 'locked_carve': locked}
         if shares:
@@ -220,7 +252,12 @@ def report(run_dir, iteration=None, depth=BOUNDING_DEPTH, against_targets=False)
           % ', '.join(PT_SUBMODES))
     print('%s are person-level LOCKED carves, not members of the choice set: '
           'the agent holds no alternative, so this table reports their share '
-          'and prints no bound for them.' % ' and '.join(LOCKED_MODES))
+          'and prints no bound for them.' % ' and '.join(locked_set))
+    if warm:
+        print('WARM-STARTED at iteration %d: MATSim counts coverage from the '
+              "run's own first iteration, so this table describes %d..%d only "
+              'and bounds no target - read the coverage of the run it resumed '
+              '(warm_started_from).' % (warm, warm, iteration))
     print('')
     print('A scoring constant reallocates between plans an agent already '
           'holds. `headroom` is therefore the MOST any constant for that mode '

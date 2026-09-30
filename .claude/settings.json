@@ -54,6 +54,11 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/block-stdin-trap.sh\"",
+            "statusMessage": "Refusing a heredoc or a bare 'python -'"
+          },
+          {
+            "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/block-session-ref-in-gh-pr.sh\"",
             "statusMessage": "Checking gh pr command for forbidden session reference"
           },

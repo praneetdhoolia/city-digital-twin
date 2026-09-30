@@ -181,7 +181,7 @@
       "consumers": [
         "src/build/build_matsim_run_inputs.py"
       ],
-      "description": "The booking/wait time a point-to-point trip carries before the vehicle arrives, for a taxi with NO fleet behind it. Folded into the taxi mode constant at emit time (wait_min/60 x trip-weighted VOT x marginalUtilityOfMoney) - the same derivation discipline as utilityOfLineSwitch. Under A.taxi.fleet_representation = fleet it folds nothing: citysim.TaxiFleetEngine executes each served request's own wait, which the mobsim and the score see (fourteenth report, 25 September 2026)."
+      "description": "The booking/wait time a point-to-point trip carries before the vehicle arrives, for a taxi with NO fleet behind it. Folded into the taxi mode constant at emit time (wait_min/60 x trip-weighted VOT x marginalUtilityOfMoney) - the same derivation discipline as utilityOfLineSwitch. Under A.taxi.fleet_representation = finite_fleet it folds nothing: citysim.TaxiFleetEngine executes each served request's own wait, which the mobsim and the score see (fourteenth report, 25 September 2026)."
     },
     "C.taxi.asc": {
       "value": 0.0,
@@ -320,6 +320,92 @@
       "decisions_ref": "9.164",
       "matsim_param": "serviceQuality.representation",
       "description": "The representation gate for service quality in scoring (#175). `absent` recovers the previous model exactly - citysim.ServiceQualityScoring never installs and no PersonScoreEvent of kind `serviceQuality` is emitted. The two prices it needs are DERIVED by build_matsim_run_inputs.py from the trip-weighted VOT identity every other derived scoring value uses, and the config group holds no default for either, so a gate turned on without them is refused before the JVM reaches the mobsim."
+    },
+    "C.time_weights.service_interval_function": {
+      "value": "linear",
+      "units": "categorical",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "linear",
+          "atap_m1"
+        ],
+        "basis": "How a boarding's service interval SI (the boarded line's interval at the boarding stop around the boarding time) becomes equivalent in-vehicle minutes, read only while C.time_weights.service_quality_representation is on. `linear` is C.time_weights.beta_headway x SI with the service day as the cap, the form built in 9.164: at 0.5 it charges 5 minutes at a 10-minute service, 30 at hourly and 900 at once a day. `atap_m1` is the Australian appraisal function (ATAP M1 Public Transport Supporting Technical Report (Infrastructure and Transport Ministers, Australian Transport Assessment and Planning Guidelines), section 4.3, equation 4.3.2): weighted expected wait plus timetable displacement, 1.4 x min(0.5 x SI, 1.88 x sqrt(SI), 20) + 0.1 x SI - 8, 26 and 208 minutes at the same intervals. The F39 probe (9.219) found 706-890 boardings an iteration at once-a-day line-stops (school and peak-only services), each charged 900 minutes by the linear form. WHAT THE SWEEP ANSWERS: whether the frequency penalty the pair tests is read on its published Australian shape or on a linear convention the evidence says overstates long intervals fourfold."
+      },
+      "sweep_role": "answer",
+      "status": "active",
+      "decisions_ref": "9.219",
+      "matsim_param": "serviceQuality.intervalFunction",
+      "description": "The service-interval function of citysim.ServiceQualityScoring. `linear` recovers the 9.164 charge exactly. `atap_m1` prices each boarding at the trip-weighted VOT per in-vehicle minute (serviceQuality.ivtUtilsPerMin, derived) times ATAP M1's valuation, with the four coefficients declared below; the config group refuses the function without them."
+    },
+    "C.time_weights.atap_si_wait_weight": {
+      "value": 1.4,
+      "units": "ratio_to_ivt",
+      "source": "literature",
+      "sweep": [
+        1.4,
+        2.0
+      ],
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.219",
+      "matsim_param": "serviceQuality.atapWaitWeight",
+      "sweep_basis": "ATAP M1 Technical Report Table 4: wait time 1.40 for the Australian/NZ review, 1.75-2 in Wardman's (2014) OECD review; equation 4.3.2 uses 1.4. The upper end is C.time_weights.beta_wait's 2.0.",
+      "description": "The IVT multiplier on the EXPECTED wait inside ATAP M1's service-interval valuation (equation 4.3.2). Distinct from C.time_weights.beta_wait, which prices the wait an agent actually executes; a MATSim agent with timetable knowledge barely waits, so the expected wait of a real traveller is otherwise uncharged. Read only under C.time_weights.service_interval_function = atap_m1."
+    },
+    "C.time_weights.atap_si_displacement_weight": {
+      "value": 0.1,
+      "units": "ratio_to_ivt",
+      "source": "literature",
+      "sweep": [
+        0.1,
+        0.15
+      ],
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.219",
+      "matsim_param": "serviceQuality.atapDisplacementWeight",
+      "sweep_basis": "ATAP M1 Technical Report Table 26: timetable displacement per minute of service interval 0.10 recommended, 0.15 from the two Sydney studies (35, 38); Wardman's (2014) 0.4-0.6 per displacement minute divided by 4 (the report's footnote 40) is the same 0.10-0.15.",
+      "description": "The IVT multiplier on each minute of service interval as TIMETABLE DISPLACEMENT - the cost of not travelling at the desired time - in ATAP M1's equation 4.3.2. It is what keeps growing past the 20-minute wait ceiling. Read only under C.time_weights.service_interval_function = atap_m1."
+    },
+    "C.time_weights.atap_si_wait_half": {
+      "value": 0.5,
+      "units": "ratio",
+      "source": "literature",
+      "held_fixed": {
+        "rule": "The random-arrival wait as a share of the service interval in ATAP M1 equation 4.1 - half, below the 14-minute crossover with the square-root term. A definition of the turn-up-and-go wait, not a tunable.",
+        "decisions_ref": "9.219"
+      },
+      "status": "active",
+      "decisions_ref": "9.219",
+      "matsim_param": "serviceQuality.atapWaitHalf",
+      "description": "ATAP M1 equation 4.1's first wait term: wait = 0.5 x SI for frequent services."
+    },
+    "C.time_weights.atap_si_wait_sqrt_min": {
+      "value": 1.88,
+      "units": "min_per_sqrt_min",
+      "source": "literature",
+      "held_fixed": {
+        "rule": "ATAP M1 equation 4.1's square-root wait term, ESTIMATED on Melbourne, Sydney and NZ wait surveys (studies 36-38): at a 14-minute interval the average wait was exactly half, and less frequent services flattened to just under 15 minutes hourly. Held at the estimate; the sweep of the function is carried by the two weights.",
+        "decisions_ref": "9.219"
+      },
+      "status": "active",
+      "decisions_ref": "9.219",
+      "matsim_param": "serviceQuality.atapWaitSqrtMin",
+      "description": "ATAP M1 equation 4.1's second wait term: wait = 1.88 x sqrt(SI) minutes."
+    },
+    "C.time_weights.atap_si_wait_cap_min": {
+      "value": 20.0,
+      "units": "min",
+      "source": "literature",
+      "held_fixed": {
+        "rule": "ATAP M1 equation 4.1's ceiling on the predicted wait, 20 minutes (a two-hourly service): beyond it a traveller plans to the timetable and the interval is displacement only.",
+        "decisions_ref": "9.219"
+      },
+      "status": "active",
+      "decisions_ref": "9.219",
+      "matsim_param": "serviceQuality.atapWaitCapMin",
+      "description": "ATAP M1 equation 4.1's third wait term: the predicted wait never exceeds 20 minutes."
     },
     "C.time_weights.beta_ivt": {
       "value": 1.0,
@@ -495,11 +581,36 @@
     "C.asc.motorbike": {
       "value": 0.0,
       "units": "utils",
-      "source": "definition",
-      "sweep": null,
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          -2.0,
+          0.0
+        ],
+        "basis": "A SENSITIVITY BRACKET, NOT A FIT RANGE. No observation bears on a mode constant, which is by construction the net effect of what the utility omits; for motorbike that is named at 9.217 - recreational registrations, weather, safety, carrying capacity. The WIDTH is the 2.0 utils this registry already accepts for a mode constant (C.taxi.asc at 9.76, the one-util half-width of C.asc.bus, C.asc.light_rail and C.asc.ferry), which at this model's scale is 2 x 3.54 = 7.1 minutes of in-vehicle time. The bracket is placed ONE-SIDED BELOW the shipped 0.0 rather than centred on it because the only reading of the constant, F38's arm 0 (9.217), found motorbike over-chosen five-fold (+465.7 %) at 0.0 with availability taken as possession; a constant above the car driver's has no reading behind it. The top is the shipped value, so the bracket contains what every run so far has read."
+      },
+      "sweep_role": "uncertainty",
+      "status": "placeholder",
+      "decisions_ref": "8.5, 9.52, 9.214, 9.217",
+      "description": "Motorbike alternative-specific constant relative to car driver = 0. Motorbike is a CHOSEN mode under B.motorbike.representation = choice (9.214, D22): it competes in SubtourModeChoice for the persons with a rider licence and a household motorcycle (on the day, under B.motorbike.daily_use = use_ratio), so this constant reaches choices. It is NOT FITTED in F39 (D28): the census G62 share is what the reading is scored against, and fitting the constant to it would turn the share back into an input before the availability correction has been read. The shipped 0.0 reproduces every earlier emission exactly. Status is placeholder because the one reading of it (F38's arm 0, 9.217) found motorbike over-chosen at this value, and `placeholder` keeps it out of calibrate.free_parameters; the sweep is the bracket a sensitivity reading is taken across, not a licence to step it. Under `carve` (9.52) motorbike is a person-level locked carve and this constant is a level shift that changes no choice."
+    },
+    "C.scoring.motorbike_fuel_ratio": {
+      "value": 0.5350877192982456,
+      "units": "ratio",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "C.scoring.monetary_distance_rate"
+        ],
+        "identity": "ratio = motor cycles / passenger vehicles average rate of fuel consumption (l/100 km), ABS Survey of Motor Vehicle Use, Australia, 12 months ended 30 June 2020 (cat. 9208.0), data cube data/raw/abs/92080DO001_202006.xls Table 6, the city's state of registration (city.json jurisdiction.subdivision: New South Wales), column 'Total fuel' = 6.1 / 11.4, read by label and asserted by cities/newcastle/build/build_vehicle_fuel_ratio.py (data/processed/observed/vehicle_fuel_ratio.json). The motorbike's perceived running cost is then C.scoring.monetary_distance_rate['car'] x ratio = -0.00018 x 0.53509 = -0.0000963 AUD/m. The car rate covers fuel AND tyres; only the FUEL ratio is observed, so tyres are ASSUMED to scale with fuel - a motorcycle has two smaller tyres, so the tyre share is likely overstated, which the car rate's own sweep (-0.00025 to -0.00012) brackets far more widely than the tyre share can move it."
+      },
       "status": "active",
-      "decisions_ref": "8.5, 9.52",
-      "description": "Motorbike alternative-specific constant relative to car driver = 0. DECLARED rather than typed into src/build/build_matsim_run_inputs.py, where it was a literal 0.0 beside the mode table; the shipped value reproduces that emission exactly, so creating the field is behaviour-neutral. It is a DEFINITION and carries no sweep for the same reason C.asc.car_driver does not: motorbike is a person-level LOCKED carve from car-driver demand (9.52), the rider's day is locked to the mode and motorbike is not a member of RUN.mode_choice.modes, so this constant is a level shift on every plan that person can hold and cannot change any choice they make. A sweep over it would have a sensitivity band of exactly zero BY CONSTRUCTION - the defect class 9.22 retired the walk-decay axis for, where an interval reaching nothing gets reported as insensitivity. It becomes a free parameter, with a sweep and a basis, on the day motorbike joins RUN.mode_choice.modes and the lock is lifted."
+      "decisions_ref": "9.214",
+      "description": "The motorbike-to-car ratio of observed fuel consumption, scaling the car's perceived running cost onto the motorbike. Applied ONLY under B.motorbike.representation = choice, where src/build/build_matsim_run_inputs.py writes scoring.modeParams[motorbike].monetaryDistanceRate = C.scoring.monetary_distance_rate['car'] x this ratio as a derived runtime value; under `carve` the declared table's motorbike entry (0.0) stands and the config is unchanged - a locked carve rider's running cost changes no choice. The survey's rate is for the whole registered fleet of the state, not an urban cycle.",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py",
+        "cities/newcastle/build/build_vehicle_fuel_ratio.py"
+      ]
     },
     "C.asc.ferry": {
       "value": -1.05,

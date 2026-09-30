@@ -392,242 +392,294 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
             return new PlanAlgorithm() {
                 @Override
                 public void run(final Plan plan) {
-                    // the pre-innovation main mode of each trip, by its
-                    // routing mode - present on every routed leg, and the
-                    // identity ReRoute itself routes by
-                    final List<Trip> before = TripStructureUtils.getTrips(plan);
-                    final List<String> oldModes = new ArrayList<>(before.size());
-                    for (final Trip t : before) {
-                        final List<Leg> legs = t.getLegsOnly();
-                        String m = legs.isEmpty() ? null
-                                : TripStructureUtils.getRoutingMode(legs.get(0));
-                        if (m == null && !legs.isEmpty()) {
-                            m = legs.get(0).getMode();
-                        }
-                        oldModes.add(m);
-                    }
-                    // Does the mix ALREADY exist before MATSim's strategy
-                    // touches the plan? That is the whole question: if it does,
-                    // something upstream wrote it; if it does not, the strategy
-                    // itself creates it - and probaForRandomSingleTripMode
-                    // changes ONE trip's mode irrespective of its subtour.
-                    // Diagnostic only; nothing is altered either way.
-                    // A plan that ARRIVES mixed cannot be mode-changed at all:
-                    // ChooseRandomLegModeForSubtour throws the moment it
-                    // selects the offending subtour, and no draw makes that
-                    // plan valid. Running the strategy on it is a guaranteed
-                    // crash, so mode choice stands aside and ReRoute - the
-                    // other module of this strategy - still runs.
-                    //
-                    // Measured (9.119): the committed WEEKDAY demand holds 99
-                    // such subtours in 1,138,887, every one SPANNING several
-                    // excursions and every one closed=false - a day that never
-                    // comes home, so the car it started in is abandoned. NONE
-                    // is a single-excursion mix. That is a DEMAND defect and
-                    // this is not its repair; it is the refusal to crash on it
-                    // while it stands. The count is logged so it cannot be
-                    // forgotten, and the repair is tracked on its own issue.
-                    final boolean mixedBefore = isAnySubtourMixed(plan);
-                    if (mixedBefore) {
-                        // The count, not only the first five. Issue #96's own
-                        // close condition is "the stand-aside path logs nothing
-                        // on a full arm", and a diagnostic capped at five
-                        // cannot decide it: the 300-iteration arm of 9 Sep 2026
-                        // printed exactly five lines and the true total was
-                        // never readable from the log. Same cadence as the
-                        // refusal counters below - the first few in full, then
-                        // every thousandth as a running total.
-                        final int n = PREMIX_DUMPS.incrementAndGet();
-                        if (n <= 5 || n % 1000 == 0) {
-                            org.apache.logging.log4j.LogManager
-                                    .getLogger(GatedSubtourModeChoice.class)
-                                    .warn("mode choice STOOD ASIDE #{} for a "
-                                            + "plan that arrived with a mixed "
-                                            + "subtour (a demand defect, not "
-                                            + "one this strategy made) - {}",
-                                          n, describe(plan));
-                        }
-                        return;
-                    }
-                    try {
-                        inner.run(plan);
-                    } catch (final IllegalStateException ex) {
-                        // DIAGNOSTIC, not a workaround: the exception is
-                        // re-thrown unchanged. "Subtour contains a mix of
-                        // chain- and non-chainbased modes" has killed five arms
-                        // and every attempt to attribute it from the code alone
-                        // has been refuted (9.118). It names no person, so this
-                        // prints the plan MATSim actually refused - the agent,
-                        // every subtour, and the modes in it - and lets the run
-                        // die exactly as it would have.
-                        dumpRefusedPlan(plan, ex);
-                        throw ex;
-                    }
-                    final List<Trip> after = TripStructureUtils.getTrips(plan);
-                    if (after.size() != before.size()) {
-                        return;   // structure changed: not the single-trip path
-                    }
-                    // A reach refusal rejects the ENTIRE proposal. Putting
-                    // one trip of a subtour back would leave that subtour
-                    // mixing chain- and non-chain-based modes, which MATSim
-                    // refuses with an IllegalStateException - measured, and it
-                    // kills the run at the first iteration. The pre-innovation
-                    // plan is consistent by construction, so restoring all of
-                    // it is the only safe refusal.
-                    boolean infeasible = false;
-                    for (final Trip t : after) {
-                        final List<Leg> legs = t.getLegsOnly();
-                        if (!legs.isEmpty()
-                                && beyondReach(legs.get(0).getMode(), t)) {
-                            infeasible = true;
-                            break;
-                        }
-                    }
-                    // AND the proposal must not leave a subtour mixing chain-
-                    // with non-chain-based modes. MATSim cannot represent that
-                    // state - `ChooseRandomLegModeForSubtour.applyChange`
-                    // refuses it - yet MATSim's own single-trip mode change
-                    // CREATES it, measured here: 20 plans went from clean to
-                    // mixed in one replanning round against 8 that arrived
-                    // mixed (9.119). The shape is always the same: a degenerate
-                    // ONE-TRIP child subtour, two consecutive activities inside
-                    // subtourModeChoice.coordDistance of each other, is given a
-                    // non-chain mode by probaForRandomSingleTripMode; that is
-                    // valid for the child and leaves the PARENT holding car and
-                    // pt together. The plan survives into the agent's memory
-                    // and kills the run several iterations later, when the
-                    // strategy happens to select the parent - which is why five
-                    // arms died at five different points.
-                    //
-                    // This refuses the PROPOSAL, not the mode: the agent keeps
-                    // its pre-innovation plan, which is consistent by
-                    // construction, and every mode remains available on the
-                    // next draw. It is the same principle as the reach refusal
-                    // above and it enforces an invariant MATSim itself states.
-                    if (!infeasible && !mixedBefore && isAnySubtourMixed(plan)) {
-                        infeasible = true;
-                        // Counted the same way and for the same reason as the
-                        // stand-aside above: a cap of five reports that it
-                        // happened, never how often.
-                        final int n = CREATED_DUMPS.incrementAndGet();
-                        if (n <= 5 || n % 1000 == 0) {
-                            org.apache.logging.log4j.LogManager
-                                    .getLogger(GatedSubtourModeChoice.class)
-                                    .warn("refused proposal #{} that would "
-                                            + "leave a subtour mixing chain- "
-                                            + "and non-chain-based modes - {}",
-                                          n, describe(plan));
-                        }
-                    }
-                    // 9.120: `ride` is a trip somebody drives, and `car` on
-                    // a serving trip is the driver's commitment. The demand
-                    // declares BOTH per trip (`boundRideTrips`,
-                    // `boundDriveTrips`, written by build_matsim_plans.py
-                    // from the escort, lift and joint binding tables), so a
-                    // proposal putting ride on a trip nobody serves, or
-                    // taking a declared driver off car on a trip they serve,
-                    // is refused whole - the same refusal as above. Measured
-                    // on the F14 arm at iteration 30: 36% of residents'
-                    // planned ride legs belonged to persons with no declared
-                    // driver at all, every one executed as a drive or a walk
-                    // while the plan kept `ride`; and 3.4% of declared pairs
-                    // had lost their driver to another mode. A trip whose
-                    // mode the proposal did not change is never judged here:
-                    // this gates proposals, not memories.
-                    if (!infeasible) {
-                        final java.util.Set<Integer> rideTrips =
-                                boundTrips(plan, BOUND_RIDE_ATTRIBUTE);
-                        final java.util.Set<Integer> driveTrips =
-                                boundTrips(plan, BOUND_DRIVE_ATTRIBUTE);
-                        final java.util.Set<Integer> heldTrips =
-                                boundTrips(plan, HELD_RIDE_ATTRIBUTE);
-                        for (int i = 0; i < after.size(); i++) {
-                            final List<Leg> legs = after.get(i).getLegsOnly();
-                            if (legs.isEmpty()) {
-                                continue;
-                            }
-                            String mode = TripStructureUtils.getRoutingMode(
-                                    legs.get(0));
-                            if (mode == null) {
-                                mode = legs.get(0).getMode();
-                            }
-                            final String old = oldModes.get(i);
-                            if (old != null && old.equals(mode)) {
-                                continue;          // untouched by the proposal
-                            }
-                            if (TransportMode.ride.equals(mode)
-                                    && !rideTrips.contains(i + 1)) {
-                                infeasible = true;
-                                logRefusal("ride on a trip no declared driver "
-                                        + "serves", BOUND_RIDE_REFUSALS
-                                        .incrementAndGet(), plan);
-                                break;
-                            }
-                            if (driveTrips.contains(i + 1)
-                                    && !TransportMode.car.equals(mode)) {
-                                infeasible = true;
-                                logRefusal("a declared driver off car on a "
-                                        + "trip they serve", BOUND_DRIVE_REFUSALS
-                                        .incrementAndGet(), plan);
-                                break;
-                            }
-                            // D12: an escort member or joint companion is
-                            // held to ride on the tour their driver drives;
-                            // the driver drives them, so the proposal that
-                            // puts them in a car of their own, or on foot,
-                            // is refused whole
-                            if (heldTrips.contains(i + 1)
-                                    && !TransportMode.ride.equals(mode)) {
-                                infeasible = true;
-                                logRefusal("a held passenger off ride on a "
-                                        + "tour their driver drives (D12)",
-                                        HELD_RIDE_REFUSALS.incrementAndGet(), plan);
-                                break;
-                            }
-                        }
-                    }
-                    if (infeasible) {
-                        for (int i = 0; i < after.size(); i++) {
-                            final String old = oldModes.get(i);
-                            final Trip t = after.get(i);
-                            final List<Leg> legs = t.getLegsOnly();
-                            if (old == null || legs.isEmpty()
-                                    || old.equals(legs.get(0).getMode())) {
-                                continue;
-                            }
-                            final Leg leg = PopulationUtils.createLeg(old);
-                            TripStructureUtils.setRoutingMode(leg, old);
-                            TripRouter.insertTrip(
-                                    plan, t.getOriginActivity(),
-                                    Collections.singletonList(leg),
-                                    t.getDestinationActivity());
-                        }
-                        return;
-                    }
-
-                    final Collection<String> allowed =
-                            calc.getPermissibleModes(plan);
-                    for (int i = 0; i < after.size(); i++) {
-                        final Trip t = after.get(i);
-                        final List<Leg> legs = t.getLegsOnly();
-                        if (legs.size() != 1) {
-                            continue;              // untouched, still routed
-                        }
-                        final String mode = legs.get(0).getMode();
-                        final String old = oldModes.get(i);
-                        if (allowed.contains(mode) || old == null
-                                || old.equals(mode)) {
-                            continue;
-                        }
-                        final Leg leg = PopulationUtils.createLeg(old);
-                        TripStructureUtils.setRoutingMode(leg, old);
-                        TripRouter.insertTrip(
-                                plan, t.getOriginActivity(),
-                                Collections.singletonList(leg),
-                                t.getDestinationActivity());
-                    }
+                    gate(inner, plan);
                 }
             };
+        }
+
+        /**
+         * The stock algorithm, gated: stand aside for a plan that arrives
+         * mixed, run the proposal, then refuse it whole or revert what the
+         * calculator does not permit. One 236-line anonymous {@code run} until
+         * 27 September 2026 (fourteenth report, recommendation 9); the phases
+         * below are its blocks, in its order.
+         */
+        private void gate(final PlanAlgorithm inner, final Plan plan) {
+            // the pre-innovation main mode of each trip, by its
+            // routing mode - present on every routed leg, and the
+            // identity ReRoute itself routes by
+            final List<Trip> before = TripStructureUtils.getTrips(plan);
+            final List<String> oldModes = mainModes(before);
+            // Does the mix ALREADY exist before MATSim's strategy
+            // touches the plan? That is the whole question: if it does,
+            // something upstream wrote it; if it does not, the strategy
+            // itself creates it - and probaForRandomSingleTripMode
+            // changes ONE trip's mode irrespective of its subtour.
+            // Diagnostic only; nothing is altered either way.
+            // A plan that ARRIVES mixed cannot be mode-changed at all:
+            // ChooseRandomLegModeForSubtour throws the moment it
+            // selects the offending subtour, and no draw makes that
+            // plan valid. Running the strategy on it is a guaranteed
+            // crash, so mode choice stands aside and ReRoute - the
+            // other module of this strategy - still runs.
+            //
+            // Measured (9.119): the committed WEEKDAY demand holds 99
+            // such subtours in 1,138,887, every one SPANNING several
+            // excursions and every one closed=false - a day that never
+            // comes home, so the car it started in is abandoned. NONE
+            // is a single-excursion mix. That is a DEMAND defect and
+            // this is not its repair; it is the refusal to crash on it
+            // while it stands. The count is logged so it cannot be
+            // forgotten, and the repair is tracked on its own issue.
+            final boolean mixedBefore = isAnySubtourMixed(plan);
+            if (mixedBefore) {
+                standAside(plan);
+                return;
+            }
+            try {
+                inner.run(plan);
+            } catch (final IllegalStateException ex) {
+                // DIAGNOSTIC, not a workaround: the exception is
+                // re-thrown unchanged. "Subtour contains a mix of
+                // chain- and non-chainbased modes" has killed five arms
+                // and every attempt to attribute it from the code alone
+                // has been refuted (9.118). It names no person, so this
+                // prints the plan MATSim actually refused - the agent,
+                // every subtour, and the modes in it - and lets the run
+                // die exactly as it would have.
+                dumpRefusedPlan(plan, ex);
+                throw ex;
+            }
+            final List<Trip> after = TripStructureUtils.getTrips(plan);
+            if (after.size() != before.size()) {
+                return;   // structure changed: not the single-trip path
+            }
+            // A reach refusal rejects the ENTIRE proposal. Putting
+            // one trip of a subtour back would leave that subtour
+            // mixing chain- and non-chain-based modes, which MATSim
+            // refuses with an IllegalStateException - measured, and it
+            // kills the run at the first iteration. The pre-innovation
+            // plan is consistent by construction, so restoring all of
+            // it is the only safe refusal.
+            boolean infeasible = anyBeyondReach(after);
+            // AND the proposal must not leave a subtour mixing chain-
+            // with non-chain-based modes. MATSim cannot represent that
+            // state - `ChooseRandomLegModeForSubtour.applyChange`
+            // refuses it - yet MATSim's own single-trip mode change
+            // CREATES it, measured here: 20 plans went from clean to
+            // mixed in one replanning round against 8 that arrived
+            // mixed (9.119). The shape is always the same: a degenerate
+            // ONE-TRIP child subtour, two consecutive activities inside
+            // subtourModeChoice.coordDistance of each other, is given a
+            // non-chain mode by probaForRandomSingleTripMode; that is
+            // valid for the child and leaves the PARENT holding car and
+            // pt together. The plan survives into the agent's memory
+            // and kills the run several iterations later, when the
+            // strategy happens to select the parent - which is why five
+            // arms died at five different points.
+            //
+            // This refuses the PROPOSAL, not the mode: the agent keeps
+            // its pre-innovation plan, which is consistent by
+            // construction, and every mode remains available on the
+            // next draw. It is the same principle as the reach refusal
+            // above and it enforces an invariant MATSim itself states.
+            if (!infeasible && !mixedBefore && isAnySubtourMixed(plan)) {
+                infeasible = true;
+                refuseCreatedMix(plan);
+            }
+            // 9.120: `ride` is a trip somebody drives, and `car` on
+            // a serving trip is the driver's commitment. The demand
+            // declares BOTH per trip (`boundRideTrips`,
+            // `boundDriveTrips`, written by build_matsim_plans.py
+            // from the escort, lift and joint binding tables), so a
+            // proposal putting ride on a trip nobody serves, or
+            // taking a declared driver off car on a trip they serve,
+            // is refused whole - the same refusal as above. Measured
+            // on the F14 arm at iteration 30: 36% of residents'
+            // planned ride legs belonged to persons with no declared
+            // driver at all, every one executed as a drive or a walk
+            // while the plan kept `ride`; and 3.4% of declared pairs
+            // had lost their driver to another mode. A trip whose
+            // mode the proposal did not change is never judged here:
+            // this gates proposals, not memories.
+            if (!infeasible) {
+                infeasible = breaksDeclaredBinding(plan, after, oldModes);
+            }
+            if (infeasible) {
+                revertProposal(plan, after, oldModes);
+                return;
+            }
+            revertImpermissible(plan, after, oldModes);
+        }
+
+        /** Each trip's main mode: the first leg's routing mode, else its mode. */
+        private static List<String> mainModes(final List<Trip> trips) {
+            final List<String> oldModes = new ArrayList<>(trips.size());
+            for (final Trip t : trips) {
+                final List<Leg> legs = t.getLegsOnly();
+                String m = legs.isEmpty() ? null
+                        : TripStructureUtils.getRoutingMode(legs.get(0));
+                if (m == null && !legs.isEmpty()) {
+                    m = legs.get(0).getMode();
+                }
+                oldModes.add(m);
+            }
+            return oldModes;
+        }
+
+        /** Log a plan that arrived mixed, at the refusal counters' cadence. */
+        private void standAside(final Plan plan) {
+            // The count, not only the first five. Issue #96's own
+            // close condition is "the stand-aside path logs nothing
+            // on a full arm", and a diagnostic capped at five
+            // cannot decide it: the 300-iteration arm of 9 Sep 2026
+            // printed exactly five lines and the true total was
+            // never readable from the log. Same cadence as the
+            // refusal counters below - the first few in full, then
+            // every thousandth as a running total.
+            final int n = PREMIX_DUMPS.incrementAndGet();
+            if (n <= 5 || n % 1000 == 0) {
+                org.apache.logging.log4j.LogManager
+                        .getLogger(GatedSubtourModeChoice.class)
+                        .warn("mode choice STOOD ASIDE #{} for a "
+                                + "plan that arrived with a mixed "
+                                + "subtour (a demand defect, not "
+                                + "one this strategy made) - {}",
+                              n, describe(plan));
+            }
+        }
+
+        /** Is any proposed trip's first leg beyond its mode's declared reach? */
+        private boolean anyBeyondReach(final List<Trip> after) {
+            for (final Trip t : after) {
+                final List<Leg> legs = t.getLegsOnly();
+                if (!legs.isEmpty()
+                        && beyondReach(legs.get(0).getMode(), t)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /** Log a mix this strategy was caught creating, at the same cadence. */
+        private void refuseCreatedMix(final Plan plan) {
+            // Counted the same way and for the same reason as the
+            // stand-aside above: a cap of five reports that it
+            // happened, never how often.
+            final int n = CREATED_DUMPS.incrementAndGet();
+            if (n <= 5 || n % 1000 == 0) {
+                org.apache.logging.log4j.LogManager
+                        .getLogger(GatedSubtourModeChoice.class)
+                        .warn("refused proposal #{} that would "
+                                + "leave a subtour mixing chain- "
+                                + "and non-chain-based modes - {}",
+                              n, describe(plan));
+            }
+        }
+
+        /** Does the proposal put ride on a trip no declared driver serves,
+         *  take a declared driver off car, or a held passenger off ride?
+         *  The first such trip is counted and logged. */
+        private static boolean breaksDeclaredBinding(final Plan plan,
+                                                     final List<Trip> after,
+                                                     final List<String> oldModes) {
+            final java.util.Set<Integer> rideTrips =
+                    boundTrips(plan, BOUND_RIDE_ATTRIBUTE);
+            final java.util.Set<Integer> driveTrips =
+                    boundTrips(plan, BOUND_DRIVE_ATTRIBUTE);
+            final java.util.Set<Integer> heldTrips =
+                    boundTrips(plan, HELD_RIDE_ATTRIBUTE);
+            for (int i = 0; i < after.size(); i++) {
+                final List<Leg> legs = after.get(i).getLegsOnly();
+                if (legs.isEmpty()) {
+                    continue;
+                }
+                String mode = TripStructureUtils.getRoutingMode(
+                        legs.get(0));
+                if (mode == null) {
+                    mode = legs.get(0).getMode();
+                }
+                final String old = oldModes.get(i);
+                if (old != null && old.equals(mode)) {
+                    continue;          // untouched by the proposal
+                }
+                if (TransportMode.ride.equals(mode)
+                        && !rideTrips.contains(i + 1)) {
+                    logRefusal("ride on a trip no declared driver "
+                            + "serves", BOUND_RIDE_REFUSALS
+                            .incrementAndGet(), plan);
+                    return true;
+                }
+                if (driveTrips.contains(i + 1)
+                        && !TransportMode.car.equals(mode)) {
+                    logRefusal("a declared driver off car on a "
+                            + "trip they serve", BOUND_DRIVE_REFUSALS
+                            .incrementAndGet(), plan);
+                    return true;
+                }
+                // D12: an escort member or joint companion is
+                // held to ride on the tour their driver drives;
+                // the driver drives them, so the proposal that
+                // puts them in a car of their own, or on foot,
+                // is refused whole
+                if (heldTrips.contains(i + 1)
+                        && !TransportMode.ride.equals(mode)) {
+                    logRefusal("a held passenger off ride on a "
+                            + "tour their driver drives (D12)",
+                            HELD_RIDE_REFUSALS.incrementAndGet(), plan);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /** Put every trip the proposal changed back on its old main mode. */
+        private static void revertProposal(final Plan plan,
+                                           final List<Trip> after,
+                                           final List<String> oldModes) {
+            for (int i = 0; i < after.size(); i++) {
+                final String old = oldModes.get(i);
+                final Trip t = after.get(i);
+                final List<Leg> legs = t.getLegsOnly();
+                if (old == null || legs.isEmpty()
+                        || old.equals(legs.get(0).getMode())) {
+                    continue;
+                }
+                final Leg leg = PopulationUtils.createLeg(old);
+                TripStructureUtils.setRoutingMode(leg, old);
+                TripRouter.insertTrip(
+                        plan, t.getOriginActivity(),
+                        Collections.singletonList(leg),
+                        t.getDestinationActivity());
+            }
+        }
+
+        /** Put back each changed one-leg trip whose new mode the calculator
+         *  does not permit for this plan. */
+        private void revertImpermissible(final Plan plan,
+                                         final List<Trip> after,
+                                         final List<String> oldModes) {
+            final Collection<String> allowed =
+                    calc.getPermissibleModes(plan);
+            for (int i = 0; i < after.size(); i++) {
+                final Trip t = after.get(i);
+                final List<Leg> legs = t.getLegsOnly();
+                if (legs.size() != 1) {
+                    continue;              // untouched, still routed
+                }
+                final String mode = legs.get(0).getMode();
+                final String old = oldModes.get(i);
+                if (allowed.contains(mode) || old == null
+                        || old.equals(mode)) {
+                    continue;
+                }
+                final Leg leg = PopulationUtils.createLeg(old);
+                TripStructureUtils.setRoutingMode(leg, old);
+                TripRouter.insertTrip(
+                        plan, t.getOriginActivity(),
+                        Collections.singletonList(leg),
+                        t.getDestinationActivity());
+            }
         }
     }
 }

@@ -419,6 +419,11 @@ STRUCTURAL = {
         'data-use ledger reads it as naming one family of raw files (`*.json` '
         'names everything and nothing): string-matching structure of an audit '
         'that reads the package and reaches no build, no run and no target',
+    'src/analyse/mode_by_demographics.py:KM_EDGES':
+        'a reporting grid (9.219): the trip-distance bands travel surveys '
+        'publish trips in, so a modelled cell can be set beside a survey cell. '
+        'It bins a finished run\'s trips for reading and reaches no build, no '
+        'run and no target',
     'src/analyse/run_view.py:RAMP_MIN':
         'a display scale: the narrowest and widest a congestion ramp is drawn. '
         'The live view reads the run and never writes to it, so no number here '
@@ -734,22 +739,22 @@ STRUCTURAL_INLINE = {
         'one open band); the SHAPE of the source table, not a choice',
     '<city>/extract/overpass.py:_get:120':
         _RETRY,
-    'src/build/build_activity_chains.py:solve:0.5':
+    'src/build/build_activity_chains.py:_solve_decay:0.5':
         'the MIDPOINT of a bisection over the gravity decay; solver structure',
-    'src/build/build_activity_chains.py:solve_short:0.5':
+    'src/build/build_activity_chains.py:_solve_short_decay:0.5':
         'the midpoint of the short-trip decay bisection - as above',
     'src/build/build_activity_chains.py:through_agents:0.5':
         'a through flow is split into its two directions; half each is the '
         'definition of a symmetric flow, not a choice',
-    'src/build/build_population.py:main:0.5':
+    'src/build/build_population.py:_age_sex_draw_shares:0.5':
         'the sex split of an age band the census leaves EMPTY (no persons); an '
         'even split of nobody, never reached on this city',
-    '<city>/build/build_corridor_layers.py:build:0.5':
+    '<city>/build/build_corridor_layers.py:corridor_signal_rows:0.5':
         'half a cycle: the mean delay of an arrival uniform over the cycle, '
         'the textbook identity, not a value',
     '<city>/build/build_landuse_parking.py:build_frontages:0.5':
         'the midpoint of a frontage segment (shapely interpolate at half length)',
-    '<city>/build/build_level_crossings.py:main:0.5':
+    '<city>/build/build_level_crossings.py:closure_spans:0.5':
         'the centre of a window slot (i + 0.5): even spacing of the derived '
         'closures inside their window, geometry rather than a value',
     '<city>/build/build_mode_targets.py:road_person_targets:0.5':
@@ -764,14 +769,19 @@ STRUCTURAL_INLINE = {
     '<city>/extract/extract_boam.py:main:0.5':
         'a depot is kept when more than half of its sightings vote for it - a '
         'majority rule',
-    'src/build/build_activity_chains.py:solve:0.005':
+    'src/build/build_activity_chains.py:_solve_decay:0.005':
         'the LOWER BRACKET of a bisection over the gravity decay; the solution is '
         'interior and identical for any bracket that contains it',
-    'src/build/build_activity_chains.py:solve_short:0.005':
+    'src/build/build_activity_chains.py:_solve_short_decay:0.005':
         'the lower bracket of the short-trip decay bisection - as above',
     'src/build/build_activity_chains.py:calibrate_one:0.8':
         'a FLOOR on the long-trip target mean (0.8 km beeline) that keeps the '
         'solver off a degenerate target; never binding on this city\'s observed means',
+    'src/build/build_activity_chains.py:_decay_by_lga:0.8':
+        'the same floor on the per-LGA long-trip target, applied where the decay '
+        'is solved per home LGA',
+    'src/build/build_activity_chains.py:_fit_short_mix:0.8':
+        'the same floor on the long-trip target left after the short-trip mixture',
     'src/build/build_activity_chains.py:draw_hour:23':
         'the last hour of the day, in the hour-of-day wraparound',
     'src/build/build_activity_chains.py:__init__:20':
@@ -846,7 +856,7 @@ STRUCTURAL_INLINE = {
     'src/build/det_io.py:zip_entry:420':
         'POSIX permissions 0o644 in the zip entry header',
     # ---- the city's own scripts
-    '<city>/build/build_corridor_layers.py:build:45':
+    '<city>/build/build_corridor_layers.py:corridor_signal_clusters:45':
         'a JOIN TOLERANCE: OSM places one signal node per approach, and nodes within '
         '45 m are one intersection; a whole intersection spans 30-60 m and the '
         'nearest other one on the corridor is hundreds of metres away, so any value '
@@ -872,7 +882,9 @@ STRUCTURAL_INLINE = {
     '<city>/build/build_licence_rates.py:erp_single_years:120':
         'the upper age of an open-ended "85 and over" band when it is expanded to '
         'single years; nobody in the ERP is older',
-    '<city>/build/build_licence_rates.py:main:5e-05':
+    '<city>/build/build_licence_rates.py:assert_declared:5e-05':
+        _TOL,
+    '<city>/build/build_motorcycle_possession.py:main:5e-05':
         _TOL,
     '<city>/build/build_mode_targets.py:road_person_targets:5e-05':
         _TOL,

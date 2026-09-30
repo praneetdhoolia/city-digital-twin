@@ -32,8 +32,34 @@ public final class HouseholdVehiclesConfigGroup extends ReflectiveConfigGroup {
     @Parameter("roster")
     public String roster = ROSTER_PER_PERSON;
 
+    /** RUN.qsim.motorcycle_roster (D28, F39): {@code per_person} is F38
+     *  exactly - every rider rides a motorbike of their own, so two riders of
+     *  one household ride the one drawn motorcycle at the same time;
+     *  {@code household} maps every rider of a household to ONE shared
+     *  {@code hh<id>_moto1}, which a departure claims like the household
+     *  car. */
+    public static final String MOTORCYCLE_HOUSEHOLD = "household";
+
+    @Parameter("motorcycle")
+    public String motorcycle = ROSTER_PER_PERSON;
+
     public HouseholdVehiclesConfigGroup() {
         super(NAME);
+    }
+
+    /** RUN.qsim.motorcycle_roster: `household` or `per_person`. */
+    public String getMotorcycle() {
+        return this.motorcycle == null || this.motorcycle.trim().isEmpty()
+               ? ROSTER_PER_PERSON : this.motorcycle.trim();
+    }
+
+    public boolean isHouseholdMotorcycle() {
+        return MOTORCYCLE_HOUSEHOLD.equals(getMotorcycle());
+    }
+
+    /** Whether any shared-vehicle roster is in force. */
+    public boolean anyRoster() {
+        return isCensusRoster() || isHouseholdMotorcycle();
     }
 
     /** B.population.vehicle_roster: `census` or `per_person`. */
@@ -57,6 +83,13 @@ public final class HouseholdVehiclesConfigGroup extends ReflectiveConfigGroup {
                     "householdVehicles.roster must be one of " + ROSTER_CENSUS
                     + " | " + ROSTER_PER_PERSON
                     + " (B.population.vehicle_roster); got '" + this.roster + "'");
+        }
+        if (!MOTORCYCLE_HOUSEHOLD.equals(getMotorcycle())
+                && !ROSTER_PER_PERSON.equals(getMotorcycle())) {
+            throw new IllegalArgumentException(
+                    "householdVehicles.motorcycle must be one of " + MOTORCYCLE_HOUSEHOLD
+                    + " | " + ROSTER_PER_PERSON
+                    + " (RUN.qsim.motorcycle_roster); got '" + this.motorcycle + "'");
         }
     }
 }

@@ -100,8 +100,12 @@ jobs:
           python-version: "3.14"
       - name: Install the repository's import roots (#181)
         run: python src/setup/install_paths.py
-      - name: Every committed data file matches its MANIFEST.csv hash and size
-        run: python tests/check_manifest.py
+      # Every city under cities/, each in its own process under its own
+      # CITYSIM_CITY - the default city alone left a second city's manifest
+      # unchecked (#252). The debt each city has not yet fixed is its own
+      # cities/<city>/tests/manifest_debt.json, with a ceiling that may only fall.
+      - name: Every committed data file of every city matches its MANIFEST.csv hash and size
+        run: python tests/check_manifest.py --all-cities
 
   doc_currency:
     name: living documents match the artefacts
@@ -179,7 +183,7 @@ jobs:
       - name: Every city satisfies the contract
         run: python src/registry/check_city.py --all
       - name: The generated configuration reference is current
-        run: python src/registry/render_docs.py --check
+        run: python src/registry/render_docs.py --check --all-cities
       - name: The build layer has not drifted from the registry
         run: python src/registry/check_legacy_drift.py
       # Every MATSim default this model runs on is declared or accepted with a

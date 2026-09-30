@@ -55,3 +55,21 @@ def test_a_ceiling_below_the_reach_is_refused(tmp_path, monkeypatch):
         bi.refuse_access_ceiling_below_reach(C(cfg), sched, 'WEEKDAY')
     ok = C(cfg, **{'RUN.transit_router.access_max_radius_m': 5300.0})
     assert bi.refuse_access_ceiling_below_reach(ok, sched, 'WEEKDAY') == pytest.approx(5000, abs=50)
+
+
+def test_measure_reach_reads_every_assembled_scenario_day(tmp_path, capsys):
+    """`--measure-reach`: every assembled scenario x day's reach, the maximum
+    and the ceiling it asks for, assembling nothing."""
+    bi._REACH.clear()
+    sched, trips = _files(tmp_path, far_x=5000)
+    out = tmp_path / 'matsim'
+    for sid, day in (('S0', 'WEEKDAY'), ('S1', 'SAT')):
+        (out / sid / day).mkdir(parents=True)
+        (out / sid / day / 'transitSchedule.xml.gz').write_bytes(open(sched, 'rb').read())
+    (out / 'S2').mkdir()                              # not assembled: left out
+    rows, need = bi.measure_reach(['WEEKDAY', 'SAT', 'SUN'], out_dir=str(out),
+                                  extension_m=200.0, trips_csv_of=lambda d: trips)
+    assert [(s, d) for s, d, _ in rows] == [('S0', 'WEEKDAY'), ('S1', 'SAT')]
+    assert need == pytest.approx(5200, abs=50)
+    printed = capsys.readouterr().out
+    assert 'MAX reach' in printed and 'must be declared at' in printed

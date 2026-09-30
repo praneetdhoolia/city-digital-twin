@@ -1,0 +1,13 @@
+{
+  "decisions_ref": "9.217",
+  "source": "ABS 9208.0 Survey of Motor Vehicle Use, 12 months ended 30 June 2020, 92080DO001_202006.xls Table_4, New South Wales, columns 'Total kilometres travelled' / 'Number of vehicles'",
+  "units": "ratio",
+  "state": "New South Wales",
+  "passenger_vehicles_km_million": 46915.0,
+  "passenger_vehicles_number": 4371333.0,
+  "motor_cycles_km_million": 492.0,
+  "motor_cycles_number": 254486.0,
+  "passenger_vehicles_published_average_km_thousand": 10.7,
+  "motor_cycles_published_average_km_thousand": 1.9,
+  "daily_use_ratio": 0.1801371876116879
+}

@@ -58,6 +58,7 @@ from geo import haversine as hav   # noqa: E402  (one copy, src/build/geo.py)
 
 
 from geo import kinematic_time as _kinematic_time   # noqa: E402
+from registry.param_config import hhmmss   # noqa: E402  (one copy)
 
 
 def kin(d, v_kmh=LINE_SPEED_KMH, a=ACCEL, b=DECEL):
@@ -67,11 +68,6 @@ def kin(d, v_kmh=LINE_SPEED_KMH, a=ACCEL, b=DECEL):
 def sec(t):
     h, m, s = map(int, t.split(':'))
     return h * 3600 + m * 60 + s
-
-
-def hhmmss(s):
-    s = int(round(s))
-    return '%02d:%02d:%02d' % (s // 3600, (s % 3600) // 60, s % 60)
 
 
 def main():

@@ -29,6 +29,7 @@ import argparse
 import glob
 import hashlib
 import json
+import math
 import os
 import re
 import shutil
@@ -46,7 +47,7 @@ import build_matsim_run_inputs as build_inputs  # noqa: E402
 import city  # noqa: E402
 import results_store  # noqa: E402
 import run_failure  # noqa: E402
-from procs import card_pid_alive  # noqa: E402
+from procs import card_pid_alive, card_pid_state, ALIVE, DEAD  # noqa: E402
 import summarise_run  # noqa: E402
 from registry import outputs, param_config  # noqa: E402
 
@@ -173,8 +174,13 @@ def set_mode_param(text, mode, name, value):
     return new
 
 
-def resolve_warm_start(source):
+def resolve_warm_start(source, stopped_was_death=None):
     """The newest written plans checkpoint of a dead run, for `--warm-start`.
+
+    A record whose completion is `died` is crash recovery's by definition.
+    A `stopped_by_operator` record is not, unless `stopped_was_death` states
+    why that stop closed out a run that was already dead (a record written
+    before `died` existed, 9.215); the reason is carried into the new run.
 
     A crashed 1000-iteration arm used to cost the whole arm: plans are written
     every `RUN.controler.write_plans_interval` iterations but the harness never
@@ -209,12 +215,18 @@ def resolve_warm_start(source):
     # is the opposite of GOAL.md step 3 - the cause is fixed and the arm
     # relaunched, never continued.
     rec_path = os.path.join(source, '_run.json')
+    death = None
     if os.path.exists(rec_path):
         try:
             done = json.load(open(rec_path, encoding='utf-8')).get(
                 'completion', RAN_TO_LAST)
         except (OSError, ValueError):
             done = RAN_TO_LAST
+        if done == DIED:
+            death = 'recorded as died'
+        elif done == STOPPED_BY_OPERATOR and stopped_was_death:
+            death = stopped_was_death
+    if os.path.exists(rec_path) and death is None:
         if done == RAN_TO_LAST:
             raise SystemExit(
                 '%s ran to its last iteration (its _run.json says %s). Warm '
@@ -224,7 +236,10 @@ def resolve_warm_start(source):
             '%s was stopped deliberately, not crashed (its _run.json says %s) '
             'and is already closed out. Warm restart is crash recovery: fix '
             'what the stop found and launch a fresh arm - resuming past a gate '
-            'carries the deviation it fired on into every iteration after it.'
+            'carries the deviation it fired on into every iteration after it. '
+            'If an operator stop closed out a run that had already DIED (a '
+            'record from before `died` existed), say so with '
+            '--stopped-was-death TEXT.'
             % (source, done))
     candidates = []
     for d in glob.glob(os.path.join(source, 'output', 'ITERS', 'it.*')):
@@ -241,8 +256,21 @@ def resolve_warm_start(source):
             'N.plans.xml.gz). It died before the first plans write, so a cold '
             'start loses nothing.' % source)
     n, plans = max(candidates)
+    # The parent's own resolved horizon and fraction, so the resume's cutoff
+    # is checked against the cutoff the parent RAN, not today's registry
+    # (a parent that was itself a resume ran first > 0; fifteenth report)
+    snap = _read_json(os.path.join(source, meta.get('config_snapshot')
+                                   or '_config.json')) or {}
     return dict(run=os.path.basename(source), iteration=n, plans=plans,
-                meta=meta)
+                meta=meta, death=death, values=snap.get('values') or {})
+
+
+def _read_json(path):
+    try:
+        with open(path, encoding='utf-8') as fh:
+            return json.load(fh)
+    except (OSError, ValueError, TypeError):
+        return None
 
 
 def check_warm_compatibility(warm, scenario, day, fraction, seed, threads,
@@ -632,6 +660,27 @@ def _log_tail(log, nbytes=2_000_000):
         return ''
 
 
+_TS_LINE_RE = re.compile(TS_RE.pattern, re.M)
+
+
+def log_last_timestamp(log, nbytes=None):
+    """Epoch seconds of the newest timestamped line in the log's TAIL, or None.
+
+    Tail-read only (`_log_tail`'s window unless `nbytes` narrows it): an arm's
+    log runs to tens of GB (9.142), and the question - when did this run last
+    write - is answered by its last lines.
+    """
+    tail = _log_tail(log, nbytes) if nbytes else _log_tail(log)
+    stamps = _TS_LINE_RE.findall(tail)
+    if not stamps:
+        return None
+    day, ms = stamps[-1]
+    try:
+        return time.mktime(time.strptime(day, '%Y-%m-%dT%H:%M:%S')) + int(ms) / 1000.0
+    except (ValueError, OverflowError):
+        return None
+
+
 def _last_ended_in_tail(log):
     """The newest `### ITERATION n ENDS` in the log's tail, or None."""
     ended = [int(m.group(1)) for m in ITER_RE.finditer(_log_tail(log))
@@ -695,9 +744,16 @@ def announce_cost(iterations, fraction, cfg):
     """
     try:
         from analyse import arm_cost
+        # a warm start (overlay or --warm-start) runs last - first iterations
+        # from its checkpoint, and is priced so (fifteenth report)
+        try:
+            first = int(cfg.get('RUN.controler.first_iteration') or 0)
+        except Exception:                                    # noqa: BLE001
+            first = 0
         quote = arm_cost.price(int(iterations), fraction,
                                arm_cost.observed_arms(),
-                               cfg.get('RUN.gate.interval_iterations'))
+                               cfg.get('RUN.gate.interval_iterations'),
+                               first_iteration=first)
     except Exception as e:                                   # noqa: BLE001
         print('cost: not priced (%s)' % e, flush=True)
         return
@@ -705,16 +761,19 @@ def announce_cost(iterations, fraction, cfg):
         print('cost: %s' % quote['error'], flush=True)
         return
     on = quote['priced_on']
-    line = ('cost: ~%s for %d iterations plus %s of setup, priced on %s at '
+    line = ('cost: ~%s for %d iterations%s plus %s of setup, priced on %s at '
             '%.1f s an iteration (%s); the last arms at this fraction span '
             '%s to %s'
             % (quote['quote'], quote['iterations'],
+               (' (resumed at %d of %d)' % (quote['first_iteration'],
+                                            quote['last_iteration']))
+               if quote.get('first_iteration') else '',
                arm_cost._fmt_hours(quote['setup_s']), on['name'],
                on['median_iteration_s'], on['completion'] or 'status unknown',
                quote['band'][0], quote['band'][1]))
     if quote.get('first_gate_s'):
         line += '; first gate at iteration %d after ~%s' % (
-            quote['gate_every'],
+            quote['first_gate_iteration'],
             arm_cost._fmt_hours(quote['first_gate_s']))
     print(line, flush=True)
     for key in ('stall_warning', 'milestone_warning', 'stale_warning',
@@ -1037,18 +1096,89 @@ def warm_start_overrides(warm, overrides, scenario, day, run_config):
     last = int(base.get('RUN.controler.last_iteration'))
     f = float(base.get('RUN.replanning.fraction_to_disable_innovation'))
     n = int(warm['iteration'])
-    cutoff = first + f * (last - first)
     if last <= n:
         raise SystemExit('warm start: the checkpoint iteration %d is not below '
                          'RUN.controler.last_iteration = %d' % (n, last))
-    derived = (cutoff - n) / float(last - n)
+    # THE CUTOFF THE PARENT RAN, from its own snapshot when it has one: a
+    # parent that was itself a resume ran first > 0 and a derived fraction
+    parent = warm.get('values') or {}
+    try:
+        p_first = int(parent['RUN.controler.first_iteration'])
+        p_last = int(parent['RUN.controler.last_iteration'])
+        p_f = float(parent['RUN.replanning.fraction_to_disable_innovation'])
+    except (KeyError, TypeError, ValueError):
+        p_first, p_last, p_f = (None, None, None)
     out = dict(overrides)
+    if first == n:
+        # a resume overlay already carries the checkpoint and the fraction
+        # that keeps the parent's cutoff (the route for a fraction outside
+        # its sweep, which the set layer refuses by design, 9.215). It is
+        # nothing to re-derive - re-emitting it would put it in the set
+        # layer - but it is CHECKED: F38's resume overlay was trusted, and
+        # 0.333333 would have moved its cutoff to 199 (9.216, fifteenth
+        # report). Only the parent's snapshot can say what the parent ran.
+        if p_first is None:
+            raise SystemExit(
+                'warm start refused: the overlay starts at iteration %d with '
+                'fraction_to_disable_innovation %g, and %s carries no config '
+                'snapshot to check that against the cutoff the parent ran'
+                % (n, f, warm.get('run')))
+        parent_cutoff = jar_cutoff(p_first, p_last, p_f)
+        refuse_cutoff_mismatch(parent_cutoff, n, jar_cutoff(first, last, f), f)
+        print('warm start: the overlay already starts at iteration %d; '
+              'innovation cutoff at iteration %d, the parent\'s'
+              % (n, max(parent_cutoff, n)), flush=True)
+        return out
+    # the INTEGER the jar compares against, never the real it truncates
+    cutoff = (jar_cutoff(first, last, f) if p_first is None
+              else jar_cutoff(p_first, p_last, p_f))
+    # ROUNDED UP, never to nearest: the jar truncates first + f x (last -
+    # first) to an int (d2i, StrategyManager), so a fraction rounded down by
+    # a millionth moves the cutoff one iteration early (9.215: resumed at 175,
+    # 0.333333 gives 199.99998 -> 199)
+    # A checkpoint past the cutoff resumes with innovation already off: 0.0
+    # puts the jar's cutoff at `first`, which is what the parent was doing
+    # there; the formula below would go negative (9.216).
+    derived = (0.0 if n >= cutoff
+               else math.ceil((cutoff - n) / float(last - n) * 1e6) / 1e6)
+    refuse_cutoff_mismatch(cutoff, n, jar_cutoff(n, last, derived), derived)
     out['RUN.controler.first_iteration'] = n
-    out['RUN.replanning.fraction_to_disable_innovation'] = round(derived, 6)
-    print('warm start: innovation cutoff kept at iteration %.0f - '
+    out['RUN.replanning.fraction_to_disable_innovation'] = derived
+    print('warm start: innovation cutoff kept at iteration %d - '
           'fraction_to_disable_innovation %g -> %g for firstIteration %d'
-          % (cutoff, f, round(derived, 6), n), flush=True)
+          % (max(cutoff, n), f, derived, n), flush=True)
     return out
+
+
+def jar_cutoff(first, last, fraction):
+    """The iteration the pinned jar switches innovation off at.
+
+    `(int) (first + f x (last - first))` - a d2i truncation, read from
+    StrategyManager.class with javap (9.216). The harness computes it the
+    same way or it is computing a different run.
+    """
+    return int(first + float(fraction) * (last - first))
+
+
+def refuse_cutoff_mismatch(parent_cutoff, n, resume_cutoff, fraction):
+    """Refuse a resume whose jar cutoff is not the one its parent ran.
+
+    A checkpoint at or past the parent's cutoff must resume with innovation
+    already off - a resume cutoff at or before its first iteration `n` - and
+    any such cutoff is the same run; below the parent's cutoff the two
+    integers must be equal.
+    """
+    if n >= parent_cutoff and resume_cutoff <= n:
+        return
+    if resume_cutoff == parent_cutoff:
+        return
+    raise SystemExit(
+        'warm start refused: the parent switched innovation off at iteration '
+        '%d, and this resume (firstIteration %d, fraction_to_disable_innovation '
+        '%r) switches it off at iteration %d - the jar truncates first + f x '
+        '(last - first) to an int (9.216). Declare a fraction that lands on '
+        '%d.' % (parent_cutoff, n, fraction, resume_cutoff,
+                 max(parent_cutoff, n)))
 
 
 def preflight(scenario, day, cfg, overrides=None, warm=None, quiet=False,
@@ -1215,6 +1345,12 @@ STOPPED_AT_CEILING = 'stopped_at_ceiling'
 # at 05:13 and killed by nobody.
 STOPPED_AT_STALL = 'stopped_at_stall'
 STOPPED_BY_OPERATOR = 'stopped_by_operator'
+# A run whose harness and JVM were ALREADY dead when --stop closed it out:
+# nothing stopped it, something killed it - a host restart, a session that
+# took its child processes with it (9.215). Its reading to `reached_iteration`
+# is citable like any stopped arm's, and unlike a deliberate stop it is crash
+# recovery's to resume (fourteenth report, recommendation 5).
+DIED = 'died'
 
 
 def find_completed(scenario, day, fraction, iterations, seed, overrides,
@@ -2077,6 +2213,47 @@ def _elapsed_since(started):
     return max(0.0, time.time() - t0)
 
 
+def log_confirms_death(log, states, size_before, last_write, now=None):
+    """(True, why) when a run's own log says it stopped writing (fifteenth report).
+
+    `states` is {card key: procs state} read BEFORE any kill. No pid may be
+    alive. Then the log decides:
+
+    * every pid DEAD by the kernel's own word and the log no bigger than it
+      was before the stop's wait - nothing is writing it;
+    * otherwise (a pid the kernel would not describe) the log's last line
+      must be older than the longest iteration this run ever recorded - a
+      silence no healthy iteration of it produced. Its own pace, never a
+      typed constant; a run with no recorded iteration cannot be told, and
+      is not recorded as dead.
+    """
+    if ALIVE in states.values():
+        return False, 'a recorded process is alive'
+    try:
+        size_after = os.path.getsize(log)
+    except OSError:
+        size_after = None
+    if size_before is not None and size_after is not None \
+            and size_after != size_before:
+        return False, 'its log grew during the stop'
+    if all(s == DEAD for s in states.values()):
+        return True, 'no recorded process exists and its log is not growing'
+    if last_write is None:
+        return False, ('the kernel would not describe a recorded pid and the '
+                       'log carries no timestamp to date the silence')
+    longest = max(_recorded_iteration_times(log).values(), default=None)
+    if not longest:
+        return False, ('the kernel would not describe a recorded pid and the '
+                       'run recorded no iteration to measure a silence against')
+    silent = (time.time() if now is None else now) - last_write
+    if silent > longest:
+        return True, ('its log has been silent %.0f s, longer than its longest '
+                      'iteration (%.0f s)' % (silent, longest))
+    return False, ('the kernel would not describe a recorded pid and its log '
+                   'wrote %.0f s ago, inside its longest iteration (%.0f s)'
+                   % (silent, longest))
+
+
 def stop_run(name, cause):
     """Stop a running arm through the harness - never by hand (9.137).
 
@@ -2107,12 +2284,26 @@ def stop_run(name, cause):
     # moved. The jvm pid is still killed after, because on POSIX killing the
     # harness alone left the JVM running (#128); on Windows /T takes the tree
     # and the second kill is a no-op.
+    # A run nothing is left of was not stopped - it died, and its record says
+    # so, because only a death may be warm-started (9.215). THE PIDS ALONE DO
+    # NOT SAY IT: a handle the kernel refused used to read as dead (fifteenth
+    # report), so no pid may be ALIVE and the run's own log must confirm it
+    # stopped writing (fifteenth report).
+    states = {key: card_pid_state(meta, key) for key in ('pid', 'jvm_pid')}
+    log = os.path.join(run_dir, 'matsim.log')
+    try:
+        size_before = os.path.getsize(log)
+    except OSError:
+        size_before = None
+    last_write = log_last_timestamp(log)
     # ONLY A PID THAT IS STILL THE CARD'S OWN PROCESS IS KILLED: after a host
     # reboot the numbers name whatever started since, and `/T` would take its
-    # whole tree (procs.card_pid_alive).
+    # whole tree (procs.card_pid_state). A pid the kernel would not describe
+    # is tried: a process of another account refuses the kill as it refused
+    # the handle.
     for key in ('pid', 'jvm_pid'):
         victim = meta.get(key)
-        if not card_pid_alive(meta, key):
+        if states[key] == DEAD:
             continue
         if os.name == 'nt':
             subprocess.run(['taskkill', '/F', '/PID', str(victim), '/T'],
@@ -2120,20 +2311,43 @@ def stop_run(name, cause):
         else:
             subprocess.run(['kill', '-9', str(victim)], capture_output=True)
     time.sleep(3)
+    already_dead, why = log_confirms_death(log, states, size_before,
+                                           last_write)
+    if ALIVE not in states.values() and not already_dead:
+        print('not recorded as died: %s. If it had died, a warm start takes '
+              '--stopped-was-death.' % why, flush=True)
+    # A DEATH COSTS WHAT RAN BEFORE IT, NOT THE WAIT FOR A CLOSE-OUT: the
+    # 9.216 resume carried 1.8 h past its death on its record (fifteenth
+    # report). Its wall clock stops at its log's last line.
+    died_wall_s = None
+    if already_dead and last_write is not None:
+        try:
+            t0 = time.mktime(time.strptime(meta.get('started') or '',
+                                           '%Y-%m-%dT%H:%M:%S'))
+            died_wall_s = round(max(0.0, last_write - t0), 1)
+        except (TypeError, ValueError):
+            pass
     # The harness may have written the terminal record and renamed the
     # directory before it died; re-resolve so this close-out targets the run
     # where it actually is.
     run_dir = results_store.resolve(name) or run_dir
-    dead = mark_dead(run_dir, 'aborted', cause=cause)
+    if died_wall_s is not None:
+        dead = mark_dead(run_dir, 'aborted', wall_s=died_wall_s, cause=cause)
+    else:
+        dead = mark_dead(run_dir, 'aborted', cause=cause)
     # THE STOP IS A BOUNDARY, NOT A DEATH, so the run is closed out here rather
     # than left as a directory. It has to happen in THIS process: --stop kills
     # the harness's own pid as well as the JVM, so the harness never unwinds to
     # write anything. The reading up to `reached_iteration` is real; the record
     # says `stopped_by_operator`, so nothing can mistake it for a finished arm.
-    doc = close_out(dead, STOPPED_BY_OPERATOR, rc=None,
-                    wall_s=meta.get('wall_s'), stop_cause=cause)
-    print('stopped and recorded: %s%s'
-          % (os.path.basename(dead),
+    doc = close_out(dead, DIED if already_dead else STOPPED_BY_OPERATOR,
+                    rc=None,
+                    wall_s=(died_wall_s if died_wall_s is not None
+                            else meta.get('wall_s')),
+                    stop_cause=cause)
+    print('%s and recorded: %s%s'
+          % ('found dead' if already_dead else 'stopped',
+             os.path.basename(dead),
              (' (closed out at iteration %s)' % doc.get('reached_iteration'))
              if doc else ''), flush=True)
     # AND THEN THE SAME MATERIALS THE HARNESS PATH PRODUCES. A stop is a
@@ -2263,16 +2477,11 @@ def _last_digest_iteration(run_dir):
         return None
 
 
-def run(scenario, day, cfg, overrides, force=False, warm=None,
-        registry_overrides=None):
-    src_dir = os.path.join(SETS, scenario, day)
-    if not os.path.isdir(src_dir):
-        raise SystemExit('no run inputs at %s' % src_dir)
-    reconcile_stale()
-    # the store maintains itself at every harness start: migrate anything
-    # legacy now; the raw cache is trimmed back under its declared budget on
-    # a daemon thread once the run is launched (#132 - at 671 GiB against a
-    # 500 GB cap the synchronous trim held the launch for the deletion)
+def _migrate_results_store():
+    """Move any legacy run under results/raw at harness start.
+
+    A failure is reported and the launch continues.
+    """
     try:
         moved = results_store.migrate()
         if moved:
@@ -2282,6 +2491,11 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
         print('results store migration failed (continuing): %s' % e,
               flush=True)
 
+
+def _launch_settings(cfg):
+    """Read the run's declared launch values, then announce its cost and heap
+    and apply every pre-launch refusal. Returns
+    (fraction, iterations, threads, xmx, seed, jfr, gc_log)."""
     fraction = cfg.get('RUN.sample.fraction')
     try:
         iterations = cfg.get('RUN.controler.last_iteration')
@@ -2299,20 +2513,36 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
     refuse_concurrent_arm()
     refuse_unsafe_host(cfg)
     announce_heap(cfg, xmx, fraction)
+    return fraction, iterations, threads, xmx, seed, jfr, gc_log
 
+
+def _warm_start_key(warm, scenario, day, fraction, seed, threads, overrides):
+    """Check a warm start against this run and announce it.
+
+    Returns the key the record carries, or None for a cold start.
+    """
     warm_key = None
     if warm is not None:
         check_warm_compatibility(warm, scenario, day, fraction, seed, threads,
                                  overrides)
         warm_key = dict(run=warm['run'], iteration=warm['iteration'])
+        if warm.get('death'):
+            # why a run the record calls stopped may be resumed (9.215)
+            warm_key['death'] = warm['death']
         print('warm start: continuing %s from its iteration-%d plans '
               '(firstIteration=%d). A warm-started run is NOT bit-identical '
               'to an uninterrupted one - see DECISIONS.md 9.76.'
               % (warm['run'], warm['iteration'], warm['iteration']), flush=True)
+    return warm_key
 
-    controler = controler_sha256()
-    values = values_sha256(cfg)
-    inputs = inputs_sha256(day)
+
+def _resumable_prior(scenario, day, fraction, iterations, seed, overrides,
+                     controler, warm_key, values, inputs, force):
+    """The completed run this launch would repeat, when it can be handed back.
+
+    Returns None - after announcing a re-run if only the controler changed -
+    when the launch must go ahead.
+    """
     prior = find_completed(scenario, day, fraction, iterations, seed, overrides,
                            controler, warm_key, values, inputs)
     if prior is not None and not force:
@@ -2330,7 +2560,11 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
               '  recorded %s\n  current  %s'
               % (prior['name'], (prior.get('controler_sha256') or 'not recorded')[:16],
                  controler[:16]), flush=True)
+    return None
 
+
+def _new_run_name(iterations, fraction):
+    """The directory name the runner gives a new run, unique in the store."""
     # The RUNNER names the directory: launch stamp + iterations + sample
     # percentage. The stamp is a label for humans sorting `results/`; run
     # identity is the parameter set matched above.
@@ -2345,9 +2579,12 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
             or os.path.exists(os.path.join(RESULTS, name)):
         name = '%s_%dit_%spct-%d' % (stamp, iterations, '%g' % (fraction * 100), n)
         n += 1
-    run_dir = results_store.raw_dir(name)
-    record = os.path.join(run_dir, '_run.json')
-    os.makedirs(run_dir, exist_ok=True)
+    return name
+
+
+def _launch_card(scenario, day, fraction, iterations, seed, threads, xmx,
+                 overrides, controler, inputs, warm_key):
+    """The status card as it stands at launch, before the inputs are validated."""
     # The status card, written at LAUNCH and updated at every transition, so a
     # run can be observed - and considered or disregarded - without opening a
     # log. It is not the result gate: `_run.json`, written only on success,
@@ -2362,7 +2599,16 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
         rc=None, pid=os.getpid())
     if warm_key:
         meta['warm_started_from'] = warm_key
+    return meta
 
+
+def _prepare_launch(src_dir, run_dir, scenario, day, fraction, seed,
+                    overrides, cfg, warm, meta):
+    """Emit the config, snapshot the resolved values and choose the JVM stack.
+
+    A refusal is written to the card and re-raised. Returns
+    (config_path, sample, snapshot, classpath, main_class).
+    """
     # THE INPUTS ARE VALIDATED BEFORE THE CARD SAYS `running` (#127): a
     # missing input file, a regime mismatch or an unbuilt run stack refuses
     # the launch here, and the refusal is written to the card as the cause -
@@ -2400,18 +2646,13 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
     except (SystemExit, Exception) as e:                     # noqa: BLE001
         refuse_launch(run_dir, meta, e)
         raise
-    # THE CARD CARRIES EVERYTHING THE RECORD WILL NEED. A run stopped at a gate
-    # is closed out by whichever process survives the stop - this harness for a
-    # gate stop, `--stop`'s own process for an operator stop - and neither can
-    # reach the locals build_config() just produced. Stashing them on the card
-    # at launch is what lets a stopped run state its identity as completely as a
-    # run that reached its horizon, instead of leaving a directory that can only
-    # be re-derived from a log.
-    meta.update(
-        config_snapshot=os.path.relpath(snapshot, run_dir).replace(os.sep, '/'),
-        values_sha256=values, sample=sample)
-    write_meta(run_dir, meta)
-    log = os.path.join(run_dir, 'matsim.log')
+    return config_path, sample, snapshot, classpath, main_class
+
+
+def _jvm_command(cfg, xmx, jfr, gc_log, run_dir, classpath, main_class,
+                 config_path):
+    """The JVM command line: pre-sized heap, collector, observation-only flags
+    and the controler with its config."""
     # -Xms equal to -Xmx: the 9.57 arm grew the heap 7 -> 27 GB across the run
     # with full-GC stalls visible during the it-110 routing pathology; a
     # pre-sized heap removes the growth path. Wall-time only - the JVM heap
@@ -2433,6 +2674,13 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
         cmd.append('-Xlog:gc*:file=%s:time,uptime,level,tags'
                    % os.path.join(run_dir, 'gc.log').replace('\\', '/'))
     cmd += ['-cp', classpath, main_class, config_path]
+    return cmd
+
+
+def _run_jvm(run_dir, cfg, cmd, log):
+    """Announce the live view and digest, start the JVM with its three
+    watchers and wait for it. Returns (rc, wall seconds); an interrupted
+    harness records the abort and re-raises."""
     # The live view, announced before MATSim starts so the url is on screen for
     # the whole run rather than after it. It reads the run directory and never
     # writes to it.
@@ -2469,43 +2717,135 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
                         '(Ctrl+C, or a kill this process still unwound)')
         raise
     wall = time.time() - t0
-    if rc != 0:
-        gate_cause, completion = _stop_marker(run_dir)
-        dead = mark_dead(run_dir, 'aborted' if gate_cause else 'failed',
-                         rc=rc, wall_s=round(wall, 1), cause=gate_cause)
-        print(('%s after %.0fs - %s'
-               % ({STOPPED_AT_GATE: 'GATE-STOPPED',
-                   STOPPED_AT_CEILING: 'CEILING-STOPPED',
-                   STOPPED_AT_STALL: 'STALL-STOPPED'}.get(
-                       completion, 'STOPPED BY THE OPERATOR'),
-                  wall, gate_cause))
-              if gate_cause else
-              ('FAILED rc=%d after %.0fs - see %s'
-               % (rc, wall, os.path.join(dead, 'matsim.log'))), flush=True)
-        if gate_cause:
-            # A GATE STOP IS A BOUNDARY THE LOOP ASKED FOR, so the arm is closed
-            # out with the same materials a run that reached its horizon gets:
-            # its reading at `reached_iteration` is exactly what the gate was
-            # for, and it stops being an orphan the next session must re-derive.
-            # The record says `stopped_at_gate`, so it can never be handed back
-            # as a finished arm.
-            doc = close_out(dead, completion, rc=rc, wall_s=wall,
-                            stop_cause=gate_cause, cfg=cfg)
-            if doc is not None:
-                print('closed out at iteration %s: %s'
-                      % (doc.get('reached_iteration'),
-                         os.path.join(dead, '_run.json')), flush=True)
-                return doc
-        # A CRASH GETS NO RECORD - it has no boundary and no defensible reading.
-        # Its findings are still extracted while its bulk is fresh, and the
-        # cache re-trimmed, both unattended (9.137).
-        try:
-            results_store.process(os.path.basename(dead), extract=True)
-            results_store.trim(cfg.get('RUN.storage.raw_cap_gb'),
+    return rc, wall
+
+
+def _close_out_nonzero(run_dir, cfg, rc, wall):
+    """The terminal path of a JVM that returned non-zero: a stop at a defined
+    boundary is closed out with a record, a crash gets none."""
+    gate_cause, completion = _stop_marker(run_dir)
+    dead = mark_dead(run_dir, 'aborted' if gate_cause else 'failed',
+                     rc=rc, wall_s=round(wall, 1), cause=gate_cause)
+    print(('%s after %.0fs - %s'
+           % ({STOPPED_AT_GATE: 'GATE-STOPPED',
+               STOPPED_AT_CEILING: 'CEILING-STOPPED',
+               STOPPED_AT_STALL: 'STALL-STOPPED',
+               DIED: 'DIED'}.get(
+                   completion, 'STOPPED BY THE OPERATOR'),
+              wall, gate_cause))
+          if gate_cause else
+          ('FAILED rc=%d after %.0fs - see %s'
+           % (rc, wall, os.path.join(dead, 'matsim.log'))), flush=True)
+    if gate_cause:
+        # A GATE STOP IS A BOUNDARY THE LOOP ASKED FOR, so the arm is closed
+        # out with the same materials a run that reached its horizon gets:
+        # its reading at `reached_iteration` is exactly what the gate was
+        # for, and it stops being an orphan the next session must re-derive.
+        # The record says `stopped_at_gate`, so it can never be handed back
+        # as a finished arm.
+        doc = close_out(dead, completion, rc=rc, wall_s=wall,
+                        stop_cause=gate_cause, cfg=cfg)
+        if doc is not None:
+            print('closed out at iteration %s: %s'
+                  % (doc.get('reached_iteration'),
+                     os.path.join(dead, '_run.json')), flush=True)
+            return doc
+    # A CRASH GETS NO RECORD - it has no boundary and no defensible reading.
+    # Its findings are still extracted while its bulk is fresh, and the
+    # cache re-trimmed, both unattended (9.137).
+    try:
+        results_store.process(os.path.basename(dead), extract=True)
+        results_store.trim(cfg.get('RUN.storage.raw_cap_gb'),
+                           grace_s=cfg.get('RUN.storage.extract_grace_s'))
+    except Exception as e:                               # noqa: BLE001
+        print('post-run processing failed: %s' % e, flush=True)
+    return dict(name=os.path.basename(dead), rc=rc, wall_s=round(wall, 1))
+
+
+def _finish_completed(run_dir, name, record, doc, wall, cfg):
+    """Write a completed run's record against its contract, then its summary
+    and the store's unattended upkeep."""
+    # The run record must meet its declared contract before it is written; a
+    # completed run without a config snapshot cannot state what produced it.
+    try:
+        outputs.write_checked(record, doc, 'run')
+    except outputs.OutputError as e:
+        raise SystemExit(str(e))
+    print('%s rc=0 wall=%.0fs median iteration %.1fs'
+          % (name, wall, doc['median_iteration_s'] or -1), flush=True)
+    # A finished run should not leave its telemetry, its log and three JSON files
+    # for someone to interpret. Close it out with a summary in both dialects -
+    # `_summary.json` against its declared schema, and `SUMMARY.md` for a person.
+    # It reports the state of the RUN and refuses to report a finding: no mode
+    # share, no fit statistic, no validation target. A failure here is logged and
+    # never raised, because the run itself succeeded and its record is written.
+    try:
+        summarise_run.summarise(run_dir)
+    except Exception as e:                                   # noqa: BLE001
+        print('summary could not be written: %s' % e, flush=True)
+    # findings into processed and the cache back under budget, unattended
+    # (9.137) - a completed run's readings survive any later trim
+    try:
+        results_store.process(name, extract=True)
+        results_store.trim(cfg.get('RUN.storage.raw_cap_gb'),
                                grace_s=cfg.get('RUN.storage.extract_grace_s'))
-        except Exception as e:                               # noqa: BLE001
-            print('post-run processing failed: %s' % e, flush=True)
-        return dict(name=os.path.basename(dead), rc=rc, wall_s=round(wall, 1))
+    except Exception as e:                                   # noqa: BLE001
+        print('post-run processing failed: %s' % e, flush=True)
+
+
+def run(scenario, day, cfg, overrides, force=False, warm=None,
+        registry_overrides=None):
+    src_dir = os.path.join(SETS, scenario, day)
+    if not os.path.isdir(src_dir):
+        raise SystemExit('no run inputs at %s' % src_dir)
+    reconcile_stale()
+    # the store maintains itself at every harness start: migrate anything
+    # legacy now; the raw cache is trimmed back under its declared budget on
+    # a daemon thread once the run is launched (#132 - at 671 GiB against a
+    # 500 GB cap the synchronous trim held the launch for the deletion)
+    _migrate_results_store()
+
+    (fraction, iterations, threads, xmx, seed, jfr,
+     gc_log) = _launch_settings(cfg)
+    warm_key = _warm_start_key(warm, scenario, day, fraction, seed, threads,
+                               overrides)
+
+    controler = controler_sha256()
+    values = values_sha256(cfg)
+    inputs = inputs_sha256(day)
+    prior = _resumable_prior(scenario, day, fraction, iterations, seed,
+                             overrides, controler, warm_key, values, inputs,
+                             force)
+    if prior is not None:
+        return prior
+
+    name = _new_run_name(iterations, fraction)
+    run_dir = results_store.raw_dir(name)
+    record = os.path.join(run_dir, '_run.json')
+    os.makedirs(run_dir, exist_ok=True)
+    meta = _launch_card(scenario, day, fraction, iterations, seed, threads,
+                        xmx, overrides, controler, inputs, warm_key)
+    config_path, sample, snapshot, classpath, main_class = _prepare_launch(
+        src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg, warm,
+        meta)
+    # THE CARD CARRIES EVERYTHING THE RECORD WILL NEED. A run stopped at a gate
+    # is closed out by whichever process survives the stop - this harness for a
+    # gate stop, `--stop`'s own process for an operator stop - and neither can
+    # reach the locals build_config() just produced. Stashing them on the card
+    # at launch is what lets a stopped run state its identity as completely as a
+    # run that reached its horizon, instead of leaving a directory that can only
+    # be re-derived from a log.
+    meta.update(
+        config_snapshot=os.path.relpath(snapshot, run_dir).replace(os.sep, '/'),
+        values_sha256=values, sample=sample)
+    write_meta(run_dir, meta)
+    log = os.path.join(run_dir, 'matsim.log')
+    cmd = _jvm_command(cfg, xmx, jfr, gc_log, run_dir, classpath, main_class,
+                       config_path)
+    rc, wall = _run_jvm(run_dir, cfg, cmd, log)
+    if rc != 0:
+        return _close_out_nonzero(run_dir, cfg, rc, wall)
+
     update_meta(run_dir, status='completed', ended=_now(), rc=0,
                 wall_s=round(wall, 1))
 
@@ -2537,32 +2877,7 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
                **sample)
     if warm_key:
         doc['warm_started_from'] = warm_key
-    # The run record must meet its declared contract before it is written; a
-    # completed run without a config snapshot cannot state what produced it.
-    try:
-        outputs.write_checked(record, doc, 'run')
-    except outputs.OutputError as e:
-        raise SystemExit(str(e))
-    print('%s rc=0 wall=%.0fs median iteration %.1fs'
-          % (name, wall, doc['median_iteration_s'] or -1), flush=True)
-    # A finished run should not leave its telemetry, its log and three JSON files
-    # for someone to interpret. Close it out with a summary in both dialects -
-    # `_summary.json` against its declared schema, and `SUMMARY.md` for a person.
-    # It reports the state of the RUN and refuses to report a finding: no mode
-    # share, no fit statistic, no validation target. A failure here is logged and
-    # never raised, because the run itself succeeded and its record is written.
-    try:
-        summarise_run.summarise(run_dir)
-    except Exception as e:                                   # noqa: BLE001
-        print('summary could not be written: %s' % e, flush=True)
-    # findings into processed and the cache back under budget, unattended
-    # (9.137) - a completed run's readings survive any later trim
-    try:
-        results_store.process(name, extract=True)
-        results_store.trim(cfg.get('RUN.storage.raw_cap_gb'),
-                               grace_s=cfg.get('RUN.storage.extract_grace_s'))
-    except Exception as e:                                   # noqa: BLE001
-        print('post-run processing failed: %s' % e, flush=True)
+    _finish_completed(run_dir, name, record, doc, wall, cfg)
     return doc
 
 

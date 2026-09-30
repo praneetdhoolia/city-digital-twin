@@ -1,0 +1,27 @@
+{
+  "overlay": "f39_control_25pct",
+  "description": "ARM OF FAMILY F39's CONTROL (the user's decision D28, 29 September 2026): F38's demand and network with the four corrections of the fifteenth report (D28): motorcycle possession scaled to daily use by the ABS SMVU use ratio 0.1801 (B.motorbike.daily_use, #258), a household motorcycle in the vehicle roster (RUN.qsim.motorcycle_roster), trip ends attached to links that can carry them (RUN.routing.activity_link_capacity, #145), and a pt no-route walk beyond walking's 3,223.6 m reach scored as an unexecutable plan (RUN.transit_router.no_route_walk, #162). Its treatment is f39_headway_25pct, identical but for the headway charge; the pair is read against itself inside F39, and against F38's arm 0 (20260929T012258_250it_25pct) as a direction only. WHAT IT READS: motorbike against 2.14 % (F38) and the 0.3785 % target; walk's mean trip against 3.61 km and the unserved-walk count; the car time tail against 25.0 min (F37); ride and bound-trip execution; all twelve modes. COST: priced by f39_control_probe_25pct; RUN.gate.wall_ceiling_h = 34 is D28's approval for THIS arm. Launch detached only (the launcher refuses the foreground for an arm); lock the screen, never sign out or shut down.",
+  "answers_issues": [
+    30,
+    86,
+    107,
+    145,
+    162,
+    258
+  ],
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 250,
+    "RUN.gate.wall_ceiling_h": 34,
+    "RUN.gate.interval_iterations": 0,
+    "RUN.machine.xmx": "48g",
+    "RUN.controler.create_graphs": false,
+    "RUN.controler.write_plans_interval": 25
+  },
+  "allow_outside_sweep": [
+    "RUN.gate.interval_iterations"
+  ],
+  "justification": {
+    "RUN.gate.interval_iterations": "THE MODE GATE IS OFF, and this is the 9.159 scoped departure already taken for `depth_convergence_25pct` and for f35_baseline_25pct, not a new one. GOAL.md's loop says to stop a run when a mode passes 20 %, and on F35's landed reading six modes did. This arm is the CONTROL HALF of five pairs (#172): an arm the watcher stops at iteration 100 cannot be differenced against anything read at 250, so arming the gate would guarantee that none of the five pairs can ever be read. Switching the watcher off does NOT make the arm blind and does not suspend the loop: every 10th iteration stays readable on all twelve modes on their own bases (9.120, 9.170), the run viewer shows them against their targets, and the operator can stop the arm by hand with `run.py --stop` the moment a reading says the rebuild failed. What made the 9.159 arm indefensible was the OTHER half - it declared no ceiling, so it had no automatic stop of any kind and its approved hours were held by a person watching a clock (#169). This arm declares RUN.gate.wall_ceiling_h = 34, the ceiling watcher is PROVEN on a run (`aborted_20260910T205517_20it_1pct`, completion `stopped_at_ceiling`), and RUN.gate.stall_kill_s = 1800 guards a stall separately, so the run has two automatic stops and is never left without one."
+  }
+}

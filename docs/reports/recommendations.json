@@ -349,9 +349,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "docs",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "7a69e654: the frozen dossiers' banner links re-aimed and check_doc_links.py walks cities/<city>/docs/archived (0 broken)",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260916T062246:12",
@@ -433,9 +433,9 @@
    "repeat_of": 4,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "e0d2ddea: collect_performance reads every _build_timing.json; build_matsim_run_inputs is timed",
+   "updated": "2026-09-29"
   },
   {
    "id": "20260916T062246:19",
@@ -601,9 +601,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "model",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.214: the offline re-route of F37 arm 0 (diagnose_pt_routing --sample 3000) finds 39.2-39.8 % no route, 78.1 % unconnected at 15:00 too, nearest stop p90 6.8 km, 31 % of origins with no stop inside 1 km - rural trip ends, walked because the car-less had nothing else; destinations by mobility in F38",
+   "updated": "2026-09-27"
   },
   {
    "id": "20260925T182313:5",
@@ -613,9 +613,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.213 (refuse_unsafe_host: restart pending or updates not paused past the ceiling) and 9.215 (a run found dead is recorded as died; --warm-start resumes it, with --stopped-was-death for an older record; F38 arm 0 warm-started from iteration 75)",
+   "updated": "2026-09-28"
   },
   {
    "id": "20260925T182313:6",
@@ -661,9 +661,9 @@
    "repeat_of": null,
    "opens_family": true,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.213/9.214: RidePairingEngine, CitysimControler, EscortCoherenceListener, GatedSubtourModeChoice, SubtourChainScan, ActivityLinkAssigner, HouseholdVehicleRoster and the Python mains (run.py, run_matsim.run, calibrate.main, readers, build_population, build_activity_chains) split with identical output; F38 opened the family",
+   "updated": "2026-09-27"
   },
   {
    "id": "20260925T182313:10",
@@ -709,9 +709,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "model",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.214: walk's mean trip read on F37 arm 0 (4.08 km against 0.70); long walks traced to one-way escort holds (35.6 % of walk km) and mobility-blind destinations, both changed in F38; no walk distance cost added",
+   "updated": "2026-09-27"
   },
   {
    "id": "20260925T182313:14",
@@ -743,6 +743,246 @@
    "rank": 16,
    "what": "Measure the replication band.",
    "repeat_of": 8,
+   "opens_family": false,
+   "category": "model",
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260929T045645:1",
+   "report": "20260929T045645",
+   "rank": 1,
+   "what": "Charge the service interval: switch C.time_weights.service_quality_representation from absent to headway (and put the headway into the raptor's submode trade).",
+   "repeat_of": null,
+   "opens_family": true,
+   "category": "model",
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260929T045645:2",
+   "report": "20260929T045645",
+   "rank": 2,
+   "what": "Make motorcycle availability a daily probability, not possession: scale household possession by the ABS SMVU use ratio (motorcycles 1.9k km a year against 11.1k for a passenger vehicle).",
+   "repeat_of": null,
+   "opens_family": true,
+   "category": "model",
+   "status": "taken",
+   "evidence": "8eaf015a: B.motorbike.daily_use = use_ratio 0.1801 from ABS SMVU NSW Table 4; 35,416 -> 6,368 persons available; 9.218",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:3",
+   "report": "20260929T045645",
+   "rank": 3,
+   "what": "Measure one change at a time: a control pair inside the family before the next family opens, and the replication band from three seeds.",
+   "repeat_of": 10,
+   "opens_family": false,
+   "category": "process",
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260929T045645:4",
+   "report": "20260929T045645",
+   "rank": 4,
+   "what": "Close the foreground bypass: the scheduler wrapper sets a launch stamp the harness checks against a live scheduled task; drop --scheduled-child from the copyable argv.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "code",
+   "status": "taken",
+   "evidence": "fe419200: run.py requires a per-launch scheduler nonce and a running citysim_run_<stamp> task; --scheduled-child grants nothing; tests/unit/test_warm_start_after_death.py",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:5",
+   "report": "20260929T045645",
+   "rank": 5,
+   "what": "Check a resume overlay's cutoff as the jar computes it (int(first + f x (last-first))) and refuse a mismatch with the parent's.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "code",
+   "status": "taken",
+   "evidence": "fe419200: run_matsim.jar_cutoff and refuse_cutoff_mismatch against the parent's _config.json; 9.217",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:6",
+   "report": "20260929T045645",
+   "rank": 6,
+   "what": "Make an arm survive sign-out and a reboot: register the task to run whether or not the user is signed in, resume a `died` arm on boot from its newest checkpoint within its approval, and record host load in the progress digest.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "code",
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260929T045645:7",
+   "report": "20260929T045645",
+   "rank": 7,
+   "what": "Rewrite the board's hand lines and the five stale position pages from F38's result, pin the run state and \"N of 12\" in doc_currency.json, and open the session PR.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "process",
+   "status": "taken",
+   "evidence": "e60b0255: board hand lines, five position pages, doc_currency status.goal-inside-10 pinned to the scoreboard",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:8",
+   "report": "20260929T045645",
+   "rank": 8,
+   "what": "Bound the pt no-route fallback: a pt request with no transit route is not answered with a walk longer than the walk mode's observed reach.",
+   "repeat_of": null,
+   "opens_family": true,
+   "category": "model",
+   "status": "taken",
+   "evidence": "8eaf015a: RUN.transit_router.no_route_walk = refused_beyond_reach at 3,223.6 m (NetworkDirectWalkPtRouter, PtUnservedScoring, PtNoRouteWalkProbe); in F39's control arm 20260929T072135_250it_25pct",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:9",
+   "report": "20260929T045645",
+   "rank": 9,
+   "what": "Attach trip ends to links that can carry them (capacity-aware ActivityLinkAssigner).",
+   "repeat_of": null,
+   "opens_family": true,
+   "category": "model",
+   "status": "taken",
+   "evidence": "8eaf015a: RUN.routing.activity_link_capacity = capacity_bounded (ActivityLinkCapacity, ActivityLinkCapacityProbe); in F39's control arm",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:10",
+   "report": "20260929T045645",
+   "rank": 10,
+   "what": "Run check_manifest for every city in the gate and CI, and turn the recorded debts into per-rule ceilings that may only fall.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "code",
+   "status": "taken",
+   "evidence": "e0d2ddea: tests/check_manifest.py --all-cities in the gate and CI; cities/<city>/tests/manifest_debt.json ceilings that may only fall",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:11",
+   "report": "20260929T045645",
+   "rank": 11,
+   "what": "Read a died run's liveness from its log, not an OpenProcess failure: treat access denied as unknown and stop wall_s at the log's last line.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "code",
+   "status": "taken",
+   "evidence": "fe419200: procs.pid_state alive/dead/unknown; stop_run records died only when log_confirms_death; died wall_s stops at the log's last line",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:12",
+   "report": "20260929T045645",
+   "rank": 12,
+   "what": "Price a warm start from its checkpoint and have the performance collector read _build_timing.json.",
+   "repeat_of": 5,
+   "opens_family": false,
+   "category": "code",
+   "status": "taken",
+   "evidence": "fe419200 arm_cost.price(first_iteration) for a warm start; e0d2ddea collect_performance reads every _build_timing.json",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:13",
+   "report": "20260929T045645",
+   "rank": 13,
+   "what": "Fix collect_metrics' direct-to-main count to walk origin/main.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "code",
+   "status": "taken",
+   "evidence": "e0d2ddea: collect_metrics default_ref() walks origin/main",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:14",
+   "report": "20260929T045645",
+   "rank": 14,
+   "what": "Put the household motorcycle under the census roster in Java so two riders cannot use one drawn motorcycle at once.",
+   "repeat_of": null,
+   "opens_family": true,
+   "category": "code",
+   "status": "taken",
+   "evidence": "8eaf015a: RUN.qsim.motorcycle_roster = household (HouseholdVehicleRoster, HouseholdMotorcycleProbe); 60 shared motorcycles in the F39 smoke",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:15",
+   "report": "20260929T045645",
+   "rank": 15,
+   "what": "Refuse a `choice` build when either observed motorbike table is missing instead of falling back to the pooled vector.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "code",
+   "status": "taken",
+   "evidence": "8eaf015a: a choice build refuses a missing rider or possession table",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:16",
+   "report": "20260929T045645",
+   "rank": 16,
+   "what": "Close #257 on §9.217 and file the motorbike availability/constant as its own issue; post the six due measurements; re-aim the F35-anchored pairs at F38.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "process",
+   "status": "taken",
+   "evidence": "#257 closed on 9.217, #258 filed, six measurements posted and re-aimed at F39's control arm",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:17",
+   "report": "20260929T045645",
+   "rank": 17,
+   "what": "Send the TfNSW bespoke-table request (mode by age, trip length distribution by mode, occupancy by purpose).",
+   "repeat_of": 9,
+   "opens_family": false,
+   "category": "data",
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260929T045645:18",
+   "report": "20260929T045645",
+   "rank": 18,
+   "what": "verify_producer --against-committed runs HEAD's script from a temp copy instead of overwriting the tracked file.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "code",
+   "status": "taken",
+   "evidence": "e0d2ddea: verify_producer --against-committed runs HEAD's script from a temp copy",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:19",
+   "report": "20260929T045645",
+   "rank": 19,
+   "what": "A PreToolUse hook that refuses the shell stdin trap (heredoc, bare `python -`).",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "process",
+   "status": "taken",
+   "evidence": "e0d2ddea: .claude/hooks/block-stdin-trap.sh registered in .claude/settings.json; refused a heredoc this session",
+   "updated": "2026-09-29"
+  },
+  {
+   "id": "20260929T045645:20",
+   "report": "20260929T045645",
+   "rank": 20,
+   "what": "Run the built ASC fixed-point loop once the mechanisms above land, as Berlin v6 did (mode-share error under 0.5 pp in ~5 runs).",
+   "repeat_of": null,
    "opens_family": false,
    "category": "model",
    "status": "open",

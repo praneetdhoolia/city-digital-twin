@@ -1,7 +1,7 @@
 {
   "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
-  "updated": "2026-09-25",
-  "family": "F37-the-boundary-tier-returns-and-pt-reaches-every-stop",
+  "updated": "2026-09-30",
+  "family": "F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen",
   "tasks": [
     {
       "id": "routers-pair-reading",
@@ -328,8 +328,8 @@
       "id": "read-f37-arm-0",
       "title": "Read F37's arm 0 at its record: all twelve modes with choice-set coverage; the no-route share of pt requests against 66.3 % on F36 (the `ptDirectWalk` counter); walk's and pt's mean trip; the car-less split; taxi with its wait executed; the external tier's boundary trips",
       "kind": "reading",
-      "status": "open",
-      "recommended": true,
+      "status": "done",
+      "recommended": false,
       "cost": "no run: `report_mode_ridership.py --run <arm> --it 250` and `--trend`, `report_choice_set_coverage.py`, `mode_by_demographics.py`, `measure_bound_trips.py`, `diagnose_pt_routing.py --sample 3000`; then `build_run_index.py` and the board",
       "blocked_on": "the arm reaching its record (overlay `f37_baseline_25pct`, 34 h ceiling approved 25 September 2026)",
       "opens_family": false,
@@ -344,13 +344,14 @@
         187,
         237
       ],
-      "evidence": "9.213"
+      "evidence": "9.213",
+      "done_ref": "9.214"
     },
     {
       "id": "pt-no-route-structure",
       "title": "Explain the ~39 % of pt trips with no connection even without the access cap: split the no-route requests by trip-end distance band and by transfer-walk radius (300/500/800 m) in `diagnose_pt_routing.py`, read-only on F37 arm 0",
       "kind": "diagnostic",
-      "status": "open",
+      "status": "done",
       "recommended": false,
       "cost": "no run; ~1 h offline re-route of 3,000 trips per radius",
       "blocked_on": "F37 arm 0 for the plans it reads (F36 arm 0 works today)",
@@ -358,19 +359,113 @@
       "answers_issues": [
         162
       ],
-      "evidence": "9.213: 78 % of the offline no-routes persist at 15:00"
+      "evidence": "9.213: 78 % of the offline no-routes persist at 15:00",
+      "done_ref": "9.214"
     },
     {
       "id": "motorbike-choice",
       "title": "Make motorbike a choice (D22): motorbike availability from the registration stock per household, then chosen like any mode; retire the target-share carve of 9.52",
       "kind": "build",
-      "status": "open",
+      "status": "done",
       "recommended": false,
       "cost": "a build change and a plans rebuild (~1 h), a 1 % smoke; opens F38",
       "blocked_on": "F37 arm 0 read first (D22)",
       "opens_family": true,
       "answers_issues": [],
-      "evidence": "9.213, D22; 9.52"
+      "evidence": "9.213, D22; 9.52",
+      "done_ref": "9.214"
+    },
+    {
+      "id": "read-f38-arm-0",
+      "title": "Read F38's arm 0 at its record: all twelve modes with choice-set coverage against F37's result as a direction; walk's mean trip against 4.08 km and walk km inside held-ride tours against 35.6 %; the car-less split and trip lengths (bike 11.8 km, walk 6.0 km); heavy-rail station entries against 17,016 and access walks over 2 km against 19.5 %; motorbike CHOSEN against 0.3785 %; ride with the doubled lifts against -13.5 %; taxi against +129.6 %; the no-route share against 52.1 %",
+      "kind": "reading",
+      "status": "done",
+      "recommended": false,
+      "cost": "no run: `report_mode_ridership.py --run 20260927T145839_250it_25pct --it 250` and `--trend`, `report_choice_set_coverage.py --against-targets`, `mode_by_demographics.py`, `measure_bound_trips.py`, `diagnose_pt_routing.py --sample 3000`, `fit.py`; then `build_run_index.py`, the board and a fresh /project-report",
+      "blocked_on": "the arm reaching its record (overlay `f38_baseline_25pct`, 34 h ceiling approved 27 September 2026, D23)",
+      "opens_family": false,
+      "answers_issues": [
+        30,
+        86,
+        94,
+        98,
+        107,
+        145,
+        162,
+        257
+      ],
+      "evidence": "9.214",
+      "done_ref": "9.217"
+    },
+    {
+      "id": "access-link-capacity",
+      "title": "Attach trip ends to links that can carry them: on F37's arm 0, 29 links (28 service lanes, one living street) carry 23,161 sampled road-vehicle trip ends needing up to 38 hours of their own sampled capacity, and the 2.7 % of road trips touching them average 72.6 min at 13.4 km/h against 25.5 min elsewhere; 73 % of the run's excess vehicle-hours sit on residential and service links carrying ~13 % of traversals. Design a capacity-aware citysim.ActivityLinkAssigner rule (no link receives more trip ends than it can move in the modelled day, excess moved to the next-nearest eligible links), derived, behind a representation gate, and measure the car time tail against the HTS 17.2 min",
+      "kind": "model",
+      "status": "done",
+      "recommended": false,
+      "cost": "no run to design: the trip-end load per link and the car time by load band from any finished arm's trips table and output network (scratch access_load.py and delay_links.py, to be folded into an existing reader); the Java change compiles only on an idle machine and opens a family",
+      "blocked_on": "F38's arm 0 reading (the car time tail on the new demand), then a user decision on the next family's contents",
+      "opens_family": true,
+      "answers_issues": [
+        145
+      ],
+      "evidence": "9.214 (F37 arm 0: car mean 25.0 min for 11.88 km against the HTS 17.2 min for 10.2 km; median 12.6 min; 9.8 % of car trips under 15 km/h carry 32.4 % of car time, spread over the whole day)",
+      "done_ref": "9.217"
+    },
+    {
+      "id": "f39-pair",
+      "title": "Build F39 and run it as a PAIR (D28): the control arm carries four corrections - motorcycle possession scaled to daily use from ABS SMVU (#258), a motorcycle in the household vehicle roster, trip ends attached to links that can carry them (#145), the pt no-route walk bounded to walking's reach (#162, #30) - and the treatment arm adds C.time_weights.service_quality_representation = headway (#175); read each against the other inside the family and both against F38 as a direction",
+      "kind": "run",
+      "status": "done",
+      "recommended": false,
+      "cost": "the rebuild (chains unchanged; plans ~3 min; run inputs ~18 min), a 1 % smoke, a 25 % probe per arm, then two 25 % arms of ~27-32 h each at a 34 h ceiling (approved by D28), one after the other",
+      "blocked_on": "the four corrections built, compiled and probed; a full gate green; each arm priced on its own probe",
+      "opens_family": true,
+      "answers_issues": [
+        30,
+        86,
+        94,
+        98,
+        107,
+        145,
+        162,
+        175,
+        258
+      ],
+      "evidence": "the fifteenth report (docs/reports/20260929T045645_project_report.html), recommendations 1, 2, 8, 9, 14; 9.217",
+      "done_ref": "9.219"
+    },
+    {
+      "id": "f39-headway-arm",
+      "title": "Run F39's treatment arm: f39_control_25pct plus the service-interval charge on the boarded line's interval at the boarding stop, valued by ATAP M1 (C.time_weights.service_interval_function = atap_m1, #175), and read it against the control 20260929T072135_250it_25pct with compare_runs.py --modes",
+      "kind": "run",
+      "status": "open",
+      "recommended": true,
+      "cost": "a 25 % probe on the ATAP build (f39_headway_probe_25pct, ~45 min), then one 25 % arm: the control ran 27.9 h against a 27.7 h quote, the treatment's daytime probes quoted 37.0-50.5 h on a loaded host",
+      "blocked_on": "D29 - the charge's form and the arm's cost ceiling",
+      "opens_family": false,
+      "answers_issues": [
+        94,
+        98,
+        175
+      ],
+      "evidence": "9.219: the probe found the approved charge keyed on route variants (1,080 of 1,270 once-a-day) and a once-a-day line-stop charged 900 IVT-minutes; fixed, and ATAP M1 eq 4.3.2 declared"
+    },
+    {
+      "id": "short-trip-and-carless-choice",
+      "title": "Design, from observed inputs, the two mechanisms walk's error traces to on F39's control: (1) a car terminal time - the walk to and from a parked car and the manoeuvre - so the car-available stop driving 75.9 % of sub-kilometre trips (walk 7.6 %); (2) the car-less' alternative on a trip no driver is bound to and no transit serves (they walk 14-24 % of 10-20+ km trips; ride is reachable only on bound trips, coverage 19.02 % below its 20.60 % target)",
+      "kind": "build",
+      "status": "open",
+      "recommended": false,
+      "cost": "no run: the literature and data search (ATAP M1 and the HTS for terminal time; the NSW HTS passenger tables for lifts outside the household), a registry proposal with sweeps and a representation gate each, and a probe; opens the next family when built",
+      "blocked_on": "nothing - design work; an arm only after F39's treatment",
+      "opens_family": true,
+      "answers_issues": [
+        30,
+        86,
+        162
+      ],
+      "evidence": "9.219: mode_by_demographics.py distance bands and _bound_trips.json on 20260929T072135_250it_25pct (sub-1 km trips 13.5 % of trips, 59.2 % driven; chosen walks in no-ride tours 26,721 at 6.21 km)"
     }
   ],
   "decisions": [
@@ -940,6 +1035,197 @@
       "asked": "2026-09-25",
       "answer": "In F38, after F37 reads (recommended)",
       "answered": "2026-09-25"
+    },
+    {
+      "id": "D23",
+      "question": "F37's arm 0 traced walk's long trips, the rail excess and the car-less excess to two demand structures. What does F38 contain?",
+      "options": [
+        {
+          "label": "All three, then the arm (Recommended)",
+          "detail": "escort round trips for anyone who could drive, destinations by the person's own mobility, motorbike chosen (D22); verified offline, smoke, probe, then a 25 % arm at a 34 h ceiling (this approves that cost)"
+        },
+        {
+          "label": "All three, no arm yet",
+          "detail": "build and verify, ask again before 34 h"
+        },
+        {
+          "label": "Escort and motorbike only",
+          "detail": "the destination kernel in a later family"
+        },
+        {
+          "label": "Measure more first",
+          "detail": "access-walk weight and Hamilton transfers before building"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        30,
+        86,
+        107,
+        162,
+        257
+      ],
+      "evidence": "9.214; F37 arm 0 20260926T002526_250it_25pct at iteration 250",
+      "asked": "2026-09-27",
+      "answer": "All three, then the arm (Recommended)",
+      "answered": "2026-09-27",
+      "note": "approves one 25 % F38 arm at a 34 h ceiling, spent on that launch"
+    },
+    {
+      "id": "D24",
+      "question": "F38's arm 0 shares the CPU with other work (100 % CPU; about 1 h behind F37's pace at iteration 19); at that load it would reach its 34 h ceiling near iteration 247. What should happen?",
+      "options": [
+        {
+          "label": "I'll keep heavy apps closed (Recommended)",
+          "detail": "at F37's pace it finishes in about 32.5 h"
+        },
+        {
+          "label": "Keep using the PC; accept the risk",
+          "detail": "a ceiling stop closes out as stopped_at_ceiling: citable at its reached iteration, not a result"
+        },
+        {
+          "label": "Approve a 40 h ceiling instead",
+          "detail": "stop and relaunch under 40 h, losing the first 4 h"
+        }
+      ],
+      "recommended": 0,
+      "issues": [],
+      "evidence": "20260927T145839_250it_25pct stopwatch: iteration 0 to 19 in 3.18 h against F37's 2.11 h",
+      "asked": "2026-09-27",
+      "answer": "Keep using the PC; accept the risk",
+      "answered": "2026-09-27"
+    },
+    {
+      "id": "D25",
+      "question": "F38's arm 0 died at iteration 79 (13.2 h in) because it was launched attached to the Claude session; the launcher now refuses that. How should F38's arm continue?",
+      "options": [
+        {
+          "label": "Warm start at 75, 34 h cap (Recommended)",
+          "detail": "continue from the iteration-75 plans with the cutoff kept at 200, detached; ~23 h idle, up to ~34 h under load; a warm-completed arm is a result (9.167)"
+        },
+        {
+          "label": "Warm start at 75, 26 h cap",
+          "detail": "finishes only if the machine stays mostly free"
+        },
+        {
+          "label": "Fresh relaunch, 40 h cap",
+          "detail": "discard the 75 iterations; ~32 h idle"
+        }
+      ],
+      "recommended": 0,
+      "issues": [],
+      "evidence": "9.215; aborted_20260927T145839_250it_25pct (reached 79); F37's iterations 76-250 took 22.82 h",
+      "asked": "2026-09-28",
+      "answer": "Warm start at 75, 34 h cap (Recommended)",
+      "answered": "2026-09-28",
+      "note": "approves up to 34 h, spent on the warm-started launch"
+    },
+    {
+      "id": "D26",
+      "question": "F38's warm-started arm died at iteration 188 of 250 when Windows crashed (bugcheck 0x13A after an NVMe controller error); the repository and all 967 data files check out intact. Continue from the iteration-175 plans?",
+      "options": [
+        {
+          "label": "Warm start at 175, 18 h cap (Recommended)",
+          "detail": "resume detached, cutoff kept at 200; ~13 h idle (F37's iterations 176-250 took 12.27 h); approves up to 18 h"
+        },
+        {
+          "label": "Warm start at 175, 14 h cap",
+          "detail": "finishes only if the machine stays mostly free"
+        },
+        {
+          "label": "Hold until I check the SSD",
+          "detail": "launch nothing until the drive is checked"
+        }
+      ],
+      "recommended": 0,
+      "issues": [],
+      "evidence": "9.215; aborted_20260928T042107_250it_25pct (completion died, reached 188); System events 11 (stornvme), 41, 1001 (bugcheck 0x13A)",
+      "asked": "2026-09-28",
+      "answer": "Warm start at 175, 18 h cap (Recommended)",
+      "answered": "2026-09-28",
+      "note": "approves up to 18 h, spent on the second warm start"
+    },
+    {
+      "id": "D27",
+      "question": "F38's arm stopped at iteration 229 of 250 because the PC was shut down from the Start menu at 23:29 on 28 September (a shutdown or sign-out ends the scheduled run). Finish the last 25 iterations from the intact iteration-225 plans?",
+      "options": [
+        {
+          "label": "Resume at 225, 4 h cap (Recommended)",
+          "detail": "about 2-3 h including setup; innovation is already off at 225, so this is the settling tail"
+        },
+        {
+          "label": "Resume at 225, 3 h cap",
+          "detail": "enough only if the machine stays mostly free"
+        },
+        {
+          "label": "Read it at 225 as it stands",
+          "detail": "cite the stopped reading, not a result"
+        }
+      ],
+      "recommended": 0,
+      "issues": [],
+      "evidence": "9.216; aborted_20260928T163345_250it_25pct (died, reached 229); F37's iterations 226-250 took 1.94 h",
+      "asked": "2026-09-29",
+      "answer": "Resume at 225, 4 h cap (Recommended)",
+      "answered": "2026-09-29",
+      "note": "approves up to 4 h, spent on the third resume"
+    },
+    {
+      "id": "D28",
+      "question": "The fifteenth report's model fixes open family F39: four corrections of measured defects (motorcycle possession scaled to daily use from ABS SMVU; a motorcycle in the household roster; trip ends attached to links that can carry them; the pt no-route walk bounded to walking's reach) and one hypothesis (the headway charge). How should F39 run?",
+      "options": [
+        {
+          "label": "Pair: fixes vs fixes+headway (Recommended)",
+          "detail": "control = F38 + the four corrections; treatment = the same + the headway charge; ~2 x 30 h, both arms approved at a 34 h ceiling each, run one after the other"
+        },
+        {
+          "label": "One arm, all five changes",
+          "detail": "fastest, unattributable"
+        },
+        {
+          "label": "Corrections arm only, headway later",
+          "detail": "one arm"
+        },
+        {
+          "label": "No arm yet: no-run fixes first",
+          "detail": "ask again with probe prices"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        257
+      ],
+      "evidence": "the fifteenth report (docs/reports/20260929T045645_project_report.html), recommendations 1-3, 8, 9, 14",
+      "asked": "2026-09-29",
+      "answer": "Pair: fixes vs fixes+headway (Recommended)",
+      "answered": "2026-09-29",
+      "note": "approves two 25 % arms at a 34 h ceiling each (control, then treatment), each priced on its own probe first"
+    },
+    {
+      "id": "D29",
+      "question": "F39's treatment arm: which service-interval charge should it test, and at what cost ceiling? The control is a result (2 of 12 inside 10 %, motorbike -4.1 %). The approved linear charge was keyed on route variants and is fixed to the boarded line at its stop; the linear form still charges a once-a-day service 900 IVT-minutes, and the daytime probes quote 37-50 h against the control's actual 27.9 h.",
+      "options": [
+        {
+          "label": "ATAP M1 function, 40 h cap (Recommended)",
+          "detail": "ATAP M1 Technical Report s4.3 eq 4.3.2 on the line's interval at the boarding stop: 8 IVT-min at a 10-min service, 26 hourly, 208 once a day (linear: 5 / 30 / 900); built and probed in 9.219; re-probe, then one 25 % arm stopping itself at 40 h"
+        },
+        {
+          "label": "Linear as approved, 40 h cap",
+          "detail": "D28's 0.5 x interval with the service-day cap on the fixed interval; ~3 % of boardings (school and peak-only services) charged 900 IVT-minutes each"
+        },
+        {
+          "label": "Hold it; fix walk and no-route first",
+          "detail": "skip the treatment; build short-trip-and-carless-choice and open the next family with it"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        175
+      ],
+      "evidence": "9.219; asked 30 September 2026, answered 'Make any fixes and handoff' - the fixes are in, the form and the ceiling are still open",
+      "asked": "2026-09-30",
+      "answer": null,
+      "answered": null
     }
   ]
 }

@@ -50,7 +50,13 @@ import org.matsim.core.router.RoutingRequest;
  * the transit route's cost from the attribute the raptor writes on its legs
  * ({@code totalRouteCost}), and returns the cheaper. When the raptor finds no
  * transit route at all, the network walk is returned: an honest walk, not a
- * beeline one.
+ * beeline one. Under {@code RUN.transit_router.no_route_walk =
+ * refused_beyond_reach} (D28, F39) a no-route walk longer than
+ * {@code RUN.transit_router.no_route_walk_reach_m} is still returned - the
+ * plan must stay executable - but its legs carry {@link #UNSERVED_ATTRIBUTE}
+ * and {@link PtUnservedScoring} scores the plan executing it as unexecutable,
+ * so an unservable pt request stops being a free long walk; counted in the
+ * progress line. Under {@code network_walk} nothing is stamped (F38).
  *
  * <p>No value is invented and no declared value moves: the factor, the
  * marginal utilities and the walk speed are the run's own; the ferry, the
@@ -104,6 +110,27 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
     // named at its source.
     private static final AtomicLong INNER_WALKS_ROUTED = new AtomicLong();
     private static final AtomicLong INNER_WALKS_UNROUTABLE = new AtomicLong();
+    // D28 (F39), RUN.transit_router.no_route_walk = refused_beyond_reach: the
+    // no-route answers whose network walk is longer than the declared reach,
+    // a part of NO_TRANSIT. Zero under network_walk, which counts nothing.
+    private static final AtomicLong BEYOND_REACH = new AtomicLong();
+
+    /**
+     * Leg attribute (routed metres, a Double) on every leg of a no-route
+     * answer whose network walk is longer than
+     * {@code ptDirectWalk.noRouteWalkReachM}. The legs are still the network
+     * walk - PersonPrepareForSim, the agent source and the mobsim need an
+     * executable trip, and MATSim's own answer to a null route is a
+     * TELEPORTED beeline walk ({@code FallbackRoutingModuleDefaultImpl},
+     * read from the pinned jar), the very thing GOAL.md requirement 1 and
+     * 9.121 retired. What changes is what the plan is worth: see
+     * {@link PtUnservedScoring}.
+     */
+    public static final String UNSERVED_ATTRIBUTE = "ptUnservedWalk_m";
+
+    /** The routed walk length past which a no-route answer is refused, in
+     *  metres; 0 when the gate is off (network_walk, F38). */
+    private final double refuseBeyondM;
 
     NetworkDirectWalkPtRouter(final RoutingModule transit, final RoutingModule walk,
                               final RaptorParametersForPerson parameters,
@@ -114,6 +141,15 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
         this.network = network;
         this.directWalkFactor = config.transitRouter().getDirectWalkFactor();
         this.transitModes = new HashSet<>(config.transit().getTransitModes());
+        final PtDirectWalkConfigGroup cfg = (PtDirectWalkConfigGroup)
+                config.getModules().get(PtDirectWalkConfigGroup.NAME);
+        this.refuseBeyondM = cfg != null && cfg.refusesBeyondReach()
+                ? cfg.noRouteWalkReachM : 0.0;
+    }
+
+    /** Test seam for the probe: the run-lifetime count of refused answers. */
+    static long beyondReachCount() {
+        return BEYOND_REACH.get();
     }
 
     @Override
@@ -123,9 +159,19 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
         // parts of THIS total, and a line that reports parts against a total
         // they are not parts of is a line nobody can act on.
         if (requests % 100000 == 0) {
-            LOG.info("ptDirectWalk: {} pt routing requests, {} without any transit route, "
-                     + "{} compared, of which {} chose the network walk",
-                     requests, NO_TRANSIT.get(), DECIDED.get(), WALKED.get());
+            if (this.refuseBeyondM > 0.0) {
+                // the F38 spelling first, so diagnose_pt_routing's pattern
+                // still reads the line; the refused part appended
+                LOG.info("ptDirectWalk: {} pt routing requests, {} without any transit route, "
+                         + "{} compared, of which {} chose the network walk; {} of the "
+                         + "no-route answers refused as walks beyond the {} m reach",
+                         requests, NO_TRANSIT.get(), DECIDED.get(), WALKED.get(),
+                         BEYOND_REACH.get(), Math.round(this.refuseBeyondM));
+            } else {
+                LOG.info("ptDirectWalk: {} pt routing requests, {} without any transit route, "
+                         + "{} compared, of which {} chose the network walk",
+                         requests, NO_TRANSIT.get(), DECIDED.get(), WALKED.get());
+            }
         }
         final List<? extends PlanElement> transitLegs = this.transit.calcRoute(request);
         final List<? extends PlanElement> walkLegs = this.walk.calcRoute(request);
@@ -133,6 +179,21 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
             // the raptor found no transit route: the walk is the walk the
             // network offers, not a line across the map
             NO_TRANSIT.incrementAndGet();
+            if (this.refuseBeyondM > 0.0 && walkLegs != null) {
+                // D28: a pt request nobody can serve is not a free long walk
+                final double metres = walkMetres(walkLegs);
+                if (metres > this.refuseBeyondM) {
+                    markUnserved(walkLegs, metres);
+                    if (BEYOND_REACH.incrementAndGet() <= 3) {
+                        LOG.info("ptDirectWalk: no transit route and a {} m network walk "
+                                 + "(reach {} m) for person {}: refused (the plan scores "
+                                 + "as unexecutable, RUN.transit_router.no_route_walk)",
+                                 Math.round(metres), Math.round(this.refuseBeyondM),
+                                 request.getPerson() == null ? "?"
+                                         : request.getPerson().getId());
+                    }
+                }
+            }
             return walkLegs;
         }
         final List<? extends PlanElement> transitOnNetwork =
@@ -255,6 +316,31 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
             }
         }
         return Double.NaN;
+    }
+
+    /** The routed length of a walk answer, metres: the sum of its legs'
+     *  route distances (a stub without a defined distance adds nothing). */
+    static double walkMetres(final List<? extends PlanElement> legs) {
+        double m = 0.0;
+        for (final PlanElement pe : legs) {
+            if (pe instanceof Leg && ((Leg) pe).getRoute() != null) {
+                final double d = ((Leg) pe).getRoute().getDistance();
+                if (Double.isFinite(d)) {
+                    m += d;
+                }
+            }
+        }
+        return m;
+    }
+
+    /** Stamp every leg of a refused no-route answer with its routed length. */
+    private static void markUnserved(final List<? extends PlanElement> legs,
+                                     final double metres) {
+        for (final PlanElement pe : legs) {
+            if (pe instanceof Leg) {
+                ((Leg) pe).getAttributes().putAttribute(UNSERVED_ATTRIBUTE, metres);
+            }
+        }
     }
 
     private static double travelSeconds(final List<? extends PlanElement> legs) {

@@ -146,6 +146,7 @@ from geo import haversine as hav   # noqa: E402  (one copy, src/build/geo.py)
 
 
 from geo import kinematic_time as _kinematic_time   # noqa: E402
+from registry.param_config import hhmmss   # noqa: E402  (one copy)
 
 
 def kin(d, v_kmh, a=ACCEL, b=DECEL):
@@ -155,11 +156,6 @@ def kin(d, v_kmh, a=ACCEL, b=DECEL):
 def sec(t):
     h, m, s = map(int, t.split(':'))
     return h * 3600 + m * 60 + s
-
-
-def hhmmss(s):
-    s = int(round(s))
-    return '%02d:%02d:%02d' % (s // 3600, (s % 3600) // 60, s % 60)
 
 
 def renumber_sequences(feed):
@@ -629,14 +625,9 @@ def summarise(f, label):
             'trunk_trips_weekday': {k: len(v) for k, v in durs.items()}}
 
 
-def main():
-    base = read_feed(BASE)
-    print('base2026: routes=%d trips=%d stops=%d' %
-          (len(base['routes']), len(base['trips']), len(base['stops'])), flush=True)
-    out = {}
-    geom = {}
-
-    # ---- alignments, built once from observed geometry -------------------
+def extension_alignment_km():
+    """Route the S4/S5 extension corridor over the road and footway extracts;
+    returns (alignment points, length in km)."""
     print('building alignments from the road and footway extracts ...', flush=True)
     graph = RoadGraph()
     ext_align = extension_alignment(graph)
@@ -645,7 +636,12 @@ def main():
           '(SBC states %.2f km, %+.1f%%)'
           % (ext_km, len(ext_align), SBC_EXTENSION_KM,
              (ext_km / SBC_EXTENSION_KM - 1) * 100), flush=True)
+    return ext_align, ext_km
 
+
+def reserved_corridors(base):
+    """The S2c tram and S0 rail corridors along the harbour-side strip; returns
+    (tram corridor, rail corridor, their geometry report)."""
     lr_west = shape_points(base, LR_SHAPE_OUT)[0]
     lr_east = shape_points(base, LR_SHAPE_OUT)[-1]
     tram_corridor, tram_obs_m, tram_tot_m = harbourside_corridor(lr_west, lr_east)
@@ -655,7 +651,20 @@ def main():
           % (tram_tot_m / 1000.0, 100.0 * tram_obs_m / max(tram_tot_m, 1)), flush=True)
     print('   S0 rail corridor:         %.2f km, %.0f%% on observed OSM geometry'
           % (rail_tot_m / 1000.0, 100.0 * rail_obs_m / max(rail_tot_m, 1)), flush=True)
+    reserved_geom = dict(
+        tram_km=round(tram_tot_m / 1000.0, 3),
+        tram_observed_pct=round(100.0 * tram_obs_m / max(tram_tot_m, 1), 1),
+        rail_km=round(rail_tot_m / 1000.0, 3),
+        rail_observed_pct=round(100.0 * rail_obs_m / max(rail_tot_m, 1), 1),
+        source='modelled - the retained harbour-side former-railway strip, '
+               'observed in OSM where it survives (Foreshore Footpath) and '
+               'interpolated across the redeveloped gap')
+    return tram_corridor, rail_corridor, reserved_geom
 
+
+def extension_stop_sites(ext_align, ext_km):
+    """Site the S4/S5 extension stops on the alignment and cut S4's truncated
+    alignment; returns (S4 stops, S5 added stops, S4 alignment, geometry report)."""
     bmd = site_extension_stops(ext_align, EXT_BROADMEADOW)
     jhh = site_extension_stops(ext_align, EXT_JHH)
     for nm, la, lo, src, off, along in bmd + jhh:
@@ -668,7 +677,7 @@ def main():
     bmd_end = max(a for *_, a in bmd)
     ext_align_bmd = [p for p in ext_align
                      if project_onto(ext_align, p)[2] <= bmd_end + 1.0]
-    geom['extension'] = dict(
+    extension_geom = dict(
         km=round(ext_km, 3), points=len(ext_align),
         sbc_stated_km=SBC_EXTENSION_KM,
         sbc_streets=list(SBC_EXTENSION_STREETS),
@@ -676,29 +685,25 @@ def main():
         source='modelled - routed over observed OSM centreline of the streets '
                'named in the 2020 NLR Extension Strategic Business Case; stop '
                'sitings remain assumed (DECISIONS.md 3.4, 10)')
-    geom['reserved_corridor'] = dict(
-        tram_km=round(tram_tot_m / 1000.0, 3),
-        tram_observed_pct=round(100.0 * tram_obs_m / max(tram_tot_m, 1), 1),
-        rail_km=round(rail_tot_m / 1000.0, 3),
-        rail_observed_pct=round(100.0 * rail_obs_m / max(rail_tot_m, 1), 1),
-        source='modelled - the retained harbour-side former-railway strip, '
-               'observed in OSM where it survives (Foreshore Footpath) and '
-               'interpolated across the redeveloped gap')
+    return bmd_stops, jhh_stops, ext_align_bmd, extension_geom
 
-    # S2 - as built
-    write_feed(renumber_sequences(base), os.path.join(OUT, 'S2.zip'))
-    out['S2'] = summarise(base, 'S2')
 
+def scenario_s0(base, rail_corridor):
+    """Write the S0 feed (heavy rail retained) and return its summary."""
     # S0 - heavy rail retained to Newcastle station
     s0, n_ext = extend_heavy_rail(base)
     n_trips, n_shapes = set_s0_rail_shapes(
         s0, rail_corridor, {'sydneytrains:S0_%d' % (i + 1)
                             for i in range(len(S0_EXTENSION))})
     write_feed(renumber_sequences(s0), os.path.join(OUT, 'S0.zip'))
-    out['S0'] = summarise(s0, 'S0')
-    out['S0']['heavy_rail_trips_extended'] = n_ext
-    out['S0']['shapes_extended'] = dict(trips=n_trips, shapes=n_shapes)
+    summary = summarise(s0, 'S0')
+    summary['heavy_rail_trips_extended'] = n_ext
+    summary['shapes_extended'] = dict(trips=n_trips, shapes=n_shapes)
+    return summary
 
+
+def scenario_s1(base):
+    """Write the S1 feed (bus shuttle, no light rail) and return its summary."""
     # S1 - bus shuttle from Wickham, no light rail
     s1, n1 = make_bus_shuttle(
         drop_lr(base), S1_SHUTTLE, CFG.get('E.s1.headway_s'), 'S1SHUTTLE',
@@ -707,29 +712,38 @@ def main():
         dwell_s=CFG.get('E.s1.shuttle_dwell_s'),
         first_h=CFG.get('E.s1.first_hour'), last_h=CFG.get('E.s1.last_hour'))
     write_feed(renumber_sequences(s1), os.path.join(OUT, 'S1.zip'))
-    out['S1'] = summarise(s1, 'S1')
-    out['S1']['shuttle_trips'] = n1
+    summary = summarise(s1, 'S1')
+    summary['shuttle_trips'] = n1
+    return summary
 
+
+def scenario_s2a(base, s2_summary):
+    """Write the S2a feed (charging dwell removed) and return its summary;
+    refuse one not faster than S2 on every trunk route."""
     # S2a - charging dwell removed: the charging dwell comes OFF every
     # segment, the boarding dwell is untouched (a dead first call once ADDED
     # the fixed dwell instead and was overwritten, #121)
     s2a = scale_lr_runtime(base, delta_per_intermediate_s=0.0,
                            delta_per_segment_s=-DWELL_CHARGING)
     write_feed(renumber_sequences(s2a), os.path.join(OUT, 'S2a.zip'))
-    out['S2a'] = summarise(s2a, 'S2a')
+    summary = summarise(s2a, 'S2a')
     # the report states the delta and refuses a wire-free feed that is not
     # faster than S2 on every trunk route
     delta = {}
-    for k, v in out['S2a']['trunk_runtime_min'].items():
-        s2 = out['S2']['trunk_runtime_min'].get(k)
+    for k, v in summary['trunk_runtime_min'].items():
+        s2 = s2_summary['trunk_runtime_min'].get(k)
         if s2 is None:
             continue
         if not v < s2:
             raise SystemExit('S2a trunk runtime for %s is %.2f min against S2 %.2f: '
                              'removing the charging dwell must shorten it' % (k, v, s2))
         delta[k] = round(v - s2, 2)
-    out['S2a']['runtime_delta_vs_S2_min'] = delta
+    summary['runtime_delta_vs_S2_min'] = delta
+    return summary
 
+
+def scenario_s2b(base):
+    """Write the S2b feed (full transit signal priority) and return its summary."""
     # S2b - full transit signal priority (75% of signal delay removed)
     # A.lightrail.tsp_enabled says WHETHER priority applies and
     # E.s2b.signal_delay_removed_share says what it is worth. Every one of the
@@ -743,9 +757,13 @@ def main():
                   * s2b_cfg.get('E.s2b.signal_delay_removed_share') / N_LR_SEGMENTS)
     s2b = scale_lr_runtime(base, delta_per_segment_s=-saving)
     write_feed(renumber_sequences(s2b), os.path.join(OUT, 'S2b.zip'))
-    out['S2b'] = summarise(s2b, 'S2b')
-    out['S2b']['signal_delay_removed_s_per_segment'] = round(saving, 1)
+    summary = summarise(s2b, 'S2b')
+    summary['signal_delay_removed_s_per_segment'] = round(saving, 1)
+    return summary
 
+
+def scenario_s2c(base, tram_corridor):
+    """Write the S2c feed (reserved former-railway alignment) and return its summary."""
     # S2c - Option A alignment on former railway land: reserved, fewer conflicts.
     # The stops move onto the corridor before the run time is decomposed, so the
     # timetable describes the reserved alignment rather than the street one.
@@ -756,9 +774,13 @@ def main():
                            * CFG.get('E.s2c.signal_delay_removed_share'))
     set_reserved_alignment_shape(s2c, tram_corridor)
     write_feed(renumber_sequences(s2c), os.path.join(OUT, 'S2c.zip'))
-    out['S2c'] = summarise(s2c, 'S2c')
-    out['S2c']['stops_moved_to_reserved_corridor'] = n_moved
+    summary = summarise(s2c, 'S2c')
+    summary['stops_moved_to_reserved_corridor'] = n_moved
+    return summary
 
+
+def scenario_s3(base):
+    """Write the S3 feed (bus rapid transit) and return its summary."""
     # S3 - bus rapid transit on the same alignment
     # S3 calls at the S1 stops MINUS the two the declaration omits - wider
     # spacing is what makes it rapid transit. It was a second copy of the same
@@ -770,8 +792,37 @@ def main():
         dwell_s=CFG.get('E.s3.brt_dwell_s'),
         first_h=CFG.get('E.s1.first_hour'), last_h=CFG.get('E.s1.last_hour'))
     write_feed(renumber_sequences(s3), os.path.join(OUT, 'S3.zip'))
-    out['S3'] = summarise(s3, 'S3')
-    out['S3']['brt_trips'] = n3
+    summary = summarise(s3, 'S3')
+    summary['brt_trips'] = n3
+    return summary
+
+
+def main():
+    base = read_feed(BASE)
+    print('base2026: routes=%d trips=%d stops=%d' %
+          (len(base['routes']), len(base['trips']), len(base['stops'])), flush=True)
+    out = {}
+    geom = {}
+
+    # ---- alignments, built once from observed geometry -------------------
+    ext_align, ext_km = extension_alignment_km()
+
+    tram_corridor, rail_corridor, reserved_geom = reserved_corridors(base)
+
+    bmd_stops, jhh_stops, ext_align_bmd, geom['extension'] = extension_stop_sites(
+        ext_align, ext_km)
+    geom['reserved_corridor'] = reserved_geom
+
+    # S2 - as built
+    write_feed(renumber_sequences(base), os.path.join(OUT, 'S2.zip'))
+    out['S2'] = summarise(base, 'S2')
+
+    out['S0'] = scenario_s0(base, rail_corridor)
+    out['S1'] = scenario_s1(base)
+    out['S2a'] = scenario_s2a(base, out['S2'])
+    out['S2b'] = scenario_s2b(base)
+    out['S2c'] = scenario_s2c(base, tram_corridor)
+    out['S3'] = scenario_s3(base)
 
     # S4 - extended to Broadmeadow
     s4 = extend_lr(base, bmd_stops, tag='BMD')

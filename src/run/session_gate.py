@@ -184,7 +184,9 @@ def lane_lines():
 GATES = [
     # (label, command, needs_toolchain)
     ('import roots', [PY, 'src/setup/install_paths.py', '--check'], False),
-    ('manifest', [PY, 'tests/check_manifest.py'], False),
+    # every city under cities/, not the active one alone: a second city's
+    # built bytes drifted from its manifest for a week unseen (#252)
+    ('manifest', [PY, 'tests/check_manifest.py', '--all-cities'], False),
     ('compile', [PY, '-m', 'compileall', '-q', 'src', 'tests', 'cities', 'run.py'], False),
     ('hardcoding', [PY, 'src/registry/check_hardcoding.py', '--strict'], False),
     ('doc currency', [PY, 'tests/check_doc_currency.py', '--strict'], False),
@@ -193,6 +195,9 @@ GATES = [
     # a credential in a tracked file is published by the next push (the
     # fourteenth report, 25 September 2026)
     ('no secrets', [PY, 'tests/check_secrets.py'], False),
+    # CI ran it and the gate did not, so psutil went unpinned through a green
+    # gate (9.219); test_gate_covers_ci keeps the two lists together
+    ('requirements', [PY, 'tests/check_requirements.py', '--strict'], False),
     ('board blocks', [PY, 'src/analyse/build_status_board.py', '--check'], False),
     # 9.171: the lane ledger is the one home of "what is next"; the board and
     # the brief render it, and a malformed ledger renders nothing
@@ -203,7 +208,7 @@ GATES = [
     # CI's city-contract job checks the generated reference; the gate only
     # regenerated it under --fix, so a stale one passed here and failed there
     # (PR #256)
-    ('config reference', [PY, 'src/registry/render_docs.py', '--check'], False),
+    ('config reference', [PY, 'src/registry/render_docs.py', '--check', '--all-cities'], False),
     ('city agnostic', [PY, 'tests/check_city_agnostic.py'], False),
     ('dead runs say why', [PY, 'src/run/run_failure.py', '--check'], False),
     ('gate watcher', [PY, 'tests/check_gate_watcher.py'], False),
@@ -246,7 +251,7 @@ FIXES = [
     ('run index', [PY, 'src/analyse/build_run_index.py'],
      'the board reads it, and a run that finished after the last session '
      'leaves it one row short'),
-    ('config reference', [PY, 'src/registry/render_docs.py'],
+    ('config reference', [PY, 'src/registry/render_docs.py', '--all-cities'],
      'regenerated from the registry on every field change'),
     ('schema', [PY, 'src/registry/render_schema.py'],
      'required_fields.json and layers.json, regenerated from the registry'),

@@ -1,0 +1,33 @@
+{
+  "overlay": "f38_baseline_resume225_25pct",
+  "description": "THE LAST RESUME OF F38 ARM 0, FROM ITERATION 225 (D27, 9.216): f38_baseline_25pct exactly, continued from the iteration-225 plans of aborted_20260928T163345_250it_25pct, which died at iteration 229 when the host was shut down from the Start menu (a shutdown or logoff ends the user-session scheduled task). It sets only what a resume must: the first iteration, an innovation fraction of 0.0 because the arm's cutoff (iteration 200) is already behind it, and the 4 h ceiling the user approved for the last 25 iterations (F37 ran iterations 226-250 in 1.94 h). Nothing else differs from f38_baseline_25pct.",
+  "answers_issues": [
+    30,
+    86,
+    94,
+    98,
+    107,
+    145,
+    162,
+    257
+  ],
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 250,
+    "RUN.gate.wall_ceiling_h": 4,
+    "RUN.gate.interval_iterations": 0,
+    "RUN.machine.xmx": "48g",
+    "RUN.controler.create_graphs": false,
+    "RUN.controler.write_plans_interval": 25,
+    "RUN.controler.first_iteration": 225,
+    "RUN.replanning.fraction_to_disable_innovation": 0.0
+  },
+  "allow_outside_sweep": [
+    "RUN.gate.interval_iterations",
+    "RUN.replanning.fraction_to_disable_innovation"
+  ],
+  "justification": {
+    "RUN.gate.interval_iterations": "THE MODE GATE IS OFF, and this is the 9.159 scoped departure already taken for `depth_convergence_25pct` and for f35_baseline_25pct, not a new one. GOAL.md's loop says to stop a run when a mode passes 20 %, and on F35's landed reading six modes did. This arm is the CONTROL HALF of five pairs (#172): an arm the watcher stops at iteration 100 cannot be differenced against anything read at 250, so arming the gate would guarantee that none of the five pairs can ever be read. Switching the watcher off does NOT make the arm blind and does not suspend the loop: every 10th iteration stays readable on all twelve modes on their own bases (9.120, 9.170), the run viewer shows them against their targets, and the operator can stop the arm by hand with `run.py --stop` the moment a reading says the rebuild failed. What made the 9.159 arm indefensible was the OTHER half - it declared no ceiling, so it had no automatic stop of any kind and its approved hours were held by a person watching a clock (#169). This arm declares RUN.gate.wall_ceiling_h = 34, the ceiling watcher is PROVEN on a run (`aborted_20260910T205517_20it_1pct`, completion `stopped_at_ceiling`), and RUN.gate.stall_kill_s = 1800 guards a stall separately, so the run has two automatic stops and is never left without one.",
+    "RUN.replanning.fraction_to_disable_innovation": "A RESUME PAST THE CUTOFF, NOT A NEW SEARCH SETTING. This arm stopped innovating at iteration 200 (0.8 x 250); resumed at 225 it must not innovate again, and 0.0 puts the jar's cutoff at the first iteration, (int)(225 + 0 x 25) = 225, which is what the parent was doing there. run_matsim.warm_start_overrides derives the same 0.0 for any checkpoint at or past the cutoff; the declared [0.7, 0.9] describes a cold arm. D27 (user, 29 September 2026)."
+  }
+}

@@ -130,7 +130,8 @@ def _nested_locals(nodes):
     return out
 
 
-def main(argv=None):
+def _parse_args(argv):
+    """The command line: file, function, loop line or statement range, new name."""
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('file')
     ap.add_argument('function')
@@ -142,10 +143,13 @@ def main(argv=None):
                     help='with A:B - the statements are taken from the body of the '
                          'compound statement (if/for/with/try) starting at this line')
     a = ap.parse_args(argv)
-    src = open(a.file, encoding='utf-8').read()
-    lines = src.split('\n')
-    tree = ast.parse(src)
-    fn = [n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == a.function][0]
+    return a
+
+
+def _find_loop(fn, a):
+    """The `for` at the given line, or a statement range modelled as a loop with
+    no targets. Returns (loop, range_mode, host, host_body)."""
+    host = host_body = None
     loop = None
     range_mode = ':' in a.for_line
     if range_mode:
@@ -176,9 +180,13 @@ def main(argv=None):
             if isinstance(x, ast.For) and x.lineno == int(a.for_line):
                 loop = x
         assert loop is not None, 'no for loop starts at line %s' % a.for_line
-    body = loop.body
-    targets = sorted(_names([loop.target], ast.Store))
+    return loop, range_mode, host, host_body
 
+
+def _classify_names(fn, tree, loop, body, targets, range_mode, a, host,
+                    host_body):
+    """Which names the body reaches through ctx, which it rebinds for the
+    caller, and which it produces. Returns (via_ctx, shared, produced)."""
     # the enclosing scope's names: parameters, and everything the function
     # binds outside the loop body (before or after it - a closure resolves at
     # call time, so `w` bound by the surrounding `with` counts)
@@ -250,12 +258,11 @@ def main(argv=None):
     produced = sorted(n for n in (body_stores - set(targets) - nested)
                       if n not in bound_before and _loads_in_scope(after, n)
                       and _first_use_is_load(after, n) and n not in module_scope)
-    print('produced (returned to the caller):', produced)
-    # names the body binds only for itself (locals) stay bare
-    print('loop targets', targets)
-    print('via ctx (%d):' % len(via_ctx), via_ctx)
-    print('rebound in body (unpacked after the loop):', shared)
+    return via_ctx, shared, produced
 
+
+def _own_continues(body):
+    """Positions of the `continue`s that belong to this loop, not to an inner one."""
     # a `continue` that belongs to THIS loop (not to an inner one) becomes a
     # `return` of the extracted function
     own_continues = set()
@@ -282,6 +289,13 @@ def main(argv=None):
             for x in ast.walk(n):
                 if isinstance(x, ast.Break):
                     pass  # a break of an inner loop is fine; of THIS loop it is not extractable
+    return own_continues
+
+
+def _rewrite_body(lines, loop, body, range_mode, via_ctx, own_continues, a):
+    """The body text dedented to function level, free names renamed to ctx
+    attributes and the loop's own continues turned into returns. Returns
+    (new_body, start_line, end_line, loop_indent)."""
     # token-level rename inside the body's line span
     start_line, end_line = body[0].lineno, body[-1].end_lineno
     # include comment lines directly above the first statement
@@ -335,6 +349,13 @@ def main(argv=None):
         row = bl[sr - 1]
         bl[sr - 1] = row[:sc] + new + row[ec:]
     new_body = '\n'.join(bl)
+    return new_body, start_line, end_line, loop_indent
+
+
+def _assemble(lines, fn, loop, a, range_mode, targets, via_ctx, shared,
+              produced, new_body, start_line, end_line, loop_indent):
+    """The new function placed before the enclosing one, and the loop replaced
+    by the ctx bundle, the call and the unpack. Returns the module text."""
     sig = 'def %s(%s):' % (a.new_name, ', '.join(targets + [a.ctx]))
     # A placeholder the author must replace, never a description: the stock
     # "one iteration of the loop this replaced" line was left on 34 functions
@@ -369,6 +390,32 @@ def main(argv=None):
         out.insert(i + 1, 'import types as _types')
         text = '\n'.join(out)
     ast.parse(text)
+    return text
+
+
+def main(argv=None):
+    a = _parse_args(argv)
+    src = open(a.file, encoding='utf-8').read()
+    lines = src.split('\n')
+    tree = ast.parse(src)
+    fn = [n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == a.function][0]
+    loop, range_mode, host, host_body = _find_loop(fn, a)
+    body = loop.body
+    targets = sorted(_names([loop.target], ast.Store))
+
+    via_ctx, shared, produced = _classify_names(fn, tree, loop, body, targets,
+                                                range_mode, a, host, host_body)
+    print('produced (returned to the caller):', produced)
+    # names the body binds only for itself (locals) stay bare
+    print('loop targets', targets)
+    print('via ctx (%d):' % len(via_ctx), via_ctx)
+    print('rebound in body (unpacked after the loop):', shared)
+
+    own_continues = _own_continues(body)
+    new_body, start_line, end_line, loop_indent = _rewrite_body(
+        lines, loop, body, range_mode, via_ctx, own_continues, a)
+    text = _assemble(lines, fn, loop, a, range_mode, targets, via_ctx, shared,
+                     produced, new_body, start_line, end_line, loop_indent)
     open(a.file, 'w', encoding='utf-8', newline='\n').write(text)
     print('extracted %s lines into %s' % (end_line - start_line + 1, a.new_name))
 

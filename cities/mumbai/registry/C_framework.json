@@ -310,6 +310,75 @@
       "sweep_basis": "Provisional broad behavioural baseline; validate with observed choices before calibration.",
       "matsim_param": "scoring.waitingPt"
     },
+    "C.time_weights.atap_si_displacement_weight": {
+      "units": "ratio_to_ivt",
+      "source": "literature",
+      "sweep": [
+        0.1,
+        0.15
+      ],
+      "sweep_basis": "ATAP M1 Technical Report Table 26: timetable displacement per minute of service interval 0.10 recommended, 0.15 from the two Sydney studies (35, 38); Wardman's (2014) 0.4-0.6 per displacement minute divided by 4 (the report's footnote 40) is the same 0.10-0.15.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "serviceQuality.atapDisplacementWeight",
+      "value": 0.1,
+      "description": "The IVT multiplier on each minute of service interval as TIMETABLE DISPLACEMENT - the cost of not travelling at the desired time - in ATAP M1's equation 4.3.2. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "C.time_weights.atap_si_wait_cap_min": {
+      "units": "min",
+      "source": "literature",
+      "status": "active",
+      "held_fixed": {
+        "rule": "ATAP M1 equation 4.1's ceiling on the predicted wait, 20 minutes (a two-hourly service): beyond it a traveller plans to the timetable and the interval is displacement only.",
+        "decisions_ref": "9.219"
+      },
+      "matsim_param": "serviceQuality.atapWaitCapMin",
+      "value": 20.0,
+      "description": "ATAP M1 equation 4.1's third wait term: the predicted wait never exceeds 20 minutes. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "C.time_weights.atap_si_wait_half": {
+      "units": "ratio",
+      "source": "literature",
+      "status": "active",
+      "held_fixed": {
+        "rule": "The random-arrival wait as a share of the service interval in ATAP M1 equation 4.1 - half, below the 14-minute crossover with the square-root term. A definition of the turn-up-and-go wait, not a tunable.",
+        "decisions_ref": "9.219"
+      },
+      "matsim_param": "serviceQuality.atapWaitHalf",
+      "value": 0.5,
+      "description": "ATAP M1 equation 4.1's first wait term: wait = 0.5 x SI for frequent services. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "C.time_weights.atap_si_wait_sqrt_min": {
+      "units": "min_per_sqrt_min",
+      "source": "literature",
+      "status": "active",
+      "held_fixed": {
+        "rule": "ATAP M1 equation 4.1's square-root wait term, ESTIMATED on Melbourne, Sydney and NZ wait surveys (studies 36-38): at a 14-minute interval the average wait was exactly half, and less frequent services flattened to just under 15 minutes hourly. Held at the estimate; the sweep of the function is carried by the two weights.",
+        "decisions_ref": "9.219"
+      },
+      "matsim_param": "serviceQuality.atapWaitSqrtMin",
+      "value": 1.88,
+      "description": "ATAP M1 equation 4.1's second wait term: wait = 1.88 x sqrt(SI) minutes. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
+    "C.time_weights.atap_si_wait_weight": {
+      "units": "ratio_to_ivt",
+      "source": "literature",
+      "sweep": [
+        1.4,
+        2.0
+      ],
+      "sweep_basis": "ATAP M1 Technical Report Table 4: wait time 1.40 for the Australian/NZ review, 1.75-2 in Wardman's (2014) OECD review; equation 4.3.2 uses 1.4. The upper end is C.time_weights.beta_wait's 2.0.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "serviceQuality.atapWaitWeight",
+      "value": 1.4,
+      "description": "The IVT multiplier on the EXPECTED wait inside ATAP M1's service-interval valuation (equation 4.3.2). Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
+    },
     "C.time_weights.beta_headway": {
       "units": "ratio_to_ivt",
       "source": "literature",
@@ -326,6 +395,15 @@
         "src/build/build_params.py",
         "src/build/build_matsim_run_inputs.py"
       ]
+    },
+    "C.time_weights.beta_ivt": {
+      "units": "ratio_to_ivt",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 1.0,
+      "description": "In-vehicle time is the numeraire the other weights are expressed against. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202"
     },
     "C.time_weights.beta_reliability": {
       "units": "ratio_to_ivt",
@@ -371,6 +449,23 @@
       "sweep_role": "uncertainty",
       "sweep_basis": "Provisional broad behavioural baseline; validate with observed choices before calibration.",
       "matsim_param": "serviceQuality.reliabilityUtilsPerMin"
+    },
+    "C.time_weights.service_interval_function": {
+      "units": "categorical",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "linear",
+          "atap_m1"
+        ],
+        "basis": "adopted from the reference city: How a boarding's service interval SI (the boarded line's interval at the boarding stop around the boarding time) becomes equivalent in-vehicle minutes, read only while C.time_weights.service_quality_representation is on. `linear` is C.time_weights.beta_headway x SI with the service day as the cap, the form built in 9.164: at 0.5 it charges 5 minutes at a 10-minute service, 30 at hourly and 900 at once a day. `atap_m1` is the Australian appraisal function (ATAP M1 Public Transport Supporting Technical Report (Infrastructure and Transport Ministers, Australian Transport Assessment and Planning Guidelines), section 4.3, equation 4.3.2): weighted expected wait plus timetable displacement, 1.4 x min(0.5 x SI, 1.88 x sqrt(SI), 20) + 0.1 x SI - 8, 26 and 208 minutes at the same intervals. The F39 probe (9.219) found 706-890 boardings an iteration at once-a-day line-stops (school and peak-only services), each charged 900 minutes by the linear form. WHAT THE SWEEP ANSWERS: whether the frequency penalty the pair tests is read on its published Australian shape or on a linear convention the evidence says overstates long intervals fourfold."
+      },
+      "sweep_role": "answer",
+      "status": "active",
+      "matsim_param": "serviceQuality.intervalFunction",
+      "value": "linear",
+      "description": "The service-interval function of citysim.ServiceQualityScoring. Switched on for this baseline (\"linear\"): service quality is `absent` in this baseline, so no interval is charged at all; `linear` is the form the gate would switch on first and adopts no Australian appraisal function for Mumbai (the ATAP M1 coefficients are adopted as the reference city declares them and are read by nothing here).",
+      "decisions_ref": "9.202"
     },
     "C.time_weights.service_quality_representation": {
       "value": "headway_and_reliability",

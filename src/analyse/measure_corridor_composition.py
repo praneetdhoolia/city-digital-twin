@@ -66,7 +66,8 @@ import xml.etree.ElementTree as ET
 from collections import Counter, defaultdict
 from pathlib import Path
 
-from build_run_index import load_families, family_of
+from iteration_reading import run_family
+
 
 def runs_along_band(n_inband_locations):
     """A route runs ALONG the corridor (rather than merely crossing or
@@ -275,24 +276,10 @@ def time_stats(values_s):
             'median_min': fmt_min(statistics.median(v))}
 
 
-def main() -> int:
-    if len(sys.argv) != 2:
-        print(__doc__)
-        return 2
-    run_dir = Path(sys.argv[1])
-
-    fams, overrides = load_families()
-    family, fam_note = family_of(run_dir.name, fams, overrides)
-    fam_label = next((f['label'] for k, f in fams if k == family), '')
-    run_meta = json.loads((run_dir / '_run.json').read_text(encoding='utf-8'))
-    metrics = json.loads(
-        (run_dir / '_metrics.json').read_text(encoding='utf-8'))
-
-    params = load_config_params(run_dir)
-    band_m = params['max_beeline_walk_connection_distance_m']
-
-    stops, routes = load_schedule(run_dir)
-
+def corridor_band(stops, routes, band_m):
+    """The tram routes, their deduplicated stop locations and names, the
+    in-band test, the stop facilities inside the band and, per route, how
+    many distinct in-band stop locations it serves."""
     # --- the corridor: tram stops and the walk band --------------------------
     tram_routes = {k: v for k, v in routes.items() if v['mode'] == 'tram'}
     tram_stop_ids = {s for v in tram_routes.values() for s, _ in v['profile']}
@@ -311,7 +298,14 @@ def main() -> int:
             [s for s, _ in v['profile'] if s in inband_stop_ids], stops)
         if locs:
             routes_by_inband_locs[key] = len(locs)
+    return (tram_routes, tram_locs, tram_stop_names, in_band,
+            inband_stop_ids, routes_by_inband_locs)
 
+
+def frequency(routes, tram_routes, routes_by_inband_locs):
+    """(a) scheduled service on the tram routes and on the bus routes that
+    run along the band. Returns (tram_sched, parallel_bus, bus_touching,
+    all_parallel_deps, all_tram_deps)."""
     # (a) frequency: tram vs the parallel bus routes ---------------------------
     tram_sched = {}
     for (lid, rid), v in tram_routes.items():
@@ -341,11 +335,12 @@ def main() -> int:
         for d in v['departures'])
     all_tram_deps = sorted(d for v in tram_routes.values()
                            for d in v['departures'])
+    return tram_sched, parallel_bus, bus_touching, all_parallel_deps, all_tram_deps
 
-    # --- realised corridor demand --------------------------------------------
-    pt_legs, boardings_all, unknown_route = load_pt_legs(run_dir, routes)
-    pt_trips = load_pt_trips(run_dir, set(pt_legs))
 
+def classify_catchment(pt_trips, pt_legs, in_band, inband_stop_ids):
+    """trip_id -> classification, for every PT trip with an origin or a
+    destination inside the band."""
     catchment = {}   # trip_id -> classification
     for tid, t in pt_trips.items():
         o_in, d_in = in_band(t['start_xy']), in_band(t['end_xy'])
@@ -366,8 +361,12 @@ def main() -> int:
                          for lg in legs),
             'door_s': t['trav_s'],
         }
+    return catchment
 
-    n_catch = len(catchment)
+
+def boarding_counts(catchment, pt_legs, inband_stop_ids):
+    """(submode split of catchment trips, boardings by submode on catchment
+    trips, boardings by submode at in-band stops)."""
     submode_split = Counter(c['submodes'] for c in catchment.values())
     catch_boardings = Counter()
     for tid, c in catchment.items():
@@ -378,13 +377,13 @@ def main() -> int:
         for lg in legs:
             if lg['access_stop'] in inband_stop_ids:
                 inband_boardings[lg['submode']] += 1
+    return submode_split, catch_boardings, inband_boardings
 
-    bus_no_tram = [c for c in catchment.values()
-                   if c['used_bus'] and not c['used_tram']]
-    tram_users = [c for c in catchment.values() if c['used_tram']]
 
-    # (c) coverage
-    coverage = {
+def coverage_block(catchment, bus_no_tram):
+    """(c) how many catchment trips have both ends, or one end, in the band."""
+    n_catch = len(catchment)
+    return {
         'catchment_trips': n_catch,
         'both_ends_in_band': sum(1 for c in catchment.values() if c['both']),
         'one_end_in_band': sum(1 for c in catchment.values() if not c['both']),
@@ -397,8 +396,11 @@ def main() -> int:
             c['submodes'] for c in catchment.values() if c['both'])),
     }
 
-    # (d) transfers
-    transfers = {
+
+def transfers_block(bus_no_tram, tram_users, params):
+    """(d) one-seat vs multi-boarding rides, beside the declared interchange
+    and waiting prices."""
+    return {
         'bus_no_tram_one_seat':
             sum(1 for c in bus_no_tram if c['n_boardings'] == 1),
         'bus_no_tram_multi_boarding':
@@ -416,8 +418,10 @@ def main() -> int:
         'declared_waiting_pt_util_hr': params.get('waiting_pt_util_hr'),
     }
 
-    # (b) times
-    times = {
+
+def times_block(bus_no_tram, tram_users):
+    """(b) realised door-to-door, wait and in-vehicle time per rider group."""
+    return {
         'bus_no_tram': {
             'door_to_door': time_stats([c['door_s'] for c in bus_no_tram]),
             'wait': time_stats([c['wait_s'] for c in bus_no_tram]),
@@ -436,6 +440,99 @@ def main() -> int:
                 [c['ivt_s'] for c in bus_no_tram if c['both']]),
         },
     }
+
+
+def print_report(report, run_dir, family, fam_label, run_meta):
+    """Print the notice, the band, the reconciliation, the composition and
+    the four candidate explanations from the finished report."""
+    band = report['band']
+    comp = report['composition']
+    boardings_all = report['reconciliation']['boardings_by_submode_legs_table']
+    n_catch = comp['corridor_catchment_trips']
+    tram_sched = report['a_frequency']['tram_routes']
+    parallel_bus = report['a_frequency']['parallel_bus_routes']
+    times = report['b_times']
+    coverage = report['c_coverage']
+    transfers = report['d_transfers']
+    print(report['diagnostic_notice'])
+    print(f"run {run_dir.name}  family {family} ({fam_label})  "
+          f"scenario {run_meta.get('scenario')} {run_meta.get('day')} "
+          f"fraction {run_meta.get('fraction')}")
+    print(f"\nband: {band['tram_stop_locations']} tram stop locations, "
+          f"radius {band['radius_m']} m "
+          f"(declared maxBeelineWalkConnectionDistance); "
+          f"{band['stop_facilities_in_band']} stop facilities in band")
+    print(f"\nreconciliation legs-vs-metrics boardings: "
+          f"{boardings_all} vs "
+          f"{report['reconciliation']['boardings_by_submode_metrics_json']}")
+    print(f"\ncorridor catchment: {n_catch} of {comp['pt_trips_total']} PT trips")
+    print('submode split of catchment trips:')
+    for k, v in comp['submode_split_of_catchment_trips'].items():
+        print(f'  {k:>24} {v:>7}  {v / n_catch:7.1%}')
+    print('\n(a) frequency')
+    for name, s in tram_sched.items():
+        print(f'  tram {name}: {s["departures"]} deps, mean headway '
+              f'{s["mean_headway_min"]} min, end-to-end '
+              f'{s["scheduled_end_to_end_min"]} min')
+    pb = report['a_frequency']['parallel_bus_all_departures']
+    print(f'  parallel bus routes: {len(parallel_bus)} '
+          f'(of {report["a_frequency"]["bus_routes_touching_band"]} touching '
+          f'the band), combined '
+          f'{pb["departures"] if pb else 0} departures')
+    print('\n(b) times (door-to-door / wait / in-vehicle, mean min)')
+    for grp in ('bus_no_tram', 'tram_users', 'both_ends_bus_no_tram'):
+        t = times[grp]
+        print(f'  {grp:>22}: n={t["door_to_door"]["n"]:>6} '
+              f'door {t["door_to_door"].get("mean_min")} '
+              f'wait {t["wait"].get("mean_min")} '
+              f'ivt {t["in_vehicle"].get("mean_min")}')
+    print('\n(c) coverage')
+    for k, v in coverage.items():
+        if k != 'both_ends_split':
+            print(f'  {k}: {v}')
+    print(f'  both_ends_split: {coverage["both_ends_split"]}')
+    print('\n(d) transfers')
+    for k, v in transfers.items():
+        print(f'  {k}: {v}')
+
+
+def main() -> int:
+    if len(sys.argv) != 2:
+        print(__doc__)
+        return 2
+    run_dir = Path(sys.argv[1])
+
+    family, fam_note, fam_label = run_family(run_dir.name)
+    run_meta = json.loads((run_dir / '_run.json').read_text(encoding='utf-8'))
+    metrics = json.loads(
+        (run_dir / '_metrics.json').read_text(encoding='utf-8'))
+
+    params = load_config_params(run_dir)
+    band_m = params['max_beeline_walk_connection_distance_m']
+
+    stops, routes = load_schedule(run_dir)
+
+    (tram_routes, tram_locs, tram_stop_names, in_band, inband_stop_ids,
+     routes_by_inband_locs) = corridor_band(stops, routes, band_m)
+    (tram_sched, parallel_bus, bus_touching, all_parallel_deps,
+     all_tram_deps) = frequency(routes, tram_routes, routes_by_inband_locs)
+
+    # --- realised corridor demand --------------------------------------------
+    pt_legs, boardings_all, unknown_route = load_pt_legs(run_dir, routes)
+    pt_trips = load_pt_trips(run_dir, set(pt_legs))
+
+    catchment = classify_catchment(pt_trips, pt_legs, in_band, inband_stop_ids)
+    n_catch = len(catchment)
+    submode_split, catch_boardings, inband_boardings = boarding_counts(
+        catchment, pt_legs, inband_stop_ids)
+
+    bus_no_tram = [c for c in catchment.values()
+                   if c['used_bus'] and not c['used_tram']]
+    tram_users = [c for c in catchment.values() if c['used_tram']]
+
+    coverage = coverage_block(catchment, bus_no_tram)
+    transfers = transfers_block(bus_no_tram, tram_users, params)
+    times = times_block(bus_no_tram, tram_users)
 
     report = {
         'title': 'corridor PT composition: why the demand rides buses past '
@@ -508,44 +605,7 @@ def main() -> int:
     out_path = run_dir / '_corridor_pt_composition.json'
     out_path.write_text(json.dumps(report, indent=1), encoding='utf-8')
 
-    print(report['diagnostic_notice'])
-    print(f"run {run_dir.name}  family {family} ({fam_label})  "
-          f"scenario {run_meta.get('scenario')} {run_meta.get('day')} "
-          f"fraction {run_meta.get('fraction')}")
-    print(f"\nband: {len(tram_locs)} tram stop locations, radius {band_m} m "
-          f"(declared maxBeelineWalkConnectionDistance); "
-          f"{len(inband_stop_ids)} stop facilities in band")
-    print(f"\nreconciliation legs-vs-metrics boardings: "
-          f"{dict(sorted(boardings_all.items()))} vs "
-          f"{report['reconciliation']['boardings_by_submode_metrics_json']}")
-    print(f"\ncorridor catchment: {n_catch} of {len(pt_trips)} PT trips")
-    print('submode split of catchment trips:')
-    for k, v in sorted(submode_split.items(), key=lambda kv: -kv[1]):
-        print(f'  {k:>24} {v:>7}  {v / n_catch:7.1%}')
-    print('\n(a) frequency')
-    for name, s in tram_sched.items():
-        print(f'  tram {name}: {s["departures"]} deps, mean headway '
-              f'{s["mean_headway_min"]} min, end-to-end '
-              f'{s["scheduled_end_to_end_min"]} min')
-    pb = report['a_frequency']['parallel_bus_all_departures']
-    print(f'  parallel bus routes: {len(parallel_bus)} '
-          f'(of {bus_touching} touching the band), combined '
-          f'{pb["departures"] if pb else 0} departures')
-    print('\n(b) times (door-to-door / wait / in-vehicle, mean min)')
-    for grp in ('bus_no_tram', 'tram_users', 'both_ends_bus_no_tram'):
-        t = times[grp]
-        print(f'  {grp:>22}: n={t["door_to_door"]["n"]:>6} '
-              f'door {t["door_to_door"].get("mean_min")} '
-              f'wait {t["wait"].get("mean_min")} '
-              f'ivt {t["in_vehicle"].get("mean_min")}')
-    print('\n(c) coverage')
-    for k, v in coverage.items():
-        if k != 'both_ends_split':
-            print(f'  {k}: {v}')
-    print(f'  both_ends_split: {coverage["both_ends_split"]}')
-    print('\n(d) transfers')
-    for k, v in transfers.items():
-        print(f'  {k}: {v}')
+    print_report(report, run_dir, family, fam_label, run_meta)
     print(f'\nwrote {out_path}')
     return 0
 

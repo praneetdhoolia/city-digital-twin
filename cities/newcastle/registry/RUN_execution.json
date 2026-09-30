@@ -207,6 +207,29 @@
       "matsim_param": "qsim.mainMode",
       "description": "The modes physically simulated in the mobsim: car; truck (9.49) and motorbike (9.52) at their declared PCE; walk and bike (9.54) - a pedestrian at PCE 0.0 capped at walking speed occupies the network without consuming road capacity (the sidewalk, expressed in queue arithmetic), a cyclist at the declared PCE genuinely takes road space; and taxi (9.86) at the car body it already declares, because a hired car is a car on the road and a mode that is routed over the network and then teleported occupies none of it - 39,892 of 39,923 taxi legs per iteration were leaving the carriageway empty. A car passenger is not a second vehicle: ride stays routed, with PAIRED passengers physically boarded (9.53)."
     },
+    "RUN.qsim.motorcycle_roster": {
+      "value": "household",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "per_person",
+          "household"
+        ],
+        "basis": "Whether a household's riders share the motorcycle the plans builder draws for it. `per_person` is F38 exactly (9.214): PrepareForSim gives every rider a motorbike of their own, so two riders of one household can ride the one drawn motorcycle at the same time and the chosen share is not bounded by the stock (the fifteenth report's finding on AvailabilityModesCalculator.java:201). `household` (D28, F39): HouseholdVehicleRoster maps every rider of a household - a member whose motorbikeAvail is not `never` - to ONE shared hh<id>_moto1, because possession is drawn per household by the Poisson at-least-one identity (B.population.household_motorcycle_share), so a household holds one or none; the agent source parks it once and HouseholdCarDepartureHandler makes a second rider wait for it while it is out, as a second driver waits for a one-car household's car (9.146, 9.148)."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.146, 9.214, 9.217",
+      "matsim_param": "householdVehicles.motorcycle",
+      "consumers": [
+        "src/java/citysim/HouseholdVehiclesConfigGroup.java",
+        "src/java/citysim/HouseholdVehicleRoster.java",
+        "src/java/citysim/HouseholdCarDepartureHandler.java",
+        "src/java/citysim/CitysimControler.java"
+      ],
+      "description": "The representation gate for the household motorcycle (D28, one of F39's four corrections). Acts only on a population built under B.motorbike.representation = choice, which writes motorbikeAvail; independent of B.population.vehicle_roster, which governs cars. The roster logs households, riders and shared motorcycles at the first iteration; the departure handler logs riders who waited each mobsim. Proven by citysim.HouseholdMotorcycleProbe (src/run/run_signal_probes.py)."
+    },
     "RUN.replanning.max_agent_plan_memory": {
       "value": 8,
       "units": "plans",
@@ -593,12 +616,12 @@
       ]
     },
     "RUN.transit_router.access_max_radius_m": {
-      "value": 55600.0,
+      "value": 55900.0,
       "units": "metres",
       "source": "measured",
       "held_fixed": {
-        "rule": "THE CEILING MAY NOT CUT THE NEAREST-STOP FALLBACK. SwissRailRaptor's intermodal finder (DefaultRaptorStopFinder.addInitialStopsForParamSet, read from the pinned jar) searches min(initialSearchRadius, maxRadius) and, with fewer than two stops inside, falls back to min(nearest-stop distance + searchExtensionRadius, maxRadius) - so maxRadius only ever CUTS that fallback, and never lets a search run past the nearest stop plus the extension. The ceiling that reproduces the beeline finder's reach is therefore the farthest distance from any activity location to its nearest stop, plus the extension: measured 25 September 2026 over every scenario's own stops and every day type's own activity locations at 32,261 m (weekdays) and 55,362 m (weekends; the far points are boundary and freight origins), + 200 m = 55,562 m, declared 55,600. build_matsim_run_inputs.py re-measures it at every assembly and refuses a ceiling below it. SUPERSEDES the identity 1,000 + 200 = 1,200 m (9.159), which read the beeline path as bounded by the sum: from 12 September (access on the network, 9.167) it refused transit to every trip end beyond 1.2 km of a stop - the share of pt requests with no transit route went from 31-37 % to 66-68 % on every run since, against 38.8-39.4 % re-routed offline without the cap (fourteenth report).",
-        "decisions_ref": "9.159, 9.167",
+        "rule": "THE CEILING MAY NOT CUT THE NEAREST-STOP FALLBACK. SwissRailRaptor's intermodal finder (DefaultRaptorStopFinder.addInitialStopsForParamSet, read from the pinned jar) searches min(initialSearchRadius, maxRadius) and, with fewer than two stops inside, falls back to min(nearest-stop distance + searchExtensionRadius, maxRadius) - so maxRadius only ever CUTS that fallback, and never lets a search run past the nearest stop plus the extension. The ceiling that reproduces the beeline finder's reach is therefore the farthest distance from any activity location to its nearest stop, plus the extension: measured 25 September 2026 over every scenario's own stops and every day type's own activity locations at 32,261 m (weekdays) and 55,362 m (weekends; the far points are boundary and freight origins), + 200 m = 55,562 m, declared 55,600; RE-MEASURED 27 September 2026 on the F38 demand (9.214, destinations by mobility) at 32,250 m (weekdays), 55,339 m (Sundays) and 55,668 m (Saturdays, S5/S6), + 200 m = 55,868 m, declared 55,900. build_matsim_run_inputs.py re-measures it at every assembly and refuses a ceiling below it. SUPERSEDES the identity 1,000 + 200 = 1,200 m (9.159), which read the beeline path as bounded by the sum: from 12 September (access on the network, 9.167) it refused transit to every trip end beyond 1.2 km of a stop - the share of pt requests with no transit route went from 31-37 % to 66-68 % on every run since, against 38.8-39.4 % re-routed offline without the cap (fourteenth report).",
+        "decisions_ref": "9.159, 9.167, 9.214",
         "departure_requires": "a stop layout or activity locations whose re-measured reach exceeds the value - the assembler refuses and names the reach"
       },
       "status": "active",
@@ -627,6 +650,49 @@
         "src/java/citysim/NetworkDirectWalkPtRouter.java"
       ],
       "description": "What the PT router's direct-walk alternative IS: `beeline` (SwissRailRaptor's own, drawn straight across the map at transitRouter.beelineWalkSpeed) or `network` (citysim.NetworkDirectWalkPtRouter: the walk routing module's route on the walk network, priced with the raptor's own walk disutility and RUN.transit_router.direct_walk_factor, compared against the transit route's own cost). The ferry's market is a 640 m water crossing with a 20 km road detour; a beeline direct walk erases it."
+    },
+    "RUN.transit_router.no_route_walk": {
+      "value": "refused_beyond_reach",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "network_walk",
+          "refused_beyond_reach"
+        ],
+        "basis": "What the pt router answers when SwissRailRaptor finds no transit route at all. `network_walk` is F38 exactly (9.121): the walk router's network walk, whatever its length, returned as the pt trip - on F38's arm 0 walk trips averaged 3.61 km against 0.70 observed and 39.5 % of pt requests were unconnected rural trip ends (9.214, 9.217). `refused_beyond_reach` (D28, F39): a no-route walk longer than RUN.transit_router.no_route_walk_reach_m is still returned, because the plan must stay executable for PersonPrepareForSim and the mobsim and MATSim's own answer to a null route is a TELEPORTED beeline walk (TripRouter's FallbackRoutingModuleDefaultImpl, read from the pinned jar); its legs are stamped ptUnservedWalk_m and citysim.PtUnservedScoring charges the person whose executed plan holds one MATSim's own aborted-plan score (ScoringParameters.abortedPlanScore, what CharyparNagelAgentStuckScoring adds to a stuck agent), so ChangeExpBeta never prefers it to a feasible plan and plan removal drops it first - pt leaves that tour's choice set. A walk inside the reach is untouched under both."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.217",
+      "matsim_param": "ptDirectWalk.noRouteWalk",
+      "consumers": [
+        "src/java/citysim/PtDirectWalkConfigGroup.java",
+        "src/java/citysim/NetworkDirectWalkPtRouter.java",
+        "src/java/citysim/PtUnservedScoring.java",
+        "src/java/citysim/CitysimControler.java"
+      ],
+      "description": "The representation gate for an unservable pt request (D28, one of F39's four corrections; the fifteenth report's finding on NetworkDirectWalkPtRouter.java:132). Honoured only under RUN.transit_router.direct_walk_basis = network, the router that answers no-route requests; the config group refuses `refused_beyond_reach` on a beeline basis or without a positive reach. The router's progress line counts the refused answers beside the no-route total; PtUnservedScoring logs the plans charged each iteration. Proven by citysim.PtNoRouteWalkProbe (src/run/run_signal_probes.py)."
+    },
+    "RUN.transit_router.no_route_walk_reach_m": {
+      "value": 3223.6,
+      "units": "metres_routed",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "C.constraint.trip_length_km.walk"
+        ],
+        "identity": "the 99th percentile of an exponential trip-length distribution with the OBSERVED mean walk-only trip length the package already declares: -ln(0.01) x 0.70 km x 1000 = 3,223.6 m - the identity B.mode.walk_feasible_km states for its 3.22 km (9.106), applied here as a value because that field ships 0.0 (its gate disabled on measurement) and so carries no reach to reuse. The survey mean is a travelled (TRIP_AVG_DISTANCE) length, so the reach is compared with the walk router's ROUTED distance, not a straight line. Only the tail is used: 1 % of observed walk trips are longer, so a no-route walk past it is one almost nobody makes."
+      },
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.106, 9.217",
+      "matsim_param": "ptDirectWalk.noRouteWalkReachM",
+      "consumers": [
+        "src/java/citysim/PtDirectWalkConfigGroup.java",
+        "src/java/citysim/NetworkDirectWalkPtRouter.java"
+      ],
+      "description": "The routed walk length past which a pt request with no transit route is refused rather than answered as a free walk, under RUN.transit_router.no_route_walk = refused_beyond_reach (D28, F39). Read by nothing under `network_walk`."
     },
     "RUN.transit_router.additional_transfer_time_s": {
       "value": 0.0,
@@ -1571,6 +1637,49 @@
       "decisions_ref": "9.184",
       "matsim_param": "activityLinks.assignment",
       "description": "Activity-to-road assignment policy. common_modes retains the existing intersection of all usable mode networks. mode_specific_access retains each activity location and link and delegates mode-specific boarding/alighting connections to routed access/egress. The latter requires accessEgressModeToLink or accessEgressModeToLinkPlusTimeConstant and independently validated access routing; it does not confer legal road access or supply a passenger fleet."
+    },
+    "RUN.routing.activity_link_capacity": {
+      "value": "capacity_bounded",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "nearest",
+          "capacity_bounded"
+        ],
+        "basis": "How many trip ends one link may be given. `nearest` is F38 exactly (9.58): every activity goes to the nearest link carrying its person's needed modes however many trip ends that link collects - on F37, 29 service and living-street links carried trip ends needing up to 38 h of their own sampled capacity, and car trips touching them averaged 72.6 min at 13.4 km/h against a car mean of 25.0 min (HTS 17.2; the fifteenth report). `capacity_bounded` (D28, F39): after the nearest rule, a link keeps - locked boundary agents first, then persons in population file order - the car-capable trip ends it can move in the modelled day, capacity x 3600 / capacityPeriod x qsim.flowCapacityFactor x RUN.routing.activity_link_service_hours; each later person's activities at that coordinate, in every plan, move together to the next-nearest link carrying the same needed modes with room (rings over the mode subnetwork, ties by link id; no randomness). A car-capable trip end is an arrival or departure at the activity on the person's selected plan when their needed modes include car - an upper bound on the vehicles the link sees."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.58, 9.217",
+      "matsim_param": "activityLinks.capacityRule",
+      "consumers": [
+        "src/java/citysim/ActivityLinksConfigGroup.java",
+        "src/java/citysim/ActivityLinkAssigner.java",
+        "src/java/citysim/ActivityLinkCapacity.java"
+      ],
+      "description": "The representation gate for capacity-aware activity links (D28, one of F39's four corrections). Needs RUN.routing.activity_link_assignment = common_modes (the config group refuses it otherwise). The log line states the links over capacity before, the activities, person-places and trip ends moved, the person-places no link could take, and the worst remaining load in hours of its own sampled capacity. Proven by citysim.ActivityLinkCapacityProbe (src/run/run_signal_probes.py)."
+    },
+    "RUN.routing.activity_link_service_hours": {
+      "value": 30.0,
+      "units": "hours",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "RUN.qsim.start_time_h",
+          "RUN.qsim.end_time_h"
+        ],
+        "identity": "service_hours = RUN.qsim.end_time_h - RUN.qsim.start_time_h = 30 - 0 = 30: the whole modelled day the mobsim runs, over which a link's flow capacity is available to the trip ends attached to it. It is the widest bound the day allows, so a link is only relieved of trip ends it could not move even if they were spread evenly over every simulated hour; a narrower window (the hours trips actually start in) would be a further assumption this field does not make."
+      },
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.217",
+      "matsim_param": "activityLinks.serviceHours",
+      "consumers": [
+        "src/java/citysim/ActivityLinksConfigGroup.java",
+        "src/java/citysim/ActivityLinkCapacity.java"
+      ],
+      "description": "The hours of the modelled day a link's sampled capacity is counted over when RUN.routing.activity_link_capacity = capacity_bounded bounds the trip ends given to it (D28, F39). Read by nothing under `nearest`."
     },
     "RUN.scoring.translation": {
       "value": "c1_translation",

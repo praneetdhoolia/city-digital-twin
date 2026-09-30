@@ -4,20 +4,20 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. A field that carries a sweep MUST say what the sweep is for (sweep_role: answer, uncertainty or measurement), and an assumed field with a sweep MUST say how the interval was chosen (sweep_basis) - the resolver refuses either omission (#134). Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in cities/<city>/docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. Two narrowings are DERIVED: a field carrying `required_if_mode` is required ONLY of a city that runs that mode (the mode name is in the tool binding), and `required_by` says who reads the field - `run` (every city), a list of framework builders (a city whose manifest names one of them as a producer), or `reference_city` (read only by the reference city's own adapters and builders; required of no other city). A field a switched-off mechanism silences is still `run`: the emitter writes it, so the city declares it.",
-  "n_fields": 579,
+  "n_fields": 600,
   "n_by_layer": {
     "A": 208,
-    "B": 134,
-    "C": 59,
+    "B": 143,
+    "C": 66,
     "CAL": 30,
     "D": 10,
     "E": 26,
-    "RUN": 112
+    "RUN": 117
   },
   "n_by_required_by": {
-    "build": 245,
-    "reference_city": 112,
-    "run": 222
+    "build": 252,
+    "reference_city": 113,
+    "run": 235
   },
   "fields": {
     "A.active.footway_width_default": {
@@ -2429,6 +2429,18 @@
         "src/build/build_activity_chains.py"
       ]
     },
+    "B.activity.destination_mobility": {
+      "layer": "B",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json",
+      "required_by": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
     "B.activity.detour_factor": {
       "layer": "B",
       "units": "ratio",
@@ -2571,6 +2583,18 @@
         "src/build/build_matsim_plans.py"
       ]
     },
+    "B.activity.escort_oneway_scope": {
+      "layer": "B",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json",
+      "required_by": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
     "B.activity.escort_requires_licence": {
       "layer": "B",
       "units": "boolean",
@@ -2707,7 +2731,7 @@
       "layer": "B",
       "units": "km/h",
       "type": "number",
-      "source_in_reference_city": "assumed",
+      "source_in_reference_city": "derived",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
@@ -2719,7 +2743,7 @@
       "layer": "B",
       "units": "km/h",
       "type": "number",
-      "source_in_reference_city": "assumed",
+      "source_in_reference_city": "derived",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
@@ -3214,6 +3238,30 @@
         "src/build/build_matsim_plans.py"
       ]
     },
+    "B.motorbike.daily_use": {
+      "layer": "B",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json",
+      "required_by": [
+        "src/build/build_matsim_plans.py"
+      ]
+    },
+    "B.motorbike.daily_use_ratio": {
+      "layer": "B",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json",
+      "required_by": [
+        "src/build/build_matsim_plans.py"
+      ]
+    },
     "B.motorbike.length_m": {
       "layer": "B",
       "units": "metres",
@@ -3236,6 +3284,38 @@
       "declared_in": "B_demand.json",
       "required_by": [
         "src/build/build_matsim_run_inputs.py"
+      ]
+    },
+    "B.motorbike.possession_identity": {
+      "layer": "B",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json",
+      "required_by": "reference_city"
+    },
+    "B.motorbike.representation": {
+      "layer": "B",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json",
+      "required_by": "run"
+    },
+    "B.motorbike.rider_coupling": {
+      "layer": "B",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json",
+      "required_by": [
+        "src/build/build_matsim_plans.py"
       ]
     },
     "B.motorbike.trip_share": {
@@ -3351,6 +3431,18 @@
       "required_by": [
         "src/build/build_activity_chains.py",
         "src/build/build_population.py"
+      ]
+    },
+    "B.population.household_motorcycle_share": {
+      "layer": "B",
+      "units": "share_of_households",
+      "type": "number",
+      "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json",
+      "required_by": [
+        "src/build/build_matsim_plans.py"
       ]
     },
     "B.population.household_size_tail_p": {
@@ -3477,6 +3569,18 @@
       "layer": "B",
       "units": "boolean",
       "type": "boolean",
+      "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json",
+      "required_by": [
+        "src/build/build_matsim_plans.py"
+      ]
+    },
+    "B.population.rider_licence_rate_by_age_band": {
+      "layer": "B",
+      "units": "probability",
+      "type": "array",
       "source_in_reference_city": "derived",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
@@ -3911,8 +4015,8 @@
       "layer": "C",
       "units": "utils",
       "type": "number",
-      "source_in_reference_city": "definition",
-      "sweep_required": false,
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "C_behaviour.json",
       "required_by": [
@@ -4278,6 +4382,18 @@
       "declared_in": "C_behaviour.json",
       "required_by": "run"
     },
+    "C.scoring.motorbike_fuel_ratio": {
+      "layer": "C",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "C_behaviour.json",
+      "required_by": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
     "C.scoring.performing_utils_per_h": {
       "layer": "C",
       "units": "utils_per_hour",
@@ -4332,6 +4448,56 @@
         "src/build/build_matsim_run_inputs.py"
       ]
     },
+    "C.time_weights.atap_si_displacement_weight": {
+      "layer": "C",
+      "units": "ratio_to_ivt",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "C_behaviour.json",
+      "required_by": "run"
+    },
+    "C.time_weights.atap_si_wait_cap_min": {
+      "layer": "C",
+      "units": "min",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "C_behaviour.json",
+      "required_by": "run"
+    },
+    "C.time_weights.atap_si_wait_half": {
+      "layer": "C",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "C_behaviour.json",
+      "required_by": "run"
+    },
+    "C.time_weights.atap_si_wait_sqrt_min": {
+      "layer": "C",
+      "units": "min_per_sqrt_min",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "C_behaviour.json",
+      "required_by": "run"
+    },
+    "C.time_weights.atap_si_wait_weight": {
+      "layer": "C",
+      "units": "ratio_to_ivt",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "C_behaviour.json",
+      "required_by": "run"
+    },
     "C.time_weights.beta_bike_mode": {
       "layer": "C",
       "units": "ratio_to_ivt",
@@ -4362,10 +4528,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "C_behaviour.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py",
-        "src/build/build_params.py"
-      ]
+      "required_by": "run"
     },
     "C.time_weights.beta_reliability": {
       "layer": "C",
@@ -4424,6 +4587,16 @@
       "required_by": [
         "src/build/build_matsim_run_inputs.py"
       ]
+    },
+    "C.time_weights.service_interval_function": {
+      "layer": "C",
+      "units": "categorical",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "C_behaviour.json",
+      "required_by": "run"
     },
     "C.time_weights.service_quality_representation": {
       "layer": "C",
@@ -5668,6 +5841,16 @@
         "src/build/build_matsim_run_inputs.py"
       ]
     },
+    "RUN.qsim.motorcycle_roster": {
+      "layer": "RUN",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json",
+      "required_by": "run"
+    },
     "RUN.qsim.remove_stuck_vehicles": {
       "layer": "RUN",
       "units": "boolean",
@@ -5896,6 +6079,26 @@
       "type": "string",
       "source_in_reference_city": "definition",
       "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json",
+      "required_by": "run"
+    },
+    "RUN.routing.activity_link_capacity": {
+      "layer": "RUN",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json",
+      "required_by": "run"
+    },
+    "RUN.routing.activity_link_service_hours": {
+      "layer": "RUN",
+      "units": "hours",
+      "type": "number",
+      "source_in_reference_city": "derived",
+      "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",
       "required_by": "run"
@@ -6247,6 +6450,26 @@
       "units": "metres",
       "type": "number",
       "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json",
+      "required_by": "run"
+    },
+    "RUN.transit_router.no_route_walk": {
+      "layer": "RUN",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json",
+      "required_by": "run"
+    },
+    "RUN.transit_router.no_route_walk_reach_m": {
+      "layer": "RUN",
+      "units": "metres_routed",
+      "type": "number",
+      "source_in_reference_city": "derived",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",

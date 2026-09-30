@@ -177,14 +177,67 @@ public final class EscortCoherenceListener implements ReplanningListener {
             return;
         }
         index();
+        final Pass p = new Pass(event);
+        for (final Map.Entry<String, List<Person>> e : byHousehold.entrySet()) {
+            final List<Person> members = e.getValue();
+            if (members.size() < 2) {
+                continue;
+            }
+            proposePassengers(p, members);
+        }
+
+        // ------------------------------------------------------------------
+        // THE DRIVER SIDE (DECISIONS.md 9.84, superseding 9.82's driver-is-
+        // never-touched clause ON MEASUREMENT). The F9 gate at iteration 100
+        // located the ride decay: 52% of pairing misses were miss_endpoints -
+        // the household holds NO car leg matching the planned ride any more,
+        // because SubtourModeChoice moved the DRIVER's tour off car and the
+        // driver's own score never sees the passenger's loss. A pair is ONE
+        // choice made by two agents; while only the passenger side could be
+        // re-proposed, the coherent state was unreachable whenever the driver
+        // left. This pass proposes the DRIVER's half back - the subtour
+        // holding their matching trip, converted to car - at the same
+        // declared rates, still scored by ChangeExpBeta on the driver's own
+        // plan. Zero still recovers the one-sided behaviour exactly.
+        for (final Map.Entry<String, List<Person>> e : byHousehold.entrySet()) {
+            final List<Person> members = e.getValue();
+            if (members.size() < 2) {
+                continue;
+            }
+            for (final Person passenger : members) {
+                proposeDrivers(p, members, passenger);
+            }
+        }
+        if (p.decohered > 0 || p.driverDecohered > 0) {
+            LOG.info("escortCoherence [{}]: passenger side {} decohered / {} "
+                     + "re-proposed as ride; driver side {} decohered / {} "
+                     + "re-proposed as car; rates {}/{}, scope {}",
+                     p.innovating
+                         ? "innovating - proposed, never imposed"
+                         : "TAIL, innovation off after iteration "
+                           + innovationOffAfter()
+                           + " - measured, nothing proposed or selected",
+                     p.decohered, p.proposed, p.driverDecohered,
+                     p.driverProposed, p.rate, p.jointRate,
+                     cfg.getCoherenceScope());
+        }
+    }
+
+    /**
+     * One replanning pass: the settings it reads once, the seeded draw both
+     * sides share, and the four tallies the log reports. notifyReplanning was
+     * one 380-line method holding all of this as locals until 27 September
+     * 2026 (fourteenth report, recommendation 9); the phases below share it
+     * instead, and draw from the one rng in the order the single method did.
+     */
+    private final class Pass {
         // THE INNOVATION CUTOFF. Past it this listener creates and selects
         // nothing: it scans, counts and reports. See the class Javadoc for
         // why the tail is measured rather than held, and for the API this
         // arithmetic is copied from.
-        final boolean innovating = event.getIteration() <= innovationOffAfter();
+        final boolean innovating;
         // Seeded on the iteration so a run is reproducible; never wall-clock.
-        final Random rng = new Random(scenario.getConfig().global().getRandomSeed()
-                                      + 7919L * event.getIteration());
+        final Random rng;
         final double window = cfg.getWindowMinutes() * 60.0;
         final double rate = cfg.getEscortCoherenceRate();
         // DECISIONS.md 9.84: the joint extension. The 9.84 binder generates
@@ -209,346 +262,372 @@ public final class EscortCoherenceListener implements ReplanningListener {
                 .equals(cfg.getCoherenceScope());
         int proposed = 0;
         int decohered = 0;
-
-        for (final Map.Entry<String, List<Person>> e : byHousehold.entrySet()) {
-            final List<Person> members = e.getValue();
-            if (members.size() < 2) {
-                continue;
-            }
-            final List<double[]> escortRuns = new ArrayList<>();
-            final List<Id<Link>[]> escortEnds = new ArrayList<>();
-            final List<Id<Person>> escortDrivers = new ArrayList<>();
-            final List<Boolean> escortFlags = new ArrayList<>();
-            for (final Person driver : members) {
-                final Plan plan = driver.getSelectedPlan();
-                if (plan == null) {
-                    continue;
-                }
-                for (final Trip trip : TripStructureUtils.getTrips(plan)) {
-                    final boolean escort = ESCORT_ACTIVITY.equals(
-                            trip.getDestinationActivity().getType());
-                    if (!escort && jointRate <= 0.0) {
-                        continue;
-                    }
-                    if (!isAllMode(trip, TransportMode.car)) {
-                        continue;      // the driver chose something else: fine
-                    }
-                    @SuppressWarnings("unchecked")
-                    final Id<Link>[] ends = new Id[] {
-                        trip.getOriginActivity().getLinkId(),
-                        trip.getDestinationActivity().getLinkId()};
-                    escortEnds.add(ends);
-                    escortDrivers.add(driver.getId());
-                    escortFlags.add(escort);
-                    escortRuns.add(new double[] {
-                        departure(trip, plan)});
-                }
-            }
-            if (escortEnds.isEmpty()) {
-                continue;
-            }
-            for (final Person member : members) {
-                final Plan plan = member.getSelectedPlan();
-                if (plan == null) {
-                    continue;
-                }
-                // On the ESCORT path, only someone who cannot drive
-                // themselves: offering `ride` to a licensed car-available
-                // adult would second-guess a choice they are entitled to
-                // make, and it is not the population that defect is about
-                // (at licence = 0 the model puts 48.8% of trips on a bicycle
-                // and 0.5% on ride, DEMOGRAPHIC_MODES.md). On the JOINT path
-                // (9.84) car-available adults ARE the generated population -
-                // an adult companion in the household car - so the offer
-                // extends to them there, and ChangeExpBeta still decides.
-                final Object avail = member.getAttributes().getAttribute(CAR_AVAIL);
-                final boolean carAvailable =
-                        avail != null && CAR_ALWAYS.equals(avail.toString());
-                Trip target = null;
-                boolean targetEscort = false;
-                final Set<Integer> boundRide = declaredOnly
-                        ? GatedSubtourModeChoice.GatedModule.boundTrips(
-                                plan, GatedSubtourModeChoice.GatedModule
-                                        .BOUND_RIDE_ATTRIBUTE)
-                        : null;
-                final Set<String> namedDrivers =
-                        declaredOnly ? boundDrivers(member) : null;
-                int tripNo = 0;                    // 1-based, plan order (9.120)
-                for (final Trip trip : TripStructureUtils.getTrips(plan)) {
-                    tripNo++;
-                    if (isAllMode(trip, TransportMode.ride)) {
-                        continue;                  // already coherent
-                    }
-                    if (declaredOnly && !boundRide.contains(tripNo)) {
-                        continue;                  // 9.146: not a declared trip
-                    }
-                    final Id<Link> from = trip.getOriginActivity().getLinkId();
-                    final Id<Link> to = trip.getDestinationActivity().getLinkId();
-                    final double dep = departure(trip, plan);
-                    for (int i = 0; i < escortEnds.size(); i++) {
-                        if (escortDrivers.get(i).equals(member.getId())) {
-                            continue;              // you cannot escort yourself
-                        }
-                        if (escortFlags.get(i) && carAvailable) {
-                            continue;              // escort path: unlicensed only
-                        }
-                        if (declaredOnly && !namedDrivers.contains(
-                                escortDrivers.get(i).toString())) {
-                            continue;              // 9.146: not the named driver
-                        }
-                        if (from.equals(escortEnds.get(i)[0])
-                                && to.equals(escortEnds.get(i)[1])
-                                && Math.abs(dep - escortRuns.get(i)[0]) <= window) {
-                            target = trip;
-                            targetEscort = escortFlags.get(i);
-                            break;
-                        }
-                    }
-                    if (target != null) {
-                        break;
-                    }
-                }
-                if (target == null) {
-                    continue;
-                }
-                decohered++;
-                if (!innovating) {
-                    continue;   // the tail counts the pair, and proposes nothing
-                }
-                if (rng.nextDouble() >= (targetEscort ? rate : jointRate)) {
-                    continue;                      // re-proposed only sometimes
-                }
-                final Plan copy = PopulationUtils.createPlan(member);
-                PopulationUtils.copyFromTo(plan, copy);
-                // Re-find the trip in the COPY: the objects differ.
-                Trip inCopy = null;
-                for (final Trip trip : TripStructureUtils.getTrips(copy)) {
-                    if (trip.getOriginActivity().getLinkId()
-                            .equals(target.getOriginActivity().getLinkId())
-                            && trip.getDestinationActivity().getLinkId()
-                            .equals(target.getDestinationActivity().getLinkId())) {
-                        inCopy = trip;
-                        break;
-                    }
-                }
-                if (inCopy == null) {
-                    continue;
-                }
-                // THE WHOLE SUBTOUR, never one trip of it. MATSim refuses a
-                // subtour mixing chain-based modes (car, bike) with
-                // non-chain-based ones, because the vehicle would be stranded:
-                // re-moding a single trip to ride left [car, ride] and killed
-                // arm 20260826T222352 at iteration 2 with
-                // "Subtour contains a mix of chain- and non-chainbased modes"
-                // (persons 93508, 451935). That is this project's own trap 13,
-                // the 9.63/#65 failure, met again. An escorted member is
-                // dropped AND collected, which is what the drop/pickup pairs
-                // in B2_escort_bindings say, so the coherent proposal is the
-                // whole subtour rather than half of it.
-                final List<Trip> subtourTrips = subtourContaining(copy, inCopy);
-                if (subtourTrips.isEmpty()) {
-                    continue;
-                }
-                boolean built = true;
-                for (final Trip t : subtourTrips) {
-                    final Leg leg = PopulationUtils.createLeg(TransportMode.ride);
-                    TripStructureUtils.setRoutingMode(leg, TransportMode.ride);
-                    try {
-                        TripRouter.insertTrip(copy, t.getOriginActivity(),
-                                              Collections.singletonList(leg),
-                                              t.getDestinationActivity());
-                    } catch (final RuntimeException ex) {
-                        built = false;
-                        break;
-                    }
-                }
-                if (!built) {
-                    continue;
-                }
-                member.addPlan(copy);
-                member.setSelectedPlan(copy);
-                trim(member);
-                proposed++;
-            }
-        }
-
-        // ------------------------------------------------------------------
-        // THE DRIVER SIDE (DECISIONS.md 9.84, superseding 9.82's driver-is-
-        // never-touched clause ON MEASUREMENT). The F9 gate at iteration 100
-        // located the ride decay: 52% of pairing misses were miss_endpoints -
-        // the household holds NO car leg matching the planned ride any more,
-        // because SubtourModeChoice moved the DRIVER's tour off car and the
-        // driver's own score never sees the passenger's loss. A pair is ONE
-        // choice made by two agents; while only the passenger side could be
-        // re-proposed, the coherent state was unreachable whenever the driver
-        // left. This pass proposes the DRIVER's half back - the subtour
-        // holding their matching trip, converted to car - at the same
-        // declared rates, still scored by ChangeExpBeta on the driver's own
-        // plan. Zero still recovers the one-sided behaviour exactly.
         int driverDecohered = 0;
         int driverProposed = 0;
-        for (final Map.Entry<String, List<Person>> e : byHousehold.entrySet()) {
-            final List<Person> members = e.getValue();
-            if (members.size() < 2) {
+
+        Pass(final ReplanningEvent event) {
+            this.innovating = event.getIteration() <= innovationOffAfter();
+            this.rng = new Random(scenario.getConfig().global().getRandomSeed()
+                                  + 7919L * event.getIteration());
+        }
+    }
+
+    /** A household's car legs a co-member's trip may share: parallel lists,
+     *  in the order the members' selected plans hold them. */
+    private static final class CarLegs {
+        final List<double[]> runs = new ArrayList<>();
+        final List<Id<Link>[]> ends = new ArrayList<>();
+        final List<Id<Person>> drivers = new ArrayList<>();
+        final List<Boolean> escortFlags = new ArrayList<>();
+    }
+
+    /** The trip a member makes that a household car leg shares, and whether
+     *  that car leg is the escort path or the joint one. */
+    private static final class Target {
+        final Trip trip;
+        final boolean escort;
+
+        Target(final Trip trip, final boolean escort) {
+            this.trip = trip;
+            this.escort = escort;
+        }
+    }
+
+    /** THE PASSENGER SIDE: every member whose trip a household car leg
+     *  shares, and who is not on ride, is offered the subtour as ride. */
+    private void proposePassengers(final Pass p, final List<Person> members) {
+        final CarLegs legs = householdCarLegs(p, members);
+        if (legs.ends.isEmpty()) {
+            return;
+        }
+        for (final Person member : members) {
+            proposeRide(p, legs, member);
+        }
+    }
+
+    /** Every car leg in the household's selected plans that an escort (or,
+     *  with a joint rate, any) co-member trip could share. */
+    private static CarLegs householdCarLegs(final Pass p,
+                                            final List<Person> members) {
+        final CarLegs legs = new CarLegs();
+        for (final Person driver : members) {
+            final Plan plan = driver.getSelectedPlan();
+            if (plan == null) {
                 continue;
             }
-            for (final Person passenger : members) {
-                final Plan pplan = passenger.getSelectedPlan();
-                if (pplan == null) {
+            for (final Trip trip : TripStructureUtils.getTrips(plan)) {
+                final boolean escort = ESCORT_ACTIVITY.equals(
+                        trip.getDestinationActivity().getType());
+                if (!escort && p.jointRate <= 0.0) {
                     continue;
                 }
-                final Set<Integer> pBound = declaredOnly
-                        ? GatedSubtourModeChoice.GatedModule.boundTrips(
-                                pplan, GatedSubtourModeChoice.GatedModule
-                                        .BOUND_RIDE_ATTRIBUTE)
-                        : null;
-                final Set<String> pDrivers =
-                        declaredOnly ? boundDrivers(passenger) : null;
-                int pTripNo = 0;
-                for (final Trip ptrip : TripStructureUtils.getTrips(pplan)) {
-                    pTripNo++;
-                    if (!isAllMode(ptrip, TransportMode.ride)) {
-                        continue;
-                    }
-                    if (declaredOnly && !pBound.contains(pTripNo)) {
-                        continue;                  // 9.146: not a declared trip
-                    }
-                    final Id<Link> from = ptrip.getOriginActivity().getLinkId();
-                    final Id<Link> to =
-                            ptrip.getDestinationActivity().getLinkId();
-                    final double dep = departure(ptrip, pplan);
-                    // served already? then the pairing engine will carry it
-                    boolean served = false;
-                    for (final Person driver : members) {
-                        if (driver == passenger || served) {
-                            continue;
-                        }
-                        final Plan dplan = driver.getSelectedPlan();
-                        if (dplan == null) {
-                            continue;
-                        }
-                        for (final Trip dt : TripStructureUtils.getTrips(dplan)) {
-                            if (isAllMode(dt, TransportMode.car)
-                                    && from.equals(dt.getOriginActivity().getLinkId())
-                                    && to.equals(dt.getDestinationActivity().getLinkId())
-                                    && Math.abs(departure(dt, dplan) - dep) <= window) {
-                                served = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (served) {
-                        continue;
-                    }
-                    // a member whose own NON-car trip matches: the driver who
-                    // drifted. Only someone the car identity permits, and only
-                    // a home-anchored subtour, so the vehicle chain stays whole.
-                    for (final Person driver : members) {
-                        if (driver == passenger) {
-                            continue;
-                        }
-                        if (declaredOnly && !pDrivers.contains(
-                                driver.getId().toString())) {
-                            continue;              // 9.146: not the named driver
-                        }
-                        final Object avail =
-                                driver.getAttributes().getAttribute(CAR_AVAIL);
-                        if (avail == null || !CAR_ALWAYS.equals(avail.toString())) {
-                            continue;
-                        }
-                        if (driver.getAttributes().getAttribute(
-                                AvailabilityModesCalculator.LOCKED_ATTRIBUTE) != null) {
-                            continue;
-                        }
-                        final Plan dplan = driver.getSelectedPlan();
-                        if (dplan == null) {
-                            continue;
-                        }
-                        Trip match = null;
-                        for (final Trip dt : TripStructureUtils.getTrips(dplan)) {
-                            if (!isAllMode(dt, TransportMode.car)
-                                    && from.equals(dt.getOriginActivity().getLinkId())
-                                    && to.equals(dt.getDestinationActivity().getLinkId())
-                                    && Math.abs(departure(dt, dplan) - dep) <= window) {
-                                match = dt;
-                                break;
-                            }
-                        }
-                        if (match == null) {
-                            continue;
-                        }
-                        driverDecohered++;
-                        if (!innovating) {
-                            break;  // the tail counts the pair, proposes nothing
-                        }
-                        final boolean escortPair = ESCORT_ACTIVITY.equals(
-                                match.getDestinationActivity().getType());
-                        if (rng.nextDouble() >= (escortPair ? rate : jointRate)) {
-                            break;
-                        }
-                        final Plan copy = PopulationUtils.createPlan(driver);
-                        PopulationUtils.copyFromTo(dplan, copy);
-                        Trip inCopy = null;
-                        for (final Trip t : TripStructureUtils.getTrips(copy)) {
-                            if (t.getOriginActivity().getLinkId()
-                                    .equals(match.getOriginActivity().getLinkId())
-                                    && t.getDestinationActivity().getLinkId()
-                                    .equals(match.getDestinationActivity()
-                                            .getLinkId())) {
-                                inCopy = t;
-                                break;
-                            }
-                        }
-                        if (inCopy == null) {
-                            break;
-                        }
-                        final List<Trip> subtourTrips =
-                                subtourContaining(copy, inCopy);
-                        // car is chain-based: convert only a subtour anchored
-                        // at home, where the household's vehicle stands
-                        if (subtourTrips.isEmpty()
-                                || !"home".equals(subtourTrips.get(0)
-                                        .getOriginActivity().getType())) {
-                            break;
-                        }
-                        boolean built = true;
-                        for (final Trip t : subtourTrips) {
-                            final Leg leg =
-                                    PopulationUtils.createLeg(TransportMode.car);
-                            TripStructureUtils.setRoutingMode(
-                                    leg, TransportMode.car);
-                            try {
-                                TripRouter.insertTrip(copy, t.getOriginActivity(),
-                                        Collections.singletonList(leg),
-                                        t.getDestinationActivity());
-                            } catch (final RuntimeException ex) {
-                                built = false;
-                                break;
-                            }
-                        }
-                        if (built) {
-                            driver.addPlan(copy);
-                            driver.setSelectedPlan(copy);
-                            trim(driver);
-                            driverProposed++;
-                        }
-                        break;
-                    }
+                if (!isAllMode(trip, TransportMode.car)) {
+                    continue;      // the driver chose something else: fine
+                }
+                @SuppressWarnings("unchecked")
+                final Id<Link>[] ends = new Id[] {
+                    trip.getOriginActivity().getLinkId(),
+                    trip.getDestinationActivity().getLinkId()};
+                legs.ends.add(ends);
+                legs.drivers.add(driver.getId());
+                legs.escortFlags.add(escort);
+                legs.runs.add(new double[] {
+                    departure(trip, plan)});
+            }
+        }
+        return legs;
+    }
+
+    /** One member: find the decohered trip, count it, and - innovating, and
+     *  on the draw - propose its whole subtour as ride. */
+    private void proposeRide(final Pass p, final CarLegs legs,
+                             final Person member) {
+        final Plan plan = member.getSelectedPlan();
+        if (plan == null) {
+            return;
+        }
+        final Target target = decoheredTrip(p, legs, member, plan);
+        if (target == null) {
+            return;
+        }
+        p.decohered++;
+        if (!p.innovating) {
+            return;   // the tail counts the pair, and proposes nothing
+        }
+        if (p.rng.nextDouble() >= (target.escort ? p.rate : p.jointRate)) {
+            return;                        // re-proposed only sometimes
+        }
+        final Plan copy = PopulationUtils.createPlan(member);
+        PopulationUtils.copyFromTo(plan, copy);
+        // Re-find the trip in the COPY: the objects differ.
+        final Trip inCopy = sameTripIn(copy, target.trip);
+        if (inCopy == null) {
+            return;
+        }
+        // THE WHOLE SUBTOUR, never one trip of it. MATSim refuses a
+        // subtour mixing chain-based modes (car, bike) with
+        // non-chain-based ones, because the vehicle would be stranded:
+        // re-moding a single trip to ride left [car, ride] and killed
+        // arm 20260826T222352 at iteration 2 with
+        // "Subtour contains a mix of chain- and non-chainbased modes"
+        // (persons 93508, 451935). That is this project's own trap 13,
+        // the 9.63/#65 failure, met again. An escorted member is
+        // dropped AND collected, which is what the drop/pickup pairs
+        // in B2_escort_bindings say, so the coherent proposal is the
+        // whole subtour rather than half of it.
+        final List<Trip> subtourTrips = subtourContaining(copy, inCopy);
+        if (subtourTrips.isEmpty()) {
+            return;
+        }
+        if (!remode(copy, subtourTrips, TransportMode.ride)) {
+            return;
+        }
+        member.addPlan(copy);
+        member.setSelectedPlan(copy);
+        trim(member);
+        p.proposed++;
+    }
+
+    /** The member's first trip, in plan order, that a household car leg
+     *  shares on endpoints and clock and that the rules let them ride. */
+    private static Target decoheredTrip(final Pass p, final CarLegs legs,
+                                        final Person member, final Plan plan) {
+        // On the ESCORT path, only someone who cannot drive
+        // themselves: offering `ride` to a licensed car-available
+        // adult would second-guess a choice they are entitled to
+        // make, and it is not the population that defect is about
+        // (at licence = 0 the model puts 48.8% of trips on a bicycle
+        // and 0.5% on ride, DEMOGRAPHIC_MODES.md). On the JOINT path
+        // (9.84) car-available adults ARE the generated population -
+        // an adult companion in the household car - so the offer
+        // extends to them there, and ChangeExpBeta still decides.
+        final Object avail = member.getAttributes().getAttribute(CAR_AVAIL);
+        final boolean carAvailable =
+                avail != null && CAR_ALWAYS.equals(avail.toString());
+        final Set<Integer> boundRide = p.declaredOnly
+                ? GatedSubtourModeChoice.GatedModule.boundTrips(
+                        plan, GatedSubtourModeChoice.GatedModule
+                                .BOUND_RIDE_ATTRIBUTE)
+                : null;
+        final Set<String> namedDrivers =
+                p.declaredOnly ? boundDrivers(member) : null;
+        int tripNo = 0;                    // 1-based, plan order (9.120)
+        for (final Trip trip : TripStructureUtils.getTrips(plan)) {
+            tripNo++;
+            if (isAllMode(trip, TransportMode.ride)) {
+                continue;                  // already coherent
+            }
+            if (p.declaredOnly && !boundRide.contains(tripNo)) {
+                continue;                  // 9.146: not a declared trip
+            }
+            final Id<Link> from = trip.getOriginActivity().getLinkId();
+            final Id<Link> to = trip.getDestinationActivity().getLinkId();
+            final double dep = departure(trip, plan);
+            for (int i = 0; i < legs.ends.size(); i++) {
+                if (legs.drivers.get(i).equals(member.getId())) {
+                    continue;              // you cannot escort yourself
+                }
+                if (legs.escortFlags.get(i) && carAvailable) {
+                    continue;              // escort path: unlicensed only
+                }
+                if (p.declaredOnly && !namedDrivers.contains(
+                        legs.drivers.get(i).toString())) {
+                    continue;              // 9.146: not the named driver
+                }
+                if (from.equals(legs.ends.get(i)[0])
+                        && to.equals(legs.ends.get(i)[1])
+                        && Math.abs(dep - legs.runs.get(i)[0]) <= p.window) {
+                    return new Target(trip, legs.escortFlags.get(i));
                 }
             }
         }
-        if (decohered > 0 || driverDecohered > 0) {
-            LOG.info("escortCoherence [{}]: passenger side {} decohered / {} "
-                     + "re-proposed as ride; driver side {} decohered / {} "
-                     + "re-proposed as car; rates {}/{}, scope {}",
-                     innovating
-                         ? "innovating - proposed, never imposed"
-                         : "TAIL, innovation off after iteration "
-                           + innovationOffAfter()
-                           + " - measured, nothing proposed or selected",
-                     decohered, proposed, driverDecohered, driverProposed,
-                     rate, jointRate, cfg.getCoherenceScope());
+        return null;
+    }
+
+    /** One passenger: every ride trip no household car leg serves any more
+     *  is offered back to the driver who drifted off car. */
+    private void proposeDrivers(final Pass p, final List<Person> members,
+                                final Person passenger) {
+        final Plan pplan = passenger.getSelectedPlan();
+        if (pplan == null) {
+            return;
         }
+        final Set<Integer> pBound = p.declaredOnly
+                ? GatedSubtourModeChoice.GatedModule.boundTrips(
+                        pplan, GatedSubtourModeChoice.GatedModule
+                                .BOUND_RIDE_ATTRIBUTE)
+                : null;
+        final Set<String> pDrivers =
+                p.declaredOnly ? boundDrivers(passenger) : null;
+        int pTripNo = 0;
+        for (final Trip ptrip : TripStructureUtils.getTrips(pplan)) {
+            pTripNo++;
+            if (!isAllMode(ptrip, TransportMode.ride)) {
+                continue;
+            }
+            if (p.declaredOnly && !pBound.contains(pTripNo)) {
+                continue;                  // 9.146: not a declared trip
+            }
+            final Id<Link> from = ptrip.getOriginActivity().getLinkId();
+            final Id<Link> to =
+                    ptrip.getDestinationActivity().getLinkId();
+            final double dep = departure(ptrip, pplan);
+            // served already? then the pairing engine will carry it
+            if (served(p, members, passenger, from, to, dep)) {
+                continue;
+            }
+            proposeDriftedDriver(p, members, passenger, pDrivers, from, to, dep);
+        }
+    }
+
+    /** Does a co-member's selected plan hold a car trip on these endpoints
+     *  inside the window? */
+    private static boolean served(final Pass p, final List<Person> members,
+                                  final Person passenger,
+                                  final Id<Link> from, final Id<Link> to,
+                                  final double dep) {
+        for (final Person driver : members) {
+            if (driver == passenger) {
+                continue;
+            }
+            final Plan dplan = driver.getSelectedPlan();
+            if (dplan == null) {
+                continue;
+            }
+            for (final Trip dt : TripStructureUtils.getTrips(dplan)) {
+                if (isAllMode(dt, TransportMode.car)
+                        && from.equals(dt.getOriginActivity().getLinkId())
+                        && to.equals(dt.getDestinationActivity().getLinkId())
+                        && Math.abs(departure(dt, dplan) - dep) <= p.window) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * A member whose own NON-car trip matches: the driver who drifted. Only
+     * someone the car identity permits, and only a home-anchored subtour, so
+     * the vehicle chain stays whole. The first such member is counted and -
+     * innovating, and on the draw - offered the subtour back as car; nobody
+     * after them is looked at.
+     */
+    private void proposeDriftedDriver(final Pass p, final List<Person> members,
+                                      final Person passenger,
+                                      final Set<String> pDrivers,
+                                      final Id<Link> from, final Id<Link> to,
+                                      final double dep) {
+        for (final Person driver : members) {
+            if (driver == passenger) {
+                continue;
+            }
+            if (p.declaredOnly && !pDrivers.contains(
+                    driver.getId().toString())) {
+                continue;              // 9.146: not the named driver
+            }
+            final Object avail =
+                    driver.getAttributes().getAttribute(CAR_AVAIL);
+            if (avail == null || !CAR_ALWAYS.equals(avail.toString())) {
+                continue;
+            }
+            if (driver.getAttributes().getAttribute(
+                    AvailabilityModesCalculator.LOCKED_ATTRIBUTE) != null) {
+                continue;
+            }
+            final Plan dplan = driver.getSelectedPlan();
+            if (dplan == null) {
+                continue;
+            }
+            final Trip match = driftedTrip(p, dplan, from, to, dep);
+            if (match == null) {
+                continue;
+            }
+            p.driverDecohered++;
+            if (!p.innovating) {
+                return;  // the tail counts the pair, proposes nothing
+            }
+            final boolean escortPair = ESCORT_ACTIVITY.equals(
+                    match.getDestinationActivity().getType());
+            if (p.rng.nextDouble() >= (escortPair ? p.rate : p.jointRate)) {
+                return;
+            }
+            proposeCar(p, driver, dplan, match);
+            return;
+        }
+    }
+
+    /** The driver's first non-car trip on these endpoints inside the window. */
+    private static Trip driftedTrip(final Pass p, final Plan dplan,
+                                    final Id<Link> from, final Id<Link> to,
+                                    final double dep) {
+        for (final Trip dt : TripStructureUtils.getTrips(dplan)) {
+            if (!isAllMode(dt, TransportMode.car)
+                    && from.equals(dt.getOriginActivity().getLinkId())
+                    && to.equals(dt.getDestinationActivity().getLinkId())
+                    && Math.abs(departure(dt, dplan) - dep) <= p.window) {
+                return dt;
+            }
+        }
+        return null;
+    }
+
+    /** Propose the drifted driver's home-anchored subtour back as car. */
+    private void proposeCar(final Pass p, final Person driver, final Plan dplan,
+                            final Trip match) {
+        final Plan copy = PopulationUtils.createPlan(driver);
+        PopulationUtils.copyFromTo(dplan, copy);
+        final Trip inCopy = sameTripIn(copy, match);
+        if (inCopy == null) {
+            return;
+        }
+        final List<Trip> subtourTrips =
+                subtourContaining(copy, inCopy);
+        // car is chain-based: convert only a subtour anchored
+        // at home, where the household's vehicle stands
+        if (subtourTrips.isEmpty()
+                || !"home".equals(subtourTrips.get(0)
+                        .getOriginActivity().getType())) {
+            return;
+        }
+        if (remode(copy, subtourTrips, TransportMode.car)) {
+            driver.addPlan(copy);
+            driver.setSelectedPlan(copy);
+            trim(driver);
+            p.driverProposed++;
+        }
+    }
+
+    /** The trip of `copy` on the same origin and destination links as
+     *  `trip` - the plan was copied, so the objects differ. */
+    private static Trip sameTripIn(final Plan copy, final Trip trip) {
+        for (final Trip t : TripStructureUtils.getTrips(copy)) {
+            if (t.getOriginActivity().getLinkId()
+                    .equals(trip.getOriginActivity().getLinkId())
+                    && t.getDestinationActivity().getLinkId()
+                    .equals(trip.getDestinationActivity().getLinkId())) {
+                return t;
+            }
+        }
+        return null;
+    }
+
+    /** Every trip of the subtour re-inserted as one leg of `mode`; false,
+     *  and the copy abandoned, if MATSim refuses any of them. */
+    private static boolean remode(final Plan copy, final List<Trip> subtourTrips,
+                                  final String mode) {
+        for (final Trip t : subtourTrips) {
+            final Leg leg = PopulationUtils.createLeg(mode);
+            TripStructureUtils.setRoutingMode(leg, mode);
+            try {
+                TripRouter.insertTrip(copy, t.getOriginActivity(),
+                                      Collections.singletonList(leg),
+                                      t.getDestinationActivity());
+            } catch (final RuntimeException ex) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

@@ -144,11 +144,12 @@ def propose(fit, cfg, reference='car'):
             continue
         # No scalar sweep means the registry has declared this constant not
         # movable, and `calibrate.free_parameters` applies the same test. It is
-        # not always a freeze: C.asc.motorbike ships `definition` with no sweep
-        # because motorbike is a person-level locked carve and is NOT in
-        # RUN.mode_choice.modes, so its constant is a level shift that cannot
-        # change any choice - a step for it would have a band of exactly zero
-        # by construction. Reusing the movability contract rather than
+        # not always a freeze: C.asc.motorbike shipped `definition` with no
+        # sweep while motorbike was a person-level locked carve, when its
+        # constant was a level shift that could not change any choice (it
+        # carries a sensitivity sweep since motorbike became chosen, 9.214 and
+        # D28, and is `placeholder`, so calibrate.free_parameters skips it and
+        # this round only proposes). Reusing the movability contract rather than
         # re-deciding it here means a constant declared unmovable for ANY
         # reason is refused for that reason, in the registry's own words.
         lo, hi = _sweep_interval(field)

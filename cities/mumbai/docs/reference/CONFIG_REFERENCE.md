@@ -27,22 +27,22 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 428 fields are made of
+## What the 442 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 14 | read directly from a raw download |
 | `measured` | 9 | computed from observed data in this package |
-| `derived` | 25 | follows from another registry field by identity |
-| `literature` | 36 | a published value, not specific to this city |
-| `assumed` | 166 | chosen without direct empirical support |
-| `definition` | 178 | fixed by the formulation, not an empirical quantity |
+| `derived` | 26 | follows from another registry field by identity |
+| `literature` | 41 | a published value, not specific to this city |
+| `assumed` | 172 | chosen without direct empirical support |
+| `definition` | 180 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 392 | usable point value |
+| `active` | 404 | usable point value |
 | `computed` | 6 | written at run time from other fields; do not hand-edit |
-| `placeholder` | 29 | a structural stand-in; the model runs but the field is not defensible |
+| `placeholder` | 31 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 1 | the datum does not exist in the package; must be swept, never pinned |
 
 ### The 1 fields with no value
@@ -53,27 +53,29 @@ These carry `value: null` and the resolver refuses to return a point value for t
 |---|---|---|
 | `B.population.tertiary_attendance_rate_20_24` | 0 - 0.35 | Unobtained: null, and the synthesiser makes nobody in that age range a student, which the report says. |
 
-### What the 202 sweeps are for
+### What the 209 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
-| `answer` | 5 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 189 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `answer` | 7 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
+| `uncertainty` | 194 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 8 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
 
 | Field | Value | Sweep |
 |---|---|---|
+| `B.motorbike.representation` | `carve` | `carve`, `choice` |
 | `B.ride.pairing_rule` | `both_links` | `both_links`, `route_contains`, `origin_link`, `dest_link`, `window_only` |
+| `C.time_weights.service_interval_function` | `linear` | `linear`, `atap_m1` |
 | `RUN.mode_choice.pt_submode_alternatives` | `aggregate` | `aggregate`, `alternatives` |
 | `RUN.replanning.plan_selector_for_removal` | `WorstPlanSelector` | `WorstPlanSelector`, `SelectRandom`, `SelectExpBetaForRemoval`, `ChangeExpBetaForRemoval`, `PathSizeLogitSelectorForRemoval` |
 | `RUN.replanning.score_msa_representation` | `absent` | `absent`, `at_innovation_cutoff` |
 | `RUN.routing.access_egress_consistency_check` | `reroute` | `reroute`, `disable`, `abortOnInconsistency` |
 
-### The 17 fields held fixed
+### The 22 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
@@ -88,12 +90,17 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `B.targets.goods_vehicle_traffic_share_pct` - a published screenline observation (CMP for Greater Mumbai executive summary, traffic composition), never varied
 - `B.taxi.daily_trips_band` - A CONSTRAINT, NEVER A TARGET (9.8/9.13): the pre-registered 67/143 target split cannot grow. The modelled taxi volume is REPORTED against this band; nothing is fitted to it.
 - `B.taxi.fleet_size` - adopted from the reference city, where it is derived from B.taxi.daily_trips_band, B.taxi.vehicle_trips_per_day; those fields are not declared for this city, so the value is held
+- `C.scoring.marginal_utility_of_distance_per_m` - every mode at MATSim's own 0.0: no distance term is priced for this city, which is what every Mumbai case has run with. The reference city derives bike's coefficient as -1/(its obs
+- `C.time_weights.atap_si_wait_cap_min` - ATAP M1 equation 4.1's ceiling on the predicted wait, 20 minutes (a two-hourly service): beyond it a traveller plans to the timetable and the interval is displacement only.
+- `C.time_weights.atap_si_wait_half` - The random-arrival wait as a share of the service interval in ATAP M1 equation 4.1 - half, below the 14-minute crossover with the square-root term. A definition of the turn-up-and-
+- `C.time_weights.atap_si_wait_sqrt_min` - ATAP M1 equation 4.1's square-root wait term, ESTIMATED on Melbourne, Sydney and NZ wait surveys (studies 36-38): at a 14-minute interval the average wait was exactly half, and les
 - `CAL.asc.max_step_utils` - A REFUSAL THRESHOLD, not a model input, and so not swept - the A.signals.scats_match_radius_m precedent for a build guard's tolerance. It is the point past which a proposed step st
 - `CAL.objective.include_counts` - adopted from the reference city, where it is derived from B.external.interaction_rate; those fields are not declared for this city, so the value is held
 - `CAL.search.reading_drift_pct` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
 - `RUN.machine.heap_floor_gib` - the LIVE SET after the last full collection of a case with no population to speak of, read from its gc.log (Pause Full N->M: M), never the pre-collection peak - under ParallelGC wi
 - `RUN.machine.heap_per_fraction_gib` - persons in the core (27.06 M) x RUN.replanning.max_agent_plan_memory x the live heap a routed plan holds at steady state - 19 KB on the reference city's 25 % arm 20260916T063903_25
 - `RUN.monitor.pace_band_s` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `RUN.transit_router.no_route_walk_reach_m` - adopted from the reference city, where it is derived from C.constraint.trip_length_km.walk; those fields are not declared for this city, so the value is held
 
 ## Broad baseline boarding fares
 
@@ -2221,7 +2228,7 @@ Fixed background movement seed.
 
 ## Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)
 
-*`cities/mumbai/registry/B_framework.json` - 29 fields*
+*`cities/mumbai/registry/B_framework.json` - 30 fields*
 
 
 
@@ -2233,6 +2240,7 @@ Fixed background movement seed.
 | `B.counts.station_match_radius_m` | `120.0` | metres | `assumed` | 60 - 120 |
 | `B.mode.bike_feasible_km` | `0.0` | km_straight_line | `definition` | - |
 | `B.mode.walk_feasible_km` | `0.0` | km_straight_line | `definition` | - |
+| `B.motorbike.representation` | `carve` | enum | `assumed` | `carve`, `choice` |
 | `B.population.age_bands` | `[[0, 4], [5, 9], [10, 14], [15, 19], [20, 24], [25, 29], [30, 34], [35, 39], [40, 44], [45, 49], [50, 54], ...` | years | `definition` | - |
 | `B.population.bike_min_age` | `6` | years | `definition` | - |
 | `B.population.vehicle_roster` | `per_person` | enum | `assumed` | `census`, `per_person` |
@@ -2304,6 +2312,14 @@ Explicit setting for bounded provisional smoke only; full capacities serve the s
 Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.modeAvailability.walkFeasibleKm on 21 September 2026: one key per MATSim parameter.
 
 ***definition** · status **active** · DECISIONS.md §9.202 · MATSim `modeAvailability.walkFeasibleKm`*
+
+#### `B.motorbike.representation`
+
+The representation gate for motorbike (D22, #257). Switched off for this baseline ("carve"): the reference city's rider-licence and household-motorcycle choice (9.214) is not applied: this baseline puts motorbike in each person's permittedModes (9.186), writes no motorbikeAvail, and prices no motorbike running cost - `carve` is the value that leaves that path exactly as it ran.
+
+***assumed** · status **active** · DECISIONS.md §9.202 · sweep role **answer***
+
+> **Sweep basis.** adopted from the reference city: The two representations the plans builder can write. `carve` is every build before 9.214, recovered byte for byte: a licensed, car-available resident is drawn a motorbike user by a hash against B.motorbike.trip_share (per home SA1 under B.motorbike.carve_resolution) and their day is LOCKED to the mode, which reproduces the census G62 share by construction. `choice` retires the lock and the draw: availability is observed - a rider licence (B.population.rider_licence_rate_by_age_band, per LGA and age band) AND a household motorcycle (B.population.household_motorcycle_share, per postal area) - and motorbike competes in SubtourModeChoice as a chain-based mode, scored by C.asc.motorbike unfitted. WHAT THE SWEEP ANSWERS: how much of the motorbike share is availability and how much is preference - under `choice` the G62 share is a reading, no longer an input.
 
 #### `B.population.age_bands`
 
@@ -2721,7 +2737,7 @@ How much the objective moves between iteration 80 and iteration 100 OF THE SAME 
 
 ## Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)
 
-*`cities/mumbai/registry/C_framework.json` - 23 fields*
+*`cities/mumbai/registry/C_framework.json` - 31 fields*
 
 
 
@@ -2738,6 +2754,7 @@ How much the objective moves between iteration 80 and iteration 100 OF THE SAME 
 | `C.scoring.activity_minimal_applied_s` | *(null - unobtained)* | seconds | `derived` | derived: min(C.scoring.activity_minimal_duration_s, typical duration) per activ |
 | `C.scoring.activity_minimal_duration_s` | `0` | seconds | `definition` | - |
 | `C.scoring.activity_typical_duration_s` | `{"home": 43200, "work": 28800, "education": 21600, "other": 3600, "freight_start": 86400, "freight_end": 86...` | seconds | `assumed` | plus/minus 50% |
+| `C.scoring.marginal_utility_of_distance_per_m` | `{"car": 0.0, "ride": 0.0, "walk": 0.0, "bike": 0.0, "motorbike": 0.0, "taxi": 0.0, "auto_rickshaw": 0.0, "p...` | utils_per_metre | `definition` | **held fixed** |
 | `C.scoring.marginal_utility_of_money` | `0.05` | utils_per_INR | `assumed` | plus/minus 50% |
 | `C.scoring.marginal_utility_of_traveling` | `{"car": -6.0, "ride": -6.0, "walk": -6.0, "bike": -6.0, "motorbike": -6.0, "taxi": -6.0, "auto_rickshaw": -...` | utils_per_hour | `assumed` | plus/minus 50% |
 | `C.scoring.mode_constant` | `{"car": 0.0, "ride": 0.0, "walk": 0.0, "bike": 0.0, "motorbike": 0.0, "taxi": 0.0, "auto_rickshaw": 0.0, "p...` | utils | `definition` | - |
@@ -2745,10 +2762,17 @@ How much the objective moves between iteration 80 and iteration 100 OF THE SAME 
 | `C.scoring.performing_utils_per_h` | `6.0` | utils_per_hour | `assumed` | plus/minus 50% |
 | `C.scoring.utility_of_line_switch` | `-0.5` | utils | `assumed` | plus/minus 50% |
 | `C.scoring.waiting_pt` | `-12.0` | utils_per_hour | `assumed` | plus/minus 50% |
+| `C.time_weights.atap_si_displacement_weight` | `0.1` | ratio_to_ivt | `literature` | 0.1 - 0.15 |
+| `C.time_weights.atap_si_wait_cap_min` | `20.0` | min | `literature` | **held fixed** |
+| `C.time_weights.atap_si_wait_half` | `0.5` | ratio | `literature` | **held fixed** |
+| `C.time_weights.atap_si_wait_sqrt_min` | `1.88` | min_per_sqrt_min | `literature` | **held fixed** |
+| `C.time_weights.atap_si_wait_weight` | `1.4` | ratio_to_ivt | `literature` | 1.4 - 2 |
 | `C.time_weights.beta_headway` | `0.5` | ratio_to_ivt | `literature` | 0.35 - 0.65 |
+| `C.time_weights.beta_ivt` | `1.0` | ratio_to_ivt | `definition` | - |
 | `C.time_weights.beta_reliability` | `1.3` | ratio_to_ivt | `literature` | 0.8 - 1.8 |
 | `C.time_weights.headway_utils_per_min` | `0.05` | utility_per_minute | `assumed` | plus/minus 50% |
 | `C.time_weights.reliability_utils_per_min` | `0.13` | utility_per_minute | `assumed` | plus/minus 50% |
+| `C.time_weights.service_interval_function` | `linear` | categorical | `assumed` | `linear`, `atap_m1` |
 | `C.time_weights.service_quality_representation` | `headway_and_reliability` | categorical | `definition` | - |
 
 #### `C.asc.car_passenger`
@@ -2831,6 +2855,16 @@ Provisional typical activity duration. Moved from C.smoke.activity_duration on 2
 
 > **Sweep basis.** Provisional behavioural smoke coefficient; not calibrated to ridership.
 
+#### `C.scoring.marginal_utility_of_distance_per_m`
+
+MATSim's marginal utility of distance per mode (utils per metre travelled), the term that makes a mode's use fall with trip length beyond what its time already costs. Declared for this city at 0.0 on ITS OWN mode vocabulary (auto_rickshaw included), not adopted from the reference city, because the reference city's value is derived from an observation this city does not have (9.211).
+
+***definition** · status **active** · DECISIONS.md §9.211 · MATSim `scoring.modeParams[*].marginalUtilityOfDistance_util_m`*
+
+> **Held fixed.** every mode at MATSim's own 0.0: no distance term is priced for this city, which is what every Mumbai case has run with. The reference city derives bike's coefficient as -1/(its observed mean bike trip length); this city has no such observation, and adopting the reference city's number would import ITS mean (5.2 km) and ITS mode vocabulary into this config
+>
+> *Departure requires: an observed mean trip length per mode for this city (C.constraint.trip_length_km.*), from which the coefficient is derived by the same identity*
+
 #### `C.scoring.marginal_utility_of_money`
 
 Provisional mean money sensitivity, varied by personal budget. Moved from C.smoke.money on 21 September 2026: one key per MATSim parameter.
@@ -2885,11 +2919,63 @@ Provisional waiting penalty greater than the in-vehicle travel penalty. Moved fr
 
 > **Sweep basis.** Provisional broad behavioural baseline; validate with observed choices before calibration.
 
+#### `C.time_weights.atap_si_displacement_weight`
+
+The IVT multiplier on each minute of service interval as TIMETABLE DISPLACEMENT - the cost of not travelling at the desired time - in ATAP M1's equation 4.3.2. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202 · MATSim `serviceQuality.atapDisplacementWeight` · sweep role **uncertainty***
+
+> **Sweep basis.** ATAP M1 Technical Report Table 26: timetable displacement per minute of service interval 0.10 recommended, 0.15 from the two Sydney studies (35, 38); Wardman's (2014) 0.4-0.6 per displacement minute divided by 4 (the report's footnote 40) is the same 0.10-0.15.
+
+#### `C.time_weights.atap_si_wait_cap_min`
+
+ATAP M1 equation 4.1's third wait term: the predicted wait never exceeds 20 minutes. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202 · MATSim `serviceQuality.atapWaitCapMin`*
+
+> **Held fixed.** ATAP M1 equation 4.1's ceiling on the predicted wait, 20 minutes (a two-hourly service): beyond it a traveller plans to the timetable and the interval is displacement only.
+>
+> *Departure requires: a logged decision*
+
+#### `C.time_weights.atap_si_wait_half`
+
+ATAP M1 equation 4.1's first wait term: wait = 0.5 x SI for frequent services. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202 · MATSim `serviceQuality.atapWaitHalf`*
+
+> **Held fixed.** The random-arrival wait as a share of the service interval in ATAP M1 equation 4.1 - half, below the 14-minute crossover with the square-root term. A definition of the turn-up-and-go wait, not a tunable.
+>
+> *Departure requires: a logged decision*
+
+#### `C.time_weights.atap_si_wait_sqrt_min`
+
+ATAP M1 equation 4.1's second wait term: wait = 1.88 x sqrt(SI) minutes. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202 · MATSim `serviceQuality.atapWaitSqrtMin`*
+
+> **Held fixed.** ATAP M1 equation 4.1's square-root wait term, ESTIMATED on Melbourne, Sydney and NZ wait surveys (studies 36-38): at a 14-minute interval the average wait was exactly half, and less frequent services flattened to just under 15 minutes hourly. Held at the estimate; the sweep of the function is carried by the two weights.
+>
+> *Departure requires: a logged decision*
+
+#### `C.time_weights.atap_si_wait_weight`
+
+The IVT multiplier on the EXPECTED wait inside ATAP M1's service-interval valuation (equation 4.3.2). Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202 · MATSim `serviceQuality.atapWaitWeight` · sweep role **uncertainty***
+
+> **Sweep basis.** ATAP M1 Technical Report Table 4: wait time 1.40 for the Australian/NZ review, 1.75-2 in Wardman's (2014) OECD review; equation 4.3.2 uses 1.4. The upper end is C.time_weights.beta_wait's 2.0.
+
 #### `C.time_weights.beta_headway`
 
 Weight on service headway, as a ratio to in-vehicle time. Adopted from the reference city's declaration; not a Mumbai observation.
 
 ***literature** · status **active** · DECISIONS.md §9.202 · sweep role **uncertainty***
+
+#### `C.time_weights.beta_ivt`
+
+In-vehicle time is the numeraire the other weights are expressed against. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***definition** · status **active** · DECISIONS.md §9.202*
 
 #### `C.time_weights.beta_reliability`
 
@@ -2912,6 +2998,14 @@ Provisional price of delay standard deviation measured from the preceding iterat
 ***assumed** · status **active** · DECISIONS.md §9.204 · MATSim `serviceQuality.reliabilityUtilsPerMin` · sweep role **uncertainty***
 
 > **Sweep basis.** Provisional broad behavioural baseline; validate with observed choices before calibration.
+
+#### `C.time_weights.service_interval_function`
+
+The service-interval function of citysim.ServiceQualityScoring. Switched on for this baseline ("linear"): service quality is `absent` in this baseline, so no interval is charged at all; `linear` is the form the gate would switch on first and adopts no Australian appraisal function for Mumbai (the ATAP M1 coefficients are adopted as the reference city declares them and are read by nothing here).
+
+***assumed** · status **active** · DECISIONS.md §9.202 · MATSim `serviceQuality.intervalFunction` · sweep role **answer***
+
+> **Sweep basis.** adopted from the reference city: How a boarding's service interval SI (the boarded line's interval at the boarding stop around the boarding time) becomes equivalent in-vehicle minutes, read only while C.time_weights.service_quality_representation is on. `linear` is C.time_weights.beta_headway x SI with the service day as the cap, the form built in 9.164: at 0.5 it charges 5 minutes at a 10-minute service, 30 at hourly and 900 at once a day. `atap_m1` is the Australian appraisal function (ATAP M1 Public Transport Supporting Technical Report (Infrastructure and Transport Ministers, Australian Transport Assessment and Planning Guidelines), section 4.3, equation 4.3.2): weighted expected wait plus timetable displacement, 1.4 x min(0.5 x SI, 1.88 x sqrt(SI), 20) + 0.1 x SI - 8, 26 and 208 minutes at the same intervals. The F39 probe (9.219) found 706-890 boardings an iteration at once-a-day line-stops (school and peak-only services), each charged 900 minutes by the linear form. WHAT THE SWEEP ANSWERS: whether the frequency penalty the pair tests is read on its published Australian shape or on a linear convention the evidence says overstates long intervals fourfold.
 
 #### `C.time_weights.service_quality_representation`
 
@@ -2944,7 +3038,7 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 
 ## Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)
 
-*`cities/mumbai/registry/RUN_framework.json` - 105 fields*
+*`cities/mumbai/registry/RUN_framework.json` - 110 fields*
 
 
 
@@ -2996,6 +3090,7 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 | `RUN.qsim.link_dynamics` | `PassingQ` | enum | `definition` | - |
 | `RUN.qsim.main_mode` | `["car", "ride", "walk", "bike", "motorbike", "taxi", "auto_rickshaw", "truck", "freight_rail"]` | enum | `definition` | - |
 | `RUN.qsim.mode_vehicle_fields` | `{"car": {"length_m_field": "A.vehicle.car.length_m", "width_m_field": "A.vehicle.car.width_m", "pce_field":...` | registry_field_mapping | `definition` | - |
+| `RUN.qsim.motorcycle_roster` | `per_person` | enum | `assumed` | `per_person`, `household` |
 | `RUN.qsim.remove_stuck_vehicles` | `true` | boolean | `definition` | - |
 | `RUN.qsim.snapshot_period` | `00:00:00` | hh:mm:ss | `definition` | - |
 | `RUN.qsim.start_time_h` | `0` | hours | `definition` | - |
@@ -3017,6 +3112,8 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 | `RUN.routing.access_walk_beeline_factor` | `1.3` | ratio | `assumed` | plus/minus 50% |
 | `RUN.routing.access_walk_speed_ms` | `1.2` | m/s | `assumed` | plus/minus 50% |
 | `RUN.routing.activity_link_assignment` | `mode_specific_access` | policy | `definition` | - |
+| `RUN.routing.activity_link_capacity` | `nearest` | enum | `assumed` | `nearest`, `capacity_bounded` |
+| `RUN.routing.activity_link_service_hours` | `30.0` | hours | `derived` | derived: service_hours = RUN.qsim.end_time_h - RUN.qsim.start_time_h = 30 - 0 = |
 | `RUN.routing.clear_default_teleported_params` | `true` | boolean | `definition` | - |
 | `RUN.routing.network_modes` | `["car", "ride", "walk", "bike", "motorbike", "taxi", "auto_rickshaw", "truck", "freight_rail"]` | enum | `definition` | - |
 | `RUN.routing.pt_submode_scoring` | `aggregate` | enum | `definition` | - |
@@ -3048,6 +3145,8 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 | `RUN.transit_router.direct_walk_factor` | `1.0` | ratio | `literature` | 1 - 2 |
 | `RUN.transit_router.extension_radius_m` | `200.0` | metres | `literature` | 100 - 500 |
 | `RUN.transit_router.max_beeline_walk_connection_m` | `300.0` | metres | `literature` | 100 - 500 |
+| `RUN.transit_router.no_route_walk` | `network_walk` | enum | `assumed` | `network_walk`, `refused_beyond_reach` |
+| `RUN.transit_router.no_route_walk_reach_m` | `3223.6` | metres_routed | `assumed` | **held fixed** |
 | `RUN.transit_router.search_radius_m` | `1000.0` | metres | `literature` | 500 - 2000 |
 | `RUN.travel_time.aggregator` | `optimistic` | enum | `assumed` | `optimistic`, `experimental_LastMile` |
 | `RUN.travel_time.analysed_modes` | `["car"]` | mode_names | `definition` | - |
@@ -3354,6 +3453,14 @@ Explicit network-mode vehicle definitions: one profile per routed mode, each nam
 
 ***definition** · status **active** · DECISIONS.md §9.204*
 
+#### `RUN.qsim.motorcycle_roster`
+
+The representation gate for the household motorcycle (D28, one of F39's four corrections). Switched off for this baseline ("per_person"): the baseline population carries no households and writes no motorbikeAvail (B.motorbike.representation = carve), so there is no household motorcycle to share; `per_person` leaves the vehicles exactly as they ran.
+
+***assumed** · status **active** · DECISIONS.md §9.202 · MATSim `householdVehicles.motorcycle` · sweep role **uncertainty***
+
+> **Sweep basis.** adopted from the reference city: Whether a household's riders share the motorcycle the plans builder draws for it. `per_person` is F38 exactly (9.214): PrepareForSim gives every rider a motorbike of their own, so two riders of one household can ride the one drawn motorcycle at the same time and the chosen share is not bounded by the stock (the fifteenth report's finding on AvailabilityModesCalculator.java:201). `household` (D28, F39): HouseholdVehicleRoster maps every rider of a household - a member whose motorbikeAvail is not `never` - to ONE shared hh<id>_moto1, because possession is drawn per household by the Poisson at-least-one identity (B.population.household_motorcycle_share), so a household holds one or none; the agent source parks it once and HouseholdCarDepartureHandler makes a second rider wait for it while it is out, as a second driver waits for a one-car household's car (9.146, 9.148).
+
 #### `RUN.qsim.remove_stuck_vehicles`
 
 Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.qsim.removeStuckVehicles on 21 September 2026: one key per MATSim parameter.
@@ -3497,6 +3604,22 @@ Explicit routing helper configuration for the provisional network-mode smoke; ma
 Each mode uses its own permitted network and retains MATSim access/egress connectors, including boarding links off the walk network. Moved from RUN.smoke.activityLinks.assignment on 21 September 2026: one key per MATSim parameter.
 
 ***definition** · status **active** · DECISIONS.md §9.202 · MATSim `activityLinks.assignment`*
+
+#### `RUN.routing.activity_link_capacity`
+
+The representation gate for capacity-aware activity links (D28, one of F39's four corrections). Switched off for this baseline ("nearest"): this baseline assigns activities under mode_specific_access (9.184), which keeps each activity's own link and has no common link to bound; the capacity rule acts only on common_modes and the config group refuses it otherwise, so `nearest` is the value that leaves the assignment exactly as it ran.
+
+***assumed** · status **active** · DECISIONS.md §9.202 · MATSim `activityLinks.capacityRule` · sweep role **uncertainty***
+
+> **Sweep basis.** adopted from the reference city: How many trip ends one link may be given. `nearest` is F38 exactly (9.58): every activity goes to the nearest link carrying its person's needed modes however many trip ends that link collects - on F37, 29 service and living-street links carried trip ends needing up to 38 h of their own sampled capacity, and car trips touching them averaged 72.6 min at 13.4 km/h against a car mean of 25.0 min (HTS 17.2; the fifteenth report). `capacity_bounded` (D28, F39): after the nearest rule, a link keeps - locked boundary agents first, then persons in population file order - the car-capable trip ends it can move in the modelled day, capacity x 3600 / capacityPeriod x qsim.flowCapacityFactor x RUN.routing.activity_link_service_hours; each later person's activities at that coordinate, in every plan, move together to the next-nearest link carrying the same needed modes with room (rings over the mode subnetwork, ties by link id; no randomness). A car-capable trip end is an arrival or departure at the activity on the person's selected plan when their needed modes include car - an upper bound on the vehicles the link sees.
+
+#### `RUN.routing.activity_link_service_hours`
+
+The hours of the modelled day a link's sampled capacity is counted over when RUN.routing.activity_link_capacity = capacity_bounded bounds the trip ends given to it (D28, F39). Adopted from the reference city and INERT here: RUN.routing.activity_link_capacity = "nearest" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***derived** · status **placeholder** · DECISIONS.md §9.202 · MATSim `activityLinks.serviceHours`*
+
+> **Derived from** `RUN.qsim.start_time_h`, `RUN.qsim.end_time_h`: service_hours = RUN.qsim.end_time_h - RUN.qsim.start_time_h = 30 - 0 = 30: the whole modelled day the mobsim runs, over which a link's flow capacity is available to the trip ends attached to it. It is the widest bound the day allows, so a link is only relieved of trip ends it could not move even if they were spread evenly over every simulated hour; a narrower window (the hours trips actually start in) would be a further assumption this field does not make.
 
 #### `RUN.routing.clear_default_teleported_params`
 
@@ -3721,6 +3844,24 @@ Maximum stop-to-stop distance at which the PT router will create a transfer. Ado
 ***literature** · status **active** · DECISIONS.md §9.202 · MATSim `transitRouter.maxBeelineWalkConnectionDistance` · sweep role **uncertainty***
 
 > **Sweep basis.** 100 m is the MATSim default that was live here unset; 300 m is the value Open Berlin, Leipzig and Kelheim all set. The upper bound spans Leipzig and Kelheim's 500 m extensionRadius.
+
+#### `RUN.transit_router.no_route_walk`
+
+The representation gate for an unservable pt request (D28, one of F39's four corrections; the fifteenth report's finding on NetworkDirectWalkPtRouter.java:132). Switched off for this baseline ("network_walk"): the reference city's bound on a no-route pt walk (D28, F39) is not applied: no Mumbai walk trip-length observation is declared to derive its reach from, and `network_walk` is the value that leaves this baseline's pt router exactly as it ran.
+
+***assumed** · status **active** · DECISIONS.md §9.202 · MATSim `ptDirectWalk.noRouteWalk` · sweep role **uncertainty***
+
+> **Sweep basis.** adopted from the reference city: What the pt router answers when SwissRailRaptor finds no transit route at all. `network_walk` is F38 exactly (9.121): the walk router's network walk, whatever its length, returned as the pt trip - on F38's arm 0 walk trips averaged 3.61 km against 0.70 observed and 39.5 % of pt requests were unconnected rural trip ends (9.214, 9.217). `refused_beyond_reach` (D28, F39): a no-route walk longer than RUN.transit_router.no_route_walk_reach_m is still returned, because the plan must stay executable for PersonPrepareForSim and the mobsim and MATSim's own answer to a null route is a TELEPORTED beeline walk (TripRouter's FallbackRoutingModuleDefaultImpl, read from the pinned jar); its legs are stamped ptUnservedWalk_m and citysim.PtUnservedScoring charges the person whose executed plan holds one MATSim's own aborted-plan score (ScoringParameters.abortedPlanScore, what CharyparNagelAgentStuckScoring adds to a stuck agent), so ChangeExpBeta never prefers it to a feasible plan and plan removal drops it first - pt leaves that tour's choice set. A walk inside the reach is untouched under both.
+
+#### `RUN.transit_router.no_route_walk_reach_m`
+
+The routed walk length past which a pt request with no transit route is refused rather than answered as a free walk, under RUN.transit_router.no_route_walk = refused_beyond_reach (D28, F39). Adopted from the reference city and INERT here: RUN.transit_router.no_route_walk = "network_walk" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202 · MATSim `ptDirectWalk.noRouteWalkReachM`*
+
+> **Held fixed.** adopted from the reference city, where it is derived from C.constraint.trip_length_km.walk; those fields are not declared for this city, so the value is held
+>
+> *Departure requires: declaring C.constraint.trip_length_km.walk for this city*
 
 #### `RUN.transit_router.search_radius_m`
 

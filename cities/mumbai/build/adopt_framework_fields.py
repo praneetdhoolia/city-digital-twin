@@ -54,15 +54,22 @@ GATES = {
     'C.raptor.mode_cost_representation': ('absent', 'the transit router carries no per-mode constant in the baseline'),
     'B.ride.pairing_enabled': (False, 'the baseline population carries no households, so no ride can name its driver'),
     'B.population.vehicle_roster': ('per_person', 'the baseline population carries no households; car access is a person attribute'),
+    'RUN.transit_router.no_route_walk': ('network_walk', 'the reference city\'s bound on a no-route pt walk (D28, F39) is not applied: no Mumbai walk trip-length observation is declared to derive its reach from, and `network_walk` is the value that leaves this baseline\'s pt router exactly as it ran'),
+    'RUN.routing.activity_link_capacity': ('nearest', 'this baseline assigns activities under mode_specific_access (9.184), which keeps each activity\'s own link and has no common link to bound; the capacity rule acts only on common_modes and the config group refuses it otherwise, so `nearest` is the value that leaves the assignment exactly as it ran'),
+    'RUN.qsim.motorcycle_roster': ('per_person', 'the baseline population carries no households and writes no motorbikeAvail (B.motorbike.representation = carve), so there is no household motorcycle to share; `per_person` leaves the vehicles exactly as they ran'),
+    'C.time_weights.service_interval_function': ('linear', 'service quality is `absent` in this baseline, so no interval is charged at all; `linear` is the form the gate would switch on first and adopts no Australian appraisal function for Mumbai (the ATAP M1 coefficients are adopted as the reference city declares them and are read by nothing here)'),
+    'B.motorbike.representation': ('carve','the reference city\'s rider-licence and household-motorcycle choice (9.214) is not applied: this baseline puts motorbike in each person\'s permittedModes (9.186), writes no motorbikeAvail, and prices no motorbike running cost - `carve` is the value that leaves that path exactly as it ran'),
 }
 # A gate at one of these values switches its mechanism OFF; the fields under
 # it are then declared, adopted and inert. Any other gate value switches it on.
-OFF = {'absent', 'implicit_delay', 'per_person', False}
+OFF = {'absent', 'implicit_delay', 'per_person', 'carve', 'network_walk', 'nearest', False}
 # Fields the gates above silence, by key prefix: declared, adopted, inert.
 GATED_BY = {
     'A.signals.': 'A.signals.representation', 'A.gradient.': 'A.gradient.representation',
     'A.crossings.': 'A.crossings.representation', 'A.bike_stress.': 'A.bike_stress.representation',
     'B.ride.': 'B.ride.pairing_enabled', 'B.taxi.': 'A.taxi.fleet_representation',
+    'RUN.transit_router.no_route_walk_reach': 'RUN.transit_router.no_route_walk',
+    'RUN.routing.activity_link_service_hours': 'RUN.routing.activity_link_capacity',
     'CAL.': None,
 }
 # Mumbai's own facts, where adopting the reference city's value would be wrong.

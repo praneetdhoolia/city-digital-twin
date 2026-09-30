@@ -637,6 +637,29 @@
       "description": "Explicit network-mode vehicle definitions: one profile per routed mode, each naming the A.vehicle.<mode>.* scalar fields (registry/A_vehicles.json) for its length, width, PCE, seats, standing room and speed cap. Replaces the per-launch vehicle writer of the city's own launcher (9.204).",
       "decisions_ref": "9.204"
     },
+    "RUN.qsim.motorcycle_roster": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "per_person",
+          "household"
+        ],
+        "basis": "adopted from the reference city: Whether a household's riders share the motorcycle the plans builder draws for it. `per_person` is F38 exactly (9.214): PrepareForSim gives every rider a motorbike of their own, so two riders of one household can ride the one drawn motorcycle at the same time and the chosen share is not bounded by the stock (the fifteenth report's finding on AvailabilityModesCalculator.java:201). `household` (D28, F39): HouseholdVehicleRoster maps every rider of a household - a member whose motorbikeAvail is not `never` - to ONE shared hh<id>_moto1, because possession is drawn per household by the Poisson at-least-one identity (B.population.household_motorcycle_share), so a household holds one or none; the agent source parks it once and HouseholdCarDepartureHandler makes a second rider wait for it while it is out, as a second driver waits for a one-car household's car (9.146, 9.148)."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "householdVehicles.motorcycle",
+      "value": "per_person",
+      "description": "The representation gate for the household motorcycle (D28, one of F39's four corrections). Switched off for this baseline (\"per_person\"): the baseline population carries no households and writes no motorbikeAvail (B.motorbike.representation = carve), so there is no household motorcycle to share; `per_person` leaves the vehicles exactly as they ran.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/java/citysim/HouseholdVehiclesConfigGroup.java",
+        "src/java/citysim/HouseholdVehicleRoster.java",
+        "src/java/citysim/HouseholdCarDepartureHandler.java",
+        "src/java/citysim/CitysimControler.java"
+      ]
+    },
     "RUN.qsim.remove_stuck_vehicles": {
       "value": true,
       "units": "boolean",
@@ -908,6 +931,49 @@
       "description": "Each mode uses its own permitted network and retains MATSim access/egress connectors, including boarding links off the walk network. Moved from RUN.smoke.activityLinks.assignment on 21 September 2026: one key per MATSim parameter.",
       "decisions_ref": "9.202",
       "matsim_param": "activityLinks.assignment"
+    },
+    "RUN.routing.activity_link_capacity": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "nearest",
+          "capacity_bounded"
+        ],
+        "basis": "adopted from the reference city: How many trip ends one link may be given. `nearest` is F38 exactly (9.58): every activity goes to the nearest link carrying its person's needed modes however many trip ends that link collects - on F37, 29 service and living-street links carried trip ends needing up to 38 h of their own sampled capacity, and car trips touching them averaged 72.6 min at 13.4 km/h against a car mean of 25.0 min (HTS 17.2; the fifteenth report). `capacity_bounded` (D28, F39): after the nearest rule, a link keeps - locked boundary agents first, then persons in population file order - the car-capable trip ends it can move in the modelled day, capacity x 3600 / capacityPeriod x qsim.flowCapacityFactor x RUN.routing.activity_link_service_hours; each later person's activities at that coordinate, in every plan, move together to the next-nearest link carrying the same needed modes with room (rings over the mode subnetwork, ties by link id; no randomness). A car-capable trip end is an arrival or departure at the activity on the person's selected plan when their needed modes include car - an upper bound on the vehicles the link sees."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "activityLinks.capacityRule",
+      "value": "nearest",
+      "description": "The representation gate for capacity-aware activity links (D28, one of F39's four corrections). Switched off for this baseline (\"nearest\"): this baseline assigns activities under mode_specific_access (9.184), which keeps each activity's own link and has no common link to bound; the capacity rule acts only on common_modes and the config group refuses it otherwise, so `nearest` is the value that leaves the assignment exactly as it ran.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/java/citysim/ActivityLinksConfigGroup.java",
+        "src/java/citysim/ActivityLinkAssigner.java",
+        "src/java/citysim/ActivityLinkCapacity.java"
+      ]
+    },
+    "RUN.routing.activity_link_service_hours": {
+      "units": "hours",
+      "source": "derived",
+      "sweep": null,
+      "status": "placeholder",
+      "derived_from": {
+        "fields": [
+          "RUN.qsim.start_time_h",
+          "RUN.qsim.end_time_h"
+        ],
+        "identity": "service_hours = RUN.qsim.end_time_h - RUN.qsim.start_time_h = 30 - 0 = 30: the whole modelled day the mobsim runs, over which a link's flow capacity is available to the trip ends attached to it. It is the widest bound the day allows, so a link is only relieved of trip ends it could not move even if they were spread evenly over every simulated hour; a narrower window (the hours trips actually start in) would be a further assumption this field does not make."
+      },
+      "matsim_param": "activityLinks.serviceHours",
+      "value": 30.0,
+      "description": "The hours of the modelled day a link's sampled capacity is counted over when RUN.routing.activity_link_capacity = capacity_bounded bounds the trip ends given to it (D28, F39). Adopted from the reference city and INERT here: RUN.routing.activity_link_capacity = \"nearest\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/java/citysim/ActivityLinksConfigGroup.java",
+        "src/java/citysim/ActivityLinkCapacity.java"
+      ]
     },
     "RUN.routing.clear_default_teleported_params": {
       "value": true,
@@ -1335,6 +1401,48 @@
       "value": 300.0,
       "description": "Maximum stop-to-stop distance at which the PT router will create a transfer. Adopted from the reference city's declaration; not a Mumbai observation.",
       "decisions_ref": "9.202"
+    },
+    "RUN.transit_router.no_route_walk": {
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "network_walk",
+          "refused_beyond_reach"
+        ],
+        "basis": "adopted from the reference city: What the pt router answers when SwissRailRaptor finds no transit route at all. `network_walk` is F38 exactly (9.121): the walk router's network walk, whatever its length, returned as the pt trip - on F38's arm 0 walk trips averaged 3.61 km against 0.70 observed and 39.5 % of pt requests were unconnected rural trip ends (9.214, 9.217). `refused_beyond_reach` (D28, F39): a no-route walk longer than RUN.transit_router.no_route_walk_reach_m is still returned, because the plan must stay executable for PersonPrepareForSim and the mobsim and MATSim's own answer to a null route is a TELEPORTED beeline walk (TripRouter's FallbackRoutingModuleDefaultImpl, read from the pinned jar); its legs are stamped ptUnservedWalk_m and citysim.PtUnservedScoring charges the person whose executed plan holds one MATSim's own aborted-plan score (ScoringParameters.abortedPlanScore, what CharyparNagelAgentStuckScoring adds to a stuck agent), so ChangeExpBeta never prefers it to a feasible plan and plan removal drops it first - pt leaves that tour's choice set. A walk inside the reach is untouched under both."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "matsim_param": "ptDirectWalk.noRouteWalk",
+      "value": "network_walk",
+      "description": "The representation gate for an unservable pt request (D28, one of F39's four corrections; the fifteenth report's finding on NetworkDirectWalkPtRouter.java:132). Switched off for this baseline (\"network_walk\"): the reference city's bound on a no-route pt walk (D28, F39) is not applied: no Mumbai walk trip-length observation is declared to derive its reach from, and `network_walk` is the value that leaves this baseline's pt router exactly as it ran.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/java/citysim/PtDirectWalkConfigGroup.java",
+        "src/java/citysim/NetworkDirectWalkPtRouter.java",
+        "src/java/citysim/PtUnservedScoring.java",
+        "src/java/citysim/CitysimControler.java"
+      ]
+    },
+    "RUN.transit_router.no_route_walk_reach_m": {
+      "units": "metres_routed",
+      "source": "assumed",
+      "sweep": null,
+      "status": "placeholder",
+      "matsim_param": "ptDirectWalk.noRouteWalkReachM",
+      "value": 3223.6,
+      "held_fixed": {
+        "rule": "adopted from the reference city, where it is derived from C.constraint.trip_length_km.walk; those fields are not declared for this city, so the value is held",
+        "decisions_ref": "9.202",
+        "departure_requires": "declaring C.constraint.trip_length_km.walk for this city"
+      },
+      "description": "The routed walk length past which a pt request with no transit route is refused rather than answered as a free walk, under RUN.transit_router.no_route_walk = refused_beyond_reach (D28, F39). Adopted from the reference city and INERT here: RUN.transit_router.no_route_walk = \"network_walk\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/java/citysim/PtDirectWalkConfigGroup.java",
+        "src/java/citysim/NetworkDirectWalkPtRouter.java"
+      ]
     },
     "RUN.transit_router.search_radius_m": {
       "units": "metres",

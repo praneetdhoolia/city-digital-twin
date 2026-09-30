@@ -1,0 +1,20 @@
+{
+  "overlay": "f38_pricing_probe_25pct",
+  "description": "A PRICING PROBE, NOT A MODELLING RUN - it is citable for its CLOCK and its HEAP and for nothing else, and no share, count, boarding or fit from it may be quoted, compared or fitted. f37_pricing_probe_25pct re-taken on family F38 (9.214), because the demand and the choice set changed under the previous price: (a) destinations are drawn by the person's own mobility (car-less trips 10-25 % shorter) and one-way escort bindings on members who could drive are released into round-trip lifts (lifts bound 44,632 -> 93,318 a weekday), so the ride pairing engine carries about twice the lift passengers; (b) motorbike is a CHOSEN mode for 35,416 available persons instead of a locked carve, so replanning offers one more chain-based mode; (c) the Java was split into named phases with no behaviour change (EscortCoherenceProbe fingerprint identical) and PtFareChargeHandler refuses an undeclared submode. F37 arm 0's recurring pace (356.9 s median) is for a stack that no longer exists; this probe is the price.",
+  "answers_issues": [],
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 4,
+    "RUN.gate.wall_ceiling_h": 2.0,
+    "RUN.gate.interval_iterations": 0,
+    "RUN.machine.xmx": "48g",
+    "RUN.controler.create_graphs": false
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one. Four iterations is this repository's established pricing horizon at 25 % (20260909T011135_4it_25pct, 9.160; f33_pricing_probe_25pct, f34_pricing_probe_25pct, f35_pricing_probe_25pct): it is the shortest depth at which the recurring iteration - replanning, a re-routed plan executed and scored, a router reading the previous iteration's travel times - has actually run, which is the only iteration whose clock predicts an arm's. The value sits two orders below the range so any output carrying it is obviously not a result.",
+    "RUN.gate.interval_iterations": "The mode gate is switched OFF because this probe has no modes to judge: at four iterations every deviation it could compute is a transient the board may not read, and stopping on one would report a pricing question as a modelling failure. The COST watcher stays armed in its place at 2.0 h - the horizon the F35 and F37 probes declared, kept because the F35 probe recurred at 467.5 s an iteration and four of those plus setup is well under it, while the fold's new in-mobsim work is the unknown this probe exists to bound - so the run is not left with no automatic stop of either kind, which src/run/run_matsim.py refuses before the JVM starts (9.163, #169). The ceiling is not a budget; it is the tripwire for a stack that has become dramatically slower, which is what this probe exists to find out."
+  }
+}

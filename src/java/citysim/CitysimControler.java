@@ -152,6 +152,20 @@ public final class CitysimControler {
         resolveRelativePaths(configPath, g);
         final org.matsim.api.core.v01.Scenario scenario =
                 ScenarioUtils.loadScenario(config);
+        // DECISIONS.md 9.214 (D22, #257): a population that carries
+        // motorbikeAvail was built with motorbike as a CHOSEN mode, so the
+        // choice set and the chain-based set gain it - before anything reads
+        // either (the activity linker, the gated strategy). A `carve`
+        // population carries no such attribute and nothing changes.
+        if (AvailabilityModesCalculator.applyMotorbikeChoiceSet(scenario)) {
+            LOG.info("motorbike choice (9.214): the population carries {}, so "
+                     + "subtourModeChoice.modes is now {} and chainBasedModes {} - "
+                     + "derived from RUN.mode_choice.modes and "
+                     + "RUN.mode_choice.chain_based_modes",
+                     AvailabilityModesCalculator.MOTORBIKE_ATTRIBUTE,
+                     java.util.Arrays.toString(config.subtourModeChoice().getModes()),
+                     java.util.Arrays.toString(config.subtourModeChoice().getChainBasedModes()));
+        }
         AvailabilityModesCalculator.validateExplicitPopulation(scenario);
         // Apply the declared activity-link policy before constructing the
         // controller. The original common-link treatment remains available;
@@ -410,12 +424,16 @@ public final class CitysimControler {
                 }
             });
         }
-        if (householdVehicles.isCensusRoster()) {
+        if (householdVehicles.anyRoster()) {
             // A household drives the cars the census gives it (DECISIONS.md
             // 9.146, B.population.vehicle_roster): the roster maps every
             // driver to a shared hh<id>_car<k> at the first iteration, after
             // PrepareForSim has done its per-person mapping, and the agent
-            // source parks each shared car once.
+            // source parks each shared car once. D28 (F39): under
+            // RUN.qsim.motorcycle_roster = household the same roster maps a
+            // household's riders to its one hh<id>_moto1, and the departure
+            // handler below makes the second rider wait for it; under
+            // per_person (with the census car roster) this is F38 exactly.
             installSingleton(controler, HouseholdVehicleRoster.class, false, true, false);
         }
     }
@@ -468,7 +486,7 @@ public final class CitysimControler {
                         addQSimComponentBinding("citysimTolerantAgentSource")
                                 .to(TolerantAgentSource.class);
                     }
-                    if (householdVehicles.isCensusRoster()) {
+                    if (householdVehicles.anyRoster()) {
                         // 9.148: a driver whose household car is out waits
                         // for it - car only, so walk and taxi keep MATSim's
                         // teleport under RUN.qsim.vehicle_behavior. Ordered
@@ -492,7 +510,7 @@ public final class CitysimControler {
                 if (networkWalk) {
                     components.addNamedComponent(GenericRouteTeleporter.COMPONENT);
                 }
-                if (householdVehicles.isCensusRoster()) {
+                if (householdVehicles.anyRoster()) {
                     components.addNamedComponent(HouseholdCarDepartureHandler.COMPONENT);
                 }
                 if (hiredFleet.enabled()) {
@@ -555,6 +573,14 @@ public final class CitysimControler {
             // and for the same reason (an event emitted from inside a
             // handler re-enters the manager mid-drain).
             installSingleton(controler, PtCrowdingScoring.class, true, true, false);
+        }
+        final PtDirectWalkConfigGroup ptDirectWalk = g.ptDirectWalk;
+        if (ptDirectWalk.isNetwork() && ptDirectWalk.refusesBeyondReach()) {
+            // D28 (F39): a pt trip no transit serves and no one would walk
+            // scores as a plan MATSim could not execute; the router stamps
+            // the trip, this charges the executed plan at AfterMobsim. Under
+            // RUN.transit_router.no_route_walk = network_walk nothing installs.
+            installSingleton(controler, PtUnservedScoring.class, false, true, false);
         }
     }
 

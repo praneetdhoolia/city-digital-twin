@@ -1,0 +1,22 @@
+{
+  "decisions_ref": "9.214",
+  "identity": "poisson_at_least_one",
+  "numerator": "BITRE Road Vehicles Australia, 31 January 2025: motorcycles by GARAGING postcode (rva-2025-mvs-vehtype-streg-poagar-mtvpwr-rpc.csv, every motive power and state of registration), for the study postal areas of bitre_registrations_study_area.csv",
+  "motorcycles_garaged": 30220,
+  "motorcycles_registered": 29635,
+  "denominator": "census 2021 occupied private dwellings (G34) of the SA1s whose largest overlap is the postal area",
+  "postcodes": 44,
+  "postcodes_rated": 43,
+  "postcodes_without_households": [
+    "2308"
+  ],
+  "share_range": [
+    0.0773,
+    0.2778
+  ],
+  "core_sa1_rated": 1433,
+  "core_sa1_unrated": 67,
+  "core_dwellings_unrated": 9370,
+  "pooled_share_core_dwelling_weighted": 0.1254,
+  "note": "The garaging postcode is where the vehicle is kept (BITRE falls back to the registered postcode where none is recorded); business, fleet and dealer vehicles are in the stock - one postal area holds twice as many garaged as registered motorcycles (see the table); the census dwellings are 2021 against a 2025 stock. A core SA1 whose postal area is outside the study set takes B.population.household_motorcycle_share in the plans builder."
+}

@@ -334,6 +334,40 @@ def aggregates(runs: list[dict]) -> dict:
                 peak_memory_top=peak[:5], host_cpu_count=os.cpu_count())
 
 
+def build_timing(root: Path) -> dict:
+    """What the reproduction pipeline costs, per city, from the roll-up each
+    builder writes on exit (`cities/<city>/data/_build_timing.json`, written by
+    src/build/build_timing.py; gitignored and unhashed by design).
+
+    Until the fifteenth report this line was typed as "none recorded" while
+    the roll-up held 5,648.8 s. The builders the city's manifest names as a
+    `produced_by` but the roll-up never timed are listed, so a missing clock
+    reads as a gap rather than as a cheap step."""
+    out = {}
+    csv.field_size_limit(1 << 30)
+    for rollup in sorted((root / "cities").glob("*/data/_build_timing.json")):
+        city = rollup.parent.parent.name
+        doc = _json(rollup) or {}
+        builders = doc.get("builders") if isinstance(doc.get("builders"), dict) else {}
+        producers = set()
+        manifest = rollup.parent / "MANIFEST.csv"
+        if manifest.exists():
+            with manifest.open(encoding="utf-8", newline="") as fh:
+                producers = {(r.get("produced_by") or "").strip() for r in csv.DictReader(fh)}
+            producers = {p for p in producers if p.endswith(".py")}
+        timed = sorted(builders.items(), key=lambda kv: -(kv[1].get("seconds") or 0))
+        out[city] = dict(
+            source=rollup.relative_to(root).as_posix(),
+            total_seconds=doc.get("total_seconds", round(sum(e.get("seconds") or 0 for e in builders.values()), 3)),
+            builders_timed=len(builders),
+            failed=[k for k, e in builders.items() if e.get("status") != "ok"],
+            slowest=[dict(builder=k, seconds=e.get("seconds"), recorded=e.get("recorded")) for k, e in timed[:10]],
+            oldest_recorded=min((e.get("recorded") or "" for e in builders.values()), default=None) or None,
+            newest_recorded=max((e.get("recorded") or "" for e in builders.values()), default=None) or None,
+            manifest_producers_untimed=sorted(p for p in producers if p not in builders))
+    return out or {"none": "no cities/<city>/data/_build_timing.json on this workstation"}
+
+
 def main(argv: list[str]) -> int:
     if len(argv) < 2:
         print(__doc__)
@@ -368,7 +402,7 @@ def main(argv: list[str]) -> int:
                 runs.append(r)
     m = dict(head=sh(["git", "rev-parse", "--short", "HEAD"]).strip(), results_present=bool(runs),
              aggregates=aggregates(runs) if runs else None, runs=runs,
-             build_timing="none recorded: no producing script writes its wall time into a report or the manifest")
+             build_timing=build_timing(root))
     (out_dir / "performance.json").write_text(json.dumps(m, indent=1, default=str), encoding="utf-8")
     print(f"wrote {out_dir / 'performance.json'}: {len(runs)} runs")
     return 0

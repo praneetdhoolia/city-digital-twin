@@ -202,7 +202,20 @@ def main():
                          'scheduler. The harness, its watchers, its record '
                          'writer and its viewer then die with the shell that '
                          'launched them; use it for a smoke probe you will '
-                         'sit and watch, never for an arm')
+                         'sit and watch, never for an arm - an arm-length run '
+                         '(RUN.controler.last_iteration inside its declared '
+                         'sweep) is REFUSED in the foreground (9.215)')
+    # Accepted so an older wrapper still parses, and GRANTS NOTHING: a flag
+    # in the child's argv is copied with the argv, which is how F38's arm 0
+    # was re-launched in a shell that then took it down. The proof a run was
+    # launched by the scheduler is `scheduler_launched()`.
+    ap.add_argument('--scheduled-child', action='store_true',
+                    help=argparse.SUPPRESS)
+    ap.add_argument('--stopped-was-death', metavar='TEXT',
+                    help='with --warm-start: the parent\'s record says '
+                         'stopped_by_operator, but the stop closed out a run '
+                         'that had already died (a record from before `died` '
+                         'existed); why, recorded in warm_started_from')
     ap.add_argument('--config-set', action='append', default=[], metavar='KEY=VALUE',
                     help='registry override, checked against the declared sweep')
     ap.add_argument('--set', action='append', default=[], metavar='KEY=VALUE',
@@ -245,37 +258,50 @@ def main():
 
     if a.list:
         return listing()
-
     if a.stop:
-        if not a.cause:
-            raise SystemExit('--stop needs --cause: a dead run must say why '
-                             'it died, in the words of whoever stopped it')
-        # The scheduled task self-deletes when its command tree ends; ending
-        # THIS RUN'S task first is belt and braces.
-        #
-        # ONLY THIS RUN'S. The sweep used to end every task whose name contained
-        # `citysim_run_`, so stopping one arm killed every other detached arm on
-        # the machine. One arm at a time is the standing rule (#66), not a
-        # guarantee - probes and a gate arm have overlapped - and `--stop` is the
-        # one sanctioned manual path, so it may not take anything with it.
-        # A run is named `<stamp>_<n>it_<p>pct`, optionally prefixed `aborted_`
-        # once mark_dead has renamed it, and its task is `citysim_run_<stamp>`.
-        if os.name == 'nt':
-            import subprocess
-            stamp = re.search(r'\d{8}T\d{6}', a.stop)
-            if stamp:
-                want = 'citysim_run_%s' % stamp.group(0)
-                for line in subprocess.run(
-                        ['schtasks', '/query', '/fo', 'csv'],
-                        capture_output=True, text=True).stdout.splitlines():
-                    tn = line.split(',')[0].strip('"').lstrip('\\')
-                    if tn.rsplit('\\', 1)[-1] == want:
-                        subprocess.run(['schtasks', '/end', '/tn', tn],
-                                       capture_output=True)
-        return 0 if run_matsim.stop_run(a.stop, a.cause) else 1
+        return stop(a)
     if a.close_out:
-        return 0 if run_matsim.close_out_orphan(a.close_out) else 1
+        return close_out(a)
+    return launch(a)
 
+
+def close_out(a):
+    """`--close-out`: record an orphaned run that reached its horizon (9.176)."""
+    return 0 if run_matsim.close_out_orphan(a.close_out) else 1
+
+
+def stop(a):
+    """`--stop`: end this run's scheduled task, then stop it through the harness."""
+    if not a.cause:
+        raise SystemExit('--stop needs --cause: a dead run must say why '
+                         'it died, in the words of whoever stopped it')
+    # The scheduled task self-deletes when its command tree ends; ending
+    # THIS RUN'S task first is belt and braces.
+    #
+    # ONLY THIS RUN'S. The sweep used to end every task whose name contained
+    # `citysim_run_`, so stopping one arm killed every other detached arm on
+    # the machine. One arm at a time is the standing rule (#66), not a
+    # guarantee - probes and a gate arm have overlapped - and `--stop` is the
+    # one sanctioned manual path, so it may not take anything with it.
+    # A run is named `<stamp>_<n>it_<p>pct`, optionally prefixed `aborted_`
+    # once mark_dead has renamed it, and its task is `citysim_run_<stamp>`.
+    if os.name == 'nt':
+        import subprocess
+        stamp = re.search(r'\d{8}T\d{6}', a.stop)
+        if stamp:
+            want = 'citysim_run_%s' % stamp.group(0)
+            for line in subprocess.run(
+                    ['schtasks', '/query', '/fo', 'csv'],
+                    capture_output=True, text=True).stdout.splitlines():
+                tn = line.split(',')[0].strip('"').lstrip('\\')
+                if tn.rsplit('\\', 1)[-1] == want:
+                    subprocess.run(['schtasks', '/end', '/tn', tn],
+                                   capture_output=True)
+    return 0 if run_matsim.stop_run(a.stop, a.cause) else 1
+
+
+def launch(a):
+    """Resolve and preflight a launch, then detach it, dry-run it or run it here."""
     # The one defaulting decision this script makes, and it is made loudly.
     run_config = a.run_config
     defaulted = False
@@ -314,7 +340,8 @@ def main():
 
     warm = None
     if a.warm_start:
-        warm = run_matsim.resolve_warm_start(a.warm_start)
+        warm = run_matsim.resolve_warm_start(
+            a.warm_start, stopped_was_death=a.stopped_was_death)
         # firstIteration AND the innovation fraction, so the cutoff iteration
         # is the parent's (#192)
         overrides = run_matsim.warm_start_overrides(warm, overrides, a.scenario,
@@ -343,22 +370,128 @@ def main():
     if a.detach:
         raise SystemExit('--detach uses the Windows Task Scheduler; on this '
                          'platform use nohup/setsid instead.')
+    if not a.dry_run:
+        refuse_foreground_arm(a, cfg)
 
     if a.dry_run:
-        print('scenario %s  day %s  overlay %s'
-              % (a.scenario, a.day, run_config or '(none)'))
-        src_dir = os.path.join(run_matsim.SETS, a.scenario, a.day)
-        print('inputs   %s  %s' % (src_dir, 'OK' if os.path.isdir(src_dir) else 'MISSING'))
-        snap = cfg.snapshot()
-        values, origin = snap['values'], snap['resolved_from']
-        print('\nresolved registry - %d fields, layers %s:'
-              % (snap['registry_fields'], ' -> '.join(snap['layers'])))
-        for key in sorted(values):
-            print('  %-46s %-24s [%s]'
-                  % (key, repr(values[key])[:24], origin.get(key, '?')))
-        print('\ndry run: nothing was executed')
-        return 0
+        return dry_run(a, run_config, cfg)
+    return run_here(a, cfg, raw_overrides, warm, overrides, defaulted)
 
+
+# The scheduler's wrapper sets both. The stamp names the task (and the run,
+# city.RESERVED_ENV); the nonce is minted per launch by `_detach`, passed to
+# the wrapper as its ARGUMENT in the task's own registered action, and never
+# written into the child's argv. Neither prefix is CITYSIM_: the registry
+# reads every CITYSIM_* variable as a field override.
+STAMP_ENV = 'CITYSIM_LAUNCH_STAMP'
+NONCE_ENV = 'SCHEDULED_LAUNCH_NONCE'
+# Printed by every detached launch (9.217, fifteenth report; `_detach` says why it is not fixed
+# by a logon type).
+SESSION_BOUND_WARNING = (
+    'THIS ARM LIVES IN YOUR WINDOWS SESSION: the scheduled task runs only while '
+    'you are signed in, so SIGNING OUT, SHUTTING DOWN or RESTARTING ends it '
+    '(F38 died at iteration 229 to a Start-menu shutdown). Lock the screen '
+    'instead; a dead arm resumes with --warm-start.')
+
+
+def _query_task(task):
+    """The verbose CSV rows `schtasks /query` prints for one task; [] if none."""
+    import csv
+    import subprocess
+    try:
+        out = subprocess.run(['schtasks', '/query', '/tn', task, '/v', '/fo',
+                              'csv', '/nh'], capture_output=True, text=True,
+                             timeout=60)
+    except (OSError, subprocess.SubprocessError):
+        return []
+    if out.returncode != 0:
+        return []
+    return [r for r in csv.reader((out.stdout or '').splitlines()) if r]
+
+
+def scheduler_launched(env=None, query=_query_task):
+    """(True, '') when THIS process was started by its own live scheduled task.
+
+    Proof that cannot be copied with a command line (fifteenth report): the wrapper's
+    environment carries the launch stamp and the per-launch nonce, and the
+    Task Scheduler must hold a task `citysim_run_<stamp>` that is RUNNING and
+    whose registered action carries that nonce. A child's argv copied into
+    another shell carries neither variable; the wrapper run by hand carries no
+    nonce (it is the task's argument, not the file's); a task that has ended
+    has deleted itself.
+    """
+    env = os.environ if env is None else env
+    stamp = (env.get(STAMP_ENV) or '').strip()
+    nonce = (env.get(NONCE_ENV) or '').strip()
+    if not stamp or not nonce:
+        return False, ('this process carries no scheduler stamp and nonce '
+                       '(%s, %s) - it was not started by --detach\'s task'
+                       % (STAMP_ENV, NONCE_ENV))
+    task = 'citysim_run_%s' % stamp
+    rows = query(task)
+    if not rows:
+        return False, 'the Task Scheduler holds no task named %s' % task
+    cells = [c.strip() for r in rows for c in r]
+    if 'Running' not in cells:
+        return False, 'scheduled task %s is not running' % task
+    if not any(nonce in c for c in cells):
+        return False, ('scheduled task %s does not carry this process\'s '
+                       'launch nonce' % task)
+    return True, ''
+
+
+def refuse_foreground_arm(a, cfg, launched=scheduler_launched):
+    """An arm must outlive the shell that launched it (D6, #70; 9.215; fifteenth report).
+
+    F38's arm 0 was launched with --foreground from a Claude Code session's
+    background shell and died with that session at iteration 79 of 250, 13 h
+    in - the failure --detach was made the default to prevent, re-created by
+    copying the scheduled child's own flags. The first repair exempted a
+    `--scheduled-child` flag, which the wrapper wrote into that same copyable
+    argv (fifteenth report). Only a process the scheduler's live task started
+    (`scheduler_launched`) may run an arm-length run in the foreground: any
+    run whose RUN.controler.last_iteration lies inside the field's declared
+    sweep, which is what makes it a modelling run rather than a smoke or a
+    probe. Smokes and probes are never asked for the proof.
+    """
+    if not a.foreground:
+        return
+    fields, _ = registry.load_registry()
+    lo = registry._sweep_interval(fields['RUN.controler.last_iteration'].get('sweep'))
+    last = int(cfg.get('RUN.controler.last_iteration'))
+    if lo is None or last < lo[0]:
+        return
+    ok, why = launched()
+    if ok:
+        return
+    raise SystemExit(
+        'REFUSED: a %d-iteration run is an arm (RUN.controler.last_iteration '
+        'declares %g-%g), and an arm launched with --foreground dies with '
+        'the shell that launched it (9.215: F38 arm 0 at iteration 79). '
+        'Only the scheduler\'s own task may run one in the foreground, and '
+        '%s. Launch without --foreground; the default detaches it under the '
+        'Windows Task Scheduler (D6).' % (last, lo[0], lo[1], why))
+
+
+def dry_run(a, run_config, cfg):
+    """`--dry-run`: print the inputs and the resolved registry; execute nothing."""
+    print('scenario %s  day %s  overlay %s'
+          % (a.scenario, a.day, run_config or '(none)'))
+    src_dir = os.path.join(run_matsim.SETS, a.scenario, a.day)
+    print('inputs   %s  %s' % (src_dir, 'OK' if os.path.isdir(src_dir) else 'MISSING'))
+    snap = cfg.snapshot()
+    values, origin = snap['values'], snap['resolved_from']
+    print('\nresolved registry - %d fields, layers %s:'
+          % (snap['registry_fields'], ' -> '.join(snap['layers'])))
+    for key in sorted(values):
+        print('  %-46s %-24s [%s]'
+              % (key, repr(values[key])[:24], origin.get(key, '?')))
+    print('\ndry run: nothing was executed')
+    return 0
+
+
+def run_here(a, cfg, raw_overrides, warm, overrides, defaulted):
+    """Run the arm in this process, then extract its metrics."""
     doc = run_matsim.run(a.scenario, a.day, cfg, raw_overrides,
                          a.force, warm=warm, registry_overrides=overrides)
     rc_ok = doc.get('rc') == 0
@@ -441,8 +574,12 @@ def _detach():
     log = os.path.join(launch_dir, '%s.log' % task)
     wrapper = os.path.join(launch_dir, '%s.cmd' % task)
 
-    args = ([x for x in sys.argv[1:] if x != '--detach']
+    # No --scheduled-child: whatever sits in the child's argv is copied with
+    # it (fifteenth report). The child proves its launch through the task instead.
+    args = ([x for x in sys.argv[1:] if x not in ('--detach', '--scheduled-child')]
             + ['--issue-gate-passed', '--foreground'])
+    import secrets
+    nonce = secrets.token_hex(16)
     # Quoted the way CreateProcess parses it (embedded quotes and
     # backslashes escaped), then `%` doubled because the command lives in
     # a batch file: the old `"%s"`-if-space rule passed `--cause "he said
@@ -456,7 +593,11 @@ def _detach():
         # the run is NAMED by this stamp too, so `--stop <run>` finds the task:
         # the runner used to stamp the directory at JVM start, seconds after
         # the task was named, and the stop's task lookup matched nothing
-        f.write('set CITYSIM_LAUNCH_STAMP=%s\r\n' % stamp)
+        f.write('set %s=%s\r\n' % (STAMP_ENV, stamp))
+        # the nonce is the task's ARGUMENT, not a line of this file: running
+        # the wrapper by hand starts a run with no nonce, which
+        # scheduler_launched() refuses for an arm (fifteenth report)
+        f.write('set %s=%%~1\r\n' % NONCE_ENV)
         # the Task Scheduler starts the wrapper with the machine's environment,
         # not this shell's: a `CITYSIM_CITY=mumbai` launch resolved the default
         # city inside the task and died on its missing BASE overlay
@@ -470,12 +611,25 @@ def _detach():
 
     # /sc once needs a start time; it is a fallback only - /run fires it now.
     st = time.strftime('%H:%M', time.localtime(time.time() + 120))
+    # THE TASK RUNS "ONLY WHEN THE USER IS LOGGED ON" (logon type
+    # Interactive), so SIGNING OUT ENDS THE ARM, and a shutdown or restart
+    # ends it whatever the logon type (F38 died at iteration 229 to a
+    # Start-menu shutdown, 9.217). "Run whether the user is logged on or not"
+    # without a stored password is logon type S4U (`/ru <user> /np`, or
+    # `Register-ScheduledTask -LogonType S4U`); measured on this host on 29
+    # September 2026, both are refused with "Access is denied" from an
+    # unelevated shell, which is where the launcher runs. S4U would also
+    # cost the task network credentials (local files, the JDK and outbound
+    # HTTP would be unaffected) and put it in session 0. Storing the
+    # password (`/rp`) is not done, by rule. So the trade-off is stated at
+    # every launch instead, and the task keeps the user's session.
     subprocess.check_call(['schtasks', '/create', '/tn', task,
-                           '/tr', '"%s"' % wrapper, '/sc', 'once', '/st', st,
-                           '/f'])
+                           '/tr', '"%s" %s' % (wrapper, nonce), '/sc', 'once',
+                           '/st', st, '/f'])
     subprocess.check_call(['schtasks', '/run', '/tn', task])
     print('\ndetached launch registered and started as scheduled task %s' % task)
     print('launcher log: %s' % log)
+    print(SESSION_BOUND_WARNING)
     print('the run directory will appear under results/ as %s_<n>it_<pct>pct, '
           'minutes from now: the harness subsamples the population before the '
           'JVM starts.' % stamp)

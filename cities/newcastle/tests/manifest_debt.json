@@ -1,0 +1,30 @@
+{
+  "description": "Newcastle's recorded manifest debt - the CITY-OWNED half of tests/check_manifest.py. Each rule's paths are the exact rows that fail it; `ceiling` is their count and may only FALL. Adding a path fails unless the ceiling is raised in the same change with a new ceiling_log entry carrying the date and the reason; a listed path that no longer fails must be deleted and the ceiling lowered. A city with no file carries no debt.",
+  "rules": {
+    "raw_without_retrieved": {
+      "ceiling": 2,
+      "reason": "A raw file that is not a provenance record and carries no retrieval date of its own. Measured 25 September 2026 when the rule was introduced; provenance_*.json records were exempted by rule on 29 September 2026 (each carries its own dated retrieval key, which check_manifest.py now verifies), which removed them from this list.",
+      "ceiling_log": [
+        {
+          "date": "2026-09-25",
+          "ceiling": 14,
+          "reason": "measured against the committed manifest when the rule was introduced"
+        },
+        {
+          "date": "2026-09-27",
+          "ceiling": 15,
+          "reason": "data/raw/provenance_smvu.json added to the list in d7d93b31 while it had no count; recorded here so the history is whole"
+        },
+        {
+          "date": "2026-09-29",
+          "ceiling": 2,
+          "reason": "provenance_*.json exempt by rule: a provenance record IS the retrieval record, and its own dated retrieval key is now verified instead"
+        }
+      ],
+      "paths": [
+        "data/raw/_osm_fetch.log",
+        "data/raw/_s3_historical_gtfs_listing.txt"
+      ]
+    }
+  }
+}

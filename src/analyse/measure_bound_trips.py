@@ -11,6 +11,12 @@ the executed main mode of every bound trip - by binding type (from the city's
 B2 binding tables, the plans' own source) and by car availability - and the
 seed's own selected-plan ride share from the run's input plans.
 
+`held_tour_spill` (in the same JSON): for residents, the OTHER trips of every
+home-based tour that holds a held ride trip (`heldRideTrips`), by executed
+main mode and routing mode - `walk|walk` a chosen walk, `walk|pt` a pt request
+the router answered with a walk - with count, share and mean km, beside the
+same for ride tours without a held trip and for tours with no ride at all.
+
 Measured first on the routers pair (16 September 2026, 9.177): 109,816 bound
 trips in the sample, 59.0 % executed as ride at iteration 250; car-available
 escort members drove themselves 52 %, joint companions 37 %, lift passengers
@@ -82,6 +88,95 @@ def seed_ride_share(run_dir):
     return dict(selected_plan_legs=n, ride_share_pct=round(100.0 * ride / n, 4) if n else None)
 
 
+HOME_ACTIVITY = 'home'     # the plans' home activity type (build_matsim_plans.ACT_TYPES)
+
+
+def _tours(trips):
+    """A person's trips (sorted by trip_number) cut into home-based tours: a
+    new tour starts at every trip after the first that leaves home."""
+    tours, cur = [], []
+    for t in trips:
+        if cur and t.get('start_activity_type') == HOME_ACTIVITY:
+            tours.append(cur)
+            cur = []
+        cur.append(t)
+    if cur:
+        tours.append(cur)
+    return tours
+
+
+def held_tour_spill(trip_rows, attrs, routing=None):
+    """What the OTHER trips of a tour holding a held ride trip execute.
+
+    A held ride trip (`heldRideTrips`, D12) may not be driven, and subtour
+    mode choice changes a tour's modes together - so the rest of that tour is
+    where a held trip's constraint spills. For residents' executed plans this
+    returns, per tour class - `held_ride_tour` (its non-held trips), `ride_tour`
+    (a tour with a ride trip and no held one) and `no_ride_tour` - the trips by
+    executed main mode and routing mode (`walk|pt` is a pt request the router
+    answered with a walk), each with its count, share of the class and mean
+    km, and the class's trips by `carAvail`.
+
+    `trip_rows` are trips-table dicts; `attrs` is person -> {subpopulation,
+    heldRideTrips, carAvail}; `routing` is (person, trip_number) -> routingMode
+    (`iteration_trips.trip_routing_modes`), or None when the plans are absent.
+    """
+    per_person = collections.defaultdict(list)
+    for t in trip_rows:
+        a = attrs.get(t['person'])
+        if a is None or a.get('subpopulation') != 'person':
+            continue
+        per_person[t['person']].append(t)
+    classes = {k: dict(n=collections.Counter(), km=collections.Counter(),
+                       car=collections.Counter())
+               for k in ('held_ride_tour', 'ride_tour', 'no_ride_tour')}
+    for person, trips in per_person.items():
+        a = attrs[person]
+        held = {int(x) for x in (a.get('heldRideTrips') or '').split(',')
+                if x.strip().isdigit()}
+        trips.sort(key=lambda t: int(t['trip_number']))
+        for tour in _tours(trips):
+            nums = [int(t['trip_number']) for t in tour]
+
+            def rmode(t):
+                return (routing or {}).get((person, int(t['trip_number'])))
+            if held.intersection(nums):
+                cls = 'held_ride_tour'
+            elif any(t['main_mode'] == 'ride' or rmode(t) == 'ride' for t in tour):
+                cls = 'ride_tour'
+            else:
+                cls = 'no_ride_tour'
+            c = classes[cls]
+            for t in tour:
+                if cls == 'held_ride_tour' and int(t['trip_number']) in held:
+                    continue
+                rm = rmode(t) if routing is not None else None
+                key = '%s|%s' % (t['main_mode'], rm if rm else 'unknown')
+                try:
+                    km = float(t.get('traveled_distance') or 0.0) / 1000.0
+                except ValueError:
+                    km = 0.0
+                c['n'][key] += 1
+                c['km'][key] += km
+                c['car'][a.get('carAvail') or '(none)'] += 1
+    out = {}
+    for cls, c in classes.items():
+        n = sum(c['n'].values())
+        out[cls] = dict(
+            trips=n, km=round(sum(c['km'].values()), 1),
+            by_main_and_routing_mode={
+                k: dict(trips=v, share_pct=round(100.0 * v / n, 2),
+                        mean_km=round(c['km'][k] / v, 3))
+                for k, v in c['n'].most_common()},
+            by_car_availability=dict(c['car'].most_common()))
+    out['note'] = ('residents\' executed trips, tours cut at home; keys are '
+                   'main_mode|routingMode (walk|pt = a pt request answered with '
+                   'a walk; routing unknown when the run kept no experienced '
+                   'plans); held_ride_tour counts the tour\'s trips OTHER than '
+                   'its held ride trips')
+    return out
+
+
 def measure(run_dir, iteration=None):
     if iteration is None:
         # a stopped arm is read where its close-out read it (_metrics.json)
@@ -97,7 +192,7 @@ def measure(run_dir, iteration=None):
     # which writes none - its input plans (iteration_reading.person_attributes)
     import iteration_reading
     attrs = iteration_reading.person_attributes(
-        run_dir, ('subpopulation', 'boundRideTrips', 'carAvail'))
+        run_dir, ('subpopulation', 'boundRideTrips', 'heldRideTrips', 'carAvail'))
     bound = {p: ({int(x) for x in a['boundRideTrips'].split(',') if x.strip()},
                  a.get('carAvail'))
              for p, a in attrs.items()
@@ -118,6 +213,16 @@ def measure(run_dir, iteration=None):
         by['%s|%s' % (k, car)][t['main_mode']] += 1
         total[t['main_mode']] += 1
 
+    # the held-tour spill reads the same trips table, plus the routing mode
+    # only the experienced plans of the same iteration carry
+    import iteration_trips
+    plans = iteration_trips.experienced_plans_path(run_dir, em._READ_AT['iteration']
+                                                   if not em._final_exists(run_dir, 'output_trips')
+                                                   else None)
+    residents = {p for p, a in attrs.items() if a.get('subpopulation') == 'person'}
+    routing = iteration_trips.trip_routing_modes(plans, residents) if plans else None
+    spill = held_tour_spill(em.rows(run_dir, 'output_trips'), attrs, routing)
+
     def split(c):
         s = sum(c.values())
         return {m: round(100.0 * v / s, 2) for m, v in c.most_common()} if s else {}
@@ -129,6 +234,7 @@ def measure(run_dir, iteration=None):
                by_binding_and_car_availability={k: dict(trips=sum(c.values()), executed_pct=split(c))
                                                 for k, c in sorted(by.items())},
                seed=seed_ride_share(run_dir),
+               held_tour_spill=spill,
                note='the executed main mode of every trip the demand bound to a driver, from the '
                     "run's own persons and trips tables; binding types from the city's B2 binding "
                     'tables (the plans\' source); nothing here is a target')

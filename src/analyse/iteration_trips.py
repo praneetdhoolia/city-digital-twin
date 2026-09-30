@@ -279,6 +279,74 @@ def boardings(run_dir, iteration, route_mode=None):
     return out
 
 
+def experienced_plans_path(run_dir, iteration=None):
+    """The experienced plans matching a trips table: the iteration's, or the
+    final output's when `iteration` is None; None when absent."""
+    if iteration is not None:
+        return plans_path(run_dir, iteration)
+    p = os.path.join(run_dir, 'output', 'output_experienced_plans.xml.gz')
+    return p if os.path.exists(p) else None
+
+
+_ROUTING_MODE = re.compile(r'<attribute name="routingMode"[^>]*>([^<]*)<')
+
+
+def trip_routing_modes(path, persons=None):
+    """{(person, trip_number): routingMode} from an experienced-plans file.
+
+    The trips table says what a trip EXECUTED (its main mode); only the plans
+    say what it was ROUTED as - a `pt` request the router answered with a walk
+    is a walk-only trip in the table, indistinguishable from a chosen walk.
+    Trips are numbered as the table numbers them: 1-based, split at every
+    activity that is not a stage activity. A trip's routing mode is its first
+    leg's. `persons`, when given, limits the read to those ids.
+    """
+    out = {}
+    opener = gzip.open if path.endswith('.gz') else open
+    person = None
+    keep = False
+    in_selected = False
+    n_trip = 0
+    trip_mode = None
+    in_leg = False
+    with opener(path, 'rt', encoding='utf-8') as fh:
+        for line in fh:
+            s = line.strip()
+            if s.startswith('<person '):
+                person = re.search(r'id="([^"]+)"', s).group(1)
+                keep = persons is None or person in persons
+                n_trip = 0
+                trip_mode = None
+                in_selected = False
+            elif not keep:
+                continue
+            elif s.startswith('<plan'):
+                # experienced plans carry one plan, not always stamped
+                in_selected = 'selected="no"' not in s
+            elif not in_selected:
+                continue
+            elif s.startswith('<activity '):
+                typ = re.search(r'type="([^"]*)"', s)
+                if typ and typ.group(1).endswith('interaction'):
+                    continue
+                if trip_mode is not None:
+                    n_trip += 1
+                    out[(person, n_trip)] = trip_mode or ''
+                trip_mode = None
+            elif s.startswith('<leg '):
+                in_leg = True
+                if trip_mode is None:
+                    trip_mode = ''
+            elif s.startswith('</leg>'):
+                in_leg = False
+            elif in_leg and trip_mode == '' and s.startswith('<attribute name="routingMode"'):
+                m = _ROUTING_MODE.search(s)
+                trip_mode = m.group(1).strip() if m else ''
+            elif s.startswith('</plan>'):
+                in_selected = False
+    return out
+
+
 def as_trip_rows(trips):
     """The trips-table columns the readers consume, one dict per trip."""
     for t in trips:

@@ -71,6 +71,10 @@ import org.matsim.vehicles.Vehicle;
  * and the single-trip-ticket premium do not exist in a one-day simulation
  * and are recorded, not modelled (DECISIONS.md 9.135).
  *
+ * <p><b>What is refused.</b> A boarding of a transit submode the schedule
+ * declares no fare for - anything but rail, tram, bus and ferry - stops the
+ * run with the submode named. It is never priced on another submode's table.
+ *
  * <p><b>Deferred emission.</b> Money events accumulate during the mobsim and
  * are emitted at {@code notifyAfterMobsim} - the {@link ParkingChargeHandler}
  * discipline; scoring still sees them because {@code EventsToScore} finishes
@@ -85,6 +89,12 @@ public final class PtFareChargeHandler implements
     public static final String PURPOSE = "ptFare";
     /** Deliberately generic: naming an operator would name a place. */
     public static final String PARTNER = "publicTransportOperator";
+    /** The transit submodes the fare schedule declares a table for; any
+     *  other boarded submode is refused, never priced on a stand-in. */
+    static final String RAIL = "rail";
+    static final String TRAM = "tram";
+    static final String BUS = "bus";
+    static final String FERRY = "ferry";
 
     private final EventsManager events;
     private final PtFareConfigGroup cfg;
@@ -169,6 +179,9 @@ public final class PtFareChargeHandler implements
         final String mode = this.vehicleMode.get(event.getVehicleId());
         if (mode == null || this.transitDrivers.contains(event.getPersonId())) {
             return;
+        }
+        if (!hasDeclaredFare(mode)) {
+            throw unfared(mode);
         }
         final Coord at = facilityCoord(event.getVehicleId());
         if (at == null) {
@@ -347,7 +360,7 @@ public final class PtFareChargeHandler implements
             return false;
         }
         final double h = (leg.boardTime / 3600.0) % 24.0;
-        final double morningStart = "rail".equals(leg.mode)
+        final double morningStart = RAIL.equals(leg.mode)
                 ? this.cfg.getRailPeakMorningStartH()
                 : this.cfg.getPeakMorningStartH();
         return (h >= morningStart && h < this.cfg.getPeakMorningEndH())
@@ -357,7 +370,7 @@ public final class PtFareChargeHandler implements
 
     private double lookup(final String mode, final double km,
             final RiderClass rc, final boolean peak) {
-        if ("ferry".equals(mode)) {
+        if (FERRY.equals(mode)) {
             final double adult = peak ? this.cfg.getFerryAdultPeak()
                     : this.cfg.getFerryAdultOffpeak();
             final double child = peak ? this.cfg.getFerryChildPeak()
@@ -367,26 +380,28 @@ public final class PtFareChargeHandler implements
         final String bands;
         final String adultCsv;
         final String childCsv;
-        if ("rail".equals(mode)) {
+        if (RAIL.equals(mode)) {
             bands = this.cfg.getTrainBandsKm();
             adultCsv = peak ? this.cfg.getTrainAdultPeak()
                     : this.cfg.getTrainAdultOffpeak();
             childCsv = peak ? this.cfg.getTrainChildPeak()
                     : this.cfg.getTrainChildOffpeak();
-        } else if ("tram".equals(mode)) {
+        } else if (TRAM.equals(mode)) {
             bands = this.cfg.getTramBandsKm();
             adultCsv = peak ? this.cfg.getTramAdultPeak()
                     : this.cfg.getTramAdultOffpeak();
             childCsv = peak ? this.cfg.getTramChildPeak()
                     : this.cfg.getTramChildOffpeak();
-        } else {
-            // bus, and any scheduled submode without a table of its own,
-            // takes the bus table - the aggregate pt fallback of 9.78
+        } else if (BUS.equals(mode)) {
             bands = this.cfg.getBusBandsKm();
             adultCsv = peak ? this.cfg.getBusAdultPeak()
                     : this.cfg.getBusAdultOffpeak();
             childCsv = peak ? this.cfg.getBusChildPeak()
                     : this.cfg.getBusChildOffpeak();
+        } else {
+            // unreachable while boarding refuses first; kept so the table
+            // lookup can never fall through to a table that is not its own
+            throw unfared(mode);
         }
         final double[] upper = parsed(bands);
         int band = upper.length;  // the open last band
@@ -399,6 +414,31 @@ public final class PtFareChargeHandler implements
         final double adult = parsed(adultCsv)[band];
         final double child = parsed(childCsv)[band];
         return classFare(rc, adult, child);
+    }
+
+    /** The submodes {@link PtFareConfigGroup} declares a fare for. */
+    private static boolean hasDeclaredFare(final String mode) {
+        return RAIL.equals(mode) || TRAM.equals(mode) || BUS.equals(mode)
+                || FERRY.equals(mode);
+    }
+
+    /**
+     * The refusal for a boarded submode with no declared fare. Until 27
+     * September 2026 such a submode was silently charged the BUS table (the
+     * aggregate pt fallback of 9.78): a metro or monorail boarding would have
+     * paid a bus fare nobody published for it. A fare is a declared value or
+     * it is not charged, and a journey that cannot be priced is not a free
+     * one, so the run stops and says where the fare belongs.
+     */
+    private static IllegalStateException unfared(final String mode) {
+        return new IllegalStateException("ptFare: a traveller boarded transit "
+                + "submode '" + mode + "', which has no declared fare. The "
+                + "ptFare module declares tables for " + RAIL + ", " + TRAM
+                + ", " + BUS + " and " + FERRY + " only - emitted from the "
+                + "city's A.fare.* registry fields (cities/<city>/registry/). "
+                + "Declare a fare for '" + mode + "' there and in "
+                + "PtFareConfigGroup, or map the route to a submode that has "
+                + "one; it is never charged another submode's table.");
     }
 
     private double classFare(final RiderClass rc, final double adult,

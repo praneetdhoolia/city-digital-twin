@@ -318,8 +318,23 @@ def _fmt_hours(seconds: float) -> str:
     return '%.1f h' % h
 
 
-def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
-    """The quote, and everything it rests on."""
+def price(iterations: int, fraction, arms: list, gate_every=None,
+          first_iteration=None) -> dict:
+    """The quote, and everything it rests on.
+
+    `iterations` is the horizon, RUN.controler.last_iteration. A warm start
+    (an overlay or `--warm-start` setting first_iteration N) runs only
+    last - N of them from its checkpoint: F38's 175-iteration resume was
+    quoted 32.4 h, the price of the whole 250 (fifteenth report). The pricer
+    does not tell the post-cutoff tail's pace from the search's - one median
+    prices both - so a resume is priced at the same per-iteration pace.
+    """
+    try:
+        first_iteration = max(0, int(first_iteration or 0))
+    except (TypeError, ValueError):
+        first_iteration = 0
+    horizon = int(iterations)
+    iterations = max(0, horizon - first_iteration)
     # the same city's runs only: the store holds every city's (9.204)
     same = [a for a in arms
             if (fraction is None or a['fraction'] == fraction)
@@ -333,7 +348,12 @@ def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
             '(an overlay with RUN.controler.last_iteration = 4 and '
             'RUN.machine.jfr_profile false) and price the arm on that.'
             % fraction))
-    newest = same[0]
+    # The newest run that timed a RECURRING iteration: a run stopped after two
+    # iterations timed only one-offs (warm-up, the plans dump, its own last
+    # write), and pricing on its all-in median quoted F37's relaunch at 39.5 h
+    # against the probe's 32.0 h (26 September 2026). Fall back to the newest
+    # run only when none timed one.
+    newest = next((a for a in same if a.get('plain')), same[0])
     recent = same[:5]
     medians = sorted(a['median_iteration_s'] for a in recent)
     setup_s = newest.get('setup_s') or 0.0
@@ -448,6 +468,8 @@ def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
         stall_warning=stall_warning,
         setup_s=setup_s,
         iterations=iterations,
+        first_iteration=first_iteration,
+        last_iteration=horizon,
         fraction=fraction,
         priced_on=newest,
         excluded_newer_profiled=[a.get('name') for a in newer_excluded],
@@ -466,8 +488,13 @@ def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
               _fmt_hours(medians[-1] * iterations + setup_s)],
         recent=recent,
         gate_every=gate_every,
+        # a resume meets its first gate at the next milestone past its start
+        first_gate_iteration=((first_iteration // gate_every + 1) * gate_every
+                              if gate_every else None),
         first_gate_s=(((plain['plain_median_s'] if priced_on_plain
-                        else newest['median_iteration_s']) * gate_every
+                        else newest['median_iteration_s'])
+                       * ((first_iteration // gate_every + 1) * gate_every
+                          - first_iteration)
                        + setup_s) if gate_every else None),
     )
 
@@ -481,10 +508,14 @@ def main(argv=None) -> int:
                     help='override the horizon the overlay declares')
     ap.add_argument('--fraction', type=float,
                     help='override the sample fraction the overlay declares')
+    ap.add_argument('--first-iteration', type=int, default=None,
+                    help='price a warm start from this checkpoint iteration '
+                         '(default: the overlay\'s RUN.controler.first_iteration)')
     ap.add_argument('--json', action='store_true', help='machine-readable')
     args = ap.parse_args(argv)
 
     iterations, fraction, gate_every = args.iterations, args.fraction, None
+    first = args.first_iteration
     if args.run_config or iterations is None or fraction is None:
         try:
             from registry import load as _load
@@ -494,6 +525,9 @@ def main(argv=None) -> int:
                 iterations = cfg.get('RUN.controler.last_iteration')
             if fraction is None:
                 fraction = cfg.get('RUN.sample.fraction')
+            if first is None:
+                # a resume overlay declares its checkpoint here
+                first = cfg.get('RUN.controler.first_iteration')
             gate_every = cfg.get('RUN.gate.interval_iterations')
         except Exception as e:                                # noqa: BLE001
             if iterations is None or fraction is None:
@@ -503,7 +537,8 @@ def main(argv=None) -> int:
                     '--fraction F' % e)
 
     arms = observed_arms()
-    quote = price(int(iterations), fraction, arms, gate_every)
+    quote = price(int(iterations), fraction, arms, gate_every,
+                  first_iteration=first or 0)
 
     if args.json:
         print(json.dumps(quote, indent=2, sort_keys=True))
@@ -515,9 +550,12 @@ def main(argv=None) -> int:
 
     on = quote['priced_on']
     print('=' * 72)
-    print('WHAT THIS ARM COSTS - %d iterations at %s of the population'
+    print('WHAT THIS ARM COSTS - %d iterations at %s of the population%s'
           % (quote['iterations'], ('%g%%' % (quote['fraction'] * 100))
-             if quote['fraction'] else '?'))
+             if quote['fraction'] else '?',
+             (', resumed at iteration %d of %d' % (quote['first_iteration'],
+                                                  quote['last_iteration']))
+             if quote['first_iteration'] else ''))
     print('=' * 72)
     pl = quote.get('plain')
     if quote.get('priced_on_plain'):
@@ -555,7 +593,8 @@ def main(argv=None) -> int:
         print('                 family %s' % on['family'])
     if quote.get('first_gate_s'):
         print('  first gate     %s (iteration %d)'
-              % (_fmt_hours(quote['first_gate_s']), quote['gate_every']))
+              % (_fmt_hours(quote['first_gate_s']),
+                 quote['first_gate_iteration']))
     print('  recent spread  %s to %s across the last %d arm(s) at this '
           'fraction' % (quote['band'][0], quote['band'][1],
                         len(quote['recent'])))

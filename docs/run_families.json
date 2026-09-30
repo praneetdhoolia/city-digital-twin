@@ -227,6 +227,20 @@
       "from_launch": "20260925T192302",
       "readings": null,
       "note": "Opened at the PLANS REBUILD of 25 September 2026 (the fourteenth report's three root defects). THREE things move a result across this boundary, two in the inputs and one in the run stack. (1) The plans carry the 6,103 external boundary agents (12,206 weekday trips) the 16 September staging of build_matsim_plans.py had dropped - F36 ran without them; the builder now refuses a plan that loses any tier's agents. (2) RUN.transit_router.access_max_radius_m is 55,600 m, the measured reach of the beeline finder's nearest-stop fallback, not 1,000 + 200: from 12 September it had refused transit to every trip end beyond 1.2 km of a stop and doubled the no-route share (31-37 % -> 66-68 % of pt requests). (3) citysim.TaxiFleetEngine executes each served request's wait (963-977 s mean on F36 arm 0) and the taxi constant no longer folds a priced 5-minute wait. The Java also changed without a behaviour change (CitysimControler.assemble and RidePairingEngine.notifyBeforeMobsim split into named phases, the retime/restore shared through ActivityRetimes), verified by an iteration-0 pairing diff against the pre-split engine. F36 closes with no result: its arm 0 was killed at iteration 237 by a host restart and is citable at 237, read at its iteration-230 tables."
+    },
+    "F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen": {
+      "label": "F37's network with a rebuilt demand and choice set: destinations drawn by each person's own mobility, one-way escort bindings on members who could drive released into round-trip lifts, and motorbike chosen instead of carved (9.214)",
+      "decisions_ref": "9.214",
+      "from_launch": "20260927T125424",
+      "readings": null,
+      "note": "Opened at the CHAINS AND PLANS REBUILD of 27 September 2026 (D23, D22). F37's arm 0 20260926T002526_250it_25pct is F37's RESULT and the control this family is read against across the boundary as a direction only. FOUR things move a result across it: (1) B.activity.destination_mobility = own_speed - one time decay at each segment's derived planning speed (26.80 / 21.43 km/h, ratio 1.2506), both segments together on the survey's mean distance; (2) B.activity.escort_oneway_scope = cannot_drive - 50,011 weekday one-way drops released, lifts bound 44,632 -> 93,318; (3) B.motorbike.representation = choice with riders_first coupling and a derived running cost (SMVU fuel ratio 0.5351); (4) the Java split into named phases (behaviour-identical, probed) and PtFareChargeHandler refusing an undeclared submode. The week trip rate moved 3.398 -> 3.470 (survey 3.473)."
+    },
+    "F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk": {
+      "label": "F38's demand and network with the fifteenth report's four corrections, run as a PAIR (D28): the control with the corrections, the treatment adding the headway charge",
+      "decisions_ref": "9.218",
+      "from_launch": "20260929T053207",
+      "readings": null,
+      "note": "Opened at the PLANS AND RUN-INPUTS REBUILD of 29 September 2026 (the chains are F38's). FOUR things move a result across it: (1) B.motorbike.daily_use = use_ratio - a household motorcycle is a working option on the day with the ABS SMVU use ratio 0.1801 (NSW Table 4: 1,933 km a motorcycle against 10,732 a passenger vehicle), 35,416 -> 6,368 persons available; (2) RUN.qsim.motorcycle_roster = household - one household motorcycle, one rider at a time; (3) RUN.routing.activity_link_capacity = capacity_bounded - no link receives more car-capable trip ends than it moves in the modelled 30 h; (4) RUN.transit_router.no_route_walk = refused_beyond_reach - a pt request with no transit route answered by a walk over 3,223.6 m is scored as an unexecutable plan. The treatment arm adds C.time_weights.service_quality_representation = headway. The two arms compare with each other inside F39; F38's arm 0 is a direction only."
     }
   },
   "overrides": {

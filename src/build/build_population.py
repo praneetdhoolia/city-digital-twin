@@ -276,6 +276,132 @@ def age_sex_dist(m):
     return out
 
 
+def _open_population_writers(out_dir):
+    """Open the household and person CSVs under `out_dir` and write their
+    headers; returns (households file, persons file, their two writers)."""
+    hh_f = open(os.path.join(out_dir, 'population', 'B1_households.csv'), 'w', newline='', encoding='utf-8')
+    pp_f = open(os.path.join(out_dir, 'population', 'B1_synthetic_population.csv'), 'w', newline='', encoding='utf-8')
+    hw = csv.writer(hh_f, lineterminator='\n')
+    pw = csv.writer(pp_f, lineterminator='\n')
+    hw.writerow(['household_id', 'home_sa1', 'home_x_mga56', 'home_y_mga56', 'home_lon', 'home_lat',
+                 'household_size', 'household_vehicles', 'dwelling_type', 'weight'])
+    pw.writerow(['person_id', 'household_id', 'home_sa1', 'age_band', 'age', 'sex',
+                 'employment_status', 'occupation_anzsco1', 'income_band', 'licence_holder',
+                 'household_vehicles', 'household_size', 'dwelling_type', 'student_status',
+                 'mobility_impairment_flag', 'car_available', 'weight'])
+    return hh_f, pp_f, hw, pw
+
+
+def _age_sex_draw_shares(asd):
+    """The age-band draw shares and, per band, the probability a person is male."""
+    p_age = norm(asd.sum(axis=1))
+    p_sex_given_age = np.array([norm(asd[b])[0] if asd[b].sum() > 0 else 0.5
+                                for b in range(len(AGE_BANDS))])
+    return p_age, p_sex_given_age
+
+
+def _zone_person_shares(m, region_lf, region_edu):
+    """One SA1's labour-force and education rates (region fallback) and its
+    occupation and income draw shares; returns (lf, edu, p_occ, p_inc)."""
+    # labour force status per (sex, published age band) from this SA1's
+    # own cells, and education attendance per age group - the
+    # region-wide rates fill the cells that hold nobody
+    lf = sa1_lf_rates(m['labour_force'], region_lf)
+    edu = sa1_edu_rates(m['education'], region_edu)
+    # occupation distribution (persons 15+, all ages summed)
+    p_occ = norm(m['occupation'])
+    # income distribution (persons 15+)
+    inc_tot = m['income']
+    p_inc = norm(inc_tot) if sum(inc_tot) > 0 else norm(np.ones(len(INCOME_BANDS)))
+    return lf, edu, p_occ, p_inc
+
+
+def _draw_person(rng, k, sa1, p_age, p_sex_given_age, lf, edu, p_occ, p_inc):
+    """Draw one household member's attributes, member `k` of the household (0 is
+    the adult reference person), consuming `rng` in the order the build always
+    has; returns (band, age, sex, employment, employed, occupation, income band,
+    licence, student status, mobility impairment)."""
+    if k == 0:
+        # the household reference person is an adult
+        b = int(rng.choice(len(AGE_BANDS),
+                           p=norm(np.concatenate([np.zeros(3), p_age[3:]]))))
+    else:
+        b = int(rng.choice(len(AGE_BANDS), p=p_age))
+    lo, hi = AGE_BANDS[b]
+    age = int(rng.integers(lo, min(hi, MAX_AGE_YEARS) + 1))
+    sex = 'M' if rng.random() < p_sex_given_age[b] else 'F'
+    if age < LABOUR_FORCE_MIN_AGE:
+        est = 'not_in_labour_force'
+    else:
+        er, fts, us = lf[(sex, abs_lf_band(age))]
+        if rng.random() < er:
+            est = ('employed_full_time' if rng.random() < fts
+                   else 'employed_part_time')
+        else:
+            est = ('unemployed' if rng.random() < us
+                   else 'not_in_labour_force')
+    employed = est.startswith('employed')
+    occ = OCCUPATIONS[int(rng.choice(len(OCCUPATIONS), p=p_occ))] if employed else ''
+    ib = INCOME_BANDS[int(rng.choice(len(INCOME_BANDS), p=p_inc))] if age >= LABOUR_FORCE_MIN_AGE else 'Neg_Nil'
+    # 9.131: drawn at the LGA's measured rate; 16 is the
+    # provisional minimum and the 12-17 band's rate is the
+    # 16-17-year-olds' holding spread over the band
+    lic = int(age >= LICENCE_MIN_AGE and rng.random() < licence_rate(sa1, b))
+    # attendance is observed (G01); how an 18+ attendee splits
+    # full/part-time is not held and is declared and swept
+    if rng.random() < edu[edu_group_of(age)]:
+        if age < SCHOOL_FT_MAX_AGE:
+            student = 'full_time'
+        else:
+            band_key = '18_24' if age <= 24 else '25_ov'
+            share = TERTIARY_FT_SA1.get(str(sa1), {}).get(
+                band_key, TERTIARY_FT_CORE[band_key])
+            student = ('full_time' if rng.random() < share
+                       else 'part_time')
+    else:
+        student = 'none'
+    # evaluated in exactly the order the typed formula was, so the
+    # rebuilt population is byte-identical: base + rise * years / span
+    mob = int(rng.random() < (MOB_BASE + MOB_RISE
+                              * max(0, (age - MOB_ONSET)) / MOB_SPAN))
+    return b, age, sex, est, employed, occ, ib, lic, student, mob
+
+
+def _count_person(stats, bands, age, employed, student):
+    """Add one drawn person to the run totals and its ABS-band accumulator."""
+    stats['persons'] += 1
+    if employed:
+        stats['employed'] += 1
+    if student == 'full_time':
+        stats['students'] += 1
+    bk = abs_lf_band(age) or ('0_4' if age < 5 else '5_14')
+    acc = bands.setdefault(bk, [0, 0, 0])
+    acc[0] += 1
+    acc[1] += int(employed)
+    acc[2] += int(student == 'full_time')
+
+
+def _finish_report(stats, seed, sample, hs_census, hs_drawn, hs_top_persons, bands):
+    """Add the seed, the realised shares, the household-size check and the
+    per-band rates to `stats` in place."""
+    stats['seed'] = seed
+    stats['sample_fraction'] = sample
+    stats['mean_household_size'] = round(stats['persons'] / max(stats['households'], 1), 3)
+    stats['pct_zero_car_households'] = round(stats['zero_car_hh'] / max(stats['households'], 1) * 100, 1)
+    stats['pct_employed_of_persons'] = round(stats['employed'] / max(stats['persons'], 1) * 100, 1)
+    stats['household_size'] = dict(
+        bands=['1', '2', '3', '4', '5', '6+'],
+        census_pct=[round(100.0 * v / max(hs_census.sum(), 1), 2) for v in hs_census],
+        drawn_pct=[round(100.0 * v / max(hs_drawn.sum(), 1), 2) for v in hs_drawn],
+        top_band_mean_declared=HH_TOP_BAND_MEAN,
+        top_band_mean_drawn=round(hs_top_persons / max(hs_drawn[5], 1), 3),
+        tail_p=round(HH_TAIL_P, 6))
+    stats['by_abs_age_band'] = {
+        k: dict(persons=n, employed_pct=round(100.0 * e / max(n, 1), 1),
+                student_full_time_pct=round(100.0 * s / max(n, 1), 1))
+        for k, (n, e, s) in sorted(bands.items())}
+
+
 def main(seed=None, sample=None, max_sa1=None, out_dir=None):
     # Resolved, not defaulted. The seed is this project's headline determinism
     # claim and it existed in nine copies; the build sample is ONE, always, and
@@ -294,16 +420,7 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
     region_lf = region_lf_rates()
     region_edu = region_edu_rates()
 
-    hh_f = open(os.path.join(out_dir, 'population', 'B1_households.csv'), 'w', newline='', encoding='utf-8')
-    pp_f = open(os.path.join(out_dir, 'population', 'B1_synthetic_population.csv'), 'w', newline='', encoding='utf-8')
-    hw = csv.writer(hh_f, lineterminator='\n')
-    pw = csv.writer(pp_f, lineterminator='\n')
-    hw.writerow(['household_id', 'home_sa1', 'home_x_mga56', 'home_y_mga56', 'home_lon', 'home_lat',
-                 'household_size', 'household_vehicles', 'dwelling_type', 'weight'])
-    pw.writerow(['person_id', 'household_id', 'home_sa1', 'age_band', 'age', 'sex',
-                 'employment_status', 'occupation_anzsco1', 'income_band', 'licence_holder',
-                 'household_vehicles', 'household_size', 'dwelling_type', 'student_status',
-                 'mobility_impairment_flag', 'car_available', 'weight'])
+    hh_f, pp_f, hw, pw = _open_population_writers(out_dir)
 
     hid = 0
     pid = 0
@@ -335,9 +452,7 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
         asd = age_sex_dist(m)
         if asd.sum() <= 0:
             continue
-        p_age = norm(asd.sum(axis=1))
-        p_sex_given_age = np.array([norm(asd[b])[0] if asd[b].sum() > 0 else 0.5
-                                    for b in range(len(AGE_BANDS))])
+        p_age, p_sex_given_age = _age_sex_draw_shares(asd)
 
         # household size distribution (1..6+)
         hs = norm(m['household_size'])
@@ -351,16 +466,7 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
         # dwelling structure
         dw = norm(m['dwellings'])
 
-        # labour force status per (sex, published age band) from this SA1's
-        # own cells, and education attendance per age group - the
-        # region-wide rates fill the cells that hold nobody
-        lf = sa1_lf_rates(m['labour_force'], region_lf)
-        edu = sa1_edu_rates(m['education'], region_edu)
-        # occupation distribution (persons 15+, all ages summed)
-        p_occ = norm(m['occupation'])
-        # income distribution (persons 15+)
-        inc_tot = m['income']
-        p_inc = norm(inc_tot) if sum(inc_tot) > 0 else norm(np.ones(len(INCOME_BANDS)))
+        lf, edu, p_occ, p_inc = _zone_person_shares(m, region_lf, region_edu)
 
         # jitter radius from zone area so homes are not all stacked on the centroid
         rad = math.sqrt(max(float(z['area_km2']), 1e-4) * 1e6 / math.pi) * HOME_JITTER_FACTOR
@@ -391,86 +497,23 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
             members = []
             for k in range(size):
                 pid += 1
-                if k == 0:
-                    # the household reference person is an adult
-                    b = int(rng.choice(len(AGE_BANDS),
-                                       p=norm(np.concatenate([np.zeros(3), p_age[3:]]))))
-                else:
-                    b = int(rng.choice(len(AGE_BANDS), p=p_age))
-                lo, hi = AGE_BANDS[b]
-                age = int(rng.integers(lo, min(hi, MAX_AGE_YEARS) + 1))
-                sex = 'M' if rng.random() < p_sex_given_age[b] else 'F'
-                if age < LABOUR_FORCE_MIN_AGE:
-                    est = 'not_in_labour_force'
-                else:
-                    er, fts, us = lf[(sex, abs_lf_band(age))]
-                    if rng.random() < er:
-                        est = ('employed_full_time' if rng.random() < fts
-                               else 'employed_part_time')
-                    else:
-                        est = ('unemployed' if rng.random() < us
-                               else 'not_in_labour_force')
-                employed = est.startswith('employed')
-                occ = OCCUPATIONS[int(rng.choice(len(OCCUPATIONS), p=p_occ))] if employed else ''
-                ib = INCOME_BANDS[int(rng.choice(len(INCOME_BANDS), p=p_inc))] if age >= LABOUR_FORCE_MIN_AGE else 'Neg_Nil'
-                # 9.131: drawn at the LGA's measured rate; 16 is the
-                # provisional minimum and the 12-17 band's rate is the
-                # 16-17-year-olds' holding spread over the band
-                lic = int(age >= LICENCE_MIN_AGE and rng.random() < licence_rate(sa1, b))
-                # attendance is observed (G01); how an 18+ attendee splits
-                # full/part-time is not held and is declared and swept
-                if rng.random() < edu[edu_group_of(age)]:
-                    if age < SCHOOL_FT_MAX_AGE:
-                        student = 'full_time'
-                    else:
-                        band_key = '18_24' if age <= 24 else '25_ov'
-                        share = TERTIARY_FT_SA1.get(str(sa1), {}).get(
-                            band_key, TERTIARY_FT_CORE[band_key])
-                        student = ('full_time' if rng.random() < share
-                                   else 'part_time')
-                else:
-                    student = 'none'
-                # evaluated in exactly the order the typed formula was, so the
-                # rebuilt population is byte-identical: base + rise * years / span
-                mob = int(rng.random() < (MOB_BASE + MOB_RISE
-                                          * max(0, (age - MOB_ONSET)) / MOB_SPAN))
+                (b, age, sex, est, employed, occ, ib, lic, student,
+                 mob) = _draw_person(rng, k, sa1, p_age, p_sex_given_age,
+                                     lf, edu, p_occ, p_inc)
                 cav = int(lic == 1 and nv > 0)
                 pw.writerow([pid, hid, sa1, BAND_LABEL[b], age, sex, est, occ, ib, lic,
                              nv, size, dt, student, mob, cav, round(1.0 / sample, 4)])
                 members.append(dict(pid=pid, age=age, band=b, est=est, employed=employed,
                                     student=student, cav=cav, hx=hx, hy=hy))
-                stats['persons'] += 1
-                if employed:
-                    stats['employed'] += 1
-                if student == 'full_time':
-                    stats['students'] += 1
-                bk = abs_lf_band(age) or ('0_4' if age < 5 else '5_14')
-                acc = bands.setdefault(bk, [0, 0, 0])
-                acc[0] += 1
-                acc[1] += int(employed)
-                acc[2] += int(student == 'full_time')
+                _count_person(stats, bands, age, employed, student)
             made += size
 
 
     for f in (hh_f, pp_f):
         f.close()
 
-    stats['seed'] = seed
-    stats['sample_fraction'] = sample
-    stats['mean_household_size'] = round(stats['persons'] / max(stats['households'], 1), 3)
-    stats['pct_zero_car_households'] = round(stats['zero_car_hh'] / max(stats['households'], 1) * 100, 1)
-    stats['pct_employed_of_persons'] = round(stats['employed'] / max(stats['persons'], 1) * 100, 1)
-    stats['household_size'] = dict(
-        bands=['1', '2', '3', '4', '5', '6+'],
-        census_pct=[round(100.0 * v / max(hs_census.sum(), 1), 2) for v in hs_census],
-        drawn_pct=[round(100.0 * v / max(hs_drawn.sum(), 1), 2) for v in hs_drawn],
-        top_band_mean_declared=HH_TOP_BAND_MEAN,
-        top_band_mean_drawn=round(hs_top_persons / max(hs_drawn[5], 1), 3),
-        tail_p=round(HH_TAIL_P, 6))
-    stats['by_abs_age_band'] = {
-        k: dict(persons=n, employed_pct=round(100.0 * e / max(n, 1), 1),
-                student_full_time_pct=round(100.0 * s / max(n, 1), 1))
-        for k, (n, e, s) in sorted(bands.items())}
+    _finish_report(stats, seed, sample, hs_census, hs_drawn, hs_top_persons,
+                   bands)
     json.dump(stats, open(os.path.join(out_dir, 'population', '_population_report.json'), 'w', newline='\n'), indent=2)
     print(json.dumps(stats, indent=2))
 

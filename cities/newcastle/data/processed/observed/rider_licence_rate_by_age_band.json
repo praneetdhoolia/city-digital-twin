@@ -1,0 +1,45 @@
+{
+  "decisions_ref": "9.214",
+  "snapshot_month": "202607",
+  "numerator": "TfNSW Driver Licence Statistics snapshot: licence class Rider, every licence type INCLUDING learner (a NSW learner rider may ride unaccompanied), primary and non-primary records both (a customer holds at most one record of a class, so each rider counts once)",
+  "denominator": "ABS ERP by age and LGA, 30 June 2024, split to single years by census G04",
+  "rider_holders_by_primary_flag": {
+    "FALSE": 71065.0,
+    "TRUE": 1084.0
+  },
+  "rider_learners": 2877.0,
+  "suppressed_cells_taken_at_3": 282,
+  "lgas": [
+    "Cessnock",
+    "Lake Macquarie",
+    "Maitland",
+    "Newcastle",
+    "Port Stephens"
+  ],
+  "age_bands": [
+    "0-4",
+    "5-11",
+    "12-17",
+    "18-24",
+    "25-34",
+    "35-44",
+    "45-54",
+    "55-64",
+    "65-74",
+    "75-84",
+    "85-120"
+  ],
+  "rate_by_age_band": [
+    0.0,
+    0.0,
+    0.0055,
+    0.053,
+    0.1023,
+    0.1557,
+    0.1838,
+    0.199,
+    0.1971,
+    0.1109,
+    0.0037
+  ]
+}

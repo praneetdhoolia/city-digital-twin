@@ -68,6 +68,22 @@ def repo_root() -> Path:
     return Path(sh(["git", "rev-parse", "--show-toplevel"]).strip())
 
 
+def default_ref() -> str:
+    """The default branch as this clone last saw it: `origin/main`, else a
+    local `main`, else HEAD. Read from the LOCAL ref; nothing is fetched.
+
+    What landed on main directly is a property of main, not of the branch
+    the report happens to run on: walking HEAD's first-parent chain from a
+    session branch counted that branch's own unmerged commits as direct
+    commits to main (the fifteenth report)."""
+    for ref in ("origin/main", "main"):
+        r = subprocess.run(["git", "rev-parse", "--verify", "-q", ref + "^{commit}"],
+                           capture_output=True, text=True)
+        if r.returncode == 0:
+            return ref
+    return "HEAD"
+
+
 def inventory(root: Path) -> dict:
     ext = collections.Counter()
     lines = collections.Counter()
@@ -126,7 +142,8 @@ def commit_log(root: Path) -> dict:
         m = re.match(r"^(P\d|Merge)", s)
         prefixes[m.group(1) if m else "other"] += 1
     lengths = sorted(len(r[3]) for r in rows)
-    direct = [l for l in sh(["git", "log", "--first-parent", "--no-merges", "--format=%h|%ad|%s", "--date=short"]).strip().split("\n") if l]
+    main_ref = default_ref()
+    direct = [l for l in sh(["git", "log", "--first-parent", "--no-merges", "--format=%h|%ad|%s", "--date=short", main_ref]).strip().split("\n") if l]
     churn = collections.Counter(f for f in sh(["git", "log", "--format=", "--name-only"]).split("\n") if f)
     return dict(
         total=len(rows),
@@ -137,6 +154,7 @@ def commit_log(root: Path) -> dict:
         authors=authors.most_common(),
         message_prefixes=prefixes.most_common(),
         subject_length=dict(min=lengths[0], median=lengths[len(lengths) // 2], max=lengths[-1]) if lengths else {},
+        default_branch_ref=main_ref,
         direct_to_default_branch=[dict(sha=d.split("|")[0], date=d.split("|")[1], subject=d.split("|", 2)[2]) for d in direct],
         churn_hotspots=churn.most_common(40),
     )
@@ -275,7 +293,8 @@ def timeline(root: Path, m: dict) -> dict:
     city = os.environ.get("CITYSIM_CITY", "newcastle")
     events = []
     pr_titles = {p["number"]: p["title"] for p in m.get("github", {}).get("prs", [])} if m.get("github") else {}
-    for line in sh(["git", "log", "--first-parent", "--reverse", "--format=%h|%ad|%s", "--date=short"]).strip().split("\n"):
+    # main's own history: a session branch's unmerged commits are not events
+    for line in sh(["git", "log", "--first-parent", "--reverse", "--format=%h|%ad|%s", "--date=short", default_ref()]).strip().split("\n"):
         if not line:
             continue
         sha, date, subj = line.split("|", 2)

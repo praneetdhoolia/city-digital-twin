@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 25 September 2026 (sixty-third session) · **Record read through:** §9.213 · **Written against family:** `F37`
+**Updated:** 30 September 2026 (sixty-fourth session) · **Record read through:** §9.219 · **Written against family:** `F39`
 
 ## What is built
 
@@ -25,16 +25,16 @@
 
 ## What is measured
 
-- **F37 has no reading yet** (§9.213): its structural smoke `20260925T212929_2it_1pct` executed the wait on every served request (`waitExecuted=394`, `restoreWaited=394 restoreOrphan=0`); a 1 % fleet of 8 refuses 81 %, so nothing about the level is read from it.
-- **The F35 result: taxi 2.2948 % against 0.9916 %, +131.4 %, stop** (`20260912T202242_300it_25pct` at iteration 300, §9.169): **3,636** resident trips at a mean **9.34 km (+80 % on the HTS category)**, coverage **53.72 %** — 2.3× target with 51 pp of headroom, so not a choice-set finding. The planned share fell **9.67 → 2.00 %** over the run (`modestats.csv`) and drifted −0.097 pp between 250 and 300: a relaxed level, not a moving curve. A direction, not a comparison with F32 (§3.5).
+- **F37's arm 0, a RESULT with the wait executed: taxi 2.2767 % against 0.9916 %, +129.6 %, stop** (§9.214, `report_mode_ridership.py --run 20260926T002526_250it_25pct --it 250`): **3,449** resident trips at a mean **9.10 km (+75 % on the HTS category)**, coverage **45.15 %**, headroom 42.87 pp (`report_choice_set_coverage.py`) — not a choice-set finding. Executing the quarter-hour wait left the level where F35's +131.4 % had it (§9.169), a direction, never a comparison (§3.5). The F37 probe's fleet executed 10,140 waits at a mean 1,080 s on iteration 0 (§9.213).
+- **Two demand structures carry most taxi trips** (§9.214, items 2 and 3): **28 %** of taxi trips (mean **16.5 km**) are car-available travellers on a tour whose bound escort direction is HELD to ride, so the car stays home and the rest of the tour has walk, pt, bike or taxi only; the car-less (23.4 % of production) make **37 %** of taxi trips, sent by one kernel per purpose as far as a driver.
+- **The wait is executed on every served request** (§9.213): the smoke `20260925T212929_2it_1pct` logged `waitExecuted=394`, `restoreWaited=394 restoreOrphan=0`. F37's first arm was stopped at iteration 2 because the constant still folded the priced five-minute wait beside the executed one; the fold now applies only under `absent` (§9.214).
 - **Refusals are no longer the mechanism behind taxi's excess** (§9.169): at iteration 300 the fleet of 200 refused **2,065 requests an iteration, about 18 % of 11,409**, every one routed as a network walk in **1.3 s**, against 47,797 of 58,558 (81.6 %) on the F34 probe `20260912T162831_4it_25pct`. Four requests in five served, and taxi still reads 2.3× its target.
-- **Taxi is available to half the population, on both results** (§9.163, §9.169): F32 coverage **54.62 %** against a **2.9971 %** share, headroom 51.62 pp, the largest on the board; arm 0 53.72 % against 2.2948 %. Its choice set closed at iteration **27**.
-- **The excess is a level, not a basis or a supply artefact** (§9.163): 11,633 modelled trips on F32 scale to **46,532** daily against a band of 15,000–25,000; mean trip **8.6463 km** on 4,639 target-LGA trips; `snap_pp` **−0.583**, so the cutoff moved taxi TOWARD its target.
-- **The F32 result: taxi 2.9971 % against 0.9916 %, +202.2 %, mean trip 8.58 km** (`20260909T015217_300it_25pct` at iteration 300, §9.162): one of two modes whose direction was AWAY across the run (+88.5 % at it.0, +178.7 % at 200, +202.2 % at 300); depth makes taxi worse, so the excess is not an unconverged search. Comparable with no earlier family (§3.5).
+- **Taxi is in the choice set of about half of all trips** (§9.163, §9.169, §9.214): coverage 54.62 % on F32, 53.72 % on F35's arm 0, 45.15 % on F37's; its choice set closed at iteration **27** on F32.
+- **The excess is a level, not a basis or a supply artefact** (§9.163): on F32 the modelled trips scaled to **46,532** daily against a band of 15,000–25,000; depth moved taxi AWAY from target there (§9.162).
 
 ## What is open
 
-- **The named cause of the excess is fixed and unread** (§9.213, #49): every served passenger waited a quarter of an hour the score never saw. F37's arm 0 reads taxi with the wait executed; if an excess remains, `B.taxi.vehicle_trips_per_day` (the sweep §9.99 named) and a run at `absent` are what is left, the fare still not a lever (§9.91).
+- **Taxi carries the car-less long trip on F39's control** (§9.219, #49, `20260929T072135_250it_25pct` it.250): taxi **2.5892 % against 0.9916 % (+161.1 %)** on 4,159 trips at 8.82 km (+70 % on the survey); the car-less take taxi on **5.6 %** of their trips against 0.9 % for the car-available (`_mode_by_demographics.json`) — a trip no driver is bound to and no transit serves has walk, bike or taxi only ([walk-and-bike](walk-and-bike.md)).
 - **The refused-request fallback is still walk**, costing 1.3 s an iteration at 18 % refusal on arm 0 (§9.169), down from ~60 s at 81 % on the F34 probe (§9.168, §9.105). Whether taxi should take `B.ride.unpaired_fallback`'s member is undecided.
 - **Two stated simplifications**: empty running loads no link, and there is no spatial dispatch; `B.taxi.deadhead_min` stands in for both (§9.99). A full demand-responsive fleet would add the routed empty legs (§9.86, §9.99).
 - **The IPART user incidence is consumed outside the package** to build `B.taxi.daily_trips_band`; `data/raw/p2p/` holds the Fares Order only (§9.94). Acquiring the incidence is the honest route to person-level availability.
@@ -54,6 +54,8 @@
 
 ## History
 
+- §9.219 — taxi carries the car-less trip
+- §9.214 — wait executed, excess stays
 - §9.213 — the fleet wait is executed
 - §9.210 — the Java fold; the metro target
 - §9.176 — intro fixed: which runs are results is the board's
@@ -67,5 +69,3 @@
 - §9.158 — the loop reaches taxi's supply and price; reading point drifts
 - §9.157 — F31 gate: taxi +178.4 %
 - §9.141 — refused trip restored by endpoints
-- §9.139 — F23 gate: band widens to +77 %
-- §9.134 — F21 gate: taxi flat at +67 %

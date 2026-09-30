@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 25 September 2026 (sixty-third session) · **Record read through:** §9.213 · **Written against family:** `F37`
+**Updated:** 30 September 2026 (sixty-fourth session) · **Record read through:** §9.219 · **Written against family:** `F39`
 
 ## What is built
 
@@ -57,7 +57,9 @@ A family boundary is a recorded model, data or network change after which nothin
 | `F34-walk-has-a-footpath-network` | 20260912T062457 | the footpath network (40,203 ways, 181,892 → 368,230 links), pt access/egress walks executed (#167), crossings with Cobbora freight (#184); CLOSED with no arm | §9.167, §9.168 |
 | `F35-the-engines-route-what-they-remode` | 20260912T184108 | the taxi and ride engines route what they re-mode; opened at the FIX; arm 0 `20260912T202242_300it_25pct` ran to 300 in 30.35 h, a RESULT | §9.168, §9.169 |
 | `F36-the-passenger-is-held-and-bike-pays-for-distance` | 20260922T210005 | the roots rebuild: `heldRideTrips` (D12, #86), bike's derived distance cost (D9, #107), the household tail derived (#196), the ferry target on the disclosed tap-ons (D8, #94), standing room scaled (#237); closed with no result - arm 0 stopped at 237 by a host restart, read at 230 | §9.211, §9.213 |
-| `F37-the-boundary-tier-returns-and-pt-reaches-every-stop` | 20260925T192302 | the external tier written again, the pt access ceiling measured (55,600 m, was 1,200), the taxi wait executed; opened at the PLANS REBUILD; no reading | §9.213 |
+| `F37-the-boundary-tier-returns-and-pt-reaches-every-stop` | 20260925T192302 | the external tier written again, the pt access ceiling measured (55,600 m, was 1,200), the taxi wait executed; one result, arm 0 `20260926T002526_250it_25pct` | §9.213, §9.214 |
+| `F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen` | 20260927T125424 | destinations by each person's own mobility, one-way escorts on members who could drive released into lifts, motorbike chosen; access ceiling re-measured (55,900 m); opened at the CHAINS AND PLANS REBUILD; one result, arm 0 `20260929T012258_250it_25pct` | §9.214, §9.217 |
+| `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk` | 20260929T053207 | motorcycles by daily use (SMVU 0.1801), a household motorcycle, trip ends on links that carry them, a bounded no-route walk; a PAIR (D28), the treatment adds the headway charge | §9.218 |
 
 Overrides in the file: three dead 30 Aug launches are attributed by name (`aborted_20260830T163010_300it_10pct` to F18; `aborted_20260830T170153_300it_10pct` and `aborted_20260830T170743_300it_10pct` to F19); `aborted_20260818T162538_1000it_25pct` is left unattributed because the record cannot settle it.
 
@@ -69,13 +71,11 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## What is open
 
-- **F37 is open and has NO reading** (§9.213): opened at the plans rebuild `20260925T192302`; priced by its own probe (`f37_pricing_probe_25pct`); arm 0 (`f37_baseline_25pct`, 34 h ceiling) carries F36's five measurements plus the no-route share, walk's mean trip, taxi with its wait executed and the external tier's boundary trips. #237's peak standing occupancy still has no reader.
-- **F35 is CLOSED with three results** and compares with nothing after `20260922T210005`.
-- **F35's three results are closed history** (§9.168, §9.169, §9.176, §9.177): arm 0 `20260912T202242_300it_25pct`, the routers pair `20260915T000704_250it_25pct` and the scoring pair `20260916T063903_250it_25pct`, each a RESULT, each citable inside F35 and against nothing after it.
+- **F39's control arm is a RESULT** `20260929T072135_250it_25pct` (27.9 h against a 27.7 h quote; §9.219); the headway treatment (`atap_m1` since §9.219) is unrun and needs its probe and an approval. The controler build moved in §9.219 inside `ServiceQualityScoring` alone, which the control never binds, so the pair stays comparable. F38 closed with ONE result, completed across warm starts at 75, 175 and 225 (§9.215-§9.217). #237's standing peak has no reader.
+- **F35 is CLOSED with three results** (§9.168, §9.169, §9.176, §9.177), each citable inside F35 and against nothing after `20260922T210005`.
 - Whether a separate 25 % confirmation arm is still needed now that the loop runs at 25 % (§9.129) is the user's call at convergence.
 - The design-effect penalty of household cluster sampling is unestimated and no seed-variance measurement exists; `n_replications` stays 30 (§9.45). The threshold between 10 % and 25 % is unmeasured (§9.12).
 - One arm at a time; the machine-level stall that hit two concurrent arms is #66.
-- `aborted_20260818T162538_1000it_25pct` stays unattributed to a family.
 
 ## Refused — do not re-raise
 
@@ -90,18 +90,12 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## History
 
+- §9.219 — F39's control is a result
+- §9.218 — F39 opens as a pair
+- §9.217 — F38 closes with a result
+- §9.214 — F37 closes with a result; F38 opens
 - §9.213 — F36 closes, F37 opens
 - §9.212 — F36 priced; arm 0 running
 - §9.211 — F36 opens at the roots rebuild
 - §9.206 — transit PCE scaled; 1 % gridlock 
-- §9.203 — standing room scaled at last
-- §9.176 — intro fixed: which runs are results is the board's
-- §9.170 — no family opened; a 1 % smoke on the recompiled controler
 - §9.169 — F35's arm 0 is a result
-- §9.168 — F35 opens at the engines' routed re-mode; arm 0 launched
-- §9.167 — F34 opens at the footpath-network rebuild
-- §9.166 — the families table rejoined; F33 still has no reading
-- §9.165 — F33's arm 0 dies on heap; the family has no reading
-- §9.164 — F33 opens at the probe; the demand is rebuilt
-- §9.160 — F32 opens at the probe; crowding reaches scoring
-- §9.158 — no launch, so no family row; the next arm opens one
