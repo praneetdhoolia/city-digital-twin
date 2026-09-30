@@ -1,6 +1,6 @@
 {
   "overlay": "f39_headway_probe_25pct",
-  "description": "A PRICING PROBE, NOT A MODELLING RUN - citable for its CLOCK and its HEAP only. It prices f39_headway_25pct on F39's build (four corrections of the fifteenth report (D28): motorcycle possession scaled to daily use by the ABS SMVU use ratio 0.1801 (B.motorbike.daily_use, #258), a household motorcycle in the vehicle roster (RUN.qsim.motorcycle_roster), trip ends attached to links that can carry them (RUN.routing.activity_link_capacity, #145), and a pt no-route walk beyond walking's 3,223.6 m reach scored as an unexecutable plan (RUN.transit_router.no_route_walk, #162); plus C.time_weights.service_quality_representation = headway: each boarding charged beta_headway 0.5 x the boarded route's service interval (citysim.ServiceQualityScoring, built 9.164, never run; PDFH frequency penalty 0.45-1.0 x headway by band; the F38 pattern of infrequent rail and ferry over, frequent bus and tram under)); the corrections add work to the activity-link pass, the roster and the router, so F38's pace is not F39's.",
+  "description": "A PRICING PROBE, NOT A MODELLING RUN - citable for its CLOCK and its HEAP only. It prices f39_headway_25pct on F39's build (four corrections of the fifteenth report (D28): motorcycle possession scaled to daily use by the ABS SMVU use ratio 0.1801 (B.motorbike.daily_use, #258), a household motorcycle in the vehicle roster (RUN.qsim.motorcycle_roster), trip ends attached to links that can carry them (RUN.routing.activity_link_capacity, #145), and a pt no-route walk beyond walking's 3,223.6 m reach scored as an unexecutable plan (RUN.transit_router.no_route_walk, #162); plus C.time_weights.service_quality_representation = headway: each boarding charged beta_headway 0.5 x the boarded route's service interval (citysim.ServiceQualityScoring, built 9.164, never run; PDFH frequency penalty 0.45-1.0 x headway by band; the F38 pattern of infrequent rail and ferry over, frequent bus and tram under)); the corrections add work to the activity-link pass, the roster and the router, so F38's pace is not F39's. SINCE 9.219 the interval is the boarded line's at the boarding stop (not the route variant's) and it is valued by ATAP M1 (C.time_weights.service_interval_function = atap_m1: 1.4 x min(SI/2, 1.88 sqrt(SI), 20) + 0.1 x SI IVT-minutes) instead of 0.5 x SI with the service day as cap, which charged a once-a-day boarding 900 minutes.",
   "answers_issues": [],
   "set": {
     "RUN.sample.fraction": 0.25,
@@ -9,7 +9,8 @@
     "RUN.gate.interval_iterations": 0,
     "RUN.machine.xmx": "48g",
     "RUN.controler.create_graphs": false,
-    "C.time_weights.service_quality_representation": "headway"
+    "C.time_weights.service_quality_representation": "headway",
+    "C.time_weights.service_interval_function": "atap_m1"
   },
   "allow_outside_sweep": [
     "RUN.controler.last_iteration"

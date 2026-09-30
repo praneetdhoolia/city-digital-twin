@@ -52,6 +52,7 @@ from pathlib import Path
 from city import path as city_path
 from iteration_reading import run_family
 import registry as _registry
+import results_store
 
 # --- observed side -----------------------------------------------------------
 # G62 one-method journey-to-work column stems (ABS 2021 DataPack naming) and
@@ -358,10 +359,11 @@ def print_report(report, run_dir, family, fam_label, modes, all_t, com_t,
 
 
 def main() -> int:
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 2 or sys.argv[1] in ('-h', '--help'):
         print(__doc__)
         return 2
-    run_dir = Path(sys.argv[1])
+    # a bare run name as every other reader takes it, or a path
+    run_dir = Path(results_store.resolve(sys.argv[1]) or sys.argv[1])
 
     family, fam_note, fam_label = run_family(run_dir.name)
 

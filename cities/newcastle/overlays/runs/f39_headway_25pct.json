@@ -1,6 +1,6 @@
 {
   "overlay": "f39_headway_25pct",
-  "description": "ARM OF FAMILY F39's TREATMENT (D28): f39_control_25pct exactly, plus C.time_weights.service_quality_representation = headway: each boarding charged beta_headway 0.5 x the boarded route's service interval (citysim.ServiceQualityScoring, built 9.164, never run; PDFH frequency penalty 0.45-1.0 x headway by band; the F38 pattern of infrequent rail and ferry over, frequent bus and tram under). WHAT IT READS: the four pt submodes against the control arm (heavy rail, ferry down; bus, light rail up is the hypothesis), pt's share, and every other mode for spill-over. COST: priced by f39_headway_probe_25pct; RUN.gate.wall_ceiling_h = 34 is D28's approval for THIS arm, launched after the control arm reaches its record.",
+  "description": "ARM OF FAMILY F39's TREATMENT (D28): f39_control_25pct exactly, plus C.time_weights.service_quality_representation = headway: each boarding charged beta_headway 0.5 x the boarded route's service interval (citysim.ServiceQualityScoring, built 9.164, never run; PDFH frequency penalty 0.45-1.0 x headway by band; the F38 pattern of infrequent rail and ferry over, frequent bus and tram under). WHAT IT READS: the four pt submodes against the control arm (heavy rail, ferry down; bus, light rail up is the hypothesis), pt's share, and every other mode for spill-over. COST: priced by f39_headway_probe_25pct; RUN.gate.wall_ceiling_h = 34 is D28's approval for THIS arm, launched after the control arm reaches its record. SINCE 9.219 the interval is the boarded line's at the boarding stop (not the route variant's) and it is valued by ATAP M1 (C.time_weights.service_interval_function = atap_m1: 1.4 x min(SI/2, 1.88 sqrt(SI), 20) + 0.1 x SI IVT-minutes) instead of 0.5 x SI with the service day as cap, which charged a once-a-day boarding 900 minutes. COST: NOT APPROVED AT THIS FORM - the daytime probes quoted 37.0-50.5 h against the control's 27.9 h; the ceiling below is D28's 34 h and the lane's D29 asks the form and the ceiling before any launch.",
   "answers_issues": [
     94,
     98,
@@ -14,7 +14,8 @@
     "RUN.machine.xmx": "48g",
     "RUN.controler.create_graphs": false,
     "RUN.controler.write_plans_interval": 25,
-    "C.time_weights.service_quality_representation": "headway"
+    "C.time_weights.service_quality_representation": "headway",
+    "C.time_weights.service_interval_function": "atap_m1"
   },
   "allow_outside_sweep": [
     "RUN.gate.interval_iterations"

@@ -4,12 +4,14 @@ Joins a finished run's realised trips (`output_trips.csv.gz`) to the run's OWN
 persons table (`output_persons.csv.gz`: age, employment, licence, car
 availability, household vehicles) and tabulates per-demographic mode shares -
 every mode individually, never an umbrella row - with the mean trip length
-per cell, which is what #107 reads bike by. This is the MODELLED half of #50;
+per cell, which is what #107 reads bike by - and by trip-distance band, alone
+and within car availability, which is where walk's long trips are read
+(9.219). This is the MODELLED half of #50;
 the observed mode x age counterpart is an acquisition item and no observed
 value appears here.
 
 Usage:
-    python src/analyse/mode_by_demographics.py results/<run-dir>
+    python src/analyse/mode_by_demographics.py <run name or directory>
 
 Writes `_mode_by_demographics.json` into the run directory and prints the
 tables. Sex is the one attribute the run's persons table does not carry; it
@@ -28,13 +30,27 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 import registry as _registry
+import results_store
 from city import path as city_path
 
 # the model's own banding, declared once (B.population.age_bands) and
 # labelled as the population builder labels it (build_population.BAND_LABEL)
 AGE_BANDS = [tuple(b) for b in _registry.load().get('B.population.age_bands')]
 DIMS = ('age_band', 'sex', 'employment', 'licence', 'car_availability',
-        'household_vehicles')
+        'household_vehicles', 'trip_km_band', 'car_availability_by_km')
+# A reporting grid, not a model input (9.219): the trip-distance bands travel
+# surveys publish trips in, so a modelled cell can be set beside a survey's
+# when one is obtained. Walk's observed mean is 0.70 km; the grid resolves it.
+KM_EDGES = (1.0, 2.0, 5.0, 10.0, 20.0)
+
+
+def km_band(dist_km):
+    lo = 0.0
+    for hi in KM_EDGES:
+        if dist_km < hi:
+            return '%04.1f-%04.1f' % (lo, hi)
+        lo = hi
+    return '%04.1f+' % lo
 
 
 def age_band(age):
@@ -95,10 +111,11 @@ def person_attributes(run_dir):
 
 
 def main() -> int:
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 2 or sys.argv[1] in ('-h', '--help'):
         print(__doc__)
         return 2
-    run_dir = Path(sys.argv[1])
+    # a bare run name as every other reader takes it, or a path
+    run_dir = Path(results_store.resolve(sys.argv[1]) or sys.argv[1])
     persons = load_run_persons(run_dir)
     sex, sex_source = load_sex()
 
@@ -127,7 +144,10 @@ def main() -> int:
         except ValueError:
             dist_km = 0.0
         totals[mode] += 1
-        groups = dict(attrs, sex=sex.get(r['person'], 'unknown'))
+        band = km_band(dist_km)
+        groups = dict(attrs, sex=sex.get(r['person'], 'unknown'),
+                      trip_km_band=band,
+                      car_availability_by_km='%s %s' % (attrs['car_availability'], band))
         for dim in DIMS:
             g = groups[dim]
             tables[dim][g][mode] += 1

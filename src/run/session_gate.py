@@ -208,7 +208,7 @@ GATES = [
     # CI's city-contract job checks the generated reference; the gate only
     # regenerated it under --fix, so a stale one passed here and failed there
     # (PR #256)
-    ('config reference', [PY, 'src/registry/render_docs.py', '--check'], False),
+    ('config reference', [PY, 'src/registry/render_docs.py', '--check', '--all-cities'], False),
     ('city agnostic', [PY, 'tests/check_city_agnostic.py'], False),
     ('dead runs say why', [PY, 'src/run/run_failure.py', '--check'], False),
     ('gate watcher', [PY, 'tests/check_gate_watcher.py'], False),
@@ -251,7 +251,7 @@ FIXES = [
     ('run index', [PY, 'src/analyse/build_run_index.py'],
      'the board reads it, and a run that finished after the last session '
      'leaves it one row short'),
-    ('config reference', [PY, 'src/registry/render_docs.py'],
+    ('config reference', [PY, 'src/registry/render_docs.py', '--all-cities'],
      'regenerated from the registry on every field change'),
     ('schema', [PY, 'src/registry/render_schema.py'],
      'required_fields.json and layers.json, regenerated from the registry'),

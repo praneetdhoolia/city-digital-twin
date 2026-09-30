@@ -671,6 +671,11 @@ def main():
     # bare json.dump bypassed it (eighth report, 11 September 2026)
     from registry import outputs                              # noqa: PLC0415
     outputs.write_checked(path, out, 'fit')
+    if not a.out:
+        # a fit taken after the run's last record transition reaches
+        # processed/ here, or a trim deletes the only copy (9.219: the F39
+        # control's _fit.json sat in raw/ alone)
+        _results_store.mirror(run_dir)
     print(out['headline'])
     ms = out['mode_share']
     if ms['errors']:

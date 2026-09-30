@@ -104,9 +104,40 @@ public final class ServiceQualityConfigGroup extends ReflectiveConfigGroup {
     public double headwayUtilsPerMin = Double.NaN;
     @Parameter("reliabilityUtilsPerMin")
     public double reliabilityUtilsPerMin = Double.NaN;
-    /** The longest headway a single-departure route may be charged for. */
+    /** The longest headway a boarding is charged: a line called at its stop once a day. */
     @Parameter("headwayCapMin")
     public double headwayCapMin = Double.NaN;
+
+    public static final String FUNCTION_LINEAR = "linear";
+    public static final String FUNCTION_ATAP_M1 = "atap_m1";
+
+    /**
+     * How an interval becomes equivalent in-vehicle minutes (9.219):
+     * {@code linear} is headwayUtilsPerMin x SI (9.164); {@code atap_m1} is
+     * ivtUtilsPerMin x ATAP M1 equation 4.3.2,
+     * {@code waitWeight x min(waitHalf x SI, waitSqrtMin x sqrt(SI), waitCapMin)
+     * + displacementWeight x SI}. Declared as
+     * C.time_weights.service_interval_function; the five ATAP values arrive by
+     * their own bindings and have no default here.
+     */
+    @Parameter("intervalFunction")
+    public String intervalFunction = FUNCTION_LINEAR;
+    @Parameter("ivtUtilsPerMin")
+    public double ivtUtilsPerMin = Double.NaN;
+    @Parameter("atapWaitWeight")
+    public double atapWaitWeight = Double.NaN;
+    @Parameter("atapDisplacementWeight")
+    public double atapDisplacementWeight = Double.NaN;
+    @Parameter("atapWaitHalf")
+    public double atapWaitHalf = Double.NaN;
+    @Parameter("atapWaitSqrtMin")
+    public double atapWaitSqrtMin = Double.NaN;
+    @Parameter("atapWaitCapMin")
+    public double atapWaitCapMin = Double.NaN;
+
+    public boolean isAtap() {
+        return FUNCTION_ATAP_M1.equals(this.intervalFunction);
+    }
 
     public ServiceQualityConfigGroup() {
         super(NAME);
@@ -152,9 +183,27 @@ public final class ServiceQualityConfigGroup extends ReflectiveConfigGroup {
         if (!isEnabled()) {
             return;
         }
-        require(this.headwayUtilsPerMin, "headwayUtilsPerMin",
-                "C.time_weights.beta_headway");
         require(this.headwayCapMin, "headwayCapMin", "RUN.qsim.end_time_h");
+        if (isAtap()) {
+            require(this.ivtUtilsPerMin, "ivtUtilsPerMin", "C.time_weights.beta_ivt");
+            require(this.atapWaitWeight, "atapWaitWeight",
+                    "C.time_weights.atap_si_wait_weight");
+            require(this.atapDisplacementWeight, "atapDisplacementWeight",
+                    "C.time_weights.atap_si_displacement_weight");
+            require(this.atapWaitHalf, "atapWaitHalf", "C.time_weights.atap_si_wait_half");
+            require(this.atapWaitSqrtMin, "atapWaitSqrtMin",
+                    "C.time_weights.atap_si_wait_sqrt_min");
+            require(this.atapWaitCapMin, "atapWaitCapMin",
+                    "C.time_weights.atap_si_wait_cap_min");
+        } else if (FUNCTION_LINEAR.equals(this.intervalFunction)) {
+            require(this.headwayUtilsPerMin, "headwayUtilsPerMin",
+                    "C.time_weights.beta_headway");
+        } else {
+            throw new IllegalStateException(
+                    "serviceQuality.intervalFunction is '" + this.intervalFunction
+                    + "', which is not " + FUNCTION_LINEAR + " or " + FUNCTION_ATAP_M1
+                    + ". It is declared as C.time_weights.service_interval_function.");
+        }
         if (isReliability()) {
             require(this.reliabilityUtilsPerMin, "reliabilityUtilsPerMin",
                     "C.time_weights.beta_reliability");

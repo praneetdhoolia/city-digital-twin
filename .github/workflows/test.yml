@@ -183,7 +183,7 @@ jobs:
       - name: Every city satisfies the contract
         run: python src/registry/check_city.py --all
       - name: The generated configuration reference is current
-        run: python src/registry/render_docs.py --check
+        run: python src/registry/render_docs.py --check --all-cities
       - name: The build layer has not drifted from the registry
         run: python src/registry/check_legacy_drift.py
       # Every MATSim default this model runs on is declared or accepted with a

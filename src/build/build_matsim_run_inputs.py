@@ -1764,12 +1764,25 @@ def _service_quality_entries(rc, translated):
             'derived',
             '(trip-weighted VOT x C.time_weights.beta_headway x '
             'C.scoring.marginal_utility_of_money) / 60 - a minute of the '
-            "boarded route's service interval costs beta_headway of a minute "
+            "boarded line's service interval at the boarding stop costs beta_headway of a minute "
             'in the vehicle, which at 0.5 is the half-headway convention')
+        if rc.cfg.get('C.time_weights.service_interval_function') == 'atap_m1':
+            # ATAP M1 (9.219) values the interval in equivalent IVT minutes
+            # itself; its five coefficients arrive by their own bindings and
+            # this is the one price that turns those minutes into utils.
+            rc.runtime['serviceQuality.ivtUtilsPerMin'] = (
+                round(rc.scoring['vot_aud_hr_used']
+                      * rc.cfg.get('C.time_weights.beta_ivt')
+                      * rc.cfg.get('C.scoring.marginal_utility_of_money') / 60.0, 6),
+                'derived',
+                '(trip-weighted VOT x C.time_weights.beta_ivt x '
+                'C.scoring.marginal_utility_of_money) / 60 - one in-vehicle '
+                "minute, the unit ATAP M1's service-interval valuation is stated in")
     if rc.cfg.get('C.time_weights.service_quality_representation') != 'absent':
-        # The cap a single-departure route is charged at. A route with one
-        # departure has no gap to measure and its honest interval is the
-        # service day, so the day is what it pays - taken from the declared
+        # The cap a line called at its stop once a day is charged at (9.219:
+        # the interval is the line's at the boarding stop, never a route
+        # variant's). One call has no gap to measure and its honest interval
+        # is the service day, so the day is what it pays - taken from the declared
         # mobsim window rather than typed into the Java. Needs no VOT, so it
         # is emitted under either translation.
         rc.runtime['serviceQuality.headwayCapMin'] = (
@@ -1777,7 +1790,7 @@ def _service_quality_entries(rc, translated):
                           - float(rc.cfg.get('RUN.qsim.start_time_h'))), 4),
             'derived',
             '(RUN.qsim.end_time_h - RUN.qsim.start_time_h) x 60: the service '
-            'day, which is the interval of a route with one daily departure')
+            'day, which is the interval of a line called at its stop once a day')
     if translated and rc.cfg.get('C.time_weights.service_quality_representation') \
             == 'headway_and_reliability':
         rc.runtime['serviceQuality.reliabilityUtilsPerMin'] = (

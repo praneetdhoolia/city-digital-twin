@@ -63,7 +63,10 @@ PROBES = ('citysim.SignalsAssemblyProbe', 'citysim.TramPriorityProbe',
           'citysim.ActivityLinkCapacityProbe',
           # D28 (F39): a household's riders share its one motorcycle and the
           # second waits for it, through the real assembly; off is F38
-          'citysim.HouseholdMotorcycleProbe')
+          'citysim.HouseholdMotorcycleProbe',
+          # 9.219: the headway charge is the boarded line's interval at the
+          # boarding stop, never a single-departure route variant's cap
+          'citysim.ServiceQualityProbe')
 
 
 def java_exe():

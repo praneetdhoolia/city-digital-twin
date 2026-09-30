@@ -419,6 +419,11 @@ STRUCTURAL = {
         'data-use ledger reads it as naming one family of raw files (`*.json` '
         'names everything and nothing): string-matching structure of an audit '
         'that reads the package and reaches no build, no run and no target',
+    'src/analyse/mode_by_demographics.py:KM_EDGES':
+        'a reporting grid (9.219): the trip-distance bands travel surveys '
+        'publish trips in, so a modelled cell can be set beside a survey cell. '
+        'It bins a finished run\'s trips for reading and reaches no build, no '
+        'run and no target',
     'src/analyse/run_view.py:RAMP_MIN':
         'a display scale: the narrowest and widest a congestion ramp is drawn. '
         'The live view reads the run and never writes to it, so no number here '

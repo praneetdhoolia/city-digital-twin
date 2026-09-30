@@ -386,25 +386,9 @@ def main():
 
 
 def all_cities():
-    """Run this check once per city under cities/, each in its own process
-    (the city is resolved at import), and fail if any city fails. The gate
-    and CI both call this: a second city's drift was invisible for a week
-    while every gate ran the default city only (#252)."""
-    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    worst = 0
-    for name in city.available():
-        if not os.path.exists(os.path.join(root, 'cities', name, 'data', 'MANIFEST.csv')):
-            print('== %s: no data/MANIFEST.csv - skipped' % name)
-            continue
-        env = dict(os.environ, **{city.CITY_ENV: name})
-        print('== %s' % name)
-        sys.stdout.flush()
-        rc = subprocess.run([sys.executable, os.path.abspath(__file__)],
-                            env=env, cwd=root).returncode
-        print('== %s: %s' % (name, 'OK' if rc == 0 else 'FAILED rc=%d' % rc))
-        sys.stdout.flush()
-        worst = worst or rc
-    return worst
+    """Run this check once per city under cities/ and fail if any city fails
+    (the gate and CI both call this; #252)."""
+    return city.run_per_city(__file__, needs=os.path.join('data', 'MANIFEST.csv'))
 
 
 if __name__ == '__main__':

@@ -136,6 +136,32 @@ def available():
                   if os.path.isdir(os.path.join(CITIES_DIR, d)))
 
 
+def run_per_city(script, args=(), needs=None):
+    """Run `script` once per city under cities/, each in its own process
+    (a city is resolved at import), print a line per city, and return the
+    worst exit code. A city without the relative path `needs` is skipped
+    and says so. The gate's every-city checks share this loop: a second
+    city's drift went unseen for a week while every gate ran the default
+    city only (#252), and its generated reference went stale the same way
+    (9.219)."""
+    import subprocess
+    import sys
+    worst = 0
+    for name in available():
+        if needs and not os.path.exists(os.path.join(CITIES_DIR, name, needs)):
+            print('== %s: no %s - skipped' % (name, needs))
+            continue
+        env = dict(os.environ, **{CITY_ENV: name})
+        print('== %s' % name)
+        sys.stdout.flush()
+        rc = subprocess.run([sys.executable, os.path.abspath(script)] + list(args),
+                            env=env, cwd=os.path.dirname(CITIES_DIR)).returncode
+        print('== %s: %s' % (name, 'OK' if rc == 0 else 'FAILED rc=%d' % rc))
+        sys.stdout.flush()
+        worst = worst or rc
+    return worst
+
+
 def require(city=None):
     """Fail loudly, and early, on a city that is not there.
 

@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 435 fields are made of
+## What the 442 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 14 | read directly from a raw download |
 | `measured` | 9 | computed from observed data in this package |
 | `derived` | 26 | follows from another registry field by identity |
-| `literature` | 36 | a published value, not specific to this city |
-| `assumed` | 171 | chosen without direct empirical support |
-| `definition` | 179 | fixed by the formulation, not an empirical quantity |
+| `literature` | 41 | a published value, not specific to this city |
+| `assumed` | 172 | chosen without direct empirical support |
+| `definition` | 180 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 397 | usable point value |
+| `active` | 404 | usable point value |
 | `computed` | 6 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 31 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 1 | the datum does not exist in the package; must be swept, never pinned |
@@ -53,14 +53,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 |---|---|---|
 | `B.population.tertiary_attendance_rate_20_24` | 0 - 0.35 | Unobtained: null, and the synthesiser makes nobody in that age range a student, which the report says. |
 
-### What the 206 sweeps are for
+### What the 209 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
-| `answer` | 6 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 192 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `answer` | 7 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
+| `uncertainty` | 194 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 8 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -69,12 +69,13 @@ The `answer` sweeps - the runs the study owes after the gate:
 |---|---|---|
 | `B.motorbike.representation` | `carve` | `carve`, `choice` |
 | `B.ride.pairing_rule` | `both_links` | `both_links`, `route_contains`, `origin_link`, `dest_link`, `window_only` |
+| `C.time_weights.service_interval_function` | `linear` | `linear`, `atap_m1` |
 | `RUN.mode_choice.pt_submode_alternatives` | `aggregate` | `aggregate`, `alternatives` |
 | `RUN.replanning.plan_selector_for_removal` | `WorstPlanSelector` | `WorstPlanSelector`, `SelectRandom`, `SelectExpBetaForRemoval`, `ChangeExpBetaForRemoval`, `PathSizeLogitSelectorForRemoval` |
 | `RUN.replanning.score_msa_representation` | `absent` | `absent`, `at_innovation_cutoff` |
 | `RUN.routing.access_egress_consistency_check` | `reroute` | `reroute`, `disable`, `abortOnInconsistency` |
 
-### The 19 fields held fixed
+### The 22 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
@@ -90,6 +91,9 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `B.taxi.daily_trips_band` - A CONSTRAINT, NEVER A TARGET (9.8/9.13): the pre-registered 67/143 target split cannot grow. The modelled taxi volume is REPORTED against this band; nothing is fitted to it.
 - `B.taxi.fleet_size` - adopted from the reference city, where it is derived from B.taxi.daily_trips_band, B.taxi.vehicle_trips_per_day; those fields are not declared for this city, so the value is held
 - `C.scoring.marginal_utility_of_distance_per_m` - every mode at MATSim's own 0.0: no distance term is priced for this city, which is what every Mumbai case has run with. The reference city derives bike's coefficient as -1/(its obs
+- `C.time_weights.atap_si_wait_cap_min` - ATAP M1 equation 4.1's ceiling on the predicted wait, 20 minutes (a two-hourly service): beyond it a traveller plans to the timetable and the interval is displacement only.
+- `C.time_weights.atap_si_wait_half` - The random-arrival wait as a share of the service interval in ATAP M1 equation 4.1 - half, below the 14-minute crossover with the square-root term. A definition of the turn-up-and-
+- `C.time_weights.atap_si_wait_sqrt_min` - ATAP M1 equation 4.1's square-root wait term, ESTIMATED on Melbourne, Sydney and NZ wait surveys (studies 36-38): at a 14-minute interval the average wait was exactly half, and les
 - `CAL.asc.max_step_utils` - A REFUSAL THRESHOLD, not a model input, and so not swept - the A.signals.scats_match_radius_m precedent for a build guard's tolerance. It is the point past which a proposed step st
 - `CAL.objective.include_counts` - adopted from the reference city, where it is derived from B.external.interaction_rate; those fields are not declared for this city, so the value is held
 - `CAL.search.reading_drift_pct` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
@@ -2733,7 +2737,7 @@ How much the objective moves between iteration 80 and iteration 100 OF THE SAME 
 
 ## Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)
 
-*`cities/mumbai/registry/C_framework.json` - 24 fields*
+*`cities/mumbai/registry/C_framework.json` - 31 fields*
 
 
 
@@ -2758,10 +2762,17 @@ How much the objective moves between iteration 80 and iteration 100 OF THE SAME 
 | `C.scoring.performing_utils_per_h` | `6.0` | utils_per_hour | `assumed` | plus/minus 50% |
 | `C.scoring.utility_of_line_switch` | `-0.5` | utils | `assumed` | plus/minus 50% |
 | `C.scoring.waiting_pt` | `-12.0` | utils_per_hour | `assumed` | plus/minus 50% |
+| `C.time_weights.atap_si_displacement_weight` | `0.1` | ratio_to_ivt | `literature` | 0.1 - 0.15 |
+| `C.time_weights.atap_si_wait_cap_min` | `20.0` | min | `literature` | **held fixed** |
+| `C.time_weights.atap_si_wait_half` | `0.5` | ratio | `literature` | **held fixed** |
+| `C.time_weights.atap_si_wait_sqrt_min` | `1.88` | min_per_sqrt_min | `literature` | **held fixed** |
+| `C.time_weights.atap_si_wait_weight` | `1.4` | ratio_to_ivt | `literature` | 1.4 - 2 |
 | `C.time_weights.beta_headway` | `0.5` | ratio_to_ivt | `literature` | 0.35 - 0.65 |
+| `C.time_weights.beta_ivt` | `1.0` | ratio_to_ivt | `definition` | - |
 | `C.time_weights.beta_reliability` | `1.3` | ratio_to_ivt | `literature` | 0.8 - 1.8 |
 | `C.time_weights.headway_utils_per_min` | `0.05` | utility_per_minute | `assumed` | plus/minus 50% |
 | `C.time_weights.reliability_utils_per_min` | `0.13` | utility_per_minute | `assumed` | plus/minus 50% |
+| `C.time_weights.service_interval_function` | `linear` | categorical | `assumed` | `linear`, `atap_m1` |
 | `C.time_weights.service_quality_representation` | `headway_and_reliability` | categorical | `definition` | - |
 
 #### `C.asc.car_passenger`
@@ -2908,11 +2919,63 @@ Provisional waiting penalty greater than the in-vehicle travel penalty. Moved fr
 
 > **Sweep basis.** Provisional broad behavioural baseline; validate with observed choices before calibration.
 
+#### `C.time_weights.atap_si_displacement_weight`
+
+The IVT multiplier on each minute of service interval as TIMETABLE DISPLACEMENT - the cost of not travelling at the desired time - in ATAP M1's equation 4.3.2. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202 · MATSim `serviceQuality.atapDisplacementWeight` · sweep role **uncertainty***
+
+> **Sweep basis.** ATAP M1 Technical Report Table 26: timetable displacement per minute of service interval 0.10 recommended, 0.15 from the two Sydney studies (35, 38); Wardman's (2014) 0.4-0.6 per displacement minute divided by 4 (the report's footnote 40) is the same 0.10-0.15.
+
+#### `C.time_weights.atap_si_wait_cap_min`
+
+ATAP M1 equation 4.1's third wait term: the predicted wait never exceeds 20 minutes. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202 · MATSim `serviceQuality.atapWaitCapMin`*
+
+> **Held fixed.** ATAP M1 equation 4.1's ceiling on the predicted wait, 20 minutes (a two-hourly service): beyond it a traveller plans to the timetable and the interval is displacement only.
+>
+> *Departure requires: a logged decision*
+
+#### `C.time_weights.atap_si_wait_half`
+
+ATAP M1 equation 4.1's first wait term: wait = 0.5 x SI for frequent services. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202 · MATSim `serviceQuality.atapWaitHalf`*
+
+> **Held fixed.** The random-arrival wait as a share of the service interval in ATAP M1 equation 4.1 - half, below the 14-minute crossover with the square-root term. A definition of the turn-up-and-go wait, not a tunable.
+>
+> *Departure requires: a logged decision*
+
+#### `C.time_weights.atap_si_wait_sqrt_min`
+
+ATAP M1 equation 4.1's second wait term: wait = 1.88 x sqrt(SI) minutes. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202 · MATSim `serviceQuality.atapWaitSqrtMin`*
+
+> **Held fixed.** ATAP M1 equation 4.1's square-root wait term, ESTIMATED on Melbourne, Sydney and NZ wait surveys (studies 36-38): at a 14-minute interval the average wait was exactly half, and less frequent services flattened to just under 15 minutes hourly. Held at the estimate; the sweep of the function is carried by the two weights.
+>
+> *Departure requires: a logged decision*
+
+#### `C.time_weights.atap_si_wait_weight`
+
+The IVT multiplier on the EXPECTED wait inside ATAP M1's service-interval valuation (equation 4.3.2). Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202 · MATSim `serviceQuality.atapWaitWeight` · sweep role **uncertainty***
+
+> **Sweep basis.** ATAP M1 Technical Report Table 4: wait time 1.40 for the Australian/NZ review, 1.75-2 in Wardman's (2014) OECD review; equation 4.3.2 uses 1.4. The upper end is C.time_weights.beta_wait's 2.0.
+
 #### `C.time_weights.beta_headway`
 
 Weight on service headway, as a ratio to in-vehicle time. Adopted from the reference city's declaration; not a Mumbai observation.
 
 ***literature** · status **active** · DECISIONS.md §9.202 · sweep role **uncertainty***
+
+#### `C.time_weights.beta_ivt`
+
+In-vehicle time is the numeraire the other weights are expressed against. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***definition** · status **active** · DECISIONS.md §9.202*
 
 #### `C.time_weights.beta_reliability`
 
@@ -2935,6 +2998,14 @@ Provisional price of delay standard deviation measured from the preceding iterat
 ***assumed** · status **active** · DECISIONS.md §9.204 · MATSim `serviceQuality.reliabilityUtilsPerMin` · sweep role **uncertainty***
 
 > **Sweep basis.** Provisional broad behavioural baseline; validate with observed choices before calibration.
+
+#### `C.time_weights.service_interval_function`
+
+The service-interval function of citysim.ServiceQualityScoring. Switched on for this baseline ("linear"): service quality is `absent` in this baseline, so no interval is charged at all; `linear` is the form the gate would switch on first and adopts no Australian appraisal function for Mumbai (the ATAP M1 coefficients are adopted as the reference city declares them and are read by nothing here).
+
+***assumed** · status **active** · DECISIONS.md §9.202 · MATSim `serviceQuality.intervalFunction` · sweep role **answer***
+
+> **Sweep basis.** adopted from the reference city: How a boarding's service interval SI (the boarded line's interval at the boarding stop around the boarding time) becomes equivalent in-vehicle minutes, read only while C.time_weights.service_quality_representation is on. `linear` is C.time_weights.beta_headway x SI with the service day as the cap, the form built in 9.164: at 0.5 it charges 5 minutes at a 10-minute service, 30 at hourly and 900 at once a day. `atap_m1` is the Australian appraisal function (ATAP M1 Public Transport Supporting Technical Report (Infrastructure and Transport Ministers, Australian Transport Assessment and Planning Guidelines), section 4.3, equation 4.3.2): weighted expected wait plus timetable displacement, 1.4 x min(0.5 x SI, 1.88 x sqrt(SI), 20) + 0.1 x SI - 8, 26 and 208 minutes at the same intervals. The F39 probe (9.219) found 706-890 boardings an iteration at once-a-day line-stops (school and peak-only services), each charged 900 minutes by the linear form. WHAT THE SWEEP ANSWERS: whether the frequency penalty the pair tests is read on its published Australian shape or on a linear convention the evidence says overstates long intervals fourfold.
 
 #### `C.time_weights.service_quality_representation`
 

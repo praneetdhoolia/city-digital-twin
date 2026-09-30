@@ -292,7 +292,12 @@ def main():
     ap.add_argument('--out', default=OUT)
     ap.add_argument('--check', action='store_true',
                     help='exit 1 if the file on disk differs from what would be generated')
+    ap.add_argument('--all-cities', action='store_true',
+                    help='do the same for every city under cities/, each in its own '
+                         'process (9.219: a second city\'s reference went stale unseen)')
     a = ap.parse_args()
+    if a.all_cities:
+        raise SystemExit(_city.run_per_city(__file__, ['--check'] if a.check else []))
     fields, origin = registry.load_registry()
     text = render(fields, origin)
     if a.check:
