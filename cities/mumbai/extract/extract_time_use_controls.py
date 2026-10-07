@@ -103,9 +103,12 @@ def main():
                               'Activity participation is not workforce participation or a trip rate.',
                               'Combined geography and sex categories overlap their components.'])
     Path(city.path('data/processed/observed/_time_use_controls_audit.json')).write_text(
-        json.dumps(audit, indent=2)+'\n', encoding='utf-8')
+        json.dumps(audit, indent=2)+'\n', encoding='utf-8', newline='\n')
     print(json.dumps({k:v for k,v in audit.items() if k not in ('statement_headers','limitations')}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

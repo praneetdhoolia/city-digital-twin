@@ -33,6 +33,23 @@
         "src/build/build_activity_chains.py"
       ]
     },
+    "B.bike.pce": {
+      "units": "passenger_car_equivalents",
+      "source": "literature",
+      "sweep": [
+        0.1,
+        0.4
+      ],
+      "sweep_basis": "Austroads and HCM passenger-car-equivalent ranges for on-road bicycles run from about 0.1 (wide kerbside lane, filtering) to about 0.4 (narrow lane, no filtering). No local lane-width-conditioned observation exists, so the class low-mid value is taken and the published range is swept.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 0.2,
+      "description": "Road capacity a network-simulated cyclist consumes. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
     "B.census.thin_cell_min_journeys": {
       "units": "journeys",
       "source": "definition",
@@ -63,6 +80,50 @@
         "src/analyse/map_count_stations.py"
       ]
     },
+    "B.freight.length_m": {
+      "units": "metres",
+      "source": "literature",
+      "status": "active",
+      "held_fixed": {
+        "rule": "Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.freight.pce), not through vehicle length, so no output varies across this value. Recorded because the vehicle type must state a length; a typical rigid-truck figure is used.",
+        "decisions_ref": "9.49"
+      },
+      "value": 12.5,
+      "description": "Stated length of the truck vehicle type in the vehicles file. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
+    "B.freight.max_speed_kmh": {
+      "units": "km/h",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 100.0,
+      "description": "Maximum speed of a modelled heavy vehicle: the NSW regulated limit for vehicles over 4.5 t GVM. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
+    "B.freight.pce": {
+      "units": "passenger_car_equivalents",
+      "source": "literature",
+      "sweep": [
+        1.5,
+        3.5
+      ],
+      "sweep_basis": "Austroads and HCM passenger-car-equivalent ranges for heavy commercial vehicles on level urban roads run from about 1.5 (rigid truck, flat) to 3.5 (articulated, interrupted flow); no Newcastle-specific fleet mix is observed, so the class mid-value is taken and the published range is swept. For scale: the bus fleet in this package carries the pt2matsim literature figure 2.8.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 2.0,
+      "description": "Passenger-car equivalents of one modelled heavy vehicle - how much road capacity and storage a truck consumes in the mobsim relative to a car. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
     "B.mode.bike_feasible_km": {
       "value": 0.0,
       "units": "km_straight_line",
@@ -80,6 +141,38 @@
       "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.modeAvailability.walkFeasibleKm on 21 September 2026: one key per MATSim parameter.",
       "decisions_ref": "9.202",
       "matsim_param": "modeAvailability.walkFeasibleKm"
+    },
+    "B.motorbike.length_m": {
+      "units": "metres",
+      "source": "literature",
+      "status": "active",
+      "held_fixed": {
+        "rule": "Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.motorbike.pce), not through vehicle length, so no output varies across this value. Recorded because the vehicle type must state a length; a typical motorcycle figure is used.",
+        "decisions_ref": "9.52"
+      },
+      "value": 2.2,
+      "description": "Stated length of the motorbike vehicle type in the vehicles file. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
+    "B.motorbike.pce": {
+      "units": "passenger_car_equivalents",
+      "source": "literature",
+      "sweep": [
+        0.3,
+        0.75
+      ],
+      "sweep_basis": "Austroads and HCM passenger-car-equivalent ranges for motorcycles in urban traffic run from about 0.3 (filtering, uncongested) to 0.75 (no filtering, interrupted flow); no local fleet-mix or filtering observation exists, so the class low-mid value is taken and the published range is swept.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 0.4,
+      "description": "Passenger-car equivalents of one modelled motorbike - it consumes LESS road capacity than a car. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
     },
     "B.motorbike.representation": {
       "units": "enum",
@@ -528,6 +621,18 @@
       "description": "Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.modeAvailability.taxiMinAge on 21 September 2026: one key per MATSim parameter.",
       "decisions_ref": "9.202",
       "matsim_param": "modeAvailability.taxiMinAge"
+    },
+    "B.walk.pce": {
+      "units": "passenger_car_equivalents",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 0.0,
+      "description": "Road capacity a network-simulated pedestrian consumes: zero, by definition - a walker moves along the network beside the carriageway (the sidewalk, expressed in queue arithmetic), physically present on every link (real LinkEnter/LinkLeave events, speed-capped at the declared walking speed) while neither impeding nor being impeded by motor traffic. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
     }
   }
 }

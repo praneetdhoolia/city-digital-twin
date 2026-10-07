@@ -114,15 +114,46 @@ public final class ScatsPriorityProbe {
             .append(",\"tram_drop_s\":").append(r.first(r.drops, TRAM))
             .append(",\"refused\":").append(r.refused).append('}');
 
+        // --- the barrier precondition (sixteenth report) ----------------------
+        // Discharge's cells are written on the handler thread and read on the
+        // QSim thread; the factory refuses a config without the sim-step
+        // barrier at start-up, naming itself, and builds under the barrier.
+        final boolean refusedOff = factoryRefuses(false);
+        final boolean builtOn = !factoryRefuses(true);
+        ok &= refusedOff && builtOn;
+        json.append(",\"barrier_off_refused_at_startup\":").append(refusedOff)
+            .append(",\"barrier_on_builds\":").append(builtOn);
+
         json.append(",\"ok\":").append(ok).append('}');
         System.out.println(json);
         System.exit(ok ? 0 : 1);
     }
 
-    /** One controller driven over two cycles with one detection. */
-    private static Run run(final String mode, final int tramStage,
-                           final int detectAt) {
-        final ScatsConfigGroup params = new ScatsConfigGroup();
+    /** Does {@link ScatsSignalController.Factory} refuse a config whose
+     *  eventsManager.synchronizeOnSimSteps is {@code barrier}, by name? */
+    private static boolean factoryRefuses(final boolean barrier) {
+        final org.matsim.core.config.Config config =
+                org.matsim.core.config.ConfigUtils.createConfig();
+        config.eventsManager().setSynchronizeOnSimSteps(barrier);
+        scatsFixture(org.matsim.core.config.ConfigUtils.addOrGetModule(
+                config, ScatsConfigGroup.NAME, ScatsConfigGroup.class));
+        org.matsim.core.config.ConfigUtils.addOrGetModule(config,
+                TramPriorityConfigGroup.NAME, TramPriorityConfigGroup.class).mode =
+                TramPriorityConfigGroup.MODE_OFF;
+        try {
+            new ScatsSignalController.Factory(config,
+                    org.matsim.core.events.EventsUtils.createEventsManager(),
+                    org.matsim.core.scenario.ScenarioUtils.createScenario(config));
+            return false;
+        } catch (final IllegalStateException e) {
+            return e.getMessage().contains("ScatsSignalController")
+                    && e.getMessage().contains("synchronizeOnSimSteps");
+        }
+    }
+
+    /** The SCATS fixture every check here runs on: fixed time, so nothing
+     *  adapts underneath the priority being measured. */
+    private static ScatsConfigGroup scatsFixture(final ScatsConfigGroup params) {
         params.regime = ScatsConfigGroup.REGIME_FIXED_TIME;
         params.targetDegreeSaturation = 0.9;
         params.dsDeadband = 0.05;
@@ -132,6 +163,13 @@ public final class ScatsPriorityProbe {
         params.dsSmoothing = 0.5;
         params.saturationFlowVehHLane = 1900;
         params.minGreenS = 5;
+        return params;
+    }
+
+    /** One controller driven over two cycles with one detection. */
+    private static Run run(final String mode, final int tramStage,
+                           final int detectAt) {
+        final ScatsConfigGroup params = scatsFixture(new ScatsConfigGroup());
         final TramPriorityConfigGroup priority = new TramPriorityConfigGroup();
         priority.mode = mode;
         priority.priorityGroupId = TRAM;

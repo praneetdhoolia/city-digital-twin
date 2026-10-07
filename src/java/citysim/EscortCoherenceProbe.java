@@ -141,9 +141,89 @@ public final class EscortCoherenceProbe {
             .append(Integer.toHexString(print.hashCode())).append('"')
             .append(",\"fingerprint_chars\":").append(print.length());
 
+        // --- 6. a day that visits the same links twice ---------------------
+        // DOCUMENTS today's behaviour, asserting nothing about it (sixteenth
+        // report): the listener re-finds the decohered trip in the plan copy
+        // by its origin and destination LINKS (sameTripIn) and takes the first
+        // match, so a decoherence on the SECOND home->school run of a day is
+        // re-proposed on the FIRST. The child below rides the morning run and
+        // walks the afternoon one beside the driver's afternoon escort leg;
+        // where the proposal lands is printed, so the family that changes the
+        // re-find (by trip index) is measured against this, not assumed.
+        final Scenario twice = repeatedLinks();
+        replan(twice, 0);
+        final String childModes = modes(twice, "c_twice");
+        final int childPlans = plans(twice, "c_twice");
+        final String landedOn = childPlans == 1 ? "none"
+                : "ride,ride,ride,ride".equals(childModes) ? "second_subtour"
+                : "ride,ride,walk,walk".equals(childModes) ? "first_subtour"
+                : "other";
+        json.append(",\"repeated_links_child_modes\":\"").append(childModes)
+            .append("\",\"repeated_links_child_plans\":").append(childPlans)
+            .append(",\"repeated_links_proposal_landed_on\":\"").append(landedOn)
+            .append('"');
+
         json.append(",\"ok\":").append(ok).append('}');
         System.out.println(json);
         System.exit(ok ? 0 : 1);
+    }
+
+    /**
+     * One household whose driver makes the school run twice - a morning and
+     * an afternoon car tour to an {@code escort} activity on the SAME links -
+     * and whose child rides the morning tour and walks the afternoon one.
+     * Rates of one and the inferred scope, so the one decoherence is proposed
+     * on the first replanning.
+     */
+    private static Scenario repeatedLinks() {
+        final Scenario scenario = scenario(1.0, 1.0,
+                RidePairingConfigGroup.COHERENCE_INFERRED, 5, 0);
+        final Population pop = scenario.getPopulation();
+        personTwice(pop, "d_twice", "t", EscortCoherenceListener.CAR_ALWAYS,
+                    TransportMode.car, TransportMode.car,
+                    EscortCoherenceListener.ESCORT_ACTIVITY);
+        personTwice(pop, "c_twice", "t", "never",
+                    TransportMode.ride, TransportMode.walk, "education");
+        return scenario;
+    }
+
+    /** A person on two home-anchored tours to the school link in one day:
+     *  the morning one by {@code amMode} (8.0 out, 8.1 back) and the
+     *  afternoon one by {@code pmMode} (15.0 out, 15.1 back). */
+    private static void personTwice(final Population pop, final String id,
+                                    final String household, final String carAvail,
+                                    final String amMode, final String pmMode,
+                                    final String outType) {
+        final Person p = pop.getFactory().createPerson(Id.createPersonId(id));
+        p.getAttributes().putAttribute(
+                RidePairingEngine.HOUSEHOLD_ATTRIBUTE, household);
+        p.getAttributes().putAttribute(
+                EscortCoherenceListener.CAR_AVAIL, carAvail);
+        final Plan plan = PopulationUtils.createPlan(p);
+        plan.addActivity(activity(HOME, HOME_LINK, HOME_XY, 8.0));
+        plan.addLeg(leg(amMode));
+        plan.addActivity(activity(outType, SCHOOL_LINK, SCHOOL_XY, 8.1));
+        plan.addLeg(leg(amMode));
+        plan.addActivity(activity(HOME, HOME_LINK, HOME_XY, 15.0));
+        plan.addLeg(leg(pmMode));
+        plan.addActivity(activity(outType, SCHOOL_LINK, SCHOOL_XY, 15.1));
+        plan.addLeg(leg(pmMode));
+        plan.addActivity(PopulationUtils.createActivityFromCoordAndLinkId(
+                HOME, HOME_XY, HOME_LINK));
+        p.addPlan(plan);
+        p.setSelectedPlan(plan);
+        pop.addPerson(p);
+    }
+
+    /** The selected plan's leg modes, comma-separated, in plan order. */
+    private static String modes(final Scenario s, final String id) {
+        final StringBuilder sb = new StringBuilder();
+        for (final PlanElement pe : get(s, id).getSelectedPlan().getPlanElements()) {
+            if (pe instanceof Leg) {
+                sb.append(sb.length() == 0 ? "" : ",").append(((Leg) pe).getMode());
+            }
+        }
+        return sb.toString();
     }
 
     private static void replan(final Scenario scenario, final int iteration) {

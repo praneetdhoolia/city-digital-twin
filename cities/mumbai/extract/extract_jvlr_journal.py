@@ -152,9 +152,12 @@ def main():
                       'Road inventory and temporal variability are extracted separately by extract_jvlr_inventory.py.',
                   ])
     Path(city.path('data/processed/acquisition/jvlr_journal_audit.json')).write_text(
-        json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+        json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({key: report[key] for key in ('classified_count_rows', 'road_control_rows', 'pcu_factor_rows', 'check_status_counts')}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

@@ -1,5 +1,5 @@
 {
-  "description": "Mumbai's recorded manifest debt - the CITY-OWNED half of tests/check_manifest.py. Each rule's paths are the exact rows that fail it; `ceiling` is their count and may only FALL. Adding a path fails unless the ceiling is raised in the same change with a new ceiling_log entry carrying the date and the reason; a listed path that no longer fails must be deleted and the ceiling lowered. A city with no file carries no debt.",
+  "description": "Mumbai's recorded manifest debt - the CITY-OWNED half of tests/check_manifest.py. Each rule's paths are the exact rows that fail it; `ceiling` is their count and may only FALL. Adding a path fails unless the ceiling is raised in the same change with a new ceiling_log entry carrying the date, the reason and `\"raised\": true` - an explicit, dated, reasoned raise is the only way the ceiling goes up; a listed path that no longer fails must be deleted and the ceiling lowered. A city with no file carries no debt.",
   "rules": {
     "raw_without_retrieved": {
       "ceiling": 1,
@@ -65,6 +65,67 @@
         "scenarios/matsim/BASE/network.xml.gz",
         "schedules/baseline_multimodal.zip",
         "schedules/baseline_regional.zip"
+      ]
+    },
+    "processed_without_source": {
+      "ceiling": 19,
+      "reason": "A derived row whose ancestry resolved to no declared source: the acquisition audits, the rows of lineage_scope none (recorded under that rule too) and the assembled run inputs. Measured 8 October 2026 when the rule was introduced (sixteenth report); the manifest is not regenerated over the drifted bytes (#252), so these leave with the one-sitting rebuild.",
+      "ceiling_log": [
+        {
+          "date": "2026-10-08",
+          "ceiling": 19,
+          "reason": "measured when the rule was introduced (sixteenth report)"
+        }
+      ],
+      "paths": [
+        "data/processed/acquisition/baseline_suburban_timetable.json",
+        "data/processed/acquisition/mts_2017_audit.json",
+        "data/processed/acquisition/nfhs_household_possessions_audit.json",
+        "data/processed/acquisition/ogd_metro_ridership_audit.json",
+        "data/processed/acquisition/source_inventory.json",
+        "data/processed/acquisition/source_use.json",
+        "data/processed/acquisition/transit_fleet_assignment.json",
+        "data/processed/derived/_vehicle_possession_growth_report.json",
+        "data/processed/derived/vehicle_possession_growth.csv",
+        "data/processed/geospatial/_activity_location_attraction_report.json",
+        "data/processed/geospatial/activity_location_attraction.csv",
+        "data/processed/observed/mts_2017_office_category_stock.csv",
+        "data/processed/observed/mts_state_category_stock_series.csv",
+        "data/processed/observed/nfhs_household_vehicle_possession.csv",
+        "data/processed/observed/ogd_metro_daily_ridership.csv",
+        "scenarios/matsim/BASE/WEEKDAY/config.xml",
+        "scenarios/matsim/BASE/WEEKDAY/vehicles.xml",
+        "scenarios/matsim/BASE/parking_prices.tsv",
+        "schedules/baseline_suburban_timetable.zip"
+      ]
+    },
+    "produced_by_not_declaring": {
+      "ceiling": 16,
+      "reason": "A row attributed to the adapter that owns its directory while another script declares the file as its own output (an exact OUTPUT_INPUTS key); build_manifest.lineage_for reads the declarations since 8 October 2026 (sixteenth report), and these rows are corrected by regenerating the manifest, which waits on the rebuild (#252).",
+      "ceiling_log": [
+        {
+          "date": "2026-10-08",
+          "ceiling": 16,
+          "reason": "measured when the rule was introduced (sixteenth report)"
+        }
+      ],
+      "paths": [
+        "data/processed/acquisition/baseline_suburban_timetable.json",
+        "data/processed/acquisition/mts_2017_audit.json",
+        "data/processed/acquisition/nfhs_household_possessions_audit.json",
+        "data/processed/acquisition/ogd_metro_ridership_audit.json",
+        "data/processed/acquisition/source_use.json",
+        "data/processed/acquisition/transit_fleet_assignment.json",
+        "data/processed/derived/_vehicle_possession_growth_report.json",
+        "data/processed/derived/vehicle_possession_growth.csv",
+        "data/processed/geospatial/_activity_location_attraction_report.json",
+        "data/processed/geospatial/activity_location_attraction.csv",
+        "data/processed/observed/mts_2017_office_category_stock.csv",
+        "data/processed/observed/mts_state_category_stock_series.csv",
+        "data/processed/observed/nfhs_household_vehicle_possession.csv",
+        "data/processed/observed/ogd_metro_daily_ridership.csv",
+        "networks/matsim/schedules/baseline_regional/fleet_assignments.json",
+        "schedules/baseline_suburban_timetable.zip"
       ]
     }
   }

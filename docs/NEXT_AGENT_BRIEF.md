@@ -1,18 +1,19 @@
 # Brief for the next agent
 
-**Written:** 30 September 2026 (sixty-fourth session) · **Open family:** `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk` · **Commit:** this handoff's
+**Written:** 8 October 2026 (sixty-fifth session) · **Open family:** `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk` · **Commit:** `e25deff2`
 *A pointer, not a source: [GOAL.md](GOAL.md), the [board](STATUS.md) and the [position pages](positions/) win.*
 
 ## §0 Verify first — facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **No arm runs; the machine is idle.** F39's control `20260929T072135_250it_25pct` is a RESULT (`ran_to_last_iteration` at 250, 27.9 h): 2 of 12 inside 10 % (car, motorbike −4.1 %), read in §9.219. | `python src/analyse/report_mode_ridership.py --run 20260929T072135_250it_25pct --it 250` |
-| **F39's treatment is unrun.** Its overlays set `C.time_weights.service_interval_function` = `atap_m1`; the three probes on disk (`20260930T111836`, `T123858`, `T140500` `_4it_25pct`) priced EARLIER builds of the charge and are citable for their clocks only. D29 (the form and the ceiling) is unanswered. | `python src/analyse/lane.py --ask` · `python src/analyse/arm_cost.py --run-config f39_headway_25pct` |
-| Windows Update is paused until **2 October 2026 21:28 AEST** (the user's pause, D19); the launcher refuses a launch whose ceiling outlasts it — a 40 h arm must start before 05:28 on 1 October or wait for a new pause. | `python -c "import sys; sys.path.insert(0,'src/run'); import procs,time; print(time.ctime(procs.updates_paused_until()))"` |
-| Registry **600** fields (six ATAP M1 fields added, §9.219); manifest **968** files (**733 CC-BY / 220 ODbL** + 15 bespoke), both cities verifying. | `python src/run/session_gate.py` |
-| This session's one PR (`praneetdhoolia/f37-quality-to-four`): open, or merged and the branch deleted. | `gh pr list --state all --head praneetdhoolia/f37-quality-to-four` |
-| Open issues after this handoff's issue pass (#258 closed on §9.219; F39's control measurements posted on #30 #86 #94 #107 #145 #162 #175). | `gh issue list --state open --limit 100` · `python src/run/issue_gate.py` |
+| **No arm runs; the machine is idle.** F39's control `20260929T072135_250it_25pct` is a RESULT (`ran_to_last_iteration` at 250): 2 of 12 inside 10 % (car, motorbike), read in §9.219 and assessed by the sixteenth report (§9.220). | `python src/analyse/report_mode_ridership.py --run 20260929T072135_250it_25pct --it 250` |
+| **F39's treatment is unrun and bound to #175 (reopened).** Its overlays set `C.time_weights.service_interval_function` = `atap_m1`; the three probes on disk (`20260930T111836`, `T123858`, `T140500` `_4it_25pct`) priced EARLIER builds and are citable for their clocks only; the pair quote is the control's own wall. D29 (the form and the ceiling) is unanswered - the user answered on 7 October "report and fixes first, then the run". | `python src/analyse/lane.py --ask` · `python src/analyse/arm_cost.py --run-config f39_headway_25pct` |
+| **The host cannot launch today**: Windows has a restart pending and its update pause expired on 2 October (D19: the user restarts and re-pauses; never change the settings yourself); `WmiPrvSE.exe` held 1.92 cores above the new 1.0-core bar at the handoff. | `python -c "import sys; sys.path.insert(0,'src/run'); import procs,time; print(procs.restart_pending(), time.ctime(procs.updates_paused_until()))"` |
+| Registry **604** fields (four host and fraction fields added, §9.220); manifest **968** files (**733 CC-BY / 220 ODbL** + 15 bespoke), both cities verifying; Mumbai's registry at its own count after #241. | `python src/run/session_gate.py` |
+| This session's one PR (`praneetdhoolia/sixteenth-report-and-gold-standard`): open, or merged and the branch deleted. | `gh pr list --state all --head praneetdhoolia/sixteenth-report-and-gold-standard` |
+| Open issues after this handoff's issue pass (#175 reopened with its measurement; #260 and #261 filed; #210 #211 #212 #229 #232 #234 #241 #242 #253 closed on §9.220). | `gh issue list --state open --limit 100` · `python src/run/issue_gate.py` |
+| Four decisions wait on the user: D29 (the treatment's form and ceiling), D30 (the replication band), D31 (the TfNSW request), D32 (#228, #209, #206). | `python src/analyse/lane.py --ask` |
 
 Then: `python src/run/session_gate.py`.
 
@@ -29,48 +30,35 @@ Then: `python src/run/session_gate.py`.
 
 **Decisions required** (`python src/analyse/lane.py --ask`; recorded with `--answer`):
 - **D29.** F39's treatment arm: which service-interval charge should it test, and at what cost ceiling? The control is a result (2 of 12 inside 10 %, motorbike -4.1 %). The approved linear charge was keyed on route variants and is fixed to the boarded line at its stop; the linear form still charges a once-a-day service 900 IVT-minutes, and the daytime probes quote 37-50 h against the control's actual 27.9 h. Options: ATAP M1 function, 40 h cap (Recommended) · Linear as approved, 40 h cap · Hold it; fix walk and no-route first (9.219; asked 30 September 2026, answered 'Make any fixes and handoff' - the fixes are in, the form and the ceiling are still open; #175)
+- **D30.** The replication band: three short arms at different seeds on F39 (about 100 iterations each, ~11 h each at the control's pace) to set CAL.objective.replication_band_pp, which ships 0.0 so every pair difference is read as a diff rather than a band. Recommended by ten consecutive reports and never taken. Options: Run the three seeds after the F39 pair (Recommended) · Decline: read pairs as diffs with the stated caveat (sixteenth report recommendation 16; 20260929T045645:3 (tenth issuance); #163; CAL.objective.replication_band_pp = 0.0; #163)
+- **D31.** The TfNSW bespoke-table request (mode by age, trip-length distribution by mode, occupancy by purpose, the unfolded Other) is drafted at docs/requests/tfnsw_hts_bespoke_tables.md and held since 16 September; the four cells exist nowhere public (searched nine times). Sending it is the operator's act. Options: Send it to opendataprogram@transport.nsw.gov.au (Recommended) · Send it through the TPA request form · Decline: the derived targets stand (sixteenth report recommendation 16; 20260929T045645:17 (ninth issuance); #50; docs/requests/tfnsw_hts_bespoke_tables.md; #50)
+- **D32.** Three open issues wait on a user decision no run settles: #228 (the reading budget in lines while the board's lines run to 600 characters), #209 (the 25 %-only rule and the stated-cost approval enforced by nobody but the operator), #206 (requirements pinned by version, not hash). Options: Take the recommended defaults for all three (Recommended) · Take #228 and #206 as recommended; record approvals in a file the launcher reads · Decide each separately at the next onboard (sixteenth report issue ledger (present); #228 #209 #206 AWAITING-DECISION lines; #228 #209 #206)
 
 Decided: D24 = Keep using the PC; accept the risk (2026-09-27) · D25 = Warm start at 75, 34 h cap (Recommended) (2026-09-28) · D26 = Warm start at 175, 18 h cap (Recommended) (2026-09-28) · D27 = Resume at 225, 4 h cap (Recommended) (2026-09-29) · D28 = Pair: fixes vs fixes+headway (Recommended) (2026-09-29)
 <!-- generated:lane end -->
 
-Ask D29 first. If the treatment goes ahead, probe it on the ATAP build (`f39_headway_probe_25pct`) in the host's quiet hours — the daytime probes priced the host (27.7 → 50.5 h on one code path, §9.219) — and read it against the control with `python src/analyse/compare_runs.py 20260929T072135_250it_25pct <treatment> --modes`. The walk design (`short-trip-and-carless-choice`) needs no arm and can run alongside. A fresh `/project-report` follows the treatment's reading.
+Ask D29-D32 first. The arm cannot launch until the user has restarted the host and paused updates past the ceiling; then probe `f39_headway_probe_25pct` in the host's quiet hours (the launcher now refuses a loaded host and `arm_cost.py` refuses a probe priced above `RUN.machine.probe_max_host_cpu_pct`), launch at the approved ceiling in its own PR, and read it with `python src/analyse/compare_runs.py 20260929T072135_250it_25pct <treatment> --modes`. The walk design (`short-trip-and-carless-choice`: a car terminal time and the car-less alternative) is the family after F39 and needs no arm to design. A fresh `/project-report` follows the treatment's reading, not this session.
 
 ## §2 Traps — newest first, at most ten, each with what it cost
 
-1. **A Java class with no probe has never run** (§9.219): `ServiceQualityScoring` was compiled in
-   §9.164 and keyed its headway on route variants; the first probe of the approved treatment
-   charged an all-day bus 900 IVT-minutes a boarding. Write the probe before the arm.
-2. **A daytime probe prices the host, not the build** (§9.219): three probes of one code path
-   recurred at 392, 526 and 721 s with every phase slowing together. Quote a pair's second arm
-   from the first arm's own wall; probe at night when the price decides an approval.
-3. **An environment variable picks the city** (§9.219): `adopt_framework_fields.py` read Newcastle
-   as "mine" and wrote nothing until run with `CITYSIM_CITY=mumbai`; every city script needs it.
-4. **An arm launched `--foreground` from a session dies with the session** (§9.215): the launcher
-   now refuses it without the scheduler's nonce; `run.py --stop` records a dead run as `died`.
-5. **A demand rebuild moves the measured access reach** (§9.214): re-measure over every scenario
-   and day and re-declare `RUN.transit_router.access_max_radius_m` (reach + 200).
-6. **The chains build doubles under the mobility kernel** (§9.214): ~85 min; never wrap a build in `timeout`.
-7. **A JSON writer at the wrong indent rewrites the whole file** (§9.213): read the file's own indent.
-8. **A refactor is proven by a run, and only the integers are exact** (§9.213, §9.211).
-9. **A patch prepared on an issue must be re-anchored before it is applied** (§9.211).
-10. **A keyed failure quotes its URL** (§9.209): never print a request URL.
-Retired by checks this session: a heredoc or bare `python -` (`.claude/hooks/block-stdin-trap.sh`),
-a CI check the gate skips (`tests/unit/test_gate_covers_ci.py`), a second city's stale generated
-reference (`render_docs.py --all-cities`), a NUL byte in a source (`test_sources_are_text.py`), a
-resume whose cutoff moves (`run_matsim.refuse_cutoff_mismatch`).
+1. **An arm bound to a closed issue passes the issue gate vacuously** (§9.220): #175 was closed on 13 September while the lane, the overlay, the board and the brief all named it. Retired by checks: `issue_gate.py` refuses an overlay naming a closed issue; `lane.py --check` refuses one behind an open task.
+2. **A fact typed beside a generated one goes stale on its own** (§9.220): 24 contradictions under 71 green currency claims (the lane's family stamp, the board citing closed issues, two pages stamped F35). Retired by checks: `lane.py --check` pins the family, `positions.py --check --stale`, `build_status_board.py` writes the brief's Commit.
+3. **A one-city gate is green while the second city reads 233** (§9.220): `check_hardcoding`, `check_doc_currency` and `check_doc_shape` ran for the default city only. Retired by checks: `--all-cities` on all three in the gate and CI.
+4. **A Java class with no probe has never run** (§9.219): `ServiceQualityScoring` charged an all-day bus 900 IVT-minutes a boarding. Write the probe before the arm; `java-probes.yml` now runs the thirteen in CI.
+5. **A daytime probe prices the host, not the build** (§9.219): three probes of one code path recurred at 392, 526 and 721 s. Retired by checks: `arm_cost.py` refuses a probe above the host-CPU bar and prints the family's control wall as the pair quote.
+6. **An environment variable picks the city** (§9.219): `adopt_framework_fields.py` wrote nothing until run with `CITYSIM_CITY=mumbai`; every city script needs it.
+7. **A demand rebuild moves the measured access reach** (§9.214): re-measure over every scenario and day and re-declare `RUN.transit_router.access_max_radius_m` (reach + 200).
+8. **The chains build doubles under the mobility kernel** (§9.214): ~85 min; never wrap a build in `timeout`.
+9. **A JSON writer at the wrong indent rewrites the whole file** (§9.213): read the file's own indent.
+10. **A refactor is proven by a run, and only the integers are exact** (§9.213, §9.211); this session proved every split and every reader change byte-identical on the control's own outputs before keeping it (§9.220).
+Retired by checks this session: an arm launched `--foreground` (`run.py` refuses it; the POSIX launch has its own session), a heredoc or bare `python -` (`.claude/hooks/block-stdin-trap.sh`), a PR title over 72 characters (`hooks/block-long-pr-title.sh`, `commit-trailers.yml`), a wall-clock stamp in a hashed artefact (`check_hardcoding`'s determinism rule), a stage-splitter that mis-scopes a name (`test_refactor_tools.py`).
 
 ## §3 Standing directives and approvals
 
-- **No run approval stands.** D28's control approval is SPENT on `20260929T072135_250it_25pct`; its
-  treatment approval was for the LINEAR charge at 34 h and does not carry to the ATAP form or a
-  higher ceiling — D29 decides both. D23, D25, D26 and D27 are spent.
-- **25 % arms only** for Newcastle; a structural smoke may use 1 %. One arm at a time.
-- **The user pauses Windows Update before a launch** (D19); never change the update settings yourself.
-- **The user's goal (25 September 2026):** the simulator tuned as close as possible to a real-life
-  replica from real data; every report criterion at 4/5 or better; modes chosen by the simulated
-  population, never thrown in.
-- **"Make any fixes and handoff"** (30 September 2026) authorised this session's fixes and its PR,
-  never an arm.
-- Compare only within a family, fraction and network build; F38's result is F39's direction only.
-  The 67/143 holdout stays shut.
+- **No run approval stands.** D28's control approval is SPENT on `20260929T072135_250it_25pct`; its treatment approval was for the LINEAR charge at 34 h and does not carry to the ATAP form or a higher ceiling - D29 decides both. D23, D25, D26 and D27 are spent.
+- **25 % arms only** for Newcastle (`RUN.sample.arm_fraction_floor` enforces it); a structural smoke may use 1 %. One arm at a time.
+- **The user pauses Windows Update and restarts the host before a launch** (D19); never change the update settings yourself.
+- **The user's goal (25 September 2026):** the simulator tuned as close as possible to a real-life replica from real data; every report criterion at 4/5 or better; modes chosen by the simulated population, never thrown in.
+- **"Report and fixes first, then the run"** (7 October 2026) authorised this session's report, its fixes and its PR, never an arm; the gold-standard work the sixteenth report named that needs no run is done (§9.220); what needs a run (the pair, the JFR probe, the replication band) waits on the host and D29-D32.
+- Compare only within a family, fraction and network build; F38's result is F39's direction only. The 67/143 holdout stays shut.
 - Never commit to `main`; one PR per session, based on `main`.

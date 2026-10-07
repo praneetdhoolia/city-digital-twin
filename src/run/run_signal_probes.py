@@ -66,7 +66,10 @@ PROBES = ('citysim.SignalsAssemblyProbe', 'citysim.TramPriorityProbe',
           'citysim.HouseholdMotorcycleProbe',
           # 9.219: the headway charge is the boarded line's interval at the
           # boarding stop, never a single-departure route variant's cap
-          'citysim.ServiceQualityProbe')
+          'citysim.ServiceQualityProbe',
+          # the finite taxi fleet's allocation (9.99): served order, the
+          # executed wait, the refusal and the restore, as a fingerprint
+          'citysim.TaxiFleetProbe')
 
 
 def java_exe():

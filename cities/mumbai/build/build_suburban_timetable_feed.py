@@ -55,6 +55,8 @@ import city
 import registry
 from build.extract_osm_network import fingerprint
 
+import gtfs_feed
+
 csv.field_size_limit(10 ** 9)
 
 OUTPUT_INPUTS = {
@@ -184,26 +186,11 @@ def resolve(label, line, line_index, aliases, unresolved):
     return None
 
 
-def main():
-    cfg = registry.load()
-    sheets = cfg.get('A.baseline_transit.printed_timetables')
-    lines = cfg.get('A.baseline_transit.suburban_lines')
-    aliases = json.loads(Path(city.path('extract/transcriptions/suburban_station_labels.json')).read_text(encoding='utf-8'))
-    dwell = cfg.get('A.baseline_transit.stop_dwell_s')['train']
-    points = rows('data/processed/observed/osm_transport_points.csv')
-    relations = rows('data/processed/observed/osm_transport_relations.csv')
-    line_index, by_node = station_index(points, relations, aliases, lines)
-    cells = rows('data/processed/observed/wr_printed_timetable_cells.csv') + rows('data/processed/observed/cr_printed_timetable_cells.csv')
-    by_sheet_train = defaultdict(list)
-    for c in cells:
-        if c['source_id'] in sheets:
-            by_sheet_train[(c['source_id'], c['train_number'])].append(c)
-    unresolved = Counter()
-    trains = {}                      # (line, train_number) -> dict
-    refused = []
-    counts = Counter()
-    # every sheet's reading of every train, then the trains assembled per line
-    readings = defaultdict(list)     # (line, number) -> [(sheet, stops, direction)]
+def read_sheets(aliases, by_sheet_train, counts, line_index, readings, refused, sheets, unresolved):
+    """Every sheet's reading of every train: its printed cells resolved to OSM nodes and
+    ordered in time (the sheet's direction, the reverse, or the printed clock for
+    a sheet whose rows could not be ordered); a train whose times are monotonic
+    in neither reading is refused into the audit."""
     for (sheet, number), group in sorted(by_sheet_train.items()):
         spec = sheets[sheet]
         line = spec['line']
@@ -244,6 +231,12 @@ def main():
             continue
         readings[(line, number)].append((sheet, [(node, s) for _, node, s in ordered], direction))
         counts['readings'] += 1
+
+
+def assemble_trains(counts, readings, refused, sheets, trains, unresolved):
+    """One train per (line, number) from its readings: primary sheets chain or the
+    fuller one wins, a supplement adds its flag or stands alone. Refuses the build
+    on any printed label no OSM station resolves. Returns the skipped labels."""
     for (line, number), reads in sorted(readings.items()):
         full = [r for r in reads if len(r[1]) >= 2]
         if not full:
@@ -293,7 +286,12 @@ def main():
         listing = '\n'.join('  %s: %r x%d' % (line, label, n) for (line, label), n in sorted(unresolved.items()))
         raise SystemExit('printed station labels no OSM station resolves (add them to '
                          'extract/transcriptions/suburban_station_labels.json):\n' + listing)
-    # GTFS: a route per (line, direction, flag set, stopping pattern)
+    return skipped
+
+
+def write_gtfs(by_node, dwell, lines, trains):
+    """A GTFS route per (line, direction, flags, stopping pattern) and a trip per train,
+    the timetable feed zipped; returns its path and the tallies the audit prints."""
     stops_out, routes, trips, stop_times = {}, {}, [], []
     pattern_ids = {}
     with zipfile.ZipFile(city.path('schedules/baseline_bus.zip')) as bus:
@@ -332,12 +330,7 @@ def main():
                                    stop_id=sid, stop_sequence=index))
         per_line[line] += 1
         per_sheet[t['sheet']] += 1
-    def table(items, fields):
-        out = io.StringIO(newline='')
-        w = csv.DictWriter(out, fieldnames=fields, lineterminator='\n')
-        w.writeheader()
-        w.writerows(items)
-        return out.getvalue().encode('utf-8')
+    table = gtfs_feed.table
     content = {
         'stops.txt': table(sorted(stops_out.values(), key=lambda s: s['stop_id']), ['stop_id', 'stop_name', 'stop_lon', 'stop_lat']),
         'routes.txt': table(sorted(routes.values(), key=lambda r: r['route_id']), ['route_id', 'agency_id', 'route_short_name', 'route_long_name', 'route_type']),
@@ -345,11 +338,34 @@ def main():
         'stop_times.txt': table(stop_times, ['trip_id', 'arrival_time', 'departure_time', 'stop_id', 'stop_sequence']),
     }
     output = Path(city.path(OUT))
-    with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
-        for name, data in sorted(content.items()):
-            entry = zipfile.ZipInfo(name)
-            entry.compress_type = zipfile.ZIP_DEFLATED
-            archive.writestr(entry, data)
+    gtfs_feed.write_feed(output, content)
+    return output, per_line, per_sheet, routes, stop_times, stops_out
+
+
+def main():
+    cfg = registry.load()
+    sheets = cfg.get('A.baseline_transit.printed_timetables')
+    lines = cfg.get('A.baseline_transit.suburban_lines')
+    aliases = json.loads(Path(city.path('extract/transcriptions/suburban_station_labels.json')).read_text(encoding='utf-8'))
+    dwell = cfg.get('A.baseline_transit.stop_dwell_s')['train']
+    points = rows('data/processed/observed/osm_transport_points.csv')
+    relations = rows('data/processed/observed/osm_transport_relations.csv')
+    line_index, by_node = station_index(points, relations, aliases, lines)
+    cells = rows('data/processed/observed/wr_printed_timetable_cells.csv') + rows('data/processed/observed/cr_printed_timetable_cells.csv')
+    by_sheet_train = defaultdict(list)
+    for c in cells:
+        if c['source_id'] in sheets:
+            by_sheet_train[(c['source_id'], c['train_number'])].append(c)
+    unresolved = Counter()
+    trains = {}                      # (line, train_number) -> dict
+    refused = []
+    counts = Counter()
+    # every sheet's reading of every train, then the trains assembled per line
+    readings = defaultdict(list)     # (line, number) -> [(sheet, stops, direction)]
+    read_sheets(aliases, by_sheet_train, counts, line_index, readings, refused, sheets, unresolved)
+    skipped = assemble_trains(counts, readings, refused, sheets, trains, unresolved)
+    # GTFS: a route per (line, direction, flag set, stopping pattern)
+    output, per_line, per_sheet, routes, stop_times, stops_out = write_gtfs(by_node, dwell, lines, trains)
     published = {r['operator']: int(r['daily_services_count']) for r in rows('data/processed/observed/suburban_service_counts_202604.csv')
                  if r['category'] == 'All EMU local services'}
     by_operator = Counter()
@@ -381,4 +397,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

@@ -21,7 +21,7 @@ Onboarding:
 - [ ] Phase 1  Verify what expires; run the gate
 - [ ] Phase 2  Drift scan
 - [ ] Phase 3  The four questions
-- [ ] Phase 4  Constraints recited
+- [ ] Phase 4  The approvals line
 - [ ] Phase 5  Briefing delivered, then stop
 ```
 
@@ -120,21 +120,16 @@ Answer all four per the contract, with numbers, every mode individually, and
 4. **Unfinished business** — PRs, commits ahead, arms, red gates, overtaken
    issues, decisions awaiting the user, approvals (all spent unless stated).
 
-## Phase 4 — Constraints recited
+## Phase 4 — The approvals line
 
-Confirm you can state these without looking them up, then read the brief's §2
-traps — each has already cost a day:
-
-- **No multi-hour run without explicit approval**; approvals are spent on use.
-- **No invented data**; an unobserved value is derived, or declared with a sweep.
-- **The 67/143 holdout is never opened.** **Never compare across families,
-  fractions or network builds.** **One arm at a time**; never recompile
-  `.tools/classes` while one runs. **A run is a result only if its `_run.json`
-  says `ran_to_last_iteration`**; a stopped arm's record is a citable reading at
-  its `reached_iteration`, not a result.
-- Branch `<git-handle>/<kebab>`, never `claude/*`; no attribution trailers, no
-  session links; **never commit to `main`**; the session's ONE PR opens at
-  `/handoff`.
+The constraints are the digest's to print and the launcher's to enforce, not
+the session's to recite (the sixteenth report: no finding in §9.200–§9.219
+traced to the recital, and the foreground launch of §9.215 happened under it).
+One sentence, from the digest's approvals line and the brief's §3: which
+approvals are SPENT or absent, that no multi-hour run starts without a stated
+cost, that the 67/143 holdout stays shut, and that the session's ONE PR opens
+at `/handoff` from a `<git-handle>/<kebab>` branch, never `main`. Then read the
+brief's §2 traps — each has already cost a day.
 
 ## Phase 5 — The briefing, then the decisions, then stop
 

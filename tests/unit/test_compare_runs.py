@@ -5,7 +5,6 @@ hand out of `stopwatch.csv`, and a hand comparison is how a figure quietly gets
 made across a family boundary and quoted without the caveat. The blockers are
 the point of the tool, so they are pinned here.
 """
-import pytest
 
 import compare_runs as C
 

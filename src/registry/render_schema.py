@@ -144,13 +144,17 @@ def field_readers():
     return {k: sorted(v) for k, v in _hard.key_uses(corpus, set(fields)).items()}
 
 
-def required_by(field, readers):
+def required_by(field, readers, run_path=None):
     """`run`, a list of framework builders, or `reference_city` - see the
-    module docstring. Derived from the bindings and the reads, not judged."""
+    module docstring. Derived from the bindings and the reads, not judged.
+    `run_path` is `assembler_run_path()`: a key the launcher reads THROUGH
+    the assembler is `run` whichever file spells it."""
     if any(field.get(b) for b in TOOL_BINDINGS):
         return 'run'
     reads = [f for f in readers if not f.startswith('tests/') or f == PACKAGE_CONTRACT]
     if any(f.startswith(RUN_SIDE) for f in reads):
+        return 'run'
+    if run_path and field.get('_key') in run_path[0] | run_path[1]:
         return 'run'
     builders = sorted(f for f in reads if f.startswith('src/build/') or f == PACKAGE_CONTRACT)
     if builders:
@@ -158,14 +162,198 @@ def required_by(field, readers):
     return 'reference_city'
 
 
+# --------------------------------------------------------------------------
+# the run path through the assembler (#241)
+# --------------------------------------------------------------------------
+# `run_matsim.emit_run_config` calls the assembler's `config_runtime`,
+# `write_mode_vehicles`, `c1_scoring` and `write_config` at EVERY launch, and
+# a key those read is a run key whichever file spells it. Classed as the
+# assembler's - required only of a city whose manifest names the assembler
+# as a producer - a second city passed the contract and failed at launch on
+# `C.time_weights.beta_walk_mode`, then on two more (9.204). The closure is
+# derived function by function from the assembler's own call graph, starting
+# at the functions the run side calls on it.
+ASSEMBLER = 'src/build/build_matsim_run_inputs.py'
+ASSEMBLER_MODULE = 'build_matsim_run_inputs'
+# The assembler's one scoring gate. Under `bound_fields` `c1_scoring` returns
+# None before `scoring_from_c1` runs, and every derived price is behind
+# `translated = rc.scoring is not None` - so a key read only there is read
+# only under the C1 translation, and a `bound_fields` city need not declare a
+# C1 weight it has no source for. Both facts are verified against the
+# assembler's source at render time; a rename refuses to render.
+TRANSLATION_KEY = 'RUN.scoring.translation'
+C1_TRANSLATION = 'c1_translation'
+C1_GATE_NAME = 'translated'
+C1_GATE_BINDING = 'translated = rc.scoring is not None'
+C1_ROOT_GUARD = "if scoring_translation(cfg) == 'bound_fields':"
+
+
+# Where a launch starts: the front door and the harness. The resolver and the
+# readers are run-side too, but check_hardcoding's reach probe calls the
+# assembler's C1 translation to emit a config it never runs, and that is an
+# audit, not a launch.
+LAUNCH_SIDE = ('run.py', 'src/run/')
+
+
+def _assembler_entry_points():
+    """The assembler functions the launcher calls, as `<alias>.<name>(` for
+    every `import build_matsim_run_inputs as <alias>` under LAUNCH_SIDE."""
+    entries = set()
+    for root in LAUNCH_SIDE:
+        full = os.path.join(REPO, root)
+        paths = [full] if os.path.isfile(full) else [
+            os.path.join(d, n) for d, _, names in os.walk(full) for n in names
+            if n.endswith('.py')]
+        for p in paths:
+            text = io.open(p, encoding='utf-8', errors='replace').read()
+            for alias in re.findall(r'^import %s as (\w+)' % ASSEMBLER_MODULE, text, re.M):
+                entries |= set(re.findall(r'\b%s\.(\w+)\s*\(' % re.escape(alias), text))
+            if re.search(r'^import %s\b(?! as)' % ASSEMBLER_MODULE, text, re.M):
+                entries |= set(re.findall(r'\b%s\.(\w+)\s*\(' % ASSEMBLER_MODULE, text))
+    return entries
+
+
+def _reads_in(node, keys, docstring_id=None):
+    """The declared keys named as complete string literals under `node`, a
+    key built at the call site (`'C.x.%s' % mode`) expanding to every key it
+    can name - check_hardcoding's rule, so the two scans agree."""
+    import check_hardcoding as _hard
+    found = set()
+    for sub in ast.walk(node):
+        if isinstance(sub, ast.Constant) and isinstance(sub.value, str) and id(sub) != docstring_id:
+            if sub.value in keys:
+                found.add(sub.value)
+            else:
+                for pattern in _hard._key_patterns({sub.value}):
+                    found |= {k for k in keys if pattern.match(k)}
+    return found
+
+
+def _is_gate(expr):
+    """`translated`, or its binding spelled out: `<x>.scoring is not None`."""
+    if isinstance(expr, ast.Name) and expr.id == C1_GATE_NAME:
+        return True
+    return (isinstance(expr, ast.Compare) and isinstance(expr.left, ast.Attribute)
+            and expr.left.attr == 'scoring' and len(expr.ops) == 1
+            and isinstance(expr.ops[0], ast.IsNot)
+            and isinstance(expr.comparators[0], ast.Constant)
+            and expr.comparators[0].value is None)
+
+
+def _gated(test):
+    """Whether an `if` test is the C1 gate: `translated`, `rc.scoring is not
+    None`, or either `and ...`."""
+    if _is_gate(test):
+        return True
+    if isinstance(test, ast.BoolOp) and isinstance(test.op, ast.And):
+        return any(_is_gate(v) for v in test.values)
+    return False
+
+
+def _guard_return(stmt):
+    """`if scoring_translation(cfg) == 'bound_fields': ...; return` - the
+    guard whose body is the bound-fields path and whose return makes
+    everything after it in the function C1-only."""
+    if not (isinstance(stmt, ast.If) and stmt.body
+            and isinstance(stmt.body[-1], ast.Return)):
+        return False
+    t = stmt.test
+    return (isinstance(t, ast.Compare) and isinstance(t.left, ast.Call)
+            and isinstance(t.left.func, ast.Name) and t.left.func.id == 'scoring_translation'
+            and len(t.comparators) == 1 and isinstance(t.comparators[0], ast.Constant)
+            and t.comparators[0].value == 'bound_fields')
+
+
+def assembler_run_path(keys):
+    """(run keys, C1-only keys): what the launcher reads through the assembler.
+
+    Every function reachable from the run side's entry points is on the run
+    path. A key it reads outside the C1 gate is a run key of every city; a
+    key read only under `if translated ...` or only inside `scoring_from_c1`
+    and the functions only it reaches is a run key of a `c1_translation`
+    city. Module-level reads run at import and are run keys.
+    """
+    text = io.open(os.path.join(REPO, ASSEMBLER), encoding='utf-8').read()
+    for needle, what in ((C1_GATE_BINDING, 'the C1 gate'), (C1_ROOT_GUARD, 'the C1 root guard')):
+        if needle not in text:
+            raise SystemExit('%s no longer carries %s (%r); the run-path derivation '
+                             'in render_schema.py must be re-aimed' % (ASSEMBLER, what, needle))
+    tree = ast.parse(text)
+    funcs = {}                       # name -> (ungated reads, gated reads, callees, guarded)
+    module_reads = set()
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            doc = node.body[0].value if (node.body and isinstance(node.body[0], ast.Expr)
+                                         and isinstance(node.body[0].value, ast.Constant)) else None
+            everything = _reads_in(node, keys, id(doc) if doc else None)
+            callees = {s.func.id for s in ast.walk(node)
+                       if isinstance(s, ast.Call) and isinstance(s.func, ast.Name)}
+            # a function that returns under the bound_fields guard reads
+            # everything after the guard under the C1 translation only; what
+            # the guard's own body reads is the bound-fields path's
+            guards = [s for s in node.body if _guard_return(s)]
+            guarded = bool(guards)
+            gated = set()
+            if guarded:
+                inside = set()
+                for g in guards:
+                    for stmt in g.body:
+                        inside |= _reads_in(stmt, keys)
+                gated = everything - inside
+            for g in [s for s in ast.walk(node) if isinstance(s, ast.If) and _gated(s.test)]:
+                # `translated and cfg.get(KEY) == ...` short-circuits: the key
+                # in the test is read only under the translation, as the body is
+                if isinstance(g.test, ast.BoolOp):
+                    for operand in g.test.values[1:]:
+                        gated |= _reads_in(operand, keys)
+                for stmt in g.body:
+                    gated |= _reads_in(stmt, keys)
+            funcs[node.name] = (everything - gated, gated, callees, guarded)
+        else:
+            # a module-level CALL reads at import; a module-level table that
+            # names keys (`LAWFUL_COMPANIONS`) is read where it is used
+            for call in [s for s in ast.walk(node) if isinstance(s, ast.Call)]:
+                module_reads |= _reads_in(call, keys)
+    if not any(f[3] for f in funcs.values()):
+        raise SystemExit('%s carries no bound_fields guard-return; the run-path '
+                         'derivation in render_schema.py must be re-aimed' % ASSEMBLER)
+
+    def closure(roots, through_guards):
+        """The functions reachable from `roots`; a guarded function's callees
+        are reached only under the translation, so only `through_guards`."""
+        seen, todo = set(), [r for r in roots if r in funcs]
+        while todo:
+            f = todo.pop()
+            if f in seen:
+                continue
+            seen.add(f)
+            if funcs[f][3] and not through_guards:
+                continue
+            todo.extend(c for c in funcs[f][2] if c in funcs)
+        return seen
+
+    reached = closure(_assembler_entry_points(), through_guards=False)
+    behind_guards = {c for f in reached if funcs[f][3] for c in funcs[f][2] if c in funcs}
+    c1_reached = closure(behind_guards, through_guards=True) - reached
+    run = set(module_reads)
+    c1_only = set()
+    for f in reached:
+        run |= funcs[f][0]
+        c1_only |= funcs[f][1]
+    for f in c1_reached:
+        c1_only |= funcs[f][0] | funcs[f][1]
+    return run, c1_only - run
+
+
 def build_fields():
     fields, origin = registry.load_registry()
     desc = _city.descriptor()
     modes = desc.get('modes', [])
     readers = field_readers()
+    run_path = assembler_run_path(set(fields))
     out = {}
     for key in sorted(fields):
-        f = fields[key]
+        f = dict(fields[key], _key=key)
         value = f.get('value')
         mode = required_mode(f, modes)
         out[key] = {
@@ -176,10 +364,17 @@ def build_fields():
             'sweep_required': f.get('source') in SWEPT_SOURCES,
             'unobtained_in_reference_city': f.get('status') == 'unobtained',
             'declared_in': origin[key].split('/')[-1],
-            'required_by': required_by(f, readers.get(key, [])),
+            'required_by': required_by(f, readers.get(key, []), run_path),
         }
         if mode:
             out[key]['required_if_mode'] = mode
+        # the third derived narrowing (#241): read on the run path only under
+        # the C1 translation, so required only of a city whose
+        # RUN.scoring.translation is c1_translation
+        if key in run_path[1] and out[key]['required_by'] == 'run' \
+                and not any(f.get(b) for b in TOOL_BINDINGS) \
+                and not any(r.startswith(RUN_SIDE) for r in readers.get(key, [])):
+            out[key]['required_if_translation'] = C1_TRANSLATION
     by_layer, by_tier = {}, {}
     for key, spec in out.items():
         by_layer[spec['layer']] = by_layer.get(spec['layer'], 0) + 1
@@ -208,13 +403,19 @@ def build_fields():
                      "value type; WHY a particular city chose a particular value belongs "
                      "in cities/<city>/docs/reference/CONFIG_REFERENCE.md."),
         'caveat': ('`required` means the reference city declares it and the framework '
-                   'will not run without it. Two narrowings are DERIVED: a field '
+                   'will not run without it. Three narrowings are DERIVED: a field '
                    'carrying `required_if_mode` is required ONLY of a city that runs '
-                   'that mode (the mode name is in the tool binding), and `required_by` '
-                   'says who reads the field - `run` (every city), a list of framework '
-                   'builders (a city whose manifest names one of them as a producer), '
-                   'or `reference_city` (read only by the reference city\'s own '
-                   'adapters and builders; required of no other city). A field a '
+                   'that mode (the mode name is in the tool binding); `required_by` '
+                   'says who reads the field - `run` (every city: a tool binding, a '
+                   'read in the run harness, or a read the launcher makes THROUGH the '
+                   'assembler, derived function by function from '
+                   'src/build/build_matsim_run_inputs.py\'s call graph, #241), a list '
+                   'of framework builders (a city whose manifest names one of them as '
+                   'a producer), or `reference_city` (read only by the reference '
+                   'city\'s own adapters and builders; required of no other city); and '
+                   'a `run` field carrying `required_if_translation` is read on the '
+                   'run path only under that RUN.scoring.translation, so a city whose '
+                   'scoring is bound fields need not declare it. A field a '
                    'switched-off mechanism silences is still `run`: the emitter writes '
                    'it, so the city declares it.'),
         'n_fields': len(out),

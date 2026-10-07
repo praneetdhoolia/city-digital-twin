@@ -64,6 +64,11 @@
           },
           {
             "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/block-long-pr-title.sh\"",
+            "statusMessage": "A PR title fits the 72-character convention"
+          },
+          {
+            "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/gate-pr-on-docs.sh\"",
             "statusMessage": "A PR cannot open on stale documents"
           }
@@ -167,7 +172,6 @@
         "rollingstockworld.com",
         "routenetwork.bestundertaking.com",
         "rskr.irimee.in",
-        "s3.amazonaws.com",
         "saiindia.gov.in",
         "sciforum.net",
         "services.arcgis.com",
@@ -183,6 +187,7 @@
         "trti.maharashtra.gov.in",
         "web.archive.org",
         "wiki.openstreetmap.org",
+        "www.openstreetmap.org",
         "wr.indianrailways.gov.in",
         "www.abs.gov.au",
         "www.alstom.com",

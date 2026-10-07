@@ -3,6 +3,9 @@
 
 import city as _city
 import os, csv, glob
+# a second city's tables carry whole OSM relations in one cell (the
+# ordered-members JSON of osm_transport_relations.csv)
+csv.field_size_limit(10 ** 9)
 ROOT='.'
 GROUPS=[
  ('A1/A6 network',_city.path('data/processed/network/*.csv')),

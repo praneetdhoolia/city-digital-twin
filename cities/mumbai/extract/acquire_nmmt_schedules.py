@@ -67,7 +67,7 @@ def register(entries):
                 raise ValueError('Immutable source identity changed: '+entry['id'])
         else:
             catalogue['sources'].append(entry)
-    path.write_text(json.dumps(catalogue,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+    path.write_text(json.dumps(catalogue,indent=2,ensure_ascii=False)+'\n',encoding='utf-8', newline='\n')
 
 
 def entry(source_id, endpoint, body, parent):
@@ -134,5 +134,8 @@ def main():
             raise SystemExit('%d trip timetable(s) did not answer with a data list' % len(unresolved))
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

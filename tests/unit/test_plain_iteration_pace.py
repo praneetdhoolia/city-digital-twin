@@ -15,7 +15,6 @@ it in the pricer, where it sets what an operator is asked to approve.
 import io
 import os
 
-import pytest
 
 import arm_cost
 

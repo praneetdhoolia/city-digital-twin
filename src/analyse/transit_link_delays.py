@@ -26,62 +26,125 @@ from pathlib import Path
 import re
 import xml.etree.ElementTree as ET
 
-from iteration_reading import events, open_table
+from iteration_reading import open_table
 import iteration_reading
 import results_store
 from run_matsim import _iteration_times_from_log
 
 
-def analyse(name, iteration, top):
-    run = Path(results_store.resolve_or_die(name))
-    if iteration not in _iteration_times_from_log(str(run / 'matsim.log')):
-        raise ValueError('Iteration has no native ENDS marker')
-    fleet_path = next((run / 'output').glob('output_allVehicles.xml*'))
-    with open_table(str(fleet_path)) as stream:
-        fleet = ET.parse(stream)
-    modes = {v.get('id'): v.find('{*}networkMode').get('networkMode')
-             for v in fleet.findall('{*}vehicleType')}
-    vehicles = {v.get('id'): modes[v.get('type')] for v in fleet.findall('{*}vehicle')}
-    with gzip.open(run / 'transitSchedule.xml.gz', 'rb') as stream:
-        transit = {v.get('vehicleRefId') for _, v in ET.iterparse(stream, events=('end',))
-                   if v.tag == 'departure'}
-    with gzip.open(run / 'network.xml.gz', 'rb') as stream:
-        links = {}
-        for _, link in ET.iterparse(stream, events=('end',)):
-            if link.tag == 'link':
-                links[link.get('id')] = {k: float(link.get(k)) for k in ('length', 'freespeed', 'capacity', 'permlanes')}
-                link.clear()
-    path = next((run / 'output/ITERS' / f'it.{iteration}').glob(f'{iteration}.events.xml*'))
-    active, stats, unmatched = {}, {}, Counter()
-    for kind, event in events(path, {'entered link', 'left link', 'vehicle enters traffic', 'vehicle leaves traffic'}):
+def run_input(run, name):
+    """A run's schedule, network or vehicles file: the output copy MATSim
+    wrote (`output/output_<name>`), else the copy beside the run directory.
+    The reader looked only beside the run and no launch since 9.137 puts the
+    schedule or the network there, so the transit reading could not open the
+    F39 control run (sixteenth report)."""
+    for candidate in (run / 'output' / ('output_' + name), run / name):
+        if candidate.exists():
+            return candidate
+    raise SystemExit('%s holds neither output/output_%s nor %s' % (run, name, name))
+
+
+class TransitLinkTraversals:
+    """The scan_events handler of the transit reading: every transit vehicle's
+    completed traversal of a link, per (mode, link) - count, total, min and
+    max time with the vehicle and entry time of the max - and the unmatched
+    entries and exits. One handler, so the close-out's single pass over the
+    events file (summarise_run) and this reader's own pass accumulate the
+    same thing and the report reads the same either way."""
+    events = ('entered link', 'left link', 'vehicle enters traffic', 'vehicle leaves traffic')
+
+    def __init__(self, transit, vehicles):
+        self.transit, self.vehicles = transit, vehicles
+        self.active, self.stats, self.unmatched = {}, {}, Counter()
+
+    def __call__(self, kind, event):
         vehicle = event.get('vehicle', '')
-        if vehicle not in transit:
-            continue
-        mode, link, time = vehicles[vehicle], event['link'], float(event['time'])
+        if vehicle not in self.transit:
+            return
+        mode, link, time = self.vehicles[vehicle], event['link'], float(event['time'])
         if kind in ('entered link', 'vehicle enters traffic'):
-            if vehicle in active:
-                unmatched['entry_without_previous_exit'] += 1
-            active[vehicle] = (link, time)
-            continue
-        start = active.pop(vehicle, None)
+            if vehicle in self.active:
+                self.unmatched['entry_without_previous_exit'] += 1
+            self.active[vehicle] = (link, time)
+            return
+        start = self.active.pop(vehicle, None)
         if start is None or start[0] != link:
-            unmatched['exit_without_matching_entry'] += 1
-            continue
+            self.unmatched['exit_without_matching_entry'] += 1
+            return
         duration = time - start[1]
-        row = stats.setdefault((mode, link), dict(mode=mode, link_id=link, traversals_count=0,
-            total_time_s=0, max_time_s=0, min_time_s=float('inf'), **links[link]))
+        row = self.stats.setdefault((mode, link), dict(mode=mode, link_id=link, traversals_count=0,
+            total_time_s=0, max_time_s=0, min_time_s=float('inf')))
         row['traversals_count'] += 1
         row['total_time_s'] += duration
         row['min_time_s'] = min(row['min_time_s'], duration)
         if duration > row['max_time_s']:
             row.update(max_time_s=duration, max_vehicle_id=vehicle, max_entry_time_s=start[1])
-    for row in stats.values():
+
+    def result(self):
+        """What the pass found, JSON-serialisable: the per-(mode, link) rows,
+        the unmatched counts and the traversals still open at the end."""
+        return dict(rows=list(self.stats.values()), unmatched=dict(self.unmatched),
+                    unfinished=len(self.active))
+
+
+def transit_fleet(run):
+    """(the ids of the vehicles the schedule's departures name, vehicle id ->
+    network mode) from the run's own vehicles and schedule."""
+    with open_table(str(run_input(run, 'allVehicles.xml.gz'))) as stream:
+        fleet = ET.parse(stream)
+    modes = {v.get('id'): v.find('{*}networkMode').get('networkMode')
+             for v in fleet.findall('{*}vehicleType')}
+    vehicles = {v.get('id'): modes[v.get('type')] for v in fleet.findall('{*}vehicle')}
+    with gzip.open(run_input(run, 'transitSchedule.xml.gz'), 'rb') as stream:
+        transit = {v.get('vehicleRefId') for _, v in ET.iterparse(stream, events=('end',))
+                   if v.tag == 'departure'}
+    return transit, vehicles
+
+
+def traversal_handler(run_dir):
+    """This reading's handler for a shared events pass (summarise_run)."""
+    transit, vehicles = transit_fleet(Path(run_dir))
+    return TransitLinkTraversals(transit, vehicles)
+
+
+def events_path(run, iteration):
+    return next((run / 'output/ITERS' / f'it.{iteration}').glob(f'{iteration}.events.xml*'))
+
+
+def traversals_reading(run, iteration):
+    """The handler's result for this iteration: the close-out's recorded pass
+    when `_summary.json` carries one for the same iteration (one decode of
+    the events file serves every reader), else this reader's own pass."""
+    import summarise_run                                        # noqa: PLC0415
+    recorded = summarise_run.recorded_events_pass(str(run), iteration)
+    if recorded and 'transit_link_traversals' in recorded:
+        return recorded['transit_link_traversals'], 'close-out events pass (output/_events_pass_it%d.json)' % iteration
+    handler = traversal_handler(run)
+    iteration_reading.scan_events(events_path(run, iteration), handler)
+    return handler.result(), 'this reading\'s own events pass'
+
+
+def analyse(name, iteration, top):
+    run = Path(results_store.resolve_or_die(name))
+    iteration_reading.refuse_past_record(str(run), iteration)
+    if iteration not in _iteration_times_from_log(str(run / 'matsim.log')):
+        raise ValueError('Iteration has no native ENDS marker')
+    with gzip.open(run_input(run, 'network.xml.gz'), 'rb') as stream:
+        links = {}
+        for _, link in ET.iterparse(stream, events=('end',)):
+            if link.tag == 'link':
+                links[link.get('id')] = {k: float(link.get(k)) for k in ('length', 'freespeed', 'capacity', 'permlanes')}
+                link.clear()
+    found, basis = traversals_reading(run, iteration)
+    stats = [dict(row, **links[row['link_id']]) for row in found['rows']]
+    for row in stats:
         row['mean_time_s'] = row['total_time_s'] / row['traversals_count']
         row['link_freeflow_time_s'] = row['length'] / row['freespeed']
         row['excess_over_link_freeflow_s'] = row['total_time_s'] - row['traversals_count'] * row['link_freeflow_time_s']
-    rows = sorted(stats.values(), key=lambda r: (-r['excess_over_link_freeflow_s'], r['mode'], r['link_id']))
+    rows = sorted(stats, key=lambda r: (-r['excess_over_link_freeflow_s'], r['mode'], r['link_id']))
     report = dict(run=run.name, iteration=iteration, completed_traversals_count=sum(r['traversals_count'] for r in rows),
-        mode_link_pairs_count=len(rows), unmatched_events=dict(unmatched), unfinished_traversals_count=len(active),
+        mode_link_pairs_count=len(rows), unmatched_events=found['unmatched'], unfinished_traversals_count=found['unfinished'],
+        events_basis=basis,
         ranked_links=rows[:top], limitations=[
             'Link times include stop dwell and queues; excess is not automatically traffic congestion.',
             'The link free speed ignores vehicle maximum speed; this is a diagnostic baseline only.',
@@ -225,6 +288,8 @@ def load_band(hours):
 
 
 LOAD_BANDS = ('<1h', '1-4h', '4-12h', '>=12h')
+# the trips columns access_load reads (iteration_reading.table's projection)
+ACCESS_COLUMNS = ('main_mode', 'start_link', 'end_link', 'trav_time', 'traveled_distance')
 # the bands from which a link's trip ends are the offending ones
 OFFENDING_BANDS = frozenset(LOAD_BANDS[2:])
 
@@ -308,7 +373,7 @@ def road_readings(name, iteration, top, road, access):
             raise SystemExit('REFUSED: %s carries no sample fraction in _meta.json or '
                              '_run.json, so a link\'s sampled capacity is unknown' % run_name)
         try:
-            trips = iteration_reading.table(run_dir, 'trips', iteration)
+            trips = iteration_reading.table(run_dir, 'trips', iteration, columns=ACCESS_COLUMNS)
         except FileNotFoundError as exc:
             raise SystemExit(str(exc))
         report = dict(run=run_name, iteration=iteration, **access_load(trips, net, fraction, top))

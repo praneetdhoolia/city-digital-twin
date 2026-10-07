@@ -21,17 +21,17 @@ Exits non-zero on any mismatch or unmanifested tracked file.
 
 A hole the city has not yet fixed is recorded in its own
 `cities/<city>/tests/manifest_debt.json`, per rule, with a ceiling that may only
-fall (see check_ceilings).
+fall: a raise is refused unless its newest ceiling_log entry says `"raised":
+true` with the reason (src/registry/debt_ledger.py states the shape).
 """
-import csv
 import hashlib
-import json
 import os
 import re
 import subprocess
 import sys
 
 import city
+import debt_ledger
 from manifest_io import manifest_reader
 
 # Manifest rows are CITY-RELATIVE (`data/processed/...`), so they are resolved
@@ -156,11 +156,15 @@ def check_provenance_dated(rows, resolve=None):
     return out
 
 
-# Two provenance holes a row may not carry. A RAW download with no retrieval
+# Three provenance holes a row may not carry. A RAW download with no retrieval
 # date is an acquisition nobody can date (CLAUDE.md: every acquisition carries
-# its retrieval timestamp), and a `lineage_scope` of `none` is a row whose
+# its retrieval timestamp); a `lineage_scope` of `none` is a row whose
 # ancestry the producing script never declared at any scope, so the licence
-# claim beside it rests on nothing.
+# claim beside it rests on nothing; and a PROCESSED row with no `source` is a
+# derived file whose raw ancestry resolved to no declared source and no
+# provenance record - a file the package cannot say where its data came from
+# (sixteenth report: 53 such rows across the two cities, every one of them
+# either built from the registry alone or from inputs with no record).
 DATE_AND_SCOPE_RULES = (
     ('raw_without_retrieved',
      lambda row: ((row.get('stage') or '').strip() == 'raw'
@@ -170,13 +174,26 @@ DATE_AND_SCOPE_RULES = (
     ('lineage_scope_none',
      lambda row: (row.get('lineage_scope') or '').strip() == 'none',
      'row(s) carry lineage_scope none'),
+    ('processed_without_source',
+     lambda row: ((row.get('stage') or '').strip() == 'processed'
+                  and not (row.get('source') or '').strip()),
+     'processed row(s) carry no source'),
 )
 # Byte drift: a file in the checkout whose sha256 or size is not the
-# manifest's. Unlike the two rules above it is judged on the bytes, so a
-# listed path ABSENT from the checkout (every gitignored file in CI) is not
-# judged either way.
+# manifest's. Unlike the rules above it is judged on the bytes, so a listed
+# path ABSENT from the checkout (every gitignored file in CI) is not judged
+# either way.
 DRIFT_RULE = 'sha256_drift'
-RULES = tuple(r[0] for r in DATE_AND_SCOPE_RULES) + (DRIFT_RULE,)
+# A processed row whose path some script DECLARES as its own output (an exact
+# `OUTPUT_INPUTS` key, written beside the code that writes the file) while
+# the row's `produced_by` names a different script. The manifest attributed
+# data/processed/observed/vehicle_use_ratio.json to the adapter that owns its
+# directory for eleven days while cities/newcastle/build/build_vehicle_fuel_ratio.py
+# declared it, and the one observation D28 rests on carried the wrong source
+# and the wrong retrieval date (sixteenth report). build_manifest.lineage_for
+# now reads the declarations; this refuses the manifest that forgets to.
+DECLARED_RULE = 'produced_by_not_declaring'
+RULES = tuple(r[0] for r in DATE_AND_SCOPE_RULES) + (DRIFT_RULE, DECLARED_RULE)
 
 # The debt ledger is the CITY's, beside its other test expectations
 # (cities/<city>/tests/): the framework states the rules, a city states the
@@ -186,83 +203,22 @@ DEBT_FILE = ('tests', 'manifest_debt.json')
 
 def load_ledger(path=None):
     """{rule: {ceiling, paths, ceiling_log, ...}} for this city ({} if none)."""
-    # beside doc_currency.json, located the way check_doc_currency.py locates it
-    path = path or os.path.join(city.CITY_DIR, *DEBT_FILE)
-    if not os.path.exists(path):
-        return {}
-    with open(path, encoding='utf-8') as f:
-        return json.load(f).get('rules') or {}
+    return debt_ledger.load(DEBT_FILE, path=path)
 
 
 def base_ledger():
-    """The same ledger on origin/main, or None where that ref is not here
-    (a shallow CI checkout). Read from the LOCAL ref; nothing is fetched."""
-    rel = '%s/%s' % (CITY_REL, '/'.join(DEBT_FILE))
-    try:
-        p = subprocess.run(['git', 'show', 'origin/main:' + rel],
-                           capture_output=True, text=True, encoding='utf-8')
-    except OSError:
-        return None
-    if p.returncode != 0:
-        ok = subprocess.run(['git', 'rev-parse', '--verify', '-q', 'origin/main'],
-                            capture_output=True, text=True).returncode == 0
-        return {} if ok else None      # the ref is here but the file is new: no base
-    return (json.loads(p.stdout).get('rules') or {})
+    """The same ledger on origin/main, or None where that ref is not here."""
+    return debt_ledger.base(DEBT_FILE)
 
 
 def check_ceilings(ledger, base=None):
-    """The count beside each list, and the rule that it may only fall.
-
-    - a rule's `ceiling` equals the number of listed paths: a path added
-      without raising the ceiling fails, and a path removed without lowering
-      it fails;
-    - the ceiling equals the newest `ceiling_log` entry, and every entry
-      carries a date and a reason - so a raise cannot be made silently;
-    - against origin/main (when the ref is here), a ceiling that ROSE must
-      bring a new log entry in the same change.
-    """
-    out = []
-    for rule, entry in sorted(ledger.items()):
-        if rule not in RULES:
-            out.append('manifest debt names an unknown rule %r (known: %s)'
-                       % (rule, ', '.join(RULES)))
-            continue
-        paths = entry.get('paths') or []
-        ceiling = entry.get('ceiling')
-        log = entry.get('ceiling_log') or []
-        if not isinstance(ceiling, int):
-            out.append('%s: the debt carries no integer ceiling' % rule)
-            continue
-        if len(set(paths)) != len(paths):
-            out.append('%s: the debt lists a path twice' % rule)
-        if len(paths) > ceiling:
-            out.append('%s: %d path(s) listed above the ceiling of %d - a new '
-                       'entry needs the ceiling raised in the same change, '
-                       'with a dated ceiling_log entry giving the reason'
-                       % (rule, len(paths), ceiling))
-        elif len(paths) < ceiling:
-            out.append('%s: %d path(s) listed under a ceiling of %d - the debt '
-                       'shrank; lower the ceiling to %d and log it'
-                       % (rule, len(paths), ceiling, len(paths)))
-        if not log or log[-1].get('ceiling') != ceiling:
-            out.append('%s: the newest ceiling_log entry must state the '
-                       'current ceiling (%d)' % (rule, ceiling))
-        for item in log:
-            if not str(item.get('date') or '').strip() or not str(item.get('reason') or '').strip():
-                out.append('%s: every ceiling_log entry carries a date and a '
-                           'reason' % rule)
-                break
-        if base is not None:
-            was = (base.get(rule) or {})
-            was_ceiling = was.get('ceiling', 0)
-            if ceiling > was_ceiling and len(log) <= len(was.get('ceiling_log') or []):
-                out.append('%s: the ceiling rose from %d (origin/main) to %d '
-                           'without a new ceiling_log entry giving the reason'
-                           % (rule, was_ceiling, ceiling))
-    return out
+    """The count beside each list, and the rule that it may only fall - see
+    debt_ledger.check_ceilings. A rise against origin/main is refused unless
+    the newest ceiling_log entry carries `"raised": true` with its reason."""
+    return debt_ledger.check_ceilings(ledger, base, RULES, 'paths')
 
 
-def check_recorded_debt(rows, debt, drifted=None, present=None):
+def check_recorded_debt(rows, debt, drifted=None, present=None, declared=None):
     """Refuse each hole, except the paths recorded as debt - which may only SHRINK.
 
     `debt` maps a rule name to the exact paths that fail it. A failing path
@@ -271,32 +227,61 @@ def check_recorded_debt(rows, debt, drifted=None, present=None):
     must be deleted and the list can only get shorter. `drifted` is the set of
     present paths whose bytes are not the manifest's; `present` the set of
     manifest paths in this checkout (a listed drift path that is absent is not
-    judged). Returns (failures, {rule: (failing, allowlisted)}).
+    judged); `declared` maps an output path to the scripts whose OUTPUT_INPUTS
+    declare it exactly. Returns (failures, {rule: (failing, allowlisted)}).
     """
-    failures, counts = [], {}
     judged = [(rule, {norm(r['path']) for r in rows if failing_row(r)}, what, None)
               for rule, failing_row, what in DATE_AND_SCOPE_RULES]
     if drifted is not None:
         judged.append((DRIFT_RULE, set(drifted),
                        'present file(s) differ from the manifest (sha256 or size)',
                        present))
-    for rule, failing, what, seen in judged:
-        allowed = set(debt.get(rule, ()))
-        new = sorted(failing - allowed)
-        fixed = sorted(p for p in allowed - failing if seen is None or p in seen)
-        counts[rule] = (len(failing), len(allowed))
-        if new:
-            failures.append('%d %s outside the recorded debt: %s%s'
-                            % (len(new), what, ', '.join(new[:6]),
-                               ' ...' if len(new) > 6 else ''))
-        if fixed:
-            failures.append('%d path(s) in the recorded %s debt no longer fail '
-                            'it - delete them from %s/%s and lower its ceiling: '
-                            '%s%s'
-                            % (len(fixed), rule, CITY_REL, '/'.join(DEBT_FILE),
-                               ', '.join(fixed[:6]),
-                               ' ...' if len(fixed) > 6 else ''))
-    return failures, counts
+    if declared is not None:
+        judged.append((DECLARED_RULE, set(producer_not_declaring(rows, declared)),
+                       'processed row(s) name a producer other than the script '
+                       'whose OUTPUT_INPUTS declares the output', None))
+    return debt_ledger.check_recorded(judged, debt, '%s/%s' % (CITY_REL, '/'.join(DEBT_FILE)))
+
+
+def producer_tokens(entry):
+    """The scripts a `produced_by` cell names, tool suffixes stripped."""
+    return {t.split(' (')[0].strip() for t in (entry or '').split(' + ') if t.strip()}
+
+
+def producer_not_declaring(rows, declared):
+    """Processed paths whose exact declarer is not among the row's producers."""
+    out = []
+    for row in rows:
+        if (row.get('stage') or '').strip() != 'processed':
+            continue
+        path = norm(row['path'])
+        who = declared.get(path) or set()
+        if who and not (who & producer_tokens(row.get('produced_by'))):
+            out.append(path)
+    return out
+
+
+def declared_outputs(rows):
+    """{city-relative output path: {script, ...}} over every EXACT key a
+    producing script's OUTPUT_INPUTS declares - the scripts the manifest names
+    and every script under the city's build/ and extract/. A glob key is a
+    claim over a directory and names no file; only an exact key attributes."""
+    import build_manifest                     # noqa: PLC0415  (the one OUTPUT_INPUTS reader)
+    tokens = set()
+    for row in rows:
+        tokens |= producer_tokens(row.get('produced_by'))
+    for sub in ('build', 'extract'):
+        d = city.path(sub)
+        if os.path.isdir(d):
+            tokens |= {'cities/%s/%s/%s' % (city.CITY, sub, n)
+                       for n in os.listdir(d) if n.endswith('.py')}
+    out = {}
+    for token in sorted(tokens):
+        for key in build_manifest._script_declarations(token):
+            if '#' in key or any(c in key for c in '*?['):
+                continue
+            out.setdefault(norm(key), set()).add(token)
+    return out
 
 
 def main():
@@ -355,7 +340,8 @@ def main():
     debt = {rule: frozenset(norm(p) for p in (e.get('paths') or ()))
             for rule, e in ledger.items()}
     failures += check_ceilings(ledger, base_ledger())
-    debt_failures, debt_counts = check_recorded_debt(rows, debt, set(drift), present)
+    debt_failures, debt_counts = check_recorded_debt(rows, debt, set(drift), present,
+                                                     declared_outputs(rows))
     for rule, (failing, allowed) in debt_counts.items():
         print('%s: %d row(s) fail, %d recorded as debt (ceiling %s)'
               % (rule, failing, allowed,

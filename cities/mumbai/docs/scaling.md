@@ -1,5 +1,14 @@
 # Evidence required before downscaling Mumbai
 
+> **FROZEN — superseded by §9.205 (21 September 2026).** The "explicit
+> 1,000-person input" below is the development case before the citywide plans:
+> since §9.205 the core extent is populated from the census controls and its
+> plans are written at a 5 % household build fraction (1.35 M persons), the
+> 0.1 % and 1 % cases are structural checks on the flow identity (§9.206), and
+> the reading needs the D15 host. The current state is [`README.md`](README.md);
+> the sample-fraction argument here is kept as it was made. Bannered 8 October
+> 2026 (the sixteenth report).
+
 No Mumbai sample fraction has been shown to preserve accuracy. A smaller
 population can change queues, discrete vehicle capacity, transfers and rare
 services even when demand and road capacity use the same multiplier.
@@ -94,7 +103,7 @@ city's declared target modes; the mode inventory must itself be complete. A fit
 statistic still cannot certify run completion or fulfil the other requirements.
 
 The run-input assembler supports
-[explicit vehicle capacity profiles](../../../docs/transit_fleet.md), and since
+[explicit vehicle capacity profiles](../../../docs/framework/transit_fleet.md), and since
 21 September 2026 (9.206) Mumbai uses them: `build_transit_fleet.py` assigns
 every one of the 114,670 mapped vehicles a profile whose seats and standing
 places are registry fields with their sources - a 12-car EMU 1,168 + 3,816

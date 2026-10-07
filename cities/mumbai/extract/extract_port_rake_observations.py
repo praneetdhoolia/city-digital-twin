@@ -83,9 +83,12 @@ def main():
     write('jnpa_rake_observations.csv', rows)
     audit = dict(schema_version=1, reports=checks, rake_rows=len(rows),
                  limits='Only rakes on each printed handled-date table. Arrival/departure can fall outside that day. No timezone is assigned. Blank departures remain missing. Multiline origin/destination and train-label cells are not resolved; the retained line prefix is partial text, not a route assignment. Terminal TEU columns differ between report layouts and are reconciled within each report only. TEUs are not wagons, vehicles or persons. No inference of complete traffic, network paths, rake length or line occupation.')
-    Path(city.path('data/processed/acquisition/jnpa_rake_audit.json')).write_text(json.dumps(audit, indent=2)+'\n', encoding='utf-8')
+    Path(city.path('data/processed/acquisition/jnpa_rake_audit.json')).write_text(json.dumps(audit, indent=2)+'\n', encoding='utf-8', newline='\n')
     print(json.dumps(audit), flush=True)
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

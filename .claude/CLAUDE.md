@@ -136,8 +136,18 @@ reading is citable at that record's `reached_iteration` and nowhere past it; onl
 - **One arm at a time**; never recompile `.tools/classes` while one runs. The
   launcher refuses a concurrent arm, a launch with no automatic stop, a heap
   below the registry's rule, and an overlay that changes nothing the run reads.
+  It also refuses a host that will restart under the run or is already loaded
+  (free RAM below `RUN.machine.xmx` + `RUN.machine.free_ram_margin_gib`, or
+  another process over `RUN.machine.other_process_max_cores`), and an arm below
+  `RUN.sample.arm_fraction_floor` without `--override-reason`. `arm_cost.py`
+  refuses a probe whose `_host.jsonl` read above
+  `RUN.machine.probe_max_host_cpu_pct` and quotes the family's control wall as
+  the pair price. Off Windows, `--detach` runs the arm in its own session with
+  the same stamp-and-nonce proof.
 - **No launch while an open issue in the run's lane lacks a stated measurement**
-  (`GOAL.md` requirement 10; `python src/run/issue_gate.py`).
+  (`GOAL.md` requirement 10; `python src/run/issue_gate.py`), and none whose
+  overlay names a closed issue; `lane.py --check` pins the lane's family to the
+  ledger's newest and refuses a closed issue behind an open task.
 - **Never compare across a family boundary, a sample fraction or a network
   build** (`docs/run_families.json`). MATSim runs are not bit-reproducible: a
   difference is read as a band, never as a diff.
@@ -163,11 +173,25 @@ reading is citable at that record's `reached_iteration` and nowhere past it; onl
 - **Titles** follow `P<phase>: <concise plain-English summary>` (≤ ~72 chars),
   issue refs in parentheses at the end, no internal idiom and no DECISIONS
   §-refs. PR bodies: Summary / Changes / Testing / Breaking changes, neutral
-  voice.
+  voice. Enforced by [`hooks/block-long-pr-title.sh`](hooks/block-long-pr-title.sh)
+  on `gh pr create`/`edit` and by
+  [`.github/workflows/commit-trailers.yml`](../.github/workflows/commit-trailers.yml)
+  on the landed title.
 - **No attribution.** No co-author trailer, no `claude.ai/code` session link in a
   commit or PR body. Enforced by [`.githooks/commit-msg`](../.githooks/commit-msg),
-  two `PreToolUse` hooks under [`hooks/`](hooks) and
-  [`.github/workflows/strip-session-ref.yml`](../.github/workflows/strip-session-ref.yml).
+  two `PreToolUse` hooks under [`hooks/`](hooks),
+  [`.github/workflows/strip-session-ref.yml`](../.github/workflows/strip-session-ref.yml)
+  (the PR body) and [`.github/workflows/commit-trailers.yml`](../.github/workflows/commit-trailers.yml)
+  (every commit of the PR, so a commit made outside a session cannot bypass the
+  tracked hooks, #210). A fresh checkout activates the tracked hooks with
+  `git config core.hooksPath .githooks` (README, *Set it up*).
+- **Session tracing is the operator's and leaves the machine.** The gitignored
+  `.claude/settings.local.json` may set `TRACE_TO_LANGSMITH` with a
+  `CC_LANGSMITH_*` key, which sends each session's transcript (tool calls, file
+  contents read, command output) to the operator's own LangSmith project. It is
+  off unless that file sets it; set `TRACE_TO_LANGSMITH` to `false` there to stop
+  it. Nothing in the repository reads or depends on it, and its key is never
+  committed (`tests/check_secrets.py`).
 - **Commit messages** state what changed in the model or the data, not which
   script ran. **Path references in prose** are written in full — never
   abbreviated with `…`, which renderers auto-link into a broken URL.
@@ -187,10 +211,13 @@ arm runs). Run it at `/onboard` and `/handoff`, and before every commit.
 | `python tests/check_requirements.py --strict` | CI + local | committed files |
 | `python -m compileall -q src tests` | CI | nothing |
 | JSON validity of provenance, scenario and params files | CI | nothing |
-| `python src/registry/check_hardcoding.py --strict` | CI + local | committed files |
-| `python tests/check_doc_currency.py --strict` | CI + local | committed files |
-| `python tests/check_doc_shape.py --strict` · `python tests/check_doc_links.py --strict` · `python src/analyse/build_status_board.py --check` | CI + local | committed files |
-| `python src/analyse/lane.py --check` · `python src/analyse/report_recs.py --check` | local | committed files |
+| `python src/registry/check_hardcoding.py --all-cities --strict` (every city; a second city's debt sits in `cities/<city>/tests/hardcoding_debt.json` under a ceiling that only falls) | CI + local | committed files |
+| `python tests/check_doc_currency.py --strict --all-cities` (every city's claims, through `city.run_per_city`) | CI + local | committed files |
+| `python tests/check_doc_shape.py --strict --all-cities` · `python tests/check_doc_links.py --strict` · `python src/analyse/build_status_board.py --check` | CI + local | committed files |
+| `python src/analyse/positions.py --check --stale` (a page read-through more than three sections behind the record, or naming no result of the newest family, is STALE) · `--second-homes` (informational: what a page restates of the board) | local (`--handoff`) | committed files |
+| `python src/analyse/lane.py --check` · `python src/analyse/report_recs.py --check` | CI + local | committed files |
+| `.github/workflows/commit-trailers.yml` (every commit of the PR free of trailers and session links; the title on the convention) | CI | nothing |
+| `python src/setup/bootstrap_toolchain.py --verify` · `python src/run/run_signal_probes.py` | CI (`java-probes.yml`) + local | the pinned toolchain (`.tools/`; CI bootstraps it from the pinned URLs and caches it by pin hash) |
 | `python tests/check_secrets.py` (and `--staged` from `.githooks/pre-commit`) | local | committed files |
 | `python src/registry/check_city.py --all` · `render_schema.py --check` | CI | nothing |
 | `python tests/check_city_agnostic.py` | CI | nothing |
@@ -211,7 +238,12 @@ arm runs). Run it at `/onboard` and `/handoff`, and before every commit.
 - **`check_hardcoding.py` is the ledger for the registry rule**: declared-but-
   unwired fields, config template literals, numeric constants in the build
   layer, coordinates in code. It is at 0 and stays at 0; an item is worked down,
-  never silenced. If your change adds an item, the change is not finished.
+  never silenced. If your change adds an item, the change is not finished. A
+  second city's debt is recorded in `cities/<city>/tests/hardcoding_debt.json`
+  under a ceiling that only falls (a raise needs a dated `ceiling_log` entry
+  with `"raised": true` and its reason; `src/registry/debt_ledger.py` is the one
+  shape, shared with `manifest_debt.json`); the gate's number is what sits
+  outside the ledger.
 - **`check_doc_shape.py`** keeps the living documents the shape they were
   designed to be; the rules are the framework's
   ([`tests/doc_shape.json`](../tests/doc_shape.json)): a position page is capped

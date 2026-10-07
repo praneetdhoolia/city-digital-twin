@@ -392,6 +392,12 @@
       "type": "integer",
       "minimum": 0,
       "description": "Ratchet: how many manifest rows may carry share_alike_ancestor=undetermined, i.e. an ancestry the evidence does not decide because a producing script writes several outputs and declares no OUTPUT_INPUTS mapping (#159). tests/check_manifest.py fails above it. A refused row beats a guessed one, so the number is allowed to be non-zero - but it may only fall."
+    },
+    "source_vocabulary": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true,
+      "description": "Place-name strings the city's own build and extract scripts match on because a SOURCE TABLE spells them that way - a region label in a census table, a line name in an operator's report, an LGA name in a survey. check_city.py scans cities/<city>/build and extract for the city's own place names (sixteenth report): a path, a url, an identifier and prose are structure, a string declared here is the source's vocabulary, and anything else is a typed extent or filter the check refuses. Declaring it here is what makes a typed filter visible in a diff."
     }
   }
 }

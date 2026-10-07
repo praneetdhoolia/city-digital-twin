@@ -1,30 +1,13 @@
 #!/usr/bin/env python
 """ABS boundaries + Census DataPacks, and Copernicus DEM tiles."""
 
-import os as _os
-import sys as _sys
 import city as _city
-import os,urllib.request,hashlib,json,datetime
+from fetch_with_provenance import fetch_all
 
-
-def _sha256(path):
-    """Chunked, so peak memory is one buffer rather than one download.
-
-    The whole file was read into memory to hash it, which at the 871 MB hourly
-    counts archive meant a peak RSS of the largest thing this ever fetches.
-    The same chunked shape build_manifest.py and extract_speed_zones.py already
-    use; the digest is identical.
-    """
-    h = hashlib.sha256()
-    with open(path, 'rb') as f:
-        for chunk in iter(lambda: f.read(1 << 20), b''):
-            h.update(chunk)
-    return h.hexdigest()
-
-ABS="https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/digital-boundary-files/"
-DP="https://www.abs.gov.au/census/find-census-data/datapacks/download/"
-COP="https://copernicus-dem-30m.s3.amazonaws.com/"
-M=[
+ABS = "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/digital-boundary-files/"
+DP = "https://www.abs.gov.au/census/find-census-data/datapacks/download/"
+COP = "https://copernicus-dem-30m.s3.amazonaws.com/"
+M = [
  ("boundaries/SA1_2021_AUST_SHP_GDA2020.zip",ABS+"SA1_2021_AUST_SHP_GDA2020.zip","ABS ASGS Ed3 SA1 2021 digital boundaries","CC-BY 4.0"),
  ("boundaries/SA2_2021_AUST_SHP_GDA2020.zip",ABS+"SA2_2021_AUST_SHP_GDA2020.zip","ABS ASGS Ed3 SA2 2021 digital boundaries","CC-BY 4.0"),
  ("boundaries/SA3_2021_AUST_SHP_GDA2020.zip",ABS+"SA3_2021_AUST_SHP_GDA2020.zip","ABS ASGS Ed3 SA3 2021 digital boundaries","CC-BY 4.0"),
@@ -94,39 +77,15 @@ def dem_tiles():
     return cells
 
 
-M += dem_tiles()
-root=_city.path('data/raw'); prov=[]
-_prev_path=os.path.join(root,'provenance_abs_dem.json')
-_prev={}
-if os.path.exists(_prev_path):
-    try:
-        _prev={r['path']:r for r in json.load(open(_prev_path,encoding='utf-8'))}
-    except (OSError,ValueError,TypeError,KeyError):
-        _prev={}
-for rel,url,desc,lic in M:
-    p=os.path.join(root,rel); os.makedirs(os.path.dirname(p),exist_ok=True)
-    fetched=False
-    if os.path.exists(p) and os.path.getsize(p)>1000:
-        print(f"SKIP {rel} ({os.path.getsize(p):,})",flush=True)
-    else:
-        fetched=True
-        print(f"GET  {rel}",flush=True)
-        try:
-            req=urllib.request.Request(url,headers={'User-Agent':'city-digital-twin/0.1 (research)'})
-            with urllib.request.urlopen(req,timeout=1800) as r, open(p,'wb') as f:
-                while True:
-                    c=r.read(1<<20)
-                    if not c: break
-                    f.write(c)
-        except Exception as e:
-            print(f"  FAIL {e}",flush=True); continue
-    sz=os.path.getsize(p)
-    h=_sha256(p)
-    print(f"  {sz:>13,} B",flush=True)
-    # a held file keeps the day it was retrieved; only a fetched one is today's
-    retrieved=(datetime.date.today().isoformat() if fetched
-               else (_prev.get(rel) or {}).get('retrieved') or datetime.date.today().isoformat())
-    prov.append({"path":rel,"url":url,"description":desc,"licence":lic,"bytes":sz,"sha256":h,
-                 "retrieved":retrieved})
-json.dump(prov,open(os.path.join(root,'provenance_abs_dem.json'),'w',encoding='utf-8',newline='\n'),indent=2)
-print("wrote provenance_abs_dem.json",len(prov))
+def main():
+    # a held file keeps the day it was retrieved; a held file with no earlier
+    # record is stamped today, as this fetcher always did
+    fetch_all(M + dem_tiles(), _city.path('data/raw'), 'provenance_abs_dem.json',
+              min_bytes=1000, timeout=1800, undated='today')
+
+
+if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
+    main()

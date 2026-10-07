@@ -18,87 +18,29 @@ Outputs, both consumed by ``src/build/build_activity_chains.py``:
   median across stations of each station's own SAT/SUN-to-weekday ratio, so a
   station that counts more days does not dominate the level.
 
-Selection rules, all definitional rather than tuned:
-
-* HEAVY VEHICLES classification only, resolved through the
-  ``classification_seq -> classification_type`` pairing observed in the AADT
-  slice - the hourly file carries only the code.
-* Stations restricted to the study slice (``traffic_count_stations_newcastle``).
-* Public holidays excluded: the model's day types are typical WEEKDAY/SAT/SUN
-  and a public-holiday Monday is none of them.
-* Only complete days are used: rows whose 24 hourly cells sum to their own
-  ``daily_total`` (blank hourly cells are zero counts in this format; a row
-  whose hours do not reconcile is a partial day).
-* No year filter: every classified year in the raw download contributes. A
-  cutoff would be an undeclared modelling choice; the profile is a SHAPE, and
-  the volume it scales is declared and swept elsewhere
-  (``B.freight.trip_ratio``).
+Selection rules, all definitional rather than tuned, are the shared loader's
+(``rms_hourly.load_days``): HEAVY VEHICLES classification only, resolved
+through the observed ``classification_seq -> classification_type`` pairing;
+stations restricted to the study slice; public holidays excluded; complete
+days only; no year filter - a cutoff would be an undeclared modelling choice;
+the profile is a SHAPE, and the volume it scales is declared and swept
+elsewhere (``B.freight.trip_ratio``).
 
 Deterministic: pure aggregation of a hashed raw download, no randomness.
 """
 
 import city as _city
 
-import zipfile
-
 import pandas as pd
 
-RAW_ZIP = _city.path('data/raw/counts/rms_hourly_permanent.zip')
-STATIONS = _city.path('data/processed/observed/traffic_count_stations_newcastle.csv')
-AADT = _city.path('data/processed/observed/traffic_aadt.csv')
+from rms_hourly import HOUR_COLS, load_days
+
 OUT_PROFILE = _city.path('data/processed/observed/freight_hourly_profile.csv')
 OUT_FACTORS = _city.path('data/processed/observed/freight_day_factors.csv')
 
-HOUR_COLS = ['hour_%02d' % h for h in range(24)]
-# The model's service week (cities/<city>/city.json day_types) named over
-# ISO day-of-week, which the raw data carries as 1=Monday..7=Sunday.
-DAY_TYPE_OF_DOW = {1: 'WEEKDAY', 2: 'WEEKDAY', 3: 'WEEKDAY', 4: 'WEEKDAY',
-                   5: 'WEEKDAY', 6: 'SAT', 7: 'SUN'}
-
-
-def heavy_seq():
-    """The classification code for HEAVY VEHICLES, read from the AADT slice.
-
-    The hourly file carries only ``classification_seq``; the AADT slice carries
-    both the code and its label, so the mapping is observed rather than typed.
-    """
-    a = pd.read_csv(AADT, usecols=['classification_seq', 'classification_type'])
-    pairs = a.drop_duplicates()
-    m = pairs[pairs.classification_type == 'HEAVY VEHICLES']
-    if len(m) != 1:
-        raise SystemExit('expected exactly one HEAVY VEHICLES classification code '
-                         'in %s, found %d' % (AADT, len(m)))
-    return int(m.classification_seq.iloc[0])
-
 
 def load_heavy_days():
-    seq = heavy_seq()
-    slice_keys = set(pd.read_csv(STATIONS, usecols=['station_key'])
-                     .station_key.astype(str))
-    usecols = (['station_key', 'classification_seq', 'day_of_week',
-                'public_holiday', 'daily_total'] + HOUR_COLS)
-    z = zipfile.ZipFile(RAW_ZIP)
-    frames = []
-    for name in sorted(z.namelist()):
-        df = pd.read_csv(z.open(name), usecols=usecols)
-        df = df[(df.classification_seq == seq)
-                & df.station_key.astype(str).isin(slice_keys)
-                & (~df.public_holiday.astype(bool))]
-        if len(df):
-            frames.append(df)
-    if not frames:
-        raise SystemExit('no classified heavy-vehicle hourly rows found for the '
-                         'study slice - the raw download or the slice changed')
-    df = pd.concat(frames, ignore_index=True)
-    hours = df[HOUR_COLS].fillna(0.0)
-    # complete days only: the hourly cells must reconcile with the row's own
-    # daily total (blank cells are zeros in this format; a mismatch is a
-    # partial day, not a rounding artefact - both sides are integer counts)
-    complete = hours.sum(axis=1).round(0) == df.daily_total.fillna(-1).round(0)
-    df = df[complete & (df.daily_total > 0)].reset_index(drop=True)
-    df[HOUR_COLS] = df[HOUR_COLS].fillna(0.0)
-    df['day_type'] = df.day_of_week.map(DAY_TYPE_OF_DOW)
-    return df
+    return load_days('HEAVY VEHICLES', 'heavy-vehicle')
 
 
 def main():

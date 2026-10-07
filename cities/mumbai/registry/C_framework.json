@@ -268,6 +268,23 @@
       "sweep_role": "uncertainty",
       "sweep_basis": "Provisional behavioural smoke coefficient; not calibrated to ridership."
     },
+    "C.scoring.motorbike_fuel_ratio": {
+      "units": "ratio",
+      "source": "derived",
+      "status": "placeholder",
+      "derived_from": {
+        "fields": [
+          "C.scoring.monetary_distance_rate"
+        ],
+        "identity": "ratio = motor cycles / passenger vehicles average rate of fuel consumption (l/100 km), ABS Survey of Motor Vehicle Use, Australia, 12 months ended 30 June 2020 (cat. 9208.0), data cube data/raw/abs/92080DO001_202006.xls Table 6, the city's state of registration (city.json jurisdiction.subdivision: New South Wales), column 'Total fuel' = 6.1 / 11.4, read by label and asserted by cities/newcastle/build/build_vehicle_fuel_ratio.py (data/processed/observed/vehicle_fuel_ratio.json). The motorbike's perceived running cost is then C.scoring.monetary_distance_rate['car'] x ratio = -0.00018 x 0.53509 = -0.0000963 AUD/m. The car rate covers fuel AND tyres; only the FUEL ratio is observed, so tyres are ASSUMED to scale with fuel - a motorcycle has two smaller tyres, so the tyre share is likely overstated, which the car rate's own sweep (-0.00025 to -0.00012) brackets far more widely than the tyre share can move it."
+      },
+      "value": 0.5350877192982456,
+      "description": "The motorbike-to-car ratio of observed fuel consumption, scaling the car's perceived running cost onto the motorbike. Adopted from the reference city and INERT here: B.motorbike.representation = \"carve\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
     "C.scoring.performing_utils_per_h": {
       "value": 6.0,
       "units": "utils_per_hour",

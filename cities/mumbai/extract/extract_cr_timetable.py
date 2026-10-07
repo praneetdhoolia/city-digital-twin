@@ -129,9 +129,12 @@ def main():
                                'Sunday/holiday and vehicle-substitution rules require train-specific joins.',
                                'Clock times still require service-day conversion and continuity validation.',
                                'Older base schedules require reconciliation with all later amendments.'])
-    Path(city.path('data/processed/observed/_cr_timetable_audit.json')).write_text(json.dumps(result,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+    Path(city.path('data/processed/observed/_cr_timetable_audit.json')).write_text(json.dumps(result,indent=2,ensure_ascii=False)+'\n',encoding='utf-8', newline='\n')
     print(json.dumps(counts))
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

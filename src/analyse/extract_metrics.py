@@ -65,9 +65,19 @@ STATION_LINKS = _city.path('data/processed/validation/count_station_links.csv')
 STATION_LINKS_PROVENANCE = _city.path(
     'data/processed/validation/count_station_links_provenance.json')
 C3 = _city.path('params/C3_count_comparison.json')
-POP = _city.path('demand/population/B1_synthetic_population.csv')
-SA1_LGA = _city.path('data/processed/zones/sa1_to_lga.csv')
-TARGET_LGA = _city.target_lga()
+# The residents map's inputs are the CITY's, declared through its reader-shape
+# adapter (the `residents` family of config/schema/reader_shapes.json, #242):
+# the population table and its person-id and home-zone columns, the table that
+# assigns every zone to an area, and the area the target counts. Until
+# 8 October 2026 these were the reference city's own names typed here
+# (person_id / home_sa1 and SA1_CODE21 / lga_name), so a second city could
+# not have a residents map at all.
+_RESIDENTS = getattr(_city.readers(), 'residents_shape', lambda: None)()
+POP = _city.path(_RESIDENTS['population']) if _RESIDENTS else None
+ZONE_AREAS = _city.path(_RESIDENTS['zone_areas']) if _RESIDENTS else None
+TARGET_AREA = _RESIDENTS['target'] if _RESIDENTS else _city.target_lga()
+# the name every reader has used for the target area since the first city
+TARGET_LGA = TARGET_AREA
 
 # Road vehicles: the modes that put a vehicle on a link. A ride passenger is
 # NOT a vehicle - they travel in a car that is already counted - so ride is
@@ -283,22 +293,35 @@ RESIDENTS_FILE = '_residents.csv.gz'
 _RESIDENTS_WARNED = set()
 
 
-def _sa1_to_lga():
-    if not os.path.exists(SA1_LGA):
-        raise SystemExit('%s missing - run cities/<city>/build/map_sa1_to_lga.py'
-                         % SA1_LGA)
-    lga = {}
-    with open(SA1_LGA, encoding='utf-8') as f:
+def _zone_to_area():
+    """zone id -> area, from the city's declared zone-to-area table."""
+    if not ZONE_AREAS or not os.path.exists(ZONE_AREAS):
+        raise SystemExit('%s missing - the city\'s zone-to-area table (its reader '
+                         'adapter\'s residents_shape) has not been built' % ZONE_AREAS)
+    area = {}
+    with open(ZONE_AREAS, encoding='utf-8') as f:
         for z in csv.DictReader(f):
-            lga[z['SA1_CODE21']] = z['lga_name']
-    return lga
+            area[z[_RESIDENTS['zone']]] = z[_RESIDENTS['area']]
+    return area
 
 
 def has_home_zone_table():
-    """Whether this city supplies the population table and the zone-to-target
-    join the residents map is written from; a city without them (9.204, #242)
-    resolves residents from the run's own plans instead."""
-    return os.path.exists(POP) and os.path.exists(SA1_LGA)
+    """Whether this city declares and supplies the population table and the
+    zone-to-area join the residents map is written from; a city without them
+    (9.204, #242) resolves residents from the run's own plans instead."""
+    return bool(_RESIDENTS) and os.path.exists(POP) and os.path.exists(ZONE_AREAS)
+
+
+def _residents_rows(person_ids=None):
+    """(person id, home zone, area) for every person of the city's population
+    table - restricted to `person_ids` when given - in the table's order."""
+    area = _zone_to_area()
+    pid, zone = _RESIDENTS['person_id'], _RESIDENTS['home_zone']
+    with open(POP, encoding='utf-8') as f:
+        for p in csv.DictReader(f):
+            if person_ids is not None and p[pid] not in person_ids:
+                continue
+            yield p[pid], p[zone], area.get(p[zone], '')
 
 
 def write_residents(run_dir, person_ids=None, note=None):
@@ -306,20 +329,16 @@ def write_residents(run_dir, person_ids=None, note=None):
     as it is NOW (#213). The launcher calls this at subsample time; an
     operator backfilling an older run must be able to say the table has not
     changed since that run's plans were built, and the file records the note.
-    Returns the path and the row count."""
-    lga = _sa1_to_lga()
+    The header carries the city's own three names (`map_columns`); the
+    readers take the columns by position. Returns the path and the row count."""
     path = os.path.join(run_dir, RESIDENTS_FILE)
     n = 0
-    with open(POP, encoding='utf-8') as f, \
-            gzip.open(path, 'wt', encoding='utf-8', newline='') as w:
+    with gzip.open(path, 'wt', encoding='utf-8', newline='') as w:
         if note:
             w.write('# %s\n' % note.replace('\n', ' '))
-        w.write('person_id,home_sa1,home_lga\n')
-        for p in csv.DictReader(f):
-            if person_ids is not None and p['person_id'] not in person_ids:
-                continue
-            w.write('%s,%s,%s\n' % (p['person_id'], p['home_sa1'],
-                                   lga.get(p['home_sa1'], '')))
+        w.write(','.join(_RESIDENTS['map_columns']) + '\n')
+        for person, zone, area in _residents_rows(person_ids):
+            w.write('%s,%s,%s\n' % (person, zone, area))
             n += 1
     return path, n
 
@@ -345,7 +364,7 @@ class _ResidentsBySubpopulation(dict):
     person -> LGA map so every reader keeps one code path."""
 
     def get(self, person, default=None):
-        return TARGET_LGA if dict.get(self, person) else ''
+        return TARGET_AREA if dict.get(self, person) else ''
 
 
 def _residents_by_subpopulation(run_dir):
@@ -383,18 +402,19 @@ def _residents_by_subpopulation(run_dir):
 
 
 def home_lga(run_dir=None):
-    """person id -> LGA, from the RUN's own residents map when it carries one,
-    else via the city's current B1 and the ABS boundary join (with a warning:
-    that map is the run's only while the population has not been rebuilt
-    since the run's plans were, #213).
+    """person id -> target-area label, from the RUN's own residents map when it
+    carries one, else via the city's current population table and its
+    zone-to-area join (with a warning: that map is the run's only while the
+    population has not been rebuilt since the run's plans were, #213).
 
-    MEMOISED per process and per run. The city map is 622k population rows
-    joined to the SA1 boundary table, and it was rebuilt on every call -
+    MEMOISED per process and per run. The city map is the whole population
+    table joined to the zone table, and it was rebuilt on every call -
     `report_mode_ridership --trend` calls it once per iteration read.
 
-    Built by `map_sa1_to_lga.py`; `zones_SA1.csv` carries SA2/SA3/SA4 but no
-    LGA, and SA3 `Newcastle` is not Newcastle LGA. External-tier agents are not
-    in B1 and map to '' rather than being counted as residents of anywhere.
+    The map's columns are the city's own (`residents_shape()['map_columns']`)
+    and are read by POSITION: person, zone, area. An agent outside the
+    population table (an external or freight tier) maps to '' rather than
+    being counted as a resident of anywhere.
     """
     key = os.path.abspath(run_dir) if run_dir else ''
     if key and os.path.exists(os.path.join(key, RESIDENTS_FILE)):
@@ -404,11 +424,13 @@ def home_lga(run_dir=None):
         with gzip.open(os.path.join(key, RESIDENTS_FILE), 'rt',
                        encoding='utf-8') as f:
             rows = (ln for ln in f if not ln.startswith('#'))
-            for p in csv.DictReader(rows):
-                out[p['person_id']] = p['home_lga']
+            reader = csv.reader(rows)
+            next(reader)                                  # the header
+            for p in reader:
+                out[p[0]] = p[2]
         _HOME_LGA_CACHE[key] = out
         return out
-    if key and not (os.path.exists(POP) and os.path.exists(SA1_LGA)):
+    if key and not has_home_zone_table():
         # no home-zone table for this city (9.204): the plans' own labels
         if key not in _HOME_LGA_CACHE:
             _HOME_LGA_CACHE[key] = _residents_by_subpopulation(key)
@@ -421,14 +443,18 @@ def home_lga(run_dir=None):
               'built (#213). Backfill with extract_metrics.py '
               '--write-residents while that holds.'
               % (os.path.basename(key), RESIDENTS_FILE), flush=True)
-    if '' in _HOME_LGA_CACHE:
-        return _HOME_LGA_CACHE['']
-    lga = _sa1_to_lga()
-    out = {}
-    with open(POP, encoding='utf-8') as f:
-        for p in csv.DictReader(f):
-            out[p['person_id']] = lga.get(p['home_sa1'], '')
-    _HOME_LGA_CACHE[''] = out
+    if not has_home_zone_table():
+        raise SystemExit('this city declares no residents shape (reader adapter '
+                         'residents_shape) and no run directory was given')
+    # restricted to the persons the run's own plans hold when it has them: a
+    # second city's population table is 27 M rows, and a map of all of them
+    # is not what a reader of one run needs
+    ids = _person_ids_in_plans(os.path.join(key, 'plans.xml.gz')) if key else None
+    cache_key = key if ids is not None else ''
+    if cache_key in _HOME_LGA_CACHE:
+        return _HOME_LGA_CACHE[cache_key]
+    out = {person: area for person, _zone, area in _residents_rows(ids)}
+    _HOME_LGA_CACHE[cache_key] = out
     return out
 
 

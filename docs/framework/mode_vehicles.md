@@ -4,7 +4,7 @@
 each of its network routing modes. Both scenario assembly and per-run input
 generation resolve the referenced registry fields, so run overlays reach the
 vehicle file. The definition follows
-[`mode_vehicles.schema.json`](../config/schema/mode_vehicles.schema.json).
+[`mode_vehicles.schema.json`](../../config/schema/mode_vehicles.schema.json).
 
 A nonempty mapping must cover exactly `RUN.routing.network_modes`. Each mode
 needs references for length, width, passenger-car equivalents (PCE), seated

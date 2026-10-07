@@ -1,5 +1,5 @@
 {
-  "description": "Newcastle's recorded manifest debt - the CITY-OWNED half of tests/check_manifest.py. Each rule's paths are the exact rows that fail it; `ceiling` is their count and may only FALL. Adding a path fails unless the ceiling is raised in the same change with a new ceiling_log entry carrying the date and the reason; a listed path that no longer fails must be deleted and the ceiling lowered. A city with no file carries no debt.",
+  "description": "Newcastle's recorded manifest debt - the CITY-OWNED half of tests/check_manifest.py. Each rule's paths are the exact rows that fail it; `ceiling` is their count and may only FALL. Adding a path fails unless the ceiling is raised in the same change with a new ceiling_log entry carrying the date, the reason and `\"raised\": true` - an explicit, dated, reasoned raise is the only way the ceiling goes up; a listed path that no longer fails must be deleted and the ceiling lowered. A city with no file carries no debt.",
   "rules": {
     "raw_without_retrieved": {
       "ceiling": 2,
@@ -24,6 +24,52 @@
       "paths": [
         "data/raw/_osm_fetch.log",
         "data/raw/_s3_historical_gtfs_listing.txt"
+      ]
+    },
+    "processed_without_source": {
+      "ceiling": 33,
+      "reason": "A derived row whose ancestry holds no raw download: the C1 parameter files are generated from the registry (9.32) and the per-scenario vehicles.xml from the mode vehicle fields, so no declared source and no provenance record covers them. Measured 8 October 2026 when the rule was introduced (sixteenth report). Leaves when the manifest can name the registry as a source.",
+      "ceiling_log": [
+        {
+          "date": "2026-10-08",
+          "ceiling": 33,
+          "reason": "measured when the rule was introduced (sixteenth report)"
+        }
+      ],
+      "paths": [
+        "params/C1_behavioural_parameters.csv",
+        "params/C1_parameters.json",
+        "params/C1_sensitivity_sweep_grid.csv",
+        "scenarios/matsim/S0/SAT/vehicles.xml",
+        "scenarios/matsim/S0/SUN/vehicles.xml",
+        "scenarios/matsim/S0/WEEKDAY/vehicles.xml",
+        "scenarios/matsim/S1/SAT/vehicles.xml",
+        "scenarios/matsim/S1/SUN/vehicles.xml",
+        "scenarios/matsim/S1/WEEKDAY/vehicles.xml",
+        "scenarios/matsim/S2/SAT/vehicles.xml",
+        "scenarios/matsim/S2/SUN/vehicles.xml",
+        "scenarios/matsim/S2/WEEKDAY/vehicles.xml",
+        "scenarios/matsim/S2a/SAT/vehicles.xml",
+        "scenarios/matsim/S2a/SUN/vehicles.xml",
+        "scenarios/matsim/S2a/WEEKDAY/vehicles.xml",
+        "scenarios/matsim/S2b/SAT/vehicles.xml",
+        "scenarios/matsim/S2b/SUN/vehicles.xml",
+        "scenarios/matsim/S2b/WEEKDAY/vehicles.xml",
+        "scenarios/matsim/S2c/SAT/vehicles.xml",
+        "scenarios/matsim/S2c/SUN/vehicles.xml",
+        "scenarios/matsim/S2c/WEEKDAY/vehicles.xml",
+        "scenarios/matsim/S3/SAT/vehicles.xml",
+        "scenarios/matsim/S3/SUN/vehicles.xml",
+        "scenarios/matsim/S3/WEEKDAY/vehicles.xml",
+        "scenarios/matsim/S4/SAT/vehicles.xml",
+        "scenarios/matsim/S4/SUN/vehicles.xml",
+        "scenarios/matsim/S4/WEEKDAY/vehicles.xml",
+        "scenarios/matsim/S5/SAT/vehicles.xml",
+        "scenarios/matsim/S5/SUN/vehicles.xml",
+        "scenarios/matsim/S5/WEEKDAY/vehicles.xml",
+        "scenarios/matsim/S6/SAT/vehicles.xml",
+        "scenarios/matsim/S6/SUN/vehicles.xml",
+        "scenarios/matsim/S6/WEEKDAY/vehicles.xml"
       ]
     }
   }

@@ -43,50 +43,68 @@ ERAS={
 # it; a file fetched this run is stamped today.
 def _retrieved_from_disk(p):
     return datetime.date.fromtimestamp(os.path.getmtime(p)).isoformat()
-_PREV={}
-_prev_path=os.path.join(OUT,"provenance.json")
-if os.path.exists(_prev_path):
-    try:
-        for _r in json.load(open(_prev_path,encoding='utf-8')):
-            if _r.get("retrieved"):
-                _PREV[(_r.get("era"),_r.get("feed"))]=_r["retrieved"]
-    except Exception:
-        pass
-TODAY=datetime.date.today().isoformat()
 
-prov=[]
-for era,items in ERAS.items():
-    d=os.path.join(OUT,era); os.makedirs(d,exist_ok=True)
-    for label,key in items:
-        p=os.path.join(d,f"{label}.zip")
-        fetched=False
-        if os.path.exists(p) and os.path.getsize(p)>1000:
-            print(f"SKIP {era}/{label}"); 
-        else:
-            fetched=True
-            url=BASE+key
-            print(f"GET  {era}/{label} <- {key}",flush=True)
-            try:
-                urllib.request.urlretrieve(url,p)
-            except Exception as e:
-                print(f"  FAIL {e}"); continue
-        # the FULL digest, like every other raw record and every manifest
-        # row: a 16-character truncation was the only integrity claim these
-        # feeds carried (eighth project report, 11 September 2026). The
-        # truncation is kept beside it for readers of the old records.
-        full=hashlib.sha256(open(p,'rb').read()).hexdigest()
-        h=full[:16]
-        sz=os.path.getsize(p)
-        print(f"  {sz:>12,} B sha256:{h}")
-        rec={"era":era,"feed":label,"s3_key":key,"url":BASE+key,"bytes":sz,
-             "sha256":full,"sha256_16":h,
-             "source":"TfNSW Open Data Hub historical GTFS archive",
-             "licence":"CC-BY 4.0"}
-        retrieved=TODAY if fetched else _PREV.get((era,label))
-        if not retrieved:
-            retrieved=_retrieved_from_disk(p)
-            rec["retrieved_basis"]="file modification time on disk (written at download); the earlier record carried no date"
-        rec["retrieved"]=retrieved
-        prov.append(rec)
-json.dump(prov,open(os.path.join(OUT,"provenance.json"),"w",encoding="utf-8",newline="\n"),indent=2)
-print("\nwrote",os.path.join(OUT,"provenance.json"))
+
+def _earlier_dates():
+    """(era, feed) -> the retrieval date the earlier provenance recorded."""
+    prev = {}
+    prev_path = os.path.join(OUT, "provenance.json")
+    if os.path.exists(prev_path):
+        try:
+            for r in json.load(open(prev_path, encoding='utf-8')):
+                if r.get("retrieved"):
+                    prev[(r.get("era"), r.get("feed"))] = r["retrieved"]
+        except Exception:
+            pass
+    return prev
+
+
+def main():
+    prev = _earlier_dates()
+    today = datetime.date.today().isoformat()
+    prov = []
+    for era, items in ERAS.items():
+        d = os.path.join(OUT, era)
+        os.makedirs(d, exist_ok=True)
+        for label, key in items:
+            p = os.path.join(d, f"{label}.zip")
+            fetched = False
+            if os.path.exists(p) and os.path.getsize(p) > 1000:
+                print(f"SKIP {era}/{label}")
+            else:
+                fetched = True
+                url = BASE + key
+                print(f"GET  {era}/{label} <- {key}", flush=True)
+                try:
+                    urllib.request.urlretrieve(url, p)
+                except Exception as e:
+                    print(f"  FAIL {e}")
+                    continue
+            # the FULL digest, like every other raw record and every manifest
+            # row: a 16-character truncation was the only integrity claim these
+            # feeds carried (eighth project report, 11 September 2026). The
+            # truncation is kept beside it for readers of the old records.
+            full = hashlib.sha256(open(p, 'rb').read()).hexdigest()
+            h = full[:16]
+            sz = os.path.getsize(p)
+            print(f"  {sz:>12,} B sha256:{h}")
+            rec = {"era": era, "feed": label, "s3_key": key, "url": BASE + key, "bytes": sz,
+                   "sha256": full, "sha256_16": h,
+                   "source": "TfNSW Open Data Hub historical GTFS archive",
+                   "licence": "CC-BY 4.0"}
+            retrieved = today if fetched else prev.get((era, label))
+            if not retrieved:
+                retrieved = _retrieved_from_disk(p)
+                rec["retrieved_basis"] = ("file modification time on disk (written at download); "
+                                          "the earlier record carried no date")
+            rec["retrieved"] = retrieved
+            prov.append(rec)
+    json.dump(prov, open(os.path.join(OUT, "provenance.json"), "w", encoding="utf-8", newline="\n"), indent=2)
+    print("\nwrote", os.path.join(OUT, "provenance.json"))
+
+
+if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
+    main()

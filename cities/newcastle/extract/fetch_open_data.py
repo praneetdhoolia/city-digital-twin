@@ -1,33 +1,14 @@
 #!/usr/bin/env python
-"""Download the open observed-data bundle with provenance."""
+"""Download the open observed-data bundle with provenance.
+
+The fetch loop is `fetch_with_provenance.fetch_all` (shared with the ABS and
+licence fetchers); this script is the manifest. #199: a file already on disk
+with no recorded retrieval date takes the date it was written to disk, the
+record saying so - neither restamped with today nor left blank.
+"""
 
 import city as _city
-import os, json, hashlib, urllib.request, datetime
-
-# #199: ONE rule for a file already on disk with no recorded retrieval date.
-# It is neither re-stamped with today (the eighth report's wall-clock drift)
-# nor left blank (the ninth report's fifteen undated feeds): the date the
-# file was WRITTEN is on the file itself - urlretrieve and the streamed
-# download both write it at retrieval - so the record takes that date and
-# says where it came from. A file whose record already carries a date keeps
-# it; a file fetched this run is stamped today.
-def _retrieved_from_disk(p):
-    return datetime.date.fromtimestamp(os.path.getmtime(p)).isoformat()
-
-
-def _sha256(path):
-    """Chunked, so peak memory is one buffer rather than one download.
-
-    The whole file was read into memory to hash it, which at the 871 MB hourly
-    counts archive meant a peak RSS of the largest thing this ever fetches.
-    The same chunked shape build_manifest.py and extract_speed_zones.py already
-    use; the digest is identical.
-    """
-    h = hashlib.sha256()
-    with open(path, 'rb') as f:
-        for chunk in iter(lambda: f.read(1 << 20), b''):
-            h.update(chunk)
-    return h.hexdigest()
+from fetch_with_provenance import fetch_all
 
 B="https://opendata.transport.nsw.gov.au/data/dataset/"
 M=[
@@ -77,41 +58,15 @@ M=[
  ("bitre/road-vehicles-australia-january-2025-explanatory-notes.txt","https://data.gov.au/data/dataset/f6e0a290-7d47-4b88-ac3b-34824b0ab334/resource/c93f027f-48d2-43f0-8b68-ab1dfb2122ed/download/road-vehicles-australia-january-2025-explanatory-notes.txt","BITRE Road Vehicles Australia, January 2025: explanatory notes","CC-BY 3.0 AU"),
  ("jtw/bts_jtw_table01_2011_v1_0.zip",B+"66ee70ff-eb4f-45e5-b45b-90ce484ec178/resource/2dd13d56-2894-4153-bbab-972550629bfe/download/bts_jtw_table01_2011_v1_0.zip","TfNSW Journey to Work 2011, Table 01: origin SA2 x destination SA2, employed persons (2011 Census)","CC-BY 4.0"),
 ]
-root=_city.path('data/raw'); prov=[]
-_prev_path=os.path.join(root,'provenance_open_data.json')
-_prev={}
-if os.path.exists(_prev_path):
-    try:
-        _prev={r['path']:r for r in json.load(open(_prev_path,encoding='utf-8'))}
-    except (OSError,ValueError,TypeError,KeyError):
-        _prev={}
-for rel,url,desc,lic in M:
-    p=os.path.join(root,rel); os.makedirs(os.path.dirname(p),exist_ok=True)
-    fetched=False
-    if os.path.exists(p) and os.path.getsize(p)>500:
-        print(f"SKIP {rel}")
-    else:
-        fetched=True
-        print(f"GET  {rel}",flush=True)
-        try:
-            req=urllib.request.Request(url,headers={'User-Agent':'city-digital-twin/0.1 (research)'})
-            with urllib.request.urlopen(req,timeout=600) as r, open(p,'wb') as f:
-                while True:
-                    c=r.read(1<<20)
-                    if not c: break
-                    f.write(c)
-        except Exception as e:
-            print(f"  FAIL {e}"); continue
-    sz=os.path.getsize(p); h=_sha256(p)
-    print(f"  {sz:>13,} B")
-    # a file already held keeps the day it was retrieved (the wall-clock drift
-    # the eighth report named: a re-run restamped every record with today)
-    rec={"path":rel,"url":url,"description":desc,"licence":lic,"bytes":sz,"sha256":h}
-    retrieved=datetime.date.today().isoformat() if fetched else (_prev.get(rel) or {}).get('retrieved')
-    if not retrieved:
-        retrieved=_retrieved_from_disk(p)
-        rec["retrieved_basis"]="file modification time on disk (written at download); no earlier record"
-    rec["retrieved"]=retrieved
-    prov.append(rec)
-json.dump(prov,open(os.path.join(root,'provenance_open_data.json'),'w',encoding='utf-8',newline='\n'),indent=2)
-print("\nwrote data/raw/provenance_open_data.json  (%d files)"%len(prov))
+
+
+def main():
+    fetch_all(M, _city.path('data/raw'), 'provenance_open_data.json', min_bytes=500,
+              timeout=600, undated='disk')
+
+
+if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
+    main()

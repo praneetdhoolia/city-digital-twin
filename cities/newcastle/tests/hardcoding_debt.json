@@ -1,0 +1,46 @@
+{
+  "description": "Newcastle's recorded hardcoding debt - the CITY-OWNED half of src/registry/check_hardcoding.py. Each rule's items are the exact findings (keyed without line numbers) the city has not yet declared, retyped or classified; `ceiling` is their count and may only FALL. Adding an item fails unless the ceiling is raised in the same change with a new ceiling_log entry carrying the date, the reason and `\"raised\": true`; an item that no longer surfaces must be deleted and the ceiling lowered. A coordinate, a stale register entry and a failed probe are never recordable.",
+  "rules": {
+    "script_decisions": {
+      "ceiling": 2,
+      "reason": "measured (sixteenth report)",
+      "ceiling_log": [
+        {
+          "date": "2026-10-08",
+          "ceiling": 2,
+          "reason": "measured when the rule was introduced (sixteenth report)"
+        }
+      ],
+      "items": [
+        "<city>/build/build_scenario_configs.py:ROAD_VARIANTS",
+        "<city>/build/build_scenario_configs.py:SCENARIOS"
+      ]
+    },
+    "inline_literals": {
+      "ceiling": 13,
+      "reason": "ALL-CAPS expression values the widened scanner first visited on 8 October 2026 (#212, sixteenth report): the light-rail vehicle specification typed into build_corridor_layers.py (A4_vehicle_spec.csv) and the road and parking variant definitions typed into build_scenario_configs.py. Each is a registry read away (A.lightrail.* and E.* fields with a literature or assumed source); the builders are retyped, never the ledger extended.",
+      "ceiling_log": [
+        {
+          "date": "2026-10-08",
+          "ceiling": 13,
+          "reason": "measured when the rule was introduced (sixteenth report)"
+        }
+      ],
+      "items": [
+        "<city>/build/build_corridor_layers.py:<module>:0.6",
+        "<city>/build/build_corridor_layers.py:<module>:0.8",
+        "<city>/build/build_corridor_layers.py:<module>:1300",
+        "<city>/build/build_corridor_layers.py:<module>:2.65",
+        "<city>/build/build_corridor_layers.py:<module>:2.8",
+        "<city>/build/build_corridor_layers.py:<module>:270",
+        "<city>/build/build_corridor_layers.py:<module>:32.966",
+        "<city>/build/build_corridor_layers.py:<module>:45",
+        "<city>/build/build_corridor_layers.py:<module>:6",
+        "<city>/build/build_corridor_layers.py:<module>:70",
+        "<city>/build/build_corridor_layers.py:<module>:750",
+        "<city>/build/build_scenario_configs.py:<module>:2026",
+        "<city>/build/build_scenario_configs.py:<module>:210"
+      ]
+    }
+  }
+}

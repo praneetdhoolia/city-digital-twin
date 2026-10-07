@@ -110,6 +110,35 @@ def person_attributes(run_dir):
             for pid, a in persons.items()}
 
 
+TRIP_COLUMNS = ('person', 'main_mode', 'longest_distance_mode', 'traveled_distance')
+
+
+def read_at_iteration(run_dir):
+    """The iteration this reader quotes: the one the run's close-out read
+    (`_metrics.json` read_at_iteration), else the final output (None) when the
+    run wrote one, else the newest citable iteration table. A stopped arm's
+    record clamps all three (iteration_reading)."""
+    import iteration_reading
+    run_dir = Path(run_dir)
+    metrics = run_dir / '_metrics.json'
+    if metrics.exists():
+        return json.loads(metrics.read_text(encoding='utf-8')).get('read_at_iteration')
+    if iteration_reading.table_path(str(run_dir), 'trips', None):
+        return None
+    have = iteration_reading.citable_iterations(str(run_dir), 'trips')
+    if not have:
+        raise SystemExit('%s holds no citable trips table' % run_dir)
+    return have[-1]
+
+
+def trips_rows(run_dir, iteration):
+    """The trips rows this reader tabulates at `iteration` (None: the final
+    output), the four columns it reads decoded (iteration_reading.table's
+    projection), refused past the run's record."""
+    import iteration_reading
+    return iteration_reading.table(str(run_dir), 'trips', iteration, columns=TRIP_COLUMNS)
+
+
 def main() -> int:
     if len(sys.argv) != 2 or sys.argv[1] in ('-h', '--help'):
         print(__doc__)
@@ -123,14 +152,8 @@ def main() -> int:
     km = {dim: defaultdict(lambda: defaultdict(float)) for dim in DIMS}
     totals = Counter()
     unmatched = 0
-    # the final trips table, or - for a stopped arm - the iteration its
-    # close-out read (`_metrics.json` read_at_iteration)
-    import iteration_reading
-    read_at = None
-    metrics = run_dir / '_metrics.json'
-    if metrics.exists():
-        read_at = json.loads(metrics.read_text(encoding='utf-8')).get('read_at_iteration')
-    rows = iteration_reading.table(str(run_dir), 'trips', read_at)
+    read_at = read_at_iteration(run_dir)
+    rows = trips_rows(run_dir, read_at)
     mode_col = ('main_mode' if rows and 'main_mode' in rows[0]
                 else 'longest_distance_mode')
     for r in rows:

@@ -176,6 +176,7 @@ public final class EscortCoherenceListener implements ReplanningListener {
                     && cfg.getJointCoherenceRate() <= 0.0)) {
             return;
         }
+        final long started = System.currentTimeMillis();
         index();
         final Pass p = new Pass(event);
         for (final Map.Entry<String, List<Person>> e : byHousehold.entrySet()) {
@@ -221,6 +222,11 @@ public final class EscortCoherenceListener implements ReplanningListener {
                      p.driverProposed, p.rate, p.jointRate,
                      cfg.getCoherenceScope());
         }
+        // One line per listener per iteration, in the one shape every citysim
+        // listener logs it, so the performance lane can attribute the
+        // replanning phase from matsim.log alone (sixteenth report).
+        LOG.info("escortCoherence: it.{} replanning listener=EscortCoherenceListener ms={}",
+                 event.getIteration(), System.currentTimeMillis() - started);
     }
 
     /**

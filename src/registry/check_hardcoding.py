@@ -1,9 +1,19 @@
 #!/usr/bin/env python
 """Find values the model uses that were decided in a script, not declared.
 
-    python src/registry/check_hardcoding.py            report
-    python src/registry/check_hardcoding.py --strict   exit 1 if anything is found
-    python src/registry/check_hardcoding.py --json OUT machine-readable ledger
+    python src/registry/check_hardcoding.py               report the active city
+    python src/registry/check_hardcoding.py --strict      exit 1 if anything is found
+    python src/registry/check_hardcoding.py --json OUT    machine-readable ledger
+    python src/registry/check_hardcoding.py --all-cities  every city under cities/
+                                                          (the gate and CI)
+
+A city's scripts carry what the city has not yet declared or classified, and a
+second city brought 230 of them on the day it was built. Each city records
+those, per question, in `cities/<city>/tests/hardcoding_debt.json` under a
+ceiling that may only fall (src/registry/debt_ledger.py states the shape): an
+item outside the record fails, a recorded item that no longer surfaces must be
+deleted, and the gate is green and honest at once. A coordinate, a stale
+register entry and a probe that could not run are never recordable.
 
 This repository's signature defect is not a wrong number. It is a number in a
 place nobody looks: a declared field that reaches nothing, a template literal
@@ -25,6 +35,11 @@ Five questions, asked separately because the answers mean different things:
   5. COORDINATES      a latitude/longitude pair typed into a script. The hard
                       constraint is absolute: a coordinate belongs in
                       `cities/<city>/geometry/` or the registry, never in code.
+ 10. WALL CLOCK       a build script reading the clock (`datetime.now()`,
+                      `time.time()`, `date.today()`) or drawing from an
+                      unseeded random stream. The determinism rule had no
+                      scanner, and the manifest stamped every regeneration
+                      with the time of day (#211).
 
 **What changed, and why the count moved.** The first version of this audit
 asked whether a field key was a SUBSTRING of any source file. That counted a
@@ -60,6 +75,7 @@ import sys
 _HERE = os.path.dirname(os.path.abspath(__file__))
 import city as _city  # noqa: E402
 import registry as _registry  # noqa: E402
+import debt_ledger as _ledger  # noqa: E402
 import extract_legacy_constants as _legacy  # noqa: E402
 
 REPO = os.path.abspath(os.path.join(_HERE, '..', '..'))
@@ -129,6 +145,11 @@ def sources(exts=CODE_EXT):
             continue
         for base, dirs, files in os.walk(root):
             dirs[:] = [d for d in dirs if d not in SKIP_DIRS]
+            if os.path.abspath(base) == os.path.abspath(_city.CITY_DIR):
+                # A path under data/ is data: a .py there is a vendored
+                # download (a published API client landed under data/raw/),
+                # immutable by the provenance rule and not a script of ours.
+                dirs[:] = [d for d in dirs if d != 'data']
             if os.path.abspath(base).startswith(os.path.join(_city.CITY_DIR,
                                                              'registry')):
                 continue                  # a declaration is not a use
@@ -370,6 +391,14 @@ STRUCTURAL = {
     # number. Since 12 Sep 2026 it is named ONCE, in `src/run/procs.py`, and
     # `session_gate` and `bootstrap_toolchain` both import it - the inlined
     # copy that was invisible here is gone.
+    # THE TASK SCHEDULER'S OWN ENUMERATION (sixteenth report): TASK_STATE
+    # Running is 4 on every Windows, and the proof an arm was launched by
+    # its own task reads the number because the word `schtasks` prints for
+    # it is localised. An operating-system constant, not a model value.
+    'run.py:TASK_STATE_RUNNING':
+        'the Task Scheduler\'s TASK_STATE value for Running, read in place '
+        'of the localised status word; an operating-system enumeration, '
+        'not a parameter of the model',
     'src/run/procs.py:ARM_RSS_KB':
         'the resident-size threshold that tells a running arm from the java '
         'process an IDE keeps alive, in KB. A classifier over '
@@ -383,6 +412,25 @@ STRUCTURAL = {
     'src/analyse/positions.py:HISTORY_CAP':
         'how many History entries a position page keeps, the same cap the '
         'handoff skill states; a document convention, not a model value',
+    'src/analyse/positions.py:STALE_SECTIONS':
+        'how many record sections a position page may trail the record by '
+        'before the handoff check calls it stale; a document convention',
+    'src/analyse/build_status_board.py:head_sha(short)':
+        'how many characters of a git commit sha the board prints; a display '
+        'width over a hash, not a model value',
+    'src/registry/check_city.py:PROSE_WORDS':
+        'the word count above which a string literal in a city script is '
+        'read as prose (a label, a message) rather than a value a script '
+        'decides by; a classifier over SOURCE TEXT in a check that reaches '
+        'no build, no run and no target',
+    'run.py:TASK_STATE_RUNNING':
+        'the Windows Task Scheduler state code for a running task (4), read '
+        'back from schtasks; the operating system\'s enum, not a model value',
+    '<city>/build/adopt_framework_fields.py:OVERRIDES':
+        'the second city\'s own declared facts, written INTO its registry '
+        'files by the adopt script with source, sweep and description: the '
+        'declaration itself, which the audit excludes under registry/, not a '
+        'twin of one',
     'src/run/run_failure.py:LOG_FRESH_S':
         'how recently matsim.log must have been written for its JVM to count '
         'as alive when its harness is dead, in seconds - five MemoryObserver '
@@ -564,6 +612,49 @@ STRUCTURAL = {
     '<city>/build/build_scenario_schedules.py:'
     'scale_lr_runtime(delta_per_segment_s)':
         'the other neutral zero of the same function',
+    # THE SECOND CITY'S SOURCE STRUCTURE (sixteenth report): the published
+    # tables' own pages, columns, bands and dates, restated so a reader can
+    # find and expand them. Each is the shape of a file being read, not a
+    # modelling choice - the same class as the ABS bands in reader_shapes.py.
+    '<city>/build/build_plans.py:BANDS':
+        'the Census of India work-distance bands (0-1 km .. 51+ km) as the '
+        'B-28 table publishes them; a worker is drawn into the band the '
+        'census put it in, and the band edges are the table\'s own',
+    '<city>/build/build_population.py:SIZE_BANDS':
+        'the census household-size columns (1 .. 9+) with the size each '
+        'column spans; the table\'s own column structure',
+    '<city>/extract/extract_bmc_population_estimates.py:DIARIES':
+        'the page of each civic diary a population estimate is read from and '
+        'the year it states; where a figure sits in a published document',
+    '<city>/extract/extract_bmc_signal_inventory.py:PAGES':
+        'the pages of the signal inventory PDF and the serial range each page '
+        'carries; the document\'s own pagination',
+    '<city>/extract/extract_bmc_signal_inventory.py:COLUMNS':
+        'column boundaries of the same PDF table in points; where a cell sits '
+        'on the page, never a coordinate on the ground',
+    '<city>/extract/extract_navi_metro_controls.py:add(page)':
+        'the page of the operating report a control figure is cited from',
+    '<city>/extract/extract_population_projections.py:ANNUAL':
+        'the page and table numbers of each projection series in the '
+        'published report, with the series\' own labels',
+    '<city>/extract/harvest.py:FIXED_TIME':
+        'the fixed zip entry timestamp (1980-01-01) every harvest archive '
+        'carries so that two harvests of the same bytes hash the same; the '
+        'determinism rule itself, the same class as det_io.zip_entry',
+    '<city>/extract/harvest.py:pack(pause_seconds)':
+        'the pause between two fetches from one host, in seconds; '
+        'acquisition courtesy, and the bytes retrieved are the same at any '
+        'value',
+    '<city>/extract/acquire_mbmt_sources.py:--pause-seconds':
+        'the same fetch pacing, as a command-line default',
+    '<city>/extract/acquire_nmmt_paths.py:--pause-seconds':
+        'the same fetch pacing',
+    '<city>/extract/acquire_nmmt_route_stops.py:--pause-seconds':
+        'the same fetch pacing',
+    '<city>/extract/acquire_nmmt_schedules.py:--pause-seconds':
+        'the same fetch pacing',
+    '<city>/extract/acquire_nmmt_vehicle_details.py:--pause-seconds':
+        'the same fetch pacing',
 }
 
 
@@ -622,9 +713,32 @@ def stale_pending(fields, uses):
     The register is a promise that something will read the field. When it does,
     the promise is kept and the entry must go - otherwise the list grows into a
     permanent excuse, which is what any allowlist becomes if nothing prunes it.
+
+    The register is one over every city. A field this city never declared is
+    not "gone" while another city declares it: under the second city the four
+    entries read as kept promises to prune, for fields that city has no use
+    for (sixteenth report).
     """
     return sorted(k for k in PENDING_CONSUMER
-                  if k not in fields or k in uses or is_bound(fields.get(k, {})))
+                  if (k not in fields and not _declared_in_any_city(k))
+                  or (k in fields and (k in uses or is_bound(fields[k]))))
+
+
+_FIELDS_BY_CITY = {}
+
+
+def _declared_in_any_city(key):
+    """Whether any city under cities/ declares `key`."""
+    for name in _city.available():
+        if name not in _FIELDS_BY_CITY:
+            try:
+                _FIELDS_BY_CITY[name] = _registry.load_registry(
+                    os.path.join(_city.CITIES_DIR, name, 'registry'))[0]
+            except Exception:                             # noqa: BLE001
+                _FIELDS_BY_CITY[name] = {}
+        if key in _FIELDS_BY_CITY[name]:
+            return True
+    return False
 
 
 # Layers whose fields BELONG to the measurement apparatus: how the calibration
@@ -893,24 +1007,30 @@ STRUCTURAL_INLINE = {
         'publication to a daily one',
     '<city>/extract/extract_speed_zones.py:sha256:20':
         'a read chunk size (1 << 20 bytes) while hashing',
-    '<city>/extract/fetch_abs_dem.py:_sha256:20':
-        'a read chunk size (1 << 20 bytes) while hashing',
-    '<city>/extract/fetch_abs_dem.py:<module>:20':
-        'a read chunk size while downloading',
+    '<city>/extract/fetch_with_provenance.py:sha256:20':
+        'a read chunk size (1 << 20 bytes) while hashing, in the one fetch '
+        'helper the reference city\'s fetchers share (sixteenth report)',
+    '<city>/extract/fetch_with_provenance.py:download:20':
+        'the same chunk size while downloading',
+    '<city>/extract/fetch_abs_dem.py:main:1800':
+        'an HTTP timeout (seconds) for a 30 m DEM tile; the bytes retrieved '
+        'are the same at any value that succeeds',
+    '<city>/extract/fetch_licences.py:main:600':
+        'an HTTP timeout (seconds) for the licence tables; as above',
+    '<city>/extract/fetch_licences.py:main:500':
+        'a VERIFICATION threshold on a downloaded file\'s byte size (below '
+        '500 bytes a response is an error page, not a table); the download '
+        'is unchanged',
     '<city>/extract/fetch_tpa_daily.py:_sha256:20':
         'a read chunk size (1 << 20 bytes) while hashing',
     '<city>/extract/fetch_tpa_daily.py:fetch:20':
         'a read chunk size while downloading',
-    '<city>/extract/fetch_open_data.py:_sha256:20':
-        'a read chunk size (1 << 20 bytes) while hashing',
-    '<city>/extract/fetch_open_data.py:<module>:20':
-        'a read chunk size while downloading',
-    '<city>/extract/fetch_open_data.py:<module>:500':
-        _RETRY,
-    '<city>/extract/fetch_licences.py:<module>:20':
-        'a read chunk size while downloading',
-    '<city>/extract/fetch_licences.py:<module>:500':
-        _RETRY,
+    '<city>/extract/fetch_open_data.py:main:500':
+        'a VERIFICATION threshold on a downloaded file\'s byte size (below '
+        '500 bytes a response is an error page); the download is unchanged',
+    '<city>/extract/fetch_open_data.py:main:600':
+        'an HTTP timeout (seconds); the bytes retrieved are the same at any '
+        'value that succeeds',
     '<city>/extract/osm_tiles.py:verify:2000':
         'a VERIFICATION threshold on a tile file\'s byte size (below 2,000 bytes an '
         'Overpass answer is an error page, not a tile); the harvest is unchanged',
@@ -932,6 +1052,81 @@ STRUCTURAL_INLINE = {
         'own band edge, restated so the reader can expand it',
     '<city>/extract/reader_shapes.py:education_groups:200':
         'the open upper age of the same band; nobody is older',
+    # ---- surfaced when ALL-CAPS expression values were first visited (#212,
+    # sixteenth report): structure that an ALL-CAPS name had hidden
+    'src/build/audit_osm_transport_tags.py:<module>:1.60934e+06':
+        'a mile in millimetres, in a unit table over OSM tag suffixes; the '
+        'definition of the unit',
+    'src/build/audit_osm_transport_tags.py:<module>:1852':
+        'a nautical mile in metres; the definition of the unit',
+    'src/build/audit_osm_transport_tags.py:<module>:3048':
+        'a foot in tenths of a millimetre; the definition of the unit',
+    'src/build/audit_osm_transport_tags.py:<module>:254':
+        'an inch in tenths of a millimetre; the definition of the unit',
+    'src/build/audit_osm_transport_tags.py:<module>:10000':
+        'the denominator those two definitions are written over',
+    'src/build/build_activity_chains.py:external_agents:0.0001':
+        'the zone-area floor (km2) under the home jitter radius, the same '
+        'guard as build_population.py:main:0.0001',
+    'src/build/build_activity_chains.py:freight_agents:0.0001':
+        'the same zone-area floor',
+    'src/build/build_activity_chains.py:load_supply_inputs:0.0001':
+        'the same zone-area floor',
+    'src/build/build_data_dictionary.py:<module>:9':
+        'the csv module\'s field-size limit (10 ** 9) so a cell holding a '
+        'whole OSM relation is read; a reader bound, not a value',
+    'src/build/det_io.py:<module>:1980':
+        'the earliest year a zip entry timestamp can express, the fixed date '
+        'every deterministic archive carries; the format\'s own epoch',
+    '<city>/build/build_era_feeds.py:<module>:6':
+        'the GTFS calendar column index of Sunday (Monday is 0): which day '
+        'column a day type reads, the feed format\'s own order',
+    '<city>/extract/rms_hourly.py:<module>:6':
+        'ISO weekday 6 (Saturday) in the day-of-week to day-type map the two '
+        'count readers share; the ISO 8601 numbering the raw counts carry',
+    # ---- the second city's builders (sixteenth report): reviewed one by one
+    '<city>/build/build_baseline_transit_feed.py:main:1e+07':
+        'the csv module\'s field-size limit while a long shape column is read; '
+        'a reader bound, not a value',
+    '<city>/build/build_suburban_timetable_feed.py:<module>:9':
+        'the same csv field-size limit (10 ** 9)',
+    '<city>/build/build_hired_fleet.py:main:0.5':
+        'round-half-up of an expected count to a whole vehicle (floor(x + 0.5))',
+    '<city>/build/build_plans.py:points_in:64':
+        'the smallest batch of candidate points drawn before a polygon is '
+        'tested; the points kept are the same at any batch size',
+    '<city>/build/build_plans.py:home_polygons:4326':
+        'EPSG:4326, the CRS the source polygons are published in; a property '
+        'of the file being read, reprojected at once to city.crs()',
+    '<city>/build/build_population.py:projected_share:0.999999':
+        'a clamp that keeps a published share strictly below one so its '
+        'complement never divides by zero',
+    '<city>/build/build_population.py:draw_sizes:1.2':
+        'an oversampling factor on household-size draws so one pass fills '
+        'the person count; the kept draws are seeded and identical at any '
+        'factor that suffices',
+    '<city>/build/build_mode_targets.py:car_passenger_split:2e+06':
+        'a pandas chunk size while a 27 M-row population is read; throughput only',
+    '<city>/build/build_plans.py:kept_persons:2e+06':
+        'the same chunk size',
+    '<city>/build/build_mode_targets.py:derived_rows:100000':
+        'one lakh, the unit the published ridership is stated in; a unit '
+        'conversion',
+    '<city>/build/build_population.py:synthesise_leaves:20':
+        'the lower edge of the census 20-24 attendance band, the table\'s '
+        'own band',
+    '<city>/build/build_population.py:synthesise_leaves:6':
+        'the upper edge of the census 0-6 age column, the table\'s own band',
+    '<city>/build/build_suburban_timetable_feed.py:assemble_trains:1800':
+        'a parsing tolerance over the printed timetable: a stop time more '
+        'than 30 min after the previous leg starts a new trip. A property of '
+        'how the published table is laid out, not of the service',
+    '<city>/build/derive_vehicle_possession_growth.py:main:2015.5':
+        'the midpoint of the NFHS-4 fieldwork period (2015-16); the survey\'s '
+        'own date',
+    '<city>/build/derive_vehicle_possession_growth.py:main:2020':
+        'the midpoint of the NFHS-5 fieldwork period (2019-21); the survey\'s '
+        'own date',
 }
 
 
@@ -951,17 +1146,32 @@ def stale_structural(corpus):
         if not p.endswith('.py') or r in SELF_REFERENTIAL or is_test(r):
             continue
         try:
-            for d in _legacy.scan_decisions(p):
-                seen.add('%s:%s' % (portable(r), d['name']))
+            seen |= _symbol_keys(p, portable(r))
         except SyntaxError:
             continue
     return sorted(k for k in STRUCTURAL
                   if k not in seen and not _live_in_reference_city(k, _decision_keys))
 
 
+def _symbol_keys(path, rp):
+    """The register keys a file makes live: every decision the scanner
+    reports, and every ALL-CAPS name it assigns - an entry for an ALL-CAPS
+    EXPRESSION (a table of registry declarations the inline scan reads
+    through, #212) names a symbol that is there even though it is not a
+    literal the decision scan reports."""
+    keys = {'%s:%s' % (rp, d['name']) for d in _legacy.scan_decisions(path)}
+    with io.open(path, encoding='utf-8', errors='replace') as f:
+        tree = ast.parse(f.read())
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign):
+            keys |= {'%s:%s' % (rp, t.id) for t in node.targets
+                     if isinstance(t, ast.Name) and t.id.isupper()}
+    return keys
+
+
 def _decision_keys(text, rp, city_name=None):
     path = os.path.join(_city.REPO, 'cities', city_name or _city.DEFAULT_CITY, rp[len('<city>/'):])
-    return {'%s:%s' % (rp, d['name']) for d in _legacy.scan_decisions(path)}
+    return _symbol_keys(path, rp)
 
 
 def script_decisions(corpus, fields):
@@ -1155,26 +1365,46 @@ def config_reach():
     except Exception as exc:                              # noqa: BLE001
         return [], [], 'the run-input builder does not import: %s' % exc
     try:
-        sweep = _registry.load(strict=True).sweep('RUN.controler.last_iteration')
-        interval = sweep['interval'] if isinstance(sweep, dict) else sweep
+        resolved = _registry.load(strict=True)
+        # The probe runs at the fewest iterations the field admits: its
+        # sweep's floor, or its declared value where the city declares the
+        # count as a definition with no sweep (the second city, sixteenth
+        # report) - the probe could not be built at all for it until then.
+        try:
+            sweep = resolved.sweep('RUN.controler.last_iteration')
+            interval = sweep['interval'] if isinstance(sweep, dict) else sweep
+            iterations = int(interval[0])
+        except Exception:                                 # noqa: BLE001
+            iterations = int(resolved.get('RUN.controler.last_iteration'))
         city_doc = _city.descriptor()
         cfg = _registry.load(
             scenario=city_doc.get('intervention', {}).get('base_scenario'),
             day=city_doc['day_types'][0],
-            set={'RUN.controler.last_iteration': int(interval[0])})
-        scoring = builder.scoring_from_c1(
-            cfg, json.load(io.open(builder.PARAMS, encoding='utf-8')),
-            builder.hts_purpose_share())
+            set={'RUN.controler.last_iteration': iterations})
+        # Under `bound_fields` nothing is translated and there is no C1 table
+        # to read (9.204): the probe emits what the launcher would, None.
+        if builder.scoring_translation(cfg) == 'bound_fields':
+            scoring = None
+        else:
+            scoring = builder.scoring_from_c1(
+                cfg, json.load(io.open(builder.PARAMS, encoding='utf-8')),
+                builder.hts_purpose_share())
         # The signal and crossing paths are read only under their declared
         # representation gates (9.77); supplying them unconditionally keeps
         # the probe valid on either side of the boundary.
+        # The signal, crossing, fare-table and hired-fleet paths are read
+        # only under their declared representation gates (9.77); supplying
+        # them unconditionally keeps the probe valid on either side of each.
         runtime = builder.config_runtime(cfg, scoring, city_doc['day_types'][0], dict(
             output='output', network='n', plans='p', schedule='s', vehicles='v',
             mode_vehicles='m', parking_prices='k',
             signal_systems='ss', signal_groups='sg', signal_control='sc',
-            change_events='ce',
+            change_events='ce', boarding_fares='bf', hired_fleet='hf',
             fraction=cfg.get('RUN.sample.fraction')))
-    except Exception as exc:                              # noqa: BLE001
+    except (Exception, SystemExit) as exc:                # noqa: BLE001
+        # a refusal the assembler raises as SystemExit is a probe failure
+        # to report, not a reason for the audit to die (the second city's
+        # fare table refused the probe for want of a path, sixteenth report)
         return [], [], 'could not resolve a probe configuration: %s' % exc
     reaching, inert = param_config.reach('matsim', cfg, runtime)
 
@@ -1253,10 +1483,11 @@ class _InlineScan(ast.NodeVisitor):
     reports the 16, because the call wraps a decision rather than making one.
     """
 
-    def __init__(self):
+    def __init__(self, rp=''):
         self.hits = []
         self.exempt = set()            # id() of Constant nodes that are structure
         self.func = ['<module>']
+        self.rp = rp                   # the file, portable, for the STRUCTURAL register
 
     def visit_FunctionDef(self, node):
         self.func.append(node.name)
@@ -1298,8 +1529,15 @@ class _InlineScan(ast.NodeVisitor):
         self.generic_visit(node)
 
     def visit_Assign(self, node):
-        if any(isinstance(t, ast.Name) and t.id.isupper() for t in node.targets):
+        caps = [t.id for t in node.targets if isinstance(t, ast.Name) and t.id.isupper()]
+        if caps and _legacy.reported_as_decision(caps[0], node.value):
             return                         # category 4's business
+        if caps and any('%s:%s' % (self.rp, c) in STRUCTURAL for c in caps):
+            return                         # the symbol's STRUCTURAL entry states why
+        # An ALL-CAPS EXPRESSION - `X = 0.6 * Y`, `TABLE = dict(a=1.5)`,
+        # `BOUNDS = (0.2, 0.8)` - returned unvisited here and unparsed there,
+        # so six typed twins of registry values passed the gate at 0 (#212).
+        # Its literals are read like any other expression's.
         self.generic_visit(node)
 
     def visit_JoinedStr(self, node):
@@ -1329,7 +1567,7 @@ def inline_literals(corpus):
             tree = ast.parse(text)
         except SyntaxError:
             continue
-        scan = _InlineScan()
+        scan = _InlineScan(rp)
         scan.visit(tree)
         for line, func, value in scan.hits:
             key = '%s:%s:%s' % (rp, func, ('%g' % value))
@@ -1359,7 +1597,7 @@ def stale_structural_inline(corpus):
             tree = ast.parse(text)
         except SyntaxError:
             continue
-        scan = _InlineScan()
+        scan = _InlineScan(rp)
         scan.visit(tree)
         for line, func, value in scan.hits:
             live.add('%s:%s:%s' % (rp, func, ('%g' % value)))
@@ -1368,7 +1606,7 @@ def stale_structural_inline(corpus):
 
 
 def _inline_keys(text, rp, city_name=None):
-    scan = _InlineScan()
+    scan = _InlineScan(rp)
     scan.visit(ast.parse(text))
     return {'%s:%s:%s' % (rp, func, ('%g' % value)) for line, func, value in scan.hits}
 
@@ -1400,6 +1638,150 @@ def _live_in_reference_city(key, keys_of):
         except (SyntaxError, OSError):
             continue
     return False
+
+
+# --------------------------------------------------------------------------
+# 10. the clock and unseeded randomness in the build layer (#211's class)
+# --------------------------------------------------------------------------
+# Everything synthetic is seeded (20260810) and nothing a builder writes may
+# depend on the wall clock - the hard constraint, and until the sixteenth
+# report it had no scanner: build_manifest.py stamped every regeneration with
+# the time of day, so a regeneration with no row changed was a diff (#211).
+# Reported like every other question; an item leaves by being removed, or by
+# an entry in STRUCTURAL_CLOCK stating why the clock reaches no artefact.
+CLOCK_LAYERS = ('src/build/', '<city>/build/')
+CLOCK_CALLS = ('datetime.now', 'datetime.utcnow', 'datetime.today', 'date.today',
+               'time.time', 'time.time_ns')
+# module-level draws from the interpreter's global stream, seeded by the
+# clock unless the file seeds it
+GLOBAL_RANDOM = {'random', 'randint', 'choice', 'choices', 'shuffle', 'sample',
+                 'uniform', 'gauss', 'normalvariate', 'randrange', 'rand', 'randn',
+                 'permutation', 'binomial', 'poisson', 'exponential', 'standard_normal',
+                 'integers'}
+SEEDED_CONSTRUCTORS = ('default_rng', 'RandomState', 'Random', 'Generator', 'SeedSequence')
+STRUCTURAL_CLOCK = {
+    'src/build/build_timing.py:record:datetime.now':
+        'the timing roll-up records WHEN a builder ran; its whole purpose is '
+        'the wall time, and it lands in data/_build_timing.json, which the '
+        'manifest\'s scan does not cover and .gitignore excludes',
+    'src/build/build_timing.py:start:time.time':
+        'the same roll-up: a builder\'s elapsed seconds, never in a hashed file',
+    'src/build/build_timing.py:__enter__:time.time':
+        'the same roll-up, as a context manager',
+    'src/build/build_timing.py:__exit__:time.time':
+        'the same roll-up, the context manager\'s end',
+    'src/build/build_timing.py:_finish:time.time':
+        'the same roll-up, the atexit hook that records a builder\'s end',
+    'src/build/build_matsim_network.py:java:time.time':
+        'how long a pt2matsim stage took, printed to the build log; the '
+        'seconds left _matsim_build_report.json in the sixteenth report so '
+        'that two builds of one feed describe it the same',
+    'src/build/build_matsim_network.py:build_schedule:time.time':
+        'the same elapsed seconds, printed beside the mapped feed',
+}
+
+
+def _dotted(node):
+    """`a.b.c` for a call target, or the bare name, or ''."""
+    parts = []
+    while isinstance(node, ast.Attribute):
+        parts.append(node.attr)
+        node = node.value
+    if isinstance(node, ast.Name):
+        parts.append(node.id)
+    return '.'.join(reversed(parts))
+
+
+class _ClockScan(ast.NodeVisitor):
+    def __init__(self, text):
+        self.hits = []
+        self.func = ['<module>']
+        self.seeded = bool(re.search(r'\brandom\.seed\s*\(\s*[^)\s]', text))
+
+    def visit_FunctionDef(self, node):
+        self.func.append(node.name)
+        self.generic_visit(node)
+        self.func.pop()
+
+    visit_AsyncFunctionDef = visit_FunctionDef
+
+    def visit_Call(self, node):
+        name = _dotted(node.func)
+        call = None
+        if any(name == c or name.endswith('.' + c) for c in CLOCK_CALLS):
+            call = name.split('.', 1)[-1] if name.count('.') > 1 else name
+        elif name.endswith(SEEDED_CONSTRUCTORS) and not node.args and not node.keywords:
+            call = name.rsplit('.', 1)[-1] + '()'          # seeded by the clock
+        elif ('.' in name and name.rsplit('.', 1)[-1] in GLOBAL_RANDOM
+              and name.rsplit('.', 1)[0].endswith('random') and not self.seeded):
+            call = name
+        if call:
+            self.hits.append((node.lineno, self.func[-1], call))
+        self.generic_visit(node)
+
+
+def wall_clock(corpus):
+    """(file, line, function, call) for every clock read or unseeded draw."""
+    out = []
+    for path, text in sorted(corpus.items()):
+        if not path.endswith('.py'):
+            continue
+        rp = portable(rel(path))
+        if not any(rp.startswith(layer) for layer in CLOCK_LAYERS) or rp in SELF_REFERENTIAL:
+            continue
+        try:
+            tree = ast.parse(text)
+        except SyntaxError:
+            continue
+        scan = _ClockScan(text)
+        scan.visit(tree)
+        for line, func, call in scan.hits:
+            if '%s:%s:%s' % (rp, func, call) in STRUCTURAL_CLOCK:
+                continue
+            out.append((rp, line, func, call))
+    return out
+
+
+# --------------------------------------------------------------------------
+# the city's recorded debt: which rows of which question, keyed stably
+# --------------------------------------------------------------------------
+DEBT_FILE = ('tests', 'hardcoding_debt.json')
+# How a reported row is named in the ledger - without its line number, so a
+# recorded item survives an edit above it. A coordinate, a stale register
+# entry and a failed probe have no key: they are never recordable.
+LEDGER_KEYS = {
+    'unwired': lambda r: r[0],
+    'report_only': lambda r: r[0],
+    'template_literals': lambda r: '%s:%s' % (r[0], r[2]),
+    'script_decisions': lambda r: '%s:%s' % (portable(r[0]), r[3]),
+    'java_shadow_defaults': lambda r: '%s:%s:%s' % (r[0], r[2], r[4]),
+    'inert_bindings': lambda r: r[0],
+    'inline_literals': lambda r: '%s:%s:%g' % (r[0], r[2], r[3]),
+    'wall_clock': lambda r: '%s:%s:%s' % (r[0], r[2], r[3]),
+}
+
+
+def recorded_debt(led):
+    """(failures, {rule: keys recorded}) against this city's ledger.
+
+    The ledger's rules about itself (the ceiling equals the list, a rise is
+    an explicit `"raised": true`) and the rule that a recorded item which no
+    longer surfaces must be deleted are debt_ledger's, shared with the
+    manifest check.
+    """
+    ledger = _ledger.load(DEBT_FILE)
+    debt = {rule: frozenset(e.get('items') or ()) for rule, e in ledger.items()}
+    judged = [(rule, {key(r) for r in led.get(rule, [])}, '%s item(s)' % rule, None)
+              for rule, key in LEDGER_KEYS.items()]
+    failures = _ledger.check_ceilings(ledger, _ledger.base(DEBT_FILE),
+                                      tuple(LEDGER_KEYS), 'items')
+    more, _counts = _ledger.check_recorded(
+        judged, debt, 'cities/%s/%s' % (_city.CITY, '/'.join(DEBT_FILE)))
+    # the ROWS the ledger covers: one key (no line number) may stand for
+    # several reported lines, and the gate's number is counted in rows
+    recorded = {rule: [r for r in led.get(rule, []) if key(r) in debt.get(rule, ())]
+                for rule, key in LEDGER_KEYS.items()}
+    return failures + more, recorded
 
 
 def audit():
@@ -1436,6 +1818,7 @@ def audit():
         inert_bindings=[(k,) for k in inert],
         inline_literals=inline_literals(corpus),
         stale_structural_inline=[(k,) for k in stale_structural_inline(corpus)],
+        wall_clock=wall_clock(corpus),
     )
     if error:
         led['reach_probe_failed'] = [(error,)]
@@ -1490,20 +1873,35 @@ def _print_switched_off(fields):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument('--strict', action='store_true',
-                    help='exit 1 if anything is reported')
+                    help='exit 1 if anything is reported outside the recorded debt')
     ap.add_argument('--json', metavar='OUT',
                     help='write the ledger as JSON as well as printing it')
+    ap.add_argument('--all-cities', action='store_true',
+                    help='run once per city under cities/ (the gate and CI)')
     a = ap.parse_args()
+    if a.all_cities:
+        return _city.run_per_city(__file__, [x for x in sys.argv[1:] if x != '--all-cities'])
 
     corpus, fields, led, n_reaching, owned, pending_rows = audit()
+    debt_failures, recorded = recorded_debt(led)
+    n_recorded = sum(len(v) for v in recorded.values())
+
+    def mark(rule, row):
+        """`DEBT` before a row the city has recorded, blanks before one it has not."""
+        return 'DEBT' if row in recorded.get(rule, ()) else '    '
+
+    def count(rule):
+        n, d = len(led[rule]), len(recorded.get(rule, ()))
+        return '%d%s' % (n, '  (%d recorded as debt)' % d if d else '')
 
     print('city %s - %d declared field(s), %d source file(s)\n'
           % (_city.CITY, len(fields), len(corpus)))
 
     print('1. DECLARED BUT UNWIRED - the key appears nowhere as a value')
-    for key, src, status in led['unwired']:
-        print('     %-46s source=%-11s status=%s' % (key, src, status))
-    print('     %d\n' % len(led['unwired']))
+    for row in led['unwired']:
+        key, src, status = row
+        print('%s %-46s source=%-11s status=%s' % (mark('unwired', row), key, src, status))
+    print('     %s\n' % count('unwired'))
 
     print('   DECLARED AHEAD OF ITS CONSUMER - unwired, with a written reason')
     for key, why in pending_rows:
@@ -1513,20 +1911,24 @@ def main():
           % len(pending_rows))
 
     print('2. REPORT-ONLY - read only by the measurement layer, decides nothing')
-    for key, src, where in led['report_only']:
-        print('     %-46s source=%-11s %s' % (key, src, ' '.join(where)))
-    print('     %d\n' % len(led['report_only']))
+    for row in led['report_only']:
+        key, src, where = row
+        print('%s %-46s source=%-11s %s' % (mark('report_only', row), key, src, ' '.join(where)))
+    print('     %s\n' % count('report_only'))
 
     print('3. TEMPLATE LITERALS - a <param> constant rather than a substitution')
-    for f, ln, name, val in led['template_literals']:
-        print('     %s:%-5d %-42s = %s' % (f, ln, name, val))
-    print('     %d\n' % len(led['template_literals']))
+    for row in led['template_literals']:
+        f, ln, name, val = row
+        print('%s %s:%-5d %-42s = %s' % (mark('template_literals', row), f, ln, name, val))
+    print('     %s\n' % count('template_literals'))
 
     print('4. VALUES DECIDED IN CODE - constant, table, unpacked, kwarg, CLI')
-    for f, ln, form, name, val, n in led['script_decisions']:
+    for row in led['script_decisions']:
+        f, ln, form, name, val, n = row
         shown = ('%d numbers' % n) if n > 1 else repr(val)
-        print('     %s:%-5d %-13s %-38s = %s' % (f, ln, form, name[:38], shown))
-    print('     %d\n' % len(led['script_decisions']))
+        print('%s %s:%-5d %-13s %-38s = %s'
+              % (mark('script_decisions', row), f, ln, form, name[:38], shown))
+    print('     %s\n' % count('script_decisions'))
 
     print('5. COORDINATES typed into a script - always a violation')
     for f, ln, txt in led['coordinates']:
@@ -1534,14 +1936,16 @@ def main():
     print('     %d\n' % len(led['coordinates']))
 
     print('6. JAVA DEFAULTS THAT EQUAL THEIR DECLARED VALUE - right by accident')
-    for f, ln, name, raw, key in led['java_shadow_defaults']:
-        print('     %s:%-5d %-22s = %-12s shadows %s' % (f, ln, name, raw, key))
-    print('     %d\n' % len(led['java_shadow_defaults']))
+    for row in led['java_shadow_defaults']:
+        f, ln, name, raw, key = row
+        print('%s %s:%-5d %-22s = %-12s shadows %s'
+              % (mark('java_shadow_defaults', row), f, ln, name, raw, key))
+    print('     %s\n' % count('java_shadow_defaults'))
 
     print('7. INERT BINDINGS - the field is declared, resolves, and moving it '
           'changes NOTHING')
-    for (key,) in led['inert_bindings']:
-        print('     %s' % key)
+    for row in led['inert_bindings']:
+        print('%s %s' % (mark('inert_bindings', row), row[0]))
     for (why,) in led.get('reach_probe_failed', []):
         print('     PROBE FAILED (not a pass): %s' % why)
     print('     %d of %d bound field(s) proven to reach the config by changing '
@@ -1561,17 +1965,29 @@ def main():
 
     print('9. INLINE LITERALS in the build and extract layers - a number inside '
           'an expression, declared by no field (#188)')
-    for f, ln, func, val in led['inline_literals']:
-        print('     %s:%d  %s()  %g' % (f, ln, func, val))
-    print('     %d  (an item leaves by a registry field the script reads, or a '
+    for row in led['inline_literals']:
+        f, ln, func, val = row
+        print('%s %s:%d  %s()  %g' % (mark('inline_literals', row), f, ln, func, val))
+    print('     %s  (an item leaves by a registry field the script reads, or a '
           'STRUCTURAL_INLINE entry stating why it is not a modelling value)\n'
-          % len(led['inline_literals']))
+          % count('inline_literals'))
     for (key,) in led['stale_structural_inline']:
         print('     STALE STRUCTURAL_INLINE entry: %s' % key)
 
-    total = sum(len(v) for v in led.values())
-    print('TOTAL %d item(s). A number in a script is a modelling choice nobody '
-          'can see or sweep.' % total)
+    print('10. WALL CLOCK and unseeded randomness in the build layer - a builder '
+          'whose bytes depend on when it ran (#211)')
+    for row in led['wall_clock']:
+        f, ln, func, call = row
+        print('%s %s:%d  %s()  %s' % (mark('wall_clock', row), f, ln, func, call))
+    print('     %s\n' % count('wall_clock'))
+
+    for line in debt_failures:
+        print('DEBT LEDGER  %s' % line)
+
+    total = sum(len(v) for v in led.values()) - n_recorded + len(debt_failures)
+    print('TOTAL %d item(s) outside the recorded debt (%d recorded in '
+          'cities/%s/%s). A number in a script is a modelling choice nobody '
+          'can see or sweep.' % (total, n_recorded, _city.CITY, '/'.join(DEBT_FILE)))
 
     if a.json:
         with io.open(a.json, 'w', encoding='utf-8', newline='\n') as f:

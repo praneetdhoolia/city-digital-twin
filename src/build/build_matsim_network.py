@@ -643,12 +643,15 @@ def build_schedule(name, zip_path, base_net, threads):
     t_map = time.time() - t1
 
     stats = schedule_stats(mapped_sched)
-    stats.update(feed=_city.rel(zip_path), gtfs_seconds=round(t_gtfs, 1),
-                 mapping_seconds=round(t_map, 1),
+    # The two stage times are printed, never written: the report is a hashed
+    # manifest row, and a wall time in it makes two builds of one feed
+    # describe it differently (#211; the determinism rule's scanner since the
+    # sixteenth report). Elapsed times live in build_timing's roll-up.
+    stats.update(feed=_city.rel(zip_path),
                  network_bytes=os.path.getsize(mapped_net),
                  schedule_bytes=os.path.getsize(mapped_sched))
-    log('   %-30s %5.0f s map | %d stops, %d routes, %d unmapped-link stops'
-        % (name, t_map, stats['stop_facilities'], stats['transit_routes'],
+    log('   %-30s %4.0f s gtfs %5.0f s map | %d stops, %d routes, %d unmapped-link stops'
+        % (name, t_gtfs, t_map, stats['stop_facilities'], stats['transit_routes'],
            stats['stops_without_link']))
     return stats
 

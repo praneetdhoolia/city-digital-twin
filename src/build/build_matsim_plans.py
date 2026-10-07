@@ -235,6 +235,37 @@ PLANS = _city.path('demand/plans')
 POP = _city.path('demand/population')
 OUT = os.path.join(PLANS, 'matsim')
 
+# B1 IS READ ONCE PER BUILD. Four consumers read the persons table and three
+# the households table, each with its own `read_csv` and column list (six
+# decodes of the same two files per build, sixteenth report). The two frames
+# below hold the union of the columns they read, with `home_sa1` as the
+# string every consumer wanted it as; each consumer takes its own columns
+# from them. Nothing a consumer does mutates the shared frame (`assign`,
+# `groupby` and `map` return new objects).
+_B1 = {}
+B1_PERSON_COLUMNS = ['person_id', 'household_id', 'home_sa1', 'age', 'car_available',
+                     'licence_holder', 'employment_status', 'student_status',
+                     'mobility_impairment_flag', 'income_band']
+B1_HOUSEHOLD_COLUMNS = ['household_id', 'home_sa1', 'household_vehicles']
+
+
+def b1_persons():
+    """The B1 persons table, decoded once per process: the columns of
+    B1_PERSON_COLUMNS the table carries, in the table's order."""
+    if 'persons' not in _B1:
+        _B1['persons'] = pd.read_csv(os.path.join(POP, 'B1_synthetic_population.csv'),
+                                     usecols=lambda c: c in B1_PERSON_COLUMNS, dtype={'home_sa1': str})
+    return _B1['persons']
+
+
+def b1_households():
+    """The B1 households table, decoded once per process: the columns of
+    B1_HOUSEHOLD_COLUMNS the table carries, in the table's order."""
+    if 'households' not in _B1:
+        _B1['households'] = pd.read_csv(os.path.join(POP, 'B1_households.csv'),
+                                        usecols=lambda c: c in B1_HOUSEHOLD_COLUMNS, dtype={'home_sa1': str})
+    return _B1['households']
+
 # Which of this script's inputs feed which of its outputs (#159), read
 # statically by src/build/build_manifest.py. The three population files and
 # the report are one write of the same tours, so one glob covers them. The
@@ -438,10 +469,9 @@ def load_person_attributes(rng_bike):
     attribute rather than as a side file means there is ONE mechanism, and one
     place it can be wrong.
     """
-    p = pd.read_csv(os.path.join(POP, 'B1_synthetic_population.csv'),
-                    usecols=['person_id', 'household_id', 'age', 'car_available',
-                             'licence_holder', 'employment_status', 'student_status',
-                             'mobility_impairment_flag', 'income_band'])
+    p = b1_persons()[['person_id', 'household_id', 'age', 'car_available',
+                      'licence_holder', 'employment_status', 'student_status',
+                      'mobility_impairment_flag', 'income_band']]
 
     if RIDE_REQUIRES_DRIVER:
         # licence holders per household, and whether the household has a vehicle
@@ -449,8 +479,7 @@ def load_person_attributes(rng_bike):
         vehicles = p.groupby('household_id')['household_vehicles'].max() \
             if 'household_vehicles' in p.columns else None
         if vehicles is None:
-            veh = pd.read_csv(os.path.join(POP, 'B1_households.csv'),
-                              usecols=['household_id', 'household_vehicles'])
+            veh = b1_households()
             vehicles = veh.set_index('household_id')['household_vehicles']
         hh_drivers = p['household_id'].map(drivers).fillna(0).astype(int)
         hh_vehicles = p['household_id'].map(vehicles).fillna(0).astype(int)
@@ -700,11 +729,8 @@ def load_motorbike_availability(seed):
     """Fill _MOTO_AVAIL for every B1 person and return the summary the plans
     report carries: riders, persons in a motorcycle household, and the
     persons for whom motorbike is available, by age band (9.214)."""
-    p = pd.read_csv(os.path.join(POP, 'B1_synthetic_population.csv'),
-                    usecols=['person_id', 'household_id', 'home_sa1', 'age'],
-                    dtype={'home_sa1': str})
-    hh = pd.read_csv(os.path.join(POP, 'B1_households.csv'),
-                     usecols=['household_id', 'home_sa1'], dtype={'home_sa1': str})
+    p = b1_persons()
+    hh = b1_households()
     rider_rate_of, household_share_of, cell_of, group_of, n_rider_cells, n_share_cells = \
         motorbike_rate_lookups()
     persons = [(int(r.person_id), int(r.household_id), r.home_sa1, int(r.age))
@@ -1663,10 +1689,8 @@ def load_day_bindings(dc):
     # 9.146: household -> vehicles owned (B1 census), written on every member
     # as `householdVehicles` for citysim.HouseholdVehicleRoster.
     hh_vehicle_count = {}
-    with open(os.path.join(POP, 'B1_households.csv'), encoding='utf-8') as fh:
-        for r in csv.DictReader(fh):
-            hh_vehicle_count[int(r['household_id'])] = \
-                int(float(r['household_vehicles'] or 0))
+    for hid, v in zip(b1_households()['household_id'], b1_households()['household_vehicles']):
+        hh_vehicle_count[int(hid)] = 0 if pd.isna(v) else int(float(v))
 
     lift_hh = {}          # passenger pid -> [driver household ids, ordered]
     lift_cover = {}       # (passenger pid, tour_id) -> set of directions
@@ -1916,8 +1940,7 @@ def thin_carve_cells(cc):
     identity, filling _MOTORBIKE_Q_BY_PID and setting `cc.carve_cells`; returns None.
     `cc` supplies mc.attrs, trips_by_pid, escorters and total_trips."""
     share_by_sa1, used, g62_drv, g62_moto = motorbike_share_by_cell()
-    home = pd.read_csv(os.path.join(POP, 'B1_synthetic_population.csv'),
-                       usecols=['person_id', 'home_sa1'], dtype=str)
+    home = b1_persons()
     sa1_of = dict(zip(home['person_id'].astype(int), home['home_sa1']))
     cell_trips, cell_elig = collections.Counter(), collections.Counter()
     for p, a in cc.mc.attrs.items():

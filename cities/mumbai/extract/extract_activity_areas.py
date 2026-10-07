@@ -82,7 +82,7 @@ def main():
     features.sort(key=lambda f: (f['properties']['osm_object_type'], int(f['properties']['osm_object_id'])))
     output = Path(city.path('data/processed/geospatial/osm_activity_areas.geojson'))
     output.write_text(json.dumps(dict(type='FeatureCollection', features=features), ensure_ascii=False,
-                                separators=(',', ':')) + '\n', encoding='utf-8')
+                                separators=(',', ':')) + '\n', encoding='utf-8', newline='\n')
     audit = dict(source_sha256=record['sha256'], licence='ODbL 1.0; OpenStreetMap contributors',
         source='derived_activity_area_inventory', source_candidates_count=len(frame),
         retained_areas_count=len(features), purpose_counts=dict(counts), excluded=dict(excluded),
@@ -92,9 +92,12 @@ def main():
                     'Node/area duplicate identities are not resolved by this inventory.',
                     'Whole valid geometries intersecting the research envelope are retained.'])
     Path(city.path('data/processed/acquisition/osm_activity_areas_audit.json')).write_text(
-        json.dumps(audit, indent=2) + '\n', encoding='utf-8')
+        json.dumps(audit, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps(audit, indent=2))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

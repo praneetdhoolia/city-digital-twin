@@ -2,13 +2,13 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 30 September 2026 (sixty-fourth session) · **Record read through:** §9.219 · **Written against family:** `F39`
+**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.220 · **Written against family:** `F39`
 
 ## What is built
 
 - **The Java fold is landed** (§9.210, #187 #216 #217, D12's gate half #86): `RidePairingEngine` logs `retimed= restoreRetimed= restoreOrphan=` by name every iteration (253 of 253 restored, 0 orphans, on the F37 smoke `20260925T212929_2it_1pct`, §9.213); a timed-out joint ride is clocked by its leg's travel time, else free-flow over its links, else the beeline, never zero; one routing pool per run (`RemodeRestore.routingPool`); `GatedSubtourModeChoice` refuses a `heldRideTrips` passenger off ride. The retime and restore are shared with the taxi fleet through `citysim.ActivityRetimes` (§9.213).
 - **The engine routes the trip it re-modes and restores the original; the clock override is restored after the mobsim** (§9.168, §9.167, #167, #187): a ride trip under `accessEgressModeToLink` is five legs, replaced whole; `RidePairingEngine.routeRemodes` routes every unpaired leg's trip in its fallback mode on `global.numberOfThreads` workers, the restore putting the ride trip back (`RemodeRestore.Remode`). The routing workers write no plan (§9.170, #197).
-- **`EscortCoherenceListener.notifyReplanning` is split into named phases** (§9.214): 380 → 52 lines, verified identical against the old classes (`EscortCoherenceProbe`, fingerprint 56ff31af).
+- **`EscortCoherenceListener.notifyReplanning` is split into named phases** (§9.214): 380 → 52 lines, verified identical against the old classes (`EscortCoherenceProbe`, fingerprint 56ff31af). **The repeated-link case is documented for the next family** (§9.220): a driver who makes the school run twice has the afternoon decoherence detected, but `sameTripIn` re-finds the trip by its links (`EscortCoherenceListener.java:603`) and lands the proposal on the morning subtour; the probe prints `repeated_links_proposal_landed_on: first_subtour` today, and re-finding by trip index opens a family.
 
 **Demand — four binder passes in `src/build/build_activity_chains.py`, each naming the driver.**
 
@@ -20,7 +20,7 @@
 - Volume: (occupancy − 1) × driver share × core trips; escort and lift count first, joint next, shared fills (§9.84, §9.124); `B.activity.joint_tour_passenger_ratio` = 0.3503 derives from `C.constraint.vehicle_occupancy` = 1.3503 (sweep 1.2493–1.3940) (§9.8).
 - Translation (`src/build/build_matsim_plans.py`): the passenger carries `boundDriver`, `liftHousehold`, `sharedDriverHousehold` and per-trip `boundRideTrips`; the driver `boundDriveTrips` (§9.85, §9.120, §9.127). `GatedSubtourModeChoice` refuses `ride` on a trip nobody drives and refuses taking a declared driver off `car` on a serving trip (§9.120).
 - Seed: `B.mode.seed_method` = `full_choice_set` gives one plan per usable mode and a declared passenger one more riding the bound trips; `RUN.replanning.max_agent_plan_memory` = 8 (§9.120). Plans carry PER-TRIP modes (§9.143); `B.mode.bound_passenger_placement` = `every_plan` puts a round-trip-covered tour on `ride` in EVERY seeded plan (§9.164).
-- **The held passenger** (§9.211, D12, #86): an escorted member's and a joint companion's bound trips are held to `ride` in every seeded plan as `heldRideTrips`; a car-less lift or shared passenger is not held. F38's WEEKDAY seed: **232,162** held trips on **106,642** persons; 220,144 ride tours, 17,722 partial; ride on 10.43 % of selected-plan legs (`_plans_report.json` `bound_placement`, `seed_ride_covered_share`).
+- **The held passenger** (§9.211, D12, #86): an escorted member's and a joint companion's bound trips are held to `ride` in every seeded plan as `heldRideTrips`; a car-less lift or shared passenger is not held. F39's WEEKDAY seed (the chains are F38's, §9.218): **232,162** held trips on **106,642** persons; 220,144 ride tours, 17,722 partial; ride on 10.48 % of selected-plan legs (`demand/plans/matsim/_plans_report.json` `bound_placement`, `seed_ride_covered_share`).
 
 **Runtime — pairing at BeforeMobsim, boarding in the qsim.**
 
@@ -35,16 +35,16 @@
 
 ## What is measured
 
-- **F37's arm 0, a RESULT at iteration 250** (§9.214, `report_mode_ridership.py --run 20260926T002526_250it_25pct --it 250`): ride **17.8204 % against 20.60 (−13.5 %)** on 26,996 trips at a **9.45 km** mean (9.8 observed); coverage **18.99 %**, headroom 1.17 pp (`report_choice_set_coverage.py`). A direction against F35's −41.6 % (§9.169), never a comparison (§3.5).
-- **The bound trips are executed as bound** (§9.214, `_bound_trips.json`, #86): **106,580** bound trips in sample on 49,259 persons ride **89.17 %**; escort and joint trips, car-available or car-less, ride **100 %** (the held passenger, D12); lift passengers with a car ride 28.9 % and drive 67.1 %, car-less lift passengers ride 83.7 %; car-less shared passengers ride 80.0 %, walk 11.1 %, cycle 4.6 %.
+- **Ride stays volume-bound on F39's control, a RESULT at iteration 250** (§9.219, #86, `report_mode_ridership.py --run 20260929T072135_250it_25pct --it 250`): **15.4418 % against 20.60 (−25.0 %)** on 24,804 trips at 8.91 km (9.8 observed), coverage **19.02 %** — the target unreachable by any constant; occupancy 0.2426 passengers per driver against 0.3503 (outside [0.2493, 0.394], `_fit.json`). The two results before it read −13.5 % (F37, 9.45 km, coverage 18.99 %, §9.214) and −25.4 % (F38, §9.217): directions, never comparisons (§3.5).
+- **The bound trips are executed as bound** (§9.214, `_bound_trips.json`, #86): **106,580** bound trips in sample on 49,259 persons ride **89.17 %**; escort and joint trips, car-available or car-less, ride **100 %** (the held passenger, D12); lift passengers with a car ride 28.9 % and drive 67.1 %, car-less lift passengers ride 83.7 %; car-less shared passengers ride 80.0 %, walk 11.1 %, cycle 4.6 %. Read on F37; F39's `_bound_trips.json` carries the same structure (`held_tour_spill`, §9.219).
 - **A one-way escort binding strands the tour it holds** (§9.214, item 2): the F37 binder covered 70,571 weekday member tours ONE way against 24,993 round trip, 80,384 of 122,270 bindings on a licensed member's non-education trip, at a mean 11.88 network km against the survey's 7.84. The bound direction HELD to ride, the car stayed home and the tour's other trips had walk, pt, bike or taxi only: 35.6 % of walk km and 28 % of taxi trips (§9.214). §9.68 had measured the same under `outbound_only`.
 - **Coverage is a share of TRIPS, so ride's coverage IS the bound trips' share** (§9.177): the binders bind about the observed passenger share of core legs; a constant can add nothing past it, and the deficit is what bound trips execute as.
 - **The ride split refactor changed nothing** (§9.213): against the pre-split engine on the same inputs every iteration-0 integer counter was identical (4,247 ride legs, 3,573 paired, 674 unpaired).
 
 ## What is open
 
-- **Ride stays volume-bound on F39's control** (§9.219, #86, `20260929T072135_250it_25pct` it.250): **15.4418 % against 20.60 (−25.0 %)** on 24,804 trips at 8.91 km (9.8 observed), coverage **19.02 %** — the target unreachable by any constant; occupancy 0.2426 passengers per driver against 0.3503 (outside [0.2493, 0.394], `_fit.json`). The car-less walk 14–24 % of their 5–20+ km trips where no driver is bound ([walk-and-bike](walk-and-bike.md)): ride's missing volume and walk's long trips are one gap.
-- **`C.asc.car_passenger` STAYS FROZEN** (§9.158): ride's deficit is VOLUME, not utility — on F37's arm 0 the trip is 9.45 km against 9.8 at −13.5 % with 1.17 pp of headroom (§9.214); the constant is CONSTRAINED by §9.8 to the observed 0.3503 ride:car ratio, and `src/calibrate/asc_fixed_point.py` refuses it.
+- **The car-less' alternative on an unbound trip is the open mechanism** (§9.219, #86, the lane's `short-trip-and-carless-choice`): the car-less walk 14–24 % of their 5–20+ km trips where no driver is bound ([walk-and-bike](walk-and-bike.md)); ride is reachable only on bound trips, so ride's missing volume and walk's long trips are one gap — a lift outside the household (the NSW HTS passenger tables) is the observed input to derive it from.
+- **`C.asc.car_passenger` STAYS FROZEN** (§9.158): ride's deficit is VOLUME, not utility — on F39's control the trip is 8.91 km against 9.8 at −25.0 % with coverage below the target (§9.219); the constant is CONSTRAINED by §9.8 to the observed 0.3503 ride:car ratio, and `src/calibrate/asc_fixed_point.py` refuses it.
 - Whether a suburb is the right carpool precision is the sweep's question (§9.124); #145's wait distribution is unread (§9.169).
 
 ## Refused — do not re-raise
@@ -61,6 +61,7 @@
 
 ## History
 
+- §9.220 — repeated-link case pinned
 - §9.219 — ride volume-bound on F39
 - §9.214 — bound trips ride; escorts released
 - §9.211 — D12 built: the held passenger
@@ -75,4 +76,3 @@
 - §9.164 — declared passenger put on ride
 - §9.163 — target above choice set
 - §9.162 — first result: ride converged
-- §9.160 — ride CONVERGED; it is supply

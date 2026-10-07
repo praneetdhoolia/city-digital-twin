@@ -12,8 +12,13 @@ handoff commit from publishing it. Keys belong in the gitignored `.env` or
 always a leak, never a reference.
 
 The patterns are the published formats of the providers this project touches
-or could, plus a generic `key = "<long token>"` assignment. A match prints the
-file, the line and the provider - never the value.
+or could, plus two shapes of the project's own keys: the TfNSW Open Data key
+is a JWT (three base64url segments joined by dots, the first `eyJ`), and a key
+pasted into a request URL rides a query string (`apikey=...`) with no quotes
+for the assignment pattern to see. A generic `key = "<long token>"` assignment
+closes the rest. Rendered reports under docs/reports/ are HTML and are scanned
+like everything else: a key in a page is published twice over. A match prints
+the file, the line and the provider - never the value.
 """
 import argparse
 import re
@@ -26,11 +31,19 @@ PATTERNS = (
     ('OpenAI', re.compile(r'sk-(?:proj-)?[A-Za-z0-9]{32,}')),
     ('GitHub', re.compile(r'(?:ghp|gho|ghs|ghu)_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{60,}')),
     ('AWS', re.compile(r'AKIA[0-9A-Z]{16}')),
+    # a JSON Web Token: `{"alg"` or `{"typ"` base64url-encoded begins `eyJ`,
+    # and three dot-joined segments of that alphabet is the whole shape
+    ('JWT (TfNSW Open Data key)', re.compile(
+        r'eyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}')),
+    # a key riding a query string, unquoted: `?apikey=...`, `&api_key=...`,
+    # `&key=...`; 20+ characters so a short lookup key (`key=aadt`) is not one
+    ('query-string key', re.compile(
+        r'(?i)(?:^|[?&\s"\'])(?:apikey|api[_-]?key|key)=[A-Za-z0-9_\-]{20,}')),
     ('assigned key', re.compile(
         r'''(?i)["']?[a-z_]*(?:api[_-]?key|secret|token)["']?\s*[:=]\s*["'][A-Za-z0-9_\-]{24,}["']''')),
 )
 # Binary and bulk files are not scanned: a hash or a GTFS id is not a key.
-SKIP = re.compile(r'\.(?:gz|zip|pdf|png|jpg|jpeg|parquet|xlsx|pbf|jar|class|html)$|MANIFEST\.csv$')
+SKIP = re.compile(r'\.(?:gz|zip|pdf|png|jpg|jpeg|parquet|xlsx|pbf|jar|class)$|MANIFEST\.csv$')
 
 
 def files(staged):

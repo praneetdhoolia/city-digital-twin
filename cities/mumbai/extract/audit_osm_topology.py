@@ -56,9 +56,12 @@ def main():
                  relation_types=dict(sorted(relations.items())), control_evidence=dict(sorted(controls.items())),
                  limits='Whole acquired source extent, not city counts. Syntax and entity counts only; no missing-reference, duplicate-ID, turn-restriction applicability, connectivity or road-capacity validation.')
     target = Path(city.path('data/processed/acquisition/osm_topology_audit.json'))
-    target.write_text(json.dumps(audit, indent=2, ensure_ascii=False)+'\n', encoding='utf-8')
+    target.write_text(json.dumps(audit, indent=2, ensure_ascii=False)+'\n', encoding='utf-8', newline='\n')
     print(json.dumps({k:v for k,v in audit.items() if k not in ('highway_classes','relation_types','control_evidence')}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

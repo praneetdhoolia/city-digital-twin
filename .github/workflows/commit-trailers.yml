@@ -1,0 +1,55 @@
+name: commit-trailers
+
+# Refuse a pull request whose COMMITS carry an attribution trailer or a session
+# link, or whose TITLE runs past the convention's cap.
+#
+# Why this lives server-side: the tracked git hooks under .githooks/ apply only
+# where `core.hooksPath` points at them, which the Claude session's SessionStart
+# hook sets and a plain terminal on a fresh checkout does not (#210). The
+# PreToolUse hooks see the agent's own `gh pr` calls and nothing else. A commit
+# made outside a session therefore reaches GitHub through the one path no layer
+# covered; this job is that layer. strip-session-ref.yml scrubs the PR BODY; this
+# job reads the PR's commits and title, which that workflow cannot see.
+#
+# (CLAUDE.md, Git: no co-author trailer, no claude.ai/code session link in a
+# commit or PR; titles `P<phase>: <concise plain-English summary>`, <= ~72 chars.)
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  trailers:
+    name: no attribution trailer or session link in the PR's commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read the PR's commit messages and title
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          set -euo pipefail
+          gh api --paginate "repos/${GH_REPO}/pulls/${PR_NUMBER}/commits" \
+            --jq '.[] | "\(.sha[0:8]) \(.commit.message)"' > commits.txt
+          echo "$(wc -l < commits.txt) commit line(s) read"
+          bad=0
+          if grep -niE 'co-authored-by:|claude-session:|https?://claude\.ai/code|generated with \[?claude' commits.txt; then
+            echo "::error::a commit above carries an attribution trailer or a session link; the convention forbids both (CLAUDE.md, Git)."
+            bad=1
+          fi
+          n=${#PR_TITLE}
+          if [ "$n" -gt 72 ]; then
+            echo "::error::the PR title is ${n} characters; the convention caps it at about 72 - 'P<phase>: <concise plain-English summary>', issue refs in parentheses at the end."
+            bad=1
+          fi
+          if ! printf '%s' "$PR_TITLE" | grep -qE '^P[0-9]+: '; then
+            echo "::error::the PR title does not start with 'P<phase>: ' (CLAUDE.md, Git: titles follow P<phase>: <summary>)."
+            bad=1
+          fi
+          exit $bad

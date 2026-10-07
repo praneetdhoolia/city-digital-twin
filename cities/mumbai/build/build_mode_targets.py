@@ -73,29 +73,21 @@ def rows(relative):
         return list(csv.DictReader(f))
 
 
-def main():
-    cfg = registry.load()
-    area, year = cfg.get('B.targets.published_split_area'), int(cfg.get('B.targets.published_split_year'))
-    active_sweep = cfg.get('B.targets.active_share_sweep_pp')
-    port_groups = cfg.get('B.targets.ferry_port_groups')
-    goods_share = float(cfg.get('B.targets.goods_vehicle_traffic_share_pct'))
-    splits = [r for r in rows('data/processed/observed/published_mode_splits.csv')
-              if r['area'] == area and int(r['survey_year']) == year]
-    motorised = {r['mode_raw']: float(r['share_pct']) for r in splits if r['share_basis'].startswith('motorised')}
-    active = [float(r['share_pct']) for r in splits if r['mode_raw'].startswith('Active modes')]
-    if not active or 'Train' not in motorised:
-        raise SystemExit('the published splits carry no %s %d table or active share' % (area, year))
-    active_pct = active[0]
-    m = (100.0 - active_pct) / 100.0                     # motorised trips as a share of all trips
-    lo_m, hi_m = (100.0 - (active_pct + active_sweep)) / 100.0, (100.0 - (active_pct - active_sweep)) / 100.0
-
+def active_split():
+    """The walk : bicycle split of the active share from Census 2011 B-28, the four
+    districts summed."""
     # walk : bicycle from B-28, the four districts summed
     b28 = {}
     for r in rows('data/processed/observed/census_2011_b28_commuting.csv'):
         if r['residence'] == 'Total' and r['distance_band_km_raw'] == 'Total':
             b28[r['mode_raw']] = b28.get(r['mode_raw'], 0.0) + float(r['persons_count'])
     bicycle_of_active = b28['Bicycle'] / (b28['Bicycle'] + b28['On foot'])
+    return b28, bicycle_of_active
 
+
+def car_passenger_split():
+    """The car driver : passenger split of the synthesised population - among persons
+    aged 5+ in car-owning households, who may drive against who may only ride."""
     # car driver : car passenger from the synthesised population
     drivers = riders = 0
     for chunk in pd.read_csv(city.path('demand/population/B1_synthetic_population.csv'),
@@ -104,7 +96,12 @@ def main():
         drivers += int((in_car_hh['car_available'] > 0).sum())
         riders += int((in_car_hh['car_available'] == 0).sum())
     passenger_share = riders / (drivers + riders)
+    return drivers, passenger_share, riders
 
+
+def ferry_share(m, port_groups, splits):
+    """The ferry share: the Maritime Board's newest annual passengers for the port groups
+    to a day, against the CTS all-mode daily trips."""
     # ferry: MMB annual passengers of the MMR port groups, the newest year, to a day
     water = [r for r in rows('data/processed/observed/water_annual_passengers.csv')
              if r['port_group'] in port_groups and r['parse_status'] == 'numeric']
@@ -113,7 +110,12 @@ def main():
     daily_trips_all = sum(float(r['trips_per_day']) for r in splits
                           if r['mode_raw'] == 'Total' and r['share_basis'].startswith('motorised')) / m
     ferry_pct = 100.0 * (annual / 365.0) / daily_trips_all
+    return annual, daily_trips_all, ferry_pct, newest
 
+
+def derived_rows(active_pct, active_sweep, annual, area, b28, bicycle_of_active, daily_trips_all, drivers, ferry_pct, goods_share, hi_m, lo_m, m, motorised, newest, passenger_share, port_groups, riders, year):
+    """Every target row in the published order with its basis and sweep, metro from the
+    operators' daily passengers."""
     def motor(mode_raw):
         s = motorised[mode_raw]
         return round(s * m, 4), round(s * lo_m, 4), round(s * hi_m, 4)
@@ -199,6 +201,32 @@ def main():
     order = ['car', 'ride', 'walk', 'bike', 'motorbike', 'taxi', 'auto_rickshaw', 'bus', 'heavy_rail', 'metro',
              'ferry', 'truck', 'freight_train']
     out.sort(key=lambda r: order.index(r['mode']))
+    return out
+
+
+def main():
+    cfg = registry.load()
+    area, year = cfg.get('B.targets.published_split_area'), int(cfg.get('B.targets.published_split_year'))
+    active_sweep = cfg.get('B.targets.active_share_sweep_pp')
+    port_groups = cfg.get('B.targets.ferry_port_groups')
+    goods_share = float(cfg.get('B.targets.goods_vehicle_traffic_share_pct'))
+    splits = [r for r in rows('data/processed/observed/published_mode_splits.csv')
+              if r['area'] == area and int(r['survey_year']) == year]
+    motorised = {r['mode_raw']: float(r['share_pct']) for r in splits if r['share_basis'].startswith('motorised')}
+    active = [float(r['share_pct']) for r in splits if r['mode_raw'].startswith('Active modes')]
+    if not active or 'Train' not in motorised:
+        raise SystemExit('the published splits carry no %s %d table or active share' % (area, year))
+    active_pct = active[0]
+    m = (100.0 - active_pct) / 100.0                     # motorised trips as a share of all trips
+    lo_m, hi_m = (100.0 - (active_pct + active_sweep)) / 100.0, (100.0 - (active_pct - active_sweep)) / 100.0
+
+    b28, bicycle_of_active = active_split()
+
+    drivers, passenger_share, riders = car_passenger_split()
+
+    annual, daily_trips_all, ferry_pct, newest = ferry_share(m, port_groups, splits)
+
+    out = derived_rows(active_pct, active_sweep, annual, area, b28, bicycle_of_active, daily_trips_all, drivers, ferry_pct, goods_share, hi_m, lo_m, m, motorised, newest, passenger_share, port_groups, riders, year)
     path = Path(city.path(OUT))
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open('w', encoding='utf-8', newline='') as f:
@@ -231,4 +259,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     sys.exit(main())

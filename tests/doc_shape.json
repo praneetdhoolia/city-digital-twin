@@ -26,7 +26,9 @@
             "representation"
         ],
         "max_last_updated_lines": 2,
-        "last_updated_note": "#208: the paragraph that starts **Last updated:** states the newest reading and the session, in at most two lines. The board re-accreted a session diary one sentence at a time in August and again in September; narrative belongs in the record."
+        "last_updated_note": "#208: the paragraph that starts **Last updated:** states the newest reading and the session, in at most two lines. The board re-accreted a session diary one sentence at a time in August and again in September; narrative belongs in the record.",
+        "open_family_claim": "\\bF(\\d+) is open\\b",
+        "open_family_claim_note": "The sixteenth report (C2), and the fifteenth before it: the board's hand paragraph said '<F> is open' for the family BEFORE the ledger's newest, re-keyed by hand one family late two reports running. A hand line may say a family is open only when it is the ledger's newest; the open family's one home is the generated state block."
     },
     "brief": {
         "path": "docs/NEXT_AGENT_BRIEF.md",
@@ -38,6 +40,8 @@
             "§3"
         ],
         "family_stamp": "\\*\\*Open family:\\*\\*\\s*`([^`]+)`",
+        "commit_stamp": "\\*\\*Commit:\\*\\*\\s*`([0-9a-f]{7,40})`",
+        "commit_stamp_note": "The sixteenth report (C16): the header read 'Commit: this handoff's' for a session - a placeholder where the template's <sha> goes, so the brief could not be tied to the commit it described. build_status_board.py writes the sha at --write; this rule refuses anything that is not 7-40 hex characters.",
         "required_blocks": [
             "lane"
         ],

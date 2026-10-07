@@ -364,12 +364,13 @@ def launch(a):
     # cannot detach itself again.
     if a.detach and a.foreground:
         raise SystemExit('--detach and --foreground contradict each other')
+    # the arm's fraction is checked where the launcher still has the person
+    # (before the detach), so an override is stated once and ledgered once
+    if not a.dry_run and not a.issue_gate_passed:
+        refuse_arm_fraction(a, cfg, run_config)
     if (not a.dry_run and not a.foreground and not a.issue_gate_passed
             and (a.detach or os.name == 'nt')):
         return _detach()
-    if a.detach:
-        raise SystemExit('--detach uses the Windows Task Scheduler; on this '
-                         'platform use nohup/setsid instead.')
     if not a.dry_run:
         refuse_foreground_arm(a, cfg)
 
@@ -394,31 +395,82 @@ SESSION_BOUND_WARNING = (
     'instead; a dead arm resumes with --warm-start.')
 
 
+# The Task Scheduler's TASK_STATE enumeration: Unknown 0, Disabled 1,
+# Queued 2, Ready 3, Running 4. The number is the same on every Windows;
+# the word `schtasks /query` prints for it is localised ('Wird ausgeführt' on
+# a German host), which is why the proof reads the number (sixteenth report).
+TASK_STATE_RUNNING = 4
+
+
+def _launch_dir():
+    return os.path.join(HERE, 'results', '_launch')
+
+
 def _query_task(task):
-    """The verbose CSV rows `schtasks /query` prints for one task; [] if none."""
-    import csv
+    """What the platform holds for this launch, or None when it holds nothing.
+
+    Windows: the scheduled task's numeric state and its registered actions,
+    read through PowerShell's Get-ScheduledTask (locale-free). POSIX: the
+    proof file `_detach` wrote beside the launch log - the session id the
+    wrapper was started in and the nonce it was handed - with `running` true
+    only when THIS process sits in that session.
+    """
+    if os.name == 'nt':
+        return _query_task_windows(task)
+    return _query_task_posix(task)
+
+
+def _query_task_windows(task):
+    import json
     import subprocess
+    cmd = ("$t = Get-ScheduledTask -TaskName '%s' -ErrorAction Stop; "
+           "@{state=[int]$t.State; actions=@($t.Actions | ForEach-Object "
+           "{ $_.Execute + ' ' + $_.Arguments })} | ConvertTo-Json -Compress"
+           % task.replace("'", "''"))
     try:
-        out = subprocess.run(['schtasks', '/query', '/tn', task, '/v', '/fo',
-                              'csv', '/nh'], capture_output=True, text=True,
+        out = subprocess.run(['powershell', '-NoProfile', '-NonInteractive',
+                              '-Command', cmd], capture_output=True, text=True,
                              timeout=60)
-    except (OSError, subprocess.SubprocessError):
-        return []
-    if out.returncode != 0:
-        return []
-    return [r for r in csv.reader((out.stdout or '').splitlines()) if r]
+        doc = json.loads(out.stdout) if out.returncode == 0 and out.stdout.strip() else None
+    except (OSError, subprocess.SubprocessError, ValueError):
+        return None
+    if not isinstance(doc, dict) or 'state' not in doc:
+        return None
+    actions = doc.get('actions') or []
+    if isinstance(actions, str):
+        actions = [actions]
+    return dict(running=int(doc['state']) == TASK_STATE_RUNNING,
+                nonce_text=' '.join(str(a) for a in actions))
+
+
+def _query_task_posix(task):
+    import json
+    try:
+        with open(os.path.join(_launch_dir(), task + '.json'), encoding='utf-8') as fh:
+            doc = json.load(fh)
+    except (OSError, ValueError):
+        return None
+    try:
+        sid = int(doc.get('sid'))
+        own = os.getsid(0)
+    except (TypeError, ValueError, OSError, AttributeError):
+        return None
+    return dict(running=(own == sid), nonce_text=str(doc.get('nonce') or ''))
 
 
 def scheduler_launched(env=None, query=_query_task):
-    """(True, '') when THIS process was started by its own live scheduled task.
+    """(True, '') when THIS process was started by its own detached launch.
 
     Proof that cannot be copied with a command line (fifteenth report): the wrapper's
     environment carries the launch stamp and the per-launch nonce, and the
-    Task Scheduler must hold a task `citysim_run_<stamp>` that is RUNNING and
-    whose registered action carries that nonce. A child's argv copied into
-    another shell carries neither variable; the wrapper run by hand carries no
-    nonce (it is the task's argument, not the file's); a task that has ended
-    has deleted itself.
+    platform must hold a launch `citysim_run_<stamp>` that is RUNNING and
+    carries that nonce - on Windows the scheduled task in state Running
+    (the number, never the localised word) whose registered action carries
+    the nonce; on POSIX the session `_detach` started with `setsid`, which
+    this process must be in. A child's argv copied into another shell
+    carries neither variable; the wrapper run by hand carries no nonce (it
+    is the launch's argument, not the file's); a task that has ended has
+    deleted itself.
     """
     env = os.environ if env is None else env
     stamp = (env.get(STAMP_ENV) or '').strip()
@@ -428,16 +480,59 @@ def scheduler_launched(env=None, query=_query_task):
                        '(%s, %s) - it was not started by --detach\'s task'
                        % (STAMP_ENV, NONCE_ENV))
     task = 'citysim_run_%s' % stamp
-    rows = query(task)
-    if not rows:
-        return False, 'the Task Scheduler holds no task named %s' % task
-    cells = [c.strip() for r in rows for c in r]
-    if 'Running' not in cells:
+    info = query(task)
+    if not info:
+        return False, ('the %s holds no task named %s'
+                       % ('Task Scheduler' if os.name == 'nt' else 'launch directory',
+                          task))
+    if not info.get('running'):
         return False, 'scheduled task %s is not running' % task
-    if not any(nonce in c for c in cells):
+    if nonce not in (info.get('nonce_text') or ''):
         return False, ('scheduled task %s does not carry this process\'s '
                        'launch nonce' % task)
     return True, ''
+
+
+def refuse_arm_fraction(a, cfg, run_config=None):
+    """An ARM runs at the campaign's fraction or says why not (#209).
+
+    The 25 %-only directive (user, 1 September 2026) was held by nobody but
+    the operator: the launcher refused a small heap and a missing stop, not
+    a 10 % 300-iteration arm - the class that cost 151.6 of 405.3 machine
+    hours before 9 September. An arm (a horizon at or above the floor of
+    RUN.controler.last_iteration's declared sweep, the same line the
+    foreground refusal draws) below RUN.sample.arm_fraction_floor is refused
+    unless --override-reason states why, and the reason is written to the
+    issue gate's override ledger so the bypass is counted. Probes and smokes
+    are never asked. The approvals-ledger half of #209 is the user's.
+    """
+    fields, _ = registry.load_registry()
+    lo = registry._sweep_interval(fields['RUN.controler.last_iteration'].get('sweep'))
+    last = int(cfg.get('RUN.controler.last_iteration'))
+    if lo is None or last < lo[0]:
+        return
+    floor = cfg.get('RUN.sample.arm_fraction_floor') or 0
+    fraction = float(cfg.get('RUN.sample.fraction'))
+    if not floor or fraction + 1e-12 >= float(floor):
+        return
+    reason = (a.override_reason or '').strip()
+    if not reason:
+        raise SystemExit(
+            'REFUSED: a %d-iteration run is an arm (RUN.controler.last_iteration '
+            'declares %g-%g) and this one samples %g of the population, below '
+            'RUN.sample.arm_fraction_floor %g - the 25 %%-only directive '
+            '(user, 1 September 2026; #209). A 20-45 h arm at the wrong '
+            'fraction is the class that cost 151.6 of 405.3 machine hours. '
+            'Run it at the floor, or pass --override-reason "<why this arm '
+            'runs below it>": the override is recorded and counted.'
+            % (last, lo[0], lo[1], fraction, float(floor)))
+    import issue_gate
+    n = issue_gate.record_override(
+        'fraction %g below RUN.sample.arm_fraction_floor %g: %s'
+        % (fraction, float(floor), reason), [], run_config)
+    print('arm fraction OVERRIDDEN (override %d in this repository\'s history): '
+          '%g below the floor %g\n  reason: %s' % (n, fraction, float(floor), reason),
+          flush=True)
 
 
 def refuse_foreground_arm(a, cfg, launched=scheduler_launched):
@@ -468,9 +563,14 @@ def refuse_foreground_arm(a, cfg, launched=scheduler_launched):
         'REFUSED: a %d-iteration run is an arm (RUN.controler.last_iteration '
         'declares %g-%g), and an arm launched with --foreground dies with '
         'the shell that launched it (9.215: F38 arm 0 at iteration 79). '
-        'Only the scheduler\'s own task may run one in the foreground, and '
-        '%s. Launch without --foreground; the default detaches it under the '
-        'Windows Task Scheduler (D6).' % (last, lo[0], lo[1], why))
+        'Only a detached launch\'s own process may run one in the foreground, '
+        'and %s. %s' % (last, lo[0], lo[1], why,
+                        'Launch without --foreground; the default detaches it '
+                        'under the Windows Task Scheduler (D6).'
+                        if os.name == 'nt' else
+                        'Launch with --detach: on this platform it starts the '
+                        'run in its own session (setsid) with the same stamp '
+                        'and nonce proof, and nothing else may run an arm.'))
 
 
 def dry_run(a, run_config, cfg):
@@ -564,15 +664,11 @@ def _detach():
     """
     import subprocess
     import time
-    if os.name != 'nt':
-        raise SystemExit('--detach uses the Windows Task Scheduler; on this '
-                         'platform use nohup/setsid instead.')
     stamp = time.strftime('%Y%m%dT%H%M%S')
     task = 'citysim_run_%s' % stamp
-    launch_dir = os.path.join(HERE, 'results', '_launch')
+    launch_dir = _launch_dir()
     os.makedirs(launch_dir, exist_ok=True)
     log = os.path.join(launch_dir, '%s.log' % task)
-    wrapper = os.path.join(launch_dir, '%s.cmd' % task)
 
     # No --scheduled-child: whatever sits in the child's argv is copied with
     # it (fifteenth report). The child proves its launch through the task instead.
@@ -580,6 +676,9 @@ def _detach():
             + ['--issue-gate-passed', '--foreground'])
     import secrets
     nonce = secrets.token_hex(16)
+    if os.name != 'nt':
+        return _detach_posix(stamp, task, launch_dir, log, args, nonce)
+    wrapper = os.path.join(launch_dir, '%s.cmd' % task)
     # Quoted the way CreateProcess parses it (embedded quotes and
     # backslashes escaped), then `%` doubled because the command lives in
     # a batch file: the old `"%s"`-if-space rule passed `--cause "he said
@@ -630,6 +729,58 @@ def _detach():
     print('\ndetached launch registered and started as scheduled task %s' % task)
     print('launcher log: %s' % log)
     print(SESSION_BOUND_WARNING)
+    _print_verification(stamp)
+    return 0
+
+
+def _detach_posix(stamp, task, launch_dir, log, args, nonce):
+    """The POSIX half of `_detach`: the same wrapper, in its own session.
+
+    Until the sixteenth report no arm could launch off Windows at all: the
+    foreground proof asked the Task Scheduler, which POSIX has not, and
+    --detach was refused outright. The wrapper here is started with
+    `start_new_session` (what `setsid` does) and every descriptor pointed at
+    the log (what `nohup` does), so it has no controlling terminal and
+    outlives the shell. The proof is the session: `_query_task_posix` reads
+    the session id recorded here and the nonce, and only a process INSIDE
+    that session carrying that nonce is the launch - a copied command line
+    runs in the copier's session.
+    """
+    import json
+    import subprocess
+    import time
+    wrapper = os.path.join(launch_dir, '%s.sh' % task)
+    quoted = ' '.join(_sh_quote(x) for x in args)
+    with open(wrapper, 'w', encoding='utf-8', newline='\n') as f:
+        f.write('#!/bin/sh\n')
+        f.write('cd %s || exit 1\n' % _sh_quote(HERE))
+        f.write('export %s=%s\n' % (STAMP_ENV, stamp))
+        # the nonce is the launch's ARGUMENT, not a line of this file
+        f.write('export %s="$1"\n' % NONCE_ENV)
+        f.write('export %s=%s\n' % (city.CITY_ENV, city.CITY))
+        f.write('%s run.py %s\n' % (_sh_quote(sys.executable), quoted))
+        f.write('rm -f %s\n' % _sh_quote(os.path.join(launch_dir, task + '.json')))
+    os.chmod(wrapper, 0o700)
+    with open(log, 'w', encoding='utf-8') as lf:
+        proc = subprocess.Popen(['/bin/sh', wrapper, nonce], stdin=subprocess.DEVNULL,
+                                stdout=lf, stderr=subprocess.STDOUT,
+                                start_new_session=True, close_fds=True, cwd=HERE)
+    proof = os.path.join(launch_dir, task + '.json')
+    with open(proof, 'w', encoding='utf-8', newline='\n') as f:
+        json.dump(dict(stamp=stamp, sid=proc.pid, nonce=nonce, wrapper=wrapper,
+                       started=time.strftime('%Y-%m-%dT%H:%M:%S')), f, indent=1)
+    os.chmod(proof, 0o600)
+    print('\ndetached launch started as session %d (%s, setsid)' % (proc.pid, task))
+    print('launcher log: %s' % log)
+    _print_verification(stamp)
+    return 0
+
+
+def _sh_quote(text):
+    return "'" + str(text).replace("'", "'\\''") + "'"
+
+
+def _print_verification(stamp):
     print('the run directory will appear under results/ as %s_<n>it_<pct>pct, '
           'minutes from now: the harness subsamples the population before the '
           'JVM starts.' % stamp)
@@ -644,7 +795,6 @@ def _detach():
           'right now' % stamp)
     print('  python src/run/watch_run.py --run %s_<n>it_<pct>pct --events --read'
           % stamp)
-    return 0
 
 
 if __name__ == '__main__':

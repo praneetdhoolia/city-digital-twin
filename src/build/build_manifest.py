@@ -14,7 +14,6 @@ import glob
 import json
 import fnmatch
 import hashlib
-import datetime
 import zipfile
 from manifest_io import atomic_manifest_writer
 
@@ -153,12 +152,56 @@ def count_rows(p):
     return None
 
 
+_declared_producers_cache = {}
+
+
+def _declared_producers():
+    """{city-relative output path: 'script'} for every EXACT `OUTPUT_INPUTS`
+    key a producing script declares - the declaration beside the write.
+
+    The prefix map above attributes a DIRECTORY to the adapter that owns it,
+    and a builder that later writes one file into that directory is invisible
+    to it unless the city's `lineage` block names the file. It did not name
+    data/processed/observed/vehicle_use_ratio.json, so the one observation D28
+    rests on was credited to the directory's adapter, with that adapter's
+    source and retrieval date, while its own builder declared it (sixteenth
+    report). A glob key is a claim over a directory and attributes nothing.
+    """
+    if not _declared_producers_cache:
+        _declared_producers_cache[None] = out = {}
+        # every script the lineage map names, and every script the city
+        # keeps under build/ and extract/ whether or not the map names it:
+        # a builder the city's `lineage` block forgot still declares what
+        # it writes, and tests/check_manifest.py reads the same set
+        tokens = {t.strip() for entry in LINEAGE.values()
+                  for t in entry.split(' + ') if t.strip()}
+        for sub in ('build', 'extract'):
+            d = os.path.join(ROOT, sub)
+            if os.path.isdir(d):
+                tokens |= {'cities/%s/%s/%s' % (_city.CITY, sub, n)
+                           for n in os.listdir(d) if n.endswith('.py')}
+        for token in sorted(tokens):
+            for key in _script_declarations(token):
+                if '#' in key or glob.has_magic(key):
+                    continue
+                out.setdefault(key, []).append(token)
+    return _declared_producers_cache[None]
+
+
 def lineage_for(rel):
+    rel = rel.replace('\\', '/')
     best = ''
-    for k, v in LINEAGE.items():
-        if rel.replace('\\', '/').startswith(k) and len(k) > len(best):
+    for k in LINEAGE:
+        if rel.startswith(k) and len(k) > len(best):
             best = k
-    return LINEAGE.get(best, '')
+    entry = LINEAGE.get(best, '')
+    # A script that declares this exact output IS its producer, unless the
+    # prefix answer already names it (a two-script entry stays whole).
+    declarers = _declared_producers().get(rel) or []
+    named = {t.split(' (')[0].strip() for t in entry.split(' + ')}
+    if declarers and not any(d in named for d in declarers):
+        return ' + '.join(declarers)
+    return entry
 
 
 def _path_prefixes(path):
@@ -733,6 +776,22 @@ def derived_provenance(rel, prov, anc, source_index=None):
             names.append(src['name'])
             if src.get('url'):
                 urls.append(src['url'])
+    # Where NO declared source covers any ancestor, the ancestors still carry
+    # the records their adapters landed beside them, and a raw row reads its
+    # own source from that record; the derived row reads the same records
+    # rather than saying nothing. The vehicle-use ratio descends from one ABS
+    # cube that no `provides` prefix names, and its row carried a blank source
+    # for want of this (sixteenth report). A row a declared source already
+    # names keeps that name alone: the declaration is canonical for a source.
+    if not names:
+        for a in sorted(set(anc)):
+            rec = record_for(a, prov)
+            name = rec.get('description') or rec.get('source') or ''
+            if name and name not in seen_names:
+                seen_names.add(name)
+                names.append(name)
+                if rec.get('url') or rec.get('s3_key'):
+                    urls.append(rec.get('url') or rec.get('s3_key'))
     ancestors = set(anc)
     dates = [r.get('retrieved') for path, r in prov.items()
              if r.get('retrieved')
@@ -874,9 +933,14 @@ def main():
             share_alike_ancestor=share_alike_verdict(proven, possible, scope, source_index)))
 
     total = sum(f['bytes'] for f in files)
+    # The vintage of the package is the newest retrieval it embodies, never
+    # the wall clock: a `generated` stamp made every regeneration a diff with
+    # no row changed, which hid the row that had (#211). A regeneration over
+    # unchanged inputs is byte-identical now.
+    newest = max((f['retrieved'] for f in files if f.get('retrieved')), default='')
     man = dict(
         project=_city.descriptor().get('description') or _city.descriptor()['name'],
-        generated=datetime.datetime.now().replace(microsecond=0).isoformat(),
+        newest_retrieved=newest,
         base_year=_city.base_year(),
         crs=_city.crs_label(),
         n_files=len(files),

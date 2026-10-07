@@ -84,4 +84,9 @@ def test_reporting_them_does_not_count_them_as_defects():
     it cannot be forgotten, and is not a defect to be worked down by changing a
     model value without an arm."""
     _corpus, _fields_, led, _n, _owned, _pending = check_hardcoding.audit()
-    assert sum(len(v) for v in led.values()) == 0
+    # the gate's number: everything reported, less what the city has
+    # recorded as debt under a ceiling that only falls (sixteenth report),
+    # with the ledger itself in order
+    failures, recorded = check_hardcoding.recorded_debt(led)
+    assert failures == []
+    assert sum(len(v) for v in led.values()) - sum(len(v) for v in recorded.values()) == 0

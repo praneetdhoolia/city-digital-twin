@@ -16,7 +16,7 @@ Both land under data/raw/ and are never edited in place; the rates are built
 from them by cities/<city>/build/build_licence_rates.py.
 """
 import city as _city
-import os, json, hashlib, urllib.request, datetime
+from fetch_with_provenance import fetch_all
 
 B = "https://opendata.transport.nsw.gov.au/data/dataset/"
 M = [
@@ -29,26 +29,17 @@ M = [
      "ABS Regional population by age and sex, 2024 - estimated resident population by age and sex, Local Government Areas, 30 June 2024 (released 28 Aug 2025)",
      "CC-BY 4.0"),
 ]
-root = _city.path('data/raw')
-prov = []
-for rel, url, desc, lic in M:
-    p = os.path.join(root, rel)
-    os.makedirs(os.path.dirname(p), exist_ok=True)
-    if os.path.exists(p) and os.path.getsize(p) > 500:
-        print("SKIP %s" % rel)
-    else:
-        print("GET  %s" % rel, flush=True)
-        req = urllib.request.Request(url, headers={'User-Agent': 'city-digital-twin/0.1 (research)'})
-        with urllib.request.urlopen(req, timeout=600) as r, open(p, 'wb') as f:
-            while True:
-                c = r.read(1 << 20)
-                if not c:
-                    break
-                f.write(c)
-    sz = os.path.getsize(p)
-    h = hashlib.sha256(open(p, 'rb').read()).hexdigest()
-    print("  %13s B" % format(sz, ','))
-    prov.append({"path": rel, "url": url, "description": desc, "licence": lic, "bytes": sz,
-                 "sha256": h, "retrieved": datetime.date.today().isoformat()})
-json.dump(prov, open(os.path.join(root, 'provenance_licences.json'), 'w'), indent=2)
-print("\nwrote data/raw/provenance_licences.json  (%d files)" % len(prov))
+
+
+def main():
+    # a failed fetch here is fatal: both files are needed and nothing else
+    # is on this list to land without them
+    fetch_all(M, _city.path('data/raw'), 'provenance_licences.json', min_bytes=500,
+              timeout=600, undated='today', continue_on_error=False)
+
+
+if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
+    main()

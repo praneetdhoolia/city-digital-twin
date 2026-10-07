@@ -88,7 +88,7 @@ def main():
                 raise ValueError('Catalogue identity changed')
         else:
             catalogue['sources'].append(entry)
-    catalogue_path.write_text(json.dumps(catalogue,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+    catalogue_path.write_text(json.dumps(catalogue,indent=2,ensure_ascii=False)+'\n',encoding='utf-8', newline='\n')
     selection=dict(schema_version=1,source='derived',purpose='Acquisition overcoverage, not a simulation boundary',
                    source_administrative_extents=[dict(source_id=s['source_id'],sha256=s['source_sha256']) for s in administrative],
                    boundary_audit_sha256=hashlib.sha256(audit_path.read_bytes()).hexdigest(),
@@ -98,9 +98,12 @@ def main():
                    limitations=['Whole historical administrative extents overcover MMR.',
                                 'Projected-envelope tile intersection is conservative and does not repair source boundary polygons.',
                                 'No population or elevation value has been assigned to a simulation.'])
-    Path(city.path('data/processed/acquisition/raster_tile_selection.json')).write_text(json.dumps(selection,indent=2)+'\n',encoding='utf-8')
+    Path(city.path('data/processed/acquisition/raster_tile_selection.json')).write_text(json.dumps(selection,indent=2)+'\n',encoding='utf-8', newline='\n')
     print(json.dumps(selection))
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

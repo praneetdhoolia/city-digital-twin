@@ -14,7 +14,7 @@ that a sampled simulation preserves boarding and crowding.
 
 Each mapped scenario supplies `fleet_assignments.json` beside its
 `transitVehicles.xml.gz` and `transitSchedule.xml.gz`. The file must satisfy
-[`transit_fleet.schema.json`](../config/schema/transit_fleet.schema.json).
+[`transit_fleet.schema.json`](../../config/schema/transit_fleet.schema.json).
 The city owns its production and the evidence for its vehicle assignments.
 
 | Field | Meaning |
@@ -63,7 +63,7 @@ report records the active vehicle-to-profile mapping and the capacities changed.
 
 ## Verification and remaining evidence
 
-[`test_transit_fleet.py`](../tests/unit/test_transit_fleet.py) exercises the
+[`test_transit_fleet.py`](../../tests/unit/test_transit_fleet.py) exercises the
 run-input builder and the capacity sampler together. It checks heterogeneous
 configurations, zero standing room, unchanged clocks and route links, invalid
 capacities, missing assignments, duplicate definitions and mapped-build hashes.

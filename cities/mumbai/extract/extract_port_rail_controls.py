@@ -95,9 +95,12 @@ def main():
     result = dict(schema_version=1, cells=len(rows), checks=len(checks),
                   disagreements=sum(not c['agrees'] for c in checks), derivations=derivations, reconciliation=checks,
                   limits='Port railway rakes, not citywide freight trains or wagons. Monthly inward/outward loaded/empty counts can differ; no balance is imposed. Commodity and wagon classes are source categories, not vehicle capacity. No operating times or network paths are inferred. Subtotals must not be added to their components.')
-    Path(city.path('data/processed/acquisition/mumbai_port_monthly_rakes_audit.json')).write_text(json.dumps(result, indent=2)+'\n', encoding='utf-8')
+    Path(city.path('data/processed/acquisition/mumbai_port_monthly_rakes_audit.json')).write_text(json.dumps(result, indent=2)+'\n', encoding='utf-8', newline='\n')
     print(json.dumps({k:v for k,v in result.items() if k != 'reconciliation'}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

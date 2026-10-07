@@ -20,7 +20,6 @@ import pandas as pd
 
 RAW = _city.path('data/raw/boundaries')
 OUT = _city.path('data/processed/zones')
-os.makedirs(OUT, exist_ok=True)
 
 SA4S = ['Newcastle and Lake Macquarie', 'Hunter Valley exc Newcastle']
 CORE_LGAS = ['Newcastle', 'Lake Macquarie', 'Maitland', 'Cessnock', 'Port Stephens']
@@ -50,47 +49,70 @@ def enrich(sel, key, core_union):
     return sel
 
 
-print('reading LGA boundaries ...', flush=True)
-lga = gpd.read_file('zip://%s/LGA_2021_AUST_GDA2020_SHP.zip!LGA_2021_AUST_GDA2020.shp' % RAW)
-core = lga[lga['LGA_NAME21'].isin(CORE_LGAS)].copy()
-core_m = core.to_crs(CRS_M)
-core_union = core_m.geometry.union_all()
-core_ll = enrich(core, 'LGA_CODE21', core_union)
-core_ll.to_file(os.path.join(OUT, 'zones_LGA.gpkg'), driver='GPKG')
-core_ll.drop(columns='geometry').to_csv(os.path.join(OUT, 'zones_LGA.csv'), index=False, lineterminator='\n')
-print('  core LGAs: %d, %.0f km2' % (len(core), core['LGA_CODE21'].size and core_m.geometry.area.sum() / 1e6))
+def core_boundary():
+    """The core LGAs clipped from the national LGA file, written as the LGA
+    zone layer; returns (the core frame in the city CRS, its dissolved
+    geometry, the report's LGA block)."""
+    print('reading LGA boundaries ...', flush=True)
+    lga = gpd.read_file('zip://%s/LGA_2021_AUST_GDA2020_SHP.zip!LGA_2021_AUST_GDA2020.shp' % RAW)
+    core = lga[lga['LGA_NAME21'].isin(CORE_LGAS)].copy()
+    core_m = core.to_crs(CRS_M)
+    core_union = core_m.geometry.union_all()
+    core_ll = enrich(core, 'LGA_CODE21', core_union)
+    core_ll.to_file(os.path.join(OUT, 'zones_LGA.gpkg'), driver='GPKG')
+    core_ll.drop(columns='geometry').to_csv(os.path.join(OUT, 'zones_LGA.csv'), index=False, lineterminator='\n')
+    print('  core LGAs: %d, %.0f km2' % (len(core), core['LGA_CODE21'].size and core_m.geometry.area.sum() / 1e6))
+    block = {'n': len(core), 'area_km2': round(float(core_m.geometry.area.sum() / 1e6), 1),
+             'names': sorted(core['LGA_NAME21'].tolist())}
+    return core_m, core_union, block
 
-report = {'LGA': {'n': len(core), 'area_km2': round(float(core_m.geometry.area.sum() / 1e6), 1),
-                  'names': sorted(core['LGA_NAME21'].tolist())}}
-sa1_core = None
 
-for level, zf, shp, key in SPECS:
-    print('reading %s ...' % level, flush=True)
-    g = gpd.read_file('zip://%s/%s!%s' % (RAW, zf, shp))
-    if 'SA4_NAME21' in g.columns:
-        sel = g[g['SA4_NAME21'].isin(SA4S)].copy()
-    else:
-        # DZN carries no SA4 field: intersect with the SA4 selection footprint
-        base = sa1_core.to_crs(CRS_M)
-        sel = gpd.sjoin(g.to_crs(CRS_M), base[['geometry']], how='inner', predicate='intersects')
-        sel = sel.drop(columns=[c for c in sel.columns if c.startswith('index_')])
-        sel = sel.drop_duplicates(subset=[key]).to_crs(g.crs)
-    sel = sel[~sel.geometry.isna()].copy()
-    sel = enrich(sel, key, core_union)
-    if level == 'SA1':
-        sa1_core = sel
-    sel.to_file(os.path.join(OUT, 'zones_%s.gpkg' % level), driver='GPKG')
-    sel.drop(columns='geometry').to_csv(os.path.join(OUT, 'zones_%s.csv' % level), index=False, lineterminator='\n')
-    t = sel['zone_tier'].value_counts().to_dict()
-    a = sel.groupby('zone_tier')['area_km2'].sum().round(1).to_dict()
-    report[level] = {'n': len(sel), 'key': key, 'by_tier': t, 'area_km2_by_tier': a}
-    print('  %s: %d zones  tiers=%s  area=%s' % (level, len(sel), t, a), flush=True)
+def zone_levels(core_union, report):
+    """Each ASGS level clipped to the study SA4s (DZN by footprint), tiered
+    and written as a GeoPackage and a CSV; fills the report per level."""
+    sa1_core = None
+    for level, zf, shp, key in SPECS:
+        print('reading %s ...' % level, flush=True)
+        g = gpd.read_file('zip://%s/%s!%s' % (RAW, zf, shp))
+        if 'SA4_NAME21' in g.columns:
+            sel = g[g['SA4_NAME21'].isin(SA4S)].copy()
+        else:
+            # DZN carries no SA4 field: intersect with the SA4 selection footprint
+            base = sa1_core.to_crs(CRS_M)
+            sel = gpd.sjoin(g.to_crs(CRS_M), base[['geometry']], how='inner', predicate='intersects')
+            sel = sel.drop(columns=[c for c in sel.columns if c.startswith('index_')])
+            sel = sel.drop_duplicates(subset=[key]).to_crs(g.crs)
+        sel = sel[~sel.geometry.isna()].copy()
+        sel = enrich(sel, key, core_union)
+        if level == 'SA1':
+            sa1_core = sel
+        sel.to_file(os.path.join(OUT, 'zones_%s.gpkg' % level), driver='GPKG')
+        sel.drop(columns='geometry').to_csv(os.path.join(OUT, 'zones_%s.csv' % level), index=False, lineterminator='\n')
+        t = sel['zone_tier'].value_counts().to_dict()
+        a = sel.groupby('zone_tier')['area_km2'].sum().round(1).to_dict()
+        report[level] = {'n': len(sel), 'key': key, 'by_tier': t, 'area_km2_by_tier': a}
+        print('  %s: %d zones  tiers=%s  area=%s' % (level, len(sel), t, a), flush=True)
 
-# zone lookup used by every downstream layer
-sa1 = pd.read_csv(os.path.join(OUT, 'zones_SA1.csv'))
-keep = ['SA1_CODE21', 'SA2_CODE21', 'SA2_NAME21', 'SA3_CODE21', 'SA3_NAME21',
-        'SA4_CODE21', 'SA4_NAME21', 'zone_tier', 'area_km2', 'x_mga56', 'y_mga56', 'lon', 'lat']
-sa1[[c for c in keep if c in sa1.columns]].to_csv(os.path.join(OUT, 'zone_lookup_SA1.csv'), index=False, lineterminator='\n')
 
-json.dump(report, open(os.path.join(OUT, '_zones_report.json'), 'w'), indent=2)
-print(json.dumps(report, indent=2))
+def main():
+    os.makedirs(OUT, exist_ok=True)
+    _core_m, core_union, lga_block = core_boundary()
+    report = {'LGA': lga_block}
+    zone_levels(core_union, report)
+
+    # zone lookup used by every downstream layer
+    sa1 = pd.read_csv(os.path.join(OUT, 'zones_SA1.csv'))
+    keep = ['SA1_CODE21', 'SA2_CODE21', 'SA2_NAME21', 'SA3_CODE21', 'SA3_NAME21',
+            'SA4_CODE21', 'SA4_NAME21', 'zone_tier', 'area_km2', 'x_mga56', 'y_mga56', 'lon', 'lat']
+    sa1[[c for c in keep if c in sa1.columns]].to_csv(os.path.join(OUT, 'zone_lookup_SA1.csv'), index=False, lineterminator='\n')
+
+    with open(os.path.join(OUT, '_zones_report.json'), 'w', encoding='utf-8', newline='\n') as fh:
+        json.dump(report, fh, indent=2)
+    print(json.dumps(report, indent=2))
+
+
+if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
+    main()

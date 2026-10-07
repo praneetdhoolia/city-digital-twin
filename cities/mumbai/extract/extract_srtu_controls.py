@@ -133,9 +133,12 @@ def main():
     result = audit(rows)
     write('srtu_historical_controls.csv', rows)
     Path(city.path('data/processed/acquisition/srtu_controls_audit.json')).write_text(
-        json.dumps(result, indent=2) + '\n', encoding='utf-8')
+        json.dumps(result, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({k: result[k] for k in ('rows', 'reported_status_counts', 'arithmetic_check_counts')}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

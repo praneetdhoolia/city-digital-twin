@@ -98,10 +98,13 @@ def main():
         ],
     )
     output = Path(city.path('data/processed/observed/_water_evidence_audit.json'))
-    output.write_text(json.dumps(audit, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    output.write_text(json.dumps(audit, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({k: audit[k] for k in ('annual_route_count', 'annual_observation_rows',
                                          'service_directory_rows', 'non_numeric_count_rows')}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

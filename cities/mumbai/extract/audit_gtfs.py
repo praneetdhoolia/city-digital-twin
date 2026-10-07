@@ -157,9 +157,12 @@ def main():
         }
     output = Path(city.path('data/processed/acquisition/bus_gtfs_audit.json'))
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(findings, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    output.write_text(json.dumps(findings, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({'counts': counts, 'defects': findings['defects'], 'path': city.rel(str(output))}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

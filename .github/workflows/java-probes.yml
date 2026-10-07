@@ -1,0 +1,105 @@
+name: java-probes
+
+# The MATSim extensions' probes on the pinned toolchain (sixteenth report).
+#
+# Every Java class that decides a result ships with a probe under
+# src/java/citysim/*Probe.java and src/java_signals/citysim/*Probe.java, and
+# src/run/run_signal_probes.py runs them all - locally, in the session gate,
+# when the toolchain is idle. Until this job none ran in CI: a regression in a
+# gated mechanism was caught on a workstation or not at all, and test.yml has no
+# Java step because the toolchain is not on a checkout. This job puts it there,
+# the way src/setup/bootstrap_toolchain.py puts it on a workstation: every
+# component fetched from its pinned URL and refused unless its sha256 matches,
+# then both class trees compiled with the pinned javac and every probe run.
+#
+# What is downloaded, and from where: the three toolchain URLs the bootstrap
+# pins (github.com/adoptium, repo.matsim.org, repo1.maven.org) and the signals
+# run stack Maven resolves from the same two repositories. Nothing else. The
+# bootstrap's JDK pin is the Windows build of Temurin 25.0.4+7 (the workstation
+# it was pinned on); a Linux runner cannot execute it, so the SAME release's
+# Linux build is fetched here from the same adoptium release page and checked
+# against the digest adoptium publishes beside it, verified by hashing the
+# archive by hand on 8 October 2026. The Windows archive is still fetched and
+# hashed by the bootstrap, because `--verify` re-hashes what the pin records;
+# it is not unpacked (the bootstrap unpacks only when no .tools/jdk exists).
+#
+# The cache holds the fetched archives, the unpacked JDK and Maven, pt2matsim
+# and the resolved run stack, keyed on the files the pins live in: the
+# bootstrap (every URL and digest), the run-stack pom (the MATSim train) and
+# this file (the Linux JDK's URL and digest).
+# .tools/toolchain.json would be the natural key, but it is written BY the
+# bootstrap and gitignored, so it does not exist at checkout to be hashed.
+# A pin change misses the cache and fetches afresh; the class trees are never
+# cached, `--verify` recompiles them from the checkout every run.
+on:
+  # push runs on main only; every other branch is exercised by its pull
+  # request, so a change is not tested twice (#130)
+  push:
+    branches: ["main"]
+  pull_request:
+
+# Least privilege: the job reads the checkout and writes nothing back.
+permissions:
+  contents: read
+
+jobs:
+  probes:
+    name: the MATSim extensions' probes on the pinned toolchain
+    runs-on: ubuntu-latest
+    env:
+      # Temurin 25.0.4+7, Linux x64: the same release as the bootstrap's
+      # JDK_VERSION, from the same adoptium release page
+      JDK_LINUX_URL: https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.4%2B7/OpenJDK25U-jdk_x64_linux_hotspot_25.0.4_7.tar.gz
+      JDK_LINUX_SHA256: e58fcdcd637b25c03ca84cbbcefc70d11efb8f4b4cbd05decc9f661769d77f94
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
+        with:
+          python-version: "3.14"
+      - name: Install the repository's import roots (#181)
+        run: python src/setup/install_paths.py
+      - name: Restore the pinned toolchain
+        id: toolchain
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830  # v4.3.0
+        with:
+          path: |
+            .tools
+            !.tools/classes
+            !.tools/classes-signals
+            !.tools/run-stack/m2
+          key: toolchain-${{ runner.os }}-${{ hashFiles('src/setup/bootstrap_toolchain.py', 'src/java/run-stack-pom.xml', '.github/workflows/java-probes.yml') }}
+      # The pinned JDK release for this runner, checked before it is unpacked.
+      # Unpacking it into .tools/jdk first is what makes the bootstrap skip its
+      # own unpack of the Windows archive (it unpacks only when .tools/jdk
+      # holds no java).
+      - name: Fetch the pinned JDK release's Linux build (sha256-checked)
+        if: steps.toolchain.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .tools/dl .tools/jdk
+          curl -fsSL --retry 3 -o .tools/dl/OpenJDK25U-jdk_x64_linux_hotspot_25.0.4_7.tar.gz "$JDK_LINUX_URL"
+          echo "$JDK_LINUX_SHA256  .tools/dl/OpenJDK25U-jdk_x64_linux_hotspot_25.0.4_7.tar.gz" | sha256sum -c -
+          tar -xzf .tools/dl/OpenJDK25U-jdk_x64_linux_hotspot_25.0.4_7.tar.gz --strip-components=1 -C .tools/jdk
+          .tools/jdk/bin/java -version
+      # pt2matsim and Maven by their pinned digests, and the Windows JDK
+      # archive hashed against its pin; the citysim classes compile at the end.
+      - name: Bootstrap the pinned toolchain
+        if: steps.toolchain.outputs.cache-hit != 'true'
+        run: python src/setup/bootstrap_toolchain.py
+      # Python's zipfile does not carry the executable bit, so the Maven
+      # launcher the bootstrap unpacked cannot be run until it is given one.
+      - name: Make the unpacked Maven launcher executable
+        if: steps.toolchain.outputs.cache-hit != 'true'
+        run: chmod +x .tools/maven/bin/mvn
+      # The signals contrib and its closure at exactly the MATSim train the
+      # shaded jar embeds, every jar recorded by sha256 in toolchain.json.
+      - name: Resolve the signals run stack
+        if: steps.toolchain.outputs.cache-hit != 'true'
+        run: python src/setup/bootstrap_toolchain.py --run-stack
+      # The session gate's `toolchain` line: every recorded digest re-hashed,
+      # then both class trees compiled from this checkout.
+      - name: Verify every digest and compile both class trees
+        run: python src/setup/bootstrap_toolchain.py --verify
+      # The session gate's `java probes` line: one JSON verdict per probe,
+      # exit 0 only if every probe passes.
+      - name: Run every Java probe
+        run: python src/run/run_signal_probes.py

@@ -70,7 +70,7 @@ def portal_download(path, source_id, portal_page, entries, allowed):
                   transport="the user's logged-in browser download from the portal page named as final_url "
                             "(a download form a script cannot pass); the file's modification time is the retrieval",
                   validation_status='acquired_unvalidated')
-    provenance.write_text(json.dumps({'files': [record]}, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    provenance.write_text(json.dumps({'files': [record]}, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print('ACQUIRED', entry['id'], len(content), record['path'])
 
 
@@ -144,9 +144,12 @@ def main():
                       producing_script='extract/import_browser_acquisition.py',
                       transport='Connected Chrome public fetch; default certificate verification',
                       validation_status='acquired_unvalidated')
-        provenance.write_text(json.dumps({'files':[record]},indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+        provenance.write_text(json.dumps({'files':[record]},indent=2,ensure_ascii=False)+'\n',encoding='utf-8', newline='\n')
         print('ACQUIRED',entry['id'],len(content),record['path'])
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

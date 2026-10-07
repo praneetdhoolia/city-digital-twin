@@ -18,6 +18,18 @@
       "decisions_ref": "9.5, 15",
       "description": "Share of the synthetic population simulated. The subsample is NESTED - a person is kept if a hash of their id falls below the fraction, so 1% is a strict subset of 10% and a difference between fractions is a sample-size effect rather than a sampling one. EVERY P4 BEHAVIOURAL RESULT SO FAR WAS MEASURED AT 1% (5,209 persons, 0.85% of the population)."
     },
+    "RUN.sample.arm_fraction_floor": {
+      "value": 0.25,
+      "units": "share_of_population",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.139, 9.149",
+      "consumers": [
+        "run.py"
+      ],
+      "description": "The sample fraction below which an ARM - a run whose RUN.controler.last_iteration is at or above its declared sweep's floor, the line run.py's foreground refusal draws - is refused by the launcher unless --override-reason states why and the reason is written to the issue gate's override ledger (run.py refuse_arm_fraction). THE 25 %-ONLY DIRECTIVE (user, 1 September 2026; 9.139, 9.149): every P4 arm runs at 25 %, and a 20-45 h arm at the wrong fraction is the class that cost 151.6 of 405.3 machine hours before 9 September (#209). A definition, not an empirical value: the directive fixes it, and a city whose campaign fraction is another declares another. Probes and smokes below the arm horizon are never asked. 0 switches the bar off. The approvals-ledger half of #209 is the user's decision and is not here."
+    },
     "RUN.sample.flow_capacity_factor": {
       "value": null,
       "units": "share_of_capacity",
@@ -922,6 +934,58 @@
         "src/run/run_matsim.py"
       ],
       "description": "Whether the JVM writes a GC log to <run>/gc.log. OBSERVATION ONLY, like RUN.machine.jfr_profile. Declared because the heap has been 40 g on every 25 % arm against a measured post-collection live set of 13.3 GiB, which is above the 32 GiB compressed-oops threshold, and no arm has ever been run with a GC log - so whether the heap size costs wall time is unmeasured rather than settled. The log is what settles it. DEFAULT TRUE since 11 September 2026: the first arm to die of heap (F33 arm 0, 9.165) spent 13.1 h inside one iteration with no collector account of it, and a GC log costs nothing a stopwatch can see; an overlay that wants none says so."
+    },
+    "RUN.machine.free_ram_margin_gib": {
+      "value": 6.0,
+      "units": "GiB",
+      "source": "assumed",
+      "sweep": [
+        2.0,
+        12.0
+      ],
+      "sweep_basis": "A LAUNCH REFUSAL'S MARGIN, not a model parameter: how much physical memory the host must have free beyond RUN.machine.xmx before the JVM starts, for the JVM's own non-heap (metaspace, 40 threads' stacks, the GC's card tables - not measured on this host), the harness, the digest, the viewer and the mode reporter the gate watcher runs (which reads a 25 % trips table into memory). 6 GiB is chosen, not measured: the 48 GB heap on the 63.46 GB host leaves 15.5 GB for everything else, and the control paged for 2.09 h (iterations 160-205, 21 full collections over 60 s, max 537 s) while a co-tenant held some of it. The interval runs from the JVM's own overhead alone (2) to twice the chosen margin (12); the first _host.jsonl of an arm that pages or does not is what measures it. 0 switches the bar off.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.220",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ],
+      "description": "Free physical memory the host must hold at launch beyond RUN.machine.xmx, in GiB; the launcher refuses below the heap plus this margin (src/run/run_matsim.py refuse_loaded_host), reading the host the way every progress write does (procs.host_load). Declared on 8 October 2026 (sixteenth project report, performance rank 2): F39's control carried a 2.09 h band of full-GC pauses of the paging signature that cost F37 5.56 h, and the host's free memory was recorded at every write and refused on by nothing. It changes what the launcher REFUSES, never what the model does. 0 = no margin bar."
+    },
+    "RUN.machine.other_process_max_cores": {
+      "value": 1.0,
+      "units": "cores",
+      "source": "assumed",
+      "sweep": [
+        0.5,
+        4.0
+      ],
+      "sweep_basis": "A LAUNCH REFUSAL'S BAR: the CPU, in logical cores held over one monitor poll (RUN.monitor.poll_s), that a process other than the run's own may be using at launch before the launch is refused. The mobsim is declared at 16 threads and the replanning pool at 20 on a 24-logical-core host (RUN.machine.threads, RUN.machine.replanning_threads), so a co-tenant holding a whole core competes with the run for a core it was measured to want. One core is the figure the sixteenth report named; the interval runs from half a core (an indexer, a browser tab) to the four the events handlers hold. Measured on nothing yet: the one host sample each of the four F39 probes kept (the last, written after the run ended) shows WmiPrvSE.exe, the WMI provider host, at 1.1-1.7 cores - whether anything held a core DURING those runs is what _host.jsonl will say from now on. 0 switches the bar off.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.220",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ],
+      "description": "The most CPU, in cores, another process may hold at launch; the launcher refuses a launch beside a process over it (src/run/run_matsim.py refuse_loaded_host, from procs.host_load's top_other_process over one RUN.monitor.poll_s). Declared on 8 October 2026 (sixteenth project report): the three daytime probes of 30 September 2026 quoted 37.0, 50.5 and 27.7 h for one build whose control had run 27.9 h - a probe launched beside a loaded host prices the host, not the build (9.219). It changes what the launcher REFUSES, never what the model does. 0 = no CPU bar."
+    },
+    "RUN.machine.probe_max_host_cpu_pct": {
+      "value": 90.0,
+      "units": "percent",
+      "source": "assumed",
+      "sweep": [
+        75.0,
+        100.0
+      ],
+      "sweep_basis": "A PRICING RULE'S BAR, not a model parameter: the host's CPU busy % (every process, over each digest interval) above which a probe's stopwatch priced the host and not the build, so arm_cost.py refuses to quote from it. The run itself holds 16 mobsim threads, 20 replanning threads and 4 handler threads of 24 logical cores, so a clean probe is expected to read between the mobsim's 67 % and the replanning pool's 83 %, and a host at 90 % or more over a probe's iterations is one where something else is taking the rest. The interval runs from the mobsim's own share (75, below which no probe on this host can read) to 100 (no bar). Measured on no probe yet: _host.jsonl exists from this declaration on, and the first probe that keeps one measures what a clean iteration reads. 100 switches the bar off.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.220",
+      "consumers": [
+        "src/run/run_matsim.py",
+        "src/analyse/arm_cost.py"
+      ],
+      "description": "The host CPU busy % recorded over a probe's iterations (results/raw/<run>/_host.jsonl, written each RUN.monitor.progress_interval_s by the progress digest) above which arm_cost.py refuses to price an arm on that probe and says so. Declared on 8 October 2026 (sixteenth project report): the daytime probes of 30 September 2026 quoted 37.0-50.5 h for a build whose control ran 27.9 h, and nothing in the pricer read the probe's host load (9.219). When a control exists in the family, its own wall clock is printed beside the quote as the pair price. It changes what the pricer QUOTES, never what the model does; 100 = no bar."
     },
     "RUN.machine.seed": {
       "value": 20260810,

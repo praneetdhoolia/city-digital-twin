@@ -62,10 +62,13 @@ def main():
         ],
     )
     output = Path(city.path('data/processed/acquisition/boundary_source_audit.json'))
-    output.write_text(json.dumps(result, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    output.write_text(json.dumps(result, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({'sources': len(sources), 'layers': sum(len(s['layers']) for s in sources),
                       'empty_layers': [s['source_id'] for s in sources if any(not l['feature_count'] for l in s['layers'])]}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

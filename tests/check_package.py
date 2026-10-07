@@ -59,6 +59,16 @@ def rows(p):
 
 # ---- 1. required artefacts, keyed to the Appendix A schemas ----
 REQUIRED = {k: _city.path(p) for k, p in EXP['required_artefacts'].items()}
+# A required DOCUMENT is resolved by whose it is (#234): the simulator's live
+# under docs/ (`city.docs()`), the city's under cities/<city>/docs/
+# (`city.city_docs()`). Both were once resolved as city artefacts, which put
+# the record at cities/newcastle/docs/DECISIONS.md and the data dictionary at
+# cities/newcastle/cities/newcastle/docs/..., and both checks were red.
+for k, spec in (EXP.get('required_documents') or {}).items():
+    if 'simulator' in spec:
+        REQUIRED[k] = _city.docs(spec['simulator'])
+    else:
+        REQUIRED[k] = _city.city_docs(spec['city'])
 for k, p in REQUIRED.items():
     check(os.path.exists(p) and os.path.getsize(p) > 100, '%s present (%s)' % (k, p))
 

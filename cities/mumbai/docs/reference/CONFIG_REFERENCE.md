@@ -27,22 +27,22 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 442 fields are made of
+## What the 495 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 14 | read directly from a raw download |
 | `measured` | 9 | computed from observed data in this package |
-| `derived` | 26 | follows from another registry field by identity |
-| `literature` | 41 | a published value, not specific to this city |
-| `assumed` | 172 | chosen without direct empirical support |
-| `definition` | 180 | fixed by the formulation, not an empirical quantity |
+| `derived` | 29 | follows from another registry field by identity |
+| `literature` | 48 | a published value, not specific to this city |
+| `assumed` | 211 | chosen without direct empirical support |
+| `definition` | 184 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 404 | usable point value |
+| `active` | 416 | usable point value |
 | `computed` | 6 | written at run time from other fields; do not hand-edit |
-| `placeholder` | 31 | a structural stand-in; the model runs but the field is not defensible |
+| `placeholder` | 72 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 1 | the datum does not exist in the package; must be swept, never pinned |
 
 ### The 1 fields with no value
@@ -53,14 +53,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 |---|---|---|
 | `B.population.tertiary_attendance_rate_20_24` | 0 - 0.35 | Unobtained: null, and the synthesiser makes nobody in that age range a student, which the report says. |
 
-### What the 209 sweeps are for
+### What the 218 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 7 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 194 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 203 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 8 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -75,7 +75,7 @@ The `answer` sweeps - the runs the study owes after the gate:
 | `RUN.replanning.score_msa_representation` | `absent` | `absent`, `at_innovation_cutoff` |
 | `RUN.routing.access_egress_consistency_check` | `reroute` | `reroute`, `disable`, `abortOnInconsistency` |
 
-### The 22 fields held fixed
+### The 59 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
@@ -83,10 +83,46 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `A.baseline_transit.line_published_weekday_trips` - MMRDA's press release PRC/PR/12/2026 of 6 April 2026 (mmr_metro_april_2026_timetable): total weekday trips per corridor, both directions - Line 2A 289, the integrated Line 7 and Li
 - `A.baseline_transit.line_windows_s` - the operator's published first and last trains (MMMOCL Train Time Table as served on 22 September 2026, mmmocl_schedule_20260918, Marathi page, Devanagari digits read as their ASCI
 - `A.baseline_transit.printed_timetables` - the operators' printed timetable sheets the package holds (wr_printed_timetable_cells.csv, cr_printed_timetable_cells.csv), each assigned to its line and read as a primary table or
+- `A.fare.bus_adult_offpeak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.bus_adult_peak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.bus_band_upper_km` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.bus_child_offpeak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.bus_child_peak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.child_max_age` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.child_min_age` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.daily_cap_adult` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.daily_cap_adult_weekend` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.daily_cap_child` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.daily_cap_child_weekend` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.daily_cap_senior` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.ferry_adult_offpeak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.ferry_adult_peak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.ferry_child_offpeak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.ferry_child_peak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.lightrail_adult_offpeak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.lightrail_adult_peak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.lightrail_band_upper_km` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.lightrail_child_offpeak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.lightrail_child_peak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.peak_evening_end_h` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.peak_evening_start_h` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.peak_morning_end_h` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.peak_morning_start_h` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.rail_peak_morning_start_h` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.senior_per_fare_cap` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.train_adult_offpeak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.train_adult_peak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.train_band_upper_km` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.train_child_offpeak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.train_child_peak` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.transfer_discount_adult` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `A.fare.transfer_discount_child` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
 - `A.transit.rail_ac_capacity_seated` - PIB's release of 24 December 2017 (pib_first_ac_emu_2017; suburban_first_ac_capacity_2017.csv, 'Complete rake'): the 12-car AC EMU rake seats 1,028 with 4,936 standing, 5,964 in al
 - `A.transit.rail_ac_capacity_standing` - PIB's release of 24 December 2017 (suburban_first_ac_capacity_2017.csv, 'Complete rake'): 4,936 standing places in the 12-car AC rake. Never varied
 - `B.activity.detour_factor` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
 - `B.activity.short_trip_band_km` - the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - t
+- `B.freight.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.freight.pce), not through vehicle length, so no output varies across this
+- `B.motorbike.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.motorbike.pce), not through vehicle length, so no output varies across th
 - `B.targets.goods_vehicle_traffic_share_pct` - a published screenline observation (CMP for Greater Mumbai executive summary, traffic composition), never varied
 - `B.taxi.daily_trips_band` - A CONSTRAINT, NEVER A TARGET (9.8/9.13): the pre-registered 67/143 target split cannot grow. The modelled taxi volume is REPORTED against this band; nothing is fitted to it.
 - `B.taxi.fleet_size` - adopted from the reference city, where it is derived from B.taxi.daily_trips_band, B.taxi.vehicle_trips_per_day; those fields are not declared for this city, so the value is held
@@ -100,6 +136,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `RUN.machine.heap_floor_gib` - the LIVE SET after the last full collection of a case with no population to speak of, read from its gc.log (Pause Full N->M: M), never the pre-collection peak - under ParallelGC wi
 - `RUN.machine.heap_per_fraction_gib` - persons in the core (27.06 M) x RUN.replanning.max_agent_plan_memory x the live heap a routed plan holds at steady state - 19 KB on the reference city's 25 % arm 20260916T063903_25
 - `RUN.monitor.pace_band_s` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+- `RUN.transit_router.access_max_radius_m` - the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
 - `RUN.transit_router.no_route_walk_reach_m` - adopted from the reference city, where it is derived from C.constraint.trip_length_km.walk; those fields are not declared for this city, so the value is held
 
 ## Broad baseline boarding fares
@@ -697,7 +734,7 @@ Transliteration reconciliation between the village names of the MMR extended-not
 
 ## Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)
 
-*`cities/mumbai/registry/A_framework.json` - 35 fields*
+*`cities/mumbai/registry/A_framework.json` - 72 fields*
 
 
 
@@ -706,6 +743,43 @@ Transliteration reconciliation between the village names of the MMR extended-not
 | `A.bike_stress.representation` | `absent` | enum | `assumed` | `absent`, `felt_time` |
 | `A.crossings.freight_closures_per_day` | `{}` | closures_per_day_per_site | `derived` | derived: no boom-gated crossing is represented (A.crossings.representation = ab |
 | `A.crossings.representation` | `absent` | enum | `assumed` | `absent`, `change_events` |
+| `A.fare.bus_adult_offpeak` | `[2.31, 3.14, 4.03]` | INR | `assumed` | **held fixed** |
+| `A.fare.bus_adult_peak` | `[3.3, 4.49, 5.77]` | INR | `assumed` | **held fixed** |
+| `A.fare.bus_band_upper_km` | `[3, 8]` | km | `assumed` | **held fixed** |
+| `A.fare.bus_child_offpeak` | `[1.15, 1.56, 2.01]` | INR | `assumed` | **held fixed** |
+| `A.fare.bus_child_peak` | `[1.65, 2.24, 2.88]` | INR | `assumed` | **held fixed** |
+| `A.fare.child_max_age` | `15` | years | `assumed` | **held fixed** |
+| `A.fare.child_min_age` | `4` | years | `assumed` | **held fixed** |
+| `A.fare.daily_cap_adult` | `19.3` | INR | `assumed` | **held fixed** |
+| `A.fare.daily_cap_adult_weekend` | `9.65` | INR | `assumed` | **held fixed** |
+| `A.fare.daily_cap_child` | `9.65` | INR | `assumed` | **held fixed** |
+| `A.fare.daily_cap_child_weekend` | `4.8` | INR | `assumed` | **held fixed** |
+| `A.fare.daily_cap_senior` | `2.5` | INR | `assumed` | **held fixed** |
+| `A.fare.ferry_adult_offpeak` | `2.31` | INR | `assumed` | **held fixed** |
+| `A.fare.ferry_adult_peak` | `3.3` | INR | `assumed` | **held fixed** |
+| `A.fare.ferry_child_offpeak` | `1.15` | INR | `assumed` | **held fixed** |
+| `A.fare.ferry_child_peak` | `1.65` | INR | `assumed` | **held fixed** |
+| `A.fare.lightrail_adult_offpeak` | `[2.31, 3.14, 4.03]` | INR | `assumed` | **held fixed** |
+| `A.fare.lightrail_adult_peak` | `[3.3, 4.49, 5.77]` | INR | `assumed` | **held fixed** |
+| `A.fare.lightrail_band_upper_km` | `[3, 8]` | km | `assumed` | **held fixed** |
+| `A.fare.lightrail_child_offpeak` | `[1.15, 1.56, 2.01]` | INR | `assumed` | **held fixed** |
+| `A.fare.lightrail_child_peak` | `[1.65, 2.24, 2.88]` | INR | `assumed` | **held fixed** |
+| `A.fare.off_peak_all_day_day_types` | `["SAT", "SUN"]` | enum | `definition` | - |
+| `A.fare.peak_evening_end_h` | `19.0` | hours | `assumed` | **held fixed** |
+| `A.fare.peak_evening_start_h` | `15.0` | hours | `assumed` | **held fixed** |
+| `A.fare.peak_morning_end_h` | `10.0` | hours | `assumed` | **held fixed** |
+| `A.fare.peak_morning_start_h` | `6.5` | hours | `assumed` | **held fixed** |
+| `A.fare.rail_peak_morning_start_h` | `6.0` | hours | `assumed` | **held fixed** |
+| `A.fare.senior_min_age` | `60` | years | `literature` | 60 - 67 |
+| `A.fare.senior_per_fare_cap` | `2.5` | INR | `assumed` | **held fixed** |
+| `A.fare.train_adult_offpeak` | `[3.03, 3.76, 4.34, 5.79, 7.46]` | INR | `assumed` | **held fixed** |
+| `A.fare.train_adult_peak` | `[4.33, 5.38, 6.2, 8.28, 10.66]` | INR | `assumed` | **held fixed** |
+| `A.fare.train_band_upper_km` | `[10, 20, 35, 65]` | km | `assumed` | **held fixed** |
+| `A.fare.train_child_offpeak` | `[1.51, 1.88, 2.17, 2.89, 3.73]` | INR | `assumed` | **held fixed** |
+| `A.fare.train_child_peak` | `[2.16, 2.69, 3.1, 4.14, 5.33]` | INR | `assumed` | **held fixed** |
+| `A.fare.transfer_discount_adult` | `2.0` | INR | `assumed` | **held fixed** |
+| `A.fare.transfer_discount_child` | `1.0` | INR | `assumed` | **held fixed** |
+| `A.fare.transfer_window_min` | `60` | minutes | `literature` | 30 - 90 |
 | `A.gradient.bike_downhill_speedup_per_pct` | `0.015` | share_of_flat_speed_per_pct | `literature` | 0 - 0.03 |
 | `A.gradient.bike_speed_ceiling_factor` | `1.3` | share | `assumed` | 1 - 1.5 |
 | `A.gradient.bike_speed_floor_factor` | `0.2` | share | `assumed` | 0.1 - 0.3 |
@@ -762,6 +836,368 @@ The representation gate for the two boom-gated freight level crossings. Switched
 ***assumed** · status **active** · DECISIONS.md §9.202 · sweep role **uncertainty***
 
 > **Sweep basis.** adopted from the reference city: Whether the freight-rail level-crossing closures (9.70, issue #68) reach the model at all. absent: the crossings are not represented (the pre-9.77 state - closures were a stated, unmodelled limitation). change_events: the derived crossing_change_events.xml enters every run input as a time-variant network, closing the crossing links for the swept closure pattern. The closure PATTERN stays swept on its own fields (closures_per_day, closure_duration_s); this switch is the representation gate, mirroring A.signals.representation's one-gate discipline.
+
+#### `A.fare.bus_adult_offpeak`
+
+Adult bus off-peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.bus_adult_peak`
+
+Adult bus peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.bus_band_upper_km`
+
+Opal bus fare distance-band upper bounds; the last band is open (8+ km). Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.bus_child_offpeak`
+
+Child/Youth bus off-peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.bus_child_peak`
+
+Child/Youth bus peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.child_max_age`
+
+Child/Youth Opal fares apply to ages 4-15 (eligible school students 16+ also qualify; that concession class is recorded, not modelled). Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.child_min_age`
+
+Children under 4 travel free; Child/Youth fares start at 4. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.daily_cap_adult`
+
+Adult daily cap, Mondays to Thursdays. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.daily_cap_adult_weekend`
+
+Adult daily cap on Fridays, Saturdays, Sundays and public holidays. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.daily_cap_child`
+
+Child/Youth daily cap, Mondays to Thursdays. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.daily_cap_child_weekend`
+
+Child/Youth daily cap on Fridays, Saturdays, Sundays and public holidays. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.daily_cap_senior`
+
+Gold Senior/Pensioner daily cap, every day of the week. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.ferry_adult_offpeak`
+
+Newcastle Stockton ferry adult off-peak fare. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.ferry_adult_peak`
+
+Newcastle Stockton ferry adult peak fare - the ferry fare table carries a named row for this crossing (0-3 km), separate from the Sydney bands. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.ferry_child_offpeak`
+
+Newcastle Stockton ferry Child/Youth off-peak fare. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.ferry_child_peak`
+
+Newcastle Stockton ferry Child/Youth peak fare. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.lightrail_adult_offpeak`
+
+Adult light rail off-peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.lightrail_adult_peak`
+
+Adult light rail peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.lightrail_band_upper_km`
+
+Opal light rail fare distance-band upper bounds; published as its own table (its values equal the bus table, but each is declared from its own publication so neither can drift by proxy). Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.lightrail_child_offpeak`
+
+Child/Youth light rail off-peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.lightrail_child_peak`
+
+Child/Youth light rail peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.off_peak_all_day_day_types`
+
+The day types Opal prices as off-peak all day and charges the weekend daily cap on. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***definition** · status **placeholder** · DECISIONS.md §9.202*
+
+#### `A.fare.peak_evening_end_h`
+
+Opal evening peak end: 7pm. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.peak_evening_start_h`
+
+Opal evening peak start: 3pm. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.peak_morning_end_h`
+
+Opal morning peak end: 10am. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.peak_morning_start_h`
+
+Opal morning peak start, metro/train, bus and light rail: 6:30am. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.rail_peak_morning_start_h`
+
+Intercity trains begin their morning peak at 6am (the Hunter line is an NSW TrainLink intercity service); the published note that it varies by tap-on station for some stations is recorded and not modelled. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.senior_min_age`
+
+Age from which a resident not employed full-time is priced on Gold Senior/Pensioner Opal fares. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***literature** · status **placeholder** · DECISIONS.md §9.202 · sweep role **uncertainty***
+
+> **Sweep basis.** NSW Seniors Card eligibility age; pensioner eligibility below 60 exists and is not modelled. Swept up to pension age.
+
+#### `A.fare.senior_per_fare_cap`
+
+Gold Senior/Pensioner Opal: each fare is the Child/Youth fare capped at this value, and the daily cap equals it. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.train_adult_offpeak`
+
+Adult metro/train off-peak fare per band (the published 30% discount, as published - not recomputed). Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.train_adult_peak`
+
+Adult metro/train peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.train_band_upper_km`
+
+Opal metro/train fare distance-band upper bounds; the last band is open (65+ km). Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.train_child_offpeak`
+
+Child/Youth metro/train off-peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.train_child_peak`
+
+Child/Youth metro/train peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.transfer_discount_adult`
+
+Opal transfer discount off an adult fare, for every transfer between modes within one journey. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.transfer_discount_child`
+
+Opal transfer discount off a Child/Youth or Concession fare, for every transfer between modes within one journey. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `A.fare.transfer_window_min`
+
+Maximum gap between alighting one service and boarding the next for the two boardings to count as one journey (and earn the transfer discount). Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = "aggregate" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***literature** · status **placeholder** · DECISIONS.md §9.202 · sweep role **uncertainty***
+
+> **Sweep basis.** The 60-minute tap-off-to-tap-on rule is the Opal journey definition in general use; the archived pages state the discount but not the window, so it is literature, swept around the published rule.
 
 #### `A.gradient.bike_downhill_speedup_per_pct`
 
@@ -1255,13 +1691,13 @@ Passengers one vessel on the wharf-mora crossing carries, from the Maritime Boar
 
 #### `A.transit.fleet_assignment_mode`
 
-How the run-input assembly resolves transit passenger capacities (docs/transit_fleet.md). explicit_vehicle: every mapped vehicle is assigned a capacity profile by build_transit_fleet.py from the route relation it serves, so a 12-car EMU, a 4-car Line 1 train, a 6-car BEML train, an 8-car Line 3 train, a 3-car Navi Mumbai train, a creek ferry and a city bus each carry their own evidenced capacity. Until 9.206 the assembly copied the mapper's own defaults (Bus 70, Rail 400, Subway 300, Ferry 250 seats, no standing room), so a suburban train that carries about 5,000 was simulated as 400 seats.
+How the run-input assembly resolves transit passenger capacities (docs/framework/transit_fleet.md). explicit_vehicle: every mapped vehicle is assigned a capacity profile by build_transit_fleet.py from the route relation it serves, so a 12-car EMU, a 4-car Line 1 train, a 6-car BEML train, an 8-car Line 3 train, a 3-car Navi Mumbai train, a creek ferry and a city bus each carry their own evidenced capacity. Until 9.206 the assembly copied the mapper's own defaults (Bus 70, Rail 400, Subway 300, Ferry 250 seats, no standing room), so a suburban train that carries about 5,000 was simulated as 400 seats.
 
 ***definition** · status **active** · DECISIONS.md §9.206*
 
 #### `A.transit.fleet_profiles`
 
-The capacity profiles build_transit_fleet.py assigns to the mapped vehicles (docs/transit_fleet.md): each names the mapper's base type it clones, the two registry fields that carry its seats and standing places, and EITHER the transport mode every line of that mode falls to (rail, bus) OR the OSM route relations it serves, read from the transit line id the feed builder writes as BASE_<relation>_<direction> (build_baseline_transit_feed.py). The relation ids are the identifiers of the mapped lines - Line 1 (3808111, 7684032), Lines 2A/2B/7/9 on BEML 6-car stock, Line 3 (7898597, 17876723), Navi Mumbai Line 1 (16533435, 16533436), the Gateway-Elephanta launch (19764205) and the Vasai-Bhayander creek ferry (16777766) - not values; a line with no profile refuses the build. The mapper typed the Central main-line and the Nerul-Uran patterns as their own base types (C, U) beside Rail; the three rail profiles carry one capacity and differ only in the base type each clones, because an assignment cannot change a vehicle's mapped type. A profile may instead name the Maritime Board directory routes it serves (`directory_routes`): the feed builder writes those lines as BASE_MMB_<directory route>_<direction> (9.207). A profile with route_id_contains claims every timetable line whose id carries the substring (the AC and 15-car trains of the printed timetables, build_suburban_timetable_feed.py), before the transport-mode default.
+The capacity profiles build_transit_fleet.py assigns to the mapped vehicles (docs/framework/transit_fleet.md): each names the mapper's base type it clones, the two registry fields that carry its seats and standing places, and EITHER the transport mode every line of that mode falls to (rail, bus) OR the OSM route relations it serves, read from the transit line id the feed builder writes as BASE_<relation>_<direction> (build_baseline_transit_feed.py). The relation ids are the identifiers of the mapped lines - Line 1 (3808111, 7684032), Lines 2A/2B/7/9 on BEML 6-car stock, Line 3 (7898597, 17876723), Navi Mumbai Line 1 (16533435, 16533436), the Gateway-Elephanta launch (19764205) and the Vasai-Bhayander creek ferry (16777766) - not values; a line with no profile refuses the build. The mapper typed the Central main-line and the Nerul-Uran patterns as their own base types (C, U) beside Rail; the three rail profiles carry one capacity and differ only in the base type each clones, because an assignment cannot change a vehicle's mapped type. A profile may instead name the Maritime Board directory routes it serves (`directory_routes`): the feed builder writes those lines as BASE_MMB_<directory route>_<direction> (9.207). A profile with route_id_contains claims every timetable line whose id carries the substring (the AC and 15-car trains of the printed timetables, build_suburban_timetable_feed.py), before the transport-mode default.
 
 ***definition** · status **active** · DECISIONS.md §9.206*
 
@@ -2228,7 +2664,7 @@ Fixed background movement seed.
 
 ## Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)
 
-*`cities/mumbai/registry/B_framework.json` - 30 fields*
+*`cities/mumbai/registry/B_framework.json` - 37 fields*
 
 
 
@@ -2236,10 +2672,16 @@ Fixed background movement seed.
 |---|---|---|---|---|
 | `B.activity.detour_factor` | `1.3276` | ratio | `assumed` | **held fixed** |
 | `B.activity.short_trip_band_km` | `1.0` | km_network | `literature` | **held fixed** |
+| `B.bike.pce` | `0.2` | passenger_car_equivalents | `literature` | 0.1 - 0.4 |
 | `B.census.thin_cell_min_journeys` | `100` | journeys | `definition` | - |
 | `B.counts.station_match_radius_m` | `120.0` | metres | `assumed` | 60 - 120 |
+| `B.freight.length_m` | `12.5` | metres | `literature` | **held fixed** |
+| `B.freight.max_speed_kmh` | `100.0` | km/h | `definition` | - |
+| `B.freight.pce` | `2.0` | passenger_car_equivalents | `literature` | 1.5 - 3.5 |
 | `B.mode.bike_feasible_km` | `0.0` | km_straight_line | `definition` | - |
 | `B.mode.walk_feasible_km` | `0.0` | km_straight_line | `definition` | - |
+| `B.motorbike.length_m` | `2.2` | metres | `literature` | **held fixed** |
+| `B.motorbike.pce` | `0.4` | passenger_car_equivalents | `literature` | 0.3 - 0.75 |
 | `B.motorbike.representation` | `carve` | enum | `assumed` | `carve`, `choice` |
 | `B.population.age_bands` | `[[0, 4], [5, 9], [10, 14], [15, 19], [20, 24], [25, 29], [30, 34], [35, 39], [40, 44], [45, 49], [50, 54], ...` | years | `definition` | - |
 | `B.population.bike_min_age` | `6` | years | `definition` | - |
@@ -2264,6 +2706,7 @@ Fixed background movement seed.
 | `B.taxi.fleet_size` | `800` | vehicles | `assumed` | **held fixed** |
 | `B.taxi.max_wait_min` | `20.0` | minutes | `assumed` | 10 - 45 |
 | `B.taxi.min_unaccompanied_age` | `18` | years | `definition` | - |
+| `B.walk.pce` | `0.0` | passenger_car_equivalents | `definition` | - |
 
 #### `B.activity.detour_factor`
 
@@ -2287,6 +2730,14 @@ The network-distance edge of the short-trip band whose observed share short_trip
 >
 > *Departure requires: a logged decision*
 
+#### `B.bike.pce`
+
+Road capacity a network-simulated cyclist consumes. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202 · sweep role **uncertainty***
+
+> **Sweep basis.** Austroads and HCM passenger-car-equivalent ranges for on-road bicycles run from about 0.1 (wide kerbside lane, filtering) to about 0.4 (narrow lane, no filtering). No local lane-width-conditioned observation exists, so the class low-mid value is taken and the published range is swept.
+
 #### `B.census.thin_cell_min_journeys`
 
 Reporting flag for the demographic mode-share measurement (issue #50): an observed census cell under this many journeys is marked too thin to constrain anything - ABS randomly perturbs small cells, so tiny aggregates carry perturbation noise on top of sampling noise. Adopted from the reference city's declaration; not a Mumbai observation.
@@ -2301,6 +2752,30 @@ Radius within which a permanent traffic count station may be attached to a netwo
 
 > **Sweep basis.** measured on data/processed/validation/count_station_links.csv: the largest ACCEPTED match is 119.7 m, so 120 m is exactly binding. Tightening costs targets at a measured rate - at 100 m six of the 116 matched stations lose their link and at 60 m twenty-three do - which is the lower bound. The upper bound is the current value because loosening cannot gain anything already in the file; whether a larger radius would resolve the three stations that match nothing (issue 10) has NOT been tested, and testing it means re-running the mapper and regenerating a committed artefact.
 
+#### `B.freight.length_m`
+
+Stated length of the truck vehicle type in the vehicles file. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202*
+
+> **Held fixed.** Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.freight.pce), not through vehicle length, so no output varies across this value. Recorded because the vehicle type must state a length; a typical rigid-truck figure is used.
+>
+> *Departure requires: a logged decision*
+
+#### `B.freight.max_speed_kmh`
+
+Maximum speed of a modelled heavy vehicle: the NSW regulated limit for vehicles over 4.5 t GVM. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***definition** · status **active** · DECISIONS.md §9.202*
+
+#### `B.freight.pce`
+
+Passenger-car equivalents of one modelled heavy vehicle - how much road capacity and storage a truck consumes in the mobsim relative to a car. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202 · sweep role **uncertainty***
+
+> **Sweep basis.** Austroads and HCM passenger-car-equivalent ranges for heavy commercial vehicles on level urban roads run from about 1.5 (rigid truck, flat) to 3.5 (articulated, interrupted flow); no Newcastle-specific fleet mix is observed, so the class mid-value is taken and the published range is swept. For scale: the bus fleet in this package carries the pt2matsim literature figure 2.8.
+
 #### `B.mode.bike_feasible_km`
 
 Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.modeAvailability.bikeFeasibleKm on 21 September 2026: one key per MATSim parameter.
@@ -2312,6 +2787,24 @@ Explicit setting for bounded provisional smoke only; full capacities serve the s
 Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.modeAvailability.walkFeasibleKm on 21 September 2026: one key per MATSim parameter.
 
 ***definition** · status **active** · DECISIONS.md §9.202 · MATSim `modeAvailability.walkFeasibleKm`*
+
+#### `B.motorbike.length_m`
+
+Stated length of the motorbike vehicle type in the vehicles file. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202*
+
+> **Held fixed.** Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.motorbike.pce), not through vehicle length, so no output varies across this value. Recorded because the vehicle type must state a length; a typical motorcycle figure is used.
+>
+> *Departure requires: a logged decision*
+
+#### `B.motorbike.pce`
+
+Passenger-car equivalents of one modelled motorbike - it consumes LESS road capacity than a car. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***literature** · status **active** · DECISIONS.md §9.202 · sweep role **uncertainty***
+
+> **Sweep basis.** Austroads and HCM passenger-car-equivalent ranges for motorcycles in urban traffic run from about 0.3 (filtering, uncongested) to 0.75 (no filtering, interrupted flow); no local fleet-mix or filtering observation exists, so the class low-mid value is taken and the published range is swept.
 
 #### `B.motorbike.representation`
 
@@ -2492,6 +2985,12 @@ How long a passenger waits for a vehicle before abandoning the taxi trip. Adopte
 Explicit setting for bounded provisional smoke only; full capacities serve the small explicit population without a full-city expansion. Moved from RUN.smoke.modeAvailability.taxiMinAge on 21 September 2026: one key per MATSim parameter.
 
 ***definition** · status **active** · DECISIONS.md §9.202 · MATSim `modeAvailability.taxiMinAge`*
+
+#### `B.walk.pce`
+
+Road capacity a network-simulated pedestrian consumes: zero, by definition - a walker moves along the network beside the carriageway (the sidewalk, expressed in queue arithmetic), physically present on every link (real LinkEnter/LinkLeave events, speed-capped at the declared walking speed) while neither impeding nor being impeded by motor traffic. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***definition** · status **active** · DECISIONS.md §9.202*
 
 ## The household population from the census controls at the core extent (9.204)
 
@@ -2737,7 +3236,7 @@ How much the objective moves between iteration 80 and iteration 100 OF THE SAME 
 
 ## Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)
 
-*`cities/mumbai/registry/C_framework.json` - 31 fields*
+*`cities/mumbai/registry/C_framework.json` - 32 fields*
 
 
 
@@ -2759,6 +3258,7 @@ How much the objective moves between iteration 80 and iteration 100 OF THE SAME 
 | `C.scoring.marginal_utility_of_traveling` | `{"car": -6.0, "ride": -6.0, "walk": -6.0, "bike": -6.0, "motorbike": -6.0, "taxi": -6.0, "auto_rickshaw": -...` | utils_per_hour | `assumed` | plus/minus 50% |
 | `C.scoring.mode_constant` | `{"car": 0.0, "ride": 0.0, "walk": 0.0, "bike": 0.0, "motorbike": 0.0, "taxi": 0.0, "auto_rickshaw": 0.0, "p...` | utils | `definition` | - |
 | `C.scoring.monetary_distance_rate` | `{"car": -0.007, "ride": -0.003, "walk": 0.0, "bike": 0.0, "motorbike": -0.0025, "taxi": -0.018, "auto_ricks...` | INR_per_metre | `assumed` | plus/minus 50% |
+| `C.scoring.motorbike_fuel_ratio` | `0.5350877192982456` | ratio | `derived` | derived: ratio = motor cycles / passenger vehicles average rate of fuel consump |
 | `C.scoring.performing_utils_per_h` | `6.0` | utils_per_hour | `assumed` | plus/minus 50% |
 | `C.scoring.utility_of_line_switch` | `-0.5` | utils | `assumed` | plus/minus 50% |
 | `C.scoring.waiting_pt` | `-12.0` | utils_per_hour | `assumed` | plus/minus 50% |
@@ -2894,6 +3394,14 @@ Provisional distance-based user costs, not observed fare schedules. PT distance 
 ***assumed** · status **active** · DECISIONS.md §9.202 · MATSim `scoring.modeParams[*].monetaryDistanceRate` · sweep role **uncertainty***
 
 > **Sweep basis.** Provisional behavioural smoke coefficient; not calibrated to ridership.
+
+#### `C.scoring.motorbike_fuel_ratio`
+
+The motorbike-to-car ratio of observed fuel consumption, scaling the car's perceived running cost onto the motorbike. Adopted from the reference city and INERT here: B.motorbike.representation = "carve" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***derived** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Derived from** `C.scoring.monetary_distance_rate`: ratio = motor cycles / passenger vehicles average rate of fuel consumption (l/100 km), ABS Survey of Motor Vehicle Use, Australia, 12 months ended 30 June 2020 (cat. 9208.0), data cube data/raw/abs/92080DO001_202006.xls Table 6, the city's state of registration (city.json jurisdiction.subdivision: New South Wales), column 'Total fuel' = 6.1 / 11.4, read by label and asserted by cities/newcastle/build/build_vehicle_fuel_ratio.py (data/processed/observed/vehicle_fuel_ratio.json). The motorbike's perceived running cost is then C.scoring.monetary_distance_rate['car'] x ratio = -0.00018 x 0.53509 = -0.0000963 AUD/m. The car rate covers fuel AND tyres; only the FUEL ratio is observed, so tyres are ASSUMED to scale with fuel - a motorcycle has two smaller tyres, so the tyre share is likely overstated, which the car rate's own sweep (-0.00025 to -0.00012) brackets far more widely than the tyre share can move it.
 
 #### `C.scoring.performing_utils_per_h`
 
@@ -3038,7 +3546,7 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 
 ## Framework run-side fields: moved from the private baseline namespace or adopted from the reference city (9.202)
 
-*`cities/mumbai/registry/RUN_framework.json` - 110 fields*
+*`cities/mumbai/registry/RUN_framework.json` - 118 fields*
 
 
 
@@ -3061,11 +3569,14 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 | `RUN.machine.event_handler_threads` | `4` | threads | `definition` | - |
 | `RUN.machine.events_one_thread_per_handler` | `false` | boolean | `definition` | - |
 | `RUN.machine.events_synchronize_on_simsteps` | `true` | boolean | `definition` | - |
+| `RUN.machine.free_ram_margin_gib` | `0.0` | GiB | `assumed` | 0 - 12 |
 | `RUN.machine.gc_collector` | `ParallelGC` | enum | `assumed` | `ParallelGC`, `G1GC` |
 | `RUN.machine.gc_log` | `true` | boolean | `definition` | - |
 | `RUN.machine.heap_floor_gib` | `7.4` | GiB | `measured` | **held fixed** |
 | `RUN.machine.heap_per_fraction_gib` | `2400.0` | GiB_per_unit_fraction | `measured` | **held fixed** |
 | `RUN.machine.jfr_profile` | `false` | boolean | `definition` | - |
+| `RUN.machine.other_process_max_cores` | `0.0` | cores | `assumed` | 0 - 4 |
+| `RUN.machine.probe_max_host_cpu_pct` | `100.0` | percent | `assumed` | 75 - 100 |
 | `RUN.machine.replanning_threads` | `2` | threads | `definition` | - |
 | `RUN.machine.seed` | `20260810` | integer_seed | `definition` | - |
 | `RUN.machine.telemetry_requires_simstep_barrier` | `true` | boolean | `definition` | - |
@@ -3086,6 +3597,7 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 | `RUN.monitor.progress_interval_s` | `30` | seconds | `definition` | - |
 | `RUN.monitor.solo_check_iterations` | `[2, 5]` | iteration_range | `definition` | - |
 | `RUN.monitor.stall_s` | `300` | seconds | `definition` | - |
+| `RUN.qsim.car_vehicle` | `{"length_m": 7.5, "width_m": 1.0, "pce": 1.0}` | metres/metres/passenger_car_equivalents | `definition` | - |
 | `RUN.qsim.end_time_h` | `36` | hours | `definition` | - |
 | `RUN.qsim.link_dynamics` | `PassingQ` | enum | `definition` | - |
 | `RUN.qsim.main_mode` | `["car", "ride", "walk", "bike", "motorbike", "taxi", "auto_rickshaw", "truck", "freight_rail"]` | enum | `definition` | - |
@@ -3116,8 +3628,9 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 | `RUN.routing.activity_link_service_hours` | `30.0` | hours | `derived` | derived: service_hours = RUN.qsim.end_time_h - RUN.qsim.start_time_h = 30 - 0 = |
 | `RUN.routing.clear_default_teleported_params` | `true` | boolean | `definition` | - |
 | `RUN.routing.network_modes` | `["car", "ride", "walk", "bike", "motorbike", "taxi", "auto_rickshaw", "truck", "freight_rail"]` | enum | `definition` | - |
-| `RUN.routing.pt_submode_scoring` | `aggregate` | enum | `definition` | - |
+| `RUN.routing.pt_submode_scoring` | `aggregate` | enum | `assumed` | `per_submode`, `aggregate` |
 | `RUN.routing.routing_randomness` | `3.0` | dimensionless | `literature` | 0 - 5 |
+| `RUN.sample.arm_fraction_floor` | `0.0` | share_of_population | `definition` | - |
 | `RUN.sample.flow_capacity_factor` | *(null - unobtained)* | share_of_capacity | `derived` | derived: flowCapacityFactor = RUN.sample.fraction, the standard MATSim scaling  |
 | `RUN.sample.fraction` | `1.0` | share_of_population | `assumed` | 0.001 - 1 |
 | `RUN.sample.storage_capacity_exponent` | `1.0` | exponent | `derived` | derived: storageCapacityFactor = fraction ** 1.0 = flowCapacityFactor. MATSim e |
@@ -3140,6 +3653,9 @@ The subpopulations the plans carry, in the framework's vocabulary (src/build/sub
 | `RUN.transit.transit_modes` | `["pt"]` | mode_names | `definition` | - |
 | `RUN.transit.use_transit` | `true` | boolean | `definition` | - |
 | `RUN.transit_router.access_egress_basis` | `beeline` | enum | `assumed` | `beeline`, `network` |
+| `RUN.transit_router.access_initial_search_radius_m` | `1000.0` | metres | `derived` | derived: access_initial_search_radius_m = search_radius_m. The intermodal stop  |
+| `RUN.transit_router.access_max_radius_m` | `55900.0` | metres | `assumed` | **held fixed** |
+| `RUN.transit_router.access_search_extension_radius_m` | `200.0` | metres | `derived` | derived: access_search_extension_radius_m = extension_radius_m, the same reach- |
 | `RUN.transit_router.additional_transfer_time_s` | `0.0` | s | `assumed` | 0 - 120 |
 | `RUN.transit_router.direct_walk_basis` | `network` | enum | `definition` | - |
 | `RUN.transit_router.direct_walk_factor` | `1.0` | ratio | `literature` | 1 - 2 |
@@ -3257,6 +3773,14 @@ Whether the qsim waits for the events pipeline at every sim-step. Adopted from t
 
 ***definition** · status **active** · DECISIONS.md §9.202 · MATSim `eventsManager.synchronizeOnSimSteps`*
 
+#### `RUN.machine.free_ram_margin_gib`
+
+Free physical memory the host must hold at launch beyond RUN.machine.xmx, in GiB; the launcher refuses below the heap plus this margin (src/run/run_matsim.py refuse_loaded_host). Adopted from the reference city's declaration at 0 - no bar - so this baseline's launches are refused on nothing they were not refused on before; not a Mumbai observation.
+
+***assumed** · status **active** · DECISIONS.md §9.220 · sweep role **uncertainty***
+
+> **Sweep basis.** Adopted from the reference city's launch-refusal margin (sixteenth project report, 8 October 2026) at the value that leaves this city's launch path exactly as it ran: 0 switches the free-memory bar off, as RUN.gate.wall_ceiling_h = 0 means no ceiling. The interval runs from off to twice the reference city's chosen margin; no Mumbai case has recorded a host history to measure it on.
+
 #### `RUN.machine.gc_collector`
 
 The JVM garbage collector the launcher passes (-XX:+Use<collector>). Adopted from the reference city's declaration; not a Mumbai observation.
@@ -3296,6 +3820,22 @@ The sample-dependent part of the heap rule, per unit of RUN.sample.fraction of t
 Whether the JVM records a Java Flight Recorder profile of the run into <run>/profile.jfr. Adopted from the reference city's declaration; not a Mumbai observation.
 
 ***definition** · status **active** · DECISIONS.md §9.202*
+
+#### `RUN.machine.other_process_max_cores`
+
+The most CPU, in cores, another process may hold at launch before the launcher refuses the launch (src/run/run_matsim.py refuse_loaded_host). Adopted from the reference city's declaration at 0 - no bar - so this baseline's launches are refused on nothing they were not refused on before; not a Mumbai observation.
+
+***assumed** · status **active** · DECISIONS.md §9.220 · sweep role **uncertainty***
+
+> **Sweep basis.** Adopted from the reference city's launch-refusal bar (sixteenth project report, 8 October 2026) at the value that leaves this city's launch path exactly as it ran: 0 switches the co-tenant CPU bar off. The interval runs from off to the four cores the reference city's events handlers hold; no Mumbai case has recorded a host history to measure it on.
+
+#### `RUN.machine.probe_max_host_cpu_pct`
+
+The host CPU busy % recorded over a probe's iterations (_host.jsonl) above which arm_cost.py refuses to price an arm on that probe. Adopted from the reference city's declaration at 100 - no bar; not a Mumbai observation.
+
+***assumed** · status **active** · DECISIONS.md §9.220 · sweep role **uncertainty***
+
+> **Sweep basis.** Adopted from the reference city's pricing bar (sixteenth project report, 8 October 2026) at the value that leaves this city's pricing exactly as it ran: 100 switches the bar off, so no probe is refused as a price. The interval is the reference city's; no Mumbai probe has recorded a host history to measure it on.
 
 #### `RUN.machine.replanning_threads`
 
@@ -3426,6 +3966,12 @@ Which solo iterations the conditional-replication rule reads (DECISIONS.md 9.72:
 #### `RUN.monitor.stall_s`
 
 How long the log may go untouched before the live view calls a run stalled rather than running. Adopted from the reference city's declaration; not a Mumbai observation.
+
+***definition** · status **active** · DECISIONS.md §9.202*
+
+#### `RUN.qsim.car_vehicle`
+
+The car vehicle type written into the run inputs' vehicles file: MATSim's own default vehicle, restated explicitly because qsim.vehiclesSource=modeVehicleTypesFromVehiclesData replaces the implicit default. Adopted from the reference city's declaration; not a Mumbai observation.
 
 ***definition** · status **active** · DECISIONS.md §9.202*
 
@@ -3635,9 +4181,11 @@ Explicit setting for bounded provisional smoke only; full capacities serve the s
 
 #### `RUN.routing.pt_submode_scoring`
 
-Whether each scheduled transport mode is scored as a passenger mode of its own (per_submode) or every pt leg as one pt mode (aggregate). `aggregate` for this city: the transit router combines bus, suburban rail, metro and ferry under one pt mode (RUN.transit.transit_modes = [pt]) and one bound constant; splitting them is a declared change of its own once a ridership series per operator exists to score it by.
+Whether the scheduled PT submodes are score-distinct passenger modes (issue #49 Tier C - every mode individually, per the 20 Aug 2026 directive). Switched off for this baseline ("aggregate"): the scheduled modes score as one pt mode and no per-submode fare table is emitted (the A.fare.* fields are the reference city's Opal fares, inert here); `aggregate` is the value every Mumbai case has run with.
 
-***definition** · status **active** · DECISIONS.md §9.204*
+***assumed** · status **active** · DECISIONS.md §9.202 · sweep role **uncertainty***
+
+> **Sweep basis.** adopted from the reference city: the two representations the pinned MATSim (2027.0-2026w25) supports, verified against the jar's bytecode rather than memory: per_submode uses the `swissRailRaptor` config module's `useModeMappingForPassengers` with one `modeMapping` parameterset (routeMode -> passengerMode) per scheduled transportMode (ch.sbb.matsim.config.SwissRailRaptorConfigGroup), so each submode's legs carry its own mode and score with C1's own per-submode constants; aggregate is the pre-9.78 state - one `pt` passenger mode carrying asc_bus for bus, tram, rail and ferry alike, the collapse DECISIONS.md 9.3 recorded as not representable.
 
 #### `RUN.routing.routing_randomness`
 
@@ -3646,6 +4194,12 @@ The width of the random utility the least-cost-path router draws per agent, so t
 ***literature** · status **active** · DECISIONS.md §9.202 · MATSim `routing.routingRandomness` · sweep role **uncertainty***
 
 > **Sweep basis.** 0.0 is a deterministic least-cost router - every agent between one pair of links takes the identical path - and 3.0 is the value MATSim's own comment recommends ("3.0 seems to be a good value"), the width parameter of the log-normal distribution the money-versus-time trade-off is drawn from. WHAT THE SWEEP ANSWERS: how much of the route spread on this network is heterogeneous taste and how much is the network's own geometry. It bears on the count rung directly, because a deterministic router concentrates flow onto single links and a random one spreads it across parallel ones.
+
+#### `RUN.sample.arm_fraction_floor`
+
+The sample fraction below which an arm-length run is refused by the launcher unless --override-reason states why (run.py refuse_arm_fraction). Adopted from the reference city's declaration at 0 - no bar: the 25 %-only directive is the reference city's campaign rule, and this baseline's cases run at the fraction each overlay declares; not a Mumbai observation.
+
+***definition** · status **active** · DECISIONS.md §9.220*
 
 #### `RUN.sample.flow_capacity_factor`
 
@@ -3806,6 +4360,32 @@ How a pt trip reaches its first stop and leaves its last. `beeline` for the fold
 ***assumed** · status **active** · DECISIONS.md §9.204 · sweep role **uncertainty***
 
 > **Sweep basis.** beeline reproduces the pre-fold cases exactly (the raptor draws access and egress straight); network routes them on the walk network, which GOAL.md requirement 1 asks for and which is switched on once the walk network's reach to the boarding links is measured for this city
+
+#### `RUN.transit_router.access_initial_search_radius_m`
+
+Radius around a trip end within which the raptor collects candidate access/egress stops when access/egress is routed rather than drawn. Adopted from the reference city and INERT here: RUN.transit_router.access_egress_basis = "beeline" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***derived** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Derived from** `RUN.transit_router.search_radius_m`: access_initial_search_radius_m = search_radius_m. The intermodal stop search is given the SAME reach the beeline search already had, so that turning access/egress into network legs changes the route and not the market. Declaring a different number here would move two things at once and make the arm that follows uninterpretable - and it would re-open a question 9.158 already closed with numbers, that radius is NOT what makes 60.5% of pt requests come back as a walk. The raptor's own default for this parameter is the sentinel -Infinity, so it must be set explicitly or the initial search is unbounded.
+
+#### `RUN.transit_router.access_max_radius_m`
+
+The hard ceiling on how far the raptor will look for an access or egress stop. Adopted from the reference city and INERT here: RUN.transit_router.access_egress_basis = "beeline" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***assumed** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Held fixed.** the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied
+>
+> *Departure requires: a Mumbai measurement of the same quantity*
+
+#### `RUN.transit_router.access_search_extension_radius_m`
+
+How far past the nearest found stop the intermodal search continues. Adopted from the reference city and INERT here: RUN.transit_router.access_egress_basis = "beeline" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.
+
+***derived** · status **placeholder** · DECISIONS.md §9.202*
+
+> **Derived from** `RUN.transit_router.extension_radius_m`: access_search_extension_radius_m = extension_radius_m, the same reach-preserving identity as the initial radius above. MATSim's own default for this one is 500 m rather than a sentinel, which would have widened the search by 300 m as a side effect of a change that is not about reach at all.
 
 #### `RUN.transit_router.additional_transfer_time_s`
 

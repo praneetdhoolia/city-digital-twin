@@ -188,6 +188,32 @@ def truth_json_number(city_root: Path, spec: dict) -> float:
     return node
 
 
+def truth_json_list_count(city_root: Path, spec: dict) -> int:
+    """How many items a list under a dotted key path in a committed JSON file
+    holds, optionally only those whose `match` keys equal the given values.
+
+    The Mumbai catalogue is the motivating case (the sixteenth report, C23):
+    "600 sources in extract/sources.json" and "127 of the 600 carry reuse terms
+    unverified" are claims about a list's length, which no number in the file
+    states.
+    """
+    path = artefact(city_root, spec["file"])
+    if not path.exists():
+        raise Skip(f"{spec['file']} absent")
+    node = json.loads(path.read_text(encoding="utf-8"))
+    for part in spec["key"].split("."):
+        if not isinstance(node, dict) or part not in node:
+            raise Skip(f"{spec['file']} has no key {spec['key']}")
+        node = node[part]
+    if not isinstance(node, list):
+        raise Skip(f"{spec['file']} key {spec['key']} is not a list")
+    match = spec.get("match") or {}
+    if not match:
+        return len(node)
+    return sum(1 for item in node
+               if isinstance(item, dict) and all(item.get(k) == v for k, v in match.items()))
+
+
 def truth_csv_value_count(city_root: Path, spec: dict) -> int:
     """How many rows of a committed CSV carry one value in one column.
 
@@ -328,6 +354,7 @@ RESOLVERS = {
     "registry_fields": truth_registry_fields,
     "registry_value": truth_registry_value,
     "json_number": truth_json_number,
+    "json_list_count": truth_json_list_count,
     "csv_value_count": truth_csv_value_count,
     "path_count": truth_path_count,
 }
@@ -692,5 +719,18 @@ def main() -> int:
     return 1 if (problems and args.strict) else 0
 
 
+def all_cities() -> int:
+    """Run this check once per city under cities/ and fail if any city fails.
+
+    The gate and CI both call this: Mumbai's front page stated 428 registry
+    fields against 442, then 446, through three project reports because every
+    gate ran the default city's claims alone (the sixteenth report, C9).
+    """
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+    import city as city_module  # noqa: PLC0415
+    return city_module.run_per_city(__file__, args=[a for a in sys.argv[1:] if a != "--all-cities"],
+                                    needs=str(Path("tests") / "doc_currency.json"))
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(all_cities() if "--all-cities" in sys.argv[1:] else main())

@@ -30,9 +30,12 @@ def main():
                  limits='Not a runnable network. Legal region boundary, topology closure, modal permissions, restrictions, link capacities and road matching still need validation.')
     target = Path(city.path('data/processed/acquisition/osm_conversion_audit.json'))
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(audit, indent=2)+'\n', encoding='utf-8')
+    target.write_text(json.dumps(audit, indent=2)+'\n', encoding='utf-8', newline='\n')
     print(json.dumps(audit))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

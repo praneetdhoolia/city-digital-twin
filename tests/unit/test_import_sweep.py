@@ -20,11 +20,12 @@ another's. Three verdicts:
   workstation sees them pass instead.
 * FAIL - anything else: the module is broken.
 
-The extract layer (`cities/<city>/extract/`) is deliberately outside the
-sweep: its scripts download at import by design, and a unit test opens no
-network connection. Three scripts that do their work at module level
-(`build_data_dictionary`, `build_era_feeds`, `shape_tools`) are compiled
-rather than imported, for the same reason.
+The extract layer (`cities/<city>/extract/`) is in the sweep since the
+twelfth report, and the nine adapters that fetched or extracted at module
+level are under `main()` guards since the sixteenth (#232), so they import
+like everything else. Three framework scripts that still do their work at
+module level (`build_data_dictionary`, `build_era_feeds`, `shape_tools`) are
+compiled rather than imported.
 """
 import glob
 import json
@@ -38,14 +39,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 import city as _city  # noqa: E402
 
-RUNS_AT_IMPORT = {'build_data_dictionary', 'build_era_feeds', 'shape_tools',
-                  # the city's adapters that fetch or extract at module level:
-                  # importing one downloads, rewrites a provenance record or
-                  # regenerates a layer (the zones GeoPackages, whose bytes carry
-                  # a last_change stamp) - compiled, never imported (9.177)
-                  'extract_census', 'extract_hts', 'extract_zones', 'fetch_abs_dem',
-                  'fetch_gtfs', 'fetch_licences', 'fetch_open_data', 'osm_tiles',
-                  'slice_newcastle'}
+RUNS_AT_IMPORT = {'build_data_dictionary', 'build_era_feeds', 'shape_tools'}
 THIRD_PARTY = {'geopandas', 'pyproj', 'rasterio', 'shapely', 'numpy', 'pandas',
                'scipy', 'jsonschema', 'matplotlib', 'PIL', 'openpyxl', 'psutil',
                'requests', 'fiona', 'networkx', 'sklearn', 'yaml', 'lxml'}

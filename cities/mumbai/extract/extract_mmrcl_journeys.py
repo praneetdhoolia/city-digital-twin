@@ -96,9 +96,12 @@ def main():
                      'Adjacent single fares cannot be added to calculate through fares.',
                      'The operator internal line_no is not the public metro line number.',
                      'Responses requested for 18 September 2026 do not establish other dates or timetables.'])
-    (output / '_metro3_journey_audit.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8')
+    (output / '_metro3_journey_audit.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8', newline='\n')
     print(json.dumps(audit))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

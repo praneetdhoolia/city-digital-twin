@@ -91,8 +91,29 @@
         "The legacy synthesiser requires weekly full-time/part-time employment counts. Annual work-duration categories are not interchangeable with them.",
         "The legacy vehicle marginal is a count of motor vehicles per dwelling. Possession percentages for overlapping asset types cannot be substituted.",
         "An adapter must not manufacture these concepts merely to satisfy the reader shape. A city with different observations needs an evidenced derivation or a compatible synthesiser.",
-        "Person permittedModes attributes can restrict arbitrary configured modes independently of car access; see docs/person_modes.md. They do not derive household fleets or demographic joint distributions."
+        "Person permittedModes attributes can restrict arbitrary configured modes independently of car access; see docs/framework/person_modes.md. They do not derive household fleets or demographic joint distributions."
       ]
+    },
+    "residents": {
+      "status": "adapted",
+      "consumed_by": [
+        "src/analyse/extract_metrics.py (write_residents, home_lga: the run's _residents.csv.gz and every reader's person -> target-area map)",
+        "src/run/run_matsim.py (the residents map written at launch, #213)"
+      ],
+      "adapter_functions": {
+        "residents_shape()": "The city's declaration of where a person lives and which zones are the target area, as a dict with the keys below. A city whose adapter lacks it has no home-zone table and its readers resolve residents from the plans' subpopulation labels (9.204, #242)."
+      },
+      "columns": {
+        "population": "city-relative path of the synthetic population table, one row per person",
+        "person_id": "its person-id column",
+        "home_zone": "its residence-zone column, in the vocabulary of city.json zone_system.id_column",
+        "zone_areas": "city-relative path of the table that assigns every residence zone to an area",
+        "zone": "that table's zone column",
+        "area": "that table's area column",
+        "target": "the area value whose residents the mode-share target counts (the reference city: its target LGA; the second city: the core tier)",
+        "map_columns": "the three header names the run's _residents.csv.gz carries for person, zone and area, in the city's own vocabulary; the readers take them by position"
+      },
+      "note": "Adapted 8 October 2026 (#242): until then extract_metrics.py read person_id/home_sa1 from B1 and SA1_CODE21/lga_name from sa1_to_lga.csv, the reference city's vocabulary in framework code, and a city without those files fell back to the plans' labels. The residents map of a run built before the adaptation is byte-identical (verified on the F39 control run's _residents.csv.gz content)."
     }
   }
 }

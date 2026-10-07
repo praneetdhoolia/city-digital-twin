@@ -110,10 +110,13 @@ def main():
             unmatched_census_names=[r['village_name_as_transcribed'] for r in group if not r['census_name_candidate_count']],
             shared_ena_names=[r['village_name_as_transcribed'] for r in group if r['ena_name_candidate_count']])
     Path(city.path('data/processed/acquisition/scheduled_area_name_audit.json')).write_text(
-        json.dumps(audit, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+        json.dumps(audit, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({k: {x: v for x, v in group.items() if not isinstance(v, list)}
                       for k, group in audit['groups'].items()}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

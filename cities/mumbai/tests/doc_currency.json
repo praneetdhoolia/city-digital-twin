@@ -139,6 +139,52 @@
         "file": "scenarios/matsim/_run_inputs_report.json",
         "key": "network.gradient.links"
       }
+    },
+    {
+      "id": "catalogue.total",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "\\| Catalogue \\| \\*\\*([\\d,]+)\\*\\* sources in",
+      "truth": {
+        "kind": "json_list_count",
+        "file": "extract/sources.json",
+        "key": "sources"
+      },
+      "note": "the sixteenth report (C23): the page said 567 in one place and 600 in another; the catalogue's length is the list's"
+    },
+    {
+      "id": "catalogue.total-licence-line",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "of the\\n([\\d,]+) catalogue entries carry `Government publication; reuse terms unverified`",
+      "truth": {
+        "kind": "json_list_count",
+        "file": "extract/sources.json",
+        "key": "sources"
+      }
+    },
+    {
+      "id": "catalogue.government-unverified",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "licence; ([\\d,]+) of the\\n[\\d,]+ catalogue entries carry `Government publication; reuse terms unverified`",
+      "truth": {
+        "kind": "json_list_count",
+        "file": "extract/sources.json",
+        "key": "sources",
+        "match": {"licence": "Government publication; reuse terms unverified"}
+      }
+    },
+    {
+      "id": "validation.per-mode-targets",
+      "kind": "number",
+      "doc": "{city}/docs/README.md",
+      "pattern": "\\| Validation \\| \\*\\*([\\d,]+) per-mode targets\\*\\*",
+      "truth": {
+        "kind": "manifest_artefact_rows",
+        "path": "data/processed/validation/mode_targets_by_mode.csv"
+      },
+      "note": "the sixteenth report (C8): the root README said no target had been derived while this page said thirteen; the count is the target table's row count"
     }
   ]
 }

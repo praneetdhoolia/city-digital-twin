@@ -110,6 +110,33 @@ def literal_reads(literal, raw_path):
     return literal == raw_path or literal == base
 
 
+def disposition_of(entry, status, readers, cited):
+    """One catalogue entry's disposition (the module docstring's list), from
+    the inventory's status, what reads it and whether the requirements ledger
+    cites it. The order is the rule: the inventory's own statuses first, then
+    a declared judgement, then evidence of reading, then the page's kind."""
+    source_id = entry['id']
+    declared = entry.get('use') or {}
+    if status == 'unobtained':
+        return 'unobtained'
+    if status == 'acquired_unusable':
+        return 'unusable'
+    if declared.get('disposition') in ('not_needed', 'reference') and declared.get('reason'):
+        return declared['disposition']
+    if readers['transcriptions'] or readers['registry'] or any(
+            not Path(s).name.startswith(('audit_', 'register_')) for s in readers['scripts']):
+        return 'consumed'
+    if readers['scripts']:
+        return 'audited'
+    if entry.get('kind') == 'harvest':
+        return 'unread'
+    if any(word in source_id for word in DISCOVERY_WORDS) or entry.get('format') in ('js', 'yaml', 'py', 'md', 'txt'):
+        return 'discovery'
+    if cited:
+        return 'cited'
+    return 'unread'
+
+
 def main():
     catalogue = json.loads(Path(city.path('extract/sources.json')).read_text(encoding='utf-8'))['sources']
     inventory_doc = json.loads(Path(city.path('data/processed/acquisition/source_inventory.json')).read_text(encoding='utf-8'))
@@ -167,25 +194,7 @@ def main():
         readers['scripts'] = sorted(readers['scripts'])
 
         declared = entry.get('use') or {}
-        if status == 'unobtained':
-            disposition = 'unobtained'
-        elif status == 'acquired_unusable':
-            disposition = 'unusable'
-        elif declared.get('disposition') in ('not_needed', 'reference') and declared.get('reason'):
-            disposition = declared['disposition']
-        elif readers['transcriptions'] or readers['registry'] or any(
-                not Path(s).name.startswith(('audit_', 'register_')) for s in readers['scripts']):
-            disposition = 'consumed'
-        elif readers['scripts']:
-            disposition = 'audited'
-        elif entry.get('kind') == 'harvest':
-            disposition = 'unread'
-        elif any(word in source_id for word in DISCOVERY_WORDS) or entry.get('format') in ('js', 'yaml', 'py', 'md', 'txt'):
-            disposition = 'discovery'
-        elif source_id in cited_by:
-            disposition = 'cited'
-        else:
-            disposition = 'unread'
+        disposition = disposition_of(entry, status, readers, source_id in cited_by)
         counts[disposition] += 1
         ledger.append({
             'id': source_id, 'category': entry.get('category'), 'format': entry.get('format'),
@@ -223,7 +232,7 @@ def main():
     }
     target = Path(city.path('data/processed/acquisition/source_use.json'))
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(out, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    target.write_text(json.dumps(out, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print('data-use ledger:', ' '.join('%s %d' % kv for kv in sorted(counts.items())))
     for row in ledger:
         if row['disposition'] in ('unread', 'cited', 'audited'):
@@ -231,4 +240,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

@@ -49,6 +49,21 @@ REPO = os.path.dirname(os.path.dirname(
 RAW = os.path.join(REPO, 'results', 'raw')
 
 
+def _arm_horizon_floor():
+    """The iteration count from which a run is an ARM and not a probe: the
+    floor of RUN.controler.last_iteration's declared sweep, the same line
+    run.py's foreground refusal draws. Read from the registry; a registry
+    that cannot be read makes nothing an arm."""
+    try:
+        import registry as _registry                          # noqa: PLC0415
+        fields, _ = _registry.load_registry()
+        lo = _registry._sweep_interval(
+            fields['RUN.controler.last_iteration'].get('sweep'))
+        return int(lo[0]) if lo else None
+    except Exception:                                          # noqa: BLE001
+        return None
+
+
 def stall_kill_s():
     """The registry's own stall rule, RUN.gate.stall_kill_s - an iteration
     longer than the silence that kills a run IS a stall by that definition,
@@ -60,6 +75,87 @@ def stall_kill_s():
         return float(_registry.load().get('RUN.gate.stall_kill_s'))
     except Exception:                                          # noqa: BLE001
         return None
+
+
+def probe_max_host_cpu_pct():
+    """The registry's own bar on a probe's host, RUN.machine.probe_max_host_cpu_pct:
+    a probe whose host read busier than this over its iterations priced the
+    host, not the build, and is not quoted from. Read from the registry so
+    the pricer and the declaration cannot disagree; None when unreadable."""
+    try:
+        import registry as _registry                          # noqa: PLC0415
+        return float(_registry.load().get('RUN.machine.probe_max_host_cpu_pct'))
+    except Exception:                                          # noqa: BLE001
+        return None
+
+
+def host_summary(run_dir):
+    """What `_host.jsonl` says the host did while the run iterated, or None.
+
+    The digest kept one sample - the last - until the sixteenth report, so
+    the three daytime probes of 30 September 2026 quoted 37.0, 50.5 and
+    27.7 h for one build with nothing in the pricer able to say which of
+    them shared its host. The history is read through the digest's own
+    reader; the summary is the busiest and the median host CPU over the
+    samples taken inside an iteration, and the other process that held most
+    cores at any sample.
+    """
+    try:
+        import progress_digest                                 # noqa: PLC0415
+        rows = progress_digest.read_host_history(run_dir)
+    except Exception:                                          # noqa: BLE001
+        return None
+    cpu = sorted(r['cpu_pct'] for r in rows
+                 if r.get('iteration') is not None and r.get('cpu_pct') is not None)
+    if not cpu:
+        return None
+    top = None
+    for r in rows:
+        p = r.get('top_other_process') or {}
+        if p.get('cores') is not None and (top is None or p['cores'] > top['cores']):
+            top = dict(p, iteration=r.get('iteration'), at=r.get('at'))
+    return dict(samples=len(cpu), cpu_pct_max=cpu[-1],
+                cpu_pct_median=cpu[len(cpu) // 2], top_other_process=top)
+
+
+def family_control(arms):
+    """The newest family's control - its first run that ran to its last
+    iteration at an arm's horizon - and the family's key, or (None, None).
+
+    The 9.219 lesson: a probe launched in the day priced the host, and the
+    one number that priced the build was the control's own wall clock. When
+    a control exists in the family being priced, that wall is the pair
+    quote and the probe's figure is the band around it.
+    """
+    try:
+        import iteration_reading                              # noqa: PLC0415
+        from build_run_index import load_families            # noqa: PLC0415
+        fams, _ = load_families()
+    except Exception:                                          # noqa: BLE001
+        return None, None
+    mine = [(k, f) for k, f in fams
+            if (f.get('city') or city.DEFAULT_CITY) == city.CITY]
+    if not mine:
+        return None, None
+    newest = mine[-1][0]
+    floor = _arm_horizon_floor()
+    if floor is None:
+        return None, newest
+    controls = []
+    for a in arms:
+        if a.get('completion') != 'ran_to_last_iteration' or not a.get('wall_s'):
+            continue
+        if a.get('reached_iteration', 0) < floor:
+            continue
+        try:
+            fam, _, _ = iteration_reading.run_family(a['name'])
+        except Exception:                                      # noqa: BLE001
+            continue
+        if fam == newest:
+            controls.append(a)
+    if not controls:
+        return None, newest
+    return min(controls, key=lambda a: _launch_stamp(a['name'])), newest
 
 
 def _read(path):
@@ -288,6 +384,10 @@ def observed_arms(min_iterations: int = 2) -> list:
             name=name,
             city=meta.get('city') or city.DEFAULT_CITY,
             plain=plain,
+            wall_s=wall,
+            # the host across the run's iterations, from its own history
+            # (None for a run that kept only the digest's last sample)
+            host=host_summary(d),
             # A run that carried a flight recorder paid for it: the first two
             # profiled probes ran ~8 % slower than the same stack unprofiled.
             # Its clock prices its own conditions and nothing else, so it is
@@ -318,8 +418,19 @@ def _fmt_hours(seconds: float) -> str:
     return '%.1f h' % h
 
 
+def loaded_host(arm, max_cpu_pct):
+    """Whether this run's own host history says its clock priced the host:
+    the busiest digest interval over its iterations read above the declared
+    RUN.machine.probe_max_host_cpu_pct. A run with no history cannot say,
+    and is not refused on what it cannot say."""
+    host = arm.get('host') or {}
+    if max_cpu_pct is None or host.get('cpu_pct_max') is None:
+        return False
+    return float(host['cpu_pct_max']) > float(max_cpu_pct)
+
+
 def price(iterations: int, fraction, arms: list, gate_every=None,
-          first_iteration=None) -> dict:
+          first_iteration=None, max_host_cpu_pct=None, control=None) -> dict:
     """The quote, and everything it rests on.
 
     `iterations` is the horizon, RUN.controler.last_iteration. A warm start
@@ -328,6 +439,12 @@ def price(iterations: int, fraction, arms: list, gate_every=None,
     quoted 32.4 h, the price of the whole 250 (fifteenth report). The pricer
     does not tell the post-cutoff tail's pace from the search's - one median
     prices both - so a resume is priced at the same per-iteration pace.
+
+    A probe whose own `_host.jsonl` read busier than `max_host_cpu_pct`
+    over its iterations is REFUSED as a price (the 9.219 lesson: a daytime
+    probe prices the host, not the build), and when the family has a
+    `control` that ran to its horizon, its wall clock is carried as the pair
+    quote beside the probe's.
     """
     try:
         first_iteration = max(0, int(first_iteration or 0))
@@ -340,14 +457,35 @@ def price(iterations: int, fraction, arms: list, gate_every=None,
             if (fraction is None or a['fraction'] == fraction)
             and a.get('city', city.DEFAULT_CITY) == city.CITY
             and not a.get('profiled')]
+    loaded = [a for a in same if loaded_host(a, max_host_cpu_pct)]
+    same = [a for a in same if a not in loaded]
+    host_warning = None
+    if loaded:
+        host_warning = (
+            'REFUSED AS A PRICE: %s - the host read %s %% busy over the '
+            'iterations of %s (RUN.machine.probe_max_host_cpu_pct %g), so the '
+            'clock priced the host, not the build (9.219: the daytime probes '
+            'of 30 September 2026 quoted 37.0-50.5 h for a 27.9 h build). '
+            'Take the probe again on an idle host.'
+            % (', '.join(a['name'] for a in loaded),
+               ', '.join('%.0f' % (a['host'] or {}).get('cpu_pct_max', 0)
+                         for a in loaded),
+               'it' if len(loaded) == 1 else 'them', float(max_host_cpu_pct)))
+    pair_quote = None
+    if control and control.get('wall_s'):
+        pair_quote = dict(name=control['name'], wall_s=float(control['wall_s']),
+                          wall=_fmt_hours(float(control['wall_s'])),
+                          reached_iteration=control.get('reached_iteration'))
     if not same:
         return dict(error=(
             'no run on disk measured a pace at fraction %s, so there is '
             'nothing to price this arm on (a profiled probe does not count: '
-            'the recorder is in its clock). Run a short timing probe first '
+            'the recorder is in its clock%s). Run a short timing probe first '
             '(an overlay with RUN.controler.last_iteration = 4 and '
             'RUN.machine.jfr_profile false) and price the arm on that.'
-            % fraction))
+            % (fraction, ('; neither does a probe on a loaded host - %s'
+                          % host_warning) if host_warning else '')),
+            host_warning=host_warning, pair_quote=pair_quote)
     # The newest run that timed a RECURRING iteration: a run stopped after two
     # iterations timed only one-offs (warm-up, the plans dump, its own last
     # write), and pricing on its all-in median quoted F37's relaunch at 39.5 h
@@ -466,6 +604,10 @@ def price(iterations: int, fraction, arms: list, gate_every=None,
 
     return dict(
         stall_warning=stall_warning,
+        host_warning=host_warning,
+        refused_loaded_host=[a['name'] for a in loaded],
+        # the control's own wall, the pair quote when the family has one
+        pair_quote=pair_quote,
         setup_s=setup_s,
         iterations=iterations,
         first_iteration=first_iteration,
@@ -537,8 +679,10 @@ def main(argv=None) -> int:
                     '--fraction F' % e)
 
     arms = observed_arms()
+    control, _ = family_control(arms)
     quote = price(int(iterations), fraction, arms, gate_every,
-                  first_iteration=first or 0)
+                  first_iteration=first or 0,
+                  max_host_cpu_pct=probe_max_host_cpu_pct(), control=control)
 
     if args.json:
         print(json.dumps(quote, indent=2, sort_keys=True))
@@ -546,6 +690,11 @@ def main(argv=None) -> int:
 
     if quote.get('error'):
         print('CANNOT PRICE THIS ARM\n\n%s' % quote['error'])
+        if quote.get('pair_quote'):
+            print('\n  the family\'s control %s ran %s to iteration %s: the '
+                  'pair quote' % (quote['pair_quote']['name'],
+                                  quote['pair_quote']['wall'],
+                                  quote['pair_quote']['reached_iteration']))
         return 1
 
     on = quote['priced_on']
@@ -591,6 +740,13 @@ def main(argv=None) -> int:
                       on['completion'] or 'status unrecorded'))
     if on.get('family'):
         print('                 family %s' % on['family'])
+    if quote.get('pair_quote'):
+        # the 9.219 lesson: the control's own wall is the price of the build
+        pq = quote['pair_quote']
+        print('  pair quote     %s   (the family\'s control %s ran that to '
+              'iteration %s; a treatment arm of the same build is priced by '
+              'it, the probe above is the band)'
+              % (pq['wall'], pq['name'], pq['reached_iteration']))
     if quote.get('first_gate_s'):
         print('  first gate     %s (iteration %d)'
               % (_fmt_hours(quote['first_gate_s']),
@@ -604,7 +760,8 @@ def main(argv=None) -> int:
         print('    %-44s %7.1f s/it  to it %-4d %s'
               % (a['name'], a['median_iteration_s'], a['reached_iteration'],
                  a['completion'] or ''))
-    for key in ('build_warning', 'stale_warning', 'milestone_warning'):
+    for key in ('build_warning', 'stale_warning', 'milestone_warning',
+                'host_warning'):
         if quote.get(key):
             print()
             for i, sentence in enumerate(quote[key].split('. ')):

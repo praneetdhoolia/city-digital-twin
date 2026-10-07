@@ -192,7 +192,7 @@ def write_fleet(inputs, repaired_schedule, destination, cfg):
     Until 21 September 2026 the mapped file was copied byte for byte, and it
     carries pt2matsim's defaults (Bus 70, Rail 400, Subway 300, Ferry 250
     seats, no standing room). The framework's explicit representation
-    (docs/transit_fleet.md) assigns each vehicle the profile
+    (docs/framework/transit_fleet.md) assigns each vehicle the profile
     build_transit_fleet.py derived for the line it serves and reads the
     profile's seats and standing places from `A.transit.*`; the assignment is
     bound to the mapped build by hash, so a remapped feed refuses an old file.
@@ -314,4 +314,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     sys.exit(main())

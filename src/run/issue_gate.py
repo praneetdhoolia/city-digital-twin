@@ -310,6 +310,121 @@ def measurement_due(issue):
     return None
 
 
+# ------------------------------------------------------------ closed issues
+
+def issue_states(numbers):
+    """(status, {number: closed_at or None}) for the issues named.
+
+    Asked of GitHub one issue at a time through `gh api`, because an open
+    listing cannot say an issue is CLOSED - and a closed issue is what the
+    sixteenth report found behind the lane: #175, closed 13 September, named
+    by the F39 treatment overlay and the lane's recommended task, so
+    requirement 10 was satisfied vacuously. `status` is 'ok', 'no-gh' or
+    'error'; nothing here guesses a state it could not read.
+    """
+    numbers = sorted({int(n) for n in numbers})
+    if not numbers:
+        return 'ok', {}
+    gh = shutil.which('gh')
+    if not gh:
+        return 'no-gh', {}
+    states = {}
+    for n in numbers:
+        try:
+            out = subprocess.run(
+                [gh, 'api', 'repos/{owner}/{repo}/issues/%d' % n,
+                 '--jq', '{state: .state, closed_at: .closed_at}'],
+                capture_output=True, text=True, timeout=60, cwd=REPO)
+            doc = json.loads(out.stdout) if out.returncode == 0 else None
+        except (OSError, subprocess.SubprocessError, ValueError):
+            doc = None
+        if not isinstance(doc, dict) or 'state' not in doc:
+            return 'error', {}
+        states[n] = (doc.get('closed_at') or '?') \
+            if str(doc['state']).upper() == 'CLOSED' else None
+    return 'ok', states
+
+
+def closed_in_lane(numbers, states):
+    """The lane issues that are closed, as (number, closed_at) pairs."""
+    return [(n, states[n]) for n in sorted(numbers or ())
+            if states.get(n) is not None]
+
+
+def _closed_why(closed_at):
+    return ('CLOSED (%s): an arm that answers a closed issue answers nothing '
+            'the tracker is waiting on, and its reading has no issue to land '
+            'on - reopen it with an AWAITING-RUN line naming this overlay, '
+            'or re-point the overlay\'s answers_issues' % closed_at[:10])
+
+
+def lane_tasks_for(run_config, numbers):
+    """The lane ledger's open tasks bound to this overlay: a task that names
+    the overlay, or one whose answers_issues are the overlay's. Printed at
+    every launch so the task the arm serves is visible beside the issues."""
+    try:
+        import lane as lane_ledger                              # noqa: PLC0415
+        doc = lane_ledger.load()
+    except Exception:                                           # noqa: BLE001
+        return []
+    want = set(int(n) for n in (numbers or ()))
+    out = []
+    for t in doc.get('tasks', []):
+        if t.get('status') not in ('open', 'held'):
+            continue
+        text = json.dumps(t)
+        mine = set(int(n) for n in (t.get('answers_issues') or []))
+        if (run_config and run_config in text) or (want and mine == want):
+            out.append(t)
+    return out
+
+
+def run_family_of(line):
+    """The families the runs an AWAITING-RUN line names belong to, by the
+    run name or the "F36's arm 0" form, through the family ledger."""
+    fams = {}
+    try:
+        import iteration_reading                                # noqa: PLC0415
+        import lane as lane_ledger                              # noqa: PLC0415
+    except ImportError:
+        return fams
+    for m in RUN_NAME.finditer(line or ''):
+        try:
+            fam, _, _ = iteration_reading.run_family(m.group(1))
+        except Exception:                                       # noqa: BLE001
+            fam = None
+        if fam:
+            fams[m.group(1)] = fam
+    for m in FAMILY_ARM.finditer(line or ''):
+        key = lane_ledger.family_key_for(m.group(1))
+        if key:
+            fams['%s\'s arm 0' % m.group(1)] = key
+    return fams
+
+
+def awaiting_closed_family(issues):
+    """Awaiting-run issues whose stated measurement names a run of a family
+    that is no longer the newest: a measurement waiting on a closed family
+    waits on nothing that will run (#49 and five others at the sixteenth
+    report were aimed at F35's control, three families back)."""
+    try:
+        import lane as lane_ledger                              # noqa: PLC0415
+        newest = lane_ledger.newest_family_key()
+    except Exception:                                           # noqa: BLE001
+        return []
+    if not newest:
+        return []
+    out = []
+    for i in issues:
+        if LABEL not in i['labels']:
+            continue
+        fams = run_family_of(evidence(i))
+        stale = {name: fam for name, fam in fams.items() if fam != newest}
+        if stale:
+            out.append(dict(i, stale=stale, newest=newest))
+    return out
+
+
 # --------------------------------------------------------------------- the lane
 
 def lane(run_config):
@@ -479,6 +594,13 @@ def check(verbose=True, run_config=None):
     in_lane = lane(run_config)
     bad = blocking(issues, in_lane)
     later = deferred(issues, in_lane)
+    closed = []
+    if in_lane:
+        st, states = issue_states(in_lane)
+        closed = closed_in_lane(in_lane, states) if st == 'ok' else []
+        for n, when in closed:
+            bad.append(dict(number=n, title='(closed issue in the lane)',
+                            why=_closed_why(when)))
     if verbose:
         scope = ('the whole open set' if in_lane is None
                  else '%d issue(s) the %s overlay declares'
@@ -492,6 +614,11 @@ def check(verbose=True, run_config=None):
         for i in bad:
             print('  #%-4d %s' % (i['number'], i['title'][:88]))
             print('        %s' % i['why'])
+        for t in lane_tasks_for(run_config, in_lane):
+            print('  lane task %s (%s%s): %s' % (
+                t['id'], t.get('status'),
+                ', recommended' if t.get('recommended') else '',
+                (t.get('title') or '')[:90]))
         for i in later:
             print('  #%-4d %s   [deferred: outside this run\'s lane]'
                   % (i['number'], i['title'][:70]))
@@ -501,6 +628,12 @@ def check(verbose=True, run_config=None):
                 if due:
                     print('  #%-4d %s   [MEASUREMENT DUE: %s has run]'
                           % (i['number'], i['title'][:60], due))
+        for i in awaiting_closed_family(issues):
+            print('  #%-4d %s   [AWAITS A CLOSED FAMILY: %s; the newest is %s]'
+                  % (i['number'], i['title'][:52],
+                     ', '.join('%s is %s' % (k, v.split('-', 1)[0])
+                               for k, v in sorted(i['stale'].items())),
+                     i['newest'].split('-', 1)[0]))
         # Always printed, in or out of lane, blocking or not: the point of the
         # third state is that it is visible, not that it is quiet.
         for i in awaiting_decision(issues):
@@ -551,6 +684,31 @@ def refuse_launch(allow_open_issues=False, reason=None, run_config=None):
               'outside the lane the %s overlay declares - it does not block '
               'this arm and it is not closed either'
               % (i['number'], run_config), flush=True)
+    # THE MIRROR OF THE RULE (sixteenth report): an overlay whose lane names
+    # a CLOSED issue satisfies requirement 10 vacuously - nothing open blocks
+    # it because nothing open is behind it - and the arm's reading then has
+    # no issue to land on. Read from GitHub like the open set; a tracker that
+    # cannot be read is the refusal above, not a pass here.
+    if in_lane:
+        st, states = issue_states(in_lane)
+        if st != 'ok':
+            msg = ('the state of the lane\'s issues %s could not be read (%s), '
+                   'so a closed issue behind this arm cannot be ruled out'
+                   % (sorted(in_lane), 'gh CLI not installed' if st == 'no-gh'
+                      else 'gh api failed'))
+            if not allow_open_issues:
+                return msg + '; pass --allow-open-issues with --override-reason ' \
+                             'to launch regardless'
+            bad.append(dict(number=0, title='(the lane\'s states unread)',
+                            why=msg))
+        for n, when in closed_in_lane(in_lane, states):
+            bad.append(dict(number=n, title='(closed issue in the lane)',
+                            why=_closed_why(when)))
+        for t in lane_tasks_for(run_config, in_lane):
+            print('issue gate: lane task %s (%s%s) is bound to this overlay: %s'
+                  % (t['id'], t.get('status'),
+                     ', recommended' if t.get('recommended') else '',
+                     (t.get('title') or '')[:100]), flush=True)
     if not bad:
         return None
     lines = ['#%d %s (%s)' % (i['number'], i['title'][:70], i['why'])

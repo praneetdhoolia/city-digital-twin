@@ -19,10 +19,10 @@
   "K": "Computation"
  },
  "counts": {
-  "factors": 106,
-  "needs_research": 0,
-  "researched": 106,
-  "literature_half_written": 106
+  "factors": 108,
+  "needs_research": 1,
+  "researched": 107,
+  "literature_half_written": 108
  },
  "factors": [
   {
@@ -372,7 +372,7 @@
    "evidence_strength": "strong",
    "relevance": "high",
    "needs_research": false,
-   "last_verified": "2026-09-07",
+   "last_verified": "2026-10-07",
    "query": "E Access, egress, wait and transfer time weights: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
    "id": "E2",
@@ -382,6 +382,12 @@
      "pass": 12,
      "note": "2026-09-16 (twelfth pass): the Sydney access-walk distribution is now in the library (E28: mean 573 m, train 805 m, bus 461 m; upper quartile 824 m / 1,018 m) - the check the network access legs can be read against.",
      "source_url": "https://www.jtlu.org/index.php/jtlu/article/view/308/338"
+    },
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): TRL593 Table 7.1 (Wardman 2001, 183 studies): walk time 1.68 x IVT (urban commuting car 1.37, bus 1.67; urban other bus 2.02); Table 7.2 (Wardman 1998, 52 studies): access time 1.81 (car users 1.54, bus users 1.98, rail users 1.31; RP 1.38 vs SP 1.91); Table 7.3: the walk weighting RISES with the walk's length (car users on a 2-mile trip: 2.18 at 2 min, 2.79 at 5, 3.37 at 10, 4.07 at 20) and falls with trip distance; interchange penalty 31 IVT-min overall, 21 for bus users, 37 for rail users (Table 8.11, 47 studies) against the Edinburgh SP 4.5 min bus / 8 min rail per trip (Table 8.12) and 1.7 min per connection minute.",
+     "source_url": "https://discovery.ucl.ac.uk/id/eprint/1349/1/2004_42.pdf"
     }
    ]
   },
@@ -410,7 +416,7 @@
    "evidence_strength": "strong",
    "relevance": "medium",
    "needs_research": false,
-   "last_verified": "2026-09-07",
+   "last_verified": "2026-10-07",
    "query": "E Parking cost and search time: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
    "id": "E4",
@@ -425,6 +431,12 @@
      "pass": "tenth",
      "head": "b8f89ff",
      "text": "Berlin v6.3 reports the mirror of this project's parking-search term: 'As parking search is not included in the model, the car speeds are generally too high, however the negative ASCs of these modes will account for these effects' (Rakow et al. 2024)."
+    },
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): the car's terminal time (park, unpark, walk) has its own row (E30): 0.75-5 min per trip end by area type in four-step practice; parking SEARCH (this row) is the dense-zone part of it and the only part this project prices.",
+     "source_url": "https://compassidaho.org/wp-content/uploads/FinalRegionalTravelDemandModelCalibration.pdf"
     }
    ]
   },
@@ -453,10 +465,18 @@
    "evidence_strength": "strong",
    "relevance": "high",
    "needs_research": false,
-   "last_verified": "2026-09-07",
+   "last_verified": "2026-10-07",
    "query": "E Car availability and competition for household cars: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
-   "id": "E6"
+   "id": "E6",
+   "addenda": [
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): Brazil, O Suilleabhain, Colleary, Carroll, Nott & Fox, UTSG 2023 (NTA Eastern Regional Model; read in full, 11 pp.): the same MNL mode-destination specification estimated on the 2016 census POWSCAR (1.56 M commute observations, car availability = a car in the household, 12 % non-available) and on the 2017 NHTS (2,956, car availability asked per trip, 29 % non-available) gives car ASCs of 1.02 / 0.69 (census) against 3.35 / 3.11 (survey, blue / white collar) relative to PT, with the generalised-time parameters within +-0.01 (car -0.07, walk -0.07, PT -0.02): 'in certain households simultaneous trip makers may be competing for the car, and the NHTS data captures this, while POWSCAR does not ... expected to be reflected in the mode specific constant'. Competition for the household car is a mechanism a constant absorbs when the availability definition misses it - this project's roster (33 % of households with more licensed drivers than cars) is the survey definition.",
+     "source_url": "https://www.nationaltransport.ie/wp-content/uploads/2023/07/UTSG-2023-NTA-Revealed-Preference-Mode-and-Destination-Choice-Modelling.pdf"
+    }
+   ]
   },
   {
    "layer": "E",
@@ -527,10 +547,18 @@
    "evidence_strength": "strong",
    "relevance": "high",
    "needs_research": false,
-   "last_verified": "2026-09-07",
+   "last_verified": "2026-10-07",
    "query": "E Crowding (seated / standing): literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
-   "id": "E11"
+   "id": "E11",
+   "addenda": [
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): TRL593 Table 8.9 (ATOC 2002, the PDFH recommendation) prices crowding in pence per passenger-minute by load factor, zero below 60 % seated: at 100 % load seated leisure non-London 0.70, business 2.5, commuting 0.8 p/min; STANDING at 100 % 22.0 / 48.0 / 6.5 p/min and at 140 % 30.8 / 53.0 / 8.5 - standing is an order of magnitude above seated at the same load, 'all intermediate values calculated by linear interpolation'. The registry's seated multiplier 1.0 (off) and standing 1.45 is the Wardman-Whelan shape, not the PDFH pence table.",
+     "source_url": "https://discovery.ucl.ac.uk/id/eprint/1349/1/2004_42.pdf"
+    }
+   ]
   },
   {
    "layer": "E",
@@ -542,9 +570,9 @@
    "evidence_strength": "strong",
    "relevance": "medium",
    "needs_research": false,
-   "last_verified": "2026-09-29",
+   "last_verified": "2026-10-07",
    "query": "E Reliability and headway: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": false,
+   "reused": true,
    "id": "E12",
    "addenda": [
     {
@@ -563,6 +591,12 @@
       "https://www.sciencedirect.com/science/article/abs/pii/S0967070X25000216"
      ],
      "magnitude": "literature: frequency penalty 1.0 x headway (<=10 min), 0.70-0.90 x (30 min), 0.45-0.65 x (60 min) in IVT minutes; LR headway elasticity -0.50 urban, -0.21 to -0.27 inter-urban"
+    },
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): TRL593 (Balcombe et al. 2004) read on the UCL repository (1.4 MB saved; pp. 72-78, 89-91). Headway weighting 0.77 x IVT over 164 British studies (Table 7.17; urban commuting car 0.85, bus 0.84, other 0.70; urban other 0.61-0.75; interurban 0.47-0.78). By distance and purpose from Wardman's 2001 model (Table 7.18): 2 miles non-business car 0.71 / bus 0.69 / rail 0.78 / underground 0.91; 10 miles 0.46 / 0.50 / 0.57 / 0.66; 25 miles 0.36 / 0.42 / 0.47 / 0.55; 50 miles 0.30 / 0.37 / 0.41 / 0.48 - 'headway valuation being much higher for shorter distance trips'. Wait time 1.76 x IVT over 62 studies (Table 7.14; urban bus 1.59, underground 1.17, car-and-PT 2.06). Service elasticities: bus short run 0.38 (0.10-0.74), long run 0.66 (0.22-1.04) (Table 7.5); rail short run 0.75 (Table 7.6); wait-time elasticity -0.64 (Preston & James 2000, Table 7.9); 'elasticities for lower frequency services were up to four times greater than high frequency services' (Cheung, in Booz Allen Hamilton 2003). The registry's C.time_weights.beta_headway 0.5 sits below the urban short-distance band (0.61-0.85) and inside the 25-mile band. The ITF 2013-16 paper the last pass named as Wardman is Anderson, Condry, Findlay, Brage-Ardao & Li (Imperial College), 'Measuring and Valuing Convenience and Service Quality: a review of global practices', DOI 10.1787/5k3z04gb6zs1-en - a benchmarking review whose abstract carries no headway table; that gap is closed by TRL593 instead. The ATAP M1 technical report (the registry's atap_m1 service-interval function, eq 4.3.2) timed out twice at atap.gov.au this pass.",
+     "source_url": "https://discovery.ucl.ac.uk/id/eprint/1349/1/2004_42.pdf"
     }
    ],
    "verified_in": "fifteenth pass (6bc18487)"
@@ -637,10 +671,18 @@
    "evidence_strength": "strong",
    "relevance": "high",
    "needs_research": false,
-   "last_verified": "2026-09-07",
+   "last_verified": "2026-10-07",
    "query": "Detour and wait tolerance for a household lift (minutes) from a chauffeuring or escort study",
    "reused": true,
-   "id": "E16"
+   "id": "E16",
+   "addenda": [
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): the car-less person's lift now has its own row (E31): England 2014 car-less persons take ~14 % of trips as car passenger, ~43 % walk, ~26 % bus (chart-read) - against F39's car-less ride 45.7 / walk 30.8 / bike 11.8 / pt 5.8 / taxi 5.6 %.",
+     "source_url": "https://assets.publishing.service.gov.uk/media/5a7fa042ed915d74e622b992/how-people-travel-car.pdf"
+    }
+   ]
   },
   {
    "layer": "E",
@@ -652,7 +694,7 @@
    "evidence_strength": "strong",
    "relevance": "high",
    "needs_research": false,
-   "last_verified": "2026-09-07",
+   "last_verified": "2026-10-07",
    "query": "E Taxi / rideshare: wait, fleet, refusal, surge: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
    "id": "E17",
@@ -661,6 +703,12 @@
      "date": "2026-09-11",
      "text": "Ride-hailing demand elasticity literature read this pass: fare elasticities are low (an Uber estimate of -0.154 from experimental fare variation; cross-price elasticity 0.26 between ride-hailing and taxi), waiting time is the second service attribute after fare, and any fare change feeds back through wait time. Labelled literature; none is a Newcastle observation.",
      "source_url": "https://www.sciencedirect.com/science/article/pii/S2185556023000263"
+    },
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): two searches and one full read (NTA ERM 2023: four alternatives - car, PT, walk, cycle; no taxi) found no Western revealed-preference taxi or ride-hail constant; the e-hailing literature adjusts the ASC to the observed share (ASU e-hailing non-work study). Gap kept.",
+     "source_url": "https://www.nationaltransport.ie/wp-content/uploads/2023/07/UTSG-2023-NTA-Revealed-Preference-Mode-and-Destination-Choice-Modelling.pdf"
     }
    ]
   },
@@ -674,9 +722,9 @@
    "evidence_strength": "strong",
    "relevance": "medium",
    "needs_research": false,
-   "last_verified": "2026-09-29",
+   "last_verified": "2026-10-07",
    "query": "E Motorbike: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": false,
+   "reused": true,
    "id": "E18",
    "addenda": [
     {
@@ -701,6 +749,12 @@
      "head": "6bc18487",
      "text": "No published Western (Australian, European or North American) urban mode-choice estimate of a motorcycle alternative-specific constant was found in four searches this pass; the estimates in print are Asian and motorcycle-dependent (Indonesia: the motorcycle parameter small and insignificant at 90 %; Hanoi, Taipei, Malaysia), and are not transferable. The constant therefore remains a calibration quantity against the observed motorbike share, not a literature value.",
      "source_url": "https://doi.org/10.3390/su11030788"
+    },
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): the NTA ERM (2023) has no motorcycle alternative. The one Western estimation located with motorbike as a choice is Cherchi & Cirillo 2014 (Transportation 41(6) 1245-1262; Thurgau six-week panel, 16,101 trips, 187 persons, five alternatives: car driver, car passenger, public transport, motorbike, slow modes): the DCA 2017 slides (read in full) give motorbike's purpose-lagged inertia 0.552 (t 1.78; 1.27, t 6.31, without the habit variable) but not its constant; the paper is behind Springer (dead route) and the UWE and Newcastle repositories (403). Gap kept with that route.",
+     "source_url": "https://transp-or.epfl.ch/dcaworkshop/2017/Cherchi.pdf"
     }
    ],
    "verified_in": "fifteenth pass (6bc18487)"
@@ -747,7 +801,7 @@
    "needs_research": false,
    "last_verified": "2026-09-29",
    "query": "E Heavy rail: capacity, fare, station access: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": false,
+   "reused": true,
    "id": "E21",
    "addenda": [
     {
@@ -1403,12 +1457,20 @@
    "evidence_strength": "strong",
    "relevance": "high",
    "needs_research": false,
-   "last_verified": "2026-09-08",
+   "last_verified": "2026-10-07",
    "query": "A transport application of BLP-style share inversion to MODE shares, with zones or time periods as the markets and the instruments named - the search returned only industrial-organisation applications this pass.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
    "added_on": "2026-09-08",
    "reused": true,
-   "id": "I10"
+   "id": "I10",
+   "addenda": [
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): NTA ERM 2023 estimated an RP mode-destination MNL on 1.56 M census records (usual mode, no frequency) and on 2,956 survey trips with agreeing time parameters - census usual-mode records are a usable estimation base for the TIME parameters, not for the constants (E6, I13).",
+     "source_url": "https://www.nationaltransport.ie/wp-content/uploads/2023/07/UTSG-2023-NTA-Revealed-Preference-Mode-and-Destination-Choice-Modelling.pdf"
+    }
+   ]
   },
   {
    "layer": "J",
@@ -1611,7 +1673,7 @@
     "https://tfresource.org/topics/Model_Validation_and_Reasonableness_Checking_Mode_Choice.html"
    ],
    "needs_research": false,
-   "last_verified": "2026-09-09",
+   "last_verified": "2026-10-07",
    "added_on": "2026-09-09",
    "verified_in": "pass 2026-09-09 (781cf41)",
    "id": "I13",
@@ -1621,6 +1683,12 @@
      "date": "2026-09-14",
      "text": "Narrowed this pass (14 September 2026). The nearest published TEST is McFadden and Train (2000), Journal of Applied Econometrics 15:447-470, section 4 (read from the PDF): construct artificial variables z_ti = (1/2)(x_ti - x_tC)^2 from the MNL estimates and test by Wald or likelihood ratio whether they may be omitted - asymptotically a Lagrange-multiplier test of no mixing against a mixed-logit alternative, i.e. of whether taste heterogeneity the constants cannot carry is present. It needs unit records, which this city does not release (J7), so it is recorded as the instrument and not as one this project can run; no test that separates a constant-absorbable residual from an absent MECHANISM was found.",
      "source_url": "https://pages.stern.nyu.edu/~wgreene/DiscreteChoice/Readings/McFadden-Train.pdf"
+    },
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): NTA ERM 2023 is a measured instance of the constant-versus-mechanism question: one specification on two datasets gives generalised-time parameters within +-0.01 and ASCs 3x apart (car 1.02 vs 3.35) because one dataset's car-availability definition misses competition for the household car; 'as ASC/constants are more likely to be adjusted in model calibration, the discrepancy ... is less important, but should still be noted'. An aggregate-only test still has no published form.",
+     "source_url": "https://www.nationaltransport.ie/wp-content/uploads/2023/07/UTSG-2023-NTA-Revealed-Preference-Mode-and-Destination-Choice-Modelling.pdf"
     }
    ]
   },
@@ -1872,7 +1940,7 @@
    "evidence_strength": "strong",
    "relevance": "medium",
    "needs_research": false,
-   "last_verified": "2026-09-14",
+   "last_verified": "2026-10-07",
    "verified_in": "b8f89ff",
    "added_on": "2026-09-14",
    "query": "A published estimate of the mode-choice inertia effect as a UTILITY term (utils or minutes-equivalent) from a panel or RP/SP model, and a published measurement of which MATSim replanning setting (ChangeExpBeta beta, plan memory, innovation cutoff) reproduces an observed day-to-day mode switching rate",
@@ -1883,6 +1951,12 @@
      "pass": 12,
      "note": "2026-09-16 (twelfth pass): Cherchi & Manca (2011) via the Semantic Scholar API - abstract elided by the publisher, no numbers; the inertia-as-utility-term half of the gap stands.",
      "source_url": "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1007/s11116-011-9338-9"
+    },
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): Cherchi, 'Habitual latent behaviour and dynamic effect of inertia', DCA workshop EPFL June 2017 (18 slides, read in full): Thurgau six-week panel, hybrid choice model with a habit latent variable and lagged-choice dummies. Sticking with the mode of the previous tour of the SAME PURPOSE adds, in utility units, car driver 0.559 (t 6.61), car passenger 0.409 (3.84), public transport 1.340 (11.27), motorbike 0.552 (1.78), slow modes 0.502 (3.88); the same-time-period lag is weaker (car passenger 0.901, PT 0.324). Without the habit variable the lags are larger (car 0.830, PT 1.290, motorbike 1.270). The habit variable's direct effect on car driver decays 0.503 (week 2) to 0.153 (week 6); 'habitual behaviour is not significant for car passengers, because you depend on someone else, and public transport'. Policy: a +50 % car cost moves car-driver share -3 % in week 1 and only -0.7 to -1.7 % once habit is in. A minutes-equivalent is not on the slides (no time coefficient shown) - residual. For MATSim this is the behavioural case for ChangeExpBeta's plan memory: the agent that re-optimises daily is the week-1 traveller.",
+     "source_url": "https://transp-or.epfl.ch/dcaworkshop/2017/Cherchi.pdf"
     }
    ]
   },
@@ -1902,7 +1976,7 @@
    "evidence_strength": "moderate",
    "relevance": "low",
    "needs_research": false,
-   "last_verified": "2026-09-14",
+   "last_verified": "2026-10-07",
    "verified_in": "b8f89ff",
    "added_on": "2026-09-14",
    "query": "The pooled reliability-ratio range and its meta-regression coefficients from Carrion & Levinson (2012) full text (SSRN 1736052 or the UMN conservancy PDF, both 403 this pass); the indifference band width in minutes from Zhu & Levinson (2016)",
@@ -1913,6 +1987,12 @@
      "pass": 12,
      "note": "2026-09-16 (twelfth pass): the indifference-band half of the residual gap is CLOSED from Zhu & Levinson's open-access GPS study (PLOS ONE 10(8) e0134322, 2015; 143 subjects, 25,157 trips, Minneapolis-St Paul): only about 34 % of all trips follow the shortest-time path (13.5 % of commute trips coincide with it exactly; ~40 % under a 10 % tolerance); about half of chosen routes are less than 30 s longer than the shortest-time route and almost 90 % are less than 5 min longer; no one followed the shortest-distance path unless it was also fastest. That is the band a routing randomness of 3.0 has to reproduce. Carrion & Levinson (2012) full text: the S2 route to its DOI returned 404 - dead; the pooled reliability-ratio range remains a gap.",
      "source_url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0134322"
+    },
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): TRL593 section 8.6 (read): Noland & Polak 2002 reliability ratio (value of travel-time s.d. / value of travel time) 1.04-1.22 for rail commuters, 0.66 for leisure; WS Atkins & Polak 1997 (bus, 598 obs): wait time 2.6 x IVT and wait-time s.d. 2.5 - 'the standard deviation of wait time has a similar weight to the mean value'; bus in-vehicle time s.d. 2.0 vs mean 1.4 (journey to work, Table 8.14); Hensher & Prioni 2002 bus lateness 1.82 x IVT; PDFH late time ~3 x IVT. The registry's beta_reliability 1.3 (x the s.d.) sits inside the rail-commuter band. Carrion & Levinson's pooled range is still unreached.",
+     "source_url": "https://discovery.ucl.ac.uk/id/eprint/1349/1/2004_42.pdf"
     }
    ]
   },
@@ -1931,11 +2011,19 @@
    "evidence_strength": "moderate",
    "relevance": "medium",
    "needs_research": false,
-   "last_verified": "2026-09-16",
+   "last_verified": "2026-10-07",
    "verified_in": "12",
    "added_on": "2026-09-16",
    "reused": true,
-   "query": "The NSW HTS 2020/21-2024/25 share of persons making no trip on the travel day (the data document at transport.nsw.gov.au returned 403; the 2022/23 and 2023/24 data documents on data.nsw.gov.au are the next route)."
+   "query": "The NSW HTS 2020/21-2024/25 share of persons making no trip on the travel day (the data document at transport.nsw.gov.au returned 403; the 2022/23 and 2023/24 data documents on data.nsw.gov.au are the next route).",
+   "addenda": [
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): both NSW HTS data-document hosts refused (transport.nsw.gov.au Household-Travel-Survey-2022-23-Data-09-2024.pdf 403; opendata.transport.nsw.gov.au hts-2021-data-document.pdf returns the catalogue page). Dead routes recorded; the 8-12 % diary benchmark stands.",
+     "source_url": "https://www.transport.nsw.gov.au/system/files/media/documents/2024/Household-Travel-Survey-2022-23-Data-09-2024.pdf"
+    }
+   ]
   },
   {
    "id": "E27",
@@ -1953,11 +2041,19 @@
    "evidence_strength": "strong",
    "relevance": "medium",
    "needs_research": false,
-   "last_verified": "2026-09-16",
+   "last_verified": "2026-10-07",
    "verified_in": "12",
    "added_on": "2026-09-16",
    "reused": true,
-   "query": "An access-mode split observed at a Newcastle-line station (Opal tap-on by access mode is not published; a TfNSW station-access survey or the commuter car park occupancy at Cardiff / Cockle Creek / Morisset would settle it)."
+   "query": "An access-mode split observed at a Newcastle-line station (Opal tap-on by access mode is not published; a TfNSW station-access survey or the commuter car park occupancy at Cardiff / Cockle Creek / Morisset would settle it).",
+   "addenda": [
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): Greater Wellington 2013 WTSM/WPTM update, Technical Note 5 Appendix A (TDG, May 2015; 845 KB saved and read; 2011 surveys): observed rail access split AM peak park-and-ride 41 %, kiss-and-ride 8 %, walk 44 %, bus 6 %; interpeak 17 / 3 / 69 / 11 %; modelled as a two-level access choice (car vs other, then P&R vs K&R) with walk vs bus decided in the PT assignment, validated per station (36 of 40 stations within 20 %). Newcastle: Transport for NSW's Customer Satisfaction surveys ask how customers accessed the station, stop or wharf (NSW Parliament answers to questions on notice) - a request route; no public cell found.",
+     "source_url": "https://ltp-consultation-2024-34.gw.govt.nz/assets/Documents/2021/10/TN5-Model-Input-Parameters.pdf"
+    }
+   ]
   },
   {
    "id": "E28",
@@ -1973,11 +2069,19 @@
    "evidence_strength": "strong",
    "relevance": "medium",
    "needs_research": false,
-   "last_verified": "2026-09-16",
+   "last_verified": "2026-10-07",
    "verified_in": "12",
    "added_on": "2026-09-16",
    "reused": true,
-   "query": "The distribution of executed pt access-walk lengths on a result run against the Daniels & Mulley quartiles (a reader over the experienced plans; no search)."
+   "query": "The distribution of executed pt access-walk lengths on a result run against the Daniels & Mulley quartiles (a reader over the experienced plans; no search).",
+   "addenda": [
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): TRL593 Table 7.3 gives the SHAPE an access-walk decay takes: the walk-time weighting of car users on a 2-mile trip rises 2.18 (2 min) to 4.07 (20 min), rail users 1.28 to 2.40; this project prices every access-walk minute at one weight (the transit router's walk factor), which is why a 5-6 km station walk (Metford, Awaba) is cheaper than the literature makes it.",
+     "source_url": "https://discovery.ucl.ac.uk/id/eprint/1349/1/2004_42.pdf"
+    }
+   ]
   },
   {
    "id": "I16",
@@ -2070,7 +2174,7 @@
    "needs_research": false,
    "last_verified": "2026-09-29",
    "query": "Motorcycle use frequency per motorcycle-holding household in an Australian HTS (VISTA or NSW HTS bespoke): share of weekdays on which a motorcycle is ridden",
-   "reused": false,
+   "reused": true,
    "id": "A8",
    "added_on": "2026-09-29",
    "verified_in": "fifteenth pass (6bc18487)"
@@ -2091,7 +2195,7 @@
    "needs_research": false,
    "last_verified": "2026-09-29",
    "query": "Observed trip-length difference between car-available and car-less persons in the NSW HTS",
-   "reused": false,
+   "reused": true,
    "id": "C5",
    "added_on": "2026-09-29",
    "verified_in": "fifteenth pass (6bc18487)"
@@ -2111,15 +2215,126 @@
    "evidence_strength": "strong",
    "relevance": "high",
    "needs_research": false,
-   "last_verified": "2026-09-29",
+   "last_verified": "2026-10-07",
    "query": "Adaptation-time weight relative to in-vehicle time in schedule-based assignment (Friedrich, Schmaus, Sauer, Zuendorf 2021 TRR; publisher 403 this pass)",
-   "reused": false,
+   "reused": true,
    "id": "F8",
    "added_on": "2026-09-29",
-   "verified_in": "fifteenth pass (6bc18487)"
+   "verified_in": "fifteenth pass (6bc18487)",
+   "addenda": [
+    {
+     "date": "2026-10-07",
+     "pass": 16,
+     "note": "2026-10-07 (sixteenth pass): Friedrich, Schmaus, Sauer & Zundorf 2021, 'Departure Time Choice in Schedule-Based Transit Assignment', TRR, DOI 10.1177/03611981211033858 (abstract read through api.semanticscholar.org; Sage full text still 403): adaptation time = the interval between preferred and actual departure, a utility component; 'travel demand should be discretized into intervals of 1 min'; a LINEAR adaptation-time disutility 'cannot capture all passenger behaviors' - travellers are indifferent to small shifts and strongly sensitive to large ones, so a nonlinear function is needed. The WEIGHT the last pass could not reach is in TRL593 Table 7.15 (Wardman 1998, 56 studies): a departure-time shift is valued at 0.72 x IVT overall, bus users 0.34, rail users 0.90, commuting 1.03, leisure 0.58, urban 0.44, suburban 1.06, depart earlier 0.64 / later 0.69 - 'less than the wait time values, particularly for bus'. The project's linear beta_headway 0.5 and its ATAP M1 branch both sit inside that band; neither has run.",
+     "source_url": "https://discovery.ucl.ac.uk/id/eprint/1349/1/2004_42.pdf",
+     "source_url_2": "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1177/03611981211033858?fields=title,authors,year,abstract,openAccessPdf,externalIds"
+    }
+   ]
+  },
+  {
+   "layer": "E",
+   "factor": "Car: terminal time - parking, unparking and the walk between the parked car and the activity, by area type",
+   "what_research_says": "Every four-step and activity-based model adds an auto TERMINAL TIME at each end of a car trip, by area type, so that a short drive is not priced at its in-vehicle minutes alone. COMPASS (Boise, Idaho; 2012 household survey with a 'remote lot' walk-time question, Table 13: average walk from a remote lot 0.5-4.05 min by district) applies per trip end: rural 1, suburban 1.5-2.5, urban 2, CBD fringe 2.5, CBD 3, CBD parking garage 4, university campus 5 minutes (Table 14). The North Front Range MPO model (Cambridge Systematics 2019, Table 9.3) applies CBD and commercial 1.5, urban 1, suburban 1, rural 0.75 minutes at both the production and the attraction end. The 1984 SCRTD review defines highway terminal time as the parking, unparking and walk between the ultimate origin/destination and the network, rising with development density; TRL593 (Table 7.2) values access time at 1.81 x in-vehicle time, car users 1.54.",
+   "source_url": "https://compassidaho.org/wp-content/uploads/FinalRegionalTravelDemandModelCalibration.pdf",
+   "magnitude": "literature: 0.75-5 minutes per trip end (1-2 min suburban, 2-3 min urban/CBD, 4-5 min garage or campus), added to the car skim unweighted or weighted as out-of-vehicle time; against a 1 km drive of 2.2 min at the project's 26.8 km/h planning speed, two suburban terminal ends (2 x 1.5 min) more than double the drive's cost.",
+   "how_leading_simulators_do_it": "Cube/TransCAD four-step models add OTERM + DTERM from an area-type lookup to the highway time skim (the COMPASS Cube script 'Add Terminal Times'); CT-RAMP and ActivitySim carry terminal time by area type in the auto skims and drive-access skims; MATSim has NO terminal time: the vehicle leaves the activity link at the activity's end and the trip's cost is the routed minutes plus any parking handler, so a sub-kilometre drive is priced at under three minutes.",
+   "evidence_strength": "moderate (modelling practice and survey-derived lookups, no meta-analysis)",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-10-07",
+   "query": "car terminal time by area type: source, magnitude per trip end, and how an agent-based model applies it",
+   "reused": false,
+   "id": "E30",
+   "added": {
+    "date": "2026-10-07",
+    "pass": 16,
+    "reason": "walk -24.7 % on F39 with 59.2 % of sub-1 km trips driven; the record (9.219) names the absent car terminal time as the first of two mechanisms; the library had no row."
+   },
+   "sources_read_this_pass": [
+    "https://compassidaho.org/wp-content/uploads/FinalRegionalTravelDemandModelCalibration.pdf (7.2 MB, saved and read: Tables 13-14, Figure 5)",
+    "https://nfrmpo.org/wp-content/uploads/2015-nfrmpo-travel-model-documentation.pdf (5.9 MB, saved and read: Table 9.3)",
+    "https://libraryarchives.metro.net:443/DPGTL/scrtd/1984-review-of-existing-exogenous-variable-forecasting-techniques.pdf (definition, search excerpt only)"
+   ]
+  },
+  {
+   "layer": "E",
+   "factor": "Ride for the car-less: the share of a car-less person's trips taken as a car passenger, and the lift from outside the household",
+   "what_research_says": "A person in a household without a car travels less and does NOT replace the car with lifts: England's National Travel Survey 2014 factsheet ('How people travel - car', DfT) gives 658 trips a year for persons in car-less households against 983 with a car, and its chart of trips per person by personal car access reads, approximately, car-less: walk ~280 (~43 %), bus ~170 (~26 %), car/van passenger ~90 (~14 %), other ~120 (~18 %); with a car: car driver ~470, passenger ~230 (~23 %), walk ~180. 'People who do not have access to a car in their households travel more often walking and by bus.' TRL593 (executive summary) puts the car-owning household's person at 66 % fewer bus and 25 % fewer rail trips a week than the non-owner. The share of car-passenger trips driven by a NON-household member was not reached this pass (two dead routes: core.ac.uk 'The ambivalence of ridesharing' 403; the SCAG HTS paper holds no such table).",
+   "source_url": "https://assets.publishing.service.gov.uk/media/5a7fa042ed915d74e622b992/how-people-travel-car.pdf",
+   "magnitude": "literature (chart-read, approximate): car passenger ~14 % of a car-less person's trips, walk ~43 %, bus ~26 % (England 2014); car passenger ~23 % for a person with a household car.",
+   "how_leading_simulators_do_it": "ActivitySim/CT-RAMP offer 'shared ride 2/3+' to every person (a non-household driver is implied, no driver is simulated) and calibrate its constant by car-sufficiency segment; MATSim's stock ride is teleported at car speed with no driver; eqasim/SimMobility likewise. This project binds every passenger to a named driver (escort, lift, joint, shared), so a car-less person's lift exists only through the shared-lift pass (B.ride.shared_lift_scope = same_sa2_od) and the choice set is then walk, bike, pt or taxi - which is where F39's car-less split (ride 45.7, walk 30.8, bike 11.8, pt 5.8, taxi 5.6 %) departs from the English car-less pattern (walk ~43, bus ~26, passenger ~14 %).",
+   "evidence_strength": "moderate (one national survey factsheet, chart-read; exact cells not reached)",
+   "relevance": "high",
+   "needs_research": true,
+   "last_verified": "2026-10-07",
+   "query": "DfT NTS0702/NTS0703 trips per person per year by personal car access and main mode (exact cells, 2014 and latest); the NSW HTS mode split of persons in no-vehicle households (CKAN API: vehicles per household x mode, or the bespoke-table request); the share of car-passenger trips driven by a non-household member (the 'Ambivalence of ridesharing' paper on an open host).",
+   "reused": false,
+   "id": "E31",
+   "added": {
+    "date": "2026-10-07",
+    "pass": 16,
+    "reason": "ride -25.0 % coverage-bound at 19.0 %, walk -24.7 %, bike +149.1 %, taxi +161.1 % on F39: the car-less lack an alternative (9.219); the library had no row for the car-less person's lift."
+   },
+   "sources_read_this_pass": [
+    "https://assets.publishing.service.gov.uk/media/5a7fa042ed915d74e622b992/how-people-travel-car.pdf (158 KB, saved and read in full)"
+   ]
   }
  ],
  "last_pass": {
+  "date": "2026-10-07",
+  "head": "1b14e559",
+  "rounds": 9,
+  "searches_spent": 33,
+  "budget": 40,
+  "literature_halves_newly_filled": 2,
+  "literature_halves_completed": 0,
+  "factors_added": 2,
+  "added": [
+   "E30",
+   "E31"
+  ],
+  "addenda_written": 16,
+  "gaps_closed": [
+   "E12 headway valuation by band (TRL593 Tables 7.17-7.18 read)",
+   "F8 adaptation-time weight (TRL593 Table 7.15; Friedrich 2021 abstract)"
+  ],
+  "gaps_narrowed": [
+   "H12",
+   "F6",
+   "E27",
+   "E18",
+   "E17",
+   "I13",
+   "B7"
+  ],
+  "gaps_added": [
+   "ATAP M1 fetch timeout",
+   "E31 exact NTS cells / non-household lift share",
+   "E30 Australian terminal-time observation",
+   "F8 Friedrich full text"
+  ],
+  "gaps_dead_route": [
+   "discovery-pp.ucl.ac.uk (403; discovery.ucl.ac.uk serves the same PDF)",
+   "atap.gov.au M1 technical report (60 s timeout, both URLs)",
+   "transport.nsw.gov.au HTS 2022-23 data document (403)",
+   "opendata.transport.nsw.gov.au hts-2021-data-document.pdf (catalogue page, not the PDF)",
+   "core.ac.uk/works/3084519 (403)",
+   "uwe-repository.worktribe.com OutputFile/917745 (403)",
+   "journals.sagepub.com 10.1177/03611981211033858 (403, still)"
+  ],
+  "routes_that_worked": [
+   "api.semanticscholar.org/graph/v1/paper/DOI:<doi>?fields=abstract (Friedrich 2021)",
+   "discovery.ucl.ac.uk eprint PDFs (TRL593, 1.4 MB, read locally by page range at no budget cost)",
+   "nationaltransport.ie UTSG 2023 PDF (read locally)",
+   "ltp-consultation-2024-34.gw.govt.nz TN5 PDF (read locally)",
+   "assets.publishing.service.gov.uk NTS factsheet (read locally)",
+   "compassidaho.org and nfrmpo.org model documentation PDFs (5.9-7.2 MB; pypdf text search then page reads)",
+   "transp-or.epfl.ch DCA workshop slides (read locally)"
+  ],
+  "note": "Sixteenth pass of the library, at 1b14e559. needs_research was 0 and all 106 stored literature halves were inside the 365-day horizon (oldest 2026-09-07), so all 106 were reused; the budget went to the 17 gaps, highest relevance to a current deviation first, and to the two factors the current deviations call for that had no row: E30 the car's terminal time (walk -24.7 % with 59.2 % of sub-kilometre trips driven) and E31 the car-less person's lift (ride coverage-bound, the car-less walking 14-24 % of their 10-20 km trips). Seven PDFs were saved by the fetch tool and read locally at no budget cost. 33 of 40 calls over 9 rounds; 2 gaps closed, 7 narrowed, 4 added; 7 dead routes recorded. Candidates checked and NOT added as rows: service-interval valuation by ATAP M1 (an E12/F8 addendum and a gap - the source was not reached), standing-capacity crowding by occupancy (E11 and F3 already carry it; the PDFH pence table is now an E11 addendum), trip-length distribution as a calibration target (I15 carries it).",
+  "statuses_note": "0 statuses stored, by design; this pass re-read every row at 1b14e559 (writer copy only)."
+ },
+ "previous_pass": {
   "date": "2026-09-29",
   "head": "6bc18487",
   "rounds": 2,
@@ -2141,27 +2356,6 @@
   ],
   "note": "Fifteenth pass of the library, at 6bc18487. needs_research was 0 and all 103 stored literature halves were inside the 365-day horizon (oldest 2026-09-07), so all were reused; the budget went to the two live questions the brief named. Added A8 (motorcycle possession versus use), C5 (destinations by own mobility) and F8 (the frequency penalty for infrequent services); addenda on E18 (x2), E12 and E21. 19 of 40 calls spent; four residuals written back as gaps.",
   "statuses_note": "0 statuses stored, by design; this pass re-read every row at 6bc18487 (writer copy only)."
- },
- "previous_pass": {
-  "date": "2026-09-25",
-  "head": "35b64421",
-  "rounds": 1,
-  "searches_spent": 8,
-  "budget": 15,
-  "literature_halves_newly_filled": 2,
-  "literature_halves_completed": 0,
-  "factors_added": 2,
-  "added": [
-   "E29",
-   "F7"
-  ],
-  "gaps_dead_route": [
-   "pubmed.ncbi.nlm.nih.gov 22704740 (captcha)",
-   "pmc.ncbi.nlm.nih.gov PMC8743872 (captcha)",
-   "sciencedirect S0749379712002401 (403)"
-  ],
-  "note": "Fourteenth pass of the library, at 35b64421. needs_research was 0 and all 101 stored literature halves were inside the 365-day horizon (verified 2026-09-07 to 2026-09-16), so all 101 were REUSED UNCHANGED. Two rows added for the mechanisms behind the current walk deviation that the library had no row for: E29 (the walk trip-length distribution, Yang & Diez-Roux 2012 read on the Memphis repository) and F7 (the pt routing walk fallback and its labelling, the MATSim routing-mode note). 8 of 15 calls spent.",
-  "statuses_note": "0 statuses stored, by design; this pass re-read every row at 35b64421 (writer copy only)."
  },
  "per_mode_data": {
   "written": "2026-09-11",
@@ -2417,7 +2611,7 @@
   },
   {
    "lane": "I13 constant-versus-mechanism test (residual)",
-   "query": "A published test that separates a residual an ASC may absorb from one caused by an absent mechanism using AGGREGATE shares only; one more search this pass found nothing beyond the McFadden-Train LM test, which needs unit records."
+   "query": "A published aggregate-only test that separates an absorbable residual from a missing mechanism: still none; the NTA ERM 2023 (read this pass) is a measured instance (same specification, two datasets, ASCs 3x apart from the availability definition) but not a test. McFadden-Train needs unit records."
   },
   {
    "lane": "H9 innovation cutoff (residual)",
@@ -2432,40 +2626,48 @@
    "query": "The request is DRAFTED at docs/requests/tfnsw_hts_bespoke_tables.md and HELD (#50). Sending it is the operator's act, not a search; not retried this pass."
   },
   {
-   "lane": "H12 habit (residual, narrowed 2026-09-16 twelfth)",
-   "query": "A mode-choice inertia effect expressed as a utility term or minutes-equivalent from a panel/RP-SP model (Cherchi & Manca 2011: Springer paywalled and the S2 abstract elided, 2026-09-16), and any published mapping from an observed day-to-day mode-switching rate to MATSim ChangeExpBeta / plan-memory settings."
+   "lane": "H12 habit (residual, narrowed 2026-10-07 sixteenth)",
+   "query": "Cherchi's Thurgau lagged-choice effects are now in utility units (car 0.56, PT 1.34, motorbike 0.55); the MINUTES-equivalent needs the time coefficient from Cherchi & Cirillo 2014 (Transportation 41(6); Springer dead, UWE worktribe 917745 and eprints.ncl.ac.uk 232882 both 403) - next route: an author copy on academia.edu (dtu.academia.edu/ElisabettaCherchi) or the ETH research-collection Arbeitsberichte."
   },
   {
-   "lane": "F6 route reliability (residual, half closed 2026-09-16 twelfth)",
-   "query": "Carrion & Levinson (2012) pooled reliability-ratio range: SSRN, the UMN conservancy and the S2 DOI route all fail; an author copy at nexus.umn.edu or the TR-A accepted manuscript is the next route. The indifference band is CLOSED (Zhu & Levinson 2015)."
+   "lane": "F6 route reliability (residual, narrowed 2026-10-07 sixteenth)",
+   "query": "Noland & Polak 2002's reliability ratio (rail commuters 1.04-1.22, leisure 0.66) and Atkins & Polak's wait-s.d. weight are now in the row from TRL593; Carrion & Levinson 2012's pooled range still unreached (SSRN, UMN conservancy, S2 DOI dead) - an author copy at nexus.umn.edu is the one route left."
   },
   {
    "lane": "B7 immobility (new row, residual)",
-   "query": "The NSW HTS share of persons with no travel on the travel day, 2020/21-2024/25 (the data document PDF 403s at transport.nsw.gov.au; the data.nsw.gov.au resource pages for the 2022/23 and 2023/24 data documents are the next route)."
+   "query": "The NSW HTS share of persons with no travel on the travel day: transport.nsw.gov.au's 2022-23 data document 403s and opendata.transport.nsw.gov.au's hts-2021-data-document link returns the catalogue page (both 2026-10-07); next route: the data.nsw.gov.au resource 42aa4431 download link or the HTS CKAN API's 'persons by trips made' table."
   },
   {
-   "lane": "E27 station access (new row, residual)",
-   "query": "An observed access-mode split at a Newcastle & Central Coast line station (TfNSW commuter car park occupancy counts or a station-access survey); the Sydney figures are the proxy."
+   "lane": "E27 station access (residual, narrowed 2026-10-07 sixteenth)",
+   "query": "Wellington's observed split (P&R 41 / K&R 8 / walk 44 / bus 6 % AM) is the proxy beside Sydney's; TfNSW's Customer Satisfaction surveys ask access mode by station (NSW Parliament QoN) - a data request to TfNSW for the Newcastle & Central Coast line cells, or a station-access count at Hamilton/Broadmeadow/Cardiff, is the route."
   },
   {
    "lane": "J8 mobile-phone OD (new row, residual)",
    "query": "Whether an LBS/mobile OD product covering the five LGAs is obtainable and at what aggregation (TfNSW has used DataSpark/Telstra-derived OD for Greater Sydney); the 2021 ABS journey-to-work OD via TableBuilder is the disclosed fallback the package does not yet hold (2011 vintage in use)."
   },
   {
-   "lane": "E18 motorcycle constant (added 2026-09-29 fifteenth)",
-   "query": "A Western urban mode-choice estimate of a motorcycle ASC relative to car driver (Australian STM / VITM, UK NTM, a European city model). Four searches this pass found only Asian estimates."
-  },
-  {
-   "lane": "F8 adaptation time (added 2026-09-29 fifteenth)",
-   "query": "Friedrich et al. 2021 TRR 03611981211033858 (Sage 403): the adaptation-time weight. Next route: an author copy on the University of Stuttgart ISV site or Transportation Research Record open preprint."
-  },
-  {
-   "lane": "E12 headway valuation by headway band (added 2026-09-29 fifteenth)",
-   "query": "ITF discussion paper 2013-16 (Wardman, Measuring and Valuing Convenience and Service Quality) returned 403; its headway-valuation table would give an urban, non-rail frequency penalty curve."
+   "lane": "E18 motorcycle constant (residual, narrowed 2026-10-07 sixteenth)",
+   "query": "A Western RP motorcycle ASC: the one estimation with a motorbike alternative located is Cherchi & Cirillo 2014 (Thurgau six-week panel, five alternatives incl. motorbike) - Springer dead, UWE worktribe and eprints.ncl.ac.uk 403; next route: an author copy (academia.edu) or the ETH Arbeitsberichte. The NTA ERM 2023 and the Australian STM/VITM carry no motorcycle alternative."
   },
   {
    "lane": "E17 taxi constant (added 2026-09-29 fifteenth)",
-   "query": "A revealed-preference taxi / ride-hail ASC relative to car driver in an Australian or comparable city model; one search this pass returned SP and air-taxi studies only."
+   "query": "A revealed-preference taxi / ride-hail ASC relative to car driver: the NTA ERM 2023 (read) has no taxi alternative; the two searches this pass returned SP, e-hailing-adjusted-to-share and Singapore AV studies only. Next route: the Sydney STM re-estimation (RAND TR1295) chapter on taxi, or the Auckland ART3 mode-choice documentation."
+  },
+  {
+   "lane": "E12/F8 ATAP M1 service-interval function (added 2026-10-07 sixteenth)",
+   "query": "ATAP M1 Public Transport parameter values technical report (eq 4.3.2 service-interval penalty, crowding multipliers, access and wait weights): both https://atap.gov.au/sites/default/files/documents/M1_Technical_Report.pdf and https://www.atap.gov.au/sites/default/files/M1-Technical-Report.pdf timed out at 60 s this pass; download locally and read with page ranges. The registry declares the function (C.time_weights.service_interval_function = atap_m1: 1.4 x min(SI/2, 1.88 sqrt(SI), 20) + 0.1 x SI IVT-minutes) from the same document."
+  },
+  {
+   "lane": "E31 car-less lift (new row, residual)",
+   "query": "The exact NTS0702/NTS0703 cells behind the 2014 factsheet chart (trips per person per year by personal car access and main mode), the NSW HTS mode split of persons in no-vehicle households, and the share of car-passenger trips with a non-household driver ('The ambivalence of ridesharing', core.ac.uk/works/3084519, 403 this pass; TRID 806287)."
+  },
+  {
+   "lane": "E30 car terminal time (new row, residual)",
+   "query": "An Australian terminal-time or walk-from-parking observation (the Sydney STM re-estimation TR1295, or the VITM documentation) to replace the two US MPO lookups; and whether any MATSim scenario adds a terminal time to car (search 'MATSim car access egress walk' / accessEgressType=walkConstantTimeToLink with a car constant)."
+  },
+  {
+   "lane": "F8 Friedrich 2021 full text (residual, narrowed 2026-10-07 sixteenth)",
+   "query": "The nonlinear adaptation-time function's parameters (Friedrich et al. 2021, TRR; abstract read via Semantic Scholar, Sage 403): an author copy at the University of Stuttgart ISV; the weight band itself is closed by TRL593 Table 7.15 (0.34 bus, 0.90 rail, 0.72 all)."
   }
  ],
  "review_attempt": {

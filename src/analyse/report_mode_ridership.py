@@ -42,6 +42,7 @@ import sys as _sys
 
 import csv
 import gzip
+import hashlib
 import json
 import time
 import argparse
@@ -553,8 +554,38 @@ def truck_at_count_stations(run_dir, iteration):
     Returns (modelled_pct, observed_pct, heavy, road, n_calibration, n_holdout)
     with the first two None when nothing can be measured.
     """
-    import gzip
-    import re as _re
+    want, observed, n_cal, n_held = calibration_station_links()
+    if not want:
+        return None, observed, 0, 0, n_cal, n_held
+
+    path = _os.path.join(run_dir, 'output', 'ITERS', 'it.%d' % iteration,
+                         '%d.events.xml.gz' % iteration)
+    if not _os.path.exists(path):
+        return None, observed, 0, 0, n_cal, n_held
+    # the close-out's one pass over the events file carries this tally when
+    # it was made for the same iteration and station links; else this
+    # reader's own pass
+    import summarise_run                                        # noqa: PLC0415
+    recorded = summarise_run.recorded_events_pass(run_dir, iteration)
+    entries = (recorded or {}).get('count_station_entries')
+    if entries and entries.get('links_stamp') == CountStationTally.stamp(want):
+        tally = collections.Counter(entries['tally'])
+    else:
+        import iteration_reading as _reading                    # noqa: PLC0415
+        handler = CountStationTally(want)
+        _reading.scan_events(path, handler)
+        tally = handler.tally
+    road = sum(v for k, v in tally.items() if k in ROAD_VEHICLE_MODES)
+    if not road:
+        return None, observed, 0, 0, n_cal, n_held
+    heavy = tally.get('truck', 0)
+    return (100.0 * heavy / road, observed, heavy, road, n_cal, n_held)
+
+
+def calibration_station_links():
+    """(the links of the classifying CALIBRATION stations, their observed heavy
+    share in percent, the calibration station count, the holdout station
+    count). The holdout's links are never returned."""
     want, cal_keys, held_keys = set(), set(), set()
     heavy_obs = light_obs = 0.0
     with open(_city.path('data/processed/validation/road_aadt_targets.csv'),
@@ -573,44 +604,61 @@ def truck_at_count_stations(run_dir, iteration):
         for r in csv.DictReader(fh):
             if r['station_key'] in cal_keys:
                 want.add(r['link'])
-
     observed = (100.0 * heavy_obs / (heavy_obs + light_obs)
                 if heavy_obs + light_obs > 0 else None)
-    if not want:
-        return None, observed, 0, 0, len(cal_keys), len(held_keys)
+    return want, observed, len(cal_keys), len(held_keys)
 
-    path = _os.path.join(run_dir, 'output', 'ITERS', 'it.%d' % iteration,
-                         '%d.events.xml.gz' % iteration)
-    if not _os.path.exists(path):
-        return None, observed, 0, 0, len(cal_keys), len(held_keys)
-    # A VEHICLE'S MODE IS THE ONE IT ENTERED TRAFFIC IN, not a guess from its
-    # id. The id suffix rule read `hh<hid>_car<k>` - the household roster's own
-    # naming (HouseholdVehicleRoster) - as the mode `car1`, which is in no mode
-    # list, so every roster car fell out of the road denominator entirely and
-    # inflated the heavy share this function reports. `vehicle enters traffic`
-    # carries `networkMode` and always precedes that vehicle's `entered link`
-    # events, so one pass still serves. The suffix stays as the fallback for a
-    # vehicle that entered traffic before this iteration's file began.
-    import iteration_reading as _reading                        # noqa: PLC0415
-    veh_mode = {}
-    tally = collections.Counter()
-    for t, el in _reading.events(path):
+
+class CountStationTally:
+    """The scan_events handler of the count-station reading: link entries at
+    the calibration stations' links, by the mode the vehicle entered traffic
+    in. The same handler serves the close-out's one pass over the events
+    file (summarise_run) and this reader's own, so the tally is the same
+    either way.
+
+    A VEHICLE'S MODE IS THE ONE IT ENTERED TRAFFIC IN, not a guess from its
+    id. The id suffix rule read `hh<hid>_car<k>` - the household roster's own
+    naming (HouseholdVehicleRoster) - as the mode `car1`, which is in no mode
+    list, so every roster car fell out of the road denominator entirely and
+    inflated the heavy share. `vehicle enters traffic` carries `networkMode`
+    and always precedes that vehicle's `entered link` events, so one pass
+    serves. The suffix stays as the fallback for a vehicle that entered
+    traffic before this iteration's file began.
+    """
+    events = ('vehicle enters traffic', 'entered link')
+
+    def __init__(self, want):
+        self.want = set(want)
+        self.veh_mode = {}
+        self.tally = collections.Counter()
+
+    @staticmethod
+    def stamp(want):
+        """The links a tally was made over, so a recorded tally is consumed
+        only against the same station-link table."""
+        return hashlib.sha256('\n'.join(sorted(want)).encode('utf-8')).hexdigest()[:16]
+
+    def __call__(self, t, el):
         if t == 'vehicle enters traffic':
-            veh_mode[el.get('vehicle')] = el.get('networkMode')
-            continue
-        if t != 'entered link' or el.get('link') not in want:
-            continue
+            self.veh_mode[el.get('vehicle')] = el.get('networkMode')
+            return
+        if t != 'entered link' or el.get('link') not in self.want:
+            return
         veh = el.get('vehicle')
-        mode = veh_mode.get(veh)
+        mode = self.veh_mode.get(veh)
         if mode is None:
             mode = veh.rsplit('_', 1)[-1] if '_' in veh else 'car'
-        tally[mode] += 1
-    road = sum(v for k, v in tally.items() if k in ROAD_VEHICLE_MODES)
-    if not road:
-        return None, observed, 0, 0, len(cal_keys), len(held_keys)
-    heavy = tally.get('truck', 0)
-    return (100.0 * heavy / road, observed, heavy, road,
-            len(cal_keys), len(held_keys))
+        self.tally[mode] += 1
+
+    def result(self):
+        return dict(links_stamp=self.stamp(self.want), tally=dict(self.tally))
+
+
+def station_tally_handler(run_dir=None):
+    """This reading's handler for a shared events pass (summarise_run), or
+    None when the city has no classifying calibration station."""
+    want, _observed, _n_cal, _n_held = calibration_station_links()
+    return CountStationTally(want) if want else None
 
 
 def print_footer(fctx):
@@ -1287,10 +1335,14 @@ def main():
 
 
 def readable_iterations(run_dir):
-    """Every iteration that can be read: trips table OR experienced plans."""
+    """Every iteration that can be read AND quoted: a trips table or
+    experienced plans, at or below the run's record (iteration_reading's one
+    clamp, which every table reader sits under since the sixteenth report)."""
+    import iteration_reading as _reading
     import iteration_trips as itr
-    return sorted(set(mim.iterations_with_trips(run_dir))
+    have = sorted(set(mim.iterations_with_trips(run_dir))
                   | set(itr.iterations_with_plans(run_dir)))
+    return _reading.citable_iterations(run_dir, iterations=have)
 
 
 def trend(a):
@@ -1417,24 +1469,12 @@ def watch(a):
 
 def point_reading(a):
     """One iteration's table (default the newest readable), or `--all`'s list."""
-    have = readable_iterations(a.run)
     # A run whose record says it did not reach its horizon is citable at its
-    # reached_iteration and nowhere past it - the board clamps, and so does
-    # this reader, or its default "newest readable" could cite past the record
-    # (fourteenth report).
-    try:
-        with open(_os.path.join(a.run, '_run.json'), encoding='utf-8') as fh:
-            record = json.load(fh)
-    except (OSError, ValueError):
-        record = {}
-    reached = record.get('reached_iteration')
-    if record.get('completion') not in (None, 'ran_to_last_iteration') \
-            and isinstance(reached, int):
-        if a.it is not None and a.it > reached:
-            raise SystemExit('iteration %d is past this run\'s reached_iteration '
-                             '%d (%s); it is citable there and nowhere past it'
-                             % (a.it, reached, record.get('completion')))
-        have = [i for i in have if i <= reached]
+    # reached_iteration and nowhere past it - readable_iterations is clamped
+    # and an explicit --it past the record is refused (iteration_reading).
+    have = readable_iterations(a.run)
+    import iteration_reading as _reading
+    _reading.refuse_past_record(a.run, a.it)
     if a.all:
         print(' '.join(str(i) for i in have))
         return

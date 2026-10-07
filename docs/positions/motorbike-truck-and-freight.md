@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 30 September 2026 (sixty-fourth session) · **Record read through:** §9.219 · **Written against family:** `F39`
+**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.220 · **Written against family:** `F39`
 
 ## What is built
 
@@ -13,7 +13,7 @@
 **Motorbike is CHOSEN** (§9.214, D22, #257): `B.motorbike.representation` = `choice`; `carve` (the person-level locked carve of §9.52) is the other member and reproduces F37 byte-identically.
 
 - **Who can ride** (§9.214; [population-and-demand](population-and-demand.md)): a rider licence from the TfNSW snapshot's Rider class, learners included (NSW learner riders ride unaccompanied), over ERP by age band and LGA (`B.population.rider_licence_rate_by_age_band`, derived); household motorcycle possession from BITRE's garaging-postcode registrations over census dwellings by the Poisson at-least-one identity (`B.population.household_motorcycle_share` 0.1254, derived).
-- **Coupling** (§9.214): `B.motorbike.rider_coupling` = `riders_first` (assumed; `independent` the other member) — riders drawn at their observed rate, then possession only in households holding a rider, at the rate that keeps each postcode's observed possessing households. **35,416** persons available (5.78 %); ceiling **6.05 %** of weekday trips against the **0.3785 %** target.
+- **Coupling** (§9.214): `B.motorbike.rider_coupling` = `riders_first` (assumed; `independent` the other member) — riders drawn at their observed rate, then possession only in households holding a rider, at the rate that keeps each postcode's observed possessing households. **35,416** persons possess one (5.78 %), a ceiling of **6.05 %** of weekday trips against the **0.3785 %** target — possession, the F38 stage; on the day, availability by daily use makes it **6,368** persons and a ceiling of **1.09 %** (§9.218).
 - **In the choice set** (§9.214): `motorbikeAvail` is honoured by `citysim.AvailabilityModesCalculator`; motorbike joins the subtour choice set as chain-based (the smoke `20260927T133104_2it_1pct` logs chainBasedModes [car, bike, motorbike]).
 - **Priced** (§9.214): `C.scoring.motorbike_fuel_ratio` **0.5351** (derived, ABS SMVU 2020 Table 6, NSW total fuel: motor cycles 6.1 over passenger vehicles 11.4 l/100 km) prices motorbike at the car rate times that ratio, under `choice` only. **Motorbike parking stays unpriced**: no observation of motorcycle parking charges.
 - Target: G62 one-method motorbike/scooter journeys over one-method driver journeys on the target LGA's own SA1s — `CAL.mode_split.motorbike_driver_journey_share` = 0.0064151 (282 of 43,959), × `CAL.mode_split.vehicle_driver_level` 0.59 = 0.3785 % (§9.122, §9.115).
@@ -65,6 +65,7 @@
 
 ## History
 
+- §9.220 — possession and the day's availability
 - §9.219 — motorbike at its target
 - §9.214 — motorbike chosen in F38
 - §9.176 — intro fixed: which runs are results is the board's
@@ -78,5 +79,3 @@
 - §9.136 — F22 gate; carve bias is the cell aggregation
 - §9.134 — F21 gate: motorbike +24.6%
 - §9.131 — licence rate rebuilt, carves await rebuild
-- §9.129 — carves solved on drawn pool
-- §9.126 — F18 built both carves

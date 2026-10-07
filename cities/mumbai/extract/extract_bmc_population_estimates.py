@@ -147,10 +147,13 @@ def main():
     result = audit(rows)
     write('bmc_population_estimates.csv', rows)
     Path(city.path('data/processed/acquisition/bmc_population_estimates_audit.json')).write_text(
-        json.dumps(result, indent=2)+'\n', encoding='utf-8')
+        json.dumps(result, indent=2)+'\n', encoding='utf-8', newline='\n')
     print(json.dumps({key: result[key] for key in ('rows', 'subtotal_disagreements',
                                                   'same_labelled_year_disagreements')}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

@@ -9,8 +9,6 @@ source. These tests pin the keying: a rewritten table or a changed reader
 re-derives; an unchanged one is served; --no-cache is the caller's override.
 """
 import json
-import os
-import time
 
 import report_mode_ridership as rmr
 

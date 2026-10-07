@@ -198,38 +198,62 @@ def benchmark(tus, activity, residence, sex, denominator):
     raise SystemExit('no time-use benchmark for %s/%s/%s/%s' % (activity, residence, sex, denominator))
 
 
-def main():
-    cfg = registry.load()
-    build_fraction = float(cfg.get('B.population.plans_build_fraction'))
-    seed = int(cfg.get('B.seed.master'))
-    rng = np.random.default_rng(seed)
-    adult = int(cfg.get('B.baseline.adult_age_years'))
-    school_min = int(cfg.get('B.baseline.school_min_age_years'))
-    starts, durations = cfg.get('B.baseline.activity_start_s'), cfg.get('B.baseline.activity_duration_s')
-    spread = float(cfg.get('B.baseline.departure_spread_s'))
-    modes_order = cfg.get('B.baseline.initial_choice_modes')
-    scales = cfg.get('B.activities.distance_scale_m')
-    poi_probability = cfg.get('B.activities.poi_probability')
-    purposes_tus = cfg.get('B.activities.time_use_activities')
-    outside = cfg.get('B.activities.out_of_home_fraction')
-    time_fractions = cfg.get('B.activities.out_of_home_time_fraction')
-    optional_min_age = int(cfg.get('B.activities.optional_min_age_years'))
-    max_optional = int(cfg.get('B.activities.max_optional_tours'))
-    home_break = int(cfg.get('B.activities.home_break_s'))
-    disc_departure = float(cfg.get('B.activities.discretionary_departure_s'))
-    disc_spread = float(cfg.get('B.activities.departure_spread_s'))
-    records = []
+def band_redirects(band_members):
+    """{empty band index: the band a worker drawn into it is redirected to},
+    or None when no band has a candidate.
 
+    The redirect is the first band ABOVE the drawn one with a candidate - the
+    walk the writer has always made (it climbs before it descends, so a band
+    below is reached only when nothing above has a candidate) - and, below
+    that, the nearest band beneath. The walk used to spin for ever between the
+    top two bands when nothing above the drawn band held a candidate; the
+    writer refuses at the draw instead (`refuse_no_candidate`).
+    """
+    n = len(band_members)
+    if not any(len(m) for m in band_members):
+        return None
+    out = {}
+    for b in range(n):
+        if len(band_members[b]):
+            continue
+        above = [k for k in range(b + 1, n) if len(band_members[k])]
+        below = [k for k in range(b - 1, -1, -1) if len(band_members[k])]
+        out[b] = above[0] if above else below[0]
+    return out
+
+
+def refuse_no_candidate(leaf, band):
+    raise SystemExit('build_plans.py: leaf %s drew work distance band %s and no band holds a work '
+                     'candidate; baseline_activity_locations.csv has no work location this leaf can reach'
+                     % (leaf, band))
+
+
+def kept_persons(build_fraction, seed):
+    """The households the harness would keep at the build fraction and their persons,
+    in one pass over the population table; returns the households frame, the kept
+    ids, the kept persons and the population's row count."""
     # the households the harness would keep, by the framework's own rule
     hh = pd.read_csv(city.path('demand/population/B1_households.csv'))
     kept = hh['household_id'].map(lambda h: sample_population.keep(None, build_fraction, seed=seed,
                                                                    household_id=int(h), unit='household'))
     kept_ids = set(hh.loc[kept, 'household_id'].tolist())
     print('households kept %d of %d at build fraction %g' % (len(kept_ids), len(hh), build_fraction), flush=True)
-    persons = pd.concat([chunk[chunk['household_id'].isin(kept_ids)]
-                         for chunk in pd.read_csv(city.path(PERSONS), chunksize=2_000_000)], ignore_index=True)
+    # one pass over the 27 M-row table: the kept persons, and the count the
+    # report carries (it used to be re-read line by line to count it)
+    kept_chunks, persons_in_population = [], 0
+    for chunk in pd.read_csv(city.path(PERSONS), chunksize=2_000_000):
+        persons_in_population += len(chunk)
+        kept_chunks.append(chunk[chunk['household_id'].isin(kept_ids)])
+    persons = pd.concat(kept_chunks, ignore_index=True)
+    del kept_chunks
     print('persons kept', len(persons), flush=True)
+    return hh, kept_ids, persons, persons_in_population
 
+
+def leaf_inputs(cfg, outside, persons, purposes_tus, records, time_fractions):
+    """Everything a leaf's day draws from: home polygons, the B-28 bands, the activity
+    candidates with their attraction, the census fallback points and the time-use
+    benchmarks."""
     leaves = sorted(persons['geography_id'].unique())
     polygons = home_polygons(leaves, records)
     placement_counts = Counter(p for _, p in polygons.values())
@@ -264,7 +288,12 @@ def main():
                 p = benchmark(tus, activity, residence, sex, 'participation') / 100 * outside[purpose]
                 s = benchmark(tus, activity, residence, sex, 'per_participant') * 60 * time_fractions[purpose]
                 bench[(residence, sex, purpose)] = (p, s)
+    return attr, attraction_gate, bands, bench, cand, fallback_w, fallback_xy, leaves, placement_counts, polygons
 
+
+def write_plans(adult, attr, bands, bench, cand, disc_departure, disc_spread, durations, fallback_w, fallback_xy, home_break, max_optional, modes_order, optional_min_age, persons, poi_probability, polygons, purposes_tus, rng, scales, school_min, spread, starts):
+    """The plans file, leaf by leaf: homes placed in the polygon, each person's tours
+    drawn, one selected plan written. Returns the tallies the report carries."""
     out = Path(city.path(OUT))
     out.parent.mkdir(parents=True, exist_ok=True)
     tour_counts, mode_counts, band_hits, no_candidate = Counter(), Counter(), Counter(), Counter()
@@ -285,6 +314,7 @@ def main():
             p_no_travel, band_p = bands.get((district, residence)) or bands[(district, 'Total')]
             d_work = np.linalg.norm(cand['work'] - centre, axis=1)
             band_members = [np.flatnonzero((d_work >= lo) & (d_work < hi)) for _, lo, hi in BANDS]
+            redirect = band_redirects(band_members)
             d_edu = np.linalg.norm(cand['education'] - centre, axis=1)
             w_edu = np.exp(-d_edu / scales['education'])
             w_edu /= w_edu.sum()
@@ -321,12 +351,13 @@ def main():
                 is_worker = r.worker_status in ('main_worker', 'marginal_worker')
                 if is_worker and rng.random() >= p_no_travel:
                     b = int(rng.choice(len(BANDS), p=band_p))
-                    members = band_members[b]
                     k = b
-                    while len(members) == 0:              # the nearest band with a candidate
-                        k = k + 1 if k + 1 < len(BANDS) else k - 1
-                        members = band_members[k]
-                        no_candidate[BANDS[b][0]] += 1
+                    if len(band_members[b]) == 0:         # the nearest band with a candidate
+                        if redirect is None:
+                            refuse_no_candidate(gid, BANDS[b][0])
+                        k = redirect[b]
+                        no_candidate[BANDS[b][0]] += 1    # once per redirected worker
+                    members = band_members[k]
                     band_hits[BANDS[k][0]] += 1
                     w = attr['work'][members]
                     if w.sum() > 0:
@@ -385,11 +416,41 @@ def main():
                 persons_written += 1
             z.write(('\n'.join(lines) + '\n').encode('utf-8'))
         z.write(b'</population>\n')
+    return band_hits, mode_counts, no_candidate, persons_written, tour_counts, zero_attraction
+
+
+def main():
+    cfg = registry.load()
+    build_fraction = float(cfg.get('B.population.plans_build_fraction'))
+    seed = int(cfg.get('B.seed.master'))
+    rng = np.random.default_rng(seed)
+    adult = int(cfg.get('B.baseline.adult_age_years'))
+    school_min = int(cfg.get('B.baseline.school_min_age_years'))
+    starts, durations = cfg.get('B.baseline.activity_start_s'), cfg.get('B.baseline.activity_duration_s')
+    spread = float(cfg.get('B.baseline.departure_spread_s'))
+    modes_order = cfg.get('B.baseline.initial_choice_modes')
+    scales = cfg.get('B.activities.distance_scale_m')
+    poi_probability = cfg.get('B.activities.poi_probability')
+    purposes_tus = cfg.get('B.activities.time_use_activities')
+    outside = cfg.get('B.activities.out_of_home_fraction')
+    time_fractions = cfg.get('B.activities.out_of_home_time_fraction')
+    optional_min_age = int(cfg.get('B.activities.optional_min_age_years'))
+    max_optional = int(cfg.get('B.activities.max_optional_tours'))
+    home_break = int(cfg.get('B.activities.home_break_s'))
+    disc_departure = float(cfg.get('B.activities.discretionary_departure_s'))
+    disc_spread = float(cfg.get('B.activities.departure_spread_s'))
+    records = []
+
+    hh, kept_ids, persons, persons_in_population = kept_persons(build_fraction, seed)
+
+    attr, attraction_gate, bands, bench, cand, fallback_w, fallback_xy, leaves, placement_counts, polygons = leaf_inputs(cfg, outside, persons, purposes_tus, records, time_fractions)
+
+    band_hits, mode_counts, no_candidate, persons_written, tour_counts, zero_attraction = write_plans(adult, attr, bands, bench, cand, disc_departure, disc_spread, durations, fallback_w, fallback_xy, home_break, max_optional, modes_order, optional_min_age, persons, poi_probability, polygons, purposes_tus, rng, scales, school_min, spread, starts)
     report = dict(
         source='synthetic_plans_from_census_population_and_declared_mechanisms',
         build_fraction=build_fraction, seed=seed, sample_unit='household',
         households=len(kept_ids), households_in_population=int(len(hh)), persons=persons_written,
-        persons_in_population=int(sum(1 for _ in open(city.path(PERSONS), encoding='utf-8')) - 1),
+        persons_in_population=int(persons_in_population),
         leaves=len(leaves), home_placement=dict(placement_counts),
         persons_by_tour_count=dict(sorted(tour_counts.items())),
         initial_mode=dict(mode_counts), work_distance_band_drawn=dict(band_hits),
@@ -416,4 +477,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     sys.exit(main())

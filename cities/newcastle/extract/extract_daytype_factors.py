@@ -23,71 +23,28 @@ Outputs, both consumed by ``src/build/build_activity_chains.py``:
   matches the weekday profile (the measured counterpart of the assumed
   weekend departure shift).
 
-Selection rules follow the freight extraction verbatim, all definitional:
-LIGHT VEHICLES classification resolved through the observed
-``classification_seq`` pairing; stations restricted to the study slice;
-public holidays excluded; complete days only; no year filter.
+Selection rules follow the freight extraction verbatim, all definitional,
+and the loader is the one both share (``rms_hourly.load_days``): LIGHT
+VEHICLES classification resolved through the observed ``classification_seq``
+pairing; stations restricted to the study slice; public holidays excluded;
+complete days only; no year filter.
 
 Deterministic: pure aggregation of a hashed raw download, no randomness.
 """
 
 import city as _city
 
-import zipfile
-
 import numpy as np
 import pandas as pd
 
-RAW_ZIP = _city.path('data/raw/counts/rms_hourly_permanent.zip')
-STATIONS = _city.path('data/processed/observed/traffic_count_stations_newcastle.csv')
-AADT = _city.path('data/processed/observed/traffic_aadt.csv')
+from rms_hourly import HOUR_COLS, load_days
+
 OUT_PROFILE = _city.path('data/processed/observed/light_hourly_profile.csv')
 OUT_FACTORS = _city.path('data/processed/observed/light_day_factors.csv')
 
-HOUR_COLS = ['hour_%02d' % h for h in range(24)]
-# The model's service week (cities/<city>/city.json day_types) named over
-# ISO day-of-week, which the raw data carries as 1=Monday..7=Sunday.
-DAY_TYPE_OF_DOW = {1: 'WEEKDAY', 2: 'WEEKDAY', 3: 'WEEKDAY', 4: 'WEEKDAY',
-                   5: 'WEEKDAY', 6: 'SAT', 7: 'SUN'}
-
-
-def light_seq():
-    """The classification code for LIGHT VEHICLES, read from the AADT slice."""
-    a = pd.read_csv(AADT, usecols=['classification_seq', 'classification_type'])
-    m = a.drop_duplicates()
-    m = m[m.classification_type == 'LIGHT VEHICLES']
-    if len(m) != 1:
-        raise SystemExit('expected exactly one LIGHT VEHICLES classification '
-                         'code in %s, found %d' % (AADT, len(m)))
-    return int(m.classification_seq.iloc[0])
-
 
 def load_light_days():
-    seq = light_seq()
-    slice_keys = set(pd.read_csv(STATIONS, usecols=['station_key'])
-                     .station_key.astype(str))
-    usecols = (['station_key', 'classification_seq', 'day_of_week',
-                'public_holiday', 'daily_total'] + HOUR_COLS)
-    z = zipfile.ZipFile(RAW_ZIP)
-    frames = []
-    for name in sorted(z.namelist()):
-        df = pd.read_csv(z.open(name), usecols=usecols)
-        df = df[(df.classification_seq == seq)
-                & df.station_key.astype(str).isin(slice_keys)
-                & (~df.public_holiday.astype(bool))]
-        if len(df):
-            frames.append(df)
-    if not frames:
-        raise SystemExit('no classified light-vehicle hourly rows found for '
-                         'the study slice - the raw download or the slice '
-                         'changed')
-    df = pd.concat(frames, ignore_index=True)
-    hours = df[HOUR_COLS].fillna(0.0)
-    complete = hours.sum(axis=1).round(0) == df.daily_total.fillna(-1).round(0)
-    df = df[complete & (df.daily_total > 0)].reset_index(drop=True)
-    df[HOUR_COLS] = df[HOUR_COLS].fillna(0.0)
-    df['day_type'] = df.day_of_week.map(DAY_TYPE_OF_DOW)
-    return df
+    return load_days('LIGHT VEHICLES', 'light-vehicle')
 
 
 def best_shift(weekday_profile, day_profile):

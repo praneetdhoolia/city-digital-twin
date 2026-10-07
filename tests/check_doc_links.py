@@ -31,6 +31,7 @@ def living(city_root: Path) -> list[Path]:
     docs = REPO / "docs"
     out += sorted(docs.glob("*.md"))
     out += sorted((docs / "positions").glob("*.md"))
+    out += sorted((docs / "framework").glob("*.md"))   # the contract notes (8 October 2026)
     out += [docs / "reports" / "README.md", docs / "reports" / "reference" / "README.md"]
     out += sorted((city_root / "docs").glob("*.md"))
     out += sorted((city_root / "docs" / "requests").glob("*.md"))

@@ -208,9 +208,12 @@ def main():
                               'No downscaling to wards, villages or households has been performed.',
                               'Differences with municipal estimates are retained; no source has been overwritten.'])
     Path(city.path('data/processed/acquisition/district_population_projection_audit.json')).write_text(
-        json.dumps(audit, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+        json.dumps(audit, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({k: audit[k] for k in ('districts', 'summary_rows', 'detailed_rows', 'check_status_counts', 'municipal_comparisons')}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

@@ -57,6 +57,596 @@
         "src/run/run_matsim.py"
       ]
     },
+    "A.fare.bus_adult_offpeak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        2.31,
+        3.14,
+        4.03
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Adult bus off-peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.bus_adult_peak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        3.3,
+        4.49,
+        5.77
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Adult bus peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.bus_band_upper_km": {
+      "units": "km",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        3,
+        8
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Opal bus fare distance-band upper bounds; the last band is open (8+ km). Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.bus_child_offpeak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        1.15,
+        1.56,
+        2.01
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Child/Youth bus off-peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.bus_child_peak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        1.65,
+        2.24,
+        2.88
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Child/Youth bus peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.child_max_age": {
+      "units": "years",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 15,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Child/Youth Opal fares apply to ages 4-15 (eligible school students 16+ also qualify; that concession class is recorded, not modelled). Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.child_min_age": {
+      "units": "years",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 4,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Children under 4 travel free; Child/Youth fares start at 4. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.daily_cap_adult": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 19.3,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Adult daily cap, Mondays to Thursdays. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.daily_cap_adult_weekend": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 9.65,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Adult daily cap on Fridays, Saturdays, Sundays and public holidays. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.daily_cap_child": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 9.65,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Child/Youth daily cap, Mondays to Thursdays. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.daily_cap_child_weekend": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 4.8,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Child/Youth daily cap on Fridays, Saturdays, Sundays and public holidays. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.daily_cap_senior": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 2.5,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Gold Senior/Pensioner daily cap, every day of the week. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.ferry_adult_offpeak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 2.31,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Newcastle Stockton ferry adult off-peak fare. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.ferry_adult_peak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 3.3,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Newcastle Stockton ferry adult peak fare - the ferry fare table carries a named row for this crossing (0-3 km), separate from the Sydney bands. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.ferry_child_offpeak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 1.15,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Newcastle Stockton ferry Child/Youth off-peak fare. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.ferry_child_peak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 1.65,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Newcastle Stockton ferry Child/Youth peak fare. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.lightrail_adult_offpeak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        2.31,
+        3.14,
+        4.03
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Adult light rail off-peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.lightrail_adult_peak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        3.3,
+        4.49,
+        5.77
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Adult light rail peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.lightrail_band_upper_km": {
+      "units": "km",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        3,
+        8
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Opal light rail fare distance-band upper bounds; published as its own table (its values equal the bus table, but each is declared from its own publication so neither can drift by proxy). Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.lightrail_child_offpeak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        1.15,
+        1.56,
+        2.01
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Child/Youth light rail off-peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.lightrail_child_peak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        1.65,
+        2.24,
+        2.88
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Child/Youth light rail peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.off_peak_all_day_day_types": {
+      "units": "enum",
+      "source": "definition",
+      "sweep": null,
+      "status": "placeholder",
+      "value": [
+        "SAT",
+        "SUN"
+      ],
+      "description": "The day types Opal prices as off-peak all day and charges the weekend daily cap on. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
+    "A.fare.peak_evening_end_h": {
+      "units": "hours",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 19.0,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Opal evening peak end: 7pm. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.peak_evening_start_h": {
+      "units": "hours",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 15.0,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Opal evening peak start: 3pm. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.peak_morning_end_h": {
+      "units": "hours",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 10.0,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Opal morning peak end: 10am. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.peak_morning_start_h": {
+      "units": "hours",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 6.5,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Opal morning peak start, metro/train, bus and light rail: 6:30am. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.rail_peak_morning_start_h": {
+      "units": "hours",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 6.0,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Intercity trains begin their morning peak at 6am (the Hunter line is an NSW TrainLink intercity service); the published note that it varies by tap-on station for some stations is recorded and not modelled. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.senior_min_age": {
+      "units": "years",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          60,
+          67
+        ],
+        "basis": "NSW Seniors Card eligibility age; pensioner eligibility below 60 exists and is not modelled. Swept up to pension age."
+      },
+      "sweep_role": "uncertainty",
+      "status": "placeholder",
+      "value": 60,
+      "description": "Age from which a resident not employed full-time is priced on Gold Senior/Pensioner Opal fares. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.senior_per_fare_cap": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 2.5,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Gold Senior/Pensioner Opal: each fare is the Child/Youth fare capped at this value, and the daily cap equals it. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.train_adult_offpeak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        3.03,
+        3.76,
+        4.34,
+        5.79,
+        7.46
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Adult metro/train off-peak fare per band (the published 30% discount, as published - not recomputed). Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.train_adult_peak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        4.33,
+        5.38,
+        6.2,
+        8.28,
+        10.66
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Adult metro/train peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.train_band_upper_km": {
+      "units": "km",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        10,
+        20,
+        35,
+        65
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Opal metro/train fare distance-band upper bounds; the last band is open (65+ km). Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.train_child_offpeak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        1.51,
+        1.88,
+        2.17,
+        2.89,
+        3.73
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Child/Youth metro/train off-peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.train_child_peak": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": [
+        2.16,
+        2.69,
+        3.1,
+        4.14,
+        5.33
+      ],
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Child/Youth metro/train peak fare per band. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.transfer_discount_adult": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 2.0,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Opal transfer discount off an adult fare, for every transfer between modes within one journey. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.transfer_discount_child": {
+      "units": "INR",
+      "source": "assumed",
+      "status": "placeholder",
+      "value": 1.0,
+      "sweep": null,
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "description": "Opal transfer discount off a Child/Youth or Concession fare, for every transfer between modes within one journey. Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
+    "A.fare.transfer_window_min": {
+      "units": "minutes",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          30,
+          90
+        ],
+        "basis": "The 60-minute tap-off-to-tap-on rule is the Opal journey definition in general use; the archived pages state the discount but not the window, so it is literature, swept around the published rule."
+      },
+      "sweep_role": "uncertainty",
+      "status": "placeholder",
+      "value": 60,
+      "description": "Maximum gap between alighting one service and boarding the next for the two boardings to count as one journey (and earn the transfer discount). Adopted from the reference city and INERT here: RUN.routing.pt_submode_scoring = \"aggregate\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202"
+    },
     "A.gradient.bike_downhill_speedup_per_pct": {
       "units": "share_of_flat_speed_per_pct",
       "source": "literature",

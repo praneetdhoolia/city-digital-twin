@@ -41,7 +41,13 @@ Handoff:
 ## Phase 1 — Consolidate: the position pages
 
 For **every topic the session touched**, rewrite its page in
-`docs/positions/` so it states the current truth:
+`docs/positions/` so it states the current truth. **Reopen every page whose
+mode the session READ, not only whose mechanism it changed**: a result read on
+light rail and ferry reopens their page even when nothing about them was
+built (the sixteenth report found two pages describing F35 under F39 because
+the readings had landed on other pages). `python src/analyse/positions.py
+--check --stale` names the pages whose *What is measured* does not carry the
+newest result; run it before this phase, not after.
 
 - Keep the template's headings (*What is built · What is measured · What is
   open · Refused — do not re-raise · History*), at most 130 lines and 14,000

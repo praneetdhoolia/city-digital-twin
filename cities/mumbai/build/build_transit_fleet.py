@@ -9,7 +9,7 @@ boarding at its seats. Under the sample scaler that is worse still: 400 x 0.01
 is 4 seats a train.
 
 This step writes `fleet_assignments.json` beside the mapped schedule and
-vehicles (the framework's explicit representation, docs/transit_fleet.md):
+vehicles (the framework's explicit representation, docs/framework/transit_fleet.md):
 one capacity profile per operated configuration the registry declares in
 `A.transit.fleet_profiles`, each mapped vehicle assigned to the profile of the
 line it serves. A profile is chosen by the transit line's OSM route relation
@@ -54,7 +54,7 @@ OUTPUT_INPUTS = {
 }
 
 # The capacity fields each profile reads, named here so the hardcoding ledger
-# sees every declared field wired to this producer (docs/transit_fleet.md:
+# sees every declared field wired to this producer (docs/framework/transit_fleet.md:
 # a reference inside bulk assignment JSON alone is invisible to it).
 CAPACITY_FIELDS = (
     'A.transit.ferry_versova_madh_capacity_seated', 'A.transit.ferry_marve_manori_capacity_seated',
@@ -217,4 +217,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

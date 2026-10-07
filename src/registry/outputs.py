@@ -34,11 +34,16 @@ KINDS = {
     'summary': 'summary.schema.json',
     'meta': 'meta.schema.json',
     'progress': 'progress.schema.json',
+    # one line per digest write: the host's load across the run's iterations
+    'host': 'host.schema.json',
 }
 FILENAMES = {'_run.json': 'run', '_metrics.json': 'metrics',
              '_fit.json': 'fit', '_config.json': 'config',
              '_summary.json': 'summary', '_meta.json': 'meta',
-             '_progress.json': 'progress'}
+             '_progress.json': 'progress', '_host.jsonl': 'host'}
+# The artefacts written as JSON LINES - one document per line, appended,
+# never replaced - validated line by line against their kind's schema.
+LINE_KINDS = ('host',)
 
 
 class OutputError(Exception):
@@ -50,17 +55,17 @@ def kind_of(path):
     return FILENAMES.get(os.path.basename(path))
 
 
-def _schema(kind):
+def _schema(kind, city_name=None):
     try:
         name = KINDS[kind]
     except KeyError:
         raise OutputError('no output contract for kind %r' % kind)
     with io.open(os.path.join(OUTPUT_SCHEMA_DIR, name), encoding='utf-8') as f:
         schema = json.load(f)
-    return _inject_city_vocabulary(schema)
+    return _inject_city_vocabulary(schema, city_name)
 
 
-def _inject_city_vocabulary(schema):
+def _inject_city_vocabulary(schema, city_name=None):
     """Constrain `scenario` and `day` to the CITY'S OWN declared vocabulary.
 
     The schema files used to enumerate one city's S0..S6 and WEEKDAY/SAT/SUN
@@ -70,10 +75,16 @@ def _inject_city_vocabulary(schema):
     exactly as strict for the active city and correct for any other. If the
     city descriptor cannot be read the injection is skipped - a weaker check,
     never a wrong one.
+
+    The city is the DOCUMENT'S: a run card carries `city`, and a card judged
+    against the active city's vocabulary failed every one of a second city's
+    runs on `scenario: 'BASE' is not one of ['S0', ...]` - 92 of the package
+    audit's 118 failures (#253). A document that names no city is the active
+    city's, as every record written before the field was.
     """
     try:
         import city  # noqa: PLC0415  (lazy: keep this module import-light)
-        desc = city.descriptor()
+        desc = city.descriptor(city_name or None)
         vocab = {'scenario': list(desc['intervention']['scenarios']),
                  'day': list(desc['day_types'])}
     except Exception:                                    # noqa: BLE001
@@ -145,7 +156,7 @@ def validate_doc(kind, doc):
         import jsonschema
     except ImportError:
         return errors
-    schema = _schema(kind)
+    schema = _schema(kind, doc.get('city') if isinstance(doc, dict) else None)
     schema.pop('$id', None)
     validator = jsonschema.Draft202012Validator(schema)
     for e in sorted(validator.iter_errors(doc), key=lambda x: list(x.path)):
@@ -158,8 +169,28 @@ def validate_file(path, kind=None):
     kind = kind or kind_of(path)
     if kind is None:
         raise OutputError('cannot infer an output kind from %s' % path)
+    if kind in LINE_KINDS:
+        return validate_lines(kind, path)
     with io.open(path, encoding='utf-8') as f:
         return validate_doc(kind, json.load(f))
+
+
+def validate_lines(kind, path):
+    """Every line of a JSON-lines artefact against its kind's contract; a
+    problem names its line. A blank line is tolerated, an unparseable one is
+    a problem: an appended history that cannot be read back kept nothing."""
+    problems = []
+    with io.open(path, encoding='utf-8') as f:
+        for n, line in enumerate(f, 1):
+            if not line.strip():
+                continue
+            try:
+                doc = json.loads(line)
+            except ValueError as e:
+                problems.append('line %d: not JSON (%s)' % (n, e))
+                continue
+            problems.extend('line %d: %s' % (n, p) for p in validate_doc(kind, doc))
+    return problems
 
 
 def write_checked(path, doc, kind=None):
