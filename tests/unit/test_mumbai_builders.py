@@ -25,6 +25,11 @@ if MUMBAI_BUILD not in sys.path:
     sys.path.insert(0, MUMBAI_BUILD)
 
 pd = pytest.importorskip('pandas')
+# the builders import the geospatial stack at module level; the CI unit job
+# installs the standard library and pandas only, so these tests run where the
+# package is installed (the workstation) and are skipped, not failed, elsewhere
+pytest.importorskip('pyogrio')
+pytest.importorskip('geopandas')
 
 
 class FakeCfg:

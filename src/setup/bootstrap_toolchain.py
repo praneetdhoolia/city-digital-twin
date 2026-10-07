@@ -166,8 +166,11 @@ def maven_archive():
 
 
 def maven_path():
-    for cand in (os.path.join(TOOLS, 'maven', 'bin', 'mvn.cmd'),
-                 os.path.join(TOOLS, 'maven', 'bin', 'mvn')):
+    # the zip carries both launchers; on POSIX the .cmd exists and cannot run
+    # (the first CI run of java-probes.yml died on it), so the platform's own
+    # launcher is tried first and the other is a fallback, never the reverse
+    names = ('mvn.cmd', 'mvn') if os.name == 'nt' else ('mvn', 'mvn.cmd')
+    for cand in (os.path.join(TOOLS, 'maven', 'bin', n) for n in names):
         if os.path.exists(cand):
             return cand
     return ''
