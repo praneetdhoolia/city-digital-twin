@@ -4356,7 +4356,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.machine.heap_floor_gib` | `15.6` | GiB | `measured` | **held fixed** |
 | `RUN.machine.heap_per_fraction_gib` | `87` | GiB_per_unit_fraction | `measured` | **held fixed** |
 | `RUN.machine.jfr_profile` | `false` | boolean | `definition` | - |
-| `RUN.machine.other_process_max_cores` | `1.0` | cores | `assumed` | 0.5 - 4 |
+| `RUN.machine.other_process_max_cores` | `2.0` | cores | `assumed` | 0.5 - 4 |
 | `RUN.machine.probe_max_host_cpu_pct` | `90.0` | percent | `assumed` | 75 - 100 |
 | `RUN.machine.replanning_threads` | `20` | threads | `definition` | 1 - 24 |
 | `RUN.machine.seed` | `20260810` | integer_seed | `definition` | - |
@@ -4620,9 +4620,9 @@ Whether the JVM records a Java Flight Recorder profile of the run into <run>/pro
 
 The most CPU, in cores, another process may hold at launch; the launcher refuses a launch beside a process over it (src/run/run_matsim.py refuse_loaded_host, from procs.host_load's top_other_process over one RUN.monitor.poll_s). Declared on 8 October 2026 (sixteenth project report): the three daytime probes of 30 September 2026 quoted 37.0, 50.5 and 27.7 h for one build whose control had run 27.9 h - a probe launched beside a loaded host prices the host, not the build (9.219). It changes what the launcher REFUSES, never what the model does. 0 = no CPU bar.
 
-***assumed** · status **active** · DECISIONS.md §9.220 · sweep role **uncertainty***
+***assumed** · status **active** · DECISIONS.md §9.221 · sweep role **uncertainty***
 
-> **Sweep basis.** A LAUNCH REFUSAL'S BAR: the CPU, in logical cores held over one monitor poll (RUN.monitor.poll_s), that a process other than the run's own may be using at launch before the launch is refused. The mobsim is declared at 16 threads and the replanning pool at 20 on a 24-logical-core host (RUN.machine.threads, RUN.machine.replanning_threads), so a co-tenant holding a whole core competes with the run for a core it was measured to want. One core is the figure the sixteenth report named; the interval runs from half a core (an indexer, a browser tab) to the four the events handlers hold. Measured on nothing yet: the one host sample each of the four F39 probes kept (the last, written after the run ended) shows WmiPrvSE.exe, the WMI provider host, at 1.1-1.7 cores - whether anything held a core DURING those runs is what _host.jsonl will say from now on. 0 switches the bar off.
+> **Sweep basis.** A LAUNCH REFUSAL'S BAR: the CPU, in logical cores held over one monitor poll (RUN.monitor.poll_s), that a process other than the run's own may be using at launch before the launch is refused. The mobsim is declared at 16 threads and the replanning pool at 20 on a 24-logical-core host (RUN.machine.threads, RUN.machine.replanning_threads), so a co-tenant holding a whole core competes with the run for a core it was measured to want. One core is the figure the sixteenth report named; the interval runs from half a core (an indexer, a browser tab) to the four the events handlers hold. Measured on nothing yet: the one host sample each of the four F39 probes kept (the last, written after the run ended) shows WmiPrvSE.exe, the WMI provider host, at 1.1-1.7 cores - whether anything held a core DURING those runs is what _host.jsonl will say from now on. 0 switches the bar off. MEASURED 8 October 2026 (9.221): the first launch under this bar was refused by WmiPrvSE.exe, the WMI provider host, at 1.38 and then 1.81 cores over 10 s on an otherwise idle host - the host's own baseline, present under the control that landed 27.9 h against a 27.7 h quote - so one core refuses the host as it is; two cores admit that baseline and still refuse a second JVM, a build or a browser session, which is what the bar exists for. 1.0 stays the sweep's inner member.
 
 #### `RUN.machine.probe_max_host_cpu_pct`
 
