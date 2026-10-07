@@ -73,9 +73,12 @@ def main():
                       'Research envelope overcovers the intended city; whole-tile totals are not city totals.',
                       'Product units must be read from the product documentation when TIFF units are absent.'])
     Path(city.path('data/processed/acquisition/raster_source_audit.json')).write_text(
-        json.dumps(result, indent=2, allow_nan=False)+'\n', encoding='utf-8')
+        json.dumps(result, indent=2, allow_nan=False)+'\n', encoding='utf-8', newline='\n')
     print(json.dumps({k:v for k,v in result.items() if k!='sources'}, indent=2))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

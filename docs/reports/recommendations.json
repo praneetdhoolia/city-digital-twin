@@ -2,6 +2,126 @@
  "description": "THE RECOMMENDATION LEDGER - one row per recommendation a dated project report made, with what became of it: open, taken (the record section or PR) or declined (whose decision). Kept by src/analyse/report_recs.py: --sync pulls the newest report's rows in, /onboard lists the open ones, /handoff marks the taken ones, and the next report's audit reads this file instead of re-deriving it (DECISIONS.md 9.171). The first ten reports' rows live in the reports' own audits; the ledger starts at report #11 (20260914T152907, by the index's ordinals; its own audit called it the tenth).",
  "rows": [
   {
+   "id": "20260903T134517:0",
+   "report": "20260903T134517",
+   "rank": 0,
+   "what": "The report's recommendations as a whole (report 1 of the series), audited by a later report before this ledger existed; its individual rows were never ledgered and the file is pruned.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "process",
+   "status": "taken",
+   "evidence": "closed by the ninth report's audit (20260911T210144): 76 of the 105 recommendations of reports 1-8 taken, none moved the goal count; the report is pruned and its rows are not re-derivable",
+   "updated": "2026-10-08"
+  },
+  {
+   "id": "20260907T013735:0",
+   "report": "20260907T013735",
+   "rank": 0,
+   "what": "The report's recommendations as a whole (report 2 of the series), audited by a later report before this ledger existed; its individual rows were never ledgered and the file is pruned.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "process",
+   "status": "taken",
+   "evidence": "closed by the ninth report's audit (20260911T210144): 76 of 105 taken across reports 1-8, none moved the goal count; pruned",
+   "updated": "2026-10-08"
+  },
+  {
+   "id": "20260907T130247:0",
+   "report": "20260907T130247",
+   "rank": 0,
+   "what": "The report's recommendations as a whole (report 3 of the series), audited by a later report before this ledger existed; its individual rows were never ledgered and the file is pruned.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "process",
+   "status": "taken",
+   "evidence": "closed by the ninth report's audit (20260911T210144): 76 of 105 taken across reports 1-8, none moved the goal count; pruned",
+   "updated": "2026-10-08"
+  },
+  {
+   "id": "20260907T173435:0",
+   "report": "20260907T173435",
+   "rank": 0,
+   "what": "The report's recommendations as a whole (report 4 of the series), audited by a later report before this ledger existed; its individual rows were never ledgered and the file is pruned.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "process",
+   "status": "taken",
+   "evidence": "closed by the ninth report's audit (20260911T210144): 76 of 105 taken across reports 1-8, none moved the goal count; pruned",
+   "updated": "2026-10-08"
+  },
+  {
+   "id": "20260907T231739:0",
+   "report": "20260907T231739",
+   "rank": 0,
+   "what": "The report's recommendations as a whole (report 5 of the series), audited by a later report before this ledger existed; its individual rows were never ledgered and the file is pruned.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "process",
+   "status": "taken",
+   "evidence": "closed by the ninth report's audit (20260911T210144): 76 of 105 taken across reports 1-8, none moved the goal count; pruned",
+   "updated": "2026-10-08"
+  },
+  {
+   "id": "20260908T192638:0",
+   "report": "20260908T192638",
+   "rank": 0,
+   "what": "The report's recommendations as a whole (report 6 of the series), audited by a later report before this ledger existed; its individual rows were never ledgered and the file is pruned.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "process",
+   "status": "taken",
+   "evidence": "closed by the ninth report's audit (20260911T210144): 76 of 105 taken across reports 1-8, none moved the goal count; pruned",
+   "updated": "2026-10-08"
+  },
+  {
+   "id": "20260909T003402:0",
+   "report": "20260909T003402",
+   "rank": 0,
+   "what": "The report's recommendations as a whole (report 7 of the series), audited by a later report before this ledger existed; its individual rows were never ledgered and the file is pruned.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "process",
+   "status": "taken",
+   "evidence": "closed by the ninth report's audit (20260911T210144): 76 of 105 taken across reports 1-8, none moved the goal count; pruned",
+   "updated": "2026-10-08"
+  },
+  {
+   "id": "20260910T134723:0",
+   "report": "20260910T134723",
+   "rank": 0,
+   "what": "The report's recommendations as a whole (report 8 of the series), audited by a later report before this ledger existed; its individual rows were never ledgered and the file is pruned.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "process",
+   "status": "taken",
+   "evidence": "closed by the ninth report's audit (20260911T210144): 76 of 105 taken across reports 1-8, none moved the goal count; pruned",
+   "updated": "2026-10-08"
+  },
+  {
+   "id": "20260911T210144:0",
+   "report": "20260911T210144",
+   "rank": 0,
+   "what": "The report's recommendations as a whole (report 9 of the series), audited by a later report before this ledger existed; its individual rows were never ledgered and the file is pruned.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "process",
+   "status": "taken",
+   "evidence": "closed by the tenth report's audit (20260914T014107): 19 of its 20 recommendations taken, none moved the goal count; pruned",
+   "updated": "2026-10-08"
+  },
+  {
+   "id": "20260914T014107:0",
+   "report": "20260914T014107",
+   "rank": 0,
+   "what": "The report's recommendations as a whole (report 10 of the series), audited by a later report before this ledger existed; its individual rows were never ledgered and the file is pruned.",
+   "repeat_of": null,
+   "opens_family": false,
+   "category": "process",
+   "status": "taken",
+   "evidence": "closed by the eleventh report's audit (20260914T152907), where this ledger begins; pruned",
+   "updated": "2026-10-08"
+  },
+  {
    "id": "20260914T152907:1",
    "report": "20260914T152907",
    "rank": 1,
@@ -781,9 +901,9 @@
    "repeat_of": 10,
    "opens_family": false,
    "category": "process",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.218 D28: the first control pair since F35",
+   "updated": "2026-10-08"
   },
   {
    "id": "20260929T045645:4",
@@ -997,9 +1117,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "process",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.220 (sixty-fifth session)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20261008T003329:2",
@@ -1009,9 +1129,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.220 (sixty-fifth session)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20261008T003329:3",
@@ -1021,9 +1141,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.220 (sixty-fifth session)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20261008T003329:4",
@@ -1033,9 +1153,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "process",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.220 (sixty-fifth session)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20261008T003329:5",
@@ -1045,9 +1165,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "data",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.220 (sixty-fifth session)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20261008T003329:6",
@@ -1129,9 +1249,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.220 (sixty-fifth session)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20261008T003329:13",
@@ -1153,9 +1273,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.220 (sixty-fifth session)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20261008T003329:15",
@@ -1165,9 +1285,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "process",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.220 (sixty-fifth session)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20261008T003329:16",
@@ -1177,9 +1297,9 @@
    "repeat_of": 10,
    "opens_family": false,
    "category": "process",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.220 (sixty-fifth session)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20261008T003329:17",
@@ -1189,9 +1309,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "process",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.220 (sixty-fifth session)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20261008T003329:18",
@@ -1213,9 +1333,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "process",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.220 (sixty-fifth session)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20261008T003329:20",
@@ -1225,9 +1345,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.220 (sixty-fifth session)",
+   "updated": "2026-10-08"
   }
  ]
 }

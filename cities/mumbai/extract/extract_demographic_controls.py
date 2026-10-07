@@ -140,9 +140,12 @@ def main():
                             'School attendance is not a count of daily school trips or locations.',
                             'Greater Mumbai city can use a special district code in the city table; its source identity is retained.',
                             'The four historical districts cover more than the current metropolitan region.'])
-    Path(city.path('data/processed/observed/_demographic_controls_audit.json')).write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8')
+    Path(city.path('data/processed/observed/_demographic_controls_audit.json')).write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8', newline='\n')
     print(json.dumps(audit))
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

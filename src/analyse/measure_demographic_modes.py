@@ -131,32 +131,38 @@ def hts_inventory():
     return inv
 
 
-def tabulate_trips(run_dir, pop):
-    """All-trip and commute-only mode counters per demographic dimension."""
+TRIP_COLUMNS = ('person', 'main_mode', 'longest_distance_mode', 'end_activity_type')
+
+
+def tabulate_trips(run_dir, pop, iteration=None):
+    """All-trip and commute-only mode counters per demographic dimension, from
+    the final trips table (None) or one iteration's - decoded once per process
+    with only the four columns read, and never past the run's record
+    (iteration_reading; until the sixteenth report this opened
+    output_trips.csv.gz itself, so a stopped arm could not be read at all)."""
+    import iteration_reading                                      # noqa: PLC0415
     dims = ('age_band', 'sex', 'employment', 'licence')
     all_t = {d: defaultdict(Counter) for d in dims}
     com_t = {d: defaultdict(Counter) for d in dims}
     totals, com_totals = Counter(), Counter()
     unmatched = 0
-    with gzip.open(run_dir / 'output' / 'output_trips.csv.gz', 'rt',
-                   encoding='utf-8') as fh:
-        rd = csv.DictReader(fh, delimiter=';')
-        mode_col = ('main_mode' if 'main_mode' in rd.fieldnames
-                    else 'longest_distance_mode')
-        for r in rd:
-            attrs = pop.get(r['person'])
-            if attrs is None:
-                unmatched += 1          # freight / external tiers - no B1 row
-                continue
-            mode = r[mode_col] or 'unknown'
-            commute = r['end_activity_type'] == COMMUTE_END_ACTIVITY
-            totals[mode] += 1
+    rows = iteration_reading.table(str(run_dir), 'trips', iteration, columns=TRIP_COLUMNS)
+    mode_col = ('main_mode' if rows and 'main_mode' in rows[0]
+                else 'longest_distance_mode')
+    for r in rows:
+        attrs = pop.get(r['person'])
+        if attrs is None:
+            unmatched += 1          # freight / external tiers - no B1 row
+            continue
+        mode = r[mode_col] or 'unknown'
+        commute = r['end_activity_type'] == COMMUTE_END_ACTIVITY
+        totals[mode] += 1
+        if commute:
+            com_totals[mode] += 1
+        for d, v in zip(dims, attrs):
+            all_t[d][v][mode] += 1
             if commute:
-                com_totals[mode] += 1
-            for d, v in zip(dims, attrs):
-                all_t[d][v][mode] += 1
-                if commute:
-                    com_t[d][v][mode] += 1
+                com_t[d][v][mode] += 1
     return all_t, com_t, totals, com_totals, unmatched
 
 
@@ -359,18 +365,22 @@ def print_report(report, run_dir, family, fam_label, modes, all_t, com_t,
 
 
 def main() -> int:
-    if len(sys.argv) != 2 or sys.argv[1] in ('-h', '--help'):
+    if len(sys.argv) not in (2, 3) or sys.argv[1] in ('-h', '--help'):
         print(__doc__)
+        print('usage: measure_demographic_modes.py <run> [iteration]  '
+              '(the final trips table by default; a stopped arm names the '
+              'iteration it is citable at)')
         return 2
     # a bare run name as every other reader takes it, or a path
     run_dir = Path(results_store.resolve(sys.argv[1]) or sys.argv[1])
+    iteration = int(sys.argv[2]) if len(sys.argv) == 3 else None
 
     family, fam_note, fam_label = run_family(run_dir.name)
 
     pop = load_population(run_dir)
     g62, g62_ctx, n_sa1 = load_g62()
     hts = hts_inventory()
-    all_t, com_t, totals, com_totals, unmatched = tabulate_trips(run_dir, pop)
+    all_t, com_t, totals, com_totals, unmatched = tabulate_trips(run_dir, pop, iteration)
 
     obs_tot, observed_rows, pt_union = observed_mode_by_sex(g62)
     comparison = commute_sex_comparison(g62, obs_tot, com_t)

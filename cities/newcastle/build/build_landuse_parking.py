@@ -91,15 +91,12 @@ CBD = _city.extent('cbd_buildings')
 SEG_M = CFG.get('D.frontage.segment_length_m')
 FRONTAGE_BUFFER_M = CFG.get('D.frontage.buffer_m')
 
-TARGET_STREETS = {
-    'Hunter Street': 'corridor',
-    'Scott Street': 'corridor',
-    'Darby Street': 'off_corridor',
-    'Honeysuckle Drive': 'waterfront',
-    'Wharf Road': 'waterfront',
-    'King Street': 'off_corridor',
-    'Beaumont Street': 'off_corridor',
-}
+# The frontage streets and their roles are declared in
+# cities/<city>/geometry/frontage_streets.json, not typed here: a list of place
+# names in a build script is the same class of object as the typed extents
+# above (#32), and this one was typed from the first D1 build until 8 October
+# 2026. The order is the file's, so the segments come out in the same order.
+TARGET_STREETS = {s['name']: s['role'] for s in _city.geometry('frontage_streets')['streets']}
 
 # POI categories that generate or attract pedestrian activity at frontage level
 RETAIL_KEYS = ('shop',)

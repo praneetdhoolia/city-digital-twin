@@ -177,7 +177,25 @@ def keep(person_id, fraction, seed=None, household_id=None, unit=None):
     return int.from_bytes(h.digest(), 'big') / 2 ** 64 < fraction
 
 
-def lift_cluster_map(src):
+# The cluster map's memo stamp: bump it when `lift_cluster_map`'s reading of
+# the plans changes, so a memo written by an older reading is not reused.
+CLUSTER_MEMO_STAMP = 'lift-clusters-1'
+
+
+def _source_sha256(src):
+    h = hashlib.sha256()
+    with open(src, 'rb') as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b''):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def cluster_memo_path(src):
+    """The memo that sits beside a population, keyed on the population's bytes."""
+    return str(src) + '.lift_clusters.json'
+
+
+def lift_cluster_map(src, memo=True):
     """Household -> canonical representative, over the lift couplings (9.60).
 
     Union-find over (householdId, liftHousehold) pairs read from the plans
@@ -187,7 +205,45 @@ def lift_cluster_map(src):
     are excluded from the unions: a directed closure over them was measured
     to pull the 10% sample to 17.65% of persons, and a union to make it half
     of what it should be; the binder's unit-hash rule needs neither.
+
+    MEMOISED BESIDE ITS SOURCE (sixteenth report). The map needs the whole
+    graph before the first keep decision can be made - a person's cluster is
+    not known until every later liftHousehold has been read - so a single
+    streamed pass that also writes the sample would have to hold the
+    population in memory, and the sampler parsed the 622,174-person weekday
+    plans twice at every launch (74 s for this map, then the sampling pass).
+    The map is written once beside the population, keyed on the sha256 of
+    the population's own bytes (hashed, not parsed: a second), and every
+    later launch on the same bytes makes one pass. A memo the directory
+    will not take is simply not kept.
     """
+    import json                                               # noqa: PLC0415
+    import os                                                 # noqa: PLC0415
+    digest = _source_sha256(src) if memo else None
+    path = cluster_memo_path(src)
+    if memo:
+        try:
+            with open(path, encoding='utf-8') as fh:
+                doc = json.load(fh)
+            if doc.get('stamp') == CLUSTER_MEMO_STAMP and doc.get('source_sha256') == digest:
+                return dict(doc['clusters'])
+        except (OSError, ValueError, KeyError, TypeError):
+            pass
+    clusters = _lift_cluster_map(src)
+    if memo:
+        try:
+            tmp = path + '.tmp'
+            with open(tmp, 'w', encoding='utf-8', newline='\n') as fh:
+                json.dump(dict(stamp=CLUSTER_MEMO_STAMP, source_sha256=digest,
+                               clusters=clusters), fh)
+            os.replace(tmp, path)
+        except OSError:
+            pass
+    return clusters
+
+
+def _lift_cluster_map(src):
+    """The union-find itself, over one streamed pass of the plans."""
     parent = {}
 
     def find(x):

@@ -13,6 +13,9 @@ OUTPUT_INPUTS = {
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     print('Reading complete native road and path geometry', flush=True)
     report = build(city.network_osm_inputs(), city.path('data/processed/network/road_geometry'),
                    city.crs(), feature_key='highway')

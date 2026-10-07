@@ -136,9 +136,12 @@ def main():
                  limits='Source response order retained. Up/down may refer to paired route identities; queried and returned IDs remain separate. Repeated vehicle indications are not unique vehicles or ridership. Observation timestamp freshness is unvalidated. Distance units are retained only where explicit in the source field name; raw fields require confirmation. Stop offsets use the declared projected CRS and nearest published polyline point, which is ambiguous on loops and is not road/platform matching. No service calendar or inferred timetable corrections.')
     target = Path(city.path('data/processed/acquisition/nmmt_route_stop_audit.json'))
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(audit, indent=2, ensure_ascii=False, allow_nan=False)+'\n', encoding='utf-8')
+    target.write_text(json.dumps(audit, indent=2, ensure_ascii=False, allow_nan=False)+'\n', encoding='utf-8', newline='\n')
     print(json.dumps(summary))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

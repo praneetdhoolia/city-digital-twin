@@ -1,0 +1,77 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "host.schema.json",
+ "title": "Host load history (_host.jsonl)",
+ "description": "One line per progress-digest write (RUN.monitor.progress_interval_s): what the HOST was doing while the run was in the iteration named - its CPU busy % over the span since the previous line, its free and total physical memory, and the process other than the run's own that used most CPU over the same span. Written by the same observer as _progress.json (the telemetry isolation rule, DECISIONS.md 9.36) and appended, never replaced: the digest kept only its last sample, so a slow band of a 25 % arm could not be attributed to its co-tenant after the fact (sixteenth report). arm_cost.py reads it to refuse a probe whose clock priced the host rather than the build. Nothing in it is a result.",
+ "type": "object",
+ "required": [
+  "at",
+  "iteration",
+  "cpu_pct",
+  "ram_free_gb",
+  "top_other_process"
+ ],
+ "properties": {
+  "at": {
+   "type": "string",
+   "description": "local wall-clock stamp of the reading (the artefact records the machine, not the model)"
+  },
+  "iteration": {
+   "type": [
+    "integer",
+    "null"
+   ],
+   "description": "the iteration the run was in at the reading, as the digest read it; null before iteration 0"
+  },
+  "cpu_pct": {
+   "type": [
+    "number",
+    "null"
+   ],
+   "description": "the host's CPU busy % over the span since the previous reading, every process included; null when no previous reading exists"
+  },
+  "span_s": {
+   "type": [
+    "number",
+    "null"
+   ]
+  },
+  "ram_free_gb": {
+   "type": [
+    "number",
+    "null"
+   ],
+   "description": "physical memory available to a new allocation, GiB"
+  },
+  "ram_total_gb": {
+   "type": [
+    "number",
+    "null"
+   ]
+  },
+  "top_other_process": {
+   "type": [
+    "object",
+    "null"
+   ],
+   "description": "the process other than the run's own harness and JVM that used most CPU over the span, and how many cores it held (CPU seconds per wall second)",
+   "required": [
+    "pid",
+    "name",
+    "cores"
+   ],
+   "properties": {
+    "pid": {
+     "type": "integer"
+    },
+    "name": {
+     "type": "string"
+    },
+    "cores": {
+     "type": "number"
+    }
+   }
+  }
+ },
+ "additionalProperties": false
+}

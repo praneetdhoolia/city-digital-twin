@@ -4,7 +4,6 @@ tours with no ride; and `iteration_trips.trip_routing_modes`, which supplies
 the routing mode only the experienced plans carry."""
 import gzip
 
-import pytest
 
 import iteration_trips
 import measure_bound_trips as mbt

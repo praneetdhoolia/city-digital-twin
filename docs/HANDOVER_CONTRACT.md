@@ -23,7 +23,7 @@ needs.
 
 | Layer | File | Lines | What it answers |
 |---|---|---|---|
-| Goal | `docs/GOAL.md` | ~100 | what the twin is for; the loop; the non-negotiables |
+| Goal | `docs/GOAL.md` | ~140 | what the twin is for; the loop; the non-negotiables |
 | Board | `docs/STATUS.md` | ≤ 170 hand + generated | the scoreboard, where the build is, what runs, what is next |
 | Brief | `docs/NEXT_AGENT_BRIEF.md` | ≤ 180 | what expires, the lane, the traps, the approvals |
 | Position | `docs/positions/<topic>.md` | ≤ 130 lines and ≤ 14,000 bytes each | the current truth for the lane's topic, every figure sourced |
@@ -140,6 +140,8 @@ same every time are scripts, so a session spends its reading on the prose
 | Step | Command |
 |---|---|
 | stamp a position page, cap its history, check its caps | `python src/analyse/positions.py --stamp <topic> --session "..." --ref 9.NNN --history "§9.NNN — five words"` · `--check` |
+| the pages a session must reopen: a stamp more than three sections behind the record (STALE), or *What is measured* naming none of the newest family's results (WARN); and every page or brief line that restates a figure the board generates | `python src/analyse/positions.py --check --stale` · `--second-homes` (added 8 October 2026 after the sixteenth report) |
+| the board's blocks, the families table on the sampling page, the brief's `**Commit:**` sha and the lane's family stamp, all from their artefacts | `python src/analyse/build_status_board.py` (`--check` compares and writes nothing) |
 | the next record number; place the section, its index row, its §14 row | `python src/analyse/record.py --next` · `--append --file <section.md> --index "<row>" --change "<row>"` |
 | add a task or a decision to the lane | `python src/analyse/lane.py --add-task <json>` · `--add-decision <json>` · `--answer` · `--done` |
 | a pair's reading against its control, all twelve modes | `python src/analyse/compare_runs.py <control> <arm> --modes` |

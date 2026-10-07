@@ -96,7 +96,7 @@ def main(argv: list[str]) -> int:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="A city-agnostic digital twin of how a real city moves, MATSim end to end. Rendered from the repository's README.md.">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.1/github-markdown.min.css" integrity="sha384-LTbdgUzZ3SXn50n5dAZ75Kpp86fR5oSHELRlFJqZ08kHpI2/Jwsgi/KA8UdnqXSK" crossorigin="anonymous">
 <style>
 body{{margin:0;background:#ffffff;color:#1f2328}}
 @media (prefers-color-scheme:dark){{body{{background:#0d1117;color:#e6edf3}}}}

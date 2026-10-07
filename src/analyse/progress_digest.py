@@ -37,6 +37,12 @@ import run_view
 from registry import outputs
 
 PROGRESS = '_progress.json'
+# The host's history, one line per digest write (sixteenth report): the
+# digest kept ONE host sample - the last - so F39's control's 2.09 h band of
+# full-GC pauses (iterations 160-205) could not be attributed to whatever
+# shared the host at the time. Append-only; arm_cost reads a band's co-tenant
+# from it after the fact.
+HOST_HISTORY = '_host.jsonl'
 REPLACE_ATTEMPTS = 5
 REPLACE_BACKOFF_S = 0.05
 
@@ -85,6 +91,50 @@ def host_reading(run_dir, prev=None):
         return procs.host_load(prev, exclude_pids=_run_pids(run_dir))
     except Exception as e:                                 # noqa: BLE001
         return dict(error=str(e)[:200]), prev
+
+
+def host_history_line(host, iteration):
+    """One `_host.jsonl` line: the host reading stamped with the iteration
+    the run was in, so a slow band is read against the load across it."""
+    host = host or {}
+    return dict(at=host.get('at'), iteration=iteration,
+                cpu_pct=host.get('cpu_pct'), span_s=host.get('span_s'),
+                ram_free_gb=host.get('ram_free_gb'),
+                ram_total_gb=host.get('ram_total_gb'),
+                top_other_process=host.get('top_other_process'))
+
+
+def append_host_sample(run_dir, host, iteration):
+    """Append the host reading to the run's `_host.jsonl`. A reading that
+    carries no clock (the first of a run, or a failed one) is not history.
+    Instrumentation: never raises."""
+    if not host or host.get('at') is None:
+        return False
+    try:
+        with open(os.path.join(run_dir, HOST_HISTORY), 'a', encoding='utf-8',
+                  newline='\n') as fh:
+            fh.write(json.dumps(host_history_line(host, iteration)) + '\n')
+        return True
+    except (OSError, TypeError, ValueError):
+        return False
+
+
+def read_host_history(run_dir):
+    """Every `_host.jsonl` line a run kept, oldest first; [] when none."""
+    out = []
+    try:
+        with open(os.path.join(run_dir, HOST_HISTORY), encoding='utf-8') as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    out.append(json.loads(line))
+                except ValueError:
+                    continue
+    except OSError:
+        return out
+    return out
 
 
 def digest(run_dir, band=None, solo_iters=None, host=None):
@@ -191,6 +241,7 @@ def write_once(run_dir, band=None, solo_iters=None):
         raise outputs.OutputError('digest does not meet its contract:\n  %s'
                                   % '\n  '.join(problems))
     _write_atomic(os.path.join(run_dir, PROGRESS), doc)
+    append_host_sample(run_dir, doc['host'], doc.get('iteration'))
     return doc
 
 
@@ -278,6 +329,9 @@ def serve(run_dir, interval_s, band=None, solo_iters=None, background=True):
                 if not _write_atomic(os.path.join(run_dir, PROGRESS), doc):
                     failures['n'] += 1
                     failures['last'] = 'atomic replace lost to a directory lock'
+                # the host sample is KEPT, not replaced: the history is what
+                # attributes a slow band to its co-tenant (sixteenth report)
+                append_host_sample(run_dir, host, doc.get('iteration'))
                 if doc.get('state') in ('finished', 'failed'):
                     return
             except Exception as e:                           # noqa: BLE001
@@ -303,11 +357,8 @@ def main():
     a = ap.parse_args()
     # `--run` means the same thing in every reader: a run NAME from the store,
     # or a path to a run directory (src/run/results_store.py).
-    import os as _os_r, sys as _sys_r
-    _r = _os_r.path.join(_os_r.path.dirname(_os_r.path.dirname(
-        _os_r.path.abspath(__file__))), 'run')
-    import results_store as _store_r
-    a.run = _store_r.resolve_or_die(a.run)
+    import results_store
+    a.run = results_store.resolve_or_die(a.run)
 
     import registry as _registry
     cfg = _registry.load()

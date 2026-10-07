@@ -84,9 +84,12 @@ def main():
                                    status='unresolved_source_disagreement' if bad_density != spec['poster_narrative_below_los_c_count'] else 'agrees'),
                   limitations=spec['limitations'], calibration_eligible=False)
     Path(city.path('data/processed/acquisition/jvlr_poster_audit.json')).write_text(
-        json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+        json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({k: report[k] for k in ('rows', 'check_status_counts', 'below_los_c')}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

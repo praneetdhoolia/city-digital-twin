@@ -111,13 +111,26 @@ and 7 only) and **never recompile `.tools/classes`** (an arm may be running).
 
 ## Phase 1 — Collect the mechanical half
 
-Three scripts, so the numbers are reproducible and never typed:
+Five scripts, so the numbers are reproducible and never typed:
 
 ```bash
 python .claude/skills/project-report/scripts/collect_metrics.py      <scratch>/metrics
 python .claude/skills/project-report/scripts/collect_code_metrics.py <scratch>/metrics
 python .claude/skills/project-report/scripts/collect_performance.py  <scratch>/metrics
+python .claude/skills/project-report/scripts/scan_documents.py       <scratch>/reviews
+python .claude/skills/project-report/scripts/scan_issues.py          <scratch>/metrics <scratch>/reviews
 ```
+
+- `scan_documents.json` — Phase 5's mechanical half: every archived file's
+  banner, the record's numbering, index and §14 order, an own link pass over
+  every tracked Markdown file (archived included), the board's figures
+  restated in other living documents (file:line each), the reading budget
+  against the contract, and `.agents/` against `.claude/`. Four passes
+  re-derived these in scratch before the sixteenth report.
+- `scan_issues.json` — the issue ledger's mechanical half: closed-issue
+  statistics, every open issue's AWAITING lines verified in its body and
+  comments, every issue bound by a lane task or a run overlay with its GitHub
+  state (a CLOSED one is the finding), and per-PR position-page churn.
 
 - `metrics.json` — file inventory, commit log, direct-to-main commits, churn
   hotspots, the per-merge growth series of registry fields, manifest rows and

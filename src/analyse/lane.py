@@ -79,6 +79,63 @@ def open_decisions(doc: dict) -> list[dict]:
     return [d for d in doc.get('decisions', []) if d.get('answer') is None]
 
 
+def family_keys() -> list[str]:
+    """The family ledger's keys for this city, oldest first (docs/run_families.json)."""
+    with open(_city.docs('run_families.json'), encoding='utf-8') as fh:
+        fams = json.load(fh)['families']
+    mine = [(k, f) for k, f in fams.items()
+            if (f.get('city') or _city.DEFAULT_CITY) == _city.CITY]
+    return [k for k, _ in sorted(mine, key=lambda kv: kv[1].get('from_launch', ''))]
+
+
+def newest_family_key() -> str | None:
+    """The newest family's key, the one the lane must name."""
+    keys = family_keys()
+    return keys[-1] if keys else None
+
+
+def family_key_for(prefix: str) -> str | None:
+    """The ledger key of the family `prefix` names ('F36' -> 'F36-...')."""
+    return next((k for k in family_keys() if k.split('-', 1)[0] == prefix), None)
+
+
+def family_problems(doc: dict, newest: str | None) -> list[str]:
+    """The lane's `family` must be the ledger's newest: at the sixteenth
+    report it read F38 under F39, so the generator of the board's Next and
+    the brief's section 1 believed the previous family."""
+    if newest is None:
+        return []
+    have = doc.get('family')
+    if have != newest:
+        return ['family %r is not the ledger\'s newest %r (docs/run_families.json)'
+                % (have, newest)]
+    return []
+
+
+def closed_issue_problems(doc: dict, states: dict) -> list[str]:
+    """An open task whose answers_issues names a CLOSED issue answers
+    nothing the tracker waits on (#175 under the F39 treatment task,
+    sixteenth report). `states` is {number: closed_at or None}."""
+    out = []
+    for t in doc.get('tasks', []):
+        if t.get('status') not in ('open', 'held'):
+            continue
+        closed = [n for n in (t.get('answers_issues') or [])
+                  if states.get(int(n)) is not None]
+        if closed:
+            out.append('task %s: answers_issues names closed issue(s) %s - reopen '
+                       'with an AWAITING-RUN line, or re-point the task'
+                       % (t.get('id'), ', '.join('#%s (closed %s)'
+                                                 % (n, str(states[int(n)])[:10])
+                                                 for n in closed)))
+    return out
+
+
+def open_issue_numbers(doc: dict) -> set[int]:
+    return {int(n) for t in doc.get('tasks', []) if t.get('status') in ('open', 'held')
+            for n in (t.get('answers_issues') or [])}
+
+
 def render(doc: dict) -> str:
     """The generated `lane` block: what is next, then the decisions required."""
     lines = []
@@ -155,6 +212,22 @@ def main(argv=None) -> int:
     doc = load()
     bad = problems(doc)
     if a.check:
+        # the ledger's shape, then its truth: the family it names must be
+        # the family ledger's newest, and no open task may answer a closed
+        # issue (GitHub through gh; a local gate, so offline is a WARN and
+        # never a pass)
+        try:
+            bad += family_problems(doc, newest_family_key())
+        except (OSError, ValueError, KeyError) as e:
+            bad.append('the family ledger could not be read: %s' % e)
+        import issue_gate                                       # noqa: PLC0415
+        status, states = issue_gate.issue_states(open_issue_numbers(doc))
+        if status == 'ok':
+            bad += closed_issue_problems(doc, states)
+        else:
+            print('  WARN: the state of the open tasks\' issues was not checked '
+                  '(%s) - a closed issue behind a task cannot be ruled out'
+                  % ('gh CLI not installed' if status == 'no-gh' else 'gh api failed'))
         for p in bad:
             print('  ' + p)
         print('LANE %s' % ('MALFORMED' if bad else 'ok: %d task(s), %d decision(s) open'

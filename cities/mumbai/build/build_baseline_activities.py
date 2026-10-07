@@ -102,32 +102,24 @@ def select_destination(rng, home_xy, candidates, scale_m):
     return candidates[int(rng.choice(len(candidates), p=weights / weights.sum()))]
 
 
-def main():
-    sys.path.insert(0, city.path('extract'))
-    from extract_transport_points import decode_hstore
-
-    cfg = registry.load()
-    rng = np.random.default_rng(cfg.get('B.activities.seed'))
-    mapping = cfg.get('B.activities.location_tags')
-    poi_probability = cfg.get('B.activities.poi_probability')
-    scales = cfg.get('B.activities.distance_scale_m')
-    purpose_benchmarks = cfg.get('B.activities.time_use_activities')
-    outside = cfg.get('B.activities.out_of_home_fraction')
-    time_fractions = cfg.get('B.activities.out_of_home_time_fraction')
-    for values in (poi_probability, outside, time_fractions):
-        if any(not np.isfinite(value) or not 0 <= value <= 1 for value in values.values()):
-            raise ValueError('Activity fractions must be finite and within [0, 1]')
-    if cfg.get('B.activities.max_optional_tours') < 0 or cfg.get('B.activities.home_break_s') <= 0:
-        raise ValueError('Tour limit and home interval are invalid')
-    if cfg.get('B.activities.discretionary_departure_s') < cfg.get('B.activities.departure_spread_s'):
-        raise ValueError('Discretionary departure window crosses the start of the simulated day')
-    residents = {r['person_id']: r for r in read_rows('demand/baseline/persons.csv')}
-    tus = read_rows('data/processed/observed/state_time_use_controls.csv')
+def read_zones():
+    """The populated census leaves in the city CRS, sorted by id; returns the frame and
+    its id index."""
     zones = pyogrio.read_dataframe(city.path('data/processed/geospatial/census_2011_geographies.gpkg'),
                                   layer='census_leaves').to_crs(city.crs())
     zones = zones[zones.geometry.notna() & (zones.persons_count.astype(float) > 0)]
     zones = zones.sort_values('geography_id').reset_index(drop=True)
     zones_by_id = zones.set_index('geography_id')
+    return zones, zones_by_id
+
+
+def mapped_locations(mapping, zones):
+    sys.path.insert(0, city.path('extract'))
+    from extract_transport_points import decode_hstore
+    """OSM points and areas eligible for a purpose, a named point inside a same-named
+    area deduplicated, each matched to the census leaf it lies in. Returns the
+    ambiguity and outside-zone counts, the areas, the dropped purposes, the match
+    frame, the retained points and the selected point count."""
     points = pyogrio.read_dataframe(city.path('data/processed/geospatial/osm_research.gpkg'),
                                    layer='points').to_crs(city.crs())
     points['purposes'] = points.other_tags.map(lambda text: eligible_purposes(decode_hstore(text), mapping))
@@ -168,6 +160,12 @@ def main():
     matched = matched.drop_duplicates('location_id')
     outside_zones = int(matched.geography_id.isna().sum())
     matched['geography_id'] = matched.geography_id.fillna('')
+    return ambiguous, areas, duplicated_purposes, matched, outside_zones, points, selected_point_count
+
+
+def candidate_lists(mapping, matched, zones):
+    """The location rows written to baseline_activity_locations.csv, the per-purpose
+    candidate lists and the census representative-point fallback."""
     locations = []
     candidates = {purpose: [] for purpose in mapping}
     for point in matched.itertuples():
@@ -184,6 +182,13 @@ def main():
                      y_m=float(row.geometry.representative_point().y),
                      weight=float(row.persons_count), source='historical_population_location_proxy')
                 for row in zones.itertuples()]
+    return candidates, fallback, locations
+
+
+def write_tours(candidates, cfg, fallback, outside, poi_probability, purpose_benchmarks, residents, rng, scales, time_fractions, tus, zones_by_id):
+    """Each resident's primary tour relocated to a mapped candidate at the declared
+    probability and its optional tours drawn from the state time-use benchmarks,
+    the plan rewritten in place. Returns the activities and the tallies."""
     with gzip.open(city.path('demand/baseline/plans.xml.gz'), 'rb') as stream:
         population = ET.parse(stream).getroot()
     activities, tour_counts, source_counts = [], Counter(), Counter()
@@ -252,6 +257,31 @@ def main():
             source_counts[destination['source']] += 1
         ET.SubElement(plan, 'activity', **home)
         tour_counts[len(tours)] += 1
+    return activities, benchmark_rows, population, source_counts, total_primary_relocated, tour_counts
+
+
+def main():
+    cfg = registry.load()
+    rng = np.random.default_rng(cfg.get('B.activities.seed'))
+    mapping = cfg.get('B.activities.location_tags')
+    poi_probability = cfg.get('B.activities.poi_probability')
+    scales = cfg.get('B.activities.distance_scale_m')
+    purpose_benchmarks = cfg.get('B.activities.time_use_activities')
+    outside = cfg.get('B.activities.out_of_home_fraction')
+    time_fractions = cfg.get('B.activities.out_of_home_time_fraction')
+    for values in (poi_probability, outside, time_fractions):
+        if any(not np.isfinite(value) or not 0 <= value <= 1 for value in values.values()):
+            raise ValueError('Activity fractions must be finite and within [0, 1]')
+    if cfg.get('B.activities.max_optional_tours') < 0 or cfg.get('B.activities.home_break_s') <= 0:
+        raise ValueError('Tour limit and home interval are invalid')
+    if cfg.get('B.activities.discretionary_departure_s') < cfg.get('B.activities.departure_spread_s'):
+        raise ValueError('Discretionary departure window crosses the start of the simulated day')
+    residents = {r['person_id']: r for r in read_rows('demand/baseline/persons.csv')}
+    tus = read_rows('data/processed/observed/state_time_use_controls.csv')
+    zones, zones_by_id = read_zones()
+    ambiguous, areas, duplicated_purposes, matched, outside_zones, points, selected_point_count = mapped_locations(mapping, zones)
+    candidates, fallback, locations = candidate_lists(mapping, matched, zones)
+    activities, benchmark_rows, population, source_counts, total_primary_relocated, tour_counts = write_tours(candidates, cfg, fallback, outside, poi_probability, purpose_benchmarks, residents, rng, scales, time_fractions, tus, zones_by_id)
     write_rows('data/processed/geospatial/baseline_activity_locations.csv', locations)
     write_rows('demand/baseline/activities.csv', activities)
     xml = b'<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE population SYSTEM "http://www.matsim.org/files/dtd/population_v6.dtd">\n' + ET.tostring(population, encoding='utf-8')
@@ -276,9 +306,12 @@ def main():
             'Actual route times determine subsequent departures; no guarantee all activities fit a civil day.',
             'No visitor/external passenger demand, work attendance calibration or ridership quota.'])
     Path(city.path('data/processed/acquisition/baseline_activities.json')).write_text(
-        json.dumps(audit, indent=2) + '\n', encoding='utf-8')
+        json.dumps(audit, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({k: audit[k] for k in ('residents_count', 'location_candidates_by_purpose', 'persons_by_tour_count', 'tours_by_purpose')}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

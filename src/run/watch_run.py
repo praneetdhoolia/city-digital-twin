@@ -99,9 +99,15 @@ def iteration_seconds(run_dir):
 
 
 def readable_iterations(run_dir):
-    """Iterations whose trips table exists, ascending."""
+    """Iterations whose trips table a reader may quote, ascending.
+
+    The one clamp (iteration_reading.citable_iterations) keeps the watcher's
+    live semantics: a run in flight has no `_run.json`, so it sets no ceiling
+    and a trips table is listed the moment it lands; the record that would
+    clamp the list is the one `events` ends the watch on.
+    """
     import iteration_reading                                  # noqa: PLC0415
-    return iteration_reading.iterations_with(run_dir, 'trips')
+    return iteration_reading.citable_iterations(run_dir, 'trips')
 
 
 def projection(per, cfg, meta, now=None):
@@ -115,10 +121,15 @@ def projection(per, cfg, meta, now=None):
     """
     now = now or time.time()
     horizon = cfg.get('RUN.controler.last_iteration') or meta.get('iterations')
-    cutoff = None
-    frac = cfg.get('RUN.replanning.fraction_to_disable_innovation')
-    if horizon and frac:
-        cutoff = int(round(horizon * frac))
+    # THE JAR'S OWN CUTOFF, from the one definition (iteration_reading): this
+    # read `round(horizon x fraction)` and ignored first_iteration, so the
+    # F38 resume (first 175, last 250, fraction 0.333334; jar cutoff 200)
+    # was watched against 83 and every iteration past it priced as tail
+    # (sixteenth report)
+    import iteration_reading                                  # noqa: PLC0415
+    cutoff = iteration_reading.innovation_off_after(
+        cfg.get('RUN.controler.first_iteration') or 0, horizon,
+        cfg.get('RUN.replanning.fraction_to_disable_innovation'))
     ceiling_h = cfg.get('RUN.gate.wall_ceiling_h')
     try:
         t0 = time.mktime(time.strptime(meta.get('started') or '', '%Y-%m-%dT%H:%M:%S'))
@@ -281,6 +292,7 @@ def events(run_dir, poll, read, heartbeat):
     seen = set(readable_iterations(run_dir))
     said_dead = False
     said_stall = False
+    said_no_stall = False
     said_gate = False
     last_beat = time.time()
     while True:
@@ -307,8 +319,18 @@ def events(run_dir, poll, read, heartbeat):
                   'run.py --stop now, or run.py --close-out once it reaches its horizon.'
                   % (s['name'], s['harness_pid'], s['log_age_s']), flush=True)
             said_dead = True
-        stall_s = s.get('stall_s') or 300
-        if s['log_age_s'] is not None and s['log_age_s'] > stall_s and s['jvm_alive']:
+        # the run's OWN declared stall bound, from its snapshot; a run that
+        # carries none is said so once and never judged against a typed
+        # number (the watcher and run_failure each kept a 300 until the
+        # sixteenth report)
+        stall_s = s.get('stall_s')
+        if stall_s is None:
+            if not said_no_stall:
+                print('NO STALL BOUND %s: the run\'s _config.json carries no '
+                      'RUN.monitor.stall_s, so silence is reported, not judged'
+                      % s['name'], flush=True)
+                said_no_stall = True
+        elif s['log_age_s'] is not None and s['log_age_s'] > stall_s and s['jvm_alive']:
             if not said_stall:
                 print('STALL? %s: matsim.log silent %d s (RUN.monitor.stall_s %s) at it.%s'
                       % (s['name'], s['log_age_s'], stall_s, s['done']), flush=True)

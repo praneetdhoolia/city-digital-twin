@@ -421,3 +421,19 @@ def work_attendance_counts():
     return dict(total=float(g['Tot_P'].sum()),
                 worked_home=float(g['Worked_home_P'].sum()),
                 did_not_go=float(g['Did_not_go_to_work_P'].sum()))
+
+
+# --------------------------------------------------------------------------
+# residents: where a person lives, and which zones are the target area
+# --------------------------------------------------------------------------
+
+
+def residents_shape():
+    """The residents map's inputs (#242): B1 keys a person's home by `home_sa1`,
+    `sa1_to_lga.csv` (map_sa1_to_lga.py) assigns every SA1 its LGA, and the
+    target area is the LGA the observed mode-share series is filtered on."""
+    return dict(population='demand/population/B1_synthetic_population.csv',
+                person_id='person_id', home_zone='home_sa1',
+                zone_areas='data/processed/zones/sa1_to_lga.csv',
+                zone='SA1_CODE21', area='lga_name', target=_city.target_lga(),
+                map_columns=('person_id', 'home_sa1', 'home_lga'))

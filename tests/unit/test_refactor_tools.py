@@ -107,3 +107,67 @@ def test_split_stages_keeps_the_answer(tmp_path, fixture_module):
     src = fixture_module.read_text(encoding='utf-8')
     assert 'def load_rows(' in src and 'def finish(' in src
     assert _run(tmp_path) == before
+
+
+# The three defects met splitting the Mumbai builders (8 October 2026), each
+# a NameError or UnboundLocalError in the split output: (a) `persons =
+# sorted(persons, ...)` and `total += ...` read the name they bind; (b) the
+# preamble's `from collections import OrderedDict` binds a name a stage
+# reads; (c) the preamble's loop variable `r` and comprehension variable `c`
+# re-appear as a lambda's argument and a comprehension's target in the
+# stages, where they are the nested scope's and never the function's.
+SCOPED = '''\
+import collections
+
+
+def main():
+    from collections import OrderedDict
+    rows = [('x', 1), ('y', 7), ('z', -1), ('x', 9)]
+    total = 0
+    for r in rows:
+        total += r[1]
+    labels = [c for c, _ in rows]
+    persons = list(rows)
+    # keep: the names worth keeping
+    persons = sorted(persons, key=lambda r: -r[1])
+    kept = OrderedDict()
+    for s, v in persons:
+        kept.setdefault(s, []).append(v)
+    total += len(kept)
+    # finish: the answer
+    out = {c: sum(v) for c, v in kept.items()}
+    out['order'] = sorted(kept, key=lambda s: s)
+    out['first'] = persons[0]
+    out['n'] = len(labels)
+    out['total'] = total
+    return out
+'''
+
+RUN_SCOPED = 'import json, scoped_mod; print(json.dumps(scoped_mod.main(), sort_keys=True))'
+
+
+def test_split_stages_reads_names_in_evaluation_order_and_scope(tmp_path):
+    p = tmp_path / 'scoped_mod.py'
+    p.write_text(SCOPED, encoding='utf-8')
+
+    def run():
+        r = subprocess.run([sys.executable, '-c', RUN_SCOPED], cwd=tmp_path,
+                           capture_output=True, text=True, encoding='utf-8')
+        assert r.returncode == 0, r.stderr
+        return r.stdout.strip()
+
+    before = run()
+    r = subprocess.run([sys.executable, os.path.join(TOOLS, 'split_stages.py'),
+                        str(p), 'main', 'keep=12:17', 'finish=18:23'],
+                       capture_output=True, text=True, encoding='utf-8')
+    assert r.returncode == 0, r.stderr
+    src = p.read_text(encoding='utf-8')
+    # (a) a name re-bound on the line that reads it is passed in and, read
+    #     by the next stage, handed back; (b) the imported name is passed in;
+    # (c) neither `r` nor `s` (lambda arguments) nor `c`, `v` (comprehension
+    #     targets) is a parameter or a return
+    assert 'def keep(OrderedDict, persons, total):' in src, src
+    assert 'kept, persons, total = keep(OrderedDict, persons, total)' in src, src
+    assert 'def finish(kept, labels, persons, total):' in src, src
+    assert 'out = finish(kept, labels, persons, total)' in src, src
+    assert run() == before

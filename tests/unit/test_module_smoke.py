@@ -7,7 +7,6 @@ values from `bootstrap_toolchain.require()`, which returns two, for
 seventeen days with every gate green.
 """
 import os
-import sys
 
 import pytest
 
@@ -99,3 +98,88 @@ def test_relaxation_reports_the_window_and_the_snap():
     assert block['snap_pp']['car'] == pytest.approx(3.0)
     assert block['drift_pp']['car'] == pytest.approx(0.2)
     assert block['relaxed'] is True
+
+
+# ---------------------------------------------------------------------------
+# Import-and-run-help over every src/analyse and src/calibrate module and the
+# five build modules the sixteenth report named as imported by no test. A
+# module with a `--help` path (argparse, or an explicit '--help' branch) is
+# RUN with `--help` in a fresh interpreter and must exit 0 or 2 without a
+# traceback; a module without one (a library, or a builder whose main takes
+# no arguments and would do its work) is imported instead. Every subprocess
+# runs once, concurrently, and each parametrised test reads its verdict.
+# ---------------------------------------------------------------------------
+import glob
+import json
+import subprocess
+import sys
+from concurrent.futures import ThreadPoolExecutor
+
+import test_import_sweep as _sweep
+
+SMOKE_EXTRA = ['src/build/build_population.py', 'src/build/build_gtfs_extras.py',
+               'src/build/build_network_layers.py', 'src/build/gtfs_tools.py', 'src/build/shape_tools.py']
+
+
+def _smoke_modules():
+    out = []
+    for pattern in ('src/analyse/*.py', 'src/calibrate/*.py'):
+        out += sorted(os.path.relpath(p, REPO).replace(os.sep, '/')
+                      for p in glob.glob(os.path.join(REPO, pattern)))
+    return out + SMOKE_EXTRA
+
+
+SMOKE_MODULES = _smoke_modules()
+
+
+def _has_help_path(path):
+    with open(path, encoding='utf-8') as fh:
+        src = fh.read()
+    return 'argparse' in src or "'--help'" in src or '"--help"' in src
+
+
+def _smoke_one(rel):
+    path = os.path.join(REPO, rel)
+    name = os.path.splitext(os.path.basename(rel))[0]
+    env = dict(os.environ, PYTHONIOENCODING='utf-8')
+    if name in _sweep.RUNS_AT_IMPORT:
+        with open(path, encoding='utf-8') as fh:
+            compile(fh.read(), path, 'exec')
+        return dict(verdict='pass', how='compiled')
+    if _has_help_path(path):
+        proc = subprocess.run([sys.executable, path, '--help'], capture_output=True, text=True,
+                              timeout=300, env=env, cwd=REPO)
+        out = (proc.stdout or '') + (proc.stderr or '')
+        if 'ModuleNotFoundError' in out:
+            missing = out.rsplit('ModuleNotFoundError: No module named', 1)[-1].strip().strip("'\" \n")
+            return dict(verdict='skip', why='third-party package missing: %s' % missing, name=missing)
+        if proc.returncode in (0, 2) and 'Traceback' not in out:
+            return dict(verdict='pass', how='--help')
+        if 'FileNotFoundError' in out or 'PermissionError' in out:
+            return dict(verdict='skip', why='opens an artefact this checkout does not hold')
+        return dict(verdict='fail', why='--help exited %d:\n%s' % (proc.returncode, out[-1500:]))
+    proc = subprocess.run([sys.executable, '-c', _sweep.RUNNER, REPO, path, name],
+                          capture_output=True, text=True, timeout=300, env=env)
+    last = (proc.stdout.strip().splitlines() or ['{}'])[-1]
+    try:
+        verdict = json.loads(last)
+    except ValueError:
+        verdict = dict(verdict='fail', why='no verdict (rc=%d)\n%s' % (proc.returncode, (proc.stderr or '')[-1500:]))
+    verdict['how'] = 'import'
+    return verdict
+
+
+@pytest.fixture(scope='module')
+def smoke_verdicts():
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        return dict(zip(SMOKE_MODULES, pool.map(_smoke_one, SMOKE_MODULES)))
+
+
+@pytest.mark.parametrize('rel', SMOKE_MODULES)
+def test_module_imports_and_answers_help(rel, smoke_verdicts):
+    v = smoke_verdicts[rel]
+    if v['verdict'] == 'skip':
+        if v.get('name') and v['name'].split('.')[0] not in _sweep.THIRD_PARTY:
+            pytest.fail('%s: a MISSING MODULE that is not a known third-party package: %s' % (rel, v['why']))
+        pytest.skip('%s: %s' % (rel, v['why']))
+    assert v['verdict'] == 'pass', '%s (%s):\n%s' % (rel, v.get('how'), v.get('why'))

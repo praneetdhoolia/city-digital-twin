@@ -2,22 +2,21 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 30 September 2026 (sixty-fourth session) · **Record read through:** §9.219 · **Written against family:** `F39`
+**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.220 · **Written against family:** `F39`
 
 ## What is built
 
-- **The contract says who reads a field** (§9.202): `required_fields.json` carries `required_by` — `run` (220), builders (239), `reference_city` (112) — derived from `check_hardcoding.key_uses`; Newcastle's 571 stay required of Newcastle (PASS 41).
-- **Mumbai's transit vehicles carry evidenced capacities** (§9.206): `explicit_vehicle`; `build_transit_fleet.py` gives every mapped vehicle a profile — 12-car EMU 1,168 + 3,816, Line 1 200 + 1,300, BEML 239 + 1,561, Line 3 399 + 2,601, Navi Mumbai 150 + 950, launches 80 and 100, bus 36 + 30 (standing assumed, swept) — not the mapper's defaults every earlier case ran on.
-- **Mumbai's feed holds the Maritime Board's seven commuter crossings** (§9.207, #245): `A.baseline_transit.directory_crossings` names each route's two OSM terminals and fleet profile; both directions run on the water line between them in the directory's window; seven `A.transit.ferry_*_capacity_seated` fields carry the printed capacities (60–1,635, swept); four crossings stay out (no named terminal).
-- **Mumbai's suburban trains are the printed timetables** (§9.209): `build_suburban_timetable_feed.py` turns the WR and CR cells into 3,289 trains on 495 patterns (WR 1,394 / CR 1,895 against 1,414 / 1,820 published; `baseline_suburban_timetable.json`), 12 refused into the audit; gate `A.baseline_transit.suburban_timetable`. One mapping: **18,220 stops, 3,798 routes, 0 unmapped; 116,183 vehicles, 17 profiles**.
-- **Metro 2A, 7, 9 and 2B run in their live windows at MMRDA's April 2026 headways** (§9.209): `A.baseline_transit.line_windows_s` and `line_headways_s`; generated departures against printed weekday trips 2A −8.3 %, 7 with 9 −2.7 %, 2B −0.5 % (`baseline_transit_feed.json`).
-- **Every Mumbai run-network link carries its grade** (§9.209): `A.gradient.representation` = `link_speed`; the seven GLO-30 tiles sampled at 377,645 nodes, 788,523 of 919,235 links stamped (`_run_inputs_report.json`), clamped at 20 % (`A.gradient.grade_clamp_pct`; a surface model, so p99 sits at the clamp).
+- **The contract says who reads a field, through the run path's closure** (§9.202, §9.220, #241): `required_fields.json` carries `required_by` derived through the assembler's run-path closure, not `check_hardcoding.key_uses` alone — run keys **235 → 307**; Mumbai declares the 49 gate-silenced run keys at the values that leave its path unchanged (**446 → 495** fields).
+- **Mumbai's transit vehicles carry evidenced capacities** (§9.206): `explicit_vehicle`; `build_transit_fleet.py` gives every mapped vehicle a profile (12-car EMU 1,168 + 3,816 through bus 36 + 30; standing assumed, swept), not the mapper's defaults every earlier case ran on.
+- **Mumbai's feed holds the Maritime Board's seven commuter crossings** (§9.207, #245): `A.baseline_transit.directory_crossings` names each route's two OSM terminals and fleet profile; seven `A.transit.ferry_*_capacity_seated` fields carry the printed capacities (60–1,635, swept); four crossings stay out (no named terminal).
+- **Mumbai's suburban trains and metros are the printed timetables** (§9.209; the feeds are the pt page's, [public-transport-and-yardsticks](public-transport-and-yardsticks.md)): one mapping, **18,220 stops, 3,798 routes, 0 unmapped; 116,183 vehicles, 17 profiles**.
+- **Every Mumbai run-network link carries its grade** (§9.209): `A.gradient.representation` = `link_speed`; the seven GLO-30 tiles sampled at 377,645 nodes, 788,523 of 919,235 links stamped (`_run_inputs_report.json`), clamped at 20 % (`A.gradient.grade_clamp_pct`).
 - **Every catalogue entry has a data-use disposition** (§9.209): `source_use.json` — 251 consumed, 121 discovery, 45 reference, 97 not needed with the reason, 24 unobtained, 6 unusable, **0 unread**.
 - **The pass-through merge is measured and not applied** (§9.207, D15): `src/build/merge_pass_through_nodes.py` merges 37,122 of 377,443 nodes (33,923 more held by the 500 m cap) and moves the median link 62.7 → 69.0 m at 101,306 km unchanged; the user keeps the network as converted. Nothing wires it into a build.
 - **The second city runs citywide plans through the harness against derived targets** (§9.201–§9.205, D13): the notified MMR core (2,538 leaves), 27.06 M persons for 2026, plans at a 0.05 build fraction (1.35 M), thirteen targets; a 0.1 % case is a check, not a reading (D14). Household vehicles and work destinations: [population-and-demand](population-and-demand.md). See [`cities/mumbai/docs/README.md`](../../cities/mumbai/docs/README.md).
-- **A provenance record is the package's own metadata** (§9.203): `build_manifest.record_for` no longer lets a `provenance_*.json` inherit a neighbour's source, licence and date — **724 CC-BY / 220 ODbL / 15 bespoke**; `normalise_eol.py` walks `data/raw/**/provenance*.json`.
+- **A provenance record is the package's own metadata** (§9.203): `build_manifest.record_for` no longer lets a `provenance_*.json` inherit a neighbour's source, licence and date; `normalise_eol.py` walks `data/raw/**/provenance*.json`.
 - **The network is rebuilt with its footpaths and every feed re-mapped once on it** (§9.167, #183): **181,892 → 368,230 links, 84,242 → 153,237 nodes**; remap drift stop-link 100 %, route sequences 82.3 % (§3.5); signals, crossings, dwells, run inputs, counts map and targets re-derived. Family **F34**.
-- **Three declared fields reach the config off** — `B.mode.walk_feasible_km`, `B.mode.bike_feasible_km`, `C.crowding.seated_multiplier` — declaring `inert_at` (§9.163); the GitHub Actions are pinned to SHAs.
+- **Three declared fields reach the config off** — `B.mode.walk_feasible_km`, `B.mode.bike_feasible_km`, `C.crowding.seated_multiplier` — declaring `inert_at` (§9.163).
 - **Extent** derived, never typed (§9.35, #32): the five-LGA boundary plus `A.osm.harvest_margin_m` (5000 m); 4,086 km², 1,500 core SA1s (§1).
 - **OSM harvest**: ten layers over tiles ≤ `A.osm.harvest_tile_deg` (0.4), merged by element id (§9.35); `data/raw/provenance_osm.json` (§9.141, #118).
 - **Road and active layers**: 50,182 road edges / 11,434 km, 40,195 active / 7,920 km (`README.md`), GLO-30 gradient under `A.gradient.representation` = `link_speed` (§3.3, §9.84); TfNSW speed zones within 10 m; class defaults from the city's own tags (§9.33, §9.34).
@@ -25,11 +24,13 @@
 - **MATSim network and schedules**: one base network (368,230 links, §9.167), E1 patches per scenario by `osm:way:id`; 15 GTFS feeds mapped in ONE pt2matsim build, 0 unmapped stops; day-type and variant schedules filtered, never remapped (§3.5, §11, §9.76, §9.90).
 - **Parking and land use**: `A.parking.price_hr_max` 3.2 AUD/h at the p99 of the job-density ramp, max stay 120 min (§9.31); 7,710 facilities, 4,861 observed capacities (§6); 498 frontage segments, jobs by POI index (§7).
 - **Scenarios**: S0–S6 from `schedules/base2026.zip` by explicit transformation (§3.4, §10); 30 run-input sets by `build_matsim_run_inputs.py`, the config emitted from the registry (§9.38).
-- **Registry**: **600 fields** (`cities/newcastle/docs/reference/CONFIG_REFERENCE.md`; §9.167, §9.179, §9.211, §9.213, #198); `check_hardcoding.py --strict` at 0; non-observed fields carry a sweep, `held_fixed` or `derived_from`; three unobtained fields `value: null` (§15). A `<city>` register entry is judged against the reference city's file where the active city lacks it (§9.207): Mumbai's ledger reads 225, none a stale excuse.
-- **Manifest**: 968 files in `data/MANIFEST.csv`, hashed and licensed — **733 CC-BY 4.0, 220 ODbL 1.0 and 15 bespoke** (§9.167) — from declared sources and `derived_licences` globs (§9.141, #117); the resolver refuses a bad `derived_from` or an out-of-sweep value (#124); `check_manifest.py` in CI (§9.79).
+- **Registry**: **604 fields** (`cities/newcastle/docs/reference/CONFIG_REFERENCE.md`; 600 → 604 for the host guard's four, §9.220; §9.213, #198); `check_hardcoding.py --all-cities --strict` at 0 outside each city's ledger (`cities/<city>/tests/hardcoding_debt.json`: Newcastle 15 rows, Mumbai 207; §9.220); non-observed fields carry a sweep, `held_fixed` or `derived_from`; three unobtained fields `value: null` (§15).
+- **Manifest**: 968 files in `data/MANIFEST.csv`, hashed and licensed — **733 CC-BY 4.0, 220 ODbL 1.0 and 15 bespoke** (§9.167) — from declared sources and `derived_licences` globs (§9.141, #117); the resolver refuses a bad `derived_from` or an out-of-sweep value (#124); `check_manifest.py --all-cities` in CI (§9.79, §9.220).
+- **A manifest row names its producer and its source, or the ledger says why not** (§9.220, #211): `build_manifest.py` stamps the newest `retrieved` date of a row's lineage, never the clock; a `produced_by_not_declaring` rule refuses a row whose named producer does not write it, and a `processed_without_source` ledger records the 33 Newcastle rows with no raw source (the registry-built C1 tables and `vehicles.xml`); row 598 names `build_vehicle_fuel_ratio.py` and ABS 9208.0 for `vehicle_use_ratio.json` (the observation D28 rests on, misattributed until the sixteenth report).
 - **The input contract is city-free**: HTS, counts and census read through `reader_shapes.py` against `config/schema/reader_shapes.json`, no ABS column named (§9.140, #62).
 - **Two assumptions measured** (§9.140, #63): `E.s0.heavy_rail_detour_factor` 1.037 (1.0–1.1); `B.external.interaction_rate` 0.0900, derived.
-- **Producers**: `tests/check_package.py` asserts every processed row's producer names it and refuses a builder no longer reproducing the committed demand (§9.141, #115, #116, #119, #120).
+- **Producers**: `tests/check_package.py` asserts every processed row's producer names it, refuses a builder no longer reproducing the committed demand (§9.141, #115, #116, #119, #120), judges a run card against its own city (#253) and resolves documents through `city.docs()` (#234; §9.220); `build_timing` in 126 producers (`_build_timing.json`, outside the hashed set).
+- **The extract and build layers hold no typed-in place** (§9.220, #232): the nine Newcastle extract adapters run under `main()` with two shared bodies; `TARGET_STREETS` is declared in `cities/newcastle/geometry/frontage_streets.json` (six outputs byte-identical); Mumbai's seven builder mains are split along their stages (`split_stages.py`, byte-identical per builder; `gtfs_feed.py` shared by the three feed builders) and `cities/mumbai/docs/reference/DATA_DICTIONARY.md` is generated (114 tables). The six framework contract notes live at `docs/framework/`.
 - **Toolchain**: `.tools/toolchain.json` pins Temurin JDK 25.0.4+7, pt2matsim 26.6 (MATSim 2027.0-2026w25, §9.73), Maven 3.9.9, the signals stack; SUMO descoped (§9.74).
 
 ## What is observed, derived, and still unobtained
@@ -51,22 +52,16 @@
 ## What is measured
 
 - **The count-station map is regenerated with the network** (§9.163, #82 closed): 197 rows, 0 unresolved; `20260909T015217_300it_25pct` read counts at mean +16.30 %, median −1.1 %.
-- **The `networks/matsim/*` ODbL glob is narrowed on content** (§9.159, #165): 110 of 111 rows confirmed ODbL.
-- **The 15 `transitVehicles.xml.gz` are CC-BY 4.0 on internal evidence** (§9.159): `check_manifest.py` read **512 rows agree, 0 undetermined**.
 - **Four typed network fallbacks are declared, three never fired** (§9.151, #148): only `A.active.footway_width_unknown_class_m` fires, on **830 of 40,195 active edges**.
-- **A derived file's provenance is resolved from its lineage** (§9.151, §9.158, #149): `retrieved` is the latest ancestor date, never a build time.
-- Corridor trunk: 87.5% of lanes and 97.5% of speeds observed (§2.5); kerbside, lane width and capacity of the 714 edges still imputed; speed-zone join 74.9% at 10 m (§9.34). Pre-LR: 9 of 21 segments tagged, one lane per direction (§9.71).
-- Circuity walk 1.6938, bike 1.5570, road 1.3276 (§9.142); walk speed 1.25 m/s (§9.33); SAT:SUN 1.1473 (§9.61); bike availability 0.493 (§9.78).
-- Crossings 110 and 204 a day against an assumed 30 (§9.90); ferry 107, tram 252 weekday departures (§9.113).
-- **Lineage is resolved per output and the licence boundary is checked** (§9.156, §9.158, #159): `OUTPUT_INPUTS` read statically; `share_alike_ancestor` undetermined **0**.
-- **The demand DOES carry OSM geometry** (§9.158): 3,000 of 3,000 sampled `dest_placement=poi` destinations within 5 m of an OSM POI or building — the demand rows are ODbL.
+- Corridor trunk: 87.5% of lanes and 97.5% of speeds observed (§2.5); kerbside, lane width and capacity of the 714 edges still imputed; speed-zone join 74.9% at 10 m (§9.34).
+- Circuity walk 1.6938, bike 1.5570, road 1.3276 (§9.142); walk speed 1.25 m/s (§9.33).
+- **Lineage is resolved per output and the licence boundary is checked** (§9.156, §9.158, §9.159, #159, #165): `OUTPUT_INPUTS` read statically; `share_alike_ancestor` undetermined **0**; the `networks/matsim/*` ODbL glob confirmed on content (110 of 111 rows) and the 15 `transitVehicles.xml.gz` CC-BY 4.0 (512 rows agree, 0 undetermined); the demand rows are ODbL ([population-and-demand](population-and-demand.md)).
 
 ## What is open
 
-- **The 25 % heap is measured on the footpath network; the slope is NOT re-declared** (§9.169): arm 0's `gc.log` peaks at 26.2 GiB; the rule (37.4 GiB) holds 11 GiB over it.
-- **Every vehicle has been setting the car router's link travel times** (§9.154, #154): `RUN.travel_time.filter_modes` = true is declared, MOVES RESULTS and belongs with the next family boundary.
+- **Every vehicle has been setting the car router's link travel times** (§9.154, #154): `RUN.travel_time.filter_modes` = true is declared, MOVES RESULTS and belongs with the next family boundary; re-aimed at F39's control (§9.220).
 - A CRLF producer passes `check_manifest.py` locally and fails in CI (§9.142): a Windows rebuild is followed by `normalise_eol.py`, which now reaches nested provenance records (§9.201).
-- **Mumbai's refusing hosts: 20 of 41 landed through the user's Indian VPN endpoint** (§9.209, D17 done); 22 are Wayback copies (§9.208); the 21 still unobtained carry the host's answer in the catalogue (eight behind mis-named or expired certificates, never waived; the rest 404, 504, reset or withdrawn). The OGD series and the TUS 2024 unit records wait on the user's logged-in browser downloads (`docs/lane.json`).
+- **Mumbai's refusing hosts** (§9.208, §9.209, D17 done): 20 of 41 landed through the user's Indian VPN endpoint, 22 are Wayback copies, the 21 still unobtained carry the host's answer in the catalogue (eight behind bad certificates, never waived); the OGD series and the TUS 2024 unit records wait on the user's logged-in browser (`docs/lane.json`).
 - The 2021 journey-to-work table stays an attended ABS extract (`B.external.commute_share_to_core`, §9.140). Not built: the event-demand overlay (§1); era-1 validation (§11); LiDAR, pedestrian counts, the floorspace audit (§13); two ABS DataPack URLs 404 (`STATUS.md`).
 
 ## Refused — do not re-raise
@@ -80,6 +75,7 @@
 
 ## History
 
+- §9.220 — ledgers for debt and sources
 - §9.219 — registry at 600 fields
 - §9.213 — the registry at 579 fields
 - §9.209 — printed timetables; possession; grades
@@ -94,4 +90,3 @@
 - §9.176 — intro fixed: which runs are results is the board's
 - §9.170 — documents at `docs/`; five defaults
 - §9.169 — run inputs at 250
-- §9.167 — footpath rebuild; F34

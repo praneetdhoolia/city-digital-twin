@@ -253,16 +253,105 @@ def events_accounting(out_dir):
     so. Streams the file; on a 25% arm this reads a few hundred MB of gzip and
     takes minutes, which a once-per-run close-out can afford.
     """
-    path = os.path.join(out_dir, 'output_events.xml.gz')
+    accounting, _readings = events_pass(os.path.dirname(out_dir))
+    return accounting
+
+
+def events_pass(run_dir):
+    """ONE pass over the final events file for every reader that needs one.
+
+    The 1.6 GB events file of a 25 % arm was decoded three times at a
+    close-out - here for the accounting, by report_mode_ridership for the
+    count-station tally and by transit_link_delays for the link traversals
+    (sixteenth report). The two readers' own handlers run alongside the
+    accounting here and their results are recorded beside the events file
+    (`record_events_pass`; `_summary.json` carries the stamp under
+    `events_pass`); the readers consume the recording when it is for the
+    iteration they are asked about (`recorded_events_pass`) and run their
+    own pass otherwise, so a reading is the same either way.
+
+    Returns (accounting result or None, {reading name: result}); a reader
+    whose inputs this run lacks (no schedule beside an older run, no
+    classifying station in the city) is left out and the pass still serves
+    the rest.
+    """
+    path = os.path.join(run_dir, 'output', 'output_events.xml.gz')
     if not os.path.exists(path):
-        return None
+        return None, {}
     import iteration_reading as _reading                        # noqa: PLC0415
     acc = ModeAccounting()
+    handlers, readings = [acc], {}
+    for name, factory in (('count_station_entries', _station_tally_handler),
+                          ('transit_link_traversals', _traversal_handler)):
+        try:
+            h = factory(run_dir)
+        except (OSError, SystemExit, StopIteration, KeyError, ValueError) as exc:
+            print('events pass: %s not recorded (%s)' % (name, str(exc)[:160]), flush=True)
+            continue
+        if h is not None:
+            handlers.append(h)
+            readings[name] = h
     try:
-        _reading.scan_events(path, acc)
+        _reading.scan_events(path, *handlers)
+    except OSError:
+        return None, {}
+    return acc.result(), {name: h.result() for name, h in readings.items()}
+
+
+def _station_tally_handler(run_dir):
+    import report_mode_ridership                                # noqa: PLC0415
+    return report_mode_ridership.station_tally_handler(run_dir)
+
+
+def _traversal_handler(run_dir):
+    import transit_link_delays                                  # noqa: PLC0415
+    return transit_link_delays.traversal_handler(run_dir)
+
+
+EVENTS_PASS_FILE = '_events_pass_it%d.json'
+
+
+def record_events_pass(run_dir, rec, readings):
+    """Record the readers' results from the one events pass beside the file
+    they were read from - `output/_events_pass_it<N>.json`, compact, keyed
+    to the record's reached iteration and the events file's size and mtime -
+    and return the block `_summary.json` carries (the stamp and the reading
+    names, not the readings: the transit traversals alone are 30,000 rows,
+    which no reader of the summary wants). The sidecar goes with the bulk
+    when the run is trimmed, as the events file it was made from does.
+    Returns None when there is nothing to record."""
+    out_dir = os.path.join(run_dir, 'output')
+    events_file = os.path.join(out_dir, 'output_events.xml.gz')
+    if not readings or not os.path.exists(events_file) or not isinstance(rec.get('reached_iteration'), int):
+        return None
+    st = os.stat(events_file)
+    iteration = rec['reached_iteration']
+    sidecar = EVENTS_PASS_FILE % iteration
+    payload = dict(iteration=iteration, file='output/output_events.xml.gz', bytes=int(st.st_size),
+                   mtime=int(st.st_mtime), produced_by='src/analyse/summarise_run.py', readings=readings)
+    with open(os.path.join(out_dir, sidecar), 'w', encoding='utf-8', newline='\n') as fh:
+        json.dump(payload, fh, separators=(',', ':'))
+        fh.write('\n')
+    return dict(iteration=iteration, file=payload['file'], bytes=payload['bytes'], mtime=payload['mtime'],
+                readings_file='output/' + sidecar, readings=sorted(readings))
+
+
+def recorded_events_pass(run_dir, iteration):
+    """The readings the close-out's events pass recorded for `iteration`
+    (`record_events_pass`), when the events file has not changed since; else
+    None, and the reader makes its own pass."""
+    path = os.path.join(run_dir, 'output', EVENTS_PASS_FILE % int(iteration))
+    rec = _load(path, {}) or {}
+    if rec.get('iteration') != iteration:
+        return None
+    events = os.path.join(run_dir, 'output', 'output_events.xml.gz')
+    try:
+        st = os.stat(events)
     except OSError:
         return None
-    return acc.result()
+    if [int(st.st_size), int(st.st_mtime)] != [rec.get('bytes'), rec.get('mtime')]:
+        return None
+    return rec.get('readings') or None
 
 
 class ModeAccounting:
@@ -398,8 +487,10 @@ def build(run_dir):
         except (TypeError, ValueError):
             innovation_off_at = None
 
-    integ = integrity(history, events_accounting(out_dir))
+    accounting, readings = events_pass(run_dir)
+    integ = integrity(history, accounting)
     integ['telemetry_write_failures'] = live.get('write_failures')
+    events_pass_block = record_events_pass(run_dir, rec, readings)
 
     last = history[-1] if history else {}
     doc = {
@@ -407,6 +498,7 @@ def build(run_dir):
         'generated_utc': datetime.datetime.now(datetime.timezone.utc)
                                  .strftime('%Y-%m-%dT%H:%M:%SZ'),
         'produced_by': 'src/analyse/summarise_run.py',
+        'events_pass': events_pass_block,
         'run': {
             'scenario': rec.get('scenario'),
             'day': rec.get('day'),

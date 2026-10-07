@@ -44,6 +44,19 @@ on every pass.
 
 ## State
 
+<!-- generated:library-state start -->
+Last pass **2026-10-07**, at `1b14e559` — the sixteenth report, lodged as [`20261008T003329_project_report.html`](../20261008T003329_project_report.html). Written by `render_report.py` from `field-survey.json` and `factors.json` on every pass; the prose of each pass is its own section below.
+
+| | rows | this pass |
+|---|---:|---|
+| `field-survey.json` projects | **61** | 53 reused, 5 refreshed, **3 added**; 35 of 40 calls over 4 rounds |
+| `field-survey.json` platforms | 12 | 12 reused |
+| excluded · not re-verified · gaps | 88 · 47 · **32 (7 open)** | 5 closed, 3 added |
+| `factors.json` rows | **108** | 2 added (E30, E31), 16 addenda; 2 gaps closed, 4 added, 19 in the array; `needs_research` 1; 33 of 40 calls |
+<!-- generated:library-state end -->
+
+### The pass of 25 September 2026 (the fourteenth report)
+
 Last pass **25 September 2026**, at `35b64421` (the sixty-third session: F36's
 arm 0 killed at iteration 237 by a host restart and read at 230) — the
 fourteenth report, lodged as

@@ -287,7 +287,7 @@ def pack(harvest, entries, session, allowed, pause_seconds=0.25, check=None, log
                members_listing=LISTING, formats=sorted({r['format'] for r in rows}),
                packed=datetime.now(timezone.utc).isoformat())
     harvest.provenance.write_text(json.dumps({'files': [rec]}, indent=2, ensure_ascii=False) + '\n',
-                                  encoding='utf-8')
+                                  encoding='utf-8', newline='\n')
     # the loose pairs now live in the archive with the same bytes and hashes
     for provenance, path in retire:
         provenance.unlink(missing_ok=True)
@@ -328,7 +328,7 @@ def register(harvest, entries):
     if not replaced:
         kept.append(entry)
     catalogue['sources'] = kept
-    path.write_text(json.dumps(catalogue, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    path.write_text(json.dumps(catalogue, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     return retired
 
 

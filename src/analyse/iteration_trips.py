@@ -93,7 +93,8 @@ def trips_table_exists(run_dir, iteration):
 
 
 def iterations_with_plans(run_dir):
-    """Iterations whose experienced plans exist, ascending."""
+    """Iterations whose experienced plans exist, ascending - on disk, record
+    or no record; `citable_plans_iterations` is the list a reader may quote."""
     out = []
     root = os.path.join(run_dir, 'output', 'ITERS')
     if not os.path.isdir(root):
@@ -103,6 +104,12 @@ def iterations_with_plans(run_dir):
         if m and plans_path(run_dir, int(m.group(1))):
             out.append(int(m.group(1)))
     return sorted(out)
+
+
+def citable_plans_iterations(run_dir):
+    """`iterations_with_plans` clamped to the run's record (iteration_reading)."""
+    import iteration_reading as _reading                      # noqa: PLC0415
+    return _reading.citable_iterations(run_dir, iterations=iterations_with_plans(run_dir))
 
 
 def transit_modes(run_dir):
@@ -141,6 +148,8 @@ def derive(run_dir, iteration, route_mode=None):
     `route_mode` is `extract_metrics.transit_route_modes(run_dir)`; pass it in
     when deriving several iterations so the schedule is read once.
     """
+    import iteration_reading as _reading                      # noqa: PLC0415
+    _reading.refuse_past_record(run_dir, iteration)
     path = plans_path(run_dir, iteration)
     if path is None:
         raise SystemExit('iteration %d wrote no experienced plans under %s'
@@ -411,17 +420,14 @@ def main():
     a = ap.parse_args()
     # `--run` means the same thing in every reader: a run NAME from the store,
     # or a path to a run directory (src/run/results_store.py).
-    import os as _os_r, sys as _sys_r
-    _r = _os_r.path.join(_os_r.path.dirname(_os_r.path.dirname(
-        _os_r.path.abspath(__file__))), 'run')
-    import results_store as _store_r
-    a.run = _store_r.resolve_or_die(a.run)
+    import results_store
+    a.run = results_store.resolve_or_die(a.run)
 
     if a.validate is not None:
         raise SystemExit(0 if validate(a.run, a.validate) else 1)
-    have = iterations_with_plans(a.run)
+    have = citable_plans_iterations(a.run)
     if not have:
-        raise SystemExit('no experienced plans under %s' % a.run)
+        raise SystemExit('no citable experienced plans under %s' % a.run)
     it = a.it if a.it is not None else have[-1]
     trips, unknown = derive(a.run, it)
     c = collections.Counter(t.main_mode for t in trips)

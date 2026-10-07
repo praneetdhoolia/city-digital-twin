@@ -59,17 +59,27 @@ GATES = {
     'RUN.qsim.motorcycle_roster': ('per_person', 'the baseline population carries no households and writes no motorbikeAvail (B.motorbike.representation = carve), so there is no household motorcycle to share; `per_person` leaves the vehicles exactly as they ran'),
     'C.time_weights.service_interval_function': ('linear', 'service quality is `absent` in this baseline, so no interval is charged at all; `linear` is the form the gate would switch on first and adopts no Australian appraisal function for Mumbai (the ATAP M1 coefficients are adopted as the reference city declares them and are read by nothing here)'),
     'B.motorbike.representation': ('carve','the reference city\'s rider-licence and household-motorcycle choice (9.214) is not applied: this baseline puts motorbike in each person\'s permittedModes (9.186), writes no motorbikeAvail, and prices no motorbike running cost - `carve` is the value that leaves that path exactly as it ran'),
+    # the contract derives the launcher's reads THROUGH the assembler since
+    # the sixteenth report (#241), so the fare table and the network-walk
+    # access reach are run keys; both mechanisms are off here and the fields
+    # they silence are declared inert at the values this baseline ran with
+    'RUN.routing.pt_submode_scoring': ('aggregate', 'the scheduled modes score as one pt mode and no per-submode fare table is emitted (the A.fare.* fields are the reference city\'s Opal fares, inert here); `aggregate` is the value every Mumbai case has run with'),
+    'RUN.transit_router.access_egress_basis': ('beeline', 'the transit router walks to a stop on the beeline, so the network-walk search radii (RUN.transit_router.access_*) are not read; `beeline` is the value every Mumbai case has run with'),
 }
 # A gate at one of these values switches its mechanism OFF; the fields under
 # it are then declared, adopted and inert. Any other gate value switches it on.
-OFF = {'absent', 'implicit_delay', 'per_person', 'carve', 'network_walk', 'nearest', False}
+OFF = {'absent', 'implicit_delay', 'per_person', 'carve', 'network_walk', 'nearest', 'aggregate',
+       'beeline', False}
 # Fields the gates above silence, by key prefix: declared, adopted, inert.
 GATED_BY = {
     'A.signals.': 'A.signals.representation', 'A.gradient.': 'A.gradient.representation',
     'A.crossings.': 'A.crossings.representation', 'A.bike_stress.': 'A.bike_stress.representation',
     'B.ride.': 'B.ride.pairing_enabled', 'B.taxi.': 'A.taxi.fleet_representation',
     'RUN.transit_router.no_route_walk_reach': 'RUN.transit_router.no_route_walk',
+    'RUN.transit_router.access_': 'RUN.transit_router.access_egress_basis',
     'RUN.routing.activity_link_service_hours': 'RUN.routing.activity_link_capacity',
+    'A.fare.': 'RUN.routing.pt_submode_scoring',
+    'C.scoring.motorbike_fuel_ratio': 'B.motorbike.representation',
     'CAL.': None,
 }
 # Mumbai's own facts, where adopting the reference city's value would be wrong.
@@ -334,9 +344,14 @@ def main():
     twins = move_bound_twins(mine, reference)
     required = CONTRACT['fields']
     producers = {'src/build/build_matsim_network.py', 'src/build/build_manifest.py'}
+    # a run key read only under the C1 translation (required_if_translation,
+    # #241) is not this city's: its scoring is bound fields
+    translation = (mine.get('RUN.scoring.translation') or OVERRIDES['RUN.scoring.translation']).get('value')
     applicable = {key for key, spec in required.items()
-                  if spec.get('required_by', 'run') == 'run'
-                  or (isinstance(spec.get('required_by'), list) and any(b in producers for b in spec['required_by']))}
+                  if (spec.get('required_by', 'run') == 'run'
+                      or (isinstance(spec.get('required_by'), list)
+                          and any(b in producers for b in spec['required_by'])))
+                  and spec.get('required_if_translation') in (None, translation)}
     DECLARED.update(k for k in mine if k not in {s for s, _ in twins.values()})
     DECLARED.update(twins)
     applicable |= ALSO_ADOPT
@@ -397,4 +412,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

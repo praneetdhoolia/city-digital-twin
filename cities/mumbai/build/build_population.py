@@ -242,6 +242,22 @@ def projected_share(share_2011_pct, growth):
     return 1.0 - math.exp(-growth * -math.log(1.0 - s))
 
 
+def district_cell(table, key, fallback, counts, what):
+    """The (district, residence[, sex]) cell of a published table, or the
+    district's `fallback` residence cell when the leaf's own is unpublished -
+    counted per district under `what` in the population report, and refused
+    when neither exists (a census district with no cell at any level is a
+    missing input, not a leaf to synthesise from another district)."""
+    if key in table:
+        return table[key]
+    alt = (key[0], fallback) + tuple(key[2:])
+    if alt not in table:
+        raise SystemExit('build_population.py: %s has no cell for %s nor the district\'s %r cell %s'
+                         % (what, key, fallback, alt))
+    counts[what][key[0]] += 1
+    return table[alt]
+
+
 def profile_for(profiles, leaf):
     """The leaf's own HL-14 row, else its town's, its subdistrict's, its district's."""
     d, sd, tv, w = leaf['district_code'], leaf['subdistrict_code'], leaf['town_village_code'], leaf['ward_code']
@@ -276,31 +292,10 @@ def draw_sizes(rng, profile, n_persons, open_max):
     return sizes[sizes > 0]
 
 
-def main():
-    cfg = registry.load()
-    rng = np.random.default_rng(int(cfg.get('B.seed.master')))
-    top = int(cfg.get('B.baseline.open_age_upper_years'))
-    adult = int(cfg.get('B.baseline.adult_age_years'))
-    open_max = int(cfg.get('B.population.household_size_open_band_max'))
-    licence_p = float(cfg.get('B.baseline.licence_given_vehicle_probability'))
-    # UNOBTAINED: the registry refuses a point value; the sweep's floor (nobody
-    # aged 20-24 attends) is the member taken, explicitly, and the report says so
-    tertiary_sweep = cfg.sweep('B.population.tertiary_attendance_rate_20_24')
-    tertiary = float((tertiary_sweep['interval'] if isinstance(tertiary_sweep, dict) else tertiary_sweep)[0])
-    income_median, income_sigma, income_min = (cfg.get('B.baseline.income_median_monthly_inr'),
-                                               cfg.get('B.baseline.income_log_sigma'),
-                                               cfg.get('B.baseline.income_minimum_monthly_inr'))
-
-    extent = {r['geography_id']: r for r in csv.DictReader(open(city.path('data/processed/zones/mmr_extent.csv'), encoding='utf-8'))}
-    leaves = [r for r in rows('census_2011_leaf_controls.csv') if extent[r['geography_id']]['tier'] == 'core']
-    districts = sorted({r['district_code'] for r in leaves})
-    factors, structure = projection_factors(cfg, districts)
-    ages = age_distributions(cfg, districts, structure)
-    work = worker_rates(districts, top)
-    attend = attendance_rates(districts, top)
-    profiles = household_profiles(cfg)
-    growth = possession_growth(cfg)
-
+def synthesise_leaves(adult, ages, attend, cfg, factors, growth, income_median, income_min, income_sigma, leaves, licence_p, open_max, profiles, rng, tertiary, work):
+    """Every core leaf's households and persons drawn from its controls and written as
+    they come (append mode, one header). Returns the per-district tallies, the
+    leaf count, the profile levels taken and the district-cell substitutions."""
     out_persons = Path(city.path(PERSONS))
     out_households = Path(city.path(HOUSEHOLDS))
     out_persons.parent.mkdir(parents=True, exist_ok=True)
@@ -308,6 +303,9 @@ def main():
     totals = Counter()
     by_district = defaultdict(Counter)
     profile_levels = Counter()
+    # leaf cells drawn from the district's Urban / Total cell because the
+    # leaf's own residence cell is unpublished, per district (district_cell)
+    substituted = {k: Counter() for k in ('age_distribution', 'worker_rates', 'attendance_rates')}
     first = True
     for leaf in sorted(leaves, key=lambda r: r['geography_id']):
         code, residence = leaf['district_code'], leaf['rural_urban']
@@ -335,7 +333,7 @@ def main():
             idx = np.flatnonzero(sex == s)
             if not len(idx):
                 continue
-            w = ages[(code, residence, s)] if (code, residence, s) in ages else ages[(code, 'Urban', s)]
+            w = district_cell(ages, (code, residence, s), 'Urban', substituted, 'age_distribution')
             n06 = int(round(len(idx) * share_06))
             young, old = w[:7] / max(w[:7].sum(), 1e-12), w[7:] / max(w[7:].sum(), 1e-12)
             pick = rng.permutation(idx)
@@ -348,7 +346,7 @@ def main():
             idx = np.flatnonzero(sex == s)
             if not len(idx):
                 continue
-            main_w, marg_w = work[(code, residence, s)] if (code, residence, s) in work else work[(code, 'Total', s)]
+            main_w, marg_w = district_cell(work, (code, residence, s), 'Total', substituted, 'worker_rates')
             scale = len(idx) / max(float(leaf['male_persons_count' if s == 'male' else 'female_persons_count']), 1.0)
             n_main = min(int(round(float(leaf[col_main]) * scale)), len(idx))
             n_marg = min(int(round(float(leaf[col_marg]) * scale)), len(idx) - n_main)
@@ -364,7 +362,7 @@ def main():
             chosen = rng.choice(rest, size=n_marg, replace=False, p=pg / pg.sum()) if n_marg and len(rest) else np.array([], dtype=int)
             status[chosen] = 'marginal_worker'
         # school attendance: C-12 by age and activity for 5-19; 20-24 as declared (unobtained -> 0)
-        rates = attend[(code, residence)] if (code, residence) in attend else attend[(code, 'Total')]
+        rates = district_cell(attend, (code, residence), 'Total', substituted, 'attendance_rates')
         p_attend = np.zeros(n)
         for act in ('main_worker', 'marginal_worker', 'non_worker'):
             m = status == act
@@ -425,6 +423,11 @@ def main():
         t['car_available'] += int(car_avail.sum())
         t['two_wheeler_available'] += int(tw_avail.sum())
         totals['leaves'] += 1
+    return by_district, profile_levels, substituted, totals
+
+
+def district_summaries(by_district, factors, growth):
+    """The per-district derived rates and the grand totals the report carries."""
     for code, t in by_district.items():
         t['projection_factor_male'] = round(factors[code]['male'], 4)
         t['projection_factor_female'] = round(factors[code]['female'], 4)
@@ -442,6 +445,36 @@ def main():
         for k in ('persons', 'households', 'persons_2011', 'households_2011', 'main_workers', 'marginal_workers',
                   'students', 'licence_holders', 'car_available', 'two_wheeler_available'):
             grand[k] += t[k]
+    return grand
+
+
+def main():
+    cfg = registry.load()
+    rng = np.random.default_rng(int(cfg.get('B.seed.master')))
+    top = int(cfg.get('B.baseline.open_age_upper_years'))
+    adult = int(cfg.get('B.baseline.adult_age_years'))
+    open_max = int(cfg.get('B.population.household_size_open_band_max'))
+    licence_p = float(cfg.get('B.baseline.licence_given_vehicle_probability'))
+    # UNOBTAINED: the registry refuses a point value; the sweep's floor (nobody
+    # aged 20-24 attends) is the member taken, explicitly, and the report says so
+    tertiary_sweep = cfg.sweep('B.population.tertiary_attendance_rate_20_24')
+    tertiary = float((tertiary_sweep['interval'] if isinstance(tertiary_sweep, dict) else tertiary_sweep)[0])
+    income_median, income_sigma, income_min = (cfg.get('B.baseline.income_median_monthly_inr'),
+                                               cfg.get('B.baseline.income_log_sigma'),
+                                               cfg.get('B.baseline.income_minimum_monthly_inr'))
+
+    extent = {r['geography_id']: r for r in csv.DictReader(open(city.path('data/processed/zones/mmr_extent.csv'), encoding='utf-8'))}
+    leaves = [r for r in rows('census_2011_leaf_controls.csv') if extent[r['geography_id']]['tier'] == 'core']
+    districts = sorted({r['district_code'] for r in leaves})
+    factors, structure = projection_factors(cfg, districts)
+    ages = age_distributions(cfg, districts, structure)
+    work = worker_rates(districts, top)
+    attend = attendance_rates(districts, top)
+    profiles = household_profiles(cfg)
+    growth = possession_growth(cfg)
+
+    by_district, profile_levels, substituted, totals = synthesise_leaves(adult, ages, attend, cfg, factors, growth, income_median, income_min, income_sigma, leaves, licence_p, open_max, profiles, rng, tertiary, work)
+    grand = district_summaries(by_district, factors, growth)
     report = dict(
         source='synthetic_from_census_2011_controls_projected_to_base_year',
         base_year=city.descriptor()['base_year'], seed=int(cfg.get('B.seed.master')),
@@ -450,6 +483,7 @@ def main():
         persons_2011=grand['persons_2011'], households_2011=grand['households_2011'],
         by_district=dict(sorted(by_district.items())),
         household_profile_levels=dict(profile_levels),
+        district_cell_substitutions={what: dict(sorted(c.items())) for what, c in substituted.items()},
         totals=dict(grand),
         assumed=['licence holding: B.baseline.licence_given_vehicle_probability for an adult in a household with a '
                  'two-wheeler or a car; not published',
@@ -475,4 +509,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     sys.exit(main())

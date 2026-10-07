@@ -17,7 +17,6 @@ The metrics are synthetic dicts, the targets are synthetic rows: no run, no
 reads them from the active city's own adapter), so no survey label is typed
 here.
 """
-import pytest
 
 import fit
 

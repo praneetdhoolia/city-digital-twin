@@ -106,9 +106,12 @@ def main():
                               'Combined categories and the two tables overlap; never sum across them.',
                               'Dashboard detail page contains only its first page, not the whole establishment dataset.'])
     Path(city.path('data/processed/observed/_ec6_controls_audit.json')).write_text(
-        json.dumps(audit,indent=2)+'\n',encoding='utf-8')
+        json.dumps(audit,indent=2)+'\n',encoding='utf-8', newline='\n')
     print(json.dumps(audit))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

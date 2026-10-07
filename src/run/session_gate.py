@@ -188,9 +188,12 @@ GATES = [
     # built bytes drifted from its manifest for a week unseen (#252)
     ('manifest', [PY, 'tests/check_manifest.py', '--all-cities'], False),
     ('compile', [PY, '-m', 'compileall', '-q', 'src', 'tests', 'cities', 'run.py'], False),
-    ('hardcoding', [PY, 'src/registry/check_hardcoding.py', '--strict'], False),
-    ('doc currency', [PY, 'tests/check_doc_currency.py', '--strict'], False),
-    ('doc shape', [PY, 'tests/check_doc_shape.py', '--strict'], False),
+    ('hardcoding', [PY, 'src/registry/check_hardcoding.py', '--all-cities', '--strict'], False),
+    # every city's claims and shape, not the default city's alone: Mumbai's front
+    # page drifted through three reports under a one-city gate (the sixteenth
+    # report, C9 and C21)
+    ('doc currency', [PY, 'tests/check_doc_currency.py', '--strict', '--all-cities'], False),
+    ('doc shape', [PY, 'tests/check_doc_shape.py', '--strict', '--all-cities'], False),
     ('doc links', [PY, 'tests/check_doc_links.py', '--strict'], False),
     # a credential in a tracked file is published by the next push (the
     # fourteenth report, 25 September 2026)
@@ -459,6 +462,17 @@ def handoff_checks():
         if stamped != today:
             stale.append(os.path.basename(rel))
     _line('positions stamped', not stale, 'changed but not stamped today: ' + ', '.join(stale), failed)
+    # 4. no position page is read-through more than three sections behind the
+    #    record, and every page whose topic has a reading of the newest family
+    #    names it (the sixteenth report: two pages stamped F35 three results
+    #    later); the second-homes scan is informational - it prints what a page
+    #    restates of the board, and the handoff decides what to retire
+    rc, out = _run([PY, 'src/analyse/positions.py', '--check', '--stale'], 120)
+    stale_pages = [l for l in out.splitlines() if l.startswith('STALE')]
+    _line('positions stale', rc == 0 and not stale_pages, ' / '.join(stale_pages)[:300] or out.strip()[-300:], failed)
+    rc, out = _run([PY, 'src/analyse/positions.py', '--second-homes'], 120)
+    homes = [l for l in out.splitlines() if l.strip() and not l.startswith('==')]
+    print('  second homes       %s' % ('none' if not homes else '%d restated figure(s) - see positions.py --second-homes' % len(homes)))
     print()
     if failed:
         print('HANDOFF CHECKS FAILED: %s' % ', '.join(failed))

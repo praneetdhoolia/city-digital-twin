@@ -76,9 +76,12 @@ def main():
                      'Names lack census codes and require historical geography reconciliation.',
                      'No village has been inserted, dropped or assigned a model polygon to resolve count conflicts.'])
     Path(city.path('data/processed/observed/_extended_area_villages_audit.json')).write_text(
-        json.dumps(audit, indent=2)+'\n', encoding='utf-8')
+        json.dumps(audit, indent=2)+'\n', encoding='utf-8', newline='\n')
     print(json.dumps(audit, indent=2))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

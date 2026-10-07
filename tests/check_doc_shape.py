@@ -72,13 +72,26 @@ def _lines(path: Path) -> list[str]:
     return path.read_text(encoding="utf-8").splitlines()
 
 
-def check_board(city: Path, spec: dict) -> list[str]:
+def check_board(city: Path, spec: dict, latest_family: str | None = None) -> list[str]:
     path = artefact(city, spec["path"])
     if not path.exists():
         return []
     text = path.read_text(encoding="utf-8")
     problems = []
     present = set(GENERATED.findall(text))
+    claim = spec.get("open_family_claim")
+    if claim and latest_family:
+        # the ledger's newest key is `F39-...`; a hand line says `F39 is open`
+        newest_short = latest_family.split("-", 1)[0]
+        hand_text = GENERATED.sub("", text)
+        for i, l in enumerate(text.splitlines(), 1):
+            if l not in hand_text:
+                continue
+            for m in re.finditer(claim, l):
+                if "F" + m.group(1) != newest_short:
+                    problems.append(f"{spec['path']}:{i}: a hand line says 'F{m.group(1)} is open' but the "
+                                    f"ledger's newest family is {newest_short} - the open family's one home "
+                                    f"is the generated state block; say what the older family closed with")
     cap = spec.get("max_last_updated_lines")
     if cap:
         lines = text.splitlines()
@@ -158,6 +171,11 @@ def check_brief(city: Path, spec: dict, latest_family: str | None) -> list[str]:
         problems.append(f"{spec['path']}: stamped for family '{m.group(1)}' but the "
                         f"ledger's newest family is '{latest_family}' - the brief was "
                         f"not rewritten for the family it describes")
+    commit = spec.get("commit_stamp")
+    if commit and not re.search(commit, text):
+        problems.append(f"{spec['path']}: no commit stamp matching {commit!r} - the header's "
+                        f"**Commit:** carries a 7-40 character sha (build_status_board.py writes it), "
+                        f"never a placeholder")
     return problems
 
 
@@ -206,10 +224,15 @@ def check_positions(city: Path, spec: dict, family_keys: list[str]) -> list[str]
     ref = re.compile(spec.get("reference_pattern", "§"))
     for page in sorted(d.glob("*.md")):
         rel = f"{spec['dir']}/{page.name}"
-        lines = _lines(page)
+        full_text = page.read_text(encoding="utf-8")
+        # the caps bound the hand-written page: a generated block (the families
+        # table rendered from the ledger by build_status_board.py, #229) is the
+        # artefact's, as the board's hand-line cap already excludes its blocks
+        hand_text = GENERATED.sub("", full_text)
+        lines = hand_text.splitlines()
         if len(lines) > spec["max_lines"]:
             problems.append(f"{rel}: {len(lines)} lines against a cap of {spec['max_lines']}")
-        size = page.stat().st_size
+        size = len(hand_text.encode("utf-8"))
         if spec.get("max_bytes") and size > spec["max_bytes"]:
             problems.append(f"{rel}: {size:,} bytes against a cap of {spec['max_bytes']:,} - a "
                             f"closed family's reading is a History line, not a paragraph (#205)")
@@ -258,7 +281,7 @@ def check_positions(city: Path, spec: dict, family_keys: list[str]) -> list[str]
                                     f"the ledger")
         if page.name == spec.get("families_page"):
             for key in family_keys:
-                if key not in text:
+                if key not in full_text:
                     problems.append(f"{rel}: family '{key}' from the ledger is not on the "
                                     f"families page")
     return problems
@@ -328,7 +351,7 @@ def run() -> tuple[list[str], int]:
     problems: list[str] = []
     checks = 0
     for name, fn, args in (
-        ("board", check_board, (city, spec["board"])),
+        ("board", check_board, (city, spec["board"], latest)),
         ("brief", check_brief, (city, spec["brief"], latest)),
         ("record", check_record, (city, spec["record"])),
         ("positions", check_positions, (city, spec["positions"], family_keys)),
@@ -357,5 +380,15 @@ def main() -> int:
     return 1 if (problems and args.strict) else 0
 
 
+def all_cities() -> int:
+    """Run this check once per city under cities/ and fail if any city fails
+    (the gate and CI both call this; the sixteenth report, C9 and C21: a
+    second city's front page drifted unseen under a default-city gate)."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+    import city as city_module  # noqa: PLC0415
+    return city_module.run_per_city(__file__, args=[a for a in sys.argv[1:] if a != "--all-cities"],
+                                    needs=str(Path("docs") / "README.md"))
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(all_cities() if "--all-cities" in sys.argv[1:] else main())

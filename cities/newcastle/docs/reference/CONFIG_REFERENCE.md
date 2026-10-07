@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 600 fields are made of
+## What the 604 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 43 | computed from observed data in this package |
 | `derived` | 56 | follows from another registry field by identity |
 | `literature` | 87 | a published value, not specific to this city |
-| `assumed` | 223 | chosen without direct empirical support |
-| `definition` | 152 | fixed by the formulation, not an empirical quantity |
+| `assumed` | 226 | chosen without direct empirical support |
+| `definition` | 153 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 578 | usable point value |
+| `active` | 582 | usable point value |
 | `computed` | 11 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 7 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 342 sweeps are for
+### What the 345 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 21 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 297 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 300 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 24 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -4326,7 +4326,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 117 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 121 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -4350,11 +4350,14 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.machine.event_handler_threads` | `4` | threads | `definition` | - |
 | `RUN.machine.events_one_thread_per_handler` | `false` | boolean | `definition` | - |
 | `RUN.machine.events_synchronize_on_simsteps` | `true` | boolean | `definition` | - |
+| `RUN.machine.free_ram_margin_gib` | `6.0` | GiB | `assumed` | 2 - 12 |
 | `RUN.machine.gc_collector` | `ParallelGC` | enum | `assumed` | `ParallelGC`, `G1GC` |
 | `RUN.machine.gc_log` | `true` | boolean | `definition` | - |
 | `RUN.machine.heap_floor_gib` | `15.6` | GiB | `measured` | **held fixed** |
 | `RUN.machine.heap_per_fraction_gib` | `87` | GiB_per_unit_fraction | `measured` | **held fixed** |
 | `RUN.machine.jfr_profile` | `false` | boolean | `definition` | - |
+| `RUN.machine.other_process_max_cores` | `1.0` | cores | `assumed` | 0.5 - 4 |
+| `RUN.machine.probe_max_host_cpu_pct` | `90.0` | percent | `assumed` | 75 - 100 |
 | `RUN.machine.replanning_threads` | `20` | threads | `definition` | 1 - 24 |
 | `RUN.machine.seed` | `20260810` | integer_seed | `definition` | - |
 | `RUN.machine.telemetry_requires_simstep_barrier` | `true` | boolean | `definition` | - |
@@ -4410,6 +4413,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.routing.network_modes` | `["car", "ride", "truck", "motorbike", "walk", "bike", "taxi"]` | enum | `definition` | - |
 | `RUN.routing.pt_submode_scoring` | `per_submode` | enum | `assumed` | `per_submode`, `aggregate` |
 | `RUN.routing.routing_randomness` | `3.0` | dimensionless | `literature` | 0 - 5 |
+| `RUN.sample.arm_fraction_floor` | `0.25` | share_of_population | `definition` | - |
 | `RUN.sample.flow_capacity_factor` | *(null - unobtained)* | share_of_capacity | `derived` | derived: flowCapacityFactor = RUN.sample.fraction, the standard MATSim scaling  |
 | `RUN.sample.fraction` | `0.01` | share_of_population | `assumed` | 0.01 - 0.4 |
 | `RUN.sample.storage_capacity_exponent` | `1.0` | exponent | `derived` | derived: storageCapacityFactor = fraction ** 1.0 = flowCapacityFactor. MATSim e |
@@ -4564,6 +4568,14 @@ Whether the qsim waits for the events pipeline at every sim-step. Declared for t
 
 ***definition** · status **active** · DECISIONS.md §9.59 · MATSim `eventsManager.synchronizeOnSimSteps`*
 
+#### `RUN.machine.free_ram_margin_gib`
+
+Free physical memory the host must hold at launch beyond RUN.machine.xmx, in GiB; the launcher refuses below the heap plus this margin (src/run/run_matsim.py refuse_loaded_host), reading the host the way every progress write does (procs.host_load). Declared on 8 October 2026 (sixteenth project report, performance rank 2): F39's control carried a 2.09 h band of full-GC pauses of the paging signature that cost F37 5.56 h, and the host's free memory was recorded at every write and refused on by nothing. It changes what the launcher REFUSES, never what the model does. 0 = no margin bar.
+
+***assumed** · status **active** · DECISIONS.md §9.220 · sweep role **uncertainty***
+
+> **Sweep basis.** A LAUNCH REFUSAL'S MARGIN, not a model parameter: how much physical memory the host must have free beyond RUN.machine.xmx before the JVM starts, for the JVM's own non-heap (metaspace, 40 threads' stacks, the GC's card tables - not measured on this host), the harness, the digest, the viewer and the mode reporter the gate watcher runs (which reads a 25 % trips table into memory). 6 GiB is chosen, not measured: the 48 GB heap on the 63.46 GB host leaves 15.5 GB for everything else, and the control paged for 2.09 h (iterations 160-205, 21 full collections over 60 s, max 537 s) while a co-tenant held some of it. The interval runs from the JVM's own overhead alone (2) to twice the chosen margin (12); the first _host.jsonl of an arm that pages or does not is what measures it. 0 switches the bar off.
+
 #### `RUN.machine.gc_collector`
 
 The JVM garbage collector the launcher passes (-XX:+Use<collector>). Typed as ParallelGC in the launcher until 16 September 2026; declared so the one flag that decides an arm's GC share is visible and sweepable like RUN.machine.threads.
@@ -4603,6 +4615,22 @@ The sample-dependent part of the heap rule. At 25 % it is 21.75 GiB on top of th
 Whether the JVM records a Java Flight Recorder profile of the run into <run>/profile.jfr. OBSERVATION ONLY - JFR samples the already-running threads and writes its own file; it changes no MATSim state, no random draw and no output, so a profiled run and an unprofiled one are the same run and DO NOT open a family. It exists because the iteration's cost has been argued from the MATSim stopwatch alone, which decomposes an iteration only as far as its named phases: the mobsim's 168 s at the F28 gate is one undivided number, and every cut proposed against it since 9.142 has been reasoned rather than measured. `settings=profile` samples every thread's stack, so the mobsim, the replanning pool and the event-handler pool each decompose to the method. Default false because a recording costs a few per cent of wall time and a file; turn it on in a timing-probe overlay, never in an arm whose stopwatch is being quoted.
 
 ***definition** · status **active** · DECISIONS.md §9.154*
+
+#### `RUN.machine.other_process_max_cores`
+
+The most CPU, in cores, another process may hold at launch; the launcher refuses a launch beside a process over it (src/run/run_matsim.py refuse_loaded_host, from procs.host_load's top_other_process over one RUN.monitor.poll_s). Declared on 8 October 2026 (sixteenth project report): the three daytime probes of 30 September 2026 quoted 37.0, 50.5 and 27.7 h for one build whose control had run 27.9 h - a probe launched beside a loaded host prices the host, not the build (9.219). It changes what the launcher REFUSES, never what the model does. 0 = no CPU bar.
+
+***assumed** · status **active** · DECISIONS.md §9.220 · sweep role **uncertainty***
+
+> **Sweep basis.** A LAUNCH REFUSAL'S BAR: the CPU, in logical cores held over one monitor poll (RUN.monitor.poll_s), that a process other than the run's own may be using at launch before the launch is refused. The mobsim is declared at 16 threads and the replanning pool at 20 on a 24-logical-core host (RUN.machine.threads, RUN.machine.replanning_threads), so a co-tenant holding a whole core competes with the run for a core it was measured to want. One core is the figure the sixteenth report named; the interval runs from half a core (an indexer, a browser tab) to the four the events handlers hold. Measured on nothing yet: the one host sample each of the four F39 probes kept (the last, written after the run ended) shows WmiPrvSE.exe, the WMI provider host, at 1.1-1.7 cores - whether anything held a core DURING those runs is what _host.jsonl will say from now on. 0 switches the bar off.
+
+#### `RUN.machine.probe_max_host_cpu_pct`
+
+The host CPU busy % recorded over a probe's iterations (results/raw/<run>/_host.jsonl, written each RUN.monitor.progress_interval_s by the progress digest) above which arm_cost.py refuses to price an arm on that probe and says so. Declared on 8 October 2026 (sixteenth project report): the daytime probes of 30 September 2026 quoted 37.0-50.5 h for a build whose control ran 27.9 h, and nothing in the pricer read the probe's host load (9.219). When a control exists in the family, its own wall clock is printed beside the quote as the pair price. It changes what the pricer QUOTES, never what the model does; 100 = no bar.
+
+***assumed** · status **active** · DECISIONS.md §9.220 · sweep role **uncertainty***
+
+> **Sweep basis.** A PRICING RULE'S BAR, not a model parameter: the host's CPU busy % (every process, over each digest interval) above which a probe's stopwatch priced the host and not the build, so arm_cost.py refuses to quote from it. The run itself holds 16 mobsim threads, 20 replanning threads and 4 handler threads of 24 logical cores, so a clean probe is expected to read between the mobsim's 67 % and the replanning pool's 83 %, and a host at 90 % or more over a probe's iterations is one where something else is taking the rest. The interval runs from the mobsim's own share (75, below which no probe on this host can read) to 100 (no bar). Measured on no probe yet: _host.jsonl exists from this declaration on, and the first probe that keeps one measures what a clean iteration reads. 100 switches the bar off.
 
 #### `RUN.machine.replanning_threads`
 
@@ -4987,6 +5015,12 @@ The width of the random utility the least-cost-path router draws per agent, so t
 ***literature** · status **active** · DECISIONS.md §9.164 · MATSim `routing.routingRandomness` · sweep role **uncertainty***
 
 > **Sweep basis.** 0.0 is a deterministic least-cost router - every agent between one pair of links takes the identical path - and 3.0 is the value MATSim's own comment recommends ("3.0 seems to be a good value"), the width parameter of the log-normal distribution the money-versus-time trade-off is drawn from. WHAT THE SWEEP ANSWERS: how much of the route spread on this network is heterogeneous taste and how much is the network's own geometry. It bears on the count rung directly, because a deterministic router concentrates flow onto single links and a random one spreads it across parallel ones.
+
+#### `RUN.sample.arm_fraction_floor`
+
+The sample fraction below which an ARM - a run whose RUN.controler.last_iteration is at or above its declared sweep's floor, the line run.py's foreground refusal draws - is refused by the launcher unless --override-reason states why and the reason is written to the issue gate's override ledger (run.py refuse_arm_fraction). THE 25 %-ONLY DIRECTIVE (user, 1 September 2026; 9.139, 9.149): every P4 arm runs at 25 %, and a 20-45 h arm at the wrong fraction is the class that cost 151.6 of 405.3 machine hours before 9 September (#209). A definition, not an empirical value: the directive fixes it, and a city whose campaign fraction is another declares another. Probes and smokes below the arm horizon are never asked. 0 switches the bar off. The approvals-ledger half of #209 is the user's decision and is not here.
+
+***definition** · status **active** · DECISIONS.md §9.139, 9.149*
 
 #### `RUN.sample.flow_capacity_factor`
 

@@ -2,14 +2,13 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 30 September 2026 (sixty-fourth session) · **Record read through:** §9.219 · **Written against family:** `F39`
+**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.220 · **Written against family:** `F39`
 
 ## What is built
 
-- **The TfNSW bespoke-table request is DRAFTED, not sent** (§9.167, #50): `docs/requests/tfnsw_hts_bespoke_tables.md` asks for the four cells the CKAN API lacks; HELD; the four cells searched everywhere public, found nowhere (§9.172).
-
 - **Mumbai's households carry their 2026 vehicles** (§9.209): `derive_vehicle_possession_growth.py` grows each district's 2011 HL-14 two-wheeler and car shares by the registered stock per household through the Poisson at-least-one identity (`B.population.vehicle_possession_projection`): Mumbai Suburban 15.3 → 39.9 % and 12.8 → 31.6 % (`_vehicle_possession_growth_report.json`).
 - **Mumbai's workers go where the buildings are** (§9.209): `build_activity_attraction.py` weights every work candidate by the GHSL 2025 built volume within 300 m (`B.activities.work_attraction`); `build_plans.py` draws inside the B-28 band by it.
+- **Mumbai's builders refuse instead of looping** (§9.220): `build_plans.py` refuses an empty work band and counts `no_candidate` once per person; `build_population.py` counts every district-cell substitution (`district_cell_substitutions`, all empty on the real data) and refuses when no cell exists.
 
 **B1 — persons and households (`src/build/build_population.py`, seed 20260810, the 1,500 core SA1s only).**
 
@@ -46,13 +45,13 @@
 
 ## The state on disk
 
-- **F38's plans** (§9.214, `_plans_report.json`): WEEKDAY **622,174 persons** (core 510,346, external 6,142, through 16,264, freight 89,422), **2,393,473 selected-plan legs, 1,102,769 tours**; **612,667** synthetic persons. The builder refuses a plan that loses any tier's agents (§9.213). Family **F38** opened on it (`20260927T125424`).
+- **F39's plans** (§9.218, `demand/plans/matsim/_plans_report.json`, rebuilt 29 September 2026 for the capacity-bounded activity links and the household motorcycle; the chains are F38's, §9.214): WEEKDAY **622,174 persons** (core 510,346, external 6,142, through 16,264, freight 89,422), **2,393,473 selected-plan legs, 1,102,769 tours**, 232,162 held ride trips on 106,642 persons; **612,667** synthetic persons. The builder refuses a plan that loses any tier's agents (§9.213). Family **F39** opened on this rebuild (`20260929T053207`).
+- **The plans are built from one reading of B1** (§9.220): `build_matsim_plans.py` reads the population once for WEEKDAY, SAT and SUN, and the three plan files are byte-identical to the committed ones. **A run carries its own residents, keyed by the city's declared zone system** (§9.177, §9.220, #213, #242): the launcher writes `_residents.csv.gz` at subsample and `extract_metrics.home_lga(run_dir)` prefers it, so a later demand rebuild changes no reading; tokenised by the declared zone system, F39's control's file is byte-identical.
 
 ## What is measured
 
 - **The week trip rate reads 3.470 against the HTS 3.473** (§9.214, `realised_week_trip_rate`): it was 3.398 on F37's demand; fewer tours overran the day. WEEKDAY still drops 17,495 tours over the horizon (`_activity_chains_report.json`).
-- **What the one-way escort cost on F37's result** (§9.214, item 2): the binder covered 70,571 weekday member tours ONE way against 24,993 round trip at a mean 11.88 network km against the survey's 7.84 for serve-passenger travel; held to ride, the car stayed home and the tour's other trips walked (35.6 % of walk km) or took taxi.
-- **What one kernel per purpose cost on F37's result** (§9.214, item 3): the car-less (23.4 % of production) made 57 % of bike trips, 37 % of taxi trips and walked a mean 6.0 km.
+- **What F37's result showed the two demand changes answer** (§9.214, items 2 and 3): one-way escort tours held to ride left the car at home and the tour's other trips on foot (35.6 % of walk km) or in a taxi; the car-less (23.4 % of production) made 57 % of bike trips, 37 % of taxi trips and walked a mean 6.0 km.
 - **Income's own effect is not separable** (§9.163, #108): nothing has been read with `C.income.representation` OFF at the same depth in the same family.
 - **The PLANS carry OSM geometry** (§9.158, #159): **3,000 of 3,000 sampled `dest_placement=poi` destinations within 5 m of an OSM POI or building** — `demand/plans/*` is **ODbL 1.0**; the POPULATION stays CC-BY.
 - The drawn household-size distribution tracks the census within 0.6 pp in every band, top band mean 6.596 against 6.6 (§9.211, `_population_report.json`). On the measured licence rates the unlicensed share of the employed is 4.8–5.9% (§9.131); joint binding is supply-limited on WEEKDAY (`thin_p` 1.0000, §9.116).
@@ -62,7 +61,7 @@
 - **The two demand changes worked; the car-less still lack an alternative** (§9.217, §9.219): on F39's control the car-less split their trips ride 45.7 %, walk 30.8 %, bike 11.8 %, pt 5.8 %, taxi 5.6 % (`_mode_by_demographics.json`), walking 14–24 % of their 10–20+ km trips; see [walk-and-bike](walk-and-bike.md) and [ride-and-pairing](ride-and-pairing.md).
 - **#86 — the held passenger** (§9.211, §9.214): bound escort and joint trips executed as ride on 100 % of F37's; see [ride-and-pairing](ride-and-pairing.md).
 - **#145 — measured on a full arm** (§9.169): the wait distribution and where the self-driven bound trips settle remain unread.
-- **The four HTS cells exist nowhere public** (§9.172, #50): the request is the only route; sending it is the user's decision (D2).
+- **The four HTS cells exist nowhere public** (§9.167, §9.172, #50): the drafted request `docs/requests/tfnsw_hts_bespoke_tables.md` is the only route; sending it is the user's decision (D2, re-entered as D31 in the lane ledger, §9.220).
 - Still assumed and swept: `B.external.through_share`, `B.activity.escort_oneway_scope`, `B.motorbike.rider_coupling`, `P_INTERMEDIATE_STOP`, `P_SECOND_STOP`, `CHILD_TOUR_RETENTION`, the activity durations (§9.2, §9.61, §9.214). The rider licence rate for 12-17 applies to 12-15 year olds as the car rate does (§9.214).
 - **The sub-1 km supply is AT the seed, and #30 is re-aimed at allocation** (§9.177, §9.211, user decision): placed core legs **17.81 %** at ≤ 0.748 km straight against the Sydney 18.8 % band.
 
@@ -79,6 +78,7 @@
 
 ## History
 
+- §9.220 — B1 read once; builders refuse
 - §9.219 — car-less lack an alternative
 - §9.214 — destinations by mobility; escorts released
 - §9.213 — the external tier restored
@@ -93,4 +93,3 @@
 - §9.166 — TfNSW bespoke tables obtainable
 - §9.151 — an escort priced as an escort
 - §9.149 — shared pass binds longest first
-- §9.146 — a household drives the cars it owns

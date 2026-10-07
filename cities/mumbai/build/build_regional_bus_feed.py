@@ -20,6 +20,8 @@ import city
 import registry
 from build.extract_osm_network import fingerprint
 
+import gtfs_feed
+
 OUTPUT_INPUTS = {
     'schedules/baseline_regional.zip': [
         'schedules/baseline_multimodal.zip', 'registry/A_regional_buses.json',
@@ -95,34 +97,25 @@ def pooled_headway(durations, fleet, terminal_dwell):
     return math.ceil(sum(t + terminal_dwell for t in durations) / fleet)
 
 
-def append_table(content, name, additions):
-    reader = csv.DictReader(io.StringIO(content[name].decode('utf-8-sig')))
-    fields = list(reader.fieldnames)
-    existing = list(reader)
-    for row in additions:
-        for key in row:
-            if key not in fields:
-                fields.append(key)
-    out = io.StringIO(newline='')
-    writer = csv.DictWriter(out, fieldnames=fields, lineterminator='\n')
-    writer.writeheader()
-    writer.writerows(existing + additions)
-    content[name] = out.getvalue().encode('utf-8')
+def add_pattern(additions, used_stops, service_id, operator, rid, label, stops, offsets, departures):
+    """One directed pattern into the feed's additions: its route, its stops,
+    and a trip per departure with the pattern's offsets as stop times."""
+    additions['routes.txt'].append(dict(route_id=rid, agency_id=operator,
+        route_short_name=label, route_long_name=label, route_type=3))
+    for stop in stops:
+        used_stops[stop['stop_id']] = stop
+    for trip_id, departure in departures:
+        additions['trips.txt'].append(dict(route_id=rid, service_id=service_id, trip_id=trip_id))
+        for index, (stop, offset) in enumerate(zip(stops, offsets), start=1):
+            time = clock(departure + offset)
+            additions['stop_times.txt'].append(dict(trip_id=trip_id, arrival_time=time,
+                departure_time=time, stop_id=stop['stop_id'], stop_sequence=index))
 
 
-def main():
-    if Path(city.path()).resolve() != Path(__file__).resolve().parents[1]:
-        raise ValueError('Select the city owning this adapter')
-    cfg = registry.load()
-    running = cfg.get('A.regional_bus.running_time')
-    maximum = cfg.get('A.regional_bus.max_published_segment_s')
-    geod = Geod(ellps='WGS84')
-    with zipfile.ZipFile(city.path('schedules/baseline_multimodal.zip')) as archive:
-        content = {n: archive.read(n) for n in archive.namelist()}
-    calendars = list(csv.DictReader(io.StringIO(content['calendar.txt'].decode('utf-8-sig'))))
-    if len(calendars) != 1:
-        raise ValueError('Broad baseline must identify one explicit model calendar')
-    service_id = calendars[0]['service_id']
+def operator_stations():
+    """The NMMT station directory from the acquired snapshot (its bytes verified against
+    the provenance record): station id -> GTFS stop, refused on a conflicting or
+    out-of-range coordinate. Returns (provenance record, stations)."""
     provenance = json.loads(Path(city.path('data/raw/transit/provenance_nmmt_current_stops.json'))
                             .read_text(encoding='utf-8'))['files'][0]
     station_path = Path(city.path(provenance['path']))
@@ -139,6 +132,14 @@ def main():
         if not (-180 <= value['stop_lon'] <= 180 and -90 <= value['stop_lat'] <= 90):
             raise ValueError('Invalid operator station coordinate: ' + identity)
         stations[identity] = value
+    return provenance, stations
+
+
+def nmmt_patterns(stations):
+    """Published NMMT departures grouped into (route, operator stop sequence) patterns,
+    each with its trips' observed stop clocks; a trip without a unique operator
+    sequence between its printed endpoints, a clock or a stop coordinate is quarantined.
+    Returns (patterns, skipped)."""
     times = defaultdict(list)
     for row in rows('data/processed/observed/nmmt_stop_times.csv'):
         times[row['route_id'], row['trip_id']].append(row)
@@ -168,22 +169,16 @@ def main():
                 reason='no_unique_operator_route_sequence_matching_published_endpoints'))
             continue
         patterns[trip['route_id'], candidates[0]].append((trip, sequence))
+    return patterns, skipped
+
+
+def add_nmmt_patterns(geod, maximum, patterns, running, service_id, stations):
+    """One GTFS route per NMMT pattern with running times from the published segment
+    medians over a geographic floor, at the published departure clocks. Returns
+    (feed additions, pattern report rows, the stops used)."""
     additions = {n: [] for n in ('agency.txt', 'routes.txt', 'trips.txt', 'stop_times.txt')}
     used_stops = {}
     report = []
-
-    def add_pattern(operator, rid, label, stops, offsets, departures):
-        additions['routes.txt'].append(dict(route_id=rid, agency_id=operator,
-            route_short_name=label, route_long_name=label, route_type=3))
-        for stop in stops:
-            used_stops[stop['stop_id']] = stop
-        for trip_id, departure in departures:
-            additions['trips.txt'].append(dict(route_id=rid, service_id=service_id, trip_id=trip_id))
-            for index, (stop, offset) in enumerate(zip(stops, offsets), start=1):
-                time = clock(departure + offset)
-                additions['stop_times.txt'].append(dict(trip_id=trip_id, arrival_time=time,
-                    departure_time=time, stop_id=stop['stop_id'], stop_sequence=index))
-
     for (route, station_ids), trips in sorted(patterns.items()):
         signature = hashlib.sha256(','.join(station_ids).encode('utf-8')).hexdigest()[:16]
         rid = f'NMMT_{route}_{signature}'
@@ -205,13 +200,19 @@ def main():
         offsets, sources = pattern_offsets(stops, observations, geod, running)
         departures = [(f'NMMT_{t["route_id"]}_{t["trip_id"]}', int(t['departure_clock_s']))
                       for t, _ in trips]
-        add_pattern('NMMT', rid, trips[0][0]['route_number'], stops, offsets, departures)
+        add_pattern(additions, used_stops, service_id, 'NMMT', rid, trips[0][0]['route_number'], stops, offsets, departures)
         report.append(dict(operator='NMMT', route_id=rid, source_route_id=route,
             departures_count=len(departures), stops_count=len(stops), duration_s=offsets[-1],
             rejected_segment_clock_differences=rejected, segment_timing_sources=dict(sources),
             trip_sequences_reconciled_to_operator_route=differing_sequences,
             departure_source='published_departure_clock', calendar_source='provisional_baseline_calendar'))
+    return additions, report, used_stops
 
+
+def add_mbmt_patterns(additions, cfg, geod, report, running, service_id, skipped, used_stops):
+    """MBMT directed patterns at the equal pooled-fleet headway the published bus
+    allocation supports, appended to the same additions. Returns the allocation
+    day, the directed patterns, the fleet, the headway and the terminal layover."""
     mbmt = defaultdict(list)
     for row in rows('data/processed/observed/mbmt_route_stops.csv'):
         mbmt[row['route_id']].append(row)
@@ -236,23 +237,47 @@ def main():
     for rid, label, stops, offsets, sources in directed:
         route_id = 'MBMT_' + rid
         departures = [(f'{route_id}_{t}', t) for t in range(start, end, headway)]
-        add_pattern('MBMT', route_id, label, stops, offsets, departures)
+        add_pattern(additions, used_stops, service_id, 'MBMT', route_id, label, stops, offsets, departures)
         report.append(dict(operator='MBMT', route_id=route_id, source_route_id=rid,
             departures_count=len(departures), stops_count=len(stops), duration_s=offsets[-1],
             segment_timing_sources=dict(sources), departure_source='derived_equal_frequency_pooled_fleet',
             calendar_source='provisional_baseline_calendar'))
+    return day, directed, fleet, headway, layover
+
+
+def append_feed(additions, cfg, content, used_stops):
+    """The operators' agency rows and the stops used appended to the broad baseline feed,
+    and the regional feed zipped; returns its path."""
     for operator, url in cfg.get('A.regional_bus.agency_urls').items():
         additions['agency.txt'].append(dict(agency_id=operator, agency_name=operator,
             agency_url=url, agency_timezone=cfg.get('A.regional_bus.timezone')))
     additions['stops.txt'] = list(used_stops.values())
     for name, data in additions.items():
-        append_table(content, name, data)
+        gtfs_feed.append_table(content, name, data)
     output = Path(city.path('schedules/baseline_regional.zip'))
-    with zipfile.ZipFile(output, 'w') as archive:
-        for name, data in sorted(content.items()):
-            entry = zipfile.ZipInfo(name)
-            entry.compress_type = zipfile.ZIP_DEFLATED
-            archive.writestr(entry, data)
+    gtfs_feed.write_feed(output, content)
+    return output
+
+
+def main():
+    if Path(city.path()).resolve() != Path(__file__).resolve().parents[1]:
+        raise ValueError('Select the city owning this adapter')
+    cfg = registry.load()
+    running = cfg.get('A.regional_bus.running_time')
+    maximum = cfg.get('A.regional_bus.max_published_segment_s')
+    geod = Geod(ellps='WGS84')
+    with zipfile.ZipFile(city.path('schedules/baseline_multimodal.zip')) as archive:
+        content = {n: archive.read(n) for n in archive.namelist()}
+    calendars = list(csv.DictReader(io.StringIO(content['calendar.txt'].decode('utf-8-sig'))))
+    if len(calendars) != 1:
+        raise ValueError('Broad baseline must identify one explicit model calendar')
+    service_id = calendars[0]['service_id']
+    provenance, stations = operator_stations()
+    patterns, skipped = nmmt_patterns(stations)
+    additions, report, used_stops = add_nmmt_patterns(geod, maximum, patterns, running, service_id, stations)
+
+    day, directed, fleet, headway, layover = add_mbmt_patterns(additions, cfg, geod, report, running, service_id, skipped, used_stops)
+    output = append_feed(additions, cfg, content, used_stops)
     inputs = [p for p in OUTPUT_INPUTS['schedules/baseline_regional.zip'] if '*' not in p]
     inputs.append(provenance['path'])
     audit = dict(source='derived_provisional_regional_supply',
@@ -278,4 +303,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

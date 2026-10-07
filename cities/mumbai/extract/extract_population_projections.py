@@ -200,9 +200,12 @@ def main():
                               'The 2011 age distribution is smoothed; it is not the raw single-age census distribution.',
                               'No state growth rate or age profile has been imposed on a city population.'])
     Path(city.path('data/processed/acquisition/state_population_projection_audit.json')).write_text(
-        json.dumps(audit, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+        json.dumps(audit, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({k: audit[k] for k in ('annual_rows', 'age_count_rows', 'age_share_rows', 'check_status_counts')}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

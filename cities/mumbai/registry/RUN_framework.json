@@ -176,6 +176,23 @@
       "description": "Whether the qsim waits for the events pipeline at every sim-step. Adopted from the reference city's declaration; not a Mumbai observation.",
       "decisions_ref": "9.202"
     },
+    "RUN.machine.free_ram_margin_gib": {
+      "units": "GiB",
+      "source": "assumed",
+      "sweep": [
+        0.0,
+        12.0
+      ],
+      "sweep_basis": "Adopted from the reference city's launch-refusal margin (sixteenth project report, 8 October 2026) at the value that leaves this city's launch path exactly as it ran: 0 switches the free-memory bar off, as RUN.gate.wall_ceiling_h = 0 means no ceiling. The interval runs from off to twice the reference city's chosen margin; no Mumbai case has recorded a host history to measure it on.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 0.0,
+      "description": "Free physical memory the host must hold at launch beyond RUN.machine.xmx, in GiB; the launcher refuses below the heap plus this margin (src/run/run_matsim.py refuse_loaded_host). Adopted from the reference city's declaration at 0 - no bar - so this baseline's launches are refused on nothing they were not refused on before; not a Mumbai observation.",
+      "decisions_ref": "9.220",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
     "RUN.machine.gc_collector": {
       "units": "enum",
       "source": "assumed",
@@ -250,6 +267,41 @@
       "consumers": [
         "src/run/run_matsim.py",
         "src/analyse/profile_run.py"
+      ]
+    },
+    "RUN.machine.other_process_max_cores": {
+      "units": "cores",
+      "source": "assumed",
+      "sweep": [
+        0.0,
+        4.0
+      ],
+      "sweep_basis": "Adopted from the reference city's launch-refusal bar (sixteenth project report, 8 October 2026) at the value that leaves this city's launch path exactly as it ran: 0 switches the co-tenant CPU bar off. The interval runs from off to the four cores the reference city's events handlers hold; no Mumbai case has recorded a host history to measure it on.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 0.0,
+      "description": "The most CPU, in cores, another process may hold at launch before the launcher refuses the launch (src/run/run_matsim.py refuse_loaded_host). Adopted from the reference city's declaration at 0 - no bar - so this baseline's launches are refused on nothing they were not refused on before; not a Mumbai observation.",
+      "decisions_ref": "9.220",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.machine.probe_max_host_cpu_pct": {
+      "units": "percent",
+      "source": "assumed",
+      "sweep": [
+        75.0,
+        100.0
+      ],
+      "sweep_basis": "Adopted from the reference city's pricing bar (sixteenth project report, 8 October 2026) at the value that leaves this city's pricing exactly as it ran: 100 switches the bar off, so no probe is refused as a price. The interval is the reference city's; no Mumbai probe has recorded a host history to measure it on.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "value": 100.0,
+      "description": "The host CPU busy % recorded over a probe's iterations (_host.jsonl) above which arm_cost.py refuses to price an arm on that probe. Adopted from the reference city's declaration at 100 - no bar; not a Mumbai observation.",
+      "decisions_ref": "9.220",
+      "consumers": [
+        "src/run/run_matsim.py",
+        "src/analyse/arm_cost.py"
       ]
     },
     "RUN.machine.replanning_threads": {
@@ -516,6 +568,22 @@
       "decisions_ref": "9.202",
       "consumers": [
         "src/analyse/run_view.py"
+      ]
+    },
+    "RUN.qsim.car_vehicle": {
+      "units": "metres/metres/passenger_car_equivalents",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": {
+        "length_m": 7.5,
+        "width_m": 1.0,
+        "pce": 1.0
+      },
+      "description": "The car vehicle type written into the run inputs' vehicles file: MATSim's own default vehicle, restated explicitly because qsim.vehiclesSource=modeVehicleTypesFromVehiclesData replaces the implicit default. Adopted from the reference city's declaration; not a Mumbai observation.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
       ]
     },
     "RUN.qsim.end_time_h": {
@@ -1005,11 +1073,19 @@
     },
     "RUN.routing.pt_submode_scoring": {
       "units": "enum",
-      "source": "definition",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "per_submode",
+          "aggregate"
+        ],
+        "basis": "adopted from the reference city: the two representations the pinned MATSim (2027.0-2026w25) supports, verified against the jar's bytecode rather than memory: per_submode uses the `swissRailRaptor` config module's `useModeMappingForPassengers` with one `modeMapping` parameterset (routeMode -> passengerMode) per scheduled transportMode (ch.sbb.matsim.config.SwissRailRaptorConfigGroup), so each submode's legs carry its own mode and score with C1's own per-submode constants; aggregate is the pre-9.78 state - one `pt` passenger mode carrying asc_bus for bus, tram, rail and ferry alike, the collapse DECISIONS.md 9.3 recorded as not representable."
+      },
+      "sweep_role": "uncertainty",
       "status": "active",
       "value": "aggregate",
-      "description": "Whether each scheduled transport mode is scored as a passenger mode of its own (per_submode) or every pt leg as one pt mode (aggregate). `aggregate` for this city: the transit router combines bus, suburban rail, metro and ferry under one pt mode (RUN.transit.transit_modes = [pt]) and one bound constant; splitting them is a declared change of its own once a ridership series per operator exists to score it by.",
-      "decisions_ref": "9.204",
+      "description": "Whether the scheduled PT submodes are score-distinct passenger modes (issue #49 Tier C - every mode individually, per the 20 Aug 2026 directive). Switched off for this baseline (\"aggregate\"): the scheduled modes score as one pt mode and no per-submode fare table is emitted (the A.fare.* fields are the reference city's Opal fares, inert here); `aggregate` is the value every Mumbai case has run with.",
+      "decisions_ref": "9.202",
       "consumers": [
         "src/build/build_matsim_run_inputs.py"
       ]
@@ -1030,6 +1106,18 @@
       "value": 3.0,
       "description": "The width of the random utility the least-cost-path router draws per agent, so that two agents with the same origin, destination and departure time need not take the same road. Adopted from the reference city's declaration; not a Mumbai observation.",
       "decisions_ref": "9.202"
+    },
+    "RUN.sample.arm_fraction_floor": {
+      "units": "share_of_population",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "value": 0.0,
+      "description": "The sample fraction below which an arm-length run is refused by the launcher unless --override-reason states why (run.py refuse_arm_fraction). Adopted from the reference city's declaration at 0 - no bar: the 25 %-only directive is the reference city's campaign rule, and this baseline's cases run at the fraction each overlay declares; not a Mumbai observation.",
+      "decisions_ref": "9.220",
+      "consumers": [
+        "run.py"
+      ]
     },
     "RUN.sample.flow_capacity_factor": {
       "units": "share_of_capacity",
@@ -1330,6 +1418,57 @@
         "basis": "beeline reproduces the pre-fold cases exactly (the raptor draws access and egress straight); network routes them on the walk network, which GOAL.md requirement 1 asks for and which is switched on once the walk network's reach to the boarding links is measured for this city"
       },
       "sweep_role": "uncertainty"
+    },
+    "RUN.transit_router.access_initial_search_radius_m": {
+      "units": "metres",
+      "source": "derived",
+      "status": "placeholder",
+      "derived_from": {
+        "fields": [
+          "RUN.transit_router.search_radius_m"
+        ],
+        "identity": "access_initial_search_radius_m = search_radius_m. The intermodal stop search is given the SAME reach the beeline search already had, so that turning access/egress into network legs changes the route and not the market. Declaring a different number here would move two things at once and make the arm that follows uninterpretable - and it would re-open a question 9.158 already closed with numbers, that radius is NOT what makes 60.5% of pt requests come back as a walk. The raptor's own default for this parameter is the sentinel -Infinity, so it must be set explicitly or the initial search is unbounded."
+      },
+      "value": 1000.0,
+      "description": "Radius around a trip end within which the raptor collects candidate access/egress stops when access/egress is routed rather than drawn. Adopted from the reference city and INERT here: RUN.transit_router.access_egress_basis = \"beeline\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
+    "RUN.transit_router.access_max_radius_m": {
+      "units": "metres",
+      "source": "assumed",
+      "status": "placeholder",
+      "held_fixed": {
+        "rule": "the reference city's measurement, adopted; no Mumbai measurement exists and the field is not varied",
+        "decisions_ref": "9.202",
+        "departure_requires": "a Mumbai measurement of the same quantity"
+      },
+      "value": 55900.0,
+      "sweep": null,
+      "description": "The hard ceiling on how far the raptor will look for an access or egress stop. Adopted from the reference city and INERT here: RUN.transit_router.access_egress_basis = \"beeline\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
+    "RUN.transit_router.access_search_extension_radius_m": {
+      "units": "metres",
+      "source": "derived",
+      "status": "placeholder",
+      "derived_from": {
+        "fields": [
+          "RUN.transit_router.extension_radius_m"
+        ],
+        "identity": "access_search_extension_radius_m = extension_radius_m, the same reach-preserving identity as the initial radius above. MATSim's own default for this one is 500 m rather than a sentinel, which would have widened the search by 300 m as a side effect of a change that is not about reach at all."
+      },
+      "value": 200.0,
+      "description": "How far past the nearest found stop the intermodal search continues. Adopted from the reference city and INERT here: RUN.transit_router.access_egress_basis = \"beeline\" switches the mechanism off for this baseline, so the value reaches the config and nothing acts on it.",
+      "decisions_ref": "9.202",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
     },
     "RUN.transit_router.additional_transfer_time_s": {
       "units": "s",

@@ -78,6 +78,7 @@ public final class HouseholdVehicleRoster implements IterationStartsListener {
         if (cfg == null || !cfg.anyRoster()) {
             return;
         }
+        final long started = System.currentTimeMillis();
         final boolean first = !applied;
         applied = true;
         if (cfg.isCensusRoster()) {
@@ -86,6 +87,11 @@ public final class HouseholdVehicleRoster implements IterationStartsListener {
         if (cfg.isHouseholdMotorcycle()) {
             rosterMotorcycles(event, first);
         }
+        // One line per listener per iteration, in the one shape every citysim
+        // listener logs it, so the performance lane can attribute the phase
+        // from matsim.log alone (sixteenth report).
+        LOG.info("householdVehicles: it.{} iterationStarts listener=HouseholdVehicleRoster ms={}",
+                 event.getIteration(), System.currentTimeMillis() - started);
     }
 
     /** The census car roster (9.146), exactly as it ran before D28. */

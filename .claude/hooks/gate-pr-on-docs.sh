@@ -50,6 +50,9 @@ if [ "$rc1" -ne 0 ] || [ "$rc2" -ne 0 ] || [ "$rc3" -ne 0 ] || [ "$rc4" -ne 0 ];
     [ "$rc1" -ne 0 ] && { echo "--- check_doc_currency.py --strict"; printf '%s\n' "$out_currency" | tail -12; }
     [ "$rc2" -ne 0 ] && { echo "--- check_doc_shape.py --strict"; printf '%s\n' "$out_shape" | tail -12; }
     [ "$rc3" -ne 0 ] && { echo "--- build_status_board.py --check (run it without --check to regenerate)"; printf '%s\n' "$out_board" | tail -6; }
+    # rc4 printed nothing until 8 October 2026 (the sixteenth report): a
+    # broken-link block was a blind retry at handoff.
+    [ "$rc4" -ne 0 ] && { echo "--- check_doc_links.py --strict"; printf '%s\n' "$out_links" | tail -12; }
     echo "Fix the documents (or regenerate the board), commit, then re-run gh pr create."
   } >&2
   exit 2

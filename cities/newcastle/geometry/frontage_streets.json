@@ -1,0 +1,19 @@
+{
+  "description": "The streets whose frontages D1_frontage_segments.csv segments per D.frontage.segment_length_m, each with the role it plays in the proposal's frontage test (hypothesis B4: activity generated on the corridor against displaced from off it). Declared here, in the city they belong to, because a typed list of place names in a build script is invisible to every check; the list is relocated at EXACTLY the names and order the script carried, so the segments file is byte-identical.",
+  "source": "newcastle-lr-proposal.md, hypothesis B4 (Hunter Street against Darby Street, Honeysuckle and Newcastle East) and the D1 frontage design: the four comparators the proposal names plus the three streets the first D1 build added to them (Wharf Road, King Street, Beaumont Street), typed into the build script from 10 August 2026 until 8 October 2026",
+  "was_typed_in": "cities/newcastle/build/build_landuse_parking.py (TARGET_STREETS)",
+  "roles": {
+    "corridor": "the light rail corridor and its eastern leg",
+    "off_corridor": "retail streets off the corridor, the displacement comparators",
+    "waterfront": "the harbour-side comparators"
+  },
+  "streets": [
+    {"name": "Hunter Street", "role": "corridor", "note": "the light rail corridor"},
+    {"name": "Scott Street", "role": "corridor", "note": "the eastern corridor leg"},
+    {"name": "Darby Street", "role": "off_corridor", "note": "the off-corridor retail comparator"},
+    {"name": "Honeysuckle Drive", "role": "waterfront", "note": "the waterfront comparator"},
+    {"name": "Wharf Road", "role": "waterfront"},
+    {"name": "King Street", "role": "off_corridor"},
+    {"name": "Beaumont Street", "role": "off_corridor", "note": "Hamilton's retail strip"}
+  ]
+}

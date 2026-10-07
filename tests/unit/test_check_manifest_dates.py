@@ -21,9 +21,9 @@ check_manifest = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(check_manifest)
 
 
-def row(path, stage='raw', retrieved='2026-09-01', scope='output'):
+def row(path, stage='raw', retrieved='2026-09-01', scope='output', source='a declared source'):
     return dict(path=path, stage=stage, retrieved=retrieved,
-                lineage_scope=scope)
+                lineage_scope=scope, source=source)
 
 
 ROWS = [
@@ -51,7 +51,33 @@ def test_an_exact_debt_passes_and_counts_what_fails():
     failures, counts = check_manifest.check_recorded_debt(ROWS, EXACT)
     assert failures == []
     assert counts == dict(raw_without_retrieved=(1, 1),
-                          lineage_scope_none=(1, 1))
+                          lineage_scope_none=(1, 1),
+                          processed_without_source=(0, 0))
+
+
+def test_a_processed_row_without_a_source_is_refused_outside_the_debt():
+    rows = ROWS + [row('data/processed/from_the_registry.csv', stage='processed', source='')]
+    failures, counts = check_manifest.check_recorded_debt(rows, EXACT)
+    assert len(failures) == 1 and 'carry no source' in failures[0]
+    assert 'from_the_registry.csv' in failures[0]
+    assert counts['processed_without_source'] == (1, 0)
+    ok, _ = check_manifest.check_recorded_debt(
+        rows, dict(EXACT, processed_without_source={'data/processed/from_the_registry.csv'}))
+    assert ok == []
+
+
+def test_a_row_whose_output_another_script_declares_is_refused():
+    rows = [dict(row('data/processed/observed/ratio.json', stage='processed'),
+                 produced_by='cities/x/extract/slice.py'),
+            dict(row('data/processed/observed/other.json', stage='processed'),
+                 produced_by='cities/x/build/build_ratio.py + src/build/a.py')]
+    declared = {'data/processed/observed/ratio.json': {'cities/x/build/build_ratio.py'},
+                'data/processed/observed/other.json': {'cities/x/build/build_ratio.py'}}
+    assert check_manifest.producer_not_declaring(rows, declared) == [
+        'data/processed/observed/ratio.json']
+    failures, counts = check_manifest.check_recorded_debt(rows, {}, declared=declared)
+    assert len(failures) == 1 and 'OUTPUT_INPUTS declares' in failures[0]
+    assert counts[check_manifest.DECLARED_RULE] == (1, 0)
 
 
 def test_a_processed_row_without_a_date_is_not_a_raw_date_failure():
@@ -113,7 +139,8 @@ def test_a_city_with_no_recorded_debt_refuses_every_hole():
     failures, counts = check_manifest.check_recorded_debt(ROWS, {})
     assert len(failures) == 2
     assert counts == dict(raw_without_retrieved=(1, 0),
-                          lineage_scope_none=(1, 0))
+                          lineage_scope_none=(1, 0),
+                          processed_without_source=(0, 0))
 
 
 # -- byte drift ------------------------------------------------------------------
@@ -166,14 +193,28 @@ def test_the_newest_log_entry_must_state_the_ceiling_with_a_reason():
                check_manifest.check_ceilings(dict(lineage_scope_none=unexplained)))
 
 
-def test_a_raise_against_main_needs_a_new_log_entry():
+def test_a_raise_against_main_needs_an_explicit_dated_raise():
     base = dict(lineage_scope_none=entry({'a'}))
-    raised = entry({'a', 'b'}, log=[dict(date='d', ceiling=2, reason='r')])
-    out = check_manifest.check_ceilings(dict(lineage_scope_none=raised), base)
+    # the same number of log entries: the ceiling rose silently
+    silent = entry({'a', 'b'}, log=[dict(date='d', ceiling=2, reason='r')])
+    out = check_manifest.check_ceilings(dict(lineage_scope_none=silent), base)
     assert len(out) == 1 and 'rose from 1' in out[0]
-    logged = entry({'a', 'b'}, log=base['lineage_scope_none']['ceiling_log']
-                   + [dict(date='d2', ceiling=2, reason='a new source, #999')])
-    assert check_manifest.check_ceilings(dict(lineage_scope_none=logged), base) == []
+    # a new entry with a reason but no `raised`: a line that happened to
+    # accompany the rise is not a raise (the ceiling may only fall)
+    accompanied = entry({'a', 'b'}, log=base['lineage_scope_none']['ceiling_log']
+                        + [dict(date='d2', ceiling=2, reason='a new source, #999')])
+    out = check_manifest.check_ceilings(dict(lineage_scope_none=accompanied), base)
+    assert len(out) == 1 and '"raised": true' in out[0]
+    raised = entry({'a', 'b'}, log=base['lineage_scope_none']['ceiling_log']
+                   + [dict(date='d2', ceiling=2, reason='a new source, #999', raised=True)])
+    assert check_manifest.check_ceilings(dict(lineage_scope_none=raised), base) == []
+    # a fall needs no such flag
+    fallen = entry(set(), log=base['lineage_scope_none']['ceiling_log']
+                   + [dict(date='d2', ceiling=0, reason='fixed')])
+    assert check_manifest.check_ceilings(dict(lineage_scope_none=fallen), base) == []
+    # a rule origin/main does not carry is measured for the first time
+    first = entry({'a', 'b', 'c'})
+    assert check_manifest.check_ceilings(dict(processed_without_source=first), base) == []
 
 
 def test_an_unknown_rule_is_refused():

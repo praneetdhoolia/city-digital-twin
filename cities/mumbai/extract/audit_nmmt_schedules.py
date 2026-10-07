@@ -116,10 +116,13 @@ def main():
                             'Exact name matches are candidate stop identities, not verified platform or road-link assignments.',
                             'Midnight wrap, short turns, depot movements and active service require further checks.',
                             'Empty schedules do not establish that a route has no passenger demand.'])
-    Path(city.path('data/processed/acquisition/nmmt_schedule_audit.json')).write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8')
+    Path(city.path('data/processed/acquisition/nmmt_schedule_audit.json')).write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8', newline='\n')
     print(json.dumps({key:audit[key] for key in ['listed_routes','acquired_route_responses','published_trips',
                       'acquired_stop_time_rows','acquisition_complete','unmatched_stop_rows','ambiguous_stop_rows']}))
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

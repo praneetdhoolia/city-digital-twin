@@ -73,9 +73,12 @@ def main():
                  limits='Published alignment only. No road or stop matching, route direction validation, operating calendar, fleet capacity or actual service proof. Distances are WGS84 ellipsoidal polyline sums, not operator route kilometre observations.')
     target = Path(city.path('data/processed/acquisition/nmmt_path_audit.json'))
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(audit, indent=2, ensure_ascii=False, allow_nan=False)+'\n', encoding='utf-8')
+    target.write_text(json.dumps(audit, indent=2, ensure_ascii=False, allow_nan=False)+'\n', encoding='utf-8', newline='\n')
     print(json.dumps(totals))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

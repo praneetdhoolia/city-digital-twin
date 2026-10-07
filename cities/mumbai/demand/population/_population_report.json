@@ -131,6 +131,11 @@
     "subdistrict": 4,
     "town": 12
   },
+  "district_cell_substitutions": {
+    "age_distribution": {},
+    "worker_rates": {},
+    "attendance_rates": {}
+  },
   "totals": {
     "persons": 27057132,
     "households": 6068786,

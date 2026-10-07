@@ -125,7 +125,7 @@ jobs:
       # Truths are derived from the MANIFEST and the registry, both committed, so
       # this needs no bulk data and no dependencies beyond the standard library.
       - name: No live figure has outlived its artefact
-        run: python tests/check_doc_currency.py --strict
+        run: python tests/check_doc_currency.py --strict --all-cities
 
   doc_shape:
     name: living documents keep their shape
@@ -145,7 +145,7 @@ jobs:
       # frozen document says so at the top. Standard library only; committed
       # files only; the rules are the framework's (tests/doc_shape.json, 9.171).
       - name: The board is a board, the brief is stamped, the record is in order
-        run: python tests/check_doc_shape.py --strict
+        run: python tests/check_doc_shape.py --strict --all-cities
       # Every relative link in a living document resolves (9.171: two moves in
       # one day left four position-page lines pointing at a tree that was gone).
       - name: Every link in a living document resolves
@@ -215,7 +215,7 @@ jobs:
       - name: Install the probe's one dependency
         run: pip install -c requirements.txt pandas
       - name: No value is decided in a script
-        run: python src/registry/check_hardcoding.py --strict
+        run: python src/registry/check_hardcoding.py --all-cities --strict
 
   city_agnostic:
     name: a second city runs the framework unchanged (G2)

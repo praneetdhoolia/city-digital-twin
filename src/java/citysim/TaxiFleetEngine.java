@@ -217,6 +217,19 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
         if (!this.cfg.isFleet()) {
             return;                      // `absent`: every request is served
         }
+        final long started = System.currentTimeMillis();
+        dispatch();
+        // One line per listener per iteration, in the one shape every citysim
+        // listener logs it, so the performance lane can attribute the
+        // beforeMobsim phase from matsim.log alone (sixteenth report): the
+        // fleet pass here was 151 s at iteration 0 and could be told from
+        // nothing else in the phase.
+        LOG.info("taxiFleet: it.{} beforeMobsim listener=TaxiFleetEngine ms={}",
+                 event.getIteration(), System.currentTimeMillis() - started);
+    }
+
+    /** The fleet pass: collect, allocate in departure order, re-mode the refused. */
+    private void dispatch() {
         final List<Request> requests = collect();
         if (requests.isEmpty()) {
             LOG.info("taxiFleet: no taxi legs in the selected plans");

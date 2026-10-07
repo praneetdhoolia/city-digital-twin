@@ -48,10 +48,60 @@ CONTAINER_MIN_NUMBERS = 4
 
 
 def literal(node):
+    """The Python value of a literal node, or Ellipsis where it is not one.
+
+    `dict(a=1.5, b=2.5)` is a literal mapping written as a call, and a table
+    of decisions written that way was `unparsed` here and unvisited by the
+    inline scan, so it reached nothing (#212). It reads as the dict it is.
+    """
+    if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) \
+            and node.func.id == 'dict' and not node.args:
+        out = {}
+        for kw in node.keywords:
+            value = literal(kw.value) if kw.arg is not None else Ellipsis
+            if value is Ellipsis:
+                return Ellipsis
+            out[kw.arg] = value
+        return out
+    # a container is read element by element so a dict(...) nested inside a
+    # {...} table (a registry declaration written by a script) is still one
+    # literal; a container holding anything that is not is not one
+    if isinstance(node, ast.Dict):
+        out = {}
+        for k, v in zip(node.keys, node.values):
+            key = literal(k) if k is not None else Ellipsis
+            value = literal(v)
+            if key is Ellipsis or value is Ellipsis:
+                return Ellipsis
+            try:
+                out[key] = value
+            except TypeError:
+                return Ellipsis
+        return out
+    if isinstance(node, (ast.List, ast.Tuple, ast.Set)):
+        values = [literal(e) for e in node.elts]
+        if any(v is Ellipsis for v in values):
+            return Ellipsis
+        return (tuple(values) if isinstance(node, ast.Tuple)
+                else set(values) if isinstance(node, ast.Set) else values)
     try:
         return ast.literal_eval(node)
     except (ValueError, SyntaxError, TypeError):
         return Ellipsis
+
+
+def reported_as_decision(name, value_node):
+    """Whether `scan_decisions` reports `NAME = <value>` itself: a literal
+    numeric scalar, or a literal container carrying CONTAINER_MIN_NUMBERS
+    numbers, under a name it does not ignore. Everything else - an expression,
+    a small container, an ignored name - is left to the inline scan, so no
+    ALL-CAPS value falls between the two (#212)."""
+    if name.startswith('_') or name.endswith(IGNORE_SUFFIX):
+        return False
+    value = literal(value_node)
+    if value is Ellipsis:
+        return False
+    return numeric(value) or count_numbers(value) >= CONTAINER_MIN_NUMBERS
 
 
 def numeric(v):

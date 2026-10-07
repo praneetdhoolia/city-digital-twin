@@ -63,9 +63,12 @@ def main():
     audit = dict(schema_version=1, summary=summary, queries=checks,
                  client_semantics='Public client displays actual_arrivaltime2 and actual_departudetime as arrival/departure only when stopstatus is covered. Other statuses cannot be treated as observed stops merely because an actual-named field is populated.',
                  limits='Clock timezone and device freshness remain unverified. Tracking trip IDs have not been joined to timetable trip IDs. Reported covered times are not independent ground truth. One sequential snapshot is not a dwell/running-time distribution, operating calendar, complete fleet or ridership count.')
-    Path(city.path('data/processed/acquisition/nmmt_vehicle_detail_audit.json')).write_text(json.dumps(audit, indent=2, ensure_ascii=False)+'\n', encoding='utf-8')
+    Path(city.path('data/processed/acquisition/nmmt_vehicle_detail_audit.json')).write_text(json.dumps(audit, indent=2, ensure_ascii=False)+'\n', encoding='utf-8', newline='\n')
     print(json.dumps(summary))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

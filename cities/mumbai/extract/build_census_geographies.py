@@ -325,10 +325,13 @@ def main():
             'Long truncated DBF count names are not inferred. Blank GIS counts are not zero.',
             'Source geometry reuse terms remain unverified. This is not an OSM-derived layer.'])
     Path(city.path('data/processed/acquisition/census_geography_audit.json')).write_text(
-        json.dumps(audit, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+        json.dumps(audit, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps(dict(census_records=len(frame), geometry_status_counts=audit['geometry_status_counts'],
                          repaired_polygons=len(repairs), preserved_count_columns=len(count_columns))))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

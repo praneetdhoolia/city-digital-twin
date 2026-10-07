@@ -184,7 +184,7 @@ def main():
                               'in the district; scrapped and migrated vehicles stay on record.',
                               'The 2011 stock is the state total (Table 15); no office-level 2011 stock is printed.'])
     out = Path(city.path('data/processed/acquisition/mts_2017_audit.json'))
-    out.write_text(json.dumps(audit, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    out.write_text(json.dumps(audit, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print('Table 24: %d rows, %d offices; state series: %d rows; %d checks, %d failed'
           % (len(office_rows), len(audit['offices']), len(state_rows), audit['checks'], len(failed)))
     if failed:
@@ -193,4 +193,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

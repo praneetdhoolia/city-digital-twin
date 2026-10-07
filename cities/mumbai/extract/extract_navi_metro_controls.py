@@ -76,9 +76,12 @@ def main():
                                    derived_from='(March 2025 reported daily average / April 2024 reported daily average - 1) * 100',
                                    agrees_to_published_integer=round(calculated_growth) == published_growth),
                  limits='Historical reports. No current departures, peak clock bands, fares, rolling-stock capacity, station-level demand or representative-date target is established. Event service remains separate from regular service. Other cities in the corporate reports are excluded.')
-    Path(city.path('data/processed/acquisition/navi_metro_controls_audit.json')).write_text(json.dumps(audit, indent=2)+'\n', encoding='utf-8')
+    Path(city.path('data/processed/acquisition/navi_metro_controls_audit.json')).write_text(json.dumps(audit, indent=2)+'\n', encoding='utf-8', newline='\n')
     print(json.dumps(audit))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

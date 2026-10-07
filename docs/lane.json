@@ -1,7 +1,7 @@
 {
   "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
-  "updated": "2026-09-30",
-  "family": "F38-destinations-follow-mobility-escorts-come-home-and-motorbike-is-chosen",
+  "updated": "2026-10-08",
+  "family": "F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk",
   "tasks": [
     {
       "id": "routers-pair-reading",
@@ -1224,6 +1224,82 @@
       ],
       "evidence": "9.219; asked 30 September 2026, answered 'Make any fixes and handoff' - the fixes are in, the form and the ceiling are still open",
       "asked": "2026-09-30",
+      "answer": null,
+      "answered": null
+    },
+    {
+      "id": "D30",
+      "question": "The replication band: three short arms at different seeds on F39 (about 100 iterations each, ~11 h each at the control's pace) to set CAL.objective.replication_band_pp, which ships 0.0 so every pair difference is read as a diff rather than a band. Recommended by ten consecutive reports and never taken.",
+      "options": [
+        {
+          "label": "Run the three seeds after the F39 pair (Recommended)",
+          "detail": "three 25 % arms of ~100 iterations at seeds 20260810, 20260811, 20260812 under f39_control_25pct with RUN.controler.last_iteration 100, read with compare_runs.py; about 33 h in all; sets the band once for every later pair"
+        },
+        {
+          "label": "Decline: read pairs as diffs with the stated caveat",
+          "detail": "the record keeps saying 'a difference inside one build's noise' without a measured noise; the next report records the recommendation as declined, not repeated"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        163
+      ],
+      "evidence": "sixteenth report recommendation 16; 20260929T045645:3 (tenth issuance); #163; CAL.objective.replication_band_pp = 0.0",
+      "asked": "2026-10-08",
+      "answer": null,
+      "answered": null
+    },
+    {
+      "id": "D31",
+      "question": "The TfNSW bespoke-table request (mode by age, trip-length distribution by mode, occupancy by purpose, the unfolded Other) is drafted at docs/requests/tfnsw_hts_bespoke_tables.md and held since 16 September; the four cells exist nowhere public (searched nine times). Sending it is the operator's act.",
+      "options": [
+        {
+          "label": "Send it to opendataprogram@transport.nsw.gov.au (Recommended)",
+          "detail": "the drafted request as written; the session records the date sent on #50 and in the record; nothing in the model waits on the reply"
+        },
+        {
+          "label": "Send it through the TPA request form",
+          "detail": "the same text through Transport Performance and Analytics' web form"
+        },
+        {
+          "label": "Decline: the derived targets stand",
+          "detail": "#50 closes as a recorded limitation; the next report records the recommendation as declined"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        50
+      ],
+      "evidence": "sixteenth report recommendation 16; 20260929T045645:17 (ninth issuance); #50; docs/requests/tfnsw_hts_bespoke_tables.md",
+      "asked": "2026-10-08",
+      "answer": null,
+      "answered": null
+    },
+    {
+      "id": "D32",
+      "question": "Three open issues wait on a user decision no run settles: #228 (the reading budget in lines while the board's lines run to 600 characters), #209 (the 25 %-only rule and the stated-cost approval enforced by nobody but the operator), #206 (requirements pinned by version, not hash).",
+      "options": [
+        {
+          "label": "Take the recommended defaults for all three (Recommended)",
+          "detail": "#228: add a byte cap for the board beside the line cap in tests/doc_shape.json (the position pages' pattern); #209: the fraction refusal for arms below the sweep floor is built this session and the approval stays a conversation recorded in the record's section 14; #206: no hash pinning (platform-specific maintenance), the CDN stylesheet carries its integrity hash since this session"
+        },
+        {
+          "label": "Take #228 and #206 as recommended; record approvals in a file the launcher reads",
+          "detail": "#209: an approvals ledger (who, what cost, when) under docs/ that run_matsim.py consumes once per launch"
+        },
+        {
+          "label": "Decide each separately at the next onboard",
+          "detail": "the three stay open as decision-needed; nothing changes"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        228,
+        209,
+        206
+      ],
+      "evidence": "sixteenth report issue ledger (present); #228 #209 #206 AWAITING-DECISION lines",
+      "asked": "2026-10-08",
       "answer": null,
       "answered": null
     }

@@ -25,7 +25,6 @@ The pieces that decide what the choice is offered over, on synthetic inputs:
 import collections
 import importlib.util
 import math
-import types
 from pathlib import Path
 
 import numpy as np

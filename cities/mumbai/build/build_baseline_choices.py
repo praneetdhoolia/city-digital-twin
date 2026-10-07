@@ -37,9 +37,12 @@ def main():
             stream.write(b'<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE population SYSTEM "http://www.matsim.org/files/dtd/population_v6.dtd">\n')
             stream.write(ET.tostring(population, encoding='utf-8'))
     Path(city.path('data/processed/acquisition/baseline_choices.json')).write_text(
-        json.dumps(audit, indent=2) + '\n', encoding='utf-8')
+        json.dumps(audit, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps(audit, indent=2))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

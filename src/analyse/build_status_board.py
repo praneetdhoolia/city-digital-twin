@@ -369,12 +369,94 @@ def block_lane():
     return _lane.render(doc)
 
 
+def render_families(doc):
+    """The families table from a run_families.json document (#229).
+
+    The sampling position page re-keyed every ledger row by hand - 35, then 39
+    rows - and the shape check could only say a key was missing, not that a
+    boundary or a section reference had drifted. One home: the ledger's own
+    `label` and `decisions_ref` per family, oldest first by `from_launch`; the
+    families the ledger marks `readings: none` (whose arms the scoreboard never
+    presents) and the attributed overrides are listed below the table, so the
+    page carries nothing the ledger does not."""
+    fams = sorted(doc['families'].items(), key=lambda kv: kv[1]['from_launch'])
+    lines = ['| key | opened (`from_launch`) | boundary (the ledger\'s label) | record |',
+             '|---|---|---|---|']
+    for key, fam in fams:
+        label = (fam.get('label') or '').replace('|', '/').replace('\n', ' ')
+        refs = ', '.join('§' + r.strip() for r in str(fam.get('decisions_ref', '')).split(',') if r.strip())
+        lines.append('| `%s` | %s | %s | %s |' % (key, fam.get('from_launch', '?'), label, refs or '-'))
+    none = [k for k, f in fams if f.get('readings') == 'none']
+    lines.append('')
+    lines.append('%d families in `docs/run_families.json`; the newest is `%s`.%s'
+                 % (len(fams), fams[-1][0] if fams else '-',
+                    (' Marked `readings: none` (the scoreboard never presents their arms): %s.'
+                     % ', '.join('`%s`' % k for k in none)) if none else ''))
+    overrides = doc.get('overrides') or {}
+    if overrides:
+        parts = []
+        for name, o in sorted(overrides.items()):
+            fam = o.get('family')
+            parts.append('`%s` → %s' % (name, ('`%s`' % fam) if fam else 'unattributed'))
+        lines.append('Overrides in the file (a run the record attributes by name): %s.' % '; '.join(parts))
+    return '\n'.join(lines) + '\n'
+
+
+def block_families():
+    fams_path = _city.docs('run_families.json')
+    return render_families(_json(fams_path) or {'families': {}})
+
+
 BLOCKS = {
     'scoreboard': block_scoreboard,
     'runs': block_runs,
     'state': block_state,
     'lane': block_lane,
+    'families': block_families,
 }
+
+COMMIT_LINE = re.compile(r'\*\*Commit:\*\*\s*`?[^`·\n]*`?')
+
+
+def head_sha(short=8):
+    """The checkout's HEAD sha, or None when git cannot say (CI reads the
+    documents without rewriting them, so --check never needs it)."""
+    import subprocess
+    try:
+        out = subprocess.run(['git', 'rev-parse', 'HEAD'], capture_output=True, text=True, cwd=ROOT,
+                             timeout=30)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    sha = out.stdout.strip()
+    return sha[:short] if out.returncode == 0 and re.fullmatch(r'[0-9a-f]{40}', sha) else None
+
+
+def stamp_commit(text, sha):
+    """The brief's `**Commit:** <sha>` header field written from the checkout
+    (the sixteenth report, C16: it read "this handoff's" for a session)."""
+    if not sha or not COMMIT_LINE.search(text):
+        return text
+    return COMMIT_LINE.sub('**Commit:** `%s`' % sha, text, count=1)
+
+
+def newest_family_key():
+    doc = _json(_city.docs('run_families.json')) or {}
+    fams = sorted(doc.get('families', {}).items(), key=lambda kv: kv[1]['from_launch'])
+    return fams[-1][0] if fams else None
+
+
+def pin_lane_family():
+    """docs/lane.json's `family` stamp is the ledger's newest key (the
+    sixteenth report, C1: it read F38 under F39 and nothing pinned it).
+    Returns the key written, or None when it already agreed."""
+    import lane as _lane
+    newest = newest_family_key()
+    doc = _lane.load()
+    if not newest or doc.get('family') == newest:
+        return None
+    doc['family'] = newest
+    _lane.save(doc)
+    return newest
 
 
 # --------------------------------------------------------------------- main
@@ -408,17 +490,27 @@ def main():
     ap.add_argument('--check', action='store_true',
                     help='compare the blocks with what would be generated; exit 1 if stale')
     ap.add_argument('--board', default=None,
-                    help='one document to process (default: docs/STATUS.md and, for its '
-                         'lane block, docs/NEXT_AGENT_BRIEF.md)')
+                    help='one document to process (default: docs/STATUS.md, docs/NEXT_AGENT_BRIEF.md '
+                         'for its lane block and Commit stamp, and the families page for its families block)')
     a = ap.parse_args()
-    targets = [a.board] if a.board else [_city.docs('STATUS.md'), _city.docs('NEXT_AGENT_BRIEF.md')]
+    families_page = _city.docs('positions', 'sampling-and-families.md')
+    targets = [a.board] if a.board else [_city.docs('STATUS.md'), _city.docs('NEXT_AGENT_BRIEF.md'), families_page]
     rc = 0
+    if not a.check and not a.board:
+        pinned = pin_lane_family()
+        if pinned:
+            print('docs/lane.json\n  family      pinned to %s' % pinned)
     for board in targets:
         if not os.path.exists(board):
             continue
         print(os.path.relpath(board, ROOT))
         text = _read(board)
         new, report = apply(text, check=a.check)
+        if not a.check and os.path.basename(board) == 'NEXT_AGENT_BRIEF.md':
+            stamped = stamp_commit(new, head_sha())
+            if stamped != new:
+                report.append(('commit', 'stamped'))
+                new = stamped
         for name, verdict in report:
             print('  %-11s %s' % (name, verdict))
         if not report:

@@ -197,7 +197,7 @@ def store(entry, directory, provenance, stream, record):
             while chunk := stream.read(1024*1024):
                 output.write(chunk)
     record = dict(path=city.rel(str(target)), **record)
-    provenance.write_text(json.dumps({'files':[record]},indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+    provenance.write_text(json.dumps({'files':[record]},indent=2,ensure_ascii=False)+'\n',encoding='utf-8', newline='\n')
     return record
 
 
@@ -327,9 +327,12 @@ def main():
     log = Path(city.path('data/raw/_acquisition_attempts.json'))
     prior = json.loads(log.read_text(encoding='utf-8')) if log.exists() else []
     prior.append({'retrieved':datetime.now(timezone.utc).isoformat(),'failures':failures})
-    log.write_text(json.dumps(prior,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+    log.write_text(json.dumps(prior,indent=2,ensure_ascii=False)+'\n',encoding='utf-8', newline='\n')
     return bool(failures)
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     raise SystemExit(main())

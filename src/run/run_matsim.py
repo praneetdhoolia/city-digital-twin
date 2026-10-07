@@ -326,6 +326,7 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
     plans_dst = os.path.join(run_dir, 'plans.xml.gz')
     veh_src = os.path.join(src_dir, 'transitVehicles.xml.gz')
     veh_dst = os.path.join(run_dir, 'transitVehicles.xml.gz')
+    subsample_s = None
     if warm is not None:
         # The checkpoint plans are ALREADY SAMPLED at the parent's fraction
         # (check_warm_compatibility enforced the match), so the subsampler must
@@ -348,9 +349,13 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
         scaled = []
     else:
         kept = set()
+        # timed: the subsample is the one launch step nothing measured, and
+        # the parse it costs is paid at every launch (sixteenth report)
+        t_sample = time.time()
         n_in, n_out, n_hhless = subsample_plans(
             plans_src, plans_dst, fraction, seed,
             cfg.get('RUN.sample.unit'), kept_ids=kept)
+        subsample_s = round(time.time() - t_sample, 1)
         # The run's OWN residents: person -> home LGA from the population
         # the plans were built on, written beside the plans so that a
         # later demand rebuild cannot change what this run's readings
@@ -389,6 +394,9 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
     return config_path, dict(persons_in=n_in, persons_kept=n_out,
                              unit=cfg.get('RUN.sample.unit'),
                              persons_without_household=n_hhless,
+                             # seconds the subsample took, None where no
+                             # subsample ran (a warm start or a full sample)
+                             subsample_s=subsample_s,
                              transit_capacity_scaled=sorted(set(scaled)))
 
 
@@ -750,15 +758,28 @@ def announce_cost(iterations, fraction, cfg):
             first = int(cfg.get('RUN.controler.first_iteration') or 0)
         except Exception:                                    # noqa: BLE001
             first = 0
-        quote = arm_cost.price(int(iterations), fraction,
-                               arm_cost.observed_arms(),
+        arms = arm_cost.observed_arms()
+        control, _ = arm_cost.family_control(arms)
+        # a probe whose host history says it priced the host is refused as a
+        # price, and the family's control - when one exists - is the pair
+        # quote (9.219, sixteenth report)
+        try:
+            max_host_cpu = cfg.get('RUN.machine.probe_max_host_cpu_pct')
+        except Exception:                                    # noqa: BLE001
+            max_host_cpu = None
+        quote = arm_cost.price(int(iterations), fraction, arms,
                                cfg.get('RUN.gate.interval_iterations'),
-                               first_iteration=first)
+                               first_iteration=first,
+                               max_host_cpu_pct=max_host_cpu, control=control)
     except Exception as e:                                   # noqa: BLE001
         print('cost: not priced (%s)' % e, flush=True)
         return
     if quote.get('error'):
         print('cost: %s' % quote['error'], flush=True)
+        if quote.get('pair_quote'):
+            print('      pair quote: the family\'s control %s ran %s'
+                  % (quote['pair_quote']['name'], quote['pair_quote']['wall']),
+                  flush=True)
         return
     on = quote['priced_on']
     line = ('cost: ~%s for %d iterations%s plus %s of setup, priced on %s at '
@@ -776,8 +797,13 @@ def announce_cost(iterations, fraction, cfg):
             quote['first_gate_iteration'],
             arm_cost._fmt_hours(quote['first_gate_s']))
     print(line, flush=True)
+    if quote.get('pair_quote'):
+        print('      pair quote: the family\'s control %s ran %s to iteration '
+              '%s - a treatment arm of the same build is priced by it'
+              % (quote['pair_quote']['name'], quote['pair_quote']['wall'],
+                 quote['pair_quote']['reached_iteration']), flush=True)
     for key in ('stall_warning', 'milestone_warning', 'stale_warning',
-                'build_warning'):
+                'build_warning', 'host_warning'):
         if quote.get(key):
             print('      ' + quote[key], flush=True)
     # A stated ceiling is only a boundary if something holds it. Until #169 the
@@ -870,7 +896,8 @@ def refuse_unsafe_host(cfg):
     after its active hours ended, and killed F36's arm 0 at iteration 237 of
     250 - it had done the same on 16 September. Active hours cap at 18 h and
     an arm runs 25-42 h, so the guard is a pause that outlasts the run's own
-    cost ceiling, and no staged restart. Off Windows there is nothing to ask.
+    cost ceiling, and no staged restart. Off Windows there is nothing to ask
+    about updates; the host's load (`refuse_loaded_host`) is asked everywhere.
     """
     import procs
     if procs.restart_pending():
@@ -878,6 +905,7 @@ def refuse_unsafe_host(cfg):
             'REFUSED: Windows has a restart pending, and it will force it under '
             'the run. Restart the machine first, then pause updates '
             '(Settings > Windows Update > Pause updates) and relaunch.')
+    refuse_loaded_host(cfg, host_sample(cfg))
     until = procs.updates_paused_until()
     if until is None:
         return
@@ -893,6 +921,72 @@ def refuse_unsafe_host(cfg):
                % time.strftime('%Y-%m-%d %H:%M', time.localtime(until)),
                ceiling_h, time.strftime('%Y-%m-%d %H:%M', time.localtime(need)),
                time.strftime('%Y-%m-%d %H:%M', time.localtime(need))))
+
+
+def host_sample(cfg):
+    """What the host is doing right now, read the way the digest reads it.
+
+    Two readings one monitor poll apart (`RUN.monitor.poll_s`), because one
+    reading of a cumulative CPU counter is not a rate; the free memory is in
+    the second reading. Instrumentation: never raises, and a cfg that
+    declares no poll returns the one reading it can take.
+    """
+    import procs                                              # noqa: PLC0415
+    try:
+        span = cfg.get('RUN.monitor.poll_s')
+    except Exception:                                         # noqa: BLE001
+        span = None
+    doc, prev = procs.host_load()
+    if span:
+        time.sleep(float(span))
+        doc, _ = procs.host_load(prev)
+    return doc
+
+
+def refuse_loaded_host(cfg, host):
+    """A LOADED HOST PRICES THE HOST, NOT THE BUILD (sixteenth report).
+
+    F39's control carried a 2.09 h band (iterations 160-205) of 21 full-GC
+    pauses over 60 s while the host paged - a 48 GB heap on a 63.46 GB host
+    with a co-tenant - and F37 lost 5.56 h the same way; the three daytime
+    probes of 30 September quoted 37.0, 50.5 and 27.7 h for ONE build. Every
+    progress write already recorded the host's CPU, free RAM and the top
+    other process, and nothing refused on it. This does, at preflight, from
+    the same reading: free physical memory below the heap plus the declared
+    margin (`RUN.machine.free_ram_margin_gib`), or another process holding
+    more than the declared cores (`RUN.machine.other_process_max_cores`).
+    Either field at 0 switches its bar off, the convention
+    `RUN.gate.wall_ceiling_h` set; a reading the host would not give is no
+    reason to refuse.
+    """
+    host = host or {}
+    margin = cfg.get('RUN.machine.free_ram_margin_gib')
+    free = host.get('ram_free_gb')
+    if margin and free is not None:
+        need = (parse_heap_gib(cfg.get('RUN.machine.xmx')) or 0.0) + float(margin)
+        if free < need:
+            top = host.get('top_other_process') or {}
+            raise SystemExit(
+                'REFUSED: the host has %.1f GiB free of %.1f, and this run needs '
+                'its %s heap plus RUN.machine.free_ram_margin_gib %g = %.1f GiB '
+                'before the JVM starts. A heap the host cannot hold pages: F39\'s '
+                'control lost 2.09 h to 21 full collections over 60 s each '
+                '(sixteenth report).%s Close what holds the memory and relaunch.'
+                % (free, host.get('ram_total_gb') or 0.0, cfg.get('RUN.machine.xmx'),
+                   float(margin), need,
+                   (' The busiest other process is %s (pid %s).'
+                    % (top.get('name'), top.get('pid'))) if top else ''))
+    cores = cfg.get('RUN.machine.other_process_max_cores')
+    top = host.get('top_other_process') or {}
+    if cores and top.get('cores') is not None and float(top['cores']) > float(cores):
+        raise SystemExit(
+            'REFUSED: %s (pid %s) is holding %.2f cores over the last %s s, above '
+            'RUN.machine.other_process_max_cores %g. An arm launched beside it '
+            'is priced by it, not by the build: the daytime probes of 30 '
+            'September 2026 quoted 37.0-50.5 h for a build whose control ran '
+            '27.9 h (9.219). Stop it or wait for it, then relaunch.'
+            % (top.get('name'), top.get('pid'), float(top['cores']),
+               host.get('span_s'), float(cores)))
 
 
 def refuse_small_heap(cfg, xmx, fraction):
@@ -1154,10 +1248,13 @@ def jar_cutoff(first, last, fraction):
     """The iteration the pinned jar switches innovation off at.
 
     `(int) (first + f x (last - first))` - a d2i truncation, read from
-    StrategyManager.class with javap (9.216). The harness computes it the
-    same way or it is computing a different run.
+    StrategyManager.class with javap (9.216). ONE definition, in
+    `iteration_reading.innovation_off_after`: the harness, the watcher and
+    the viewer each computed their own until the sixteenth report found the
+    watcher's reading 83 where the jar's was 200 on the F38 resume.
     """
-    return int(first + float(fraction) * (last - first))
+    import iteration_reading                                  # noqa: PLC0415
+    return iteration_reading.innovation_off_after(first, last, fraction)
 
 
 def refuse_cutoff_mismatch(parent_cutoff, n, resume_cutoff, fraction):
@@ -1729,39 +1826,75 @@ def start_ceiling_watch(run_dir, cfg, proc, t0):
         return None
     if ceiling_h <= 0:
         return None
-    # an OBSERVER cadence, declared like the gate watcher's retry interval; it
-    # bounds only how far past its ceiling a run can get, never the ceiling
-    try:
-        poll_s = float(cfg.get('RUN.gate.ceiling_poll_s'))
-    except Exception:                                        # noqa: BLE001
-        poll_s = 60.0
-    import threading
     limit_s = ceiling_h * 3600.0
+
+    def measure():
+        return time.time() - t0
+
+    def verdict(spent):
+        return dict(stopped=_now(), ceiling_h=ceiling_h, wall_s=round(spent, 1),
+                    reached_iteration=_last_completed_iteration(run_dir))
+
+    def message(spent, _verdict):
+        return ('ceiling watcher: stopping the run - %.2f h spent against an '
+                'approved ceiling of %.2f h (RUN.gate.wall_ceiling_h)'
+                % (spent / 3600.0, ceiling_h))
+
+    return _start_bound_watch('ceiling-watch', run_dir, cfg, proc, measure,
+                              limit_s, CEILING_STOP, verdict, message)
+
+
+def _watch_poll_s(cfg):
+    """The observer cadence the ceiling and stall watchers share
+    (`RUN.gate.ceiling_poll_s`): it bounds only how far past its bound a run
+    can get, never the bound. A cfg that declares none polls each minute."""
+    try:
+        return float(cfg.get('RUN.gate.ceiling_poll_s'))
+    except Exception:                                        # noqa: BLE001
+        return 60.0
+
+
+def _stop_the_run(run_dir, proc, marker, verdict, message):
+    """The one way a watcher ends a run: the verdict is written to its marker
+    BEFORE the kill (9.143), so whichever process closes the run out can say
+    which boundary it met; then the message, then the JVM."""
+    try:
+        with open(os.path.join(run_dir, marker), 'w', encoding='utf-8',
+                  newline='\n') as fh:
+            json.dump(verdict, fh, indent=1)
+    except OSError:
+        pass
+    print(message, flush=True)
+    proc.kill()
+
+
+def _start_bound_watch(name, run_dir, cfg, proc, measure, limit, marker,
+                       verdict, message):
+    """One skeleton for the watchers that compare a reading against a bound.
+
+    The ceiling watcher reads the clock against the approved hours and the
+    stall watcher reads the log's silence against `RUN.gate.stall_kill_s`;
+    until the sixteenth report each was its own copy of this loop, and a
+    fix to one's marker handling had to be made twice (9.176). The reading
+    is taken BEFORE the sleep, so a bound already passed at launch stops the
+    run at once rather than one cadence later. A daemon that swallows its
+    own failures and can only END a run: a watcher that cannot read
+    something must never kill a healthy run.
+    """
+    import threading                                          # noqa: PLC0415
+    poll_s = _watch_poll_s(cfg)
 
     def loop():
         while proc.poll() is None:
-            # checked BEFORE the sleep, so a ceiling already passed at launch
-            # stops the run at once rather than one cadence later
-            spent = time.time() - t0
-            if spent < limit_s:
+            reading = measure()
+            if reading < limit:
                 time.sleep(poll_s)
                 continue
-            verdict = dict(stopped=_now(), ceiling_h=ceiling_h,
-                           wall_s=round(spent, 1),
-                           reached_iteration=_last_completed_iteration(run_dir))
-            try:
-                with open(os.path.join(run_dir, CEILING_STOP), 'w',
-                          encoding='utf-8', newline='\n') as fh:
-                    json.dump(verdict, fh, indent=1)
-            except OSError:
-                pass
-            print('ceiling watcher: stopping the run - %.2f h spent against an '
-                  'approved ceiling of %.2f h (RUN.gate.wall_ceiling_h)'
-                  % (spent / 3600.0, ceiling_h), flush=True)
-            proc.kill()
+            doc = verdict(reading)
+            _stop_the_run(run_dir, proc, marker, doc, message(reading, doc))
             return
 
-    t = threading.Thread(target=loop, daemon=True, name='ceiling-watch')
+    t = threading.Thread(target=loop, daemon=True, name=name)
     t.start()
     return t
 
@@ -1791,40 +1924,24 @@ def start_stall_watch(run_dir, cfg, proc, log):
         return None
     if kill_s <= 0:
         return None
-    try:
-        poll_s = float(cfg.get('RUN.gate.ceiling_poll_s'))
-    except Exception:                                        # noqa: BLE001
-        poll_s = 60.0
-    import threading
 
-    def loop():
-        while proc.poll() is None:
-            try:
-                silent = time.time() - os.path.getmtime(log)
-            except OSError:
-                silent = 0.0
-            if silent < kill_s:
-                time.sleep(poll_s)
-                continue
-            verdict = dict(stopped=_now(), stall_kill_s=kill_s,
-                           silent_s=round(silent, 1),
-                           reached_iteration=_last_completed_iteration(run_dir))
-            try:
-                with open(os.path.join(run_dir, STALL_STOP), 'w',
-                          encoding='utf-8', newline='\n') as fh:
-                    json.dump(verdict, fh, indent=1)
-            except OSError:
-                pass
-            print('stall watcher: stopping the run - the log has been silent '
-                  'for %.0f s against RUN.gate.stall_kill_s = %.0f s, after '
-                  'iteration %s' % (silent, kill_s, verdict['reached_iteration']),
-                  flush=True)
-            proc.kill()
-            return
+    def measure():
+        try:
+            return time.time() - os.path.getmtime(log)
+        except OSError:
+            return 0.0
 
-    t = threading.Thread(target=loop, daemon=True, name='stall-watch')
-    t.start()
-    return t
+    def verdict(silent):
+        return dict(stopped=_now(), stall_kill_s=kill_s, silent_s=round(silent, 1),
+                    reached_iteration=_last_completed_iteration(run_dir))
+
+    def message(silent, doc):
+        return ('stall watcher: stopping the run - the log has been silent '
+                'for %.0f s against RUN.gate.stall_kill_s = %.0f s, after '
+                'iteration %s' % (silent, kill_s, doc['reached_iteration']))
+
+    return _start_bound_watch('stall-watch', run_dir, cfg, proc, measure,
+                              kill_s, STALL_STOP, verdict, message)
 
 
 def start_gate_watch(run_dir, cfg, proc):
@@ -1957,15 +2074,9 @@ def start_gate_watch(run_dir, cfg, proc):
                            interval=interval,
                            breaches=breaches,
                            gate=[ln.strip() for ln in gate_lines])
-            try:
-                with open(os.path.join(run_dir, GATE_STOP), 'w',
-                          encoding='utf-8', newline='\n') as fh:
-                    json.dump(verdict, fh, indent=1)
-            except OSError:
-                pass
-            print('gate watcher: stopping the run at iteration %d - %s'
-                  % (milestone, gate_lines[0]), flush=True)
-            proc.kill()
+            _stop_the_run(run_dir, proc, GATE_STOP, verdict,
+                          'gate watcher: stopping the run at iteration %d - %s'
+                          % (milestone, gate_lines[0]))
             return
 
     t = threading.Thread(target=loop, daemon=True, name='gate-watch')

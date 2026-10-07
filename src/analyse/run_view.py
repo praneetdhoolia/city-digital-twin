@@ -588,12 +588,17 @@ def mode_targets():
 
 
 def readable_iterations(run_dir):
-    """Iterations with a trips table or experienced plans, ascending."""
+    """Iterations with a trips table or experienced plans that the run's
+    record lets a reader quote, ascending - at or below `reached_iteration`
+    on a stopped run, everything on disk on a live one (iteration_reading's
+    one clamp, which every reader sits under since the sixteenth report)."""
     try:
         import measure_iteration_modes as _mim
         import iteration_trips as _itr
-        return sorted(set(_mim.iterations_with_trips(run_dir))
+        import iteration_reading as _reading
+        have = sorted(set(_mim.iterations_with_trips(run_dir))
                       | set(_itr.iterations_with_plans(run_dir)))
+        return _reading.citable_iterations(run_dir, iterations=have)
     except Exception:                                        # noqa: BLE001
         return []
 

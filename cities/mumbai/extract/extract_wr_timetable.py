@@ -128,9 +128,12 @@ def main():
                              'Some services continue outside the printed station span; join continuation schedules.',
                              'Printed times are scheduled observations, not realised running times.',
                              'Train lengths, AC status and station coordinates still require validated joins.'], sources=audits)
-    (output/'_wr_timetable_audit.json').write_text(json.dumps(result,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
+    (output/'_wr_timetable_audit.json').write_text(json.dumps(result,indent=2,ensure_ascii=False)+'\n',encoding='utf-8', newline='\n')
     print(json.dumps(result['extracted_cells_by_source']))
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

@@ -30,6 +30,7 @@ import org.matsim.core.utils.misc.OptionalTime;
 import org.matsim.pt.transitSchedule.api.TransitRoute;
 import org.matsim.pt.transitSchedule.api.TransitRouteStop;
 import org.matsim.pt.transitSchedule.api.TransitSchedule;
+import org.matsim.pt.transitSchedule.api.TransitStopFacility;
 import org.matsim.vehicles.Vehicle;
 
 /**
@@ -107,15 +108,31 @@ public final class ServiceQualityScoring implements TransitDriverStartsEventHand
 
     /** stopKey (line at a stop) -> its departures in seconds, sorted, once. */
     private final Map<String, double[]> departuresAtStop = new HashMap<>();
+    /**
+     * The same arrays reached by the ids the events carry, with no string
+     * built on the way: line -> child facility -> the (line, parent stop)
+     * departures. Resolved ONCE per vehicle arrival ({@link Service#departures})
+     * rather than once per boarding, which concatenated a key String for
+     * every passenger entering a transit vehicle (sixteenth report).
+     */
+    private final Map<Id<TransitLine>, Map<Id<TransitStopFacility>, double[]>>
+            departuresByFacility;
     private final double capMin;
-    /** vehicle in service -> (line, routeKey, driver, the stop it is at). */
+    /** The mobsim's end time, the clock every afterMobsim charge is stamped
+     *  with - as {@code PtUnservedScoring} stamps its own. */
+    private final Config config;
+    /** vehicle in service -> (line, routeKey, driver, the departures at the
+     *  stop it is standing at). */
     private static final class Service {
-        private final String line;
+        private final Id<TransitLine> line;
         private final String routeKey;
         private final Id<Person> driver;
-        private String stop;
+        /** The boarded line's departures at the stop the vehicle last
+         *  arrived at; null until its first arrival, or at a stop the
+         *  schedule does not list for the line. */
+        private double[] departures;
 
-        private Service(final String line, final String routeKey,
+        private Service(final Id<TransitLine> line, final String routeKey,
                         final Id<Person> driver) {
             this.line = line;
             this.routeKey = routeKey;
@@ -148,8 +165,11 @@ public final class ServiceQualityScoring implements TransitDriverStartsEventHand
         this.reliability = cfg.isReliability();
         this.atap = cfg.isAtap();
         this.cfg = cfg;
+        this.config = config;
         this.capMin = cfg.getHeadwayCapMin();
         this.departuresAtStop.putAll(indexDepartures(scenario.getTransitSchedule()));
+        this.departuresByFacility =
+                indexByFacility(scenario.getTransitSchedule(), this.departuresAtStop);
         int once = 0;
         final TreeMap<String, Integer> routesBySubmode = new TreeMap<>();
         for (final TransitLine line
@@ -231,6 +251,45 @@ public final class ServiceQualityScoring implements TransitDriverStartsEventHand
     }
 
     /**
+     * {@link #indexDepartures}'s arrays, reachable by the ids an event carries.
+     * For every line, every child facility of every parent stop the line calls
+     * at maps to that line-stop's array - EVERY child of the parent, not only
+     * the ones the line's routes list, so the answer is exactly what
+     * {@code departuresAtStop.get(stopKey(line, facility))} gave for any
+     * facility of the schedule, with no String built per lookup.
+     */
+    static Map<Id<TransitLine>, Map<Id<TransitStopFacility>, double[]>> indexByFacility(
+            final TransitSchedule schedule, final Map<String, double[]> atStop) {
+        final Map<String, List<Id<TransitStopFacility>>> childrenOf = new HashMap<>();
+        for (final Id<TransitStopFacility> facility : schedule.getFacilities().keySet()) {
+            childrenOf.computeIfAbsent(parentStop(facility.toString()),
+                                       k -> new ArrayList<>()).add(facility);
+        }
+        final Map<Id<TransitLine>, Map<Id<TransitStopFacility>, double[]>> out =
+                new HashMap<>();
+        for (final TransitLine line : schedule.getTransitLines().values()) {
+            final Map<Id<TransitStopFacility>, double[]> byFacility =
+                    out.computeIfAbsent(line.getId(), k -> new HashMap<>());
+            for (final TransitRoute route : line.getRoutes().values()) {
+                for (final TransitRouteStop stop : route.getStops()) {
+                    final String facility = stop.getStopFacility().getId().toString();
+                    final double[] departures =
+                            atStop.get(stopKey(line.getId().toString(), facility));
+                    if (departures == null) {
+                        continue;
+                    }
+                    for (final Id<TransitStopFacility> child
+                            : childrenOf.getOrDefault(parentStop(facility),
+                                                      List.of())) {
+                        byFacility.put(child, departures);
+                    }
+                }
+            }
+        }
+        return out;
+    }
+
+    /**
      * ATAP M1's valuation of a service interval of {@code siMin} minutes, in
      * equivalent in-vehicle minutes (Supporting Technical Report section 4.3,
      * equation 4.3.2, 9.219): the expected wait - the least of the random-arrival
@@ -285,7 +344,7 @@ public final class ServiceQualityScoring implements TransitDriverStartsEventHand
     @Override
     public void handleEvent(final TransitDriverStartsEvent event) {
         this.inService.put(event.getVehicleId(),
-                           new Service(event.getTransitLineId().toString(),
+                           new Service(event.getTransitLineId(),
                                        routeKey(event.getTransitLineId(),
                                                 event.getTransitRouteId()),
                                        event.getDriverId()));
@@ -297,7 +356,12 @@ public final class ServiceQualityScoring implements TransitDriverStartsEventHand
         if (service == null) {
             return;
         }
-        service.stop = event.getFacilityId().toString();
+        // The line's departures at THIS stop, resolved once for every
+        // passenger who boards here; null where the schedule lists no such
+        // line-stop, which the boarding counts rather than prices at zero.
+        final Map<Id<TransitStopFacility>, double[]> atLine =
+                this.departuresByFacility.get(service.line);
+        service.departures = atLine == null ? null : atLine.get(event.getFacilityId());
         this.delays.computeIfAbsent(service.routeKey, k -> new ArrayList<>())
                 .add(event.getDelay());
     }
@@ -309,8 +373,7 @@ public final class ServiceQualityScoring implements TransitDriverStartsEventHand
             return;                      // not a transit passenger
         }
         this.boardings++;
-        final double[] departures = service.stop == null ? null
-                : this.departuresAtStop.get(stopKey(service.line, service.stop));
+        final double[] departures = service.departures;
         if (departures == null) {
             // A boarding before the vehicle reached a stop, or at a stop the
             // schedule does not list for its line. Neither can happen while
@@ -340,9 +403,17 @@ public final class ServiceQualityScoring implements TransitDriverStartsEventHand
 
     @Override
     public void notifyAfterMobsim(final AfterMobsimEvent event) {
+        final long started = System.currentTimeMillis();
+        // Stamped at the mobsim's end (qsim.endTime, RUN.qsim.end_time_h), as
+        // PtUnservedScoring stamps its own afterMobsim charge: the charge is
+        // for the day's boardings as a whole, and an events file that carried
+        // it should place it at the day's end, not at the iteration INDEX it
+        // was stamped with until the sixteenth report (a time of 231 s on
+        // iteration 231). The score is additive and unchanged by the stamp.
+        final double time = this.config.qsim().getEndTime().orElse(0.0);
         for (final Map.Entry<Id<Person>, Double> e : this.charge.entrySet()) {
             this.events.processEvent(new PersonScoreEvent(
-                    event.getIteration(), e.getKey(), -e.getValue(), KIND));
+                    time, e.getKey(), -e.getValue(), KIND));
         }
         // Roll this mobsim's measured spread forward as NEXT iteration's
         // reliability. Measured, never seeded: see the class comment.
@@ -395,6 +466,11 @@ public final class ServiceQualityScoring implements TransitDriverStartsEventHand
         this.boardingsWithoutRoute = 0;
         this.boardingsAtCap = 0;
         this.headwayMinSum = 0.0;
+        // One line per listener per iteration, in the one shape every citysim
+        // listener logs it, so the performance lane can attribute a phase's
+        // time from matsim.log alone (sixteenth report).
+        LOG.info("serviceQuality: it.{} afterMobsim listener=ServiceQualityScoring ms={}",
+                 event.getIteration(), System.currentTimeMillis() - started);
     }
 
     @Override

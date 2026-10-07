@@ -19,7 +19,6 @@ A false green on the guard that exists because two launches once died
 silently (#70) is worse than no guard.
 """
 import json
-import os
 
 import pytest
 

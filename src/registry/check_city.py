@@ -181,7 +181,16 @@ def check_fields(city_dir, name, doc):
             continue
         if who == 'reference_city' or not any(b in producers for b in who):
             not_this_city.add(k)
-    applicable = set(required) - not_applicable - not_this_city
+    # The third derived narrowing (render_schema.assembler_run_path, #241): a
+    # key the launcher reads through the assembler only under the C1
+    # translation is required only of a city whose RUN.scoring.translation
+    # says so; a `bound_fields` city binds its scoring itself and has no C1
+    # weight to declare. The city's own declaration decides, never a judgement.
+    translation = (fields.get('RUN.scoring.translation') or {}).get('value')
+    not_translated = {k for k, spec in required.items()
+                      if spec.get('required_if_translation')
+                      and spec['required_if_translation'] != translation}
+    applicable = set(required) - not_applicable - not_this_city - not_translated
 
     missing = sorted(applicable - set(fields))
     extra = sorted(set(fields) - set(required))
@@ -197,6 +206,9 @@ def check_fields(city_dir, name, doc):
     if not_this_city:
         narrowing.append('%d read only by builders this package did not run or by the '
                          'reference city\'s own scripts' % len(not_this_city))
+    if not_translated:
+        narrowing.append('%d read on the run path only under the C1 translation; this '
+                         'city\'s scoring is %s' % (len(not_translated), translation))
     check(not missing, '%s: all %d required fields declared%s'
           % (name, len(applicable),
              '' if not narrowing else ' (%s)' % '; '.join(narrowing)))
@@ -379,6 +391,86 @@ def check_framework_is_city_free(name, doc):
                 'than a value' % (name, len(hits) - len(value_hits)), note=True)
 
 
+# What a place name in a CITY'S OWN script may be without being a typed
+# extent: a path or a url (the city's files carry its name), an identifier
+# (a key, a slug, a source id), prose (a label, a message, a format string,
+# a pattern), or a string the city declares as the vocabulary of a source
+# table it reads (`source_vocabulary` in city.json, or any string value the
+# descriptor and the geometry documents already carry). What is left is a
+# place name a script decides by - a filter or an extent - and the check
+# refuses it until the city declares it, which is what makes it reviewable.
+DATA_SUFFIXES = ('.csv', '.json', '.zip', '.xml', '.gz', '.gpkg', '.xlsx', '.xls', '.txt',
+                 '.osm', '.pdf', '.html', '.geojson', '.shp', '.tif', '.py', '.md', '.log')
+IDENTIFIER = re.compile(r'^[a-z0-9_.\-]+$', re.I)
+PROSE_WORDS = 5
+
+
+def _declared_strings(obj, out):
+    if isinstance(obj, str):
+        out.add(obj.strip().lower())
+    elif isinstance(obj, dict):
+        for v in obj.values():
+            _declared_strings(v, out)
+    elif isinstance(obj, list):
+        for v in obj:
+            _declared_strings(v, out)
+    return out
+
+
+def _is_structure(value, vocabulary):
+    v = value.strip()
+    if '/' in v or v.lower().endswith(DATA_SUFFIXES) or v.startswith('http'):
+        return True
+    if IDENTIFIER.match(v):
+        return True
+    if len(v.split()) > PROSE_WORDS or any(c in v for c in '%{\\') or '(?' in v:
+        return True
+    return v.lower() in vocabulary
+
+
+def check_city_scripts_declare_their_places(city_dir, name, doc):
+    """A place name a city's own script decides by is declared vocabulary.
+
+    The framework scan above keeps a place name out of src/; this keeps a
+    typed extent out of the city's own build and extract scripts, where the
+    four-decimal rectangle that clipped 87 core SA1s lived (CLAUDE.md). The
+    city's name is legitimately everywhere in its scripts - in its paths, its
+    ids, its labels - so only a bare literal a script compares, selects or
+    looks up by is judged, and a source table's own spelling of a region
+    (`Greater Mumbai`, `Newcastle and surrounds`) is declared in city.json's
+    `source_vocabulary`, where a diff can see it.
+    """
+    if not doc:
+        return
+    tokens = {name.lower()}
+    for sel in doc.get('boundary', {}).get('selector', []):
+        tokens.add(str(sel).split()[0].lower())
+    tokens = {t for t in tokens if len(t) > 4}
+    pattern = re.compile('|'.join(re.escape(t) for t in sorted(tokens)), re.I)
+    vocabulary = _declared_strings(doc, set())
+    for gpath in sorted(glob.glob(os.path.join(city_dir, 'geometry', '*.json'))):
+        _declared_strings(read_json(gpath), vocabulary)
+    undeclared, judged = [], 0
+    for sub in ('build', 'extract'):
+        for path in sorted(glob.glob(os.path.join(city_dir, sub, '*.py'))):
+            rel = os.path.relpath(path, REPO).replace(os.sep, '/')
+            try:
+                text = io.open(path, encoding='utf-8', errors='replace').read()
+            except OSError:
+                continue
+            for rel_, line, value in _place_names_in_literals(rel, text, pattern):
+                judged += 1
+                if not _is_structure(value, vocabulary):
+                    undeclared.append((rel_, line, value))
+    check(not undeclared,
+          '%s: every place name its own scripts decide by is declared source '
+          'vocabulary (%d literal(s) judged)' % (name, judged))
+    for rel, line, value in undeclared[:15]:
+        check(True, '  UNDECLARED  %s:%d  %r - a source table\'s spelling goes in '
+                    'city.json source_vocabulary; a typed extent goes in geometry/'
+              % (rel, line, value[:60]), note=True)
+
+
 def _place_names_in_literals(rel, text, pattern):
     """Place names appearing as string literals - excluding docstrings."""
     try:
@@ -514,6 +606,7 @@ def check_city(name):
     check_layers(city_dir, name, doc)
     check_no_cwd_relative_output(name)
     check_framework_is_city_free(name, doc)
+    check_city_scripts_declare_their_places(city_dir, name, doc)
 
 
 def main():

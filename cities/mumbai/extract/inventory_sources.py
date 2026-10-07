@@ -55,7 +55,7 @@ def main():
             share_alike=entry.get('share_alike', False),
             provides=[row['path']] if 'path' in row else [])
             for entry, row in zip(catalogue['sources'], records)]
-        descriptor_path.write_text(json.dumps(descriptor, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+        descriptor_path.write_text(json.dumps(descriptor, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     output = Path(city.path('data/processed/acquisition/source_inventory.json'))
     output.parent.mkdir(parents=True, exist_ok=True)
     result = {
@@ -64,11 +64,14 @@ def main():
         'sources': records,
         'identical_bytes_groups': sorted(ids for ids in hashes.values() if len(ids) > 1),
     }
-    output.write_text(json.dumps(result, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    output.write_text(json.dumps(result, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({'catalogued': len(records), 'acquired': len([r for r in records if r['status'] == 'acquired_unvalidated']),
                       'acquired_unusable': len([r for r in records if r['status'] == 'acquired_unusable']),
                       'unique_acquired_contents': len(hashes)}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

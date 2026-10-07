@@ -14,7 +14,6 @@ choosing one from its own sweep would be inventing the observation the
 denominator exists to represent.
 """
 import os
-import sys
 
 import pytest
 

@@ -6,7 +6,6 @@ A synthetic legs table: one walk-to-rail trip, one bus-to-rail trip, one
 rail-to-rail change, one long walk to rail, and a bus-only trip.
 """
 import gzip
-import os
 
 import pytest
 

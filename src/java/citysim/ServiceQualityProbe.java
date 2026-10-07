@@ -68,6 +68,8 @@ public final class ServiceQualityProbe {
     private static final double SECOND_STOP_OFFSET_S = 120.0;
     private static final double UTILS_PER_MIN = 0.1;
     private static final double CAP_MIN = 1800.0;
+    /** The toy's qsim end time: the clock every afterMobsim charge carries. */
+    private static final double END_OF_DAY_S = 30.0 * 3600.0;
     private static final double EPS = 1e-9;
 
     private ServiceQualityProbe() {
@@ -136,6 +138,44 @@ public final class ServiceQualityProbe {
         json.append(",\"score_mid_once\":[").append(pMid).append(',').append(pOnce)
             .append("],\"driver_not_charged\":").append(driverFree)
             .append(",\"boarding_charged_the_line_interval\":").append(endToEnd);
+        // the charge is stamped at the mobsim's end, as PtUnservedScoring's is
+        boolean stampedAtEndOfDay = !scored.isEmpty();
+        for (final PersonScoreEvent e : scored) {
+            stampedAtEndOfDay &= eq(e.getTime(), END_OF_DAY_S);
+        }
+        ok &= stampedAtEndOfDay;
+        json.append(",\"charge_stamped_at_qsim_end\":").append(stampedAtEndOfDay);
+
+        // --- 5b. the per-arrival index answers exactly as the string key ----
+        // Every (line, facility) the schedule lists, and the mapper's other
+        // child of the same stop, reach the same array through the id-keyed
+        // index the arrival resolves as through stopKey(); nothing listed is
+        // missing from it, and a line is not found at a stop it never calls at.
+        final Map<Id<TransitLine>, Map<Id<TransitStopFacility>, double[]>> byFacility =
+                ServiceQualityScoring.indexByFacility(scenario.getTransitSchedule(), index);
+        boolean sameArrays = true;
+        int pairs = 0;
+        for (final TransitLine line : scenario.getTransitSchedule().getTransitLines().values()) {
+            for (final TransitStopFacility facility
+                    : scenario.getTransitSchedule().getFacilities().values()) {
+                final double[] viaKey = index.get(ServiceQualityScoring.stopKey(
+                        line.getId().toString(), facility.getId().toString()));
+                final Map<Id<TransitStopFacility>, double[]> atLine =
+                        byFacility.get(line.getId());
+                final double[] viaId = atLine == null ? null : atLine.get(facility.getId());
+                sameArrays &= viaKey == viaId;   // the same array object, or both absent
+                pairs++;
+            }
+        }
+        // L2 lists A.link:2 only; a vehicle of L2 arriving at the mapper's
+        // other child of stop A still resolves the (L2, A) departures
+        final boolean otherChildResolves =
+                byFacility.get(Id.create(ONCE, TransitLine.class))
+                        .get(Id.create("A.link:1", TransitStopFacility.class)) == onceAtA;
+        ok &= sameArrays && pairs == 6 && otherChildResolves;
+        json.append(",\"line_facility_pairs_compared\":").append(pairs)
+            .append(",\"arrival_index_equals_string_key\":").append(sameArrays)
+            .append(",\"other_child_of_the_stop_resolves\":").append(otherChildResolves);
 
         // --- 6. ATAP M1's function (9.219) ----------------------------------
         // The coefficients below are ATAP's published ones, set as fixtures;
@@ -240,6 +280,7 @@ public final class ServiceQualityProbe {
         sq.headwayUtilsPerMin = UTILS_PER_MIN;
         sq.reliabilityUtilsPerMin = 0.0;
         sq.headwayCapMin = CAP_MIN;
+        config.qsim().setEndTime(END_OF_DAY_S);
         final Scenario scenario = ScenarioUtils.createScenario(config);
         final TransitSchedule schedule = scenario.getTransitSchedule();
         final TransitScheduleFactory f = schedule.getFactory();

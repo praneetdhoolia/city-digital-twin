@@ -1,5 +1,13 @@
 # Evidence interpretation and unresolved conflicts
 
+> **FROZEN — superseded by §9.205 (21 September 2026) and the sections after it.**
+> These notes were written during the acquisition (to 22 September 2026) and are
+> kept as its interpretation record. The current position of the second city is
+> [`README.md`](README.md) (its front page) and, for the mechanisms the framework
+> shares, the simulator's position pages under
+> [`docs/positions/`](../../../docs/positions); a figure here is read as dated,
+> never as the state today. Bannered 8 October 2026 (the sixteenth report).
+
 The [catalogue](../extract/sources.json) identifies each source below. The
 [inventory](../data/processed/acquisition/source_inventory.json) records its
 immutable path and hash. These notes describe limitations discovered during
@@ -1950,5 +1958,5 @@ operator availability and a fallback after refusal remain implementation gaps.
 The native probe is `python tests/check_hired_fleet.py`. It uses synthetic roads
 and travellers, not Mumbai observations. See decision 9.199 for the first city
 experiment and its provisional coefficients.
-The [portable pool contract](../../../docs/hired_fleet.md) defines the mechanism
+The [portable pool contract](../../../docs/framework/hired_fleet.md) defines the mechanism
 and its configuration independently of the Mumbai inputs.

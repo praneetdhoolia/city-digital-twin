@@ -108,10 +108,13 @@ def main():
                  source_sha256=record['sha256'], transcription_notes=layout['notes'],
                  limits='Registered stock and new registrations are different measures. Region/subtotal rows overlap their children and must not be summed together. RTO labels are not jurisdiction polygons, resident household ownership, active fleet or traffic. Name-exact summary comparisons only; no inferred office alias joins or East/Borivali correction. No 2026 projection applied.')
     target = Path(city.path('data/processed/acquisition/rto_2025_audit.json'))
-    target.write_text(json.dumps(audit, indent=2, ensure_ascii=False)+'\n', encoding='utf-8')
+    target.write_text(json.dumps(audit, indent=2, ensure_ascii=False)+'\n', encoding='utf-8', newline='\n')
     print(json.dumps(dict(category_cells=len(rows), summary_rows=len(summary), checks=len(checks),
                           conflicts=len(conflicts), conflict_offices=sorted({c['office_label'] for c in conflicts}))))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

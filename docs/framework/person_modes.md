@@ -48,4 +48,4 @@ separate requirements.
 Run `python tests/check_person_modes.py` for the native MATSim check. It checks
 synthetic person data, legacy restrictions, malformed input, locked modes,
 unselected plans, access legs, transfers and an XML round trip. It is not a city
-simulation or an estimate of mode shares. Decision record: [§9.186](DECISIONS.md#9186-person-specific-mode-availability-19-september-2026).
+simulation or an estimate of mode shares. Decision record: [§9.186](../DECISIONS.md#9186-person-specific-mode-availability-19-september-2026).

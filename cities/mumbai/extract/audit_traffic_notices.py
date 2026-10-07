@@ -61,11 +61,14 @@ def main():
                                'Scanned attachments require transcription and image checks; a text layer alone is not a validated reading.',
                                'Dates, exceptions, road geometry and superseding orders remain to be reconciled.'])
     Path(city.path('data/processed/acquisition/traffic_notice_audit.json')).write_text(
-        json.dumps(result,indent=2)+'\n',encoding='utf-8')
+        json.dumps(result,indent=2)+'\n',encoding='utf-8', newline='\n')
     print(json.dumps(dict(registered=len(rows),acquired=len(acquired),missing=len(missing),
                           duplicate_content_groups=len(result['duplicate_content_groups']),
                           pdf_pages_without_text=sum(r.get('pages_without_text',0) for r in acquired))))
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

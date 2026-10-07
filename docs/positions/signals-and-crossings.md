@@ -1,14 +1,16 @@
 # Signals, SCATS and level crossings — current position
 
-Living documents that still say "SCATS phasing is unobtained and handled by sweep" (the S2b overlay description and the `A.signals.tsp.mode` description) describe the pre-§9.88 state; §9.88 wins: the operated plans and the offset library are unobtained; the control logic that produces cycle and splits is implemented and live.
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
+**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.220 · **Written against family:** `F39`
+
+Living documents that still say "SCATS phasing is unobtained and handled by sweep" (the S2b overlay description and the `A.signals.tsp.mode` description) describe the pre-§9.88 state; §9.88 wins: the operated plans and the offset library are unobtained; the control logic that produces cycle and splits is implemented and live.
 
 ## What is built
 
 - **The crossings and the corridor signals are re-derived on the footpath network** (§9.167, #183, #184): 16 rail links at the two sites, 2,478 change events, Clyde Street 203 scheduled closures (204 on the previous mapping, §3.5) plus 48 freight, Saint James Road 110 plus 44, at 160 s passenger / 277 s freight. The builder reads the MAPPED schedule's weekday routes (`networks/matsim/schedules/`), not the run-input set. The signal systems match 54 signalised approaches (49 before).
 - **SCATS is implemented, not assumed.** `A.signals.control_regime` = `scats_adaptive`; all 14 corridor systems name `CitysimScats` (`src/java_signals/citysim/ScatsSignalController.java`) and every config carries the `scats` module (§9.88). Degree of saturation is measured at each stop line from `LinkLeaveEvent`s against saturation flow × lanes × green, scaled by `qsim.flowCapacityFactor`; at each cycle boundary the cycle steps toward the target on the critical movement and green is re-split to equalise DS; clearances are safety geometry (§9.88).
+- **The controller factory requires the sim-step barrier at start-up** (§9.220): `ScatsSignalController.Factory` calls `RunTelemetry.requireSimStepBarrier` before it registers `Discharge`, so a config with `eventsManager.synchronizeOnSimSteps` off is refused naming the class (`ScatsPriorityProbe` `barrier_off_refused_at_startup`); `TramPriorityController` needs no barrier by design; every probe fingerprint unchanged.
 - Algorithm parameters in the `scats` module: `A.signals.scats.target_degree_saturation` 0.90, `cycle_step_s` 6, `min_cycle_s` 30, `max_cycle_s` 150, `ds_deadband` 0.05, `ds_smoothing` 0.5, `A.signals.min_green_s` 6 (§9.88). `fixed_time` is the kept sweep member; `run_matsim.py` refuses a regime that disagrees with the committed control file (§9.88).
 - The 14 intersections (`A.signals.n_corridor_intersections`, observed) are explicit MATSim signal systems generated per scenario by `cities/newcastle/build/build_matsim_signals.py` into `cities/newcastle/networks/matsim/signals/<S>/` (§9.76); phases are link-level, with a tram group tied to the corridor phase; a site with no cross-street car approach is a mid-block crossing signal (§9.76).
 - `A.signals.representation` = `explicit_signals`: every run-input set carries the `signalsystems` module, `qsim.usingFastCapacityUpdate=false`, re-capacitation to `A.signals.saturation_flow_veh_h_lane` 1900 × lanes (`signals_capacity_patch.csv`), and `transitSchedule_signals.xml.gz`, which removes each variant's embedded per-intersection tram delay (§9.77).
@@ -43,7 +45,7 @@ Living documents that still say "SCATS phasing is unobtained and handled by swee
 - Crossings: Saint James Road 110 scheduled closures per weekday and Clyde Street 203 (204 on the previous mapping, §3.5), against 30 assumed at both, plus 44 and 48 derived freight movements; 2,478 change events (§9.90, §9.167). Mode 12 `freight_train` carries a derived target of 405 movements per weekday in `mode_targets_by_mode.csv` (§9.167).
 - **Arm 0 loaded the closures, and the reader reads them like-for-like** (§9.169, `20260912T202242_300it_25pct`): the run's `crossing_change_events.xml` carried 266 merged closure spans (112 Saint James Road + 154 Clyde Street) for the 405 movements, and the `freight_train` row reads **405 against 405** - the reader now adds the freight closures the run's own `_config.json` carried to the scheduled 313, where it had read 313 against 405 on every run (ninth report finding 4).
 - Operated evidence, archived and not an input: TIA PPSHCC-137 (`cities/newcastle/data/raw/planning_tia/PPSHCC-137_643_hunter_st_tia.pdf`) republishes SCATS history for TCS 1138 Hunter/Steel at 72–81 s and TCS 923 King/Steel at 104–113 s on 19 July 2022; neither is a modelled site, so it is a prior on the sweep (§9.75). The portal sweep — 19 applications, 13 documents — found nothing further (§9.78).
-- No arm-scale signal or crossing EFFECT is measured yet. A 1 % probe verifies plumbing only, at about 0.3 vehicles per green; the per-green discharge at 25 % reads 7.1–7.9 on the worst approach (§9.76). Every arm since F12 runs SCATS and the derived closures; both results (§9.162, §9.169) carry both ON, and no paired arm has carried either off.
+- No arm-scale signal or crossing EFFECT is measured yet. A 1 % probe verifies plumbing only, at about 0.3 vehicles per green; the per-green discharge at 25 % reads 7.1–7.9 on the worst approach (§9.76). Every arm since F12 runs SCATS and the derived closures; all six results (§9.162, §9.169, §9.176, §9.214, §9.217, §9.219) carry both ON, and no paired arm has carried either off. §9.218 and §9.219 touched the plans, the router and the scoring, not the network, the signals or the crossings: every count on this page is the F34 build's.
 
 ## What is open
 
@@ -66,6 +68,7 @@ Living documents that still say "SCATS phasing is unobtained and handled by swee
 
 ## History
 
+- §9.220 — the factory requires the barrier
 - §9.176 — intro fixed: which runs are results is the board's
 - §9.170 — the tenth report; no change to signals or crossings
 - §9.169 — arm 0 loaded 405; reader like-for-like
@@ -80,4 +83,3 @@ Living documents that still say "SCATS phasing is unobtained and handled by swee
 - §9.75 — dossier lands, PPSHCC-137 discovered
 - §9.74 — SUMO descoped, MATSim only
 - §9.70 — coal chain excluded, crossings named
-- §9.24 — SCATS site ids and install dates

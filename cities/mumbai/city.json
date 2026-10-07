@@ -625,6 +625,33 @@
     "schedules/baseline_regional.zip": "ODbL 1.0 (OpenStreetMap baseline geometry); MIT-0 (community bus feed); operator/vendor publication (reuse terms unverified); provisional derived service assumptions"
   },
   "package_licence": "CC-BY 4.0 (original package records only; source rights remain separate)",
+  "source_vocabulary": [
+    "Greater Mumbai",
+    "Gr. Mumbai",
+    "WARDWISE POPULATION OF GREATER MUMBAI",
+    "Daily Mode Split, Greater Mumbai",
+    "Mumbai Metropolitan Region",
+    "Mumbai Suburban",
+    "Mumbai (C)",
+    "Mumbai (W)",
+    "Mumbai (E)",
+    "Vashi N.Mumbai",
+    "Mumbai CSMT",
+    "Mumbai Suburban Railway",
+    "Mumbai Suburban Railway Network",
+    "Mumbai Suburban Rail Network",
+    "9.29 Mumbai Suburban Railway:",
+    "Mumbai Metro",
+    "Mumbai Metro Rail",
+    "Mumbai Metro Line 3",
+    "Mumbai Metro Lines 2A;2B;7",
+    "Navi Mumbai Metro Line",
+    "Navi Mumbai Metro Line 1",
+    "Navi Mumbai Metro Line I",
+    "Navi Mumbai MT",
+    "Mumbai Port",
+    "Opening Mumbai paragraph"
+  ],
   "sources": [
     {
       "name": "Community bus GTFS original format",

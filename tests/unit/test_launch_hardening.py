@@ -45,10 +45,14 @@ def _env(**kw):
 
 
 def _task(status='Running', action='"C:\\x\\citysim_run_%s.cmd" %s' % (STAMP, NONCE)):
+    """What `_query_task` answers for the launch's task: its state as the
+    scheduler's NUMBER (the word is localised, sixteenth report) and the
+    text of its registered action, which carries the nonce."""
+    states = {'Running': 4, 'Ready': 3, 'Queued': 2, 'Disabled': 1}
+
     def query(task):
         assert task == 'citysim_run_%s' % STAMP
-        return [['AREA-51', '\\' + task, 'N/A', status, 'Interactive only',
-                 action]]
+        return dict(running=states[status] == 4, nonce_text=action)
     return query
 
 

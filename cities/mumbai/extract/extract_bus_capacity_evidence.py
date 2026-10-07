@@ -96,9 +96,12 @@ def main():
                       'A smaller simulation must preserve separate configurations before applying its capacity scaling rule.'])
     write('bus_manufacturer_seating_claims.csv', rows)
     Path(city.path('data/processed/acquisition/bus_capacity_evidence_audit.json')).write_text(
-        json.dumps(result, indent=2) + '\n', encoding='utf-8')
+        json.dumps(result, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({'rows': len(rows), 'unresolved_capacity_conflicts': len(result['conflicts'])}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

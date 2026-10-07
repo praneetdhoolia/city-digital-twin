@@ -104,9 +104,12 @@ def main():
                        ('mbmt_contract_capacities.csv', contract)]:
         write(name, rows)
     Path(city.path('data/processed/acquisition/mbmt_controls_audit.json')).write_text(
-        json.dumps(result, indent=2) + '\n', encoding='utf-8')
+        json.dumps(result, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({k: result[k] for k in ('fleet_rows', 'allocation_cells', 'contract_configurations', 'allocation_subtotals')}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

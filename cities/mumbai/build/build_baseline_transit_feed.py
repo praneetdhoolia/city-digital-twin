@@ -18,6 +18,8 @@ import city
 import registry
 from build.extract_osm_network import fingerprint
 
+import gtfs_feed
+
 OUTPUT_INPUTS = {
     'schedules/baseline_multimodal.zip': [
         'schedules/baseline_bus.zip', 'schedules/baseline_suburban_timetable.zip', 'registry/A_baseline_services.json',
@@ -67,14 +69,6 @@ def clock(seconds):
     return f'{h:02d}:{m:02d}:{s:02d}'
 
 
-def table(rows_, fields):
-    out = io.StringIO(newline='')
-    writer = csv.DictWriter(out, fieldnames=fields, lineterminator='\n')
-    writer.writeheader()
-    writer.writerows(rows_)
-    return out.getvalue().encode('utf-8')
-
-
 def published_trips_check(cfg, report):
     """Generated departures per corridor beside the operator's printed weekday
     trips (A.baseline_transit.line_published_weekday_trips): a reading of the
@@ -93,41 +87,11 @@ def published_trips_check(cfg, report):
     return out
 
 
-def main():
-    csv.field_size_limit(10_000_000)
-    cfg = registry.load()
-    inputs = OUTPUT_INPUTS['schedules/baseline_multimodal.zip']
-    hashes = {p: fingerprint(Path(city.path(p))) for p in inputs}
-    geod = Geod(ellps='WGS84')
-    points = {r['osm_node_id']: r for r in rows('data/processed/observed/osm_transport_points.csv')}
-    networks, types = cfg.get('A.baseline_transit.networks'), cfg.get('A.baseline_transit.gtfs_route_types')
-    selected = []
-    for row in rows('data/processed/observed/osm_transport_relations.csv'):
-        tags = json.loads(row['all_tags_json'])
-        mode = tags.get('route')
-        if (mode == 'ferry' or tags.get('network') in networks.get(mode, [])) and not any(
-                k in tags for k in ('construction', 'proposed', 'disused', 'abandoned')):
-            selected.append(row)
-    new_stops, new_routes, new_trips, new_times = {}, [], [], []
-    report, skipped = [], []
-    start, end = cfg.get('A.baseline_transit.service_window_s')
-    line_windows = cfg.get('A.baseline_transit.line_windows_s')   # published first/last trains, per relation (9.208)
-    line_headways = cfg.get('A.baseline_transit.line_headways_s')  # published peak / off-peak headways, per relation (9.209)
-    peaks, peak_headway, offpeak = cfg.get('A.baseline_transit.peak_windows_s'), cfg.get('A.baseline_transit.peak_headway_s'), cfg.get('A.baseline_transit.offpeak_headway_s')
-    speed, dwell, factor = cfg.get('A.baseline_transit.commercial_speed_kmh'), cfg.get('A.baseline_transit.stop_dwell_s'), cfg.get('A.baseline_transit.distance_multiplier')
-    with zipfile.ZipFile(city.path('schedules/baseline_bus.zip')) as incoming:
-        content = {n: incoming.read(n) for n in incoming.namelist()}
-    calendars = list(csv.DictReader(io.StringIO(content['calendar.txt'].decode('utf-8-sig'))))
-    if len(calendars) != 1:
-        raise ValueError('Expected one baseline calendar to make provisional service dates explicit')
-    service_id = calendars[0]['service_id']
-    # the suburban trains: the printed timetables' trips (build_suburban_timetable_feed.py)
-    # in place of the generated patterns of the lines they cover (9.209)
-    timetable_gate = cfg.get('A.baseline_transit.suburban_timetable')
-    timetabled_relations = set()
-    if timetable_gate == 'printed_timetables':
-        for spec in cfg.get('A.baseline_transit.suburban_lines').values():
-            timetabled_relations.update(spec['relations'])
+def generate_relation_patterns(dwell, end, factor, geod, line_headways, line_windows, new_routes, new_stops, new_times, new_trips, offpeak, peak_headway, peaks, points, report, selected, service_id, skipped, speed, start, timetabled_relations, types):
+    """One generated service per selected OSM route relation (a ferry both ways): its
+    stops' sequence, geographic running times at the declared speed and dwell,
+    departures from the published window and headway where the registry carries
+    them, else the provisional ones. Appends to the feed tables and the report."""
     for row in sorted(selected, key=lambda r: int(r['osm_relation_id'])):
         identity, mode = row['osm_relation_id'], row['route_tag']
         if identity in timetabled_relations:
@@ -210,6 +174,11 @@ def main():
                 timetable_source=('published_window_published_headway' if identity in line_windows and identity in line_headways
                                   else 'published_window_provisional_headway' if identity in line_windows
                                   else 'modelled_from_provisional_registry')))
+
+
+def generate_directory_crossings(cfg, dwell, end, factor, geod, new_routes, new_stops, new_times, new_trips, offpeak, peak_headway, peaks, points, report, service_id, speed, start, types):
+    """The Maritime Board's directory crossings (9.207) as straight-line services between
+    the OSM terminals the registry names, in the directory's own first-last window."""
     # The Maritime Board's crossings (9.207): a directory route between the two OSM
     # terminals the registry names, on the straight water line between them (the
     # extract holds no route=ferry way for these), its window the directory's first
@@ -256,6 +225,12 @@ def main():
                                window_s=[first, last], length_m=round(length),
                                geometry_source='straight_water_line_between_osm_terminals',
                                timetable_source='directory_window_provisional_headway'))
+
+
+def merge_printed_timetable(new_routes, new_stops, new_times, new_trips, report, timetable_gate):
+    """The printed suburban timetable's stops, routes, trips and stop times
+    (build_suburban_timetable_feed.py) merged in place of the generated train
+    patterns when the gate says so; returns the printed trip count."""
     timetable_trips = 0
     if timetable_gate == 'printed_timetables':
         with zipfile.ZipFile(city.path('schedules/baseline_suburban_timetable.zip')) as timetable:
@@ -273,24 +248,62 @@ def main():
                 report.append(dict(route_id=r['route_id'], mode='train', stops_count=None,
                                    departures_count=sum(1 for x in new_trips if x['route_id'] == r['route_id']),
                                    geometry_source='mapped_native_stops', timetable_source='printed_timetable_trips'))
+    return timetable_trips
+
+
+def append_feed(content, new_routes, new_stops, new_times, new_trips):
+    """The generated tables appended to the acquired bus feed's and the multimodal feed
+    zipped; returns its path."""
     additions = {'agency.txt': [dict(agency_id='BASELINE', agency_name='Provisional model services',
                     agency_url='https://www.openstreetmap.org', agency_timezone='Asia/Kolkata')],
                  'stops.txt': list(new_stops.values()), 'routes.txt': new_routes,
                  'trips.txt': new_trips, 'stop_times.txt': new_times}
     for name, extra in additions.items():
-        reader = csv.DictReader(io.StringIO(content[name].decode('utf-8-sig')))
-        fields = list(reader.fieldnames)
-        for row in extra:
-            for key in row:
-                if key not in fields:
-                    fields.append(key)
-        content[name] = table([*reader, *extra], fields)
+        gtfs_feed.append_table(content, name, extra)
     output = Path(city.path('schedules/baseline_multimodal.zip'))
-    with zipfile.ZipFile(output, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
-        for name, data in sorted(content.items()):
-            entry = zipfile.ZipInfo(name)
-            entry.compress_type = zipfile.ZIP_DEFLATED
-            archive.writestr(entry, data)
+    gtfs_feed.write_feed(output, content)
+    return output
+
+
+def main():
+    csv.field_size_limit(10_000_000)
+    cfg = registry.load()
+    inputs = OUTPUT_INPUTS['schedules/baseline_multimodal.zip']
+    hashes = {p: fingerprint(Path(city.path(p))) for p in inputs}
+    geod = Geod(ellps='WGS84')
+    points = {r['osm_node_id']: r for r in rows('data/processed/observed/osm_transport_points.csv')}
+    networks, types = cfg.get('A.baseline_transit.networks'), cfg.get('A.baseline_transit.gtfs_route_types')
+    selected = []
+    for row in rows('data/processed/observed/osm_transport_relations.csv'):
+        tags = json.loads(row['all_tags_json'])
+        mode = tags.get('route')
+        if (mode == 'ferry' or tags.get('network') in networks.get(mode, [])) and not any(
+                k in tags for k in ('construction', 'proposed', 'disused', 'abandoned')):
+            selected.append(row)
+    new_stops, new_routes, new_trips, new_times = {}, [], [], []
+    report, skipped = [], []
+    start, end = cfg.get('A.baseline_transit.service_window_s')
+    line_windows = cfg.get('A.baseline_transit.line_windows_s')   # published first/last trains, per relation (9.208)
+    line_headways = cfg.get('A.baseline_transit.line_headways_s')  # published peak / off-peak headways, per relation (9.209)
+    peaks, peak_headway, offpeak = cfg.get('A.baseline_transit.peak_windows_s'), cfg.get('A.baseline_transit.peak_headway_s'), cfg.get('A.baseline_transit.offpeak_headway_s')
+    speed, dwell, factor = cfg.get('A.baseline_transit.commercial_speed_kmh'), cfg.get('A.baseline_transit.stop_dwell_s'), cfg.get('A.baseline_transit.distance_multiplier')
+    with zipfile.ZipFile(city.path('schedules/baseline_bus.zip')) as incoming:
+        content = {n: incoming.read(n) for n in incoming.namelist()}
+    calendars = list(csv.DictReader(io.StringIO(content['calendar.txt'].decode('utf-8-sig'))))
+    if len(calendars) != 1:
+        raise ValueError('Expected one baseline calendar to make provisional service dates explicit')
+    service_id = calendars[0]['service_id']
+    # the suburban trains: the printed timetables' trips (build_suburban_timetable_feed.py)
+    # in place of the generated patterns of the lines they cover (9.209)
+    timetable_gate = cfg.get('A.baseline_transit.suburban_timetable')
+    timetabled_relations = set()
+    if timetable_gate == 'printed_timetables':
+        for spec in cfg.get('A.baseline_transit.suburban_lines').values():
+            timetabled_relations.update(spec['relations'])
+    generate_relation_patterns(dwell, end, factor, geod, line_headways, line_windows, new_routes, new_stops, new_times, new_trips, offpeak, peak_headway, peaks, points, report, selected, service_id, skipped, speed, start, timetabled_relations, types)
+    generate_directory_crossings(cfg, dwell, end, factor, geod, new_routes, new_stops, new_times, new_trips, offpeak, peak_headway, peaks, points, report, service_id, speed, start, types)
+    timetable_trips = merge_printed_timetable(new_routes, new_stops, new_times, new_trips, report, timetable_gate)
+    output = append_feed(content, new_routes, new_stops, new_times, new_trips)
     audit = dict(source='modelled_provisional_service_supply', input_sha256=hashes,
         output_sha256=fingerprint(output), generated_routes=report, skipped=skipped,
         published_weekday_trips_check=published_trips_check(cfg, report),
@@ -303,4 +316,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

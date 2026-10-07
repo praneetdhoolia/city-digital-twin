@@ -871,6 +871,15 @@ public final class ScatsSignalController extends AbstractSignalController {
                     TramPriorityConfigGroup.NAME,
                     TramPriorityConfigGroup.class);
             this.network = scenario.getNetwork();
+            // Discharge's cells are written by the event-handler thread and
+            // read by the QSim thread at each cycle's end with no barrier of
+            // their own: the sim-step barrier is what publishes them, exactly
+            // as for RunTelemetry's counters. Until the sixteenth report this
+            // stack assumed the barrier the launcher refuses to run without
+            // (run_matsim.py); now a config that turns it off is refused here
+            // too, at start-up, rather than driving every cycle to its floor
+            // on torn counts.
+            RunTelemetry.requireSimStepBarrier(config, "ScatsSignalController");
             this.discharge = new Discharge();
             events.addHandler(this.discharge);
             this.detection = new TramPriorityController.TramDetection();

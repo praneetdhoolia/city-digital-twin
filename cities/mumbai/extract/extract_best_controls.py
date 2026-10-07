@@ -140,10 +140,13 @@ def main():
                        ('best_depot_listing.csv', depots), ('best_depot_route_listing.csv', routes)]:
         write(name, rows)
     Path(city.path('data/processed/acquisition/best_controls_audit.json')).write_text(
-        json.dumps(audit, indent=2)+'\n', encoding='utf-8')
+        json.dumps(audit, indent=2)+'\n', encoding='utf-8', newline='\n')
     print(json.dumps({k: audit[k] for k in ['fare_cells', 'pass_cells', 'depots',
                                            'depot_route_mentions', 'distinct_route_labels']}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

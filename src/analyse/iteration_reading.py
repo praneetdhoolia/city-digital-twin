@@ -30,6 +30,7 @@ import csv
 import glob
 import gzip
 import io
+import json
 import os
 import re
 
@@ -95,6 +96,8 @@ def iterations_with(run_dir, stem='trips'):
     A run writes its trips and legs tables on the interval its config
     declares (every 10th), so the iteration a stopped arm REACHED usually has
     none; the newest of these at or below it is where the arm is citable.
+    Every iteration on disk, record or no record: `citable_iterations` is the
+    clamped list a reader may quote.
     """
     found = []
     for d in glob.glob(os.path.join(run_dir, 'output', 'ITERS', 'it.*')):
@@ -105,6 +108,59 @@ def iterations_with(run_dir, stem='trips'):
         if table_path(run_dir, stem, n) is not None:
             found.append(n)
     return sorted(found)
+
+
+# ------------------------------------------------------------- the record
+#
+# A STOPPED arm is citable at its record's `reached_iteration` and nowhere past
+# it (GOAL.md, 9.143): MATSim writes <n>.trips.csv.gz inside the iterationEnds
+# listeners, so a table can exist on disk for an iteration the record says the
+# run never completed. The board and report_mode_ridership each clamped on
+# their own and transit_link_delays did not at all (sixteenth report), so a
+# table reader could quote a killed arm past its record. ONE clamp, here, under
+# every reader that asks this module for a table.
+
+RAN_TO_LAST = 'ran_to_last_iteration'
+
+
+def run_record(run_dir):
+    """The run's `_run.json`, or {} while it has none (a run still setting up
+    or still running writes its record at the end)."""
+    try:
+        with open(os.path.join(run_dir, '_run.json'), encoding='utf-8') as fh:
+            rec = json.load(fh)
+    except (OSError, ValueError):
+        return {}
+    return rec if isinstance(rec, dict) else {}
+
+
+def citable_ceiling(run_dir):
+    """The highest iteration a reader may quote, or None when the record sets
+    no ceiling: a run that reached its last iteration, or one with no record
+    yet (a live arm reads up to what is on disk; its record clamps it later)."""
+    rec = run_record(run_dir)
+    reached = rec.get('reached_iteration')
+    if rec.get('completion') not in (None, RAN_TO_LAST) and isinstance(reached, int):
+        return reached
+    return None
+
+
+def refuse_past_record(run_dir, iteration):
+    """Refuse an iteration the record says the run never completed."""
+    ceiling = citable_ceiling(run_dir)
+    if iteration is not None and ceiling is not None and int(iteration) > ceiling:
+        raise SystemExit('iteration %d is past this run\'s reached_iteration %d (%s); '
+                         'it is citable there and nowhere past it'
+                         % (int(iteration), ceiling, run_record(run_dir).get('completion')))
+    return iteration
+
+
+def citable_iterations(run_dir, stem='trips', iterations=None):
+    """The iterations a reader may quote, ascending: those with a `stem`
+    table (or the `iterations` given) at or below the record's ceiling."""
+    have = iterations_with(run_dir, stem) if iterations is None else sorted(iterations)
+    ceiling = citable_ceiling(run_dir)
+    return have if ceiling is None else [i for i in have if i <= ceiling]
 
 
 _PERSON_ATTR = re.compile(r'<attribute name="([^"]+)"[^>]*>([^<]*)</attribute>')
@@ -169,14 +225,26 @@ def open_table(path):
     return open(path, encoding='utf-8', newline='')
 
 
-def table(run_dir, stem, iteration=None):
+def table(run_dir, stem, iteration=None, columns=None):
     """The rows of an iteration's table, decoded once per process.
 
     Returns the cached list; callers iterate it and must not mutate it.
+    `columns` names the columns the caller reads: only those are decoded
+    into each row's dict (a 25 % trips table is twenty-odd columns of which
+    a reader uses four, and the whole table was held as dicts of all of
+    them - sixteenth report). A full decode already cached serves any
+    projection; a projection never serves a wider request.
     Raises FileNotFoundError when the table is absent - the caller decides
-    whether that is a refusal or a stated gap.
+    whether that is a refusal or a stated gap - and refuses, loudly, an
+    iteration past the run's record (`refuse_past_record`).
     """
-    key = (os.path.abspath(run_dir), stem, None if iteration is None else int(iteration))
+    refuse_past_record(run_dir, iteration)
+    cols = None if columns is None else tuple(columns)
+    base = (os.path.abspath(run_dir), stem, None if iteration is None else int(iteration))
+    full = _CACHE.get(base)                       # a full decode is keyed bare
+    if full is not None:
+        return full if cols is None else _project(full, cols)
+    key = base if cols is None else base + (cols,)
     rows = _CACHE.get(key)
     if rows is not None:
         return rows
@@ -185,11 +253,26 @@ def table(run_dir, stem, iteration=None):
         raise FileNotFoundError('no %s table for %s at %s' % (
             stem, run_dir, 'the final output' if iteration is None else 'iteration %s' % iteration))
     with open_table(path) as fh:
-        rows = list(csv.DictReader(fh, delimiter=';'))
+        if cols is None:
+            rows = list(csv.DictReader(fh, delimiter=';'))
+        else:
+            reader = csv.reader(fh, delimiter=';')
+            header = next(reader, [])
+            wanted = [(c, header.index(c)) for c in cols if c in header]
+            rows = [{c: r[i] for c, i in wanted} for r in reader]
     _CACHE[key] = rows
     while len(_CACHE) > CACHE_TABLES:
         _CACHE.popitem(last=False)
     return rows
+
+
+def _project(rows, cols):
+    """The cached full rows narrowed to `cols` (a column the table lacks is
+    left out, as a projected decode leaves it out)."""
+    if not rows:
+        return rows
+    keep = [c for c in cols if c in rows[0]]
+    return [{c: r[c] for c in keep} for r in rows]
 
 
 # ------------------------------------------------------------------ events

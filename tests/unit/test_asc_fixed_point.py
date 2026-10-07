@@ -15,7 +15,6 @@ three things that would make the answer worthless:
 
 Synthetic fits and a synthetic registry: no run, no `results/`, no package.
 """
-import json
 import math
 
 import asc_fixed_point as afp

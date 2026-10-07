@@ -15,7 +15,6 @@ import pandas as pd
 
 RAW = _city.path('data/raw/hts')
 OUT = _city.path('data/processed/hts')
-os.makedirs(OUT, exist_ok=True)
 
 LGAS = ['Newcastle', 'Lake Macquarie', 'Maitland', 'Cessnock', 'Port Stephens']
 SA3S = ['Newcastle', 'Lake Macquarie - East', 'Lake Macquarie - West',
@@ -38,77 +37,98 @@ def read_sheet(path, sheet):
     return d
 
 
-frames = {'mode': [], 'purpose': []}
-for geo, fn, keycol, wanted in FILES:
-    p = os.path.join(RAW, fn)
-    if not os.path.exists(p):
-        print('missing', fn)
-        continue
-    xl = pd.ExcelFile(p)
-    for sheet in xl.sheet_names:
-        low = sheet.lower()
-        if 'mode' in low:
-            kind = 'mode'
-        elif 'purpose' in low:
-            kind = 'purpose'
-        else:
+def extract_sheets():
+    """Every mode and purpose sheet of the four releases, filtered to the
+    study LGAs / SA3s, written as hts_mode.csv and hts_purpose.csv; returns
+    the row and year report."""
+    frames = {'mode': [], 'purpose': []}
+    for geo, fn, keycol, wanted in FILES:
+        p = os.path.join(RAW, fn)
+        if not os.path.exists(p):
+            print('missing', fn)
             continue
-        d = read_sheet(p, sheet)
-        namecol = [c for c in d.columns if c.endswith('_NAME')]
-        if not namecol:
+        xl = pd.ExcelFile(p)
+        for sheet in xl.sheet_names:
+            low = sheet.lower()
+            if 'mode' in low:
+                kind = 'mode'
+            elif 'purpose' in low:
+                kind = 'purpose'
+            else:
+                continue
+            d = read_sheet(p, sheet)
+            namecol = [c for c in d.columns if c.endswith('_NAME')]
+            if not namecol:
+                continue
+            nc = namecol[0]
+            s = d[d[nc].astype(str).str.strip().isin(wanted)].copy()
+            if s.empty:
+                continue
+            s.insert(0, 'geography', geo)
+            s.insert(1, 'source_file', fn)
+            s = s.rename(columns={nc: 'area_name'})
+            frames[kind].append(s)
+            print('%-42s %-12s %-8s rows=%d' % (fn, sheet, geo, len(s)), flush=True)
+
+    report = {}
+    for kind, fl in frames.items():
+        if not fl:
             continue
-        nc = namecol[0]
-        s = d[d[nc].astype(str).str.strip().isin(wanted)].copy()
-        if s.empty:
-            continue
-        s.insert(0, 'geography', geo)
-        s.insert(1, 'source_file', fn)
-        s = s.rename(columns={nc: 'area_name'})
-        frames[kind].append(s)
-        print('%-42s %-12s %-8s rows=%d' % (fn, sheet, geo, len(s)), flush=True)
+        d = pd.concat(fl, ignore_index=True)
+        # the names the reads below and every consumer use (#115): the reads were
+        # renamed in 047b7a0 and this write was not, so a clean rebuild died
+        d.to_csv(os.path.join(OUT, 'hts_%s.csv' % kind), index=False, lineterminator='\n')
+        report['%s_rows' % kind] = len(d)
+        report['%s_years' % kind] = sorted(d['FINANCIAL_YEAR'].astype(str).unique().tolist())
+    return report
 
-report = {}
-for kind, fl in frames.items():
-    if not fl:
-        continue
-    d = pd.concat(fl, ignore_index=True)
-    # the names the reads below and every consumer use (#115): the reads were
-    # renamed in 047b7a0 and this write was not, so a clean rebuild died
-    d.to_csv(os.path.join(OUT, 'hts_%s.csv' % kind), index=False, lineterminator='\n')
-    report['%s_rows' % kind] = len(d)
-    report['%s_years' % kind] = sorted(d['FINANCIAL_YEAR'].astype(str).unique().tolist())
 
-# ---- headline: Newcastle LGA mode share, latest and pre-pandemic ----
-m = pd.read_csv(os.path.join(OUT, 'hts_mode.csv'))
-m['MODE_SHARE'] = pd.to_numeric(m['MODE_SHARE'], errors='coerce')
-m['TRIPS_BY_MODE'] = pd.to_numeric(m['TRIPS_BY_MODE'], errors='coerce')
-sel = m[m['area_name'].str.strip() == 'Newcastle']
-tbl = {}
-for yr in ['2018/19', '2024/25']:
-    y = sel[sel['FINANCIAL_YEAR'].astype(str) == yr]
-    if len(y):
-        tot = y['TRIPS_BY_MODE'].sum()
-        tbl[yr] = {str(r['TRAVEL_MODE']).strip():
-                   {'trips': int(r['TRIPS_BY_MODE']) if pd.notna(r['TRIPS_BY_MODE']) else None,
-                    'pct_of_trips': round(float(r['TRIPS_BY_MODE']) / tot * 100, 2) if tot else None}
-                   for _, r in y.iterrows()}
-report['newcastle_lga_mode_split'] = tbl
+def headline(report):
+    """The target LGA's mode and purpose splits, latest and pre-pandemic,
+    read back from the tables just written."""
+    m = pd.read_csv(os.path.join(OUT, 'hts_mode.csv'))
+    m['MODE_SHARE'] = pd.to_numeric(m['MODE_SHARE'], errors='coerce')
+    m['TRIPS_BY_MODE'] = pd.to_numeric(m['TRIPS_BY_MODE'], errors='coerce')
+    sel = m[m['area_name'].str.strip() == 'Newcastle']
+    tbl = {}
+    for yr in ['2018/19', '2024/25']:
+        y = sel[sel['FINANCIAL_YEAR'].astype(str) == yr]
+        if len(y):
+            tot = y['TRIPS_BY_MODE'].sum()
+            tbl[yr] = {str(r['TRAVEL_MODE']).strip():
+                       {'trips': int(r['TRIPS_BY_MODE']) if pd.notna(r['TRIPS_BY_MODE']) else None,
+                        'pct_of_trips': round(float(r['TRIPS_BY_MODE']) / tot * 100, 2) if tot else None}
+                       for _, r in y.iterrows()}
+    report['newcastle_lga_mode_split'] = tbl
 
-p = pd.read_csv(os.path.join(OUT, 'hts_purpose.csv'))
-p['JOURNEYS_BY_MODE'] = pd.to_numeric(p['JOURNEYS_BY_MODE'], errors='coerce')
-psel = p[(p['area_name'].str.strip() == 'Newcastle')]
-tblp = {}
-for yr in ['2018/19', '2024/25']:
-    y = psel[psel['FINANCIAL_YEAR'].astype(str) == yr]
-    if len(y):
-        tot = y['JOURNEYS_BY_MODE'].sum()
-        tblp[yr] = {str(r['TRAVEL_PURPOSE']).strip():
-                    {'journeys': int(r['JOURNEYS_BY_MODE']) if pd.notna(r['JOURNEYS_BY_MODE']) else None,
-                     'pct': round(float(r['JOURNEYS_BY_MODE']) / tot * 100, 2) if tot else None,
-                     'avg_distance_km': r.get('JOURNEY_AVG_DISTANCE'),
-                     'avg_time_min': r.get('JOURNEY_AVG_TIME')}
-                    for _, r in y.iterrows()}
-report['newcastle_lga_purpose_split'] = tblp
+    p = pd.read_csv(os.path.join(OUT, 'hts_purpose.csv'))
+    p['JOURNEYS_BY_MODE'] = pd.to_numeric(p['JOURNEYS_BY_MODE'], errors='coerce')
+    psel = p[(p['area_name'].str.strip() == 'Newcastle')]
+    tblp = {}
+    for yr in ['2018/19', '2024/25']:
+        y = psel[psel['FINANCIAL_YEAR'].astype(str) == yr]
+        if len(y):
+            tot = y['JOURNEYS_BY_MODE'].sum()
+            tblp[yr] = {str(r['TRAVEL_PURPOSE']).strip():
+                        {'journeys': int(r['JOURNEYS_BY_MODE']) if pd.notna(r['JOURNEYS_BY_MODE']) else None,
+                         'pct': round(float(r['JOURNEYS_BY_MODE']) / tot * 100, 2) if tot else None,
+                         'avg_distance_km': r.get('JOURNEY_AVG_DISTANCE'),
+                         'avg_time_min': r.get('JOURNEY_AVG_TIME')}
+                        for _, r in y.iterrows()}
+    report['newcastle_lga_purpose_split'] = tblp
+    return report
 
-json.dump(report, open(os.path.join(OUT, '_hts_report.json'), 'w'), indent=2, default=str)
-print('\n' + json.dumps(report, indent=2, default=str)[:4000])
+
+def main():
+    os.makedirs(OUT, exist_ok=True)
+    report = headline(extract_sheets())
+    with open(os.path.join(OUT, '_hts_report.json'), 'w', encoding='utf-8', newline='\n') as fh:
+        json.dump(report, fh, indent=2, default=str)
+    print('\n' + json.dumps(report, indent=2, default=str)[:4000])
+
+
+if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
+    main()

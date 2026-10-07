@@ -15,7 +15,6 @@ pre-schema case supplies is now required, and every arm this project has
 stopped fails it (`rc` of 1 or none, and a short `reached_iteration`).
 """
 import json
-import os
 
 import pytest
 

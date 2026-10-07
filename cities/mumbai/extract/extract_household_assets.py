@@ -87,9 +87,12 @@ def main():
                      'These 2011 geographical units exceed and differ from the current metropolitan region.',
                      'Rounded household-size percentages retain their published sum discrepancies.',
                      'No 2026 projection or household-level joint distribution is inferred.'])
-    Path(city.path('data/processed/observed/_household_assets_audit.json')).write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8')
+    Path(city.path('data/processed/observed/_household_assets_audit.json')).write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8', newline='\n')
     print(json.dumps(audit))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

@@ -169,11 +169,8 @@ def main():
 
     # `--run` means the same thing in every reader: a run NAME from the store,
     # or a path to a run directory (src/run/results_store.py).
-    import os as _os_r, sys as _sys_r
-    _r = _os_r.path.join(_os_r.path.dirname(_os_r.path.dirname(
-        _os_r.path.abspath(__file__))), 'run')
-    import results_store as _store_r
-    a.run = _store_r.resolve_or_die(a.run)
+    import results_store
+    a.run = results_store.resolve_or_die(a.run)
 
     run_dir = a.run
     if not _os.path.isdir(run_dir):

@@ -3,8 +3,8 @@
   "generated_from": "cities/newcastle/registry",
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. A field that carries a sweep MUST say what the sweep is for (sweep_role: answer, uncertainty or measurement), and an assumed field with a sweep MUST say how the interval was chosen (sweep_basis) - the resolver refuses either omission (#134). Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in cities/<city>/docs/reference/CONFIG_REFERENCE.md.",
-  "caveat": "`required` means the reference city declares it and the framework will not run without it. Two narrowings are DERIVED: a field carrying `required_if_mode` is required ONLY of a city that runs that mode (the mode name is in the tool binding), and `required_by` says who reads the field - `run` (every city), a list of framework builders (a city whose manifest names one of them as a producer), or `reference_city` (read only by the reference city's own adapters and builders; required of no other city). A field a switched-off mechanism silences is still `run`: the emitter writes it, so the city declares it.",
-  "n_fields": 600,
+  "caveat": "`required` means the reference city declares it and the framework will not run without it. Three narrowings are DERIVED: a field carrying `required_if_mode` is required ONLY of a city that runs that mode (the mode name is in the tool binding); `required_by` says who reads the field - `run` (every city: a tool binding, a read in the run harness, or a read the launcher makes THROUGH the assembler, derived function by function from src/build/build_matsim_run_inputs.py's call graph, #241), a list of framework builders (a city whose manifest names one of them as a producer), or `reference_city` (read only by the reference city's own adapters and builders; required of no other city); and a `run` field carrying `required_if_translation` is read on the run path only under that RUN.scoring.translation, so a city whose scoring is bound fields need not declare it. A field a switched-off mechanism silences is still `run`: the emitter writes it, so the city declares it.",
+  "n_fields": 604,
   "n_by_layer": {
     "A": 208,
     "B": 143,
@@ -12,12 +12,12 @@
     "CAL": 30,
     "D": 10,
     "E": 26,
-    "RUN": 117
+    "RUN": 121
   },
   "n_by_required_by": {
-    "build": 252,
+    "build": 184,
     "reference_city": 113,
-    "run": 235
+    "run": 307
   },
   "fields": {
     "A.active.footway_width_default": {
@@ -459,9 +459,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.bus_adult_peak": {
       "layer": "A",
@@ -471,9 +469,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.bus_band_upper_km": {
       "layer": "A",
@@ -483,9 +479,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.bus_child_offpeak": {
       "layer": "A",
@@ -495,9 +489,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.bus_child_peak": {
       "layer": "A",
@@ -507,9 +499,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.child_max_age": {
       "layer": "A",
@@ -519,9 +509,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.child_min_age": {
       "layer": "A",
@@ -531,9 +519,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.daily_cap_adult": {
       "layer": "A",
@@ -543,9 +529,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.daily_cap_adult_weekend": {
       "layer": "A",
@@ -555,9 +539,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.daily_cap_child": {
       "layer": "A",
@@ -567,9 +549,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.daily_cap_child_weekend": {
       "layer": "A",
@@ -579,9 +559,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.daily_cap_senior": {
       "layer": "A",
@@ -591,9 +569,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.ferry_adult_offpeak": {
       "layer": "A",
@@ -603,9 +579,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.ferry_adult_peak": {
       "layer": "A",
@@ -615,9 +589,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.ferry_child_offpeak": {
       "layer": "A",
@@ -627,9 +599,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.ferry_child_peak": {
       "layer": "A",
@@ -639,9 +609,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.lightrail_adult_offpeak": {
       "layer": "A",
@@ -651,9 +619,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.lightrail_adult_peak": {
       "layer": "A",
@@ -663,9 +629,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.lightrail_band_upper_km": {
       "layer": "A",
@@ -675,9 +639,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.lightrail_child_offpeak": {
       "layer": "A",
@@ -687,9 +649,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.lightrail_child_peak": {
       "layer": "A",
@@ -699,9 +659,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.off_peak_all_day_day_types": {
       "layer": "A",
@@ -711,9 +669,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.peak_evening_end_h": {
       "layer": "A",
@@ -723,9 +679,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.peak_evening_start_h": {
       "layer": "A",
@@ -735,9 +689,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.peak_morning_end_h": {
       "layer": "A",
@@ -747,9 +699,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.peak_morning_start_h": {
       "layer": "A",
@@ -759,9 +709,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.rail_peak_morning_start_h": {
       "layer": "A",
@@ -771,9 +719,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.senior_min_age": {
       "layer": "A",
@@ -783,9 +729,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.senior_per_fare_cap": {
       "layer": "A",
@@ -795,9 +739,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.train_adult_offpeak": {
       "layer": "A",
@@ -807,9 +749,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.train_adult_peak": {
       "layer": "A",
@@ -819,9 +759,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.train_band_upper_km": {
       "layer": "A",
@@ -831,9 +769,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.train_child_offpeak": {
       "layer": "A",
@@ -843,9 +779,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.train_child_peak": {
       "layer": "A",
@@ -855,9 +789,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.transfer_discount_adult": {
       "layer": "A",
@@ -867,9 +799,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.transfer_discount_child": {
       "layer": "A",
@@ -879,9 +809,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.fare.transfer_window_min": {
       "layer": "A",
@@ -891,9 +819,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "A.gradient.bike_downhill_speedup_per_pct": {
       "layer": "A",
@@ -1383,10 +1309,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py",
-        "tests/check_package.py"
-      ]
+      "required_by": "run"
     },
     "A.parking.charged_modes": {
       "layer": "A",
@@ -1495,9 +1418,8 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run",
+      "required_if_translation": "c1_translation"
     },
     "A.road.capacity_default": {
       "layer": "A",
@@ -2291,11 +2213,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json",
-      "required_by": [
-        "src/build/build_gtfs_extras.py",
-        "src/build/build_matsim_network.py",
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "B.activity.act_duration_min": {
       "layer": "B",
@@ -2803,9 +2721,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "B.bike.speed_ms": {
       "layer": "B",
@@ -2815,10 +2731,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
-      "required_by": [
-        "src/build/build_matsim_network.py",
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "B.census.thin_cell_min_journeys": {
       "layer": "B",
@@ -3060,9 +2973,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "B.freight.max_speed_kmh": {
       "layer": "B",
@@ -3072,9 +2983,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "B.freight.pce": {
       "layer": "B",
@@ -3084,9 +2993,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "B.freight.trip_ratio": {
       "layer": "B",
@@ -3270,9 +3177,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "B.motorbike.pce": {
       "layer": "B",
@@ -3282,9 +3187,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "B.motorbike.possession_identity": {
       "layer": "B",
@@ -3825,9 +3728,8 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run",
+      "required_if_translation": "c1_translation"
     },
     "B.taxi.fare_per_km_taxi": {
       "layer": "B",
@@ -3837,9 +3739,8 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run",
+      "required_if_translation": "c1_translation"
     },
     "B.taxi.flagfall_rideshare": {
       "layer": "B",
@@ -3849,9 +3750,8 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run",
+      "required_if_translation": "c1_translation"
     },
     "B.taxi.flagfall_taxi": {
       "layer": "B",
@@ -3861,9 +3761,8 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run",
+      "required_if_translation": "c1_translation"
     },
     "B.taxi.fleet_size": {
       "layer": "B",
@@ -3903,9 +3802,8 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run",
+      "required_if_translation": "c1_translation"
     },
     "B.taxi.vehicle_trips_per_day": {
       "layer": "B",
@@ -3937,9 +3835,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "C.asc.bus": {
       "layer": "C",
@@ -4318,9 +4214,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "C_behaviour.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "C.scoring.activity_typical_duration_s": {
       "layer": "C",
@@ -4390,9 +4284,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "C_behaviour.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "C.scoring.performing_utils_per_h": {
       "layer": "C",
@@ -4432,9 +4324,8 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "C_behaviour.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run",
+      "required_if_translation": "c1_translation"
     },
     "C.taxi.wait_min": {
       "layer": "C",
@@ -4444,9 +4335,8 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "C_behaviour.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run",
+      "required_if_translation": "c1_translation"
     },
     "C.time_weights.atap_si_displacement_weight": {
       "layer": "C",
@@ -4506,9 +4396,8 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "C_behaviour.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run",
+      "required_if_translation": "c1_translation"
     },
     "C.time_weights.beta_headway": {
       "layer": "C",
@@ -4584,9 +4473,8 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "C_behaviour.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run",
+      "required_if_translation": "c1_translation"
     },
     "C.time_weights.service_interval_function": {
       "layer": "C",
@@ -5537,6 +5425,16 @@
       "declared_in": "RUN_execution.json",
       "required_by": "run"
     },
+    "RUN.machine.free_ram_margin_gib": {
+      "layer": "RUN",
+      "units": "GiB",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json",
+      "required_by": "run"
+    },
     "RUN.machine.gc_collector": {
       "layer": "RUN",
       "units": "enum",
@@ -5583,6 +5481,26 @@
       "type": "boolean",
       "source_in_reference_city": "definition",
       "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json",
+      "required_by": "run"
+    },
+    "RUN.machine.other_process_max_cores": {
+      "layer": "RUN",
+      "units": "cores",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json",
+      "required_by": "run"
+    },
+    "RUN.machine.probe_max_host_cpu_pct": {
+      "layer": "RUN",
+      "units": "percent",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",
       "required_by": "run"
@@ -5795,9 +5713,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "RUN.qsim.end_time_h": {
       "layer": "RUN",
@@ -5837,9 +5753,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "RUN.qsim.motorcycle_roster": {
       "layer": "RUN",
@@ -5989,9 +5903,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "RUN.replanning.strategy_subpopulations": {
       "layer": "RUN",
@@ -6131,9 +6043,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "RUN.routing.routing_randomness": {
       "layer": "RUN",
@@ -6141,6 +6051,16 @@
       "type": "number",
       "source_in_reference_city": "literature",
       "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json",
+      "required_by": "run"
+    },
+    "RUN.sample.arm_fraction_floor": {
+      "layer": "RUN",
+      "units": "share_of_population",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",
       "required_by": "run"
@@ -6283,9 +6203,7 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "RUN.scoring.waiting_utils_per_h": {
       "layer": "RUN",
@@ -6365,9 +6283,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "RUN.transit_router.access_initial_search_radius_m": {
       "layer": "RUN",
@@ -6377,9 +6293,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "RUN.transit_router.access_max_radius_m": {
       "layer": "RUN",
@@ -6389,9 +6303,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "RUN.transit_router.access_search_extension_radius_m": {
       "layer": "RUN",
@@ -6401,9 +6313,7 @@
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json",
-      "required_by": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
+      "required_by": "run"
     },
     "RUN.transit_router.additional_transfer_time_s": {
       "layer": "RUN",

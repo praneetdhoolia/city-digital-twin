@@ -334,11 +334,91 @@ def recs_section(syn: dict) -> str:
         # model | data | code | process - the session-process audit's rows carry
         # the last, and the ledger keeps the tag (DECISIONS.md 9.176)
         cat = f' <span class="tag">{esc(r.get("category"))}</span>' if r.get("category") else ""
+        p = r.get("predicts") if isinstance(r.get("predicts"), dict) else None
+        pred = (f'<div class=small>predicts: <b>{md_inline(p.get("mode", ""))}</b> — {md_inline(p.get("direction", ""))}; '
+                f'size: {md_inline(p.get("size", ""))}</div>') if p else ""
         items.append(
             f'<li><b>{md_inline(r.get("what", ""))}</b>{cat}{rep}{fam}<br>{md_inline(r.get("why", ""))}'
-            f'<div class=small>change: {md_inline(r.get("change", ""))} · guard: {md_inline(r.get("guard", ""))}</div></li>')
+            f'<div class=small>change: {md_inline(r.get("change", ""))} · guard: {md_inline(r.get("guard", ""))}</div>{pred}</li>')
     return section("recommendations", "Recommendations, ranked", "<ol class=recs>" + "".join(items) + "</ol>",
                    "Ranked by what each would prevent or move × how cheap it is. A `repeat` tag marks one an earlier report already issued; the process audit counts them against this report too.")
+
+
+PREDICTS_KEYS = ("mode", "direction", "size")
+
+
+def check_predictions(recs: list[dict]) -> list[str]:
+    """A model recommendation states what it predicts (the sixteenth report):
+    which mode moves, which way, and by about how much - so the next pass can
+    say whether the change did what its report said it would, instead of
+    counting recommendations taken while the goal count went 2, 2, 1, 2. A
+    `predicts` field carrying `mode`, `direction` and `size` (a measurement
+    may predict a reading, not a mode: say so in `mode`)."""
+    problems = []
+    for i, r in enumerate(recs, 1):
+        if str(r.get("category", "")).lower() != "model":
+            continue
+        p = r.get("predicts")
+        if not isinstance(p, dict) or any(not str(p.get(k, "")).strip() for k in PREDICTS_KEYS):
+            problems.append("recommendation %d (%s) is a model change with no `predicts` {%s}: %s"
+                            % (i, r.get("category"), ", ".join(PREDICTS_KEYS), str(r.get("what", ""))[:80]))
+    return problems
+
+
+LIBRARY_STATE_MARK = ("<!-- generated:library-state start -->", "<!-- generated:library-state end -->")
+
+
+def library_state(reference_dir: Path, stamp: str, head_sha: str, date: str, report_ordinal) -> str | None:
+    """The State table of docs/reports/reference/README.md, from the two JSON
+    files' own counts and `last_pass` blocks - rewritten by hand each pass
+    until the sixteenth report found it two passes stale (C22)."""
+    fs_path, fa_path = reference_dir / "field-survey.json", reference_dir / "factors.json"
+    if not (fs_path.exists() and fa_path.exists()):
+        return None
+    fs = json.loads(fs_path.read_text(encoding="utf-8"))
+    fa = json.loads(fa_path.read_text(encoding="utf-8"))
+    fc, fl = fs.get("counts", {}), fs.get("last_pass", {})
+    ac, al = fa.get("counts", {}), fa.get("last_pass", {})
+    gaps_open = sum(1 for g in fs.get("gaps", []) if not g.get("status"))
+    fac_gaps = len(fa.get("gaps", []))
+    ordinal = f"the {report_ordinal} report" if report_ordinal else "the report"
+    lines = [
+        f"Last pass **{date}**, at `{head_sha[:8]}` — {ordinal}, lodged as "
+        f"[`{stamp}_project_report.html`](../{stamp}_project_report.html). Written by "
+        f"`render_report.py` from `field-survey.json` and `factors.json` on every pass; the prose "
+        f"of each pass is its own section below.",
+        "",
+        "| | rows | this pass |",
+        "|---|---:|---|",
+        f"| `field-survey.json` projects | **{len(fs.get('projects', []))}** | "
+        f"{fl.get('rows_reused', '?')} reused, {fl.get('rows_refreshed', 0)} refreshed, **{fl.get('rows_added', 0)} added**; "
+        f"{fl.get('searches_spent', '?')} of {fl.get('budget', '?')} calls over {fl.get('rounds', '?')} rounds |",
+        f"| `field-survey.json` platforms | {len(fs.get('platforms', []))} | {fl.get('platforms_reused', '?')} reused |",
+        f"| excluded · not re-verified · gaps | {len(fs.get('excluded', []))} · {len(fs.get('not_reverified', []))} · "
+        f"**{len(fs.get('gaps', []))} ({gaps_open} open)** | {fl.get('gaps_closed', 0)} closed, {fl.get('gaps_added', 0)} added |",
+        f"| `factors.json` rows | **{len(fa.get('factors', []))}** | {al.get('factors_added', 0)} added "
+        f"({', '.join(al.get('added', [])) or 'none'}), {al.get('addenda_written', 0)} addenda; "
+        f"{len(al.get('gaps_closed', []))} gaps closed, {len(al.get('gaps_added', []))} added, {fac_gaps} in the array; "
+        f"`needs_research` {ac.get('needs_research', '?')}; {al.get('searches_spent', '?')} of {al.get('budget', '?')} calls |",
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def write_library_state(readme: Path, body: str) -> bool:
+    """Replace the marked block in the reference README; False when the
+    markers are absent (the README then still carries its hand table)."""
+    if not readme.exists():
+        return False
+    text = readme.read_text(encoding="utf-8")
+    a, b = LIBRARY_STATE_MARK
+    if a not in text or b not in text:
+        return False
+    head, rest = text.split(a, 1)
+    _old, tail = rest.split(b, 1)
+    new = head + a + "\n" + body + b + tail
+    if new != text:
+        readme.write_text(new, encoding="utf-8", newline="\n")
+    return True
 
 
 def build(scratch: Path, out: Path) -> None:
@@ -357,6 +437,10 @@ def build(scratch: Path, out: Path) -> None:
     head_sha = syn.get("head") or M.get("head", "")
     branch = syn.get("branch") or M.get("branch", "")
     date = syn.get("date") or dt.date.today().isoformat()
+
+    bad = check_predictions(syn.get("recommendations", []))
+    if bad:
+        sys.exit("render_report refuses a model recommendation without a prediction:\n  " + "\n  ".join(bad))
 
     sb = mt.get("modes", [])
     inside = [m["mode"] for m in sb if dev_class(m.get("result", {}).get("dev")) == "ok"]
@@ -562,6 +646,23 @@ def build(scratch: Path, out: Path) -> None:
 </body></html>'''
     out.write_text(doc, encoding="utf-8", newline="\n")
     print(f"wrote {out} ({out.stat().st_size/1e6:.2f} MB), {len(parts)} sections, findings {sum(fcount.values())}, recommendations {len(syn.get('recommendations', []))}")
+    # the reference library's front page: its State table from the two JSON
+    # files, in the same pass that lodged the report (the sixteenth report, C22)
+    reference_dir = out.parent / "reference"
+    state = library_state(reference_dir, stamp, head_sha, date, syn.get("reports_before", 0) and _ordinal(int(syn["reports_before"]) + 1))
+    if state is None:
+        print("reference library: field-survey.json or factors.json absent beside the report; State table not written")
+    elif write_library_state(reference_dir / "README.md", state):
+        print(f"wrote the State table of {reference_dir / 'README.md'}")
+    else:
+        print(f"reference library: {reference_dir / 'README.md'} has no {LIBRARY_STATE_MARK[0]} block; State table not written")
+
+
+def _ordinal(n: int) -> str:
+    words = {1: "first", 2: "second", 3: "third", 4: "fourth", 5: "fifth", 6: "sixth", 7: "seventh", 8: "eighth",
+             9: "ninth", 10: "tenth", 11: "eleventh", 12: "twelfth", 13: "thirteenth", 14: "fourteenth",
+             15: "fifteenth", 16: "sixteenth", 17: "seventeenth", 18: "eighteenth", 19: "nineteenth", 20: "twentieth"}
+    return words.get(n, "%dth" % n)
 
 
 CSS = """

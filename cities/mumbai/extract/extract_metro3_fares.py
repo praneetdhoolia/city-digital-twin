@@ -105,9 +105,12 @@ def main():
         writer = csv.DictWriter(stream, fieldnames=list(rows[0]), lineterminator='\n')
         writer.writeheader()
         writer.writerows(rows)
-    (output / '_metro3_fare_audit.json').write_text(json.dumps(audit, indent=2) + '\n', encoding='utf-8')
+    (output / '_metro3_fare_audit.json').write_text(json.dumps(audit, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({k:v for k,v in audit.items() if k not in ('api_checks', 'station_codes', 'limitations')}))
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

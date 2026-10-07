@@ -57,6 +57,7 @@ python src/setup/install_paths.py                   # the import roots, once per
 python src/setup/bootstrap_toolchain.py             # JDK 25, pt2matsim 26.6, Maven -> .tools/
 python src/setup/bootstrap_toolchain.py --run-stack # + the MATSim signals run stack
 python tests/check_manifest.py                      # the committed subset is intact
+git config core.hooksPath .githooks                 # the tracked hooks: identity pin, no attribution trailer (#210)
 ```
 
 Python 3.11+ (CI and the workstation run 3.14). The toolchain is ~1.4 GiB,
@@ -140,8 +141,9 @@ the calibrated base was written from — `20260909T015217_300it_25pct`, S2 × WE
 25% sample, 300 iterations, comparability family `F32-crowding-reaches-scoring`.
 The base is written from it as constrain-and-report (`DECISIONS.md` §9.50): no
 parameter was fitted, and the run is reported as it came out. The figures compare
-no scenario against any other. The newer result, F35's arm 0, is read on the
-board.
+no scenario against any other. The newest result is read on the board
+([`docs/STATUS.md`](docs/STATUS.md), the scoreboard and runs blocks); no family is
+named here because that fact has one home.
 
 **Mode share** — the only block that carries the fit statistic. Of 67 calibration
 targets, **36 are scored** and 31 could not be, each with a stated reason; mean
@@ -217,14 +219,19 @@ The licence boundary stays visible: OSM-derived layers are ODbL 1.0
 
 ## The second city: Mumbai
 
-A broad acquisition and an executable development case, not a twin: the
-framework loads the city, maps its network and combined feed, assembles its run
-inputs once and runs an explicit 1,000-person population for a few iterations
-on one day type through the same harness as any city
-(`CITYSIM_CITY=mumbai python run.py --scenario BASE --day WEEKDAY --run-config smoke_two_iterations`).
-Its study extent is the notified Mumbai Metropolitan Region, tiered leaf by
-leaf from the public lists. No target has been derived and nothing about its
-ridership is a result. Its state, extent, harvests and limits are on
+A broad acquisition, every piece of it with a stated use, and an executable
+development case, not a twin: the framework loads the city, maps its network and
+its three feeds once, and runs **citywide plans** through the same harness as any
+city (`CITYSIM_CITY=mumbai python run.py --scenario BASE --day WEEKDAY`). Its
+study extent is the notified Mumbai Metropolitan Region, tiered leaf by leaf from
+the public lists; the extent is populated from the census controls (27.06 M
+persons for 2026), its plans are written at a 5 % household build fraction
+(1.35 M persons) and thirteen per-mode targets are derived from the published
+CTS and CMP splits and the metro operators' observed daily ridership, so the
+twelve-mode reporter prints every mode against a target. On this host the city
+executes at about 1 % and reads at none: a 10 % core needs a 384–512 GB host
+(decision D15), and nothing about its ridership is a result. Its state, extent,
+harvests and limits are on
 [`cities/mumbai/docs/README.md`](cities/mumbai/docs/README.md).
 
 ---
@@ -264,7 +271,7 @@ results/                     run outputs (gitignored): raw/ the budgeted cache, 
 
 cities/mumbai/               THE SECOND CITY - its acquisitions, harvests, provisional registry and development case
 cities/newcastle/            THE FIRST CITY - every Newcastle/NSW/Australia-specific input
-  registry/                  the 600 declared values, with units, provenance, sweeps
+  registry/                  the 604 declared values, with units, provenance, sweeps
   overlays/scenarios|day|runs  per-scenario, per-day-type and per-run value overlays
   extract/                   acquisition adapters: ABS, TfNSW Open Data, Overpass
   build/                     builders that encode THIS city's intervention, corridor and geography

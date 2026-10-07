@@ -76,9 +76,12 @@ def main():
                   excluded='Other relations except required nested members; GTFS, route inventory and legal boundary remain separate inputs',
                   licence='ODbL 1.0; OpenStreetMap contributors')
     Path(city.path('data/processed/acquisition/osm_network_source_audit.json')).write_text(
-        json.dumps(report, indent=2) + '\n', encoding='utf-8')
+        json.dumps(report, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps(report), flush=True)
 
 
 if __name__ == '__main__':
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

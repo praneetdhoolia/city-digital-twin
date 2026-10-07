@@ -2,12 +2,13 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 30 September 2026 (sixty-fourth session) · **Record read through:** §9.219 · **Written against family:** `F39`
+**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.220 · **Written against family:** `F39`
 
 ## What is built
 
 - **A served passenger waits for the vehicle** (§9.213): `TaxiFleetEngine` holds the passenger's origin activity until the earliest-free vehicle can start, for this mobsim, and restores the agent's own end time afterwards through `citysim.ActivityRetimes` (shared with the ride engine); the wait was computed and only logged before (963-977 s mean on `20260923T034632_250it_25pct`). Under `A.taxi.fleet_representation` = `finite_fleet` the constant folds no priced wait.
 - **The fleet scales by the sample, its own emitted field** (§9.210, #215): `TaxiFleetEngine` reads `taxiFleet.sampleFraction` (the harness emits `RUN.sample.fraction`), not `qsim.flowCapacityFactor`; `fleet=8 (declared 800.0 x sample 0.01)` on `20260922T172813_4it_1pct`.
+- **The allocation is pinned** (§9.220): `TaxiFleetProbe` drives the real engine over seven requests on a two-vehicle fleet and fingerprints which vehicle serves whom, who waits to the limit and who is refused and walks, so a change in the allocation is a family change, not a cleanup; the engine logs one `listener=TaxiFleetEngine ms=<n>` line per iteration.
 
 - **A refused request is routed as a walk by the engine itself, and the taxi trip comes back whole** (§9.168, F35): a NULL-route walk leg had `PersonPrepareForSim` re-route the WHOLE plan every iteration (24 % of CPU, `20260912T162831_4it_25pct`). `TaxiFleetEngine.remodeRefused` routes the refused trips on `global.numberOfThreads` workers after the fleet pass (45,573 in 61 s at 25 %, `20260912T185005_4it_25pct`), inserts them in refusal order and restores the original taxi trip after the mobsim. Under `accessEgressModeToLink` the trip is found by routing mode and replaced whole (§9.167, #167).
 - **One mode, `taxi`, standing for taxi and rideshare together**, blended at `B.taxi.rideshare_trip_share` 0.66 (IPART 2025 last-trip split, swept 0.4–0.8, §9.76); no observation splits them (§9.21, §9.42).
@@ -25,7 +26,8 @@
 
 ## What is measured
 
-- **F37's arm 0, a RESULT with the wait executed: taxi 2.2767 % against 0.9916 %, +129.6 %, stop** (§9.214, `report_mode_ridership.py --run 20260926T002526_250it_25pct --it 250`): **3,449** resident trips at a mean **9.10 km (+75 % on the HTS category)**, coverage **45.15 %**, headroom 42.87 pp (`report_choice_set_coverage.py`) — not a choice-set finding. Executing the quarter-hour wait left the level where F35's +131.4 % had it (§9.169), a direction, never a comparison (§3.5). The F37 probe's fleet executed 10,140 waits at a mean 1,080 s on iteration 0 (§9.213).
+- **Taxi carries the car-less long trip on F39's control, a RESULT at iteration 250** (§9.219, #49, `report_mode_ridership.py --run 20260929T072135_250it_25pct --it 250`): taxi **2.5892 % against 0.9916 % (+161.1 %)** on 4,159 trips at 8.82 km (+70 % on the survey); the car-less take taxi on **5.6 %** of their trips against 0.9 % for the car-available (`_mode_by_demographics.json`).
+- The results before it read +129.6 % with the wait executed (F37: 3,449 trips at 9.10 km, coverage 45.15 %, §9.214) and +168.9 % (F38, §9.217) — directions, never comparisons (§3.5); the excess is not a choice-set finding (42.87 pp of headroom on F37). The F37 probe's fleet executed 10,140 waits at a mean 1,080 s on iteration 0 (§9.213).
 - **Two demand structures carry most taxi trips** (§9.214, items 2 and 3): **28 %** of taxi trips (mean **16.5 km**) are car-available travellers on a tour whose bound escort direction is HELD to ride, so the car stays home and the rest of the tour has walk, pt, bike or taxi only; the car-less (23.4 % of production) make **37 %** of taxi trips, sent by one kernel per purpose as far as a driver.
 - **The wait is executed on every served request** (§9.213): the smoke `20260925T212929_2it_1pct` logged `waitExecuted=394`, `restoreWaited=394 restoreOrphan=0`. F37's first arm was stopped at iteration 2 because the constant still folded the priced five-minute wait beside the executed one; the fold now applies only under `absent` (§9.214).
 - **Refusals are no longer the mechanism behind taxi's excess** (§9.169): at iteration 300 the fleet of 200 refused **2,065 requests an iteration, about 18 % of 11,409**, every one routed as a network walk in **1.3 s**, against 47,797 of 58,558 (81.6 %) on the F34 probe `20260912T162831_4it_25pct`. Four requests in five served, and taxi still reads 2.3× its target.
@@ -34,7 +36,7 @@
 
 ## What is open
 
-- **Taxi carries the car-less long trip on F39's control** (§9.219, #49, `20260929T072135_250it_25pct` it.250): taxi **2.5892 % against 0.9916 % (+161.1 %)** on 4,159 trips at 8.82 km (+70 % on the survey); the car-less take taxi on **5.6 %** of their trips against 0.9 % for the car-available (`_mode_by_demographics.json`) — a trip no driver is bound to and no transit serves has walk, bike or taxi only ([walk-and-bike](walk-and-bike.md)).
+- **The car-less' alternative is the open mechanism** (§9.219, #49, the lane's `short-trip-and-carless-choice`): a trip no driver is bound to and no transit serves has walk, bike or taxi only ([walk-and-bike](walk-and-bike.md)), and taxi takes the long end of it; the design is a car-less alternative derived from observed inputs, not a taxi lever (the fare is not one, §9.91).
 - **The refused-request fallback is still walk**, costing 1.3 s an iteration at 18 % refusal on arm 0 (§9.169), down from ~60 s at 81 % on the F34 probe (§9.168, §9.105). Whether taxi should take `B.ride.unpaired_fallback`'s member is undecided.
 - **Two stated simplifications**: empty running loads no link, and there is no spatial dispatch; `B.taxi.deadhead_min` stands in for both (§9.99). A full demand-responsive fleet would add the routed empty legs (§9.86, §9.99).
 - **The IPART user incidence is consumed outside the package** to build `B.taxi.daily_trips_band`; `data/raw/p2p/` holds the Fares Order only (§9.94). Acquiring the incidence is the honest route to person-level availability.
@@ -54,6 +56,7 @@
 
 ## History
 
+- §9.220 — the probe pins the allocation
 - §9.219 — taxi carries the car-less trip
 - §9.214 — wait executed, excess stays
 - §9.213 — the fleet wait is executed
@@ -68,4 +71,3 @@
 - §9.162 — the first result: taxi +202.2 %, still moving away
 - §9.158 — the loop reaches taxi's supply and price; reading point drifts
 - §9.157 — F31 gate: taxi +178.4 %
-- §9.141 — refused trip restored by endpoints

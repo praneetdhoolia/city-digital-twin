@@ -1,6 +1,6 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-09-29T05:55:02",
+  "newest_retrieved": "2026-09-27",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
   "n_files": 968,
@@ -16,8 +16,8 @@
   },
   "by_lineage_scope": {
     "raw": 522,
-    "output": 342,
-    "script": 104,
+    "output": 343,
+    "script": 103,
     "none": 0
   },
   "by_share_alike_ancestor": {
@@ -8363,8 +8363,8 @@
       "sha256": "7e9b2d8245d5ee87421faac5dfb9530f733303b77abfbb8befc81a13b718c5fc",
       "stage": "processed",
       "produced_by": "cities/newcastle/build/build_vehicle_fuel_ratio.py",
-      "source": "",
-      "source_url": "",
+      "source": "ABS Survey of Motor Vehicle Use, Australia, 12 months ended 30 June 2020 (cat. 9208.0, released 21 Dec 2020) - data cube 92080DO001: kilometres travelled, fuel consumed and average rate of fuel consumption by state/territory of registration, type of vehicle and type of fuel (Table 6: litres per 100 km)",
+      "source_url": "https://www.abs.gov.au/statistics/industry/tourism-and-transport/survey-motor-vehicle-use-australia/12-months-ended-30-june-2020/92080DO001_202006.xls",
       "licence": "CC-BY 4.0",
       "retrieved": "2026-09-27",
       "lineage_scope": "output",
@@ -8376,12 +8376,12 @@
       "rows": null,
       "sha256": "d84a2fbdf499286dc270e5ed13b9d805821fa5965312fb37f416bc59fd9709b5",
       "stage": "processed",
-      "produced_by": "cities/newcastle/extract/slice_newcastle.py",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
-      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "produced_by": "cities/newcastle/build/build_vehicle_fuel_ratio.py",
+      "source": "ABS Survey of Motor Vehicle Use, Australia, 12 months ended 30 June 2020 (cat. 9208.0, released 21 Dec 2020) - data cube 92080DO001: kilometres travelled, fuel consumed and average rate of fuel consumption by state/territory of registration, type of vehicle and type of fuel (Table 6: litres per 100 km)",
+      "source_url": "https://www.abs.gov.au/statistics/industry/tourism-and-transport/survey-motor-vehicle-use-australia/12-months-ended-30-june-2020/92080DO001_202006.xls",
       "licence": "CC-BY 4.0",
-      "retrieved": "2026-08-12",
-      "lineage_scope": "script",
+      "retrieved": "2026-09-27",
+      "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
     {
