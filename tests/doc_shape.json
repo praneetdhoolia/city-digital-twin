@@ -3,6 +3,8 @@
     "board": {
         "path": "docs/STATUS.md",
         "max_hand_lines": 170,
+        "max_hand_bytes": 24000,
+        "max_hand_bytes_note": "#228, D32 (8 October 2026): the reading budget stays in lines, and a line can be a paragraph - 22 of the board's 144 lines ran past 300 characters while the line cap held. The hand-written text (every byte outside the generated blocks) is capped like a position page's; the cap sits a fifth above the board at the decision and is lowered, never raised, as the prose is cut.",
         "max_line_chars": 600,
         "allowed_h2": [
             "The goal",

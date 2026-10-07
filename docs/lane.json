@@ -441,8 +441,8 @@
       "kind": "run",
       "status": "open",
       "recommended": true,
-      "cost": "a 25 % probe on the ATAP build (f39_headway_probe_25pct, ~45 min), then one 25 % arm: the control ran 27.9 h against a 27.7 h quote, the treatment's daytime probes quoted 37.0-50.5 h on a loaded host",
-      "blocked_on": "D29 - the charge's form and the arm's cost ceiling",
+      "cost": "a 25 % probe on the ATAP build (f39_headway_probe_25pct, ~1 h), then one 25 % arm at RUN.gate.wall_ceiling_h 40: the pair quote is the control's 27.9 h wall (band 24.5-27.9 h); the daytime probes of 30 September quoted 37.0-50.5 h on a loaded host",
+      "blocked_on": "the host: Windows Update paused past the 40 h ceiling and no restart pending (D19; the launcher refuses otherwise), then the probe f39_headway_probe_25pct in the host's quiet hours pricing inside 40 h; D29 answered 8 October 2026: ATAP M1 function, 40 h cap - the stated-cost approval",
       "opens_family": false,
       "answers_issues": [
         94,
@@ -466,6 +466,20 @@
         162
       ],
       "evidence": "9.219: mode_by_demographics.py distance bands and _bound_trips.json on 20260929T072135_250it_25pct (sub-1 km trips 13.5 % of trips, 59.2 % driven; chosen walks in no-ride tours 26,721 at 6.21 km)"
+    },
+    {
+      "id": "f39-replication-band",
+      "title": "Measure the replication band: three 25 % arms of f39_control_25pct at RUN.controler.last_iteration 100 under seeds 20260810, 20260811 and 20260812 (overlays f39_seed_<n>_100it_25pct), read against each other with compare_runs.py --modes, then set CAL.objective.replication_band_pp from their spread",
+      "kind": "run",
+      "status": "open",
+      "recommended": false,
+      "cost": "three 25 % arms of 100 iterations, ~11 h each at the control's 345 s pace (~33 h in all), one at a time; the first seed is the control's own and reads from its record where the horizons agree",
+      "blocked_on": "the F39 pair read (f39-headway-arm) - D30 answered 8 October 2026: run the three seeds after the pair; the host paused past each arm's ceiling",
+      "opens_family": false,
+      "answers_issues": [
+        163
+      ],
+      "evidence": "D30 (8 October 2026); the sixteenth report's recommendation 16 and ten earlier issuances; CAL.objective.replication_band_pp ships 0.0 so a pair difference is read as a diff"
     }
   ],
   "decisions": [
@@ -1224,8 +1238,9 @@
       ],
       "evidence": "9.219; asked 30 September 2026, answered 'Make any fixes and handoff' - the fixes are in, the form and the ceiling are still open",
       "asked": "2026-09-30",
-      "answer": null,
-      "answered": null
+      "answer": "ATAP M1 function, 40 h cap (Recommended)",
+      "answered": "2026-10-08",
+      "note": "answered 8 October 2026; the stated-cost approval for f39_headway_25pct at 40 h"
     },
     {
       "id": "D30",
@@ -1246,8 +1261,9 @@
       ],
       "evidence": "sixteenth report recommendation 16; 20260929T045645:3 (tenth issuance); #163; CAL.objective.replication_band_pp = 0.0",
       "asked": "2026-10-08",
-      "answer": null,
-      "answered": null
+      "answer": "Run the three seeds after the F39 pair (Recommended)",
+      "answered": "2026-10-08",
+      "note": "answered 8 October 2026"
     },
     {
       "id": "D31",
@@ -1272,8 +1288,9 @@
       ],
       "evidence": "sixteenth report recommendation 16; 20260929T045645:17 (ninth issuance); #50; docs/requests/tfnsw_hts_bespoke_tables.md",
       "asked": "2026-10-08",
-      "answer": null,
-      "answered": null
+      "answer": "Send it to opendataprogram@transport.nsw.gov.au (Recommended)",
+      "answered": "2026-10-08",
+      "note": "answered 8 October 2026 'type it out here in plain English, I will send': the user sends the request from the plain-English text given in session; the date sent is recorded on #50 when the user confirms"
     },
     {
       "id": "D32",
@@ -1300,8 +1317,9 @@
       ],
       "evidence": "sixteenth report issue ledger (present); #228 #209 #206 AWAITING-DECISION lines",
       "asked": "2026-10-08",
-      "answer": null,
-      "answered": null
+      "answer": "Take the recommended defaults for all three (Recommended)",
+      "answered": "2026-10-08",
+      "note": "answered 8 October 2026: #228 a byte cap for the board; #209 approvals stay a conversation recorded in section 14, the 25 % floor enforced; #206 no hash pinning, the CDN integrity hash in place"
     }
   ]
 }
