@@ -289,8 +289,8 @@ def host_load(prev=None, exclude_pids=()):
     procs_now = _process_cpu()
     sample = dict(at=now, cpu=cpu, procs=procs_now)
     doc = dict(at=time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime(now)),
-               cpu_pct=None, span_s=None, ram_free_gb=None, ram_total_gb=None,
-               top_other_process=None)
+               cpu_pct=None, other_cpu_pct=None, span_s=None, ram_free_gb=None,
+               ram_total_gb=None, top_other_process=None)
     mem = _memory()
     if mem:
         doc['ram_free_gb'] = round(mem[0] / 2 ** 30, 2)
@@ -305,12 +305,22 @@ def host_load(prev=None, exclude_pids=()):
         skip = {int(p) for p in exclude_pids if p}
         skip.add(os.getpid())
         best = None
+        # the CPU OUTSIDE the run: the whole-host figure above includes the
+        # run's own JVM, so a 16-thread mobsim on 24 cores reads 70-90 % by
+        # itself and a bar on it refuses every real probe (the first launch
+        # under 9.220's pricing rule); what prices the host rather than the
+        # build is what everything ELSE used over the same span
+        other_secs = 0.0
+        ncores = os.cpu_count() or 1
         for pid, (name, secs) in procs_now.items():
             if pid in skip or pid == 0 or pid not in prev['procs']:
                 continue
             used = secs - prev['procs'][pid][1]
+            if used > 0:
+                other_secs += used
             if best is None or used > best[2]:
                 best = (pid, name, used)
+        doc['other_cpu_pct'] = round(100.0 * other_secs / ((now - prev['at']) * ncores), 1)
         if best is not None and best[2] > 0:
             # CPU seconds per wall second: 1.0 is one logical core busy
             doc['top_other_process'] = dict(

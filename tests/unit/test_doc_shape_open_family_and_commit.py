@@ -61,3 +61,15 @@ def test_position_caps_exclude_a_generated_block(tmp_path):
              "families_page": "sampling-and-families.md", "family_stamp": r"\*\*Written against family:\*\*\s*`(F[^`]+)`"}
     assert cds.check_positions(city, spec_, ["F1-x"]) == []
     assert any("F2-y" in p for p in cds.check_positions(city, spec_, ["F1-x", "F2-y"]))
+
+
+def test_the_board_hand_text_has_a_byte_cap(tmp_path):
+    """#228 / D32: a line can be a paragraph, so the board's hand-written text is
+    capped in bytes as well as lines; a generated block does not count."""
+    city = _city(tmp_path)
+    spec_ = dict(BOARD_SPEC, max_hand_bytes=400)
+    gen = "<!-- generated:state start -->\n" + "g" * 2000 + "\n<!-- generated:state end -->\n"
+    (city / "docs" / "STATUS.md").write_text("# b\n" + gen + "short hand line\n", encoding="utf-8")
+    assert not any("hand-written bytes" in p for p in cds.check_board(city, spec_, "F39-x"))
+    (city / "docs" / "STATUS.md").write_text("# b\n" + gen + "h" * 500 + "\n", encoding="utf-8")
+    assert any("hand-written bytes" in p and "#228" in p for p in cds.check_board(city, spec_, "F39-x"))

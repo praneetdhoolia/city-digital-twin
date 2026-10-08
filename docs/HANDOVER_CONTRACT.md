@@ -24,7 +24,7 @@ needs.
 | Layer | File | Lines | What it answers |
 |---|---|---|---|
 | Goal | `docs/GOAL.md` | ~140 | what the twin is for; the loop; the non-negotiables |
-| Board | `docs/STATUS.md` | ≤ 170 hand + generated | the scoreboard, where the build is, what runs, what is next |
+| Board | `docs/STATUS.md` | ≤ 170 hand lines and ≤ 24,000 hand bytes + generated | the scoreboard, where the build is, what runs, what is next |
 | Brief | `docs/NEXT_AGENT_BRIEF.md` | ≤ 180 | what expires, the lane, the traps, the approvals |
 | Position | `docs/positions/<topic>.md` | ≤ 130 lines and ≤ 14,000 bytes each | the current truth for the lane's topic, every figure sourced |
 | Lane | `docs/lane.json` | generated into the board and the brief | the single next task, its cost and blocker; the decisions the user has not yet taken, as options |

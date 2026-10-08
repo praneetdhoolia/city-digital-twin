@@ -89,6 +89,18 @@ def probe_max_host_cpu_pct():
         return None
 
 
+def other_process_max_cores():
+    """The launcher's bar on a co-tenant, RUN.machine.other_process_max_cores,
+    read for the pricer's fallback on a host history written before
+    `other_cpu_pct` existed; None when unreadable or declared off (0)."""
+    try:
+        import registry as _registry                          # noqa: PLC0415
+        v = float(_registry.load().get('RUN.machine.other_process_max_cores'))
+        return v or None
+    except Exception:                                          # noqa: BLE001
+        return None
+
+
 def host_summary(run_dir):
     """What `_host.jsonl` says the host did while the run iterated, or None.
 
@@ -107,15 +119,22 @@ def host_summary(run_dir):
         return None
     cpu = sorted(r['cpu_pct'] for r in rows
                  if r.get('iteration') is not None and r.get('cpu_pct') is not None)
+    other = sorted(r['other_cpu_pct'] for r in rows
+                   if r.get('iteration') is not None and r.get('other_cpu_pct') is not None)
     if not cpu:
         return None
     top = None
     for r in rows:
+        if r.get('iteration') is None:
+            continue                      # the setup's co-tenants do not price an iteration
         p = r.get('top_other_process') or {}
         if p.get('cores') is not None and (top is None or p['cores'] > top['cores']):
             top = dict(p, iteration=r.get('iteration'), at=r.get('at'))
     return dict(samples=len(cpu), cpu_pct_max=cpu[-1],
-                cpu_pct_median=cpu[len(cpu) // 2], top_other_process=top)
+                cpu_pct_median=cpu[len(cpu) // 2],
+                other_cpu_pct_max=other[-1] if other else None,
+                other_cpu_pct_median=other[len(other) // 2] if other else None,
+                top_other_process=top)
 
 
 def family_control(arms):
@@ -418,19 +437,42 @@ def _fmt_hours(seconds: float) -> str:
     return '%.1f h' % h
 
 
-def loaded_host(arm, max_cpu_pct):
+def _outside_text(host):
+    """The figure a refusal quotes: the CPU outside the run where the history
+    carries it, else the busiest co-tenant and the cores it held."""
+    if host.get('other_cpu_pct_max') is not None:
+        return '%.0f %%' % float(host['other_cpu_pct_max'])
+    top = host.get('top_other_process') or {}
+    if top.get('cores') is not None:
+        return '%s at %.2f cores' % (top.get('name', '?'), float(top['cores']))
+    return 'an unrecorded amount'
+
+
+def loaded_host(arm, max_cpu_pct, max_other_cores=None):
     """Whether this run's own host history says its clock priced the host:
     the busiest digest interval over its iterations read above the declared
-    RUN.machine.probe_max_host_cpu_pct. A run with no history cannot say,
-    and is not refused on what it cannot say."""
+    RUN.machine.probe_max_host_cpu_pct on the CPU OUTSIDE the run. The
+    whole-host figure includes the run's own JVM - a 16-thread mobsim on 24
+    cores reads 70-90 % by itself, and the first probe priced under this rule
+    was refused at 98 % for its own work (9.221) - so the judgement is on
+    `other_cpu_pct`; a history written before that field existed is judged
+    on the busiest co-tenant's cores against RUN.machine.other_process_max_cores
+    when that bar is given. A run with no history cannot say, and is not
+    refused on what it cannot say."""
     host = arm.get('host') or {}
-    if max_cpu_pct is None or host.get('cpu_pct_max') is None:
+    if max_cpu_pct is None:
         return False
-    return float(host['cpu_pct_max']) > float(max_cpu_pct)
+    if host.get('other_cpu_pct_max') is not None:
+        return float(host['other_cpu_pct_max']) > float(max_cpu_pct)
+    top = host.get('top_other_process') or {}
+    if max_other_cores and top.get('cores') is not None:
+        return float(top['cores']) > float(max_other_cores)
+    return False
 
 
 def price(iterations: int, fraction, arms: list, gate_every=None,
-          first_iteration=None, max_host_cpu_pct=None, control=None) -> dict:
+          first_iteration=None, max_host_cpu_pct=None, control=None,
+          max_other_cores=None) -> dict:
     """The quote, and everything it rests on.
 
     `iterations` is the horizon, RUN.controler.last_iteration. A warm start
@@ -457,18 +499,20 @@ def price(iterations: int, fraction, arms: list, gate_every=None,
             if (fraction is None or a['fraction'] == fraction)
             and a.get('city', city.DEFAULT_CITY) == city.CITY
             and not a.get('profiled')]
-    loaded = [a for a in same if loaded_host(a, max_host_cpu_pct)]
+    if max_other_cores is None and max_host_cpu_pct is not None:
+        max_other_cores = other_process_max_cores()
+    loaded = [a for a in same if loaded_host(a, max_host_cpu_pct, max_other_cores)]
     same = [a for a in same if a not in loaded]
     host_warning = None
     if loaded:
         host_warning = (
-            'REFUSED AS A PRICE: %s - the host read %s %% busy over the '
+            'REFUSED AS A PRICE: %s - the host read %s busy OUTSIDE the run over the '
             'iterations of %s (RUN.machine.probe_max_host_cpu_pct %g), so the '
             'clock priced the host, not the build (9.219: the daytime probes '
             'of 30 September 2026 quoted 37.0-50.5 h for a 27.9 h build). '
             'Take the probe again on an idle host.'
             % (', '.join(a['name'] for a in loaded),
-               ', '.join('%.0f' % (a['host'] or {}).get('cpu_pct_max', 0)
+               ', '.join(_outside_text(a['host'] or {})
                          for a in loaded),
                'it' if len(loaded) == 1 else 'them', float(max_host_cpu_pct)))
     pair_quote = None

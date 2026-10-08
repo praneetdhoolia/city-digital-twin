@@ -115,6 +115,13 @@ def check_board(city: Path, spec: dict, latest_family: str | None = None) -> lis
         problems.append(f"{spec['path']}: {n_hand} hand-written lines against a cap of "
                         f"{cap} - the board is becoming a diary; move narrative to "
                         f"DECISIONS.md or SESSION_LOG.md")
+    bcap = spec.get("max_hand_bytes")
+    if bcap:
+        n_bytes = len(GENERATED.sub("", text).encode("utf-8"))
+        if n_bytes > bcap:
+            problems.append(f"{spec['path']}: {n_bytes:,} hand-written bytes against a cap of "
+                            f"{bcap:,} - a line can be a paragraph, so the budget is bytes as well as "
+                            f"lines (#228); cut the prose, never raise the cap")
     allowed = set(spec.get("allowed_h2", []))
     # a scoreboard row whose gate says the number is not a fit must not
     # carry one (#114): `level only` and `representation` rows show `-`

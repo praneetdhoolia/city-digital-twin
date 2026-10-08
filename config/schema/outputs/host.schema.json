@@ -71,6 +71,13 @@
      "type": "number"
     }
    }
+  },
+  "other_cpu_pct": {
+   "type": [
+    "number",
+    "null"
+   ],
+   "description": "the CPU busy % over the same span of every process OUTSIDE the run (its harness and JVM excluded), on the host's logical cores - the figure arm_cost.py judges against RUN.machine.probe_max_host_cpu_pct, since cpu_pct includes the run itself; null when no previous reading exists or the per-process table was not read (histories written before 8 October 2026)"
   }
  },
  "additionalProperties": false
