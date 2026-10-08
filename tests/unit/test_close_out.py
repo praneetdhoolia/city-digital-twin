@@ -147,6 +147,20 @@ def test_an_operator_stop_is_recorded_as_one(run_dir):
     assert doc['rc'] is None
 
 
+def test_a_run_that_died_in_setup_still_gets_its_record(run_dir):
+    # 8 October 2026: the host restarted ten minutes into a relaunch, before
+    # iteration 0 began; the readers' "nothing ended" sentinel -1 reached the
+    # record, the schema's minimum 0 refused it, and the run had no record.
+    # Null is the schema's way to say no iteration ended.
+    (run_dir / 'matsim.log').write_text('2026-10-08T14:30:00,000  INFO setup\n', encoding='utf-8')
+    # what the digest of a run still in setup holds (the 8 October run's own)
+    (run_dir / '_progress.json').write_text(json.dumps({'iteration': -1}), encoding='utf-8')
+    run_matsim.close_out(str(run_dir), run_matsim.DIED, rc=None, wall_s=None,
+                         stop_cause='died in setup: the host restarted')
+    doc = written(run_dir)
+    assert doc['completion'] == 'died' and doc['reached_iteration'] is None
+
+
 def test_an_operator_stop_takes_its_wall_clock_from_the_launch_stamp(run_dir):
     # the elapsed time is the cost the arm actually spent, not zero
     run_matsim.close_out(str(run_dir), run_matsim.STOPPED_BY_OPERATOR,
