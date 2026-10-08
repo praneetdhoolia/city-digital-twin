@@ -174,6 +174,22 @@ def set_mode_param(text, mode, name, value):
     return new
 
 
+def _record_is_resumable(rec_path):
+    """Whether a run record was written by a pause (`run.py --stop --pause`)."""
+    try:
+        return bool(json.load(open(rec_path, encoding='utf-8')).get('resumable'))
+    except (OSError, ValueError):
+        return False
+
+
+def _record_cause(rec_path):
+    """The stop cause a run record carries, or a placeholder."""
+    try:
+        return json.load(open(rec_path, encoding='utf-8')).get('stop_cause') or 'no cause recorded'
+    except (OSError, ValueError):
+        return 'no cause recorded'
+
+
 def resolve_warm_start(source, stopped_was_death=None):
     """The newest written plans checkpoint of a dead run, for `--warm-start`.
 
@@ -226,6 +242,10 @@ def resolve_warm_start(source, stopped_was_death=None):
             death = 'recorded as died'
         elif done == STOPPED_BY_OPERATOR and stopped_was_death:
             death = stopped_was_death
+        elif done == STOPPED_BY_OPERATOR and _record_is_resumable(rec_path):
+            # a pause (run.py --stop --pause): stopped for the host, not
+            # by the model; the stop's own cause is carried forward
+            death = 'paused by the operator: %s' % _record_cause(rec_path)
     if os.path.exists(rec_path) and death is None:
         if done == RAN_TO_LAST:
             raise SystemExit(
@@ -2371,8 +2391,16 @@ def log_confirms_death(log, states, size_before, last_write, now=None):
                    % (silent, longest))
 
 
-def stop_run(name, cause):
+def stop_run(name, cause, pause=False):
     """Stop a running arm through the harness - never by hand (9.137).
+
+    `pause` records the stop as RESUMABLE: an operator stop for a reason outside
+    the model (the host is needed for other work), which `--warm-start` may
+    continue from its newest plans checkpoint. A plain stop, like a gate stop,
+    stays a boundary nothing resumes past (resolve_warm_start). 9 October 2026:
+    the operator's other work took the host's memory to 0.2 GiB under F39's
+    treatment arm, and the arm was to stop at its iteration-50 checkpoint and
+    resume when the host was free - which the refusal would have forbidden.
 
     Ends the run's scheduled task if one exists, kills the recorded process
     tree, and records the abort with the caller's cause. The one sanctioned
@@ -2461,7 +2489,8 @@ def stop_run(name, cause):
                     rc=None,
                     wall_s=(died_wall_s if died_wall_s is not None
                             else meta.get('wall_s')),
-                    stop_cause=cause)
+                    stop_cause=cause,
+                    extra=({'resumable': True} if pause and not already_dead else None))
     print('%s and recorded: %s%s'
           % ('found dead' if already_dead else 'stopped',
              os.path.basename(dead),

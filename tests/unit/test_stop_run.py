@@ -197,6 +197,15 @@ def test_an_operator_stop_reaches_the_metrics_extraction(stopping):
         'run.py performs for the harness path, or the store keeps its bulk')
 
 
+def test_a_pause_records_the_stop_as_resumable_and_a_plain_stop_does_not(stopping, monkeypatch):
+    """`run.py --stop --pause`: the record says the stop was the host's, so a
+    warm start may continue it; a plain stop carries no such mark."""
+    monkeypatch.setattr(run_matsim, 'log_confirms_death', lambda *a, **k: (False, 'alive'))
+    dead = run_matsim.stop_run(stopping.name, 'the host is needed for other work', pause=True)
+    rec = json.load(open(os.path.join(dead, '_run.json'), encoding='utf-8'))
+    assert rec['completion'] == 'stopped_by_operator' and rec.get('resumable') is True
+
+
 def test_the_extraction_happens_after_the_record_is_written(stopping):
     """Order is part of the composition: the extractor reads `_run.json`."""
     run_matsim.stop_run(stopping.name, 'stopped at the approved gate')
