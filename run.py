@@ -234,6 +234,11 @@ def main():
                          'same close_out() a finished run gets. Refuses a run '
                          'that is alive, that died of an exception, or that '
                          'ended short of its horizon (DECISIONS.md 9.176)')
+    ap.add_argument('--pause', action='store_true',
+                    help='with --stop: record the stop as RESUMABLE - the operator\'s '
+                         'reason is outside the model (the host is needed), so '
+                         '--warm-start may continue from the newest plans checkpoint; '
+                         'without it a stop is a boundary nothing resumes past')
     ap.add_argument('--cause', metavar='TEXT',
                     help='why --stop is stopping the run; recorded verbatim '
                          'as the abort cause')
@@ -297,7 +302,7 @@ def stop(a):
                 if tn.rsplit('\\', 1)[-1] == want:
                     subprocess.run(['schtasks', '/end', '/tn', tn],
                                    capture_output=True)
-    return 0 if run_matsim.stop_run(a.stop, a.cause) else 1
+    return 0 if run_matsim.stop_run(a.stop, a.cause, pause=a.pause) else 1
 
 
 def launch(a):

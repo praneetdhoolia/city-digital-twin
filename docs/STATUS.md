@@ -20,32 +20,32 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 |---|---|---|
 | Twelve modes physically simulated | **Built and measured at 25 %**: every mode represented, motorbike chosen by daily use from one household motorcycle (§9.218); pt access, egress and transfer walks are network legs, and a no-route walk beyond walking's reach is an unexecutable plan (§9.219); freight trains remain crossing closures (§9.70) | [walk-and-bike](positions/walk-and-bike.md), [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md), §9.218, §9.219 |
 | Monitored live, every mode individually | **Met** — every 10th iteration readable, all twelve on their own basis; the run viewer shows them against their targets | [monitoring-and-gates](positions/monitoring-and-gates.md), §9.120, §9.170 |
-| Every mode inside 10 % | **1 of 12** at the treatment's newest readable iteration (car; the scoreboard below: iteration 40 of a dead attempt, mid-search, not a result); **2 of 12** on F39's control, the newest result (car and motorbike, §9.219); 1 of 12 on F38's. Walk's error is short trips driven and car-less trips with no alternative; pt's is a split with no frequency term (the treatment, D29) and 47.6 % of pt requests with no transit route (§9.219) | F39 (§9.219), F38 (§9.217), F37 (§9.214) |
+| Every mode inside 10 % | **1 of 12** at the treatment's newest readable iteration (car; the scoreboard below: the running warm start, mid-search, not a result); **2 of 12** on F39's control, the newest result (car and motorbike, §9.219); 1 of 12 on F38's. Walk's error is short trips driven and car-less trips with no alternative; pt's is a split with no frequency term (the treatment, D29) and 47.6 % of pt requests with no transit route (§9.219) | F39 (§9.219), F38 (§9.217), F37 (§9.214) |
 | Convergence in ≤ 250 iterations | **Measured three times, met in the weak sense; the first arm run ON the 250 horizon relaxed** (§9.169, §9.176): the pair drifts 0.14 pp over it.210–250 against 0.5 pp, with a +1.774 pp cutoff snap on car (arm 0: 0.128 pp, +1.683). Convergence still moves car away from target on both (#172) | [seed-and-choice-set](positions/seed-and-choice-set.md), §9.176, §9.169 |
 | Unobtained data derived, not assumed | SCATS as its published algorithm (§9.88); rail, tram and now **ferry** on disclosed boardings (§9.130, §9.211); licence rates from the published count (§9.131); fares from the Opal schedule (§9.135); bike's distance cost and the household tail derived, not assumed (§9.211); still swept: transfer penalty, charging dwell, SCATS offsets | [network-and-inputs](positions/network-and-inputs.md) |
 
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `aborted_20261008T144829_250it_25pct` at **iteration 40** (family `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk`, status `aborted`, 25% sample, launched 2026-10-08T14:48:56, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
-Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20261008T144829_250it_25pct --it 40` (`--trend` for the direction).
+Read from `20261008T212704_250it_25pct` at **iteration 26** (family `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk`, status `running`, 25% sample, launched 2026-10-08T21:27:21, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
+Reproduce: `python src/analyse/report_mode_ridership.py --run 20261008T212704_250it_25pct --it 26` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 55.3809 | 58.3222 | -5.0% | ok | share of resident linked trips |
-| 2 | ride | 15.8015 | 20.6000 | -23.3% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 17.6089 | 13.4000 | +31.4% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 1.8396 | 0.9916 | +85.5% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 6.3558 | 2.2084 | +187.8% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.2254 | 0.3785 | -40.4% | **STOP** >=20% | share of resident linked trips |
-| 7 | bus | 1.7111 | 2.3819 | -28.2% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 16,064 | 6,529 | +146.1% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,084 | 2,954 | -63.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 1,428 | 790.2850 | +80.7% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 11 | truck | 6.3487 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 52.6279 | 58.3222 | -9.8% | ok | share of resident linked trips |
+| 2 | ride | 15.6579 | 20.6000 | -24.0% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 20.4401 | 13.4000 | +52.5% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 1.7434 | 0.9916 | +75.8% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 6.2059 | 2.2084 | +181.0% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.1805 | 0.3785 | -52.3% | **STOP** >=20% | share of resident linked trips |
+| 7 | bus | 2.0269 | 2.3819 | -14.9% | over 10% | share of resident linked trips |
+| 8 | heavy_rail | 17,848 | 6,529 | +173.4% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,184 | 2,954 | -59.9% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 1,524 | 790.2850 | +92.8% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 11 | truck | 6.7388 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 405.0000 | 405.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **car**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry**.
+Inside 10%: **car**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is

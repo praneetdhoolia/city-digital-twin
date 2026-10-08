@@ -54,6 +54,27 @@ def test_a_reason_does_not_open_a_gate_stop_or_a_finished_run(tmp_path):
             rm.resolve_warm_start(_dead_run(sub, completion), stopped_was_death='x')
 
 
+def test_a_pause_resumes_with_its_cause_and_a_gate_stop_marked_resumable_does_not(tmp_path):
+    # run.py --stop --pause (9 October 2026): stopped for the host, not by the model
+    d = _dead_run(tmp_path, rm.STOPPED_BY_OPERATOR, checkpoint=50)
+    rec = os.path.join(d, '_run.json')
+    doc = json.load(open(rec, encoding='utf-8'))
+    doc.update(resumable=True, stop_cause='the host is needed for other work')
+    open(rec, 'w', encoding='utf-8').write(json.dumps(doc))
+    w = rm.resolve_warm_start(d)
+    assert w['iteration'] == 50
+    assert w['death'] == 'paused by the operator: the host is needed for other work'
+    gate = tmp_path / 'gate'
+    gate.mkdir()
+    g = _dead_run(gate, rm.STOPPED_AT_GATE)
+    grec = os.path.join(g, '_run.json')
+    gdoc = json.load(open(grec, encoding='utf-8'))
+    gdoc.update(resumable=True)
+    open(grec, 'w', encoding='utf-8').write(json.dumps(gdoc))
+    with pytest.raises(SystemExit):
+        rm.resolve_warm_start(g)
+
+
 def test_a_run_with_no_record_is_still_a_crash(tmp_path):
     w = rm.resolve_warm_start(_dead_run(tmp_path))
     assert w['iteration'] == 75 and w['death'] is None
