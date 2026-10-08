@@ -1,6 +1,6 @@
 # Brief for the next agent
 
-**Written:** 8 October 2026 (sixty-fifth session, after the launch) · **Open family:** `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk` · **Commit:** `f9748268`
+**Written:** 8 October 2026 (sixty-fifth session, after the launch) · **Open family:** `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk` · **Commit:** `1df0191a`
 *A pointer, not a source: [GOAL.md](GOAL.md), the [board](STATUS.md) and the [position pages](positions/) win.*
 
 ## §0 Verify first — facts that expire, each with its command
@@ -13,7 +13,7 @@
 | Registry **604** fields (four host and fraction fields added, §9.220); manifest **968** files (**733 CC-BY / 220 ODbL** + 15 bespoke), both cities verifying; Mumbai's registry at its own count after #241. | `python src/run/session_gate.py` |
 | This session's PRs: #262 (the report and the fixes, merged) and the follow-up `praneetdhoolia/d29-treatment-arm-and-decisions` (the decisions and the launch): open, or merged and the branch deleted. | `gh pr list --state all --head praneetdhoolia/d29-treatment-arm-and-decisions` |
 | Open issues after this handoff's issue pass (#175 reopened with its measurement; #260 and #261 filed; #210 #211 #212 #229 #232 #234 #241 #242 #253 closed on §9.220; #206 #209 #228 closed on D32, §9.221). | `gh issue list --state open --limit 100` · `python src/run/issue_gate.py` |
-| No decision waits on the user: D29-D32 were answered on 8 October 2026 (ATAP M1 at 40 h; the three replication seeds after the pair; the user sends the TfNSW request; the defaults for #228 #209 #206, closed). D31's sent date is still to record on #50. | `python src/analyse/lane.py --ask` · `gh issue view 50` |
+| No decision waits on the user: D29-D32 were answered on 8 October 2026 (ATAP M1 at 40 h; the three replication seeds after the pair; the defaults for #228 #209 #206, closed). The TfNSW request was SENT on 8 October 2026 (D31); #50 awaits the reply as an acquisition. | `python src/analyse/lane.py --ask` · `gh issue view 50` |
 
 Then: `python src/run/session_gate.py`.
 

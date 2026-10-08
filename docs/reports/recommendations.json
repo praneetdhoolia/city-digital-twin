@@ -249,9 +249,9 @@
    "what": "Send the TfNSW bespoke-table request (mode x age, trip-length distribution by mode, occupancy by purpose, the unfolded Other).",
    "repeat_of": "ninth #10, eighth, seventh, sixth, fifth",
    "opens_family": false,
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "sent 8 October 2026 by the operator (D31, #50)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20260914T152907:13",
@@ -421,9 +421,9 @@
    "repeat_of": 7,
    "opens_family": false,
    "category": "data",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "sent 8 October 2026 by the operator (D31, #50)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20260916T062246:8",
@@ -853,9 +853,9 @@
    "repeat_of": 7,
    "opens_family": false,
    "category": "data",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "sent 8 October 2026 by the operator (D31, #50)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20260925T182313:16",
@@ -1069,9 +1069,9 @@
    "repeat_of": 9,
    "opens_family": false,
    "category": "data",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "sent 8 October 2026 by the operator (D31, #50)",
+   "updated": "2026-10-08"
   },
   {
    "id": "20260929T045645:18",
