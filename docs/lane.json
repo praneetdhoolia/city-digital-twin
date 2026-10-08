@@ -441,8 +441,8 @@
       "kind": "run",
       "status": "open",
       "recommended": true,
-      "cost": "a 25 % probe on the ATAP build (f39_headway_probe_25pct, ~1 h), then one 25 % arm at RUN.gate.wall_ceiling_h 40: the pair quote is the control's 27.9 h wall (band 24.5-27.9 h); the daytime probes of 30 September quoted 37.0-50.5 h on a loaded host",
-      "blocked_on": "the host: Windows Update paused past the 40 h ceiling and no restart pending (D19; the launcher refuses otherwise), then the probe f39_headway_probe_25pct in the host's quiet hours pricing inside 40 h; D29 answered 8 October 2026: ATAP M1 function, 40 h cap - the stated-cost approval",
+      "cost": "one 25 % arm at a 40 h ceiling (D29): the pair quote is the control's 27.9 h wall, the band's top 37 h from the probe 20261008T114753_4it_25pct's loaded iterations; an arm slower than the band stops at the ceiling as a reading, not a result",
+      "blocked_on": "RUNNING since 8 October 2026 12:59 as 20261008T125933_250it_25pct (38g, RUN.gate.wall_ceiling_h 40, the memory margin overridden to 2 GiB at launch; §9.221): read at its record, never earlier - `python src/run/watch_run.py --run 20261008T125933_250it_25pct`; then compare_runs.py --modes against the control",
       "opens_family": false,
       "answers_issues": [
         94,

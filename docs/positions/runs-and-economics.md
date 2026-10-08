@@ -2,14 +2,14 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.220 · **Written against family:** `F39`
+**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.221 · **Written against family:** `F39`
 
 ## What is built
 
 - **The horizon is declared 250** (§9.169): `RUN.controler.last_iteration` 1000 → **250**, cutoff 200 (fraction 0.8), on arm 0's post-settle drift ≤ 0.128 pp; saves 3.8–4.6 h per 25 % arm; supersedes §9.142; the 30 run-input sets re-assembled.
 - **A second arm is refused at preflight; a harness killed under a live JVM no longer aborts the run** (§9.169, §9.170, §9.177): `refuse_concurrent_arm` in `src/run/run_matsim.py` (it also asks the store whether a run is live); `reconcile_stale` reads a clean shutdown first and closes out a finished orphan, else tests `jvm_pid`; `CITYSIM_LAUNCH_STAMP` names a detached run after its task; an unjudged milestone is written to `_readings.jsonl`.
-- **A loaded host is refused before the JVM starts** (§9.220): `refuse_unsafe_host` also refuses while free RAM is below `RUN.machine.xmx` + `RUN.machine.free_ram_margin_gib` (**6** GiB, assumed, sweep 0–12) or another process holds more than `RUN.machine.other_process_max_cores` (**1.0**, assumed, sweep 0–4), from two `procs.host_load` readings one `RUN.monitor.poll_s` apart; `run.py` refuses an ARM below `RUN.sample.arm_fraction_floor` (**0.25**, `definition`, the 25 % directive declared) without `--override-reason`, ledgered.
-- **Every host sample is a run output** (§9.220): `progress_digest` appends each 30 s sample to `_host.jsonl` (declared, `config/schema/outputs/host.schema.json`, validated line by line); `arm_cost.py` reads a run's history, refuses to quote from a probe whose host CPU exceeded `RUN.machine.probe_max_host_cpu_pct` (**90**, assumed, sweep 75–100) and prints the family's control wall as the pair quote.
+- **A loaded host is refused before the JVM starts** (§9.220): `refuse_unsafe_host` also refuses while free RAM is below `RUN.machine.xmx` + `RUN.machine.free_ram_margin_gib` (**6** GiB, assumed, sweep 0–12; overridable at launch inside the sweep, recorded on the run) or another process holds more than `RUN.machine.other_process_max_cores` (**2.0**, assumed, sweep 0–4; the WMI provider host at 1.8 cores is this host's baseline, §9.221), from two `procs.host_load` readings one `RUN.monitor.poll_s` apart; `run.py` refuses an ARM below `RUN.sample.arm_fraction_floor` (**0.25**, `definition`, the 25 % directive declared) without `--override-reason`, ledgered.
+- **Every host sample is a run output** (§9.220): `progress_digest` appends each 30 s sample to `_host.jsonl` (declared, `config/schema/outputs/host.schema.json`, validated line by line); each sample carries `other_cpu_pct`, the CPU of every process OUTSIDE the run (§9.221: the whole-host figure holds the run's own sixteen threads and refused the first probe at 98 % for its own work); `arm_cost.py` reads a run's history, refuses to quote from a probe whose outside-the-run CPU exceeded `RUN.machine.probe_max_host_cpu_pct` (**90**, assumed, sweep 75–100) - an older history by its busiest co-tenant over the iterations against the two-core bar - names the process it saw, and prints the family's control wall as the pair quote.
 - **One innovation cutoff, one watcher skeleton** (§9.220): `iteration_reading.innovation_off_after` serves `run_matsim`, `watch_run` and `run_view` (`watch_run.projection` had computed it without `first_iteration`, 200 against 83 on the F38 resume); the ceiling, stall and gate watchers share `_start_bound_watch`. The scheduler proof reads the task's numeric state; `--detach` on POSIX launches in its own session with a proof file (`tests/unit/test_detach_every_platform.py`).
 - **The heap rule re-measured on the footpath network** (§9.167, #183): `citysim.SharedModeNetworks` seeds one routing copy per distinct link set; `RUN.machine.heap_floor_gib` 9.6 → **15.6**; the 1 % overlays carry 18g, `f34_baseline_25pct` **48g**.
 - **A stall is priced as neither pace nor setup** (§9.167); `--detach` runs every refusal first; the ceiling, stall and reconcile markers carry the last iteration that ENDED. The ceiling is held in the launcher's memory: it cannot be raised on a running arm (§9.174).
@@ -29,7 +29,7 @@
 
 ## What is measured — what a run costs
 
-- **This host refuses a launch today, by design** (§9.220, the host guard called directly): `restart_pending: True` (Windows Update's pause expired 2 October and a restart is pending) and `WmiPrvSE.exe` at **1.92** cores above the 1.0-core bar; the arm follows a restart and a renewed update pause.
+- **F39's treatment arm is RUNNING under D29** (§9.221; the run name and state are the board's): launched 8 October 2026 at a 40 h ceiling, `RUN.machine.xmx` **38g** (the heap rule's floor at 25 %, 8 GiB over the control's live set) with the memory margin overridden to **2** GiB, on a host holding 39–46 GiB free with the operator's applications open; the guards first refused it on memory (48g + 6 = 54 GiB can never fit this host), on the one-core bar (the WMI provider host at 1.38 and 1.81 cores) and on a probe overlay that declared no lane. Its probe `20261008T114753_4it_25pct` (38g): plain iterations **359 and 387 s**, the dump iteration 531 s, the fourth 537 s beside the operator's Blender at 1.0–2.14 cores with free memory at 8.1 GiB; 18 full collections, the longest 10.6 s. The pair quote is the control's **27.9 h**; the band's top **37 h**; the pricer refuses the probe as a price for its co-tenant, honestly.
 - **F39's control landed within 1 % of its probe's quote** (§9.219, `20260929T072135_250it_25pct`; the wall is the board's runs block): probe `20260929T060320_4it_25pct` at 390.0 s, the median settled near 347 s. The treatment's three daytime probes quoted **27.7 / 37.0 / 50.5 h** at 392 / 526 / 721 s (`20260930T111836`, `T123858`, `T140500` `_4it_25pct`) with every stage slowing together on a host at 24 % CPU: a probe prices the host's hour, and the control's own wall is the quote for its pair.
 - **The sixteenth report's performance verdict** (`docs/reports/20261008T003329_project_report.html`, §9.220): the mobsim is 66 % of a 345 s iteration and unprofiled on this build (#231); on an idle host the control's arm prices at ~25.8 h; the five result-preserving levers measured so far (the host guard to a smaller heap) sum to ~3 h; halving the arm is not reachable without changing what a run computes.
 - **The heap is measured on a full arm, and it does not slope** (§9.169, `gc.log`, #66): live heap after a full collection 21.2 GB at 8.9 h, peak 26,863 MB at 22.9 h, 21.4 GB at 30.2 h; GC under 1 % of wall. The rule (`RUN.machine.heap_floor_gib` 15.6 + `RUN.machine.heap_per_fraction_gib` 87 × 0.25 = 37.4 GiB) holds 11 GiB over the peak; the slope is not re-declared on one arm; no stall.
@@ -63,6 +63,7 @@
 
 ## History
 
+- §9.221 — the arm launched; bars measured
 - §9.220 — a loaded host is refused
 - §9.219 — a probe prices the host
 - §9.214 — F37 lands; F38 priced
@@ -77,4 +78,3 @@
 - §9.168 — footpath iteration profiled; engines route re-modes
 - §9.167 — the heap floor re-measured; a stall is not setup
 - §9.166 — heap rule, stall kill, override refusal
-- §9.164 — four probes; the ceiling watcher's first stop
