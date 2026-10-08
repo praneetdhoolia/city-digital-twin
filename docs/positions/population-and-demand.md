@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.220 · **Written against family:** `F39`
+**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.221 · **Written against family:** `F39`
 
 ## What is built
 
@@ -61,7 +61,7 @@
 - **The two demand changes worked; the car-less still lack an alternative** (§9.217, §9.219): on F39's control the car-less split their trips ride 45.7 %, walk 30.8 %, bike 11.8 %, pt 5.8 %, taxi 5.6 % (`_mode_by_demographics.json`), walking 14–24 % of their 10–20+ km trips; see [walk-and-bike](walk-and-bike.md) and [ride-and-pairing](ride-and-pairing.md).
 - **#86 — the held passenger** (§9.211, §9.214): bound escort and joint trips executed as ride on 100 % of F37's; see [ride-and-pairing](ride-and-pairing.md).
 - **#145 — measured on a full arm** (§9.169): the wait distribution and where the self-driven bound trips settle remain unread.
-- **The four HTS cells exist nowhere public** (§9.167, §9.172, #50): the drafted request `docs/requests/tfnsw_hts_bespoke_tables.md` is the only route; sending it is the user's decision (D2, re-entered as D31 in the lane ledger, §9.220).
+- **The four HTS cells exist nowhere public** (§9.167, §9.172, #50): the request was SENT on 8 October 2026 (D31, #50) with five more tables (`cities/newcastle/docs/requests/tfnsw_hts_bespoke_tables.md`); each enters as a constraint, never a target (§9.8).
 - Still assumed and swept: `B.external.through_share`, `B.activity.escort_oneway_scope`, `B.motorbike.rider_coupling`, `P_INTERMEDIATE_STOP`, `P_SECOND_STOP`, `CHILD_TOUR_RETENTION`, the activity durations (§9.2, §9.61, §9.214). The rider licence rate for 12-17 applies to 12-15 year olds as the car rate does (§9.214).
 - **The sub-1 km supply is AT the seed, and #30 is re-aimed at allocation** (§9.177, §9.211, user decision): placed core legs **17.81 %** at ≤ 0.748 km straight against the Sydney 18.8 % band.
 
@@ -78,6 +78,7 @@
 
 ## History
 
+- §9.221 — the TfNSW request sent
 - §9.220 — B1 read once; builders refuse
 - §9.219 — car-less lack an alternative
 - §9.214 — destinations by mobility; escorts released
@@ -92,4 +93,3 @@
 - §9.167 — one binder skeleton; HTS request drafted
 - §9.166 — TfNSW bespoke tables obtainable
 - §9.151 — an escort priced as an escort
-- §9.149 — shared pass binds longest first

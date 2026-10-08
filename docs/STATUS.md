@@ -20,32 +20,32 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 |---|---|---|
 | Twelve modes physically simulated | **Built and measured at 25 %**: every mode represented, motorbike chosen by daily use from one household motorcycle (§9.218); pt access, egress and transfer walks are network legs, and a no-route walk beyond walking's reach is an unexecutable plan (§9.219); freight trains remain crossing closures (§9.70) | [walk-and-bike](positions/walk-and-bike.md), [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md), §9.218, §9.219 |
 | Monitored live, every mode individually | **Met** — every 10th iteration readable, all twelve on their own basis; the run viewer shows them against their targets | [monitoring-and-gates](positions/monitoring-and-gates.md), §9.120, §9.170 |
-| Every mode inside 10 % | **2 of 12** on F39's control (car and motorbike); 1 of 12 on F38's. Walk's error is short trips driven and car-less trips with no alternative; pt's is a split with no frequency term (the treatment, D29) and 47.6 % of pt requests with no transit route (§9.219) | F39 (§9.219), F38 (§9.217), F37 (§9.214) |
+| Every mode inside 10 % | **0 of 12** at the running treatment arm's newest readable iteration (the scoreboard below; seed plans, not a result); **2 of 12** on F39's control, the newest result (car and motorbike, §9.219); 1 of 12 on F38's. Walk's error is short trips driven and car-less trips with no alternative; pt's is a split with no frequency term (the treatment, D29) and 47.6 % of pt requests with no transit route (§9.219) | F39 (§9.219), F38 (§9.217), F37 (§9.214) |
 | Convergence in ≤ 250 iterations | **Measured three times, met in the weak sense; the first arm run ON the 250 horizon relaxed** (§9.169, §9.176): the pair drifts 0.14 pp over it.210–250 against 0.5 pp, with a +1.774 pp cutoff snap on car (arm 0: 0.128 pp, +1.683). Convergence still moves car away from target on both (#172) | [seed-and-choice-set](positions/seed-and-choice-set.md), §9.176, §9.169 |
 | Unobtained data derived, not assumed | SCATS as its published algorithm (§9.88); rail, tram and now **ferry** on disclosed boardings (§9.130, §9.211); licence rates from the published count (§9.131); fares from the Opal schedule (§9.135); bike's distance cost and the household tail derived, not assumed (§9.211); still swept: transfer penalty, charging dwell, SCATS offsets | [network-and-inputs](positions/network-and-inputs.md) |
 
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `20260929T072135_250it_25pct` at **iteration 250** (family `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk`, status `completed`, 25% sample, launched 2026-09-29T07:21:43, trips table). **A RESULT** - its `_run.json` says `ran_to_last_iteration` at iteration 250, the only completion that means the run executed the horizon it declared.
-Reproduce: `python src/analyse/report_mode_ridership.py --run 20260929T072135_250it_25pct --it 250` (`--trend` for the direction).
+Read from `20261008T125933_250it_25pct` at **iteration 0** (family `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk`, status `running`, 25% sample, launched 2026-10-08T12:59:52, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
+Reproduce: `python src/analyse/report_mode_ridership.py --run 20261008T125933_250it_25pct --it 0` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 63.2999 | 58.3222 | +8.5% | ok | share of resident linked trips |
-| 2 | ride | 15.4418 | 20.6000 | -25.0% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 10.0835 | 13.4000 | -24.7% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 2.5892 | 0.9916 | +161.1% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 5.5021 | 2.2084 | +149.1% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.3629 | 0.3785 | -4.1% | ok | share of resident linked trips |
-| 7 | bus | 1.6498 | 2.3819 | -30.7% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 14,320 | 6,529 | +119.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 768 | 2,954 | -74.0% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 1,544 | 790.2850 | +95.4% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 11 | truck | 5.4694 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 43.7796 | 58.3222 | -24.9% | **STOP** >=20% | share of resident linked trips |
+| 2 | ride | 16.1947 | 20.6000 | -21.4% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 28.5498 | 13.4000 | +113.1% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 1.6720 | 0.9916 | +68.6% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 4.8782 | 2.2084 | +120.9% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.1018 | 0.3785 | -73.1% | **STOP** >=20% | share of resident linked trips |
+| 7 | bus | 3.4706 | 2.3819 | +45.7% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 23,128 | 6,529 | +254.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,656 | 2,954 | -43.9% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 1,496 | 790.2850 | +89.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 11 | truck | 8.4079 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 405.0000 | 405.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **car, motorbike**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heavy_rail, light_rail, ferry**.
+Inside 10%: **none**. Past the 20% stop bar: **car, ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -121,7 +121,7 @@ Decided: D28 = Pair: fixes vs fixes+headway (Recommended) (2026-09-29) · D29 = 
 | **Bike and taxi carry the car-less long trip** (§9.219): the car-less take bike on 11.8 % and taxi on 5.6 % of trips against 2.4 % and 0.9 % for the car-available (`_mode_by_demographics.json`) | #107 #49 | [walk-and-bike](positions/walk-and-bike.md), [taxi-and-rideshare](positions/taxi-and-rideshare.md) | the same, after the car-less alternative |
 | **No change is ever measured alone** (the fifteenth report): F39's pair is the first control since F35; the replication band is still unmeasured, so `CAL.objective.replication_band_pp` is 0.0 - now the lane's D30 (§9.220) | #163 | [monitoring-and-gates](positions/monitoring-and-gates.md) | F39's treatment; three seeds at a short horizon |
 | **The host is the arm's weakest part**: 1 of the last 3 arms ran clean (Windows Update, a co-tenant, a session-owned launch, an NVMe-driven crash, a shutdown); since §9.220 the launcher refuses a loaded host and every run keeps `_host.jsonl` | - | [runs-and-economics](positions/runs-and-economics.md) | the next arm's `_host.jsonl` |
-| **The TfNSW bespoke-table request** (mode x age, trip length by mode, occupancy by purpose) is drafted and held | #50 | [population-and-demand](positions/population-and-demand.md) | the lodgement (the lane's D31, §9.220) |
+| **The TfNSW bespoke-table request** (mode x age, trip length by mode, occupancy by purpose, the unfolded Other, and five lower-priority tables) was SENT on 8 October 2026 (D31) | #50 | [population-and-demand](positions/population-and-demand.md) | TfNSW's reply; each table enters as a constraint, never a target |
 | **Standing room and transit road space scaled** since F36; peak standing occupancy still has no reader | #237 | [sampling-and-families](positions/sampling-and-families.md) | a peak-occupancy reader on F39 |
 | **The second city**: both 1 % cases gridlock on the flow identity, so the reading needs D15's host; the TUS unit files wait on the user's browser | #239 | [network-and-inputs](positions/network-and-inputs.md), [`cities/mumbai/docs/README.md`](../cities/mumbai/docs/README.md) | the 10 % probe on the D15 host |
 
