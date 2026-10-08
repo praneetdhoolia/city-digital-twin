@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.222 · **Written against family:** `F39`
+**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.223 · **Written against family:** `F39`
 
 ## What is built
 
@@ -29,7 +29,7 @@
 
 ## What is measured — what a run costs
 
-- **F39's treatment arm is RUNNING under D29** (§9.221, §9.222; the run name and state are the board's): relaunched 14:48 after two Start-menu restarts killed it, at a 40 h ceiling, `RUN.machine.xmx` **38g** (the heap rule's floor at 25 %) with the memory margin overridden to **2** GiB on a host holding 39–46 GiB free; the guards first refused it on memory, the core bar and an undeclared lane.
+- **F39's treatment arm is RUNNING under D29** (§9.221-§9.223; the run name and state are the board's): warm-started from iteration 25 after three manual restarts killed it, at a 32 h ceiling, `RUN.machine.xmx` **38g** (the heap rule's floor at 25 %) with the memory margin overridden to **2** GiB on a host holding 39–46 GiB free; the guards first refused it on memory, the core bar and an undeclared lane.
 - **The ATAP probe `20261008T114753_4it_25pct`** (38g, §9.221): plain iterations **359 and 387 s**, the fourth 537 s beside the operator's Blender (1.0–2.14 cores, 8.1 GiB free); 18 full collections, the longest 10.6 s. Pair quote the control's **27.9 h**, the band's top **37 h**; the pricer refuses the probe as a price for its co-tenant.
 - **F39's control landed within 1 % of its probe's quote** (§9.219, `20260929T072135_250it_25pct`): probe `20260929T060320_4it_25pct` at 390.0 s, the median settled near 347 s; the 30 September daytime probes quoted 27.7–50.5 h on a loaded host - the control's own wall is the quote for its pair.
 - **The sixteenth report's performance verdict** (§9.220): the horizon is reachable at the measured pace; the result-preserving levers sum to about 3 h of 27.85, and halving an arm needs the mobsim profiled first (#231).
@@ -64,6 +64,7 @@
 
 ## History
 
+- §9.223 — warm start from 25
 - §9.222 — two restarts; the arm relaunched
 - §9.221 — the arm launched; bars measured
 - §9.220 — a loaded host is refused
@@ -77,4 +78,3 @@
 - §9.172 — the recompiled controler priced: 422 s
 - §9.170 — concurrent arm refused at preflight
 - §9.169 — arm 0 lands at 30.35 h; the horizon declared 250
-- §9.168 — footpath iteration profiled; engines route re-modes

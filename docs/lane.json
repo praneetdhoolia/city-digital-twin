@@ -442,7 +442,7 @@
       "status": "open",
       "recommended": true,
       "cost": "one 25 % arm at a 40 h ceiling (D29): the pair quote is the control's 27.9 h wall, the band's top 37 h from the probe 20261008T114753_4it_25pct's loaded iterations; an arm slower than the band stops at the ceiling as a reading, not a result",
-      "blocked_on": "RUNNING since 8 October 2026 14:48 as 20261008T144829_250it_25pct (38g, RUN.gate.wall_ceiling_h 40, the memory margin overridden to 2 GiB at launch; §9.221, §9.222 - two earlier attempts died to Start-menu restarts): read at its record, never earlier - `python src/run/watch_run.py --run 20261008T144829_250it_25pct`; then compare_runs.py --modes against the control",
+      "blocked_on": "RUNNING since 8 October 2026 21:27 as 20261008T212704_250it_25pct, warm-started from iteration 25 of aborted_20261008T144829_250it_25pct at a 32 h ceiling (§9.223; three earlier attempts died to manual restarts, §9.222): read at its record, never earlier - `python src/run/watch_run.py --run 20261008T212704_250it_25pct`; then compare_runs.py --modes against the control",
       "opens_family": false,
       "answers_issues": [
         94,
