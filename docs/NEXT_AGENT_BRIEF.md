@@ -1,6 +1,6 @@
 # Brief for the next agent
 
-**Written:** 8 October 2026 (sixty-fifth session) · **Open family:** `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk` · **Commit:** `735f584b`
+**Written:** 8 October 2026 (sixty-fifth session) · **Open family:** `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk` · **Commit:** `6c0c51a4`
 *A pointer, not a source: [GOAL.md](GOAL.md), the [board](STATUS.md) and the [position pages](positions/) win.*
 
 ## §0 Verify first — facts that expire, each with its command

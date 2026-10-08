@@ -56,7 +56,7 @@ Inside 10%: **car, motorbike**. Past the 20% stop bar: **ride, walk, taxi, bike,
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs derived or swept with the reason stated ([network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 12 Sep with the footway harvest as walk/bike links (368,230 links); 15 feeds mapped once, 0 unmapped stops; one build per comparison (§3.5, §9.167) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains and plans of 10 Sep (§9.164); the 30 run-input sets on the 250-iteration horizon (§9.169); `check_package.py` passed |
-| P4 calibration | 🟡 | **F39 has its control's result** (§9.219) and the sixteenth report's reading of it (§9.220): the four corrections worked as built; the headway treatment is rebuilt (line at its stop, ATAP M1), bound to #175 and unrun - D29 and the host (a restart pending, §9.220). The newest run on disk is `20260930T140500_4it_25pct`, which **RAN TO ITS LAST ITERATION** — the treatment's pricing probe on the linear form, citable for its clock only. 2 of 12 inside 10 %. |
+| P4 calibration | 🟡 | **F39 has its control's result** (§9.219) and the sixteenth report's reading of it (§9.220): the four corrections worked as built; the headway treatment is rebuilt (line at its stop, ATAP M1), bound to #175 and unrun - D29 and the host (a restart pending, §9.220). The newest run on disk is `20261008T114753_4it_25pct`, which **RAN TO ITS LAST ITERATION** — the treatment's pricing probe on the ATAP build at a 38g heap, citable for its clock only (plain iterations 360-390 s beside the operator's Blender; the control's own wall is the pair quote). 2 of 12 inside 10 %. |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -82,14 +82,14 @@ The separate package audit passes since §9.220 (PASS 2,061, WARN 2): a run card
 <!-- generated:runs start -->
 | run | city | status | family | reached | cause / note |
 |---|---|---|---|---:|---|
+| `20261008T114753_4it_25pct` | newcastle | completed | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | 4 | ran_to_last_iteration `_run.json` |
 | `20260930T140500_4it_25pct` | newcastle | completed | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | 4 | ran_to_last_iteration `_run.json` |
 | `20260930T123858_4it_25pct` | newcastle | completed | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | 4 | ran_to_last_iteration `_run.json` |
 | `20260930T111836_4it_25pct` | newcastle | completed | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | 4 | ran_to_last_iteration `_run.json` |
 | `20260929T072135_250it_25pct` | newcastle | completed | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | 250 | ran_to_last_iteration `_run.json` |
 | `20260929T060320_4it_25pct` | newcastle | completed | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | 4 | ran_to_last_iteration `_run.json` |
-| `20260929T055640_2it_1pct` | newcastle | completed | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | 2 | ran_to_last_iteration `_run.json` |
 
-250 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+251 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next

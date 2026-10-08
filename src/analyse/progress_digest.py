@@ -98,7 +98,8 @@ def host_history_line(host, iteration):
     the run was in, so a slow band is read against the load across it."""
     host = host or {}
     return dict(at=host.get('at'), iteration=iteration,
-                cpu_pct=host.get('cpu_pct'), span_s=host.get('span_s'),
+                cpu_pct=host.get('cpu_pct'), other_cpu_pct=host.get('other_cpu_pct'),
+                span_s=host.get('span_s'),
                 ram_free_gb=host.get('ram_free_gb'),
                 ram_total_gb=host.get('ram_total_gb'),
                 top_other_process=host.get('top_other_process'))
