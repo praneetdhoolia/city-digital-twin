@@ -7,7 +7,7 @@ rest is capped by `tests/check_doc_shape.py`. The current truth per topic is in
 [`positions/`](positions); the history and every rationale in
 [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 8 October 2026 (sixty-fifth session). **F39's treatment arm is RUNNING** (§9.221, §9.222): `20261008T144829_250it_25pct` at a 40 h ceiling under D29, relaunched after two Start-menu restarts killed it, read at its record and nowhere earlier; the sixteenth report's instrument fixes are landed (§9.220) and D29-D32 are answered.
+**Last updated:** 8 October 2026 (sixty-fifth session). **F39's treatment arm is RUNNING** (§9.221-§9.223): `20261008T212704_250it_25pct`, warm-started from iteration 25 at a 32 h ceiling after three manual restarts killed it, read at its record and nowhere earlier; the sixteenth report's instrument fixes are landed (§9.220) and D29-D32 are answered.
 The scoreboard below is F39's control at iteration 250 (§9.219); F38's result (1 of 12) is a direction only. Mumbai waits on the D15 host.
 
 ## The goal
@@ -20,32 +20,32 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 |---|---|---|
 | Twelve modes physically simulated | **Built and measured at 25 %**: every mode represented, motorbike chosen by daily use from one household motorcycle (§9.218); pt access, egress and transfer walks are network legs, and a no-route walk beyond walking's reach is an unexecutable plan (§9.219); freight trains remain crossing closures (§9.70) | [walk-and-bike](positions/walk-and-bike.md), [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md), §9.218, §9.219 |
 | Monitored live, every mode individually | **Met** — every 10th iteration readable, all twelve on their own basis; the run viewer shows them against their targets | [monitoring-and-gates](positions/monitoring-and-gates.md), §9.120, §9.170 |
-| Every mode inside 10 % | **0 of 12** at the treatment's newest readable iteration (the scoreboard below: an early iteration of seed plans, not a result); **2 of 12** on F39's control, the newest result (car and motorbike, §9.219); 1 of 12 on F38's. Walk's error is short trips driven and car-less trips with no alternative; pt's is a split with no frequency term (the treatment, D29) and 47.6 % of pt requests with no transit route (§9.219) | F39 (§9.219), F38 (§9.217), F37 (§9.214) |
+| Every mode inside 10 % | **1 of 12** at the treatment's newest readable iteration (car; the scoreboard below: iteration 40 of a dead attempt, mid-search, not a result); **2 of 12** on F39's control, the newest result (car and motorbike, §9.219); 1 of 12 on F38's. Walk's error is short trips driven and car-less trips with no alternative; pt's is a split with no frequency term (the treatment, D29) and 47.6 % of pt requests with no transit route (§9.219) | F39 (§9.219), F38 (§9.217), F37 (§9.214) |
 | Convergence in ≤ 250 iterations | **Measured three times, met in the weak sense; the first arm run ON the 250 horizon relaxed** (§9.169, §9.176): the pair drifts 0.14 pp over it.210–250 against 0.5 pp, with a +1.774 pp cutoff snap on car (arm 0: 0.128 pp, +1.683). Convergence still moves car away from target on both (#172) | [seed-and-choice-set](positions/seed-and-choice-set.md), §9.176, §9.169 |
 | Unobtained data derived, not assumed | SCATS as its published algorithm (§9.88); rail, tram and now **ferry** on disclosed boardings (§9.130, §9.211); licence rates from the published count (§9.131); fares from the Opal schedule (§9.135); bike's distance cost and the household tail derived, not assumed (§9.211); still swept: transfer penalty, charging dwell, SCATS offsets | [network-and-inputs](positions/network-and-inputs.md) |
 
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `aborted_20261008T125933_250it_25pct` at **iteration 1** (family `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk`, status `aborted`, 25% sample, launched 2026-10-08T12:59:52, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
-Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20261008T125933_250it_25pct --it 1` (`--trend` for the direction).
+Read from `aborted_20261008T144829_250it_25pct` at **iteration 40** (family `F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk`, status `aborted`, 25% sample, launched 2026-10-08T14:48:56, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
+Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20261008T144829_250it_25pct --it 40` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 43.8395 | 58.3222 | -24.8% | **STOP** >=20% | share of resident linked trips |
-| 2 | ride | 15.6291 | 20.6000 | -24.1% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 29.1253 | 13.4000 | +117.4% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 1.6409 | 0.9916 | +65.5% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 4.8182 | 2.2084 | +118.2% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.1037 | 0.3785 | -72.6% | **STOP** >=20% | share of resident linked trips |
-| 7 | bus | 3.5261 | 2.3819 | +48.0% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 23,496 | 6,529 | +259.9% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,576 | 2,954 | -46.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 1,580 | 790.2850 | +99.9% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 11 | truck | 8.3445 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 55.3809 | 58.3222 | -5.0% | ok | share of resident linked trips |
+| 2 | ride | 15.8015 | 20.6000 | -23.3% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 17.6089 | 13.4000 | +31.4% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 1.8396 | 0.9916 | +85.5% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 6.3558 | 2.2084 | +187.8% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.2254 | 0.3785 | -40.4% | **STOP** >=20% | share of resident linked trips |
+| 7 | bus | 1.7111 | 2.3819 | -28.2% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 16,064 | 6,529 | +146.1% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,084 | 2,954 | -63.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 1,428 | 790.2850 | +80.7% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 11 | truck | 6.3487 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 405.0000 | 405.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **none**. Past the 20% stop bar: **car, ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry**.
+Inside 10%: **car**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -56,7 +56,7 @@ Inside 10%: **none**. Past the 20% stop bar: **car, ride, walk, taxi, bike, moto
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs derived or swept with the reason stated ([network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 12 Sep with the footway harvest as walk/bike links (368,230 links); 15 feeds mapped once, 0 unmapped stops; one build per comparison (§3.5, §9.167) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains and plans of 10 Sep (§9.164); the 30 run-input sets on the 250-iteration horizon (§9.169); `check_package.py` passed |
-| P4 calibration | 🟡 | **F39 has its control's result** (§9.219) and the sixteenth report's reading of it (§9.220): the four corrections worked as built; the headway treatment (line at its stop, ATAP M1), bound to #175, runs under D29. The newest run on disk is `20261008T144829_250it_25pct`, which is **RUNNING** — the treatment arm at 38g under a 40 h ceiling (D29, §9.221; its probe `20261008T114753_4it_25pct` ran plain iterations at 359-387 s, the control's own wall is the pair quote). 2 of 12 inside 10 %. |
+| P4 calibration | 🟡 | **F39 has its control's result** (§9.219) and the sixteenth report's reading of it (§9.220): the four corrections worked as built; the headway treatment (line at its stop, ATAP M1), bound to #175, runs under D29. The newest run on disk is `20261008T212704_250it_25pct`, which is **RUNNING** — the treatment arm at 38g under a 40 h ceiling (D29, §9.221; its probe `20261008T114753_4it_25pct` ran plain iterations at 359-387 s, the control's own wall is the pair quote). 2 of 12 inside 10 %. |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -82,20 +82,20 @@ The separate package audit passes since §9.220 (PASS 2,061, WARN 2): a run card
 <!-- generated:runs start -->
 | run | city | status | family | reached | cause / note |
 |---|---|---|---|---:|---|
-| `20261008T144829_250it_25pct` | newcastle | running | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | live | - |
+| `20261008T212704_250it_25pct` | newcastle | running | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | live | - |
+| `aborted_20261008T144829_250it_25pct` | newcastle | aborted | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | 42 | died: the host restarted at 21:17:31 on 8 October 2026, the third restart that day initiated from the Start menu on the operator's accoun... |
 | `aborted_20261008T142516_250it_25pct` | newcastle | aborted | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | - | died in setup: the host restarted at 14:35:36 on 8 October 2026, a second restart initiated from the Start menu on the operator's account... |
 | `aborted_20261008T125933_250it_25pct` | newcastle | aborted | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | 4 | died: the host restarted at 14:19:48 on 8 October 2026, a restart initiated from the Start menu on the operator's account (System event 1... |
 | `20261008T114753_4it_25pct` | newcastle | completed | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | 4 | ran_to_last_iteration `_run.json` |
 | `20260930T140500_4it_25pct` | newcastle | completed | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | 4 | ran_to_last_iteration `_run.json` |
-| `20260930T123858_4it_25pct` | newcastle | completed | F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk | 4 | ran_to_last_iteration `_run.json` |
 
-254 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+255 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
 
 <!-- generated:lane start -->
-1. **Run F39's treatment arm: f39_control_25pct plus the service-interval charge on the boarded line's interval at the boarding stop, valued by ATAP M1 (C.time_weights.service_interval_function = atap_m1, #175), and read it against the control 20260929T072135_250it_25pct with compare_runs.py --modes** **(recommended)** - one 25 % arm at a 40 h ceiling (D29): the pair quote is the control's 27.9 h wall, the band's top 37 h from the probe 20261008T114753_4it_25pct's loaded iterations; an arm slower than the band stops at the ceiling as a reading, not a result; no family boundary; blocked on: RUNNING since 8 October 2026 14:48 as 20261008T144829_250it_25pct (38g, RUN.gate.wall_ceiling_h 40, the memory margin overridden to 2 GiB at launch; §9.221, §9.222 - two earlier attempts died to Start-menu restarts): read at its record, never earlier - `python src/run/watch_run.py --run 20261008T144829_250it_25pct`; then compare_runs.py --modes against the control (9.219: the probe found the approved charge keyed on route variants (1,080 of 1,270 once-a-day) and a once-a-day line-stop charged 900 IVT-minutes; fixed, and ATAP M1 eq 4.3.2 declared; #94 #98 #175)
+1. **Run F39's treatment arm: f39_control_25pct plus the service-interval charge on the boarded line's interval at the boarding stop, valued by ATAP M1 (C.time_weights.service_interval_function = atap_m1, #175), and read it against the control 20260929T072135_250it_25pct with compare_runs.py --modes** **(recommended)** - one 25 % arm at a 40 h ceiling (D29): the pair quote is the control's 27.9 h wall, the band's top 37 h from the probe 20261008T114753_4it_25pct's loaded iterations; an arm slower than the band stops at the ceiling as a reading, not a result; no family boundary; blocked on: RUNNING since 8 October 2026 21:27 as 20261008T212704_250it_25pct, warm-started from iteration 25 of aborted_20261008T144829_250it_25pct at a 32 h ceiling (§9.223; three earlier attempts died to manual restarts, §9.222): read at its record, never earlier - `python src/run/watch_run.py --run 20261008T212704_250it_25pct`; then compare_runs.py --modes against the control (9.219: the probe found the approved charge keyed on route variants (1,080 of 1,270 once-a-day) and a once-a-day line-stop charged 900 IVT-minutes; fixed, and ATAP M1 eq 4.3.2 declared; #94 #98 #175)
 2. **A 10 % probe of the Mumbai core on the D15 host (384-512 GB): the live set after full collections, the iteration time, the stuck share and the twelve-mode reading at a fraction the flow identity carries, priced by arm_cost.py before any approval** - no run on this host; on the D15 host one short case (4 iterations at 10 %: 2.7 M agents, 247 GiB live by the rule, an iteration of hours on 8 threads) to price the arm; opens no family (the first Mumbai family opens with the first reading); no family boundary; blocked on: the D15 host: the user procures it (cloud or workstation, 384-512 GB); nothing else - the inputs are assembled with the crossings and the evidenced fleet (9.207) (9.207: the pass-through merge measured at 62.7 -> 69.0 m median and not applied (the user keeps the network as converted); 9.206: 1 % gridlocks on the flow identity; the 0.1 % check 20260922T031226_2it_0.1pct ran to its last iteration with the 430 crossing departures; #239)
 3. **Import the Time Use Survey 2024 unit records (microdata.gov.in, the user's logged-in download), derive the activity timing and participation of Maharashtra urban persons from them, and replace the declared departure-time and out-of-home assumptions (B.baseline.activity_start_s, B.activities.out_of_home_*) with the derived distributions** - an extractor over the unit files (the layout is tus_2024_data_layout) and a plans rebuild (~2 min); no run; no family boundary; blocked on: the user's browser: the first download (22 September 2026) carried the documentation only (layout, codes, instructions, README, sample design, Vol II - all already acquired); the unit data files under the Data block of the Get Microdata tab are still to download (9.209: the layout, codes and instructions are acquired and declared reference; the state aggregate tables are the current basis;)
 4. **Switch Mumbai's household vehicle roster to `census` and ride pairing on: the citywide plans carry households and each household's cars since 9.205, so a driver can share the household's car and a passenger can name a driver, as the reference city does** - two gate values (B.population.vehicle_roster, B.ride.pairing_enabled) in adopt_framework_fields.py GATES, a re-assembly and a 0.1 % structural check (8 min); no reading on this host; no family boundary; blocked on: nothing - the gates were set when the plans carried no households; a reading needs the D15 host (9.209: the framework files still say "the baseline population carries no households"; B1_households.csv and the plans' householdId exist since 9.205;)

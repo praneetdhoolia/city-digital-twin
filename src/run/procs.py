@@ -284,9 +284,14 @@ def host_load(prev=None, exclude_pids=()):
     same span. With no `prev` the CPU figure is None: one reading of a
     cumulative counter is not a rate. Instrumentation: never raises.
     """
-    now = time.time()
     cpu = _cpu_times()
     procs_now = _process_cpu()
+    # stamped AFTER the process scan, which walks ~370 processes and takes
+    # seconds under load: stamped before it, the window was measured short and
+    # one sample read blender.exe at 25.13 cores on a 24-core host and the
+    # outside-the-run CPU at 110.9 % (aborted_20261008T144829_250it_25pct,
+    # 16:25); every figure below is also clamped to what the host can hold
+    now = time.time()
     sample = dict(at=now, cpu=cpu, procs=procs_now)
     doc = dict(at=time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime(now)),
                cpu_pct=None, other_cpu_pct=None, span_s=None, ram_free_gb=None,
@@ -320,12 +325,12 @@ def host_load(prev=None, exclude_pids=()):
                 other_secs += used
             if best is None or used > best[2]:
                 best = (pid, name, used)
-        doc['other_cpu_pct'] = round(100.0 * other_secs / ((now - prev['at']) * ncores), 1)
+        doc['other_cpu_pct'] = round(min(100.0, 100.0 * other_secs / ((now - prev['at']) * ncores)), 1)
         if best is not None and best[2] > 0:
             # CPU seconds per wall second: 1.0 is one logical core busy
             doc['top_other_process'] = dict(
                 pid=best[0], name=best[1],
-                cores=round(best[2] / (now - prev['at']), 2))
+                cores=round(min(float(os.cpu_count() or 1), best[2] / (now - prev['at'])), 2))
     return doc, sample
 
 

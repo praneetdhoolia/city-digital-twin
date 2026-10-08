@@ -301,6 +301,26 @@ def test_the_host_load_carries_cpu_ram_and_the_top_other_process(monkeypatch):
     assert doc['top_other_process'] == dict(pid=11, name='MsMpEng.exe', cores=1.0)
 
 
+def test_a_host_sample_never_claims_more_than_the_host_holds(monkeypatch):
+    # aborted_20261008T144829_250it_25pct, 16:25: a process scan stamped short
+    # read blender.exe at 25.13 cores on 24 and the outside CPU at 110.9 %
+    samples = iter([(0.0, 1000.0), (900.0, 1960.0)])
+    monkeypatch.setattr(procs, '_cpu_times', lambda: next(samples))
+    monkeypatch.setattr(procs, '_memory', lambda: (8 * 2 ** 30, 64 * 2 ** 30))
+    tables = iter([{10: ('java.exe', 0.0), 11: ('blender.exe', 0.0)},
+                   {10: ('java.exe', 100.0), 11: ('blender.exe', 900.0)}])
+    monkeypatch.setattr(procs, '_process_cpu', lambda: next(tables))
+    monkeypatch.setattr(procs.os, 'cpu_count', lambda: 24)
+    clock = iter([1000.0, 1030.0])
+    monkeypatch.setattr(procs, 'time', types.SimpleNamespace(
+        time=lambda: next(clock), strftime=time.strftime,
+        localtime=time.localtime))
+    _, prev = procs.host_load(None, exclude_pids=(10,))
+    doc, _ = procs.host_load(prev, exclude_pids=(10,))
+    assert doc['other_cpu_pct'] == 100.0
+    assert doc['top_other_process']['cores'] == 24.0
+
+
 def test_the_host_load_never_raises(monkeypatch):
     monkeypatch.setattr(procs, '_cpu_times', lambda: None)
     monkeypatch.setattr(procs, '_memory', lambda: None)
