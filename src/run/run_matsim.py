@@ -2261,6 +2261,12 @@ def close_out(run_dir, completion, rc, wall_s, reached_iteration=None,
         # flight, the digest said 100, and the newest readable milestone was
         # 90. The record said 100 until this used the ENDS markers instead.
         reached_iteration = max(per) if per else _last_ended_iteration(run_dir)
+    if isinstance(reached_iteration, int) and reached_iteration < 0:
+        # the readers' "no iteration ended" sentinel is -1; the record's schema
+        # says it as null. A run killed in setup (the host restarted ten minutes
+        # after the 8 October 2026 relaunch) was refused its record for writing
+        # -1, and was left citable by its status card alone.
+        reached_iteration = None
     doc = dict(name=name, city=meta.get('city') or city.descriptor()['id'],
                scenario=meta.get('scenario'), day=meta.get('day'),
                fraction=meta.get('fraction'), iterations=meta.get('iterations'),
