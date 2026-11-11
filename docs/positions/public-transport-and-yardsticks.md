@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.220 · **Written against family:** `F39`
+**Updated:** 11 November 2026 (sixty-sixth session) · **Record read through:** §9.224 · **Written against family:** `F39`
 
 ## What is built
 
@@ -70,7 +70,7 @@ Latest twelve-mode reading: F39's control arm `20260929T072135_250it_25pct` at i
 - **#94 — the ferry reads +95.4 % on its disclosed tap-ons on F39's control** (§9.219, §9.211; F38 +115.6 %, F37 +119.2 %, a direction only): 1,544 boardings against 790; the near-wharf market (`measure_near_wharf.py`, `_near_wharf.json`) is not yet read on F39.
 - **Light rail −74.0 % on F39's control** (§9.219; F38 −72.5 %, F37 −57.6 %): the line's 252 weekday departures are present (§9.113); see [light-rail-and-ferry](light-rail-and-ferry.md).
 - **The pt layer's unrun controls**: F39's headway treatment (`f39_headway_25pct`, `atap_m1`, §9.219) needs its probe on the ATAP build and a stated-cost approval (D29); #175 is reopened with its measurement line, `f39_headway_25pct` against F39's control (§9.220); the probes' quotes are the runs page's; the crowding control (#174) is unrun.
-- **#49** — a standing product directive, not a run question: `decision-needed` with an `AWAITING-DECISION:` line; reported at every gate, blocking nothing (§9.160).
+- **#49** — `awaiting-run` with an `AWAITING-RUN:` line (the submodes read inside F39's pair; GitHub labels, 11 November 2026); its `rail_legs` reading on the control is owed (§9.224).
 - **Bus stays on the composition basis as a recorded limitation** (§9.140, #99 closed): the Opal `NISC 1` series falls 88 % in April 2025 and no allowlisted source publishes Newcastle's bus boardings (the HTS level and the operator series differ by 3–10×; two indications put bus nearer 75–78 % of PT boardings than 62.7 %, §9.100); REOPEN #99 if one appears.
 
 ## Refused — do not re-raise
@@ -86,6 +86,7 @@ Latest twelve-mode reading: F39's control arm `20260929T072135_250it_25pct` at i
 
 ## History
 
+- §9.224 — treatment stopped, checkpoints lost
 - §9.220 — scorer indexed; #175 reopened
 - §9.219 — headway on the line; ATAP M1
 - §9.214 — rail entries, rural no-route
@@ -100,4 +101,3 @@ Latest twelve-mode reading: F39's control arm `20260929T072135_250it_25pct` at i
 - §9.164 — headway and reliability reach the model
 - §9.163 — walk fallback holds at depth
 - §9.162 — a control for the router
-- §9.161 — #167 diagnosed

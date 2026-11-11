@@ -1,6 +1,6 @@
 {
   "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
-  "updated": "2026-10-08",
+  "updated": "2026-11-11",
   "family": "F39-motorcycles-by-daily-use-trip-ends-on-carrying-links-and-a-bounded-walk",
   "tasks": [
     {
@@ -442,7 +442,7 @@
       "status": "open",
       "recommended": true,
       "cost": "one 25 % arm at a 40 h ceiling (D29): the pair quote is the control's 27.9 h wall, the band's top 37 h from the probe 20261008T114753_4it_25pct's loaded iterations; an arm slower than the band stops at the ceiling as a reading, not a result",
-      "blocked_on": "RUNNING since 8 October 2026 21:27 as 20261008T212704_250it_25pct, warm-started from iteration 25 of aborted_20261008T144829_250it_25pct at a 32 h ceiling (§9.223; three earlier attempts died to manual restarts, §9.222): read at its record, never earlier - `python src/run/watch_run.py --run 20261008T212704_250it_25pct`; then compare_runs.py --modes against the control",
+      "blocked_on": "D33 and a new stated-cost approval: aborted_20261008T212704_250it_25pct was STOPPED BY THE OPERATOR at iteration 50 on 9 October 2026 (a shared host, 508 s median) and its plans checkpoints were lost in the host reset, so the arm relaunches from iteration 0; D29 has 24.2 h of its 40 h left against the control's 27.9 h wall, and Windows Update must be paused again first (D19); then compare_runs.py --modes against the control",
       "opens_family": false,
       "answers_issues": [
         94,
@@ -480,6 +480,20 @@
         163
       ],
       "evidence": "D30 (8 October 2026); the sixteenth report's recommendation 16 and ten earlier issuances; CAL.objective.replication_band_pp ships 0.0 so a pair difference is read as a diff"
+    },
+    {
+      "id": "checkpoint-survives-host",
+      "title": "Make a plans checkpoint survive a host loss: copy the newest N.plans.xml.gz and the run's records outside results/raw at each dump, pause and death; resolve_warm_start falls back to the copy and skips one that fails gzip -t; trim, reclaim and prune_run honour resumable and died; --pause stops after the next completed plans dump (#268)",
+      "kind": "code",
+      "status": "open",
+      "recommended": false,
+      "cost": "no run: about 1.0-1.2 GB of disk per live arm for the newest checkpoint; code and unit tests in src/run/ (run_matsim.py, results_store.py, prune_run.py); the copy's time on a 1 GB file is unmeasured until the next arm",
+      "blocked_on": "D33 - whether it lands before the F39 treatment relaunches",
+      "opens_family": false,
+      "answers_issues": [
+        268
+      ],
+      "evidence": "9.224: the host reset removed all 81 aborted_ raw directories, the treatment's iteration-25 and 50 checkpoints with them; the seventeenth report's recommendations 1-2"
     }
   ],
   "decisions": [
@@ -1320,6 +1334,33 @@
       "answer": "Take the recommended defaults for all three (Recommended)",
       "answered": "2026-10-08",
       "note": "answered 8 October 2026: #228 a byte cap for the board; #209 approvals stay a conversation recorded in section 14, the 25 % floor enforced; #206 no hash pinning, the CDN integrity hash in place"
+    },
+    {
+      "id": "D33",
+      "question": "F39's treatment arm must relaunch from iteration 0 (its checkpoints were lost in the host reset, 9.224) and needs a new stated-cost approval: the pair quote is the control's 27.9 h wall, the band's top 37 h, at a 40 h ceiling. Land the checkpoint fix (#268) first, or launch now?",
+      "options": [
+        {
+          "label": "Land the checkpoint fix first, then launch at 40 h (Recommended)",
+          "detail": "a session implements #268 (a checkpoint copy outside results/raw, the pause that waits for a dump) with no run; then the arm launches on this approval at RUN.gate.wall_ceiling_h 40, Windows Update paused (D19), the host otherwise idle; a host loss then costs at most 25 iterations"
+        },
+        {
+          "label": "Launch now at 40 h",
+          "detail": "the arm launches on this approval as the code stands; a host restart or loss before iteration 250 costs the whole arm again"
+        },
+        {
+          "label": "Hold the arm",
+          "detail": "no approval; the treatment stays unread and the replication seeds (D30) wait behind it"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        175,
+        268
+      ],
+      "evidence": "9.224: D29 has 24.2 h of 40 left against the control's 27.9 h wall; 17.5 of 79.8 machine hours across F38 and F39 lost to host events (the seventeenth report)",
+      "asked": "2026-11-11",
+      "answer": null,
+      "answered": null
     }
   ]
 }

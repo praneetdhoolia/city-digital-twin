@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.220 · **Written against family:** `F39`
+**Updated:** 11 November 2026 (sixty-sixth session) · **Record read through:** §9.224 · **Written against family:** `F39`
 
 ## What is built
 
@@ -47,7 +47,7 @@
 
 ## What is open
 
-- **What decides the split is still open, and the next control is built and unrun** (§9.219, #175 reopened 8 October 2026): the service-quality charge reads the boarded LINE's interval at the boarding stop and can take ATAP M1's valuation (`C.time_weights.service_interval_function` = `atap_m1`: 8.0 / 26.4 / 208 IVT-minutes at a 10-minute, hourly and once-a-day interval); the treatment arm `f39_headway_25pct` is the lane's recommended task and waits on D29.
+- **What decides the split is still open, and the treatment has no reading** (§9.219, §9.224, #175): the service-quality charge reads the boarded LINE's interval at the boarding stop and can take ATAP M1's valuation (`C.time_weights.service_interval_function` = `atap_m1`: 8.0 / 26.4 / 208 IVT-minutes at a 10-minute, hourly and once-a-day interval); the treatment arm `f39_headway_25pct` stopped at iteration 50 and lost its checkpoints in the host reset; it relaunches from iteration 0 on a new approval (§9.224).
 - The routers control is exonerated (§9.176); the crowding control (`C.crowding.representation` `absent`, #174) has never run; the seed bounds pt at 19.43 % coverage (§9.219); the demand's placement of pt trips is #30.
 - Light rail: where the boardings between the control's 768 and the 2,954 target are — longer corridor trips, rail transferees, visitors — is the question at the treatment arm (§9.130, §9.219).
 - **Half of all pt routing finds no service** (§9.219, #162): on F39's control **951,538 of 2,000,000** pt requests (**47.6 %**) had no transit route — geography, not the clock (§9.214: 31.0 % of origins have no stop within 1 km); the bounded no-route walk refused 358,146 walks beyond 3,224 m and left the share. A tram or ferry leg cannot be chosen inside a journey answered with a walk. Supply, radius and schedule integrity are exonerated (§9.113, §9.158).
@@ -71,6 +71,7 @@
 
 ## History
 
+- §9.224 — treatment stopped, checkpoints lost
 - §9.220 — F39 control: tram 768, ferry 1,544
 - §9.211 — the ferry target on its tap-ons
 - §9.169 — F32 result: light rail −58.6 %
