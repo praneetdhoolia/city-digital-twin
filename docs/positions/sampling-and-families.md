@@ -2,11 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.220 · **Written against family:** `F39`
+**Updated:** 11 November 2026 (sixty-sixth session) · **Record read through:** §9.224 · **Written against family:** `F39`
 
 ## What is built
 
-- **Standing room is scaled with the seats** (§9.203, §9.185, #237): the old regex scaled only `seats`, so every F35 arm ran Tram 15 + 210 at 25 % and crowding could not bind on tram, rail or ferry. `scale_transit_capacity` parses the XML and scales both (Tram 15 + 52), floor `RUN.sample.transit_capacity_floor`. **Lands in F36; its first arm measures it.**
+- **Standing room is scaled with the seats** (§9.203, §9.185, #237): the old regex scaled only `seats`, so every F35 arm ran Tram 15 + 210 at 25 % and crowding could not bind on tram, rail or ferry. `scale_transit_capacity` parses the XML and scales both (Tram 15 + 52), floor `RUN.sample.transit_capacity_floor`. **Landed in F36; no arm has measured it** - the peak standing-occupancy reader is still unwritten (#237, §9.224).
 - **Transit vehicles' road space is scaled with the sample** (§9.206, `RUN.sample.transit_pce_scaling`): each type's PCE × fraction at launch. Transit runs at full frequency on links whose flow is fraction × real, so a bus at full PCE took 4× its road share at 25 %; MOVES RESULTS, and lands in F36 with #237.
 - **The sampling unit is the household.** `RUN.sample.unit` = `household` (`derived`): a household is kept when blake2b(`household|<id>|RUN.machine.seed`) / 2^64 falls below the fraction, so the sample nests (1 % is a strict subset of 10 %) and every household-coupled mechanism is fraction-independent (§9.45). External and through tiers hash on their own id. `RUN.machine.seed` = 20260810 = `B.seed.master`.
 - **Lift couplings extend the unit**: the sampler union-finds (`householdId`, `liftHousehold`) pairs; shared-ride driver households are named in `sharedDriverHousehold` and excluded from those unions (§9.60, §9.127). The cluster map is memoised beside the population, keyed by its sha256 (`sample_population.lift_cluster_map`, §9.220): on F39's WEEKDAY plans at 0.25, cold and warm keep the same **158,161** persons with an identical id set and output sha, the cluster pass 74 s → 0.1 s.
@@ -76,7 +76,7 @@ Overrides in the file (a run the record attributes by name): `aborted_20260818T1
 
 ## What is open
 
-- **F39's treatment is unrun** (`atap_m1` since §9.219, #175): it needs its probe on the ATAP build and an approval (D29). The controler build moved in §9.219 inside `ServiceQualityScoring` alone, which the control never binds, so the pair stays comparable. #237's standing peak has no reader.
+- **F39's treatment has no reading** (`atap_m1` since §9.219, #175): its probe `20261008T114753_4it_25pct` ran (§9.221); the arm reached iteration 50 before the operator stopped it, and its checkpoints were lost in the host reset, so it relaunches from iteration 0 on a new approval (§9.224). The controler build moved in §9.219 inside `ServiceQualityScoring` alone, which the control never binds, so the pair stays comparable. #237's standing peak has no reader.
 - **F35 is CLOSED with three results** (§9.168, §9.169, §9.176, §9.177), each citable inside F35 and against nothing after `20260922T210005`.
 - Whether a separate 25 % confirmation arm is still needed now that the loop runs at 25 % (§9.129) is the user's call at convergence.
 - The design-effect penalty of household cluster sampling is unestimated and no seed-variance measurement exists; `n_replications` stays 30 (§9.45). The threshold between 10 % and 25 % is unmeasured (§9.12).
@@ -95,6 +95,7 @@ Overrides in the file (a run the record attributes by name): `aborted_20260818T1
 
 ## History
 
+- §9.224 — treatment stopped, checkpoints lost
 - §9.220 — families generated; sampler memoised
 - §9.219 — F39's control is a result
 - §9.218 — F39 opens as a pair

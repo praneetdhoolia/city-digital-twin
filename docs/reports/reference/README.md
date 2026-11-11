@@ -45,14 +45,14 @@ on every pass.
 ## State
 
 <!-- generated:library-state start -->
-Last pass **2026-10-07**, at `1b14e559` — the sixteenth report, lodged as [`20261008T003329_project_report.html`](../20261008T003329_project_report.html). Written by `render_report.py` from `field-survey.json` and `factors.json` on every pass; the prose of each pass is its own section below.
+Last pass **2026-11-07**, at `079a49a3` — the seventeenth report, lodged as [`20261107T012526_project_report.html`](../20261107T012526_project_report.html). Written by `render_report.py` from `field-survey.json` and `factors.json` on every pass; the prose of each pass is its own section below.
 
 | | rows | this pass |
 |---|---:|---|
-| `field-survey.json` projects | **61** | 53 reused, 5 refreshed, **3 added**; 35 of 40 calls over 4 rounds |
+| `field-survey.json` projects | **63** | 54 reused, 7 refreshed, **2 added**; 32 of 40 calls over 6 rounds |
 | `field-survey.json` platforms | 12 | 12 reused |
-| excluded · not re-verified · gaps | 88 · 47 · **32 (7 open)** | 5 closed, 3 added |
-| `factors.json` rows | **108** | 2 added (E30, E31), 16 addenda; 2 gaps closed, 4 added, 19 in the array; `needs_research` 1; 33 of 40 calls |
+| excluded · not re-verified · gaps | 90 · 50 · **35 (9 open)** | 1 closed, 3 added |
+| `factors.json` rows | **109** | 1 added (J9), 18 addenda; 3 gaps closed, 1 added, 18 in the array; `needs_research` 0; 35 of 40 calls |
 <!-- generated:library-state end -->
 
 ### The pass of 25 September 2026 (the fourteenth report)

@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 8 October 2026 (sixty-fifth session) · **Record read through:** §9.220 · **Written against family:** `F39`
+**Updated:** 11 November 2026 (sixty-sixth session) · **Record read through:** §9.224 · **Written against family:** `F39`
 
 ## What is built
 
@@ -42,7 +42,7 @@
 ## What is open
 
 - **Why convergence makes the fit worse is the open question of the project** (§9.162, §9.169, §9.219, #172): the post-cutoff level is car-heavier than any gate read on every result; whether the cause is the choice set, the service-quality term or the demand is what the pairs must separate — the scoring and the routers are exonerated (§9.176, §9.177).
-- **F39 is the first control pair since F35** (D28, §9.218): its control is a result (§9.219) and its treatment — service quality (`C.time_weights.service_quality_representation` = `headway`, `service_interval_function` = `atap_m1`, #175 reopened 8 October 2026) — is built and unrun, the lane's recommended task, waiting on D29.
+- **F39 is the first control pair since F35** (D28, §9.218): its control is a result (§9.219) and its treatment — service quality (`C.time_weights.service_quality_representation` = `headway`, `service_interval_function` = `atap_m1`, #175 reopened 8 October 2026) — has no reading: stopped at iteration 50 and its checkpoints lost in the host reset, it relaunches from iteration 0 on a new approval (§9.224).
 - After the treatment, the next family is the demand's (`short-trip-and-carless-choice`: a car terminal time and the car-less' alternative, §9.219); the choice-set pair (`RUN.replanning.plan_selector_for_removal` = `SelectRandom`, #174) and the crowding control (#174, #98) are re-aimed at F39's control as the arm they are read against.
 - **The `full_choice_set` against `uniform_draw` sweep** has not been run on one family (`B.mode.seed_method`).
 - **Whether choice-set decay is a defect or MATSim's ordinary memory** is the choice-set pair's question (§9.140, #174): a plan trailing by a few utils is dropped and must be re-proposed - not a constant to move.
@@ -59,6 +59,7 @@
 
 ## History
 
+- §9.224 — treatment stopped, checkpoints lost
 - §9.220 — six results; D30 a lane decision
 - §9.177 — coverage is trips; scoring pair running
 - §9.176 — the routers pair a result; moves nothing
@@ -73,4 +74,3 @@
 - §9.162 — the first result: it relaxes, 0 of 12 inside
 - §9.160 — convergence ~200-210 derived; choice set closes at 74
 - §9.158 — a listener innovated past the cutoff
-- §9.157 — the F31 gate, still stopped at 100
